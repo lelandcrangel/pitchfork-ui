@@ -1,0 +1,260 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import colorTokens from '../../../packages/tokens/src/tokens/color.json';
+import sizeTokens from '../../../packages/tokens/src/tokens/size.json';
+import typographyTokens from '../../../packages/tokens/src/tokens/typography.json';
+import shadowTokens from '../../../packages/tokens/src/tokens/shadow.json';
+
+<Meta title="Tokens/Overview" />
+
+export const flattenTokens = (node, path = []) => {
+	if (!node || typeof node !== 'object') return [];
+
+	if ('$value' in node) {
+		return [
+			{
+				name: path.join('.'),
+				value: String(node.$value),
+				type: node.$type ? String(node.$type) : '-',
+			},
+		];
+	}
+
+	return Object.entries(node).flatMap(([key, value]) => flattenTokens(value, [...path, key]));
+};
+
+export const colorRows = flattenTokens(colorTokens);
+export const spacingRows = flattenTokens(sizeTokens.space, ['space']);
+export const radiusRows = flattenTokens(sizeTokens.radius, ['radius']);
+export const typographyRows = flattenTokens(typographyTokens);
+export const shadowRows = flattenTokens(shadowTokens);
+
+export const colorValueByName = Object.fromEntries(colorRows.map((row) => [row.name, row.value]));
+
+export const resolveReference = (value, lookup, depth = 0) => {
+	if (typeof value !== 'string') return value;
+	if (depth > 8) return value;
+	if (!value.startsWith('{') || !value.endsWith('}')) return value;
+
+	const key = value.slice(1, -1);
+	const next = lookup[key];
+
+	if (!next) return value;
+	return resolveReference(next, lookup, depth + 1);
+};
+
+export const resolvedColorRows = colorRows.map((row) => ({
+	...row,
+	resolvedValue: resolveReference(row.value, colorValueByName),
+}));
+
+export const isRenderableColor = (value) =>
+	typeof value === 'string' && /^(#|rgb\(|hsl\()/i.test(value.trim());
+
+export const PreviewGrid = ({ children }) => (
+	<div
+		style={{
+			display: 'grid',
+			gap: '12px',
+			gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+			marginBottom: '20px',
+		}}
+	>
+		{children}
+	</div>
+);
+
+export const PreviewCard = ({ children }) => (
+	<div
+		style={{
+			border: '1px solid var(--color-semantic-border-default)',
+			borderRadius: '8px',
+			padding: '12px',
+			background: 'var(--color-semantic-background-default)',
+		}}
+	>
+		{children}
+	</div>
+);
+
+export const MetaCode = ({ children }) => (
+	<code
+		style={{
+			display: 'block',
+			fontSize: '11px',
+			lineHeight: 1.3,
+			overflowWrap: 'anywhere',
+			wordBreak: 'break-word',
+		}}
+	>
+		{children}
+	</code>
+);
+
+export const TokenTable = ({ rows }) => (
+	<table>
+		<thead>
+			<tr>
+				<th>Token</th>
+				<th>Value</th>
+				<th>Type</th>
+			</tr>
+		</thead>
+		<tbody>
+			{rows.map((row) => (
+				<tr key={row.name}>
+					<td><code>{row.name}</code></td>
+					<td><code>{row.value}</code></td>
+					<td><code>{row.type}</code></td>
+				</tr>
+			))}
+		</tbody>
+	</table>
+);
+
+export const ColorPreview = () => (
+	<PreviewGrid>
+		{resolvedColorRows.map((row) => {
+			const swatchValue = row.resolvedValue;
+			const renderable = isRenderableColor(swatchValue);
+
+			return (
+				<PreviewCard key={row.name}>
+					<div
+						style={{
+							height: '48px',
+							borderRadius: '6px',
+							border: '1px solid var(--color-semantic-border-default)',
+							background: renderable ? swatchValue : 'transparent',
+							backgroundImage: renderable
+								? 'none'
+								: 'linear-gradient(45deg, #f1f5f9 25%, #e2e8f0 25%, #e2e8f0 50%, #f1f5f9 50%, #f1f5f9 75%, #e2e8f0 75%, #e2e8f0 100%)',
+							backgroundSize: '12px 12px',
+						}}
+					/>
+					<div style={{ marginTop: '8px', fontSize: '12px' }}>
+						<div><MetaCode>{row.name}</MetaCode></div>
+						<div><MetaCode>{row.value}</MetaCode></div>
+						{row.resolvedValue !== row.value ? <div><MetaCode>{row.resolvedValue}</MetaCode></div> : null}
+					</div>
+				</PreviewCard>
+			);
+		})}
+	</PreviewGrid>
+);
+
+export const SpacingPreview = () => (
+	<PreviewGrid>
+		{spacingRows.map((row) => (
+			<PreviewCard key={row.name}>
+				<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
+				<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
+				<div
+					style={{
+						height: '10px',
+						borderRadius: '9999px',
+						background: 'var(--color-semantic-action-primary)',
+						width: row.value,
+						minWidth: row.value === '0px' ? '2px' : undefined,
+					}}
+				/>
+			</PreviewCard>
+		))}
+	</PreviewGrid>
+);
+
+export const RadiusPreview = () => (
+	<PreviewGrid>
+		{radiusRows.map((row) => (
+			<PreviewCard key={row.name}>
+				<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
+				<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
+				<div
+					style={{
+						height: '48px',
+						background: 'var(--color-semantic-background-subtle)',
+						border: '1px solid var(--color-semantic-border-default)',
+						borderRadius: row.value,
+					}}
+				/>
+			</PreviewCard>
+		))}
+	</PreviewGrid>
+);
+
+export const TypographyPreview = () => (
+	<PreviewGrid>
+		{typographyRows.map((row) => {
+			const style = {
+				margin: 0,
+				lineHeight: 1.3,
+			};
+
+			if (row.type === 'fontFamily') style.fontFamily = row.value;
+			if (row.type === 'fontWeight') style.fontWeight = row.value;
+			if (row.type === 'dimension' && row.name.startsWith('font.size')) style.fontSize = row.value;
+
+			return (
+				<PreviewCard key={row.name}>
+					<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
+					<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
+					<p style={style}>The quick brown fox jumps over the lazy dog.</p>
+				</PreviewCard>
+			);
+		})}
+	</PreviewGrid>
+);
+
+export const ShadowPreview = () => (
+	<PreviewGrid>
+		{shadowRows.map((row) => (
+			<PreviewCard key={row.name}>
+				<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
+				<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
+				<div
+					style={{
+						height: '56px',
+						borderRadius: '8px',
+						background: '#ffffff',
+						boxShadow: row.value,
+					}}
+				/>
+			</PreviewCard>
+		))}
+	</PreviewGrid>
+);
+
+# Design Tokens
+
+Tokens live in `packages/tokens/src/tokens` and are compiled by Style Dictionary.
+
+The React package imports generated CSS variables from `@pitchfork-ui/tokens/css`.
+
+## Color
+
+<ColorPreview />
+
+<TokenTable rows={colorRows} />
+
+## Spacing
+
+<SpacingPreview />
+
+<TokenTable rows={spacingRows} />
+
+## Radius
+
+<RadiusPreview />
+
+<TokenTable rows={radiusRows} />
+
+## Typography
+
+<TypographyPreview />
+
+<TokenTable rows={typographyRows} />
+
+## Shadow
+
+<ShadowPreview />
+
+<TokenTable rows={shadowRows} />

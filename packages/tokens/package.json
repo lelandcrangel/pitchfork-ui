@@ -1,0 +1,18 @@
+{
+  "name": "@pitchfork-ui/tokens",
+  "version": "0.1.0",
+  "type": "module",
+  "sideEffects": ["dist/**/*.css"],
+  "files": ["dist"],
+  "scripts": {
+    "build": "style-dictionary build --config style-dictionary.config.mjs",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "style-dictionary": "latest"
+  },
+  "exports": {
+    "./css": "./dist/css/variables.css",
+    "./tokens": "./dist/json/tokens.json"
+  }
+}

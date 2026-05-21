@@ -1,0 +1,45 @@
+{
+  "color": {
+    "base": {
+      "white": { "$value": "#ffffff", "$type": "color" },
+      "black": { "$value": "#0b0b0f", "$type": "color" }
+    },
+    "gray": {
+      "50": { "$value": "#f8fafc", "$type": "color" },
+      "100": { "$value": "#f1f5f9", "$type": "color" },
+      "200": { "$value": "#e2e8f0", "$type": "color" },
+      "300": { "$value": "#cbd5e1", "$type": "color" },
+      "500": { "$value": "#64748b", "$type": "color" },
+      "700": { "$value": "#334155", "$type": "color" },
+      "900": { "$value": "#0f172a", "$type": "color" }
+    },
+    "brand": {
+      "50": { "$value": "#fff7ed", "$type": "color" },
+      "100": { "$value": "#ffedd5", "$type": "color" },
+      "500": { "$value": "#f97316", "$type": "color" },
+      "600": { "$value": "#ea580c", "$type": "color" },
+      "700": { "$value": "#c2410c", "$type": "color" },
+      "800": { "$value": "#9a3412", "$type": "color" }
+    },
+    "semantic": {
+      "background": {
+        "default": { "$value": "{color.base.white}", "$type": "color" },
+        "subtle": { "$value": "{color.gray.50}", "$type": "color" }
+      },
+      "text": {
+        "default": { "$value": "{color.gray.900}", "$type": "color" },
+        "muted": { "$value": "{color.gray.500}", "$type": "color" },
+        "inverse": { "$value": "{color.base.white}", "$type": "color" }
+      },
+      "border": {
+        "default": { "$value": "{color.gray.200}", "$type": "color" },
+        "strong": { "$value": "{color.gray.300}", "$type": "color" }
+      },
+      "action": {
+        "primary": { "$value": "{color.brand.700}", "$type": "color" },
+        "primaryHover": { "$value": "{color.brand.800}", "$type": "color" },
+        "primaryText": { "$value": "{color.base.white}", "$type": "color" }
+      }
+    }
+  }
+}

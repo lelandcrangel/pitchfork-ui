@@ -1,0 +1,5 @@
+.pf-badge { align-items: center; border-radius: var(--radius-full); display: inline-flex; font-size: 12px; font-weight: var(--font-weight-medium); line-height: 1; min-height: 22px; padding: 0 var(--space-2); }
+.pf-badge--neutral { background: var(--color-gray-100); color: var(--color-gray-700); }
+.pf-badge--brand { background: var(--color-brand-100); color: var(--color-brand-700); }
+.pf-badge--success { background: #dcfae6; color: #067647; }
+.pf-badge--warning { background: #fef0c7; color: #b54708; }
