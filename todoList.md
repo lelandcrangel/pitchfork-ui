@@ -59,12 +59,12 @@ Scope for this list:
 - [x] Header navigations
 - [x] Inline CTAs
 - [x] Loading indicators
-- [ ] Metrics
-- [ ] Modals
-- [ ] Notifications
-- [ ] Page headers
-- [ ] Paginations
-- [ ] Pie charts
+- [x] Metrics
+- [x] Modals
+- [x] Notifications
+- [x] Page headers
+- [x] Paginations
+- [x] Pie charts
 - [ ] Progress steps
 - [ ] Radar charts
 - [ ] Section footers

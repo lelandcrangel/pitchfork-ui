@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as PieChartStories from './PieChart.stories';
+import * as PieChartExamples from './PieChart.examples.stories';
+
+<Meta of={PieChartStories} />
+
+# Pie Charts
+
+PieChart visualizes part-to-whole distribution with a clean donut style and optional legend.
+
+## Examples
+
+### Revenue mix
+
+<Canvas of={PieChartExamples.RevenueMix} meta={PieChartExamples} />
+
+### Channel split
+
+<Canvas of={PieChartExamples.ChannelSplit} meta={PieChartExamples} />
+
+### Compact without legend
+
+<Canvas of={PieChartExamples.CompactNoLegend} meta={PieChartExamples} />
+
+### Empty state
+
+<Canvas of={PieChartExamples.EmptyState} meta={PieChartExamples} />

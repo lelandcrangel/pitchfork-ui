@@ -1,0 +1,29 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as NotificationStories from './Notification.stories';
+import * as NotificationExamples from './Notification.examples.stories';
+
+<Meta of={NotificationStories} />
+
+# Notifications
+
+Notification and NotificationStack provide toast-style status messages with optional actions and dismiss controls.
+
+## Examples
+
+### Stacked toasts
+
+<Canvas of={NotificationExamples.StackedToasts} meta={NotificationExamples} />
+
+### Destructive notice
+
+<Canvas
+  of={NotificationExamples.DestructiveNotice}
+  meta={NotificationExamples}
+/>
+
+### Bottom-left placement
+
+<Canvas
+  of={NotificationExamples.BottomLeftPlacement}
+  meta={NotificationExamples}
+/>

@@ -1,0 +1,29 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as PageHeaderStories from './PageHeader.stories';
+import * as PageHeaderExamples from './PageHeader.examples.stories';
+
+<Meta of={PageHeaderStories} />
+
+# Page Headers
+
+PageHeader combines page titling, supporting description, breadcrumbs, metadata, and actions into a reusable top-of-page layout.
+
+## Examples
+
+### Default
+
+<Canvas of={PageHeaderExamples.Default} meta={PageHeaderExamples} />
+
+### With breadcrumbs and meta
+
+<Canvas
+  of={PageHeaderExamples.WithBreadcrumbsAndMeta}
+  meta={PageHeaderExamples}
+/>
+
+### Compact mobile friendly
+
+<Canvas
+  of={PageHeaderExamples.CompactMobileFriendly}
+  meta={PageHeaderExamples}
+/>

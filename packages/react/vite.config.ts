@@ -5,6 +5,7 @@ import dts from 'vite-plugin-dts';
 export default defineConfig({
   plugins: [react(), dts({ insertTypesEntry: true })],
   build: {
+    minify: false,
     lib: {
       entry: 'src/index.ts',
       name: 'PitchforkUI',

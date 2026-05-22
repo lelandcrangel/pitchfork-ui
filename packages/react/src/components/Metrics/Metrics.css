@@ -1,0 +1,106 @@
+.pf-metric-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.pf-metric-card {
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-border-default);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.pf-metric-card__header {
+  align-items: start;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+.pf-metric-card__heading-wrap {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.pf-metric-card__heading {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.pf-metric-card__icon {
+  align-items: center;
+  color: var(--color-semantic-text-muted);
+  display: inline-flex;
+  font-size: 14px;
+  justify-content: center;
+}
+
+.pf-metric-card__action {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.pf-metric-card__body {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pf-metric-card__value {
+  color: var(--color-semantic-text-default);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.pf-metric-card__trend {
+  align-items: center;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  gap: 4px;
+  padding: 4px 8px;
+}
+
+.pf-metric-card__trend-symbol {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.pf-metric-card__trend--positive {
+  background: color-mix(in srgb, #16a34a 10%, white);
+  color: #166534;
+}
+
+.pf-metric-card__trend--negative {
+  background: color-mix(in srgb, #dc2626 10%, white);
+  color: #991b1b;
+}
+
+.pf-metric-card__trend--neutral {
+  background: var(--color-semantic-background-subtle);
+  color: var(--color-semantic-text-muted);
+}
+
+.pf-metric-card__description {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .pf-metric-card {
+    padding: var(--space-3);
+  }
+}

@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as MetricStories from './Metrics.stories';
+import * as MetricExamples from './Metrics.examples.stories';
+
+<Meta of={MetricStories} />
+
+# Metrics
+
+MetricCard and MetricGrid surface key numbers with optional trend context, supporting both standalone and dashboard-style layouts.
+
+## Examples
+
+### Overview grid
+
+<Canvas of={MetricExamples.OverviewGrid} meta={MetricExamples} />
+
+### With action
+
+<Canvas of={MetricExamples.WithAction} meta={MetricExamples} />
+
+### Compact grid
+
+<Canvas of={MetricExamples.CompactGrid} meta={MetricExamples} />

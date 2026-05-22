@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ModalStories from './Modal.stories';
+import * as ModalExamples from './Modal.examples.stories';
+
+<Meta of={ModalStories} />
+
+# Modals
+
+Modal provides an overlay dialog for focused tasks, confirmations, and longer in-context workflows.
+
+## Examples
+
+### Confirmation
+
+<Canvas of={ModalExamples.Confirmation} meta={ModalExamples} />
+
+### Form modal
+
+<Canvas of={ModalExamples.FormModal} meta={ModalExamples} />
+
+### Large content
+
+<Canvas of={ModalExamples.LargeContent} meta={ModalExamples} />

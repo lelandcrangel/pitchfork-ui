@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as PaginationStories from './Pagination.stories';
+import * as PaginationExamples from './Pagination.examples.stories';
+
+<Meta of={PaginationStories} />
+
+# Pagination
+
+Pagination helps users move through long result sets without losing context.
+
+## Examples
+
+### Default
+
+<Canvas of={PaginationExamples.Default} meta={PaginationExamples} />
+
+### Compact numbers
+
+<Canvas of={PaginationExamples.CompactNumbers} meta={PaginationExamples} />
+
+### Numbers only
+
+<Canvas of={PaginationExamples.NumbersOnly} meta={PaginationExamples} />
+
+### Disabled
+
+<Canvas of={PaginationExamples.Disabled} meta={PaginationExamples} />
