@@ -1,0 +1,26 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SectionHeaderStories from './SectionHeader.stories';
+import * as SectionHeaderExamples from './SectionHeader.examples.stories';
+
+<Meta of={SectionHeaderStories} />
+
+# Section Headers
+
+SectionHeader provides a consistent top area for section titles, context, and actions.
+
+## Examples
+
+### Default
+
+<Canvas of={SectionHeaderExamples.Default} meta={SectionHeaderExamples} />
+
+### With actions and metadata
+
+<Canvas
+  of={SectionHeaderExamples.WithActionsAndMeta}
+  meta={SectionHeaderExamples}
+/>
+
+### End aligned
+
+<Canvas of={SectionHeaderExamples.EndAligned} meta={SectionHeaderExamples} />

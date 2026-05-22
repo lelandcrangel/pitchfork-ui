@@ -68,7 +68,7 @@ Scope for this list:
 - [x] Progress steps
 - [x] Radar charts
 - [x] Section footers
-- [ ] Section headers
+- [x] Section headers
 - [ ] Sidebar navigations
 - [ ] Slideout menus
 - [ ] Tables
