@@ -1,0 +1,67 @@
+.pf-inline-cta {
+  align-items: center;
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-border-default);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: auto 1fr auto;
+  padding: var(--space-3);
+}
+
+.pf-inline-cta__icon {
+  align-items: center;
+  color: var(--color-semantic-text-muted);
+  display: inline-flex;
+  font-size: 16px;
+  justify-content: center;
+}
+
+.pf-inline-cta__content {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pf-inline-cta__heading {
+  color: var(--color-semantic-text-default);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+.pf-inline-cta__description {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.pf-inline-cta__action {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.pf-inline-cta--info {
+  background: color-mix(in srgb, var(--color-semantic-action-primary) 8%, white);
+}
+
+.pf-inline-cta--success {
+  background: color-mix(in srgb, #16a34a 10%, white);
+}
+
+.pf-inline-cta--warning {
+  background: color-mix(in srgb, #f59e0b 14%, white);
+}
+
+@media (max-width: 720px) {
+  .pf-inline-cta {
+    align-items: start;
+    grid-template-columns: auto 1fr;
+  }
+
+  .pf-inline-cta__action {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}

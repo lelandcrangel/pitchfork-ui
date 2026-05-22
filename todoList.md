@@ -57,7 +57,7 @@ Scope for this list:
 - [x] Date pickers
 - [x] File uploaders
 - [x] Header navigations
-- [ ] Inline CTAs
+- [x] Inline CTAs
 - [ ] Line and bar charts
 - [ ] Loading indicators
 - [ ] Metrics

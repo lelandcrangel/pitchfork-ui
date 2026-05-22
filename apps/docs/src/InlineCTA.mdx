@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as InlineCTAStories from './InlineCTA.stories';
+import * as InlineCTAExamples from './InlineCTA.examples.stories';
+
+<Meta of={InlineCTAStories} />
+
+# Inline CTA
+
+InlineCTA surfaces short, contextual prompts with optional actions.
+
+## Examples
+
+### Default
+
+<Canvas of={InlineCTAExamples.Default} meta={InlineCTAExamples} />
+
+### Info
+
+<Canvas of={InlineCTAExamples.Info} meta={InlineCTAExamples} />
+
+### Success
+
+<Canvas of={InlineCTAExamples.Success} meta={InlineCTAExamples} />
+
+### Warning with action group
+
+<Canvas of={InlineCTAExamples.WarningWithActionGroup} meta={InlineCTAExamples} />
