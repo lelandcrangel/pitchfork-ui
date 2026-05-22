@@ -36,6 +36,7 @@ export * from './components/RadioButton';
 export * from './components/RadioGroup';
 export * from './components/Rating';
 export * from './components/RichTextEditor';
+export * from './components/SectionFooter';
 export * from './components/Switch';
 export * from './components/Select';
 export * from './components/Slider';

@@ -1,0 +1,26 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SectionFooterStories from './SectionFooter.stories';
+import * as SectionFooterExamples from './SectionFooter.examples.stories';
+
+<Meta of={SectionFooterStories} />
+
+# Section Footers
+
+SectionFooter provides a consistent bottom area for section-level messaging and actions.
+
+## Examples
+
+### Default
+
+<Canvas of={SectionFooterExamples.Default} meta={SectionFooterExamples} />
+
+### No divider
+
+<Canvas of={SectionFooterExamples.NoDivider} meta={SectionFooterExamples} />
+
+### End-aligned actions
+
+<Canvas
+  of={SectionFooterExamples.EndAlignedActions}
+  meta={SectionFooterExamples}
+/>
