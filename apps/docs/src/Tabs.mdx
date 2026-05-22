@@ -1,0 +1,35 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TabsStories from './Tabs.stories';
+import * as TabsExamples from './Tabs.examples.stories';
+
+<Meta of={TabsStories} />
+
+# Tabs
+
+Tabs help users switch between related content areas without leaving the current view.
+
+## Examples
+
+### Underline
+
+A classic section-navigation pattern for content-heavy interfaces.
+
+<Canvas of={TabsExamples.Underline} meta={TabsExamples} />
+
+### Pills
+
+Pill tabs are useful for compact filters and segmented controls.
+
+<Canvas of={TabsExamples.Pills} meta={TabsExamples} />
+
+### Full width
+
+Use full-width tabs to distribute options evenly across constrained layouts.
+
+<Canvas of={TabsExamples.FullWidth} meta={TabsExamples} />
+
+### Compact small
+
+A small-size variant for denser utility surfaces.
+
+<Canvas of={TabsExamples.CompactSmall} meta={TabsExamples} />

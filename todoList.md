@@ -72,7 +72,7 @@ Scope for this list:
 - [x] Sidebar navigations
 - [x] Slideout menus
 - [x] Tables
-- [ ] Tabs
+- [x] Tabs
 - [ ] Tree views
 
 ## 3) Notes

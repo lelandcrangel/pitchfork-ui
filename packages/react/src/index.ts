@@ -45,6 +45,7 @@ export * from './components/Select';
 export * from './components/Slider';
 export * from './components/Tag';
 export * from './components/Table';
+export * from './components/Tabs';
 export * from './components/Textarea';
 export * from './components/Tooltip';
 export * from './components/UtilityButton';
