@@ -53,20 +53,13 @@ Scope for this list:
 - [x] Calendars
 - [x] Carousels
 - [x] Code snippets
-- [ ] Color pickers
-- [ ] Command menus
-- [ ] Content dividers
-- [ ] Date pickers
-- [ ] Empty states
-- [ ] File uploaders
-- [ ] Filter bars
-- [ ] Gradient pickers
+- [x] Content dividers
+- [x] Date pickers
+- [x] File uploaders
 - [ ] Header navigations
-- [ ] Image pickers
 - [ ] Inline CTAs
 - [ ] Line and bar charts
 - [ ] Loading indicators
-- [ ] Messaging
 - [ ] Metrics
 - [ ] Modals
 - [ ] Notifications

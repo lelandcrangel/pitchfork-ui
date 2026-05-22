@@ -1,0 +1,38 @@
+.pf-content-divider {
+  align-items: center;
+  color: var(--color-semantic-text-muted);
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.pf-content-divider--inset {
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+
+.pf-content-divider__line {
+  background: var(--color-semantic-border-default);
+  display: block;
+  flex: 1;
+  height: 1px;
+}
+
+.pf-content-divider__label {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pf-content-divider--vertical {
+  align-self: stretch;
+  background: var(--color-semantic-border-default);
+  display: inline-block;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 100%;
+  width: 1px;
+}

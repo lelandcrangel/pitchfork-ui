@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as FileUploaderStories from './FileUploader.stories';
+import * as FileUploaderExamples from './FileUploader.examples.stories';
+
+<Meta of={FileUploaderStories} />
+
+# File Uploader
+
+FileUploader supports clicking or dragging files into a dropzone with optional limits.
+
+## Examples
+
+### Default
+
+<Canvas of={FileUploaderExamples.Default} meta={FileUploaderExamples} />
+
+### Single file
+
+<Canvas of={FileUploaderExamples.SingleFile} meta={FileUploaderExamples} />
+
+### Limited count
+
+<Canvas of={FileUploaderExamples.LimitedCount} meta={FileUploaderExamples} />
+
+### Disabled
+
+<Canvas of={FileUploaderExamples.Disabled} meta={FileUploaderExamples} />
+
+### With error
+
+<Canvas of={FileUploaderExamples.WithError} meta={FileUploaderExamples} />

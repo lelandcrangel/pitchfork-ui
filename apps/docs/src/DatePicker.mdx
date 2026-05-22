@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as DatePickerStories from './DatePicker.stories';
+import * as DatePickerExamples from './DatePicker.examples.stories';
+
+<Meta of={DatePickerStories} />
+
+# Date Picker
+
+DatePicker combines a field trigger with the Calendar component for selecting a single date.
+
+## Examples
+
+### Default
+
+<Canvas of={DatePickerExamples.Default} meta={DatePickerExamples} />
+
+### No outside days
+
+<Canvas of={DatePickerExamples.NoOutsideDays} meta={DatePickerExamples} />
+
+### Disabled weekends
+
+<Canvas of={DatePickerExamples.DisabledWeekends} meta={DatePickerExamples} />
+
+### Bounded year range
+
+<Canvas of={DatePickerExamples.BoundedYearRange} meta={DatePickerExamples} />
+
+### With error
+
+<Canvas of={DatePickerExamples.WithError} meta={DatePickerExamples} />

@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ContentDividerStories from './ContentDivider.stories';
+import * as ContentDividerExamples from './ContentDivider.examples.stories';
+
+<Meta of={ContentDividerStories} />
+
+# Content Divider
+
+ContentDivider visually separates content areas with optional labels.
+
+## Examples
+
+### Default
+
+<Canvas of={ContentDividerExamples.Default} meta={ContentDividerExamples} />
+
+### With label
+
+<Canvas of={ContentDividerExamples.WithLabel} meta={ContentDividerExamples} />
+
+### Vertical
+
+<Canvas of={ContentDividerExamples.Vertical} meta={ContentDividerExamples} />
+
+### Inset
+
+<Canvas of={ContentDividerExamples.Inset} meta={ContentDividerExamples} />
