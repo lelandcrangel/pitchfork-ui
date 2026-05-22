@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as RadarChartStories from './RadarChart.stories';
+import * as RadarChartExamples from './RadarChart.examples.stories';
+
+<Meta of={RadarChartStories} />
+
+# Radar Charts
+
+RadarChart visualizes strengths across multiple dimensions on a radial axis.
+
+## Examples
+
+### Product health
+
+<Canvas of={RadarChartExamples.ProductHealth} meta={RadarChartExamples} />
+
+### Team comparison style
+
+<Canvas of={RadarChartExamples.TeamComparisonStyle} meta={RadarChartExamples} />
+
+### Minimal without legend
+
+<Canvas of={RadarChartExamples.MinimalNoLegend} meta={RadarChartExamples} />

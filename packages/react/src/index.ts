@@ -31,6 +31,7 @@ export * from './components/Pagination';
 export * from './components/PieChart';
 export * from './components/ProgressIndicators';
 export * from './components/ProgressSteps';
+export * from './components/RadarChart';
 export * from './components/RadioButton';
 export * from './components/RadioGroup';
 export * from './components/Rating';

@@ -1,0 +1,92 @@
+.pf-radar-chart {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-6);
+}
+
+.pf-radar-chart__svg {
+  display: block;
+  height: auto;
+  width: min(100%, 320px);
+}
+
+.pf-radar-chart__grid {
+  fill: none;
+  stroke: var(--color-semantic-border-default);
+  stroke-width: 1;
+}
+
+.pf-radar-chart__axis {
+  stroke: var(--color-semantic-border-muted);
+  stroke-width: 1;
+}
+
+.pf-radar-chart__area {
+  fill-opacity: 1;
+  stroke-width: 2;
+}
+
+.pf-radar-chart__point {
+  stroke: var(--color-semantic-background-default);
+  stroke-width: 1.5;
+}
+
+.pf-radar-chart__label {
+  fill: var(--color-semantic-text-muted);
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+}
+
+.pf-radar-chart__legend {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  min-width: 140px;
+  padding: 0;
+}
+
+.pf-radar-chart__legend-item {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+  justify-content: space-between;
+}
+
+.pf-radar-chart__legend-label {
+  color: var(--color-semantic-text-default);
+  font-size: var(--font-size-sm);
+}
+
+.pf-radar-chart__legend-value {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf-radar-chart__empty {
+  align-items: center;
+  border: 1px dashed var(--color-semantic-border-default);
+  border-radius: var(--radius-md);
+  color: var(--color-semantic-text-muted);
+  display: inline-flex;
+  font-size: var(--font-size-sm);
+  justify-content: center;
+  min-height: 180px;
+  min-width: 260px;
+  padding: var(--space-4);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .pf-radar-chart {
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .pf-radar-chart__legend {
+    min-width: 0;
+    width: 100%;
+  }
+}
