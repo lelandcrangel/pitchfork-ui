@@ -79,7 +79,11 @@
   border-bottom: 0;
 }
 
-.pf-table--striped .pf-table__native tbody tr:nth-child(even) .pf-table__body-cell {
+.pf-table--striped
+  .pf-table__native
+  tbody
+  tr:nth-child(even)
+  .pf-table__body-cell {
   background: color-mix(
     in srgb,
     var(--color-semantic-background-subtle) 55%,

@@ -21,8 +21,10 @@ export interface TableColumn {
   sortValue?: (row: TableRow) => string | number | Date | null | undefined;
 }
 
-export interface TableProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
+export interface TableProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'children'
+> {
   columns: TableColumn[];
   rows: TableRow[];
   caption?: React.ReactNode;
@@ -53,9 +55,9 @@ export function Table({
   getRowKey,
   ...props
 }: TableProps) {
-  const [internalSortState, setInternalSortState] = useState<TableSortState | undefined>(
-    defaultSortState,
-  );
+  const [internalSortState, setInternalSortState] = useState<
+    TableSortState | undefined
+  >(defaultSortState);
   const resolvedSortState = sortState ?? internalSortState;
 
   const sortedRows = useMemo(() => {
@@ -63,13 +65,17 @@ export function Table({
       return rows;
     }
 
-    const sortColumn = columns.find((column) => column.key === resolvedSortState.key);
+    const sortColumn = columns.find(
+      (column) => column.key === resolvedSortState.key,
+    );
     if (!sortColumn || !sortColumn.sortable) {
       return rows;
     }
 
     const getValue = (row: TableRow) => {
-      const value = sortColumn.sortValue ? sortColumn.sortValue(row) : row[sortColumn.key];
+      const value = sortColumn.sortValue
+        ? sortColumn.sortValue(row)
+        : row[sortColumn.key];
       if (value instanceof Date) {
         return value.getTime();
       }
@@ -88,10 +94,12 @@ export function Table({
         return (leftValue - rightValue) * directionFactor;
       }
 
-      return String(leftValue).localeCompare(String(rightValue), undefined, {
-        numeric: true,
-        sensitivity: 'base',
-      }) * directionFactor;
+      return (
+        String(leftValue).localeCompare(String(rightValue), undefined, {
+          numeric: true,
+          sensitivity: 'base',
+        }) * directionFactor
+      );
     });
   }, [columns, resolvedSortState, rows]);
 
@@ -133,7 +141,6 @@ export function Table({
       {caption ? <div className="pf-table__caption">{caption}</div> : null}
 
       <table className="pf-table__native">
-
         <thead>
           <tr>
             {columns.map((column) => (
@@ -154,7 +161,12 @@ export function Table({
                 }
                 style={
                   column.width !== undefined
-                    ? { width: typeof column.width === 'number' ? `${column.width}px` : column.width }
+                    ? {
+                        width:
+                          typeof column.width === 'number'
+                            ? `${column.width}px`
+                            : column.width,
+                      }
                     : undefined
                 }
               >
@@ -184,7 +196,10 @@ export function Table({
         <tbody>
           {sortedRows.length === 0 ? (
             <tr>
-              <td className="pf-table__empty" colSpan={Math.max(columns.length, 1)}>
+              <td
+                className="pf-table__empty"
+                colSpan={Math.max(columns.length, 1)}
+              >
                 {emptyState}
               </td>
             </tr>
