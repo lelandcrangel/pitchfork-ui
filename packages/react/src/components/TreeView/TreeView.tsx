@@ -11,8 +11,10 @@ export interface TreeViewNode {
   badge?: React.ReactNode;
 }
 
-export interface TreeViewProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
+export interface TreeViewProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onSelect'
+> {
   nodes: TreeViewNode[];
   selectedValue?: string;
   defaultSelectedValue?: string;
@@ -39,9 +41,18 @@ function flattenVisibleNodes(
   for (const node of nodes) {
     flattened.push({ node, level, parentValue });
 
-    if (node.children && node.children.length > 0 && expandedSet.has(node.value)) {
+    if (
+      node.children &&
+      node.children.length > 0 &&
+      expandedSet.has(node.value)
+    ) {
       flattened.push(
-        ...flattenVisibleNodes(node.children, expandedSet, level + 1, node.value),
+        ...flattenVisibleNodes(
+          node.children,
+          expandedSet,
+          level + 1,
+          node.value,
+        ),
       );
     }
   }
@@ -83,9 +94,9 @@ export function TreeView({
   const [internalSelectedValue, setInternalSelectedValue] = useState<
     string | undefined
   >(defaultSelectedValue ?? findFirstEnabledValue(nodes));
-  const [internalExpandedValues, setInternalExpandedValues] = useState<string[]>(
-    defaultExpandedValues,
-  );
+  const [internalExpandedValues, setInternalExpandedValues] = useState<
+    string[]
+  >(defaultExpandedValues);
 
   const resolvedSelectedValue = isSelectedControlled
     ? selectedValue
@@ -143,7 +154,10 @@ export function TreeView({
     itemRefs.current[value]?.focus();
   };
 
-  const onItemKeyDown = (current: FlattenedTreeNode, event: React.KeyboardEvent) => {
+  const onItemKeyDown = (
+    current: FlattenedTreeNode,
+    event: React.KeyboardEvent,
+  ) => {
     const currentIndex = flattenedNodes.findIndex(
       (item) => item.node.value === current.node.value,
     );
@@ -152,7 +166,9 @@ export function TreeView({
       return;
     }
 
-    const hasChildren = !!(current.node.children && current.node.children.length > 0);
+    const hasChildren = !!(
+      current.node.children && current.node.children.length > 0
+    );
     const isExpanded = expandedSet.has(current.node.value);
 
     if (event.key === 'ArrowDown') {
@@ -219,7 +235,9 @@ export function TreeView({
     <div className={cx('pf-tree-view', className)} role="tree" {...props}>
       <ul className="pf-tree-view__list" role="presentation">
         {flattenedNodes.map((item) => {
-          const hasChildren = !!(item.node.children && item.node.children.length > 0);
+          const hasChildren = !!(
+            item.node.children && item.node.children.length > 0
+          );
           const isExpanded = expandedSet.has(item.node.value);
           const isSelected = resolvedSelectedValue === item.node.value;
 
@@ -235,7 +253,11 @@ export function TreeView({
                   isSelected && 'pf-tree-view__row--selected',
                   item.node.disabled && 'pf-tree-view__row--disabled',
                 )}
-                style={{ '--pf-tree-level': String(item.level - 1) } as React.CSSProperties}
+                style={
+                  {
+                    '--pf-tree-level': String(item.level - 1),
+                  } as React.CSSProperties
+                }
               >
                 <span className="pf-tree-view__toggle-wrap" aria-hidden>
                   {hasChildren ? (
@@ -275,7 +297,9 @@ export function TreeView({
                   ) : null}
                   <span className="pf-tree-view__label">{item.node.label}</span>
                   {item.node.badge ? (
-                    <span className="pf-tree-view__badge">{item.node.badge}</span>
+                    <span className="pf-tree-view__badge">
+                      {item.node.badge}
+                    </span>
                   ) : null}
                 </button>
               </div>
