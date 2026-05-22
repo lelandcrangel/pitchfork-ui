@@ -1,0 +1,41 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TableStories from './Table.stories';
+import * as TableExamples from './Table.examples.stories';
+
+<Meta of={TableStories} />
+
+# Tables
+
+Table is a structured data surface with support for density, striping, hover states, sticky headers, and empty states.
+
+## Examples
+
+### Default
+
+A baseline tabular layout with sortable headers for quick scan-and-order workflows.
+
+<Canvas of={TableExamples.Default} meta={TableExamples} />
+
+### Dense and striped
+
+A compact view with zebra striping to improve row legibility in information-dense tables.
+
+<Canvas of={TableExamples.DenseStriped} meta={TableExamples} />
+
+### With caption
+
+Use a caption when the table needs lightweight context or summary text.
+
+<Canvas of={TableExamples.WithCaption} meta={TableExamples} />
+
+### Sticky header
+
+Header cells remain visible while scrolling long result sets.
+
+<Canvas of={TableExamples.StickyHeader} meta={TableExamples} />
+
+### Empty state
+
+Use a clear message when the current filters return no rows.
+
+<Canvas of={TableExamples.EmptyState} meta={TableExamples} />

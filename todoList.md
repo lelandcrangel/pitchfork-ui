@@ -71,7 +71,7 @@ Scope for this list:
 - [x] Section headers
 - [x] Sidebar navigations
 - [x] Slideout menus
-- [ ] Tables
+- [x] Tables
 - [ ] Tabs
 - [ ] Tree views
 
