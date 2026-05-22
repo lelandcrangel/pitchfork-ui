@@ -1,0 +1,32 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SidebarNavigationStories from './SidebarNavigation.stories';
+import * as SidebarNavigationExamples from './SidebarNavigation.examples.stories';
+
+<Meta of={SidebarNavigationStories} />
+
+# Sidebar Navigations
+
+SidebarNavigation provides a structured vertical navigation with optional section labels, badges, and header/footer slots.
+
+## Examples
+
+### Default
+
+<Canvas
+  of={SidebarNavigationExamples.Default}
+  meta={SidebarNavigationExamples}
+/>
+
+### With disabled items
+
+<Canvas
+  of={SidebarNavigationExamples.WithDisabledItems}
+  meta={SidebarNavigationExamples}
+/>
+
+### Minimal
+
+<Canvas
+  of={SidebarNavigationExamples.Minimal}
+  meta={SidebarNavigationExamples}
+/>

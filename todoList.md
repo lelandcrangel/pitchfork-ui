@@ -69,7 +69,7 @@ Scope for this list:
 - [x] Radar charts
 - [x] Section footers
 - [x] Section headers
-- [ ] Sidebar navigations
+- [x] Sidebar navigations
 - [ ] Slideout menus
 - [ ] Tables
 - [ ] Tabs
