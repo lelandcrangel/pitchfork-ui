@@ -1,0 +1,35 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ButtonGroupStories from './ButtonGroup.stories';
+import * as ButtonGroupExamples from './ButtonGroup.examples.stories';
+
+<Meta of={ButtonGroupStories} />
+
+# Button Group
+
+Button groups present related choices in a compact horizontal control.
+
+## Examples
+
+### Default
+
+<Canvas of={ButtonGroupExamples.Default} meta={ButtonGroupExamples} />
+
+### Leading Icon
+
+<Canvas of={ButtonGroupExamples.LeadingIcon} meta={ButtonGroupExamples} />
+
+### With Dot
+
+<Canvas of={ButtonGroupExamples.WithDot} meta={ButtonGroupExamples} />
+
+### Disabled
+
+<Canvas of={ButtonGroupExamples.Disabled} meta={ButtonGroupExamples} />
+
+### Disabled Item
+
+<Canvas of={ButtonGroupExamples.DisabledItem} meta={ButtonGroupExamples} />
+
+### Multiple Selection
+
+<Canvas of={ButtonGroupExamples.MultipleSelection} meta={ButtonGroupExamples} />

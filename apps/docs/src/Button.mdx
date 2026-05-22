@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ButtonStories from './Button.stories';
+import * as ButtonExamples from './Button.examples.stories';
+
+<Meta of={ButtonStories} />
+
+# Button
+
+Buttons trigger key user actions and support clear visual hierarchy through variants and size.
+
+## Examples
+
+### Primary
+
+<Canvas of={ButtonExamples.Primary} meta={ButtonExamples} />
+
+### Secondary
+
+<Canvas of={ButtonExamples.Secondary} meta={ButtonExamples} />
+
+### Ghost
+
+<Canvas of={ButtonExamples.Ghost} meta={ButtonExamples} />
+
+### Disabled
+
+<Canvas of={ButtonExamples.Disabled} meta={ButtonExamples} />

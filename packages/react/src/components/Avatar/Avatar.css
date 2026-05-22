@@ -1,0 +1,79 @@
+.pf-avatar {
+  background: var(--pf-surface-subtle);
+  border: 1px solid var(--pf-surface-border);
+  border-radius: var(--radius-full);
+  color: var(--color-semantic-text-default);
+  display: inline-flex;
+  font-weight: var(--font-weight-semibold);
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.pf-avatar--sm {
+  font-size: 10px;
+  height: 24px;
+  width: 24px;
+}
+
+.pf-avatar--md {
+  font-size: 12px;
+  height: 32px;
+  width: 32px;
+}
+
+.pf-avatar--lg {
+  font-size: 14px;
+  height: 40px;
+  width: 40px;
+}
+
+.pf-avatar--xl {
+  font-size: 16px;
+  height: 56px;
+  width: 56px;
+}
+
+.pf-avatar__image {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.pf-avatar__fallback {
+  align-items: center;
+  display: inline-flex;
+  height: 100%;
+  justify-content: center;
+  line-height: 1;
+  width: 100%;
+}
+
+.pf-avatar__status {
+  border: 2px solid var(--pf-surface-bg);
+  border-radius: var(--radius-full);
+  bottom: -1px;
+  height: 10px;
+  position: absolute;
+  right: -1px;
+  width: 10px;
+}
+
+.pf-avatar__status--online {
+  background: #12b76a;
+}
+
+.pf-avatar__status--away {
+  background: #f79009;
+}
+
+.pf-avatar__status--busy {
+  background: #f04438;
+}
+
+.pf-avatar__status--offline {
+  background: var(--color-semantic-text-muted);
+}

@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TagStories from './Tag.stories';
+import * as TagExamples from './Tag.examples.stories';
+
+<Meta of={TagStories} />
+
+# Tag
+
+Tags communicate compact categorical metadata and can optionally be removable.
+
+## Examples
+
+### Neutral
+
+<Canvas of={TagExamples.Neutral} meta={TagExamples} />
+
+### Brand
+
+<Canvas of={TagExamples.Brand} meta={TagExamples} />
+
+### Success
+
+<Canvas of={TagExamples.Success} meta={TagExamples} />
+
+### Warning
+
+<Canvas of={TagExamples.Warning} meta={TagExamples} />
+
+### Dismissible
+
+<Canvas of={TagExamples.Dismissible} meta={TagExamples} />

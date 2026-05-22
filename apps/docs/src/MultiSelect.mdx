@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as MultiSelectStories from './MultiSelect.stories';
+import * as MultiSelectExamples from './MultiSelect.examples.stories';
+
+<Meta of={MultiSelectStories} />
+
+# Multi Select
+
+Multi select presents a custom dropdown that allows selecting multiple options from one list.
+
+## Examples
+
+### Default
+
+<Canvas of={MultiSelectExamples.Default} meta={MultiSelectExamples} />
+
+### With Default Values
+
+<Canvas of={MultiSelectExamples.WithDefaultValues} meta={MultiSelectExamples} />
+
+### With Error
+
+<Canvas of={MultiSelectExamples.WithError} meta={MultiSelectExamples} />
+
+### Disabled
+
+<Canvas of={MultiSelectExamples.Disabled} meta={MultiSelectExamples} />

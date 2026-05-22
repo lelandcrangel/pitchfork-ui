@@ -1,0 +1,118 @@
+.pf-select {
+  position: relative;
+}
+
+.pf-select__trigger {
+  align-items: center;
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-text-muted);
+  border-radius: var(--radius-md);
+  color: var(--color-semantic-text-default);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  gap: var(--space-2);
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  text-align: left;
+  width: 100%;
+}
+
+.pf-select__trigger:focus {
+  outline: none;
+}
+
+.pf-select__trigger:focus-visible {
+  border-color: var(--color-semantic-action-primary);
+  outline: 2px solid var(--color-semantic-action-primary);
+  outline-offset: 1px;
+  box-shadow: var(--pf-focus-ring);
+}
+
+.pf-select__trigger--open {
+  border-color: var(--color-semantic-action-primary);
+}
+
+.pf-select__trigger--invalid {
+  border-color: #d92d20;
+}
+
+.pf-select__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pf-select__placeholder {
+  color: var(--color-semantic-text-muted);
+}
+
+.pf-select__icon {
+  align-items: center;
+  color: var(--color-semantic-text-default);
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+  transform-origin: center;
+  transition: transform 140ms ease;
+}
+
+.pf-select__icon svg {
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+.pf-select__icon--open {
+  transform: rotate(180deg);
+}
+
+.pf-select__menu {
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-text-muted);
+  border-radius: var(--radius-md);
+  box-shadow: 0 14px 30px rgb(0 0 0 / 0.12);
+  list-style: none;
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+  padding: var(--space-1);
+  position: fixed;
+  z-index: 1000;
+}
+
+.pf-select__option {
+  border-radius: var(--radius-sm);
+  color: var(--color-semantic-text-default);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+}
+
+.pf-select__option:hover,
+.pf-select__option--active {
+  background: var(--color-semantic-action-primary);
+  color: var(--color-semantic-action-primary-text);
+}
+
+.pf-select__option--selected {
+  font-weight: var(--font-weight-medium);
+}
+
+.pf-select__option--disabled {
+  background: transparent;
+  color: var(--color-semantic-text-muted);
+  cursor: not-allowed;
+}
+
+.pf-select__option--disabled:hover {
+  background: transparent;
+  color: var(--color-semantic-text-muted);
+}
+
+.pf-select__option--disabled.pf-select__option--active {
+  background: transparent;
+  color: var(--color-semantic-text-muted);
+}

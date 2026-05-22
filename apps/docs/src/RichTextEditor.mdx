@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as RichTextStories from './RichTextEditor.stories';
+import * as RichTextExamples from './RichTextEditor.examples.stories';
+
+<Meta of={RichTextStories} />
+
+# Rich Text Editor
+
+Rich text editors allow formatted content entry for product descriptions, comments, and structured notes.
+
+## Examples
+
+### Empty
+
+<Canvas of={RichTextExamples.Empty} meta={RichTextExamples} />
+
+### With starting content
+
+<Canvas of={RichTextExamples.WithStartingContent} meta={RichTextExamples} />
+
+### Character limit
+
+<Canvas of={RichTextExamples.CharacterLimit} meta={RichTextExamples} />
+
+### Disabled
+
+<Canvas of={RichTextExamples.Disabled} meta={RichTextExamples} />
+
+### Error state
+
+<Canvas of={RichTextExamples.ErrorState} meta={RichTextExamples} />

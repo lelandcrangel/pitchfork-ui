@@ -1,0 +1,19 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as InputStories from './Input.stories';
+import * as InputExamples from './Input.examples.stories';
+
+<Meta of={InputStories} />
+
+# Input
+
+Inputs collect free-form text and support labels, descriptions, and inline validation states.
+
+## Examples
+
+### Default
+
+<Canvas of={InputExamples.Default} meta={InputExamples} />
+
+### With Error
+
+<Canvas of={InputExamples.WithError} meta={InputExamples} />

@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SelectStories from './Select.stories';
+import * as SelectExamples from './Select.examples.stories';
+
+<Meta of={SelectStories} />
+
+# Select
+
+Select presents a custom dropdown for choosing a single option from a list.
+
+## Examples
+
+### Default
+
+<Canvas of={SelectExamples.Default} meta={SelectExamples} />
+
+### With Default Value
+
+<Canvas of={SelectExamples.WithDefaultValue} meta={SelectExamples} />
+
+### With Error
+
+<Canvas of={SelectExamples.WithError} meta={SelectExamples} />
+
+### Disabled
+
+<Canvas of={SelectExamples.Disabled} meta={SelectExamples} />

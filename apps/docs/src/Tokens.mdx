@@ -4,22 +4,23 @@ import sizeTokens from '../../../packages/tokens/src/tokens/size.json';
 import typographyTokens from '../../../packages/tokens/src/tokens/typography.json';
 import shadowTokens from '../../../packages/tokens/src/tokens/shadow.json';
 
-<Meta title="Tokens/Overview" />
+<Meta title="Foundations/Tokens" />
 
 export const flattenTokens = (node, path = []) => {
 	if (!node || typeof node !== 'object') return [];
 
-	if ('$value' in node) {
-		return [
-			{
-				name: path.join('.'),
-				value: String(node.$value),
-				type: node.$type ? String(node.$type) : '-',
-			},
-		];
-	}
+    if ('$value' in node) {
+    	return [
+    		{
+    			name: path.join('.'),
+    			value: String(node.$value),
+    			type: node.$type ? String(node.$type) : '-',
+    		},
+    	];
+    }
 
-	return Object.entries(node).flatMap(([key, value]) => flattenTokens(value, [...path, key]));
+    return Object.entries(node).flatMap(([key, value]) => flattenTokens(value, [...path, key]));
+
 };
 
 export const colorRows = flattenTokens(colorTokens);
@@ -28,87 +29,209 @@ export const radiusRows = flattenTokens(sizeTokens.radius, ['radius']);
 export const typographyRows = flattenTokens(typographyTokens);
 export const shadowRows = flattenTokens(shadowTokens);
 
-export const colorValueByName = Object.fromEntries(colorRows.map((row) => [row.name, row.value]));
+export const colorValueByName = Object.fromEntries(
+  colorRows.map((row) => [row.name, row.value]),
+);
 
 export const resolveReference = (value, lookup, depth = 0) => {
 	if (typeof value !== 'string') return value;
 	if (depth > 8) return value;
 	if (!value.startsWith('{') || !value.endsWith('}')) return value;
 
-	const key = value.slice(1, -1);
-	const next = lookup[key];
+    const key = value.slice(1, -1);
+    const next = lookup[key];
 
-	if (!next) return value;
-	return resolveReference(next, lookup, depth + 1);
+    if (!next) return value;
+    return resolveReference(next, lookup, depth + 1);
+
 };
 
 export const resolvedColorRows = colorRows.map((row) => ({
-	...row,
-	resolvedValue: resolveReference(row.value, colorValueByName),
+  ...row,
+  resolvedValue: resolveReference(row.value, colorValueByName),
 }));
 
+export const toCssVarName = (name) =>
+  `--${name
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/\./g, '-')
+    .toLowerCase()}`;
+
+export const cssVariableRows = [
+  ...colorRows,
+  ...spacingRows,
+  ...radiusRows,
+  ...typographyRows,
+  ...shadowRows,
+].map((row) => ({
+  cssVar: toCssVarName(row.name),
+  value: row.value,
+  type: row.type,
+}));
+
+export const aliasRows = [
+  { name: '--pf-button-primary-bg', mapsTo: '--color-semantic-action-primary' },
+  {
+    name: '--pf-button-primary-bg-hover',
+    mapsTo: '--color-semantic-action-primary-hover',
+  },
+  {
+    name: '--pf-button-primary-text',
+    mapsTo: '--color-semantic-action-primary-text',
+  },
+  {
+    name: '--pf-button-secondary-bg',
+    mapsTo: '--color-semantic-background-default',
+  },
+  {
+    name: '--pf-button-secondary-border',
+    mapsTo: '--color-semantic-border-default',
+  },
+  {
+    name: '--pf-button-secondary-text',
+    mapsTo: '--color-semantic-text-default',
+  },
+  { name: '--pf-field-label', mapsTo: '--color-semantic-text-default' },
+  { name: '--pf-field-description', mapsTo: '--color-semantic-text-muted' },
+  { name: '--pf-input-bg', mapsTo: '--color-semantic-background-default' },
+  { name: '--pf-input-border', mapsTo: '--color-semantic-border-default' },
+  { name: '--pf-input-text', mapsTo: '--color-semantic-text-default' },
+  { name: '--pf-input-placeholder', mapsTo: '--color-semantic-text-muted' },
+  { name: '--pf-surface-bg', mapsTo: '--color-semantic-background-default' },
+  { name: '--pf-surface-border', mapsTo: '--color-semantic-border-default' },
+  {
+    name: '--pf-select-menu-bg',
+    mapsTo: '--color-semantic-background-default',
+  },
+  { name: '--pf-select-menu-border', mapsTo: '--color-semantic-text-muted' },
+  {
+    name: '--pf-select-option-active-bg',
+    mapsTo: '--color-semantic-action-primary',
+  },
+  {
+    name: '--pf-select-option-active-text',
+    mapsTo: '--color-semantic-action-primary-text',
+  },
+];
+
 export const isRenderableColor = (value) =>
-	typeof value === 'string' && /^(#|rgb\(|hsl\()/i.test(value.trim());
+  typeof value === 'string' && /^(#|rgb\(|hsl\()/i.test(value.trim());
 
 export const PreviewGrid = ({ children }) => (
-	<div
-		style={{
-			display: 'grid',
-			gap: '12px',
-			gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-			marginBottom: '20px',
-		}}
-	>
-		{children}
-	</div>
+  <div
+    style={{
+      display: 'grid',
+      gap: '12px',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+      marginBottom: '20px',
+    }}
+  >
+    {children}
+  </div>
 );
 
 export const PreviewCard = ({ children }) => (
-	<div
-		style={{
-			border: '1px solid var(--color-semantic-border-default)',
-			borderRadius: '8px',
-			padding: '12px',
-			background: 'var(--color-semantic-background-default)',
-		}}
-	>
-		{children}
-	</div>
+  <div
+    style={{
+      border: '1px solid var(--color-semantic-border-default)',
+      borderRadius: '8px',
+      padding: '12px',
+      background: 'var(--color-semantic-background-default)',
+    }}
+  >
+    {children}
+  </div>
 );
 
 export const MetaCode = ({ children }) => (
-	<code
-		style={{
-			display: 'block',
-			fontSize: '11px',
-			lineHeight: 1.3,
-			overflowWrap: 'anywhere',
-			wordBreak: 'break-word',
-		}}
-	>
-		{children}
-	</code>
+  <code
+    style={{
+      display: 'block',
+      fontSize: '11px',
+      lineHeight: 1.3,
+      overflowWrap: 'anywhere',
+      wordBreak: 'break-word',
+    }}
+  >
+    {children}
+  </code>
 );
 
 export const TokenTable = ({ rows }) => (
-	<table>
-		<thead>
-			<tr>
-				<th>Token</th>
-				<th>Value</th>
-				<th>Type</th>
-			</tr>
-		</thead>
-		<tbody>
-			{rows.map((row) => (
-				<tr key={row.name}>
-					<td><code>{row.name}</code></td>
-					<td><code>{row.value}</code></td>
-					<td><code>{row.type}</code></td>
-				</tr>
-			))}
-		</tbody>
-	</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Token</th>
+        <th>Value</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr key={row.name}>
+          <td>
+            <code>{row.name}</code>
+          </td>
+          <td>
+            <code>{row.value}</code>
+          </td>
+          <td>
+            <code>{row.type}</code>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
+
+export const CssVariableTable = ({ rows }) => (
+  <table>
+    <thead>
+      <tr>
+        <th>CSS Variable</th>
+        <th>Value</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr key={row.cssVar}>
+          <td>
+            <code>{row.cssVar}</code>
+          </td>
+          <td>
+            <code>{row.value}</code>
+          </td>
+          <td>
+            <code>{row.type}</code>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
+
+export const AliasTable = ({ rows }) => (
+  <table>
+    <thead>
+      <tr>
+        <th>Alias Variable</th>
+        <th>Maps To</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr key={row.name}>
+          <td>
+            <code>{row.name}</code>
+          </td>
+          <td>
+            <code>{row.mapsTo}</code>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
 );
 
 export const ColorPreview = () => (
@@ -117,68 +240,77 @@ export const ColorPreview = () => (
 			const swatchValue = row.resolvedValue;
 			const renderable = isRenderableColor(swatchValue);
 
-			return (
-				<PreviewCard key={row.name}>
-					<div
-						style={{
-							height: '48px',
-							borderRadius: '6px',
-							border: '1px solid var(--color-semantic-border-default)',
-							background: renderable ? swatchValue : 'transparent',
-							backgroundImage: renderable
-								? 'none'
-								: 'linear-gradient(45deg, #f1f5f9 25%, #e2e8f0 25%, #e2e8f0 50%, #f1f5f9 50%, #f1f5f9 75%, #e2e8f0 75%, #e2e8f0 100%)',
-							backgroundSize: '12px 12px',
-						}}
-					/>
-					<div style={{ marginTop: '8px', fontSize: '12px' }}>
-						<div><MetaCode>{row.name}</MetaCode></div>
-						<div><MetaCode>{row.value}</MetaCode></div>
-						{row.resolvedValue !== row.value ? <div><MetaCode>{row.resolvedValue}</MetaCode></div> : null}
-					</div>
-				</PreviewCard>
-			);
-		})}
-	</PreviewGrid>
+    		return (
+    			<PreviewCard key={row.name}>
+    				<div
+    					style={{
+    						height: '48px',
+    						borderRadius: '6px',
+    						border: '1px solid var(--color-semantic-border-default)',
+    						background: renderable ? swatchValue : 'transparent',
+    						backgroundImage: renderable
+    							? 'none'
+    							: 'linear-gradient(45deg, #f1f5f9 25%, #e2e8f0 25%, #e2e8f0 50%, #f1f5f9 50%, #f1f5f9 75%, #e2e8f0 75%, #e2e8f0 100%)',
+    						backgroundSize: '12px 12px',
+    					}}
+    				/>
+    				<div style={{ marginTop: '8px', fontSize: '12px' }}>
+    					<div><MetaCode>{row.name}</MetaCode></div>
+    					<div><MetaCode>{row.value}</MetaCode></div>
+    					{row.resolvedValue !== row.value ? <div><MetaCode>{row.resolvedValue}</MetaCode></div> : null}
+    				</div>
+    			</PreviewCard>
+    		);
+    	})}
+    </PreviewGrid>
+
 );
 
 export const SpacingPreview = () => (
-	<PreviewGrid>
-		{spacingRows.map((row) => (
-			<PreviewCard key={row.name}>
-				<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
-				<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
-				<div
-					style={{
-						height: '10px',
-						borderRadius: '9999px',
-						background: 'var(--color-semantic-action-primary)',
-						width: row.value,
-						minWidth: row.value === '0px' ? '2px' : undefined,
-					}}
-				/>
-			</PreviewCard>
-		))}
-	</PreviewGrid>
+  <PreviewGrid>
+    {spacingRows.map((row) => (
+      <PreviewCard key={row.name}>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.name}</MetaCode>
+        </div>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.value}</MetaCode>
+        </div>
+        <div
+          style={{
+            height: '10px',
+            borderRadius: '9999px',
+            background: 'var(--color-semantic-action-primary)',
+            width: row.value,
+            minWidth: row.value === '0px' ? '2px' : undefined,
+          }}
+        />
+      </PreviewCard>
+    ))}
+  </PreviewGrid>
 );
 
 export const RadiusPreview = () => (
-	<PreviewGrid>
-		{radiusRows.map((row) => (
-			<PreviewCard key={row.name}>
-				<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
-				<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
-				<div
-					style={{
-						height: '48px',
-						background: 'var(--color-semantic-background-subtle)',
-						border: '1px solid var(--color-semantic-border-default)',
-						borderRadius: row.value,
-					}}
-				/>
-			</PreviewCard>
-		))}
-	</PreviewGrid>
+  <PreviewGrid>
+    {radiusRows.map((row) => (
+      <PreviewCard key={row.name}>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.name}</MetaCode>
+        </div>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.value}</MetaCode>
+        </div>
+        <div
+          style={{
+            height: '48px',
+            background: 'var(--color-semantic-background-subtle)',
+            border: '1px solid var(--color-semantic-border-default)',
+            borderRadius: row.value,
+          }}
+        />
+      </PreviewCard>
+    ))}
+  </PreviewGrid>
 );
 
 export const TypographyPreview = () => (
@@ -189,38 +321,43 @@ export const TypographyPreview = () => (
 				lineHeight: 1.3,
 			};
 
-			if (row.type === 'fontFamily') style.fontFamily = row.value;
-			if (row.type === 'fontWeight') style.fontWeight = row.value;
-			if (row.type === 'dimension' && row.name.startsWith('font.size')) style.fontSize = row.value;
+    		if (row.type === 'fontFamily') style.fontFamily = row.value;
+    		if (row.type === 'fontWeight') style.fontWeight = row.value;
+    		if (row.type === 'dimension' && row.name.startsWith('font.size')) style.fontSize = row.value;
 
-			return (
-				<PreviewCard key={row.name}>
-					<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
-					<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
-					<p style={style}>The quick brown fox jumps over the lazy dog.</p>
-				</PreviewCard>
-			);
-		})}
-	</PreviewGrid>
+    		return (
+    			<PreviewCard key={row.name}>
+    				<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
+    				<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
+    				<p style={style}>The quick brown fox jumps over the lazy dog.</p>
+    			</PreviewCard>
+    		);
+    	})}
+    </PreviewGrid>
+
 );
 
 export const ShadowPreview = () => (
-	<PreviewGrid>
-		{shadowRows.map((row) => (
-			<PreviewCard key={row.name}>
-				<div style={{ marginBottom: '8px' }}><MetaCode>{row.name}</MetaCode></div>
-				<div style={{ marginBottom: '8px' }}><MetaCode>{row.value}</MetaCode></div>
-				<div
-					style={{
-						height: '56px',
-						borderRadius: '8px',
-						background: '#ffffff',
-						boxShadow: row.value,
-					}}
-				/>
-			</PreviewCard>
-		))}
-	</PreviewGrid>
+  <PreviewGrid>
+    {shadowRows.map((row) => (
+      <PreviewCard key={row.name}>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.name}</MetaCode>
+        </div>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.value}</MetaCode>
+        </div>
+        <div
+          style={{
+            height: '56px',
+            borderRadius: '8px',
+            background: '#ffffff',
+            boxShadow: row.value,
+          }}
+        />
+      </PreviewCard>
+    ))}
+  </PreviewGrid>
 );
 
 # Design Tokens
@@ -228,6 +365,36 @@ export const ShadowPreview = () => (
 Tokens live in `packages/tokens/src/tokens` and are compiled by Style Dictionary.
 
 The React package imports generated CSS variables from `@pitchfork-ui/tokens/css`.
+
+## CSS Custom Properties (Generated)
+
+All design tokens are compiled to CSS custom properties in `@pitchfork-ui/tokens/css`.
+
+<CssVariableTable rows={cssVariableRows} />
+
+## Dark Theme Layer
+
+The React theme adds a dark override layer using `[data-theme='dark']`, remapping semantic tokens while preserving the same variable API.
+
+```css
+[data-theme='dark'] {
+  --color-semantic-background-default: var(--color-gray-900);
+  --color-semantic-text-default: var(--color-gray-50);
+  --color-semantic-action-primary: var(--color-brand-500);
+}
+```
+
+To activate dark mode on any subtree:
+
+```html
+<div data-theme="dark">...</div>
+```
+
+## Component Alias Variables
+
+Component-level aliases are available in the React theme layer (`packages/react/src/styles/theme.css`) to make per-component theming simpler without changing semantic token names.
+
+<AliasTable rows={aliasRows} />
 
 ## Color
 

@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ProgressStories from './ProgressIndicators.stories';
+import * as ProgressExamples from './ProgressIndicators.examples.stories';
+
+<Meta of={ProgressStories} />
+
+# Progress Indicators
+
+Progress indicators provide visual feedback for completion status in linear and circular formats.
+
+## Examples
+
+### Linear default
+
+<Canvas of={ProgressExamples.LinearDefault} meta={ProgressExamples} />
+
+### Linear complete
+
+<Canvas of={ProgressExamples.LinearComplete} meta={ProgressExamples} />
+
+### Circular default
+
+<Canvas of={ProgressExamples.CircularDefault} meta={ProgressExamples} />
+
+### Circular large
+
+<Canvas of={ProgressExamples.CircularLarge} meta={ProgressExamples} />

@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as AvatarStories from './Avatar.stories';
+import * as AvatarExamples from './Avatar.examples.stories';
+
+<Meta of={AvatarStories} />
+
+# Avatar
+
+Avatars display people with either profile images or initials, plus optional status.
+
+## Examples
+
+### Initials
+
+<Canvas of={AvatarExamples.Initials} meta={AvatarExamples} />
+
+### With image
+
+<Canvas of={AvatarExamples.WithImage} meta={AvatarExamples} />
+
+### Sizes
+
+<Canvas of={AvatarExamples.Sizes} meta={AvatarExamples} />
+
+### Presence status
+
+<Canvas of={AvatarExamples.PresenceStatus} meta={AvatarExamples} />

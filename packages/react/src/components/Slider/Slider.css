@@ -1,0 +1,106 @@
+.pf-field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.pf-field__label {
+  color: var(--color-semantic-text-default);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.pf-field__description {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.pf-field__error {
+  color: #b42318;
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.pf-slider__header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pf-slider__value {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.pf-slider {
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--color-semantic-action-primary) 0,
+    var(--color-semantic-action-primary) var(--pf-slider-progress, 0%),
+    var(--color-semantic-border-default) var(--pf-slider-progress, 0%),
+    var(--color-semantic-border-default) 100%
+  );
+  border-radius: 999px;
+  cursor: pointer;
+  height: 8px;
+  width: 100%;
+}
+
+.pf-slider:focus {
+  outline: none;
+}
+
+.pf-slider:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+}
+
+.pf-slider::-webkit-slider-thumb {
+  appearance: none;
+  background: var(--color-semantic-background-default);
+  border: 2px solid var(--color-semantic-action-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
+  height: 18px;
+  margin-top: -5px;
+  width: 18px;
+}
+
+.pf-slider::-moz-range-thumb {
+  background: var(--color-semantic-background-default);
+  border: 2px solid var(--color-semantic-action-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
+  height: 18px;
+  width: 18px;
+}
+
+.pf-slider::-moz-range-track {
+  background: transparent;
+  border-radius: 999px;
+  height: 8px;
+}
+
+.pf-slider:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.pf-slider--invalid {
+  background: linear-gradient(
+    to right,
+    #f04438 0,
+    #f04438 var(--pf-slider-progress, 0%),
+    var(--color-semantic-border-default) var(--pf-slider-progress, 0%),
+    var(--color-semantic-border-default) 100%
+  );
+}
+
+.pf-slider--invalid::-webkit-slider-thumb {
+  border-color: #f04438;
+}
+
+.pf-slider--invalid::-moz-range-thumb {
+  border-color: #f04438;
+}

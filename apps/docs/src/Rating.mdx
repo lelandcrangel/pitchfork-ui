@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as RatingStories from './Rating.stories';
+import * as RatingExamples from './Rating.examples.stories';
+
+<Meta of={RatingStories} />
+
+# Rating
+
+Rating components communicate average score at a glance with stars or a compact badge.
+
+## Examples
+
+### Stars default
+
+<Canvas of={RatingExamples.StarsDefault} meta={RatingExamples} />
+
+### Stars compact
+
+<Canvas of={RatingExamples.StarsCompact} meta={RatingExamples} />
+
+### Stars large
+
+<Canvas of={RatingExamples.StarsLarge} meta={RatingExamples} />
+
+### Badge default
+
+<Canvas of={RatingExamples.BadgeDefault} meta={RatingExamples} />
+
+### Badge small
+
+<Canvas of={RatingExamples.BadgeSmall} meta={RatingExamples} />

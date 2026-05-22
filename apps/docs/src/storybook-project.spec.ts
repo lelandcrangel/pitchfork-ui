@@ -3,7 +3,7 @@ import * as BadgeStories from './Badge.stories';
 import * as ButtonStories from './Button.stories';
 import * as CardStories from './Card.stories';
 import * as CheckboxStories from './Checkbox.stories';
-import * as FoundationsStories from './Foundations.stories';
+import * as AlertStories from './Alert.stories';
 import * as InputStories from './Input.stories';
 import * as SwitchStories from './Switch.stories';
 
@@ -13,12 +13,14 @@ describe('storybook project stories', () => {
     expect(ButtonStories.default).toBeDefined();
     expect(CardStories.default).toBeDefined();
     expect(CheckboxStories.default).toBeDefined();
-    expect(FoundationsStories.default).toBeDefined();
+    expect(AlertStories.default).toBeDefined();
     expect(InputStories.default).toBeDefined();
     expect(SwitchStories.default).toBeDefined();
   });
 
-  it('contains a single CssCheck story export', () => {
-    expect(ButtonStories.CssCheck).toBeDefined();
+  it('contains interactive stories for core components', () => {
+    expect(ButtonStories.Interactive).toBeDefined();
+    expect(InputStories.Interactive).toBeDefined();
+    expect(SwitchStories.Interactive).toBeDefined();
   });
 });

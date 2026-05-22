@@ -1,0 +1,64 @@
+.pf-radio-group {
+  border: 0;
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  min-inline-size: 0;
+  padding: 0;
+}
+
+.pf-radio-group--horizontal {
+  column-gap: var(--space-6);
+  grid-auto-flow: column;
+  justify-content: flex-start;
+}
+
+.pf-radio-group__legend {
+  color: var(--color-semantic-text-default);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-1);
+  padding: 0;
+}
+
+.pf-radio-group__item {
+  align-items: flex-start;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.pf-radio-group__input {
+  accent-color: var(--color-semantic-action-primary);
+  height: 18px;
+  margin-top: 2px;
+  width: 18px;
+}
+
+.pf-radio-group__input:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.pf-radio-group__label {
+  color: var(--color-semantic-text-default);
+  cursor: pointer;
+  display: grid;
+  gap: 2px;
+}
+
+.pf-radio-group__label-text {
+  font-size: var(--font-size-md);
+  line-height: 1.3;
+}
+
+.pf-radio-group__description {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.35;
+}
+
+.pf-radio-group:disabled .pf-radio-group__label,
+.pf-radio-group__input:disabled + .pf-radio-group__label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

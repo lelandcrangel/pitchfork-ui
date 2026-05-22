@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TooltipStories from './Tooltip.stories';
+import * as TooltipExamples from './Tooltip.examples.stories';
+
+<Meta of={TooltipStories} />
+
+# Tooltip
+
+Tooltips provide concise contextual guidance on hover or focus without disrupting layout.
+
+## Examples
+
+### Top
+
+<Canvas of={TooltipExamples.Top} meta={TooltipExamples} />
+
+### Bottom
+
+<Canvas of={TooltipExamples.Bottom} meta={TooltipExamples} />
+
+### Left
+
+<Canvas of={TooltipExamples.Left} meta={TooltipExamples} />
+
+### Right
+
+<Canvas of={TooltipExamples.Right} meta={TooltipExamples} />
+
+### Disabled
+
+<Canvas of={TooltipExamples.Disabled} meta={TooltipExamples} />

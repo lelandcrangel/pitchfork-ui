@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as VideoPlayerStories from './VideoPlayer.stories';
+import * as VideoPlayerExamples from './VideoPlayer.examples.stories';
+
+<Meta of={VideoPlayerStories} />
+
+# Video Player
+
+VideoPlayer wraps the native HTML5 video element with consistent field labeling, sizing, and error states.
+
+## Examples
+
+### Default
+
+<Canvas of={VideoPlayerExamples.Default} meta={VideoPlayerExamples} />
+
+### With poster
+
+<Canvas of={VideoPlayerExamples.WithPoster} meta={VideoPlayerExamples} />
+
+### Muted loop
+
+<Canvas of={VideoPlayerExamples.MutedLoop} meta={VideoPlayerExamples} />
+
+### Multiple sources
+
+<Canvas of={VideoPlayerExamples.MultipleSources} meta={VideoPlayerExamples} />
+
+### With error
+
+<Canvas of={VideoPlayerExamples.WithError} meta={VideoPlayerExamples} />

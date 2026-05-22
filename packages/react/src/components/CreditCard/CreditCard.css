@@ -1,0 +1,97 @@
+.pf-credit-card {
+  border: 1px solid rgb(255 255 255 / 0.25);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  color: var(--color-base-white);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 100%;
+  width: 340px;
+  aspect-ratio: 1.586;
+  min-height: 200px;
+  padding: var(--space-4);
+  position: relative;
+}
+
+.pf-credit-card::before {
+  background: radial-gradient(circle at 20% 20%, rgb(255 255 255 / 0.22), transparent 40%);
+  border-radius: inherit;
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.pf-credit-card--generic {
+  background: linear-gradient(135deg, #1f2937, #111827 55%, #374151);
+}
+
+.pf-credit-card--visa {
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a 55%, #1d4ed8);
+}
+
+.pf-credit-card--mastercard {
+  background: linear-gradient(135deg, #ea580c, #9a3412 55%, #ef4444);
+}
+
+.pf-credit-card--amex {
+  background: linear-gradient(135deg, #0f766e, #115e59 55%, #164e63);
+}
+
+.pf-credit-card__top-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.pf-credit-card__chip {
+  background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+  border-radius: 4px;
+  display: inline-flex;
+  height: 28px;
+  width: 38px;
+}
+
+.pf-credit-card__brand {
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+}
+
+.pf-credit-card__number {
+  font-size: clamp(18px, 2.6vw, 24px);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.pf-credit-card__meta {
+  display: flex;
+  gap: var(--space-4);
+  position: relative;
+  z-index: 1;
+}
+
+.pf-credit-card__meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pf-credit-card__label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+.pf-credit-card__value {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+}

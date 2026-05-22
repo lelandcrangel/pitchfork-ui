@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect } from 'storybook/test';
 import { Button } from '@pitchfork-ui/react';
 
 const meta = {
+  title: 'Components/Button',
   component: Button,
   tags: ['ai-generated', 'test'],
   args: {
@@ -19,26 +19,10 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Primary: Story = {
+export const Interactive: Story = {
   args: {
-    children: 'Order now',
-  },
-  play: async ({ canvas }) => {
-    const button = canvas.getByRole('button', { name: /order now/i });
-    await expect(button).toHaveAttribute('type', 'button');
-  },
-};
-export const Secondary: Story = { args: { variant: 'secondary' } };
-export const Ghost: Story = { args: { variant: 'ghost' } };
-export const Disabled: Story = { args: { disabled: true } };
-
-export const CssCheck: Story = {
-  args: {
-    children: 'Submit',
+    children: 'Interactive button',
     variant: 'primary',
-  },
-  play: async ({ canvas }) => {
-    const button = canvas.getByRole('button', { name: /submit/i });
-    await expect(getComputedStyle(button).paddingLeft).toBe('16px');
+    size: 'md',
   },
 };

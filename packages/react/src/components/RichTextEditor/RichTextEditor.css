@@ -1,0 +1,93 @@
+.pf-rte {
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.pf-rte:focus-within {
+  border-color: var(--color-semantic-action-primary);
+  box-shadow: var(--pf-focus-ring);
+}
+
+.pf-rte--invalid {
+  border-color: #d92d20;
+}
+
+.pf-rte--disabled {
+  opacity: 0.75;
+}
+
+.pf-rte__toolbar {
+  align-items: center;
+  background: var(--color-semantic-background-subtle);
+  border-bottom: 1px solid var(--color-semantic-border-default);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-2);
+}
+
+.pf-rte__tool {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-semantic-text-default);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  min-height: 28px;
+  padding: 0 var(--space-2);
+}
+
+.pf-rte__tool:hover:not(:disabled) {
+  background: var(--color-semantic-background-default);
+  border-color: var(--color-semantic-border-default);
+}
+
+.pf-rte__tool:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.pf-rte__tool:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.pf-rte__divider {
+  background: var(--color-semantic-border-default);
+  height: 18px;
+  margin: 0 var(--space-1);
+  width: 1px;
+}
+
+.pf-rte__editor {
+  color: var(--color-semantic-text-default);
+  font: inherit;
+  line-height: 1.5;
+  outline: none;
+  overflow-wrap: anywhere;
+  padding: var(--space-3);
+}
+
+.pf-rte__editor p {
+  margin: 0 0 0.75em;
+}
+
+.pf-rte__editor p:last-child {
+  margin-bottom: 0;
+}
+
+.pf-rte__editor:empty::before {
+  color: var(--color-semantic-text-muted);
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
+.pf-rte__count {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  margin: var(--space-2) 0 0;
+  text-align: right;
+}

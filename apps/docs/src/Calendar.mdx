@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CalendarStories from './Calendar.stories';
+import * as CalendarExamples from './Calendar.examples.stories';
+
+<Meta of={CalendarStories} />
+
+# Calendar
+
+Calendar presents a month grid for choosing a date with keyboard-friendly controls and optional disabled dates.
+
+## Examples
+
+### Default
+
+<Canvas of={CalendarExamples.Default} meta={CalendarExamples} />
+
+### No outside days
+
+<Canvas of={CalendarExamples.NoOutsideDays} meta={CalendarExamples} />
+
+### Disabled weekends
+
+<Canvas of={CalendarExamples.DisabledWeekends} meta={CalendarExamples} />
+
+### Bounded year range
+
+<Canvas of={CalendarExamples.BoundedYearRange} meta={CalendarExamples} />
+
+### With error
+
+<Canvas of={CalendarExamples.WithError} meta={CalendarExamples} />

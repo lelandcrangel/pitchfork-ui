@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CarouselStories from './Carousel.stories';
+import * as CarouselExamples from './Carousel.examples.stories';
+
+<Meta of={CarouselStories} />
+
+# Carousel
+
+Carousel displays a sequence of slides with previous/next controls and optional indicator dots.
+
+## Examples
+
+### Default
+
+<Canvas of={CarouselExamples.Default} meta={CarouselExamples} />
+
+### No loop
+
+<Canvas of={CarouselExamples.NoLoop} meta={CarouselExamples} />
+
+### Auto play
+
+<Canvas of={CarouselExamples.AutoPlay} meta={CarouselExamples} />
+
+### No indicators
+
+<Canvas of={CarouselExamples.NoIndicators} meta={CarouselExamples} />

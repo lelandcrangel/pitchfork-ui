@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SwitchStories from './Switch.stories';
+import * as SwitchExamples from './Switch.examples.stories';
+
+<Meta of={SwitchStories} />
+
+# Switch
+
+Switches toggle binary settings on and off with immediate visual feedback.
+
+## Examples
+
+### Off
+
+<Canvas of={SwitchExamples.Off} meta={SwitchExamples} />
+
+### On
+
+<Canvas of={SwitchExamples.On} meta={SwitchExamples} />
+
+### Disabled
+
+<Canvas of={SwitchExamples.Disabled} meta={SwitchExamples} />

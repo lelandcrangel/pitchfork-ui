@@ -3,6 +3,54 @@
 :root {
   color-scheme: light;
   --pf-focus-ring: 0 0 0 3px rgb(249 115 22 / 0.35);
+
+  /* Button aliases */
+  --pf-button-primary-bg: var(--color-semantic-action-primary);
+  --pf-button-primary-bg-hover: var(--color-semantic-action-primary-hover);
+  --pf-button-primary-text: var(--color-semantic-action-primary-text);
+  --pf-button-secondary-bg: var(--color-semantic-background-default);
+  --pf-button-secondary-bg-hover: var(--color-semantic-background-subtle);
+  --pf-button-secondary-border: var(--color-semantic-border-default);
+  --pf-button-secondary-border-hover: var(--color-semantic-border-strong);
+  --pf-button-secondary-text: var(--color-semantic-text-default);
+  --pf-button-ghost-text: var(--color-semantic-text-default);
+  --pf-button-ghost-bg-hover: var(--color-semantic-background-subtle);
+
+  /* Field/input aliases */
+  --pf-field-label: var(--color-semantic-text-default);
+  --pf-field-description: var(--color-semantic-text-muted);
+  --pf-field-error: #d92d20;
+  --pf-input-bg: var(--color-semantic-background-default);
+  --pf-input-border: var(--color-semantic-border-default);
+  --pf-input-text: var(--color-semantic-text-default);
+  --pf-input-placeholder: var(--color-semantic-text-muted);
+
+  /* Surface/select aliases */
+  --pf-surface-bg: var(--color-semantic-background-default);
+  --pf-surface-subtle: var(--color-semantic-background-subtle);
+  --pf-surface-border: var(--color-semantic-border-default);
+  --pf-surface-border-strong: var(--color-semantic-border-strong);
+  --pf-select-menu-bg: var(--color-semantic-background-default);
+  --pf-select-menu-border: var(--color-semantic-text-muted);
+  --pf-select-option-active-bg: var(--color-semantic-action-primary);
+  --pf-select-option-active-text: var(--color-semantic-action-primary-text);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-semantic-background-default: var(--color-gray-900);
+  --color-semantic-background-subtle: var(--color-gray-700);
+  --color-semantic-text-default: var(--color-gray-50);
+  --color-semantic-text-muted: var(--color-gray-300);
+  --color-semantic-text-inverse: var(--color-gray-900);
+  --color-semantic-border-default: var(--color-gray-700);
+  --color-semantic-border-strong: var(--color-gray-500);
+  --color-semantic-action-primary: var(--color-brand-500);
+  --color-semantic-action-primary-hover: var(--color-brand-600);
+  --color-semantic-action-primary-text: var(--color-base-white);
+
+  --pf-focus-ring: 0 0 0 3px rgb(249 115 22 / 0.45);
 }
 
 *,

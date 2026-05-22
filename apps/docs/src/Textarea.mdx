@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TextareaStories from './Textarea.stories';
+import * as TextareaExamples from './Textarea.examples.stories';
+
+<Meta of={TextareaStories} />
+
+# Textarea
+
+Textarea captures longer free-form content where multi-line entry is needed.
+
+## Examples
+
+### Default
+
+<Canvas of={TextareaExamples.Default} meta={TextareaExamples} />
+
+### Prefilled
+
+<Canvas of={TextareaExamples.Prefilled} meta={TextareaExamples} />
+
+### With error
+
+<Canvas of={TextareaExamples.WithError} meta={TextareaExamples} />
+
+### Disabled
+
+<Canvas of={TextareaExamples.Disabled} meta={TextareaExamples} />

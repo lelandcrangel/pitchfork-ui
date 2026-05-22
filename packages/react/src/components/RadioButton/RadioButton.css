@@ -1,0 +1,4 @@
+.pf-radio-field { align-items: center; display: inline-flex; gap: var(--space-2); }
+.pf-radio { accent-color: var(--color-semantic-action-primary); height: 18px; width: 18px; }
+.pf-radio:focus-visible { box-shadow: var(--pf-focus-ring); outline: none; }
+.pf-radio-field label { color: var(--color-semantic-text-default); font-size: var(--font-size-md); }

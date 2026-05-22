@@ -1,0 +1,108 @@
+.pf-code-snippet {
+  background: #10131a;
+  border: 1px solid color-mix(in srgb, #10131a 82%, white);
+  border-radius: var(--radius-md);
+  color: #e7edf6;
+  display: grid;
+  overflow: hidden;
+}
+
+.pf-code-snippet__header,
+.pf-code-snippet__toolbar {
+  align-items: center;
+  background: color-mix(in srgb, #10131a 78%, white);
+  border-bottom: 1px solid color-mix(in srgb, #10131a 65%, white);
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+}
+
+.pf-code-snippet__meta {
+  align-items: baseline;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.pf-code-snippet__title {
+  color: #f5f8fc;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.pf-code-snippet__language {
+  color: #a8b7cb;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pf-code-snippet__copy {
+  align-items: center;
+  background: color-mix(in srgb, #10131a 70%, white);
+  border: 1px solid color-mix(in srgb, #10131a 55%, white);
+  border-radius: var(--radius-sm);
+  color: #dbe6f5;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 12px;
+  gap: var(--space-1);
+  height: 28px;
+  padding: 0 var(--space-2);
+}
+
+.pf-code-snippet__copy:hover {
+  background: color-mix(in srgb, #10131a 58%, white);
+}
+
+.pf-code-snippet__copy:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.pf-code-snippet__pre {
+  margin: 0;
+  max-width: 100%;
+  overflow: auto;
+  padding: var(--space-3);
+}
+
+.pf-code-snippet__pre code {
+  color: inherit;
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  white-space: pre;
+}
+
+.pf-code-snippet__table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.pf-code-snippet__line-number {
+  color: #8292a9;
+  min-width: 2.5ch;
+  padding-right: var(--space-3);
+  text-align: right;
+  user-select: none;
+  vertical-align: top;
+}
+
+.pf-code-snippet__line-content {
+  white-space: pre;
+}
+
+.pf-code-snippet__sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

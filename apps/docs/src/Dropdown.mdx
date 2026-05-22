@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as DropdownStories from './Dropdown.stories';
+import * as DropdownExamples from './Dropdown.examples.stories';
+
+<Meta of={DropdownStories} />
+
+# Dropdown
+
+Dropdown menus let users choose an action from a compact menu anchored to a trigger button.
+
+## Examples
+
+### Basic
+
+<Canvas of={DropdownExamples.Basic} meta={DropdownExamples} />
+
+### End aligned
+
+<Canvas of={DropdownExamples.EndAligned} meta={DropdownExamples} />
+
+### With disabled item
+
+<Canvas of={DropdownExamples.WithDisabledItem} meta={DropdownExamples} />

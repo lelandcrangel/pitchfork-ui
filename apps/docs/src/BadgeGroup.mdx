@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as BadgeGroupStories from './BadgeGroup.stories';
+import * as BadgeGroupExamples from './BadgeGroup.examples.stories';
+
+<Meta of={BadgeGroupStories} />
+
+# Badge Group
+
+Badge groups combine a compact label segment and a message segment, matching Untitled UI style patterns.
+
+## Examples
+
+### Pill leading brand
+
+<Canvas of={BadgeGroupExamples.PillLeadingBrand} meta={BadgeGroupExamples} />
+
+### Pill trailing success
+
+<Canvas of={BadgeGroupExamples.PillTrailingSuccess} meta={BadgeGroupExamples} />
+
+### Modern leading warning
+
+<Canvas of={BadgeGroupExamples.ModernLeadingWarning} meta={BadgeGroupExamples} />
+
+### Modern trailing error
+
+<Canvas of={BadgeGroupExamples.ModernTrailingError} meta={BadgeGroupExamples} />

@@ -3,6 +3,7 @@ import { expect } from 'storybook/test';
 import { Switch } from '@pitchfork-ui/react';
 
 const meta = {
+  title: 'Components/Switch',
   component: Switch,
   tags: ['ai-generated', 'test'],
   args: {
@@ -13,23 +14,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Off: Story = {};
-
-export const On: Story = {
+export const Interactive: Story = {
   args: {
-    defaultChecked: true,
-    label: 'Notify me',
-  },
-  play: async ({ canvas }) => {
-    await expect(
-      canvas.getByRole('switch', { name: /notify me/i }),
-    ).toBeChecked();
-  },
-};
-
-export const Disabled: Story = {
-  args: {
-    disabled: true,
-    label: 'Disabled switch',
+    label: 'Interactive switch',
   },
 };

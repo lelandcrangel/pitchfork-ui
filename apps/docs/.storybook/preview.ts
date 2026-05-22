@@ -23,7 +23,9 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: ['Introduction', 'Tokens', 'Components'],
+        order: ['Foundations', 'Components'],
+        method: 'alphabetical',
+        locales: 'en-US',
       },
     },
   },

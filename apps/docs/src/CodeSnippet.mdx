@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CodeSnippetStories from './CodeSnippet.stories';
+import * as CodeSnippetExamples from './CodeSnippet.examples.stories';
+
+<Meta of={CodeSnippetStories} />
+
+# Code Snippet
+
+CodeSnippet presents code in a readable block with optional line numbers and one-click copy.
+
+## Examples
+
+### Default
+
+<Canvas of={CodeSnippetExamples.Default} meta={CodeSnippetExamples} />
+
+### With line numbers
+
+<Canvas of={CodeSnippetExamples.WithLineNumbers} meta={CodeSnippetExamples} />
+
+### Scrollable
+
+<Canvas of={CodeSnippetExamples.Scrollable} meta={CodeSnippetExamples} />
+
+### Toolbar only
+
+<Canvas of={CodeSnippetExamples.ToolbarOnly} meta={CodeSnippetExamples} />

@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SliderStories from './Slider.stories';
+import * as SliderExamples from './Slider.examples.stories';
+
+<Meta of={SliderStories} />
+
+# Slider
+
+Slider provides a single-thumb range input for choosing numeric values quickly.
+
+## Examples
+
+### Default
+
+<Canvas of={SliderExamples.Default} meta={SliderExamples} />
+
+### Percentage range
+
+<Canvas of={SliderExamples.PercentageRange} meta={SliderExamples} />
+
+### Stepped values
+
+<Canvas of={SliderExamples.Stepped} meta={SliderExamples} />
+
+### With error
+
+<Canvas of={SliderExamples.WithError} meta={SliderExamples} />
+
+### Disabled
+
+<Canvas of={SliderExamples.Disabled} meta={SliderExamples} />

@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as BadgeStories from './Badge.stories';
+import * as BadgeExamples from './Badge.examples.stories';
+
+<Meta of={BadgeStories} />
+
+# Badge
+
+Badges surface compact status metadata and lightweight labels.
+
+## Examples
+
+### Neutral
+
+<Canvas of={BadgeExamples.Neutral} meta={BadgeExamples} />
+
+### Brand
+
+<Canvas of={BadgeExamples.Brand} meta={BadgeExamples} />
+
+### Success
+
+<Canvas of={BadgeExamples.Success} meta={BadgeExamples} />
+
+### Warning
+
+<Canvas of={BadgeExamples.Warning} meta={BadgeExamples} />

@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as AlertStories from './Alert.stories';
+import * as AlertExamples from './Alert.examples.stories';
+
+<Meta of={AlertStories} />
+
+# Alert
+
+Alert surfaces contextual feedback with semantic variants and optional dismissal.
+
+## Examples
+
+### Info
+
+<Canvas of={AlertExamples.Info} meta={AlertExamples} />
+
+### Success
+
+<Canvas of={AlertExamples.Success} meta={AlertExamples} />
+
+### Warning
+
+<Canvas of={AlertExamples.Warning} meta={AlertExamples} />
+
+### Danger
+
+<Canvas of={AlertExamples.Danger} meta={AlertExamples} />
+
+### Dismissible
+
+<Canvas of={AlertExamples.Dismissible} meta={AlertExamples} />

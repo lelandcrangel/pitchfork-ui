@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CheckboxStories from './Checkbox.stories';
+import * as CheckboxExamples from './Checkbox.examples.stories';
+
+<Meta of={CheckboxStories} />
+
+# Checkbox
+
+Checkboxes let users opt in to one or more independent settings.
+
+## Examples
+
+### Unchecked
+
+<Canvas of={CheckboxExamples.Unchecked} meta={CheckboxExamples} />
+
+### Checked
+
+<Canvas of={CheckboxExamples.Checked} meta={CheckboxExamples} />
+
+### Disabled
+
+<Canvas of={CheckboxExamples.Disabled} meta={CheckboxExamples} />

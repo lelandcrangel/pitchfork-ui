@@ -1,0 +1,66 @@
+.pf-progress-bar {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+  min-width: 220px;
+}
+
+.pf-progress-bar__track {
+  background: var(--pf-surface-subtle);
+  border-radius: var(--radius-full);
+  flex: 1;
+  height: 8px;
+  overflow: hidden;
+}
+
+.pf-progress-bar__fill {
+  background: var(--color-semantic-action-primary);
+  border-radius: inherit;
+  height: 100%;
+  transition: width 200ms ease;
+}
+
+.pf-progress-bar__value {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.pf-progress-circle {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  position: relative;
+}
+
+.pf-progress-circle__svg {
+  display: block;
+  height: 100%;
+  transform: rotate(-90deg);
+  width: 100%;
+}
+
+.pf-progress-circle__track,
+.pf-progress-circle__fill {
+  fill: none;
+}
+
+.pf-progress-circle__track {
+  stroke: var(--pf-surface-subtle);
+}
+
+.pf-progress-circle__fill {
+  stroke: var(--color-semantic-action-primary);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 200ms ease;
+}
+
+.pf-progress-circle__value {
+  color: var(--color-semantic-text-default);
+  font-size: 12px;
+  font-weight: var(--font-weight-semibold);
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

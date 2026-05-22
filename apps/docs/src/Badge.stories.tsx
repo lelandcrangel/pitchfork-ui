@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Badge } from '@pitchfork-ui/react';
 
 const meta = {
+  title: 'Components/Badge',
   component: Badge,
   tags: ['ai-generated', 'test'],
   args: {
@@ -19,11 +20,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Neutral: Story = {};
-export const Brand: Story = { args: { variant: 'brand', children: 'Brand' } };
-export const Success: Story = {
-  args: { variant: 'success', children: 'Success' },
-};
-export const Warning: Story = {
-  args: { variant: 'warning', children: 'Warning' },
+export const Interactive: Story = {
+  args: {
+    children: 'Interactive badge',
+    variant: 'neutral',
+  },
 };

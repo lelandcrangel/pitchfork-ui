@@ -1,0 +1,115 @@
+.pf-badge-group {
+  align-items: center;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+.pf-badge-group__badge,
+.pf-badge-group__text {
+  border: 1px solid;
+  display: inline-flex;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  white-space: nowrap;
+}
+
+.pf-badge-group__badge {
+  align-items: center;
+  border-radius: var(--radius-full);
+  z-index: 1;
+}
+
+.pf-badge-group__text {
+  align-items: center;
+}
+
+.pf-badge-group--leading .pf-badge-group__text {
+  margin-left: -1px;
+  padding-left: calc(var(--space-2) + 2px);
+}
+
+.pf-badge-group--trailing .pf-badge-group__text {
+  margin-right: -1px;
+  padding-right: calc(var(--space-2) + 2px);
+}
+
+.pf-badge-group--leading .pf-badge-group__badge {
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+}
+
+.pf-badge-group--leading .pf-badge-group__text {
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+}
+
+.pf-badge-group--trailing .pf-badge-group__text {
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+}
+
+.pf-badge-group--trailing .pf-badge-group__badge {
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+}
+
+.pf-badge-group__badge--gray {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-200);
+  color: var(--color-gray-700);
+}
+
+.pf-badge-group__badge--brand {
+  background: var(--color-brand-100);
+  border-color: #fed7aa;
+  color: var(--color-brand-700);
+}
+
+.pf-badge-group__badge--error {
+  background: #fee4e2;
+  border-color: #fecdca;
+  color: #b42318;
+}
+
+.pf-badge-group__badge--warning {
+  background: #fef0c7;
+  border-color: #fedf89;
+  color: #b54708;
+}
+
+.pf-badge-group__badge--success {
+  background: #dcfae6;
+  border-color: #abefc6;
+  color: #067647;
+}
+
+.pf-badge-group__text--pill {
+  background: var(--pf-surface-bg);
+}
+
+.pf-badge-group__text--modern {
+  background: var(--pf-surface-subtle);
+}
+
+.pf-badge-group__text--gray {
+  border-color: var(--color-gray-200);
+  color: var(--color-gray-700);
+}
+
+.pf-badge-group__text--brand {
+  border-color: #fed7aa;
+  color: var(--color-brand-700);
+}
+
+.pf-badge-group__text--error {
+  border-color: #fecdca;
+  color: #b42318;
+}
+
+.pf-badge-group__text--warning {
+  border-color: #fedf89;
+  color: #b54708;
+}
+
+.pf-badge-group__text--success {
+  border-color: #abefc6;
+  color: #067647;
+}

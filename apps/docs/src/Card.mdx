@@ -1,0 +1,19 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CardStories from './Card.stories';
+import * as CardExamples from './Card.examples.stories';
+
+<Meta of={CardStories} />
+
+# Card
+
+Cards group related content and actions into a clear, bordered surface.
+
+## Examples
+
+### Basic
+
+<Canvas of={CardExamples.Basic} meta={CardExamples} />
+
+### With Long Content
+
+<Canvas of={CardExamples.WithLongContent} meta={CardExamples} />

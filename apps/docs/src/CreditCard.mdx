@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CreditCardStories from './CreditCard.stories';
+import * as CreditCardExamples from './CreditCard.examples.stories';
+
+<Meta of={CreditCardStories} />
+
+# Credit Card
+
+Credit card component for payment method previews with brand styles and masked card details.
+
+## Examples
+
+### Visa
+
+<Canvas of={CreditCardExamples.Visa} meta={CreditCardExamples} />
+
+### Mastercard
+
+<Canvas of={CreditCardExamples.Mastercard} meta={CreditCardExamples} />
+
+### Unmasked Amex
+
+<Canvas of={CreditCardExamples.UnmaskedAmex} meta={CreditCardExamples} />

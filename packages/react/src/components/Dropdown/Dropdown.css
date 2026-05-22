@@ -1,0 +1,119 @@
+.pf-dropdown {
+  display: inline-flex;
+}
+
+.pf-dropdown__trigger {
+  align-items: center;
+  background: var(--pf-button-secondary-bg);
+  border: 1px solid var(--pf-button-secondary-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-button-secondary-text);
+  cursor: pointer;
+  display: inline-flex;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-3);
+}
+
+.pf-dropdown__trigger:hover:not(:disabled) {
+  background: var(--pf-button-secondary-bg-hover);
+  border-color: var(--pf-button-secondary-border-hover);
+}
+
+.pf-dropdown__trigger:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.pf-dropdown__trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.pf-dropdown__chevron {
+  color: var(--color-semantic-text-muted);
+  display: inline-flex;
+  height: 16px;
+  transition: transform 140ms ease;
+  width: 16px;
+}
+
+.pf-dropdown__chevron svg {
+  height: 16px;
+  width: 16px;
+}
+
+.pf-dropdown__chevron--open {
+  transform: rotate(180deg);
+}
+
+.pf-dropdown__menu {
+  background: var(--pf-surface-bg);
+  border: 1px solid var(--pf-surface-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-1);
+  position: fixed;
+  z-index: 1000;
+}
+
+.pf-dropdown__item {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-semantic-text-default);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  justify-content: space-between;
+  min-height: 34px;
+  padding: 0 var(--space-2);
+  text-align: left;
+  width: 100%;
+}
+
+.pf-dropdown__item-left {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.pf-dropdown__item-icon {
+  color: var(--color-semantic-text-muted);
+  display: inline-flex;
+  height: 16px;
+  width: 16px;
+}
+
+.pf-dropdown__item-icon svg {
+  height: 16px;
+  width: 16px;
+}
+
+.pf-dropdown__item-shortcut {
+  color: var(--color-semantic-text-muted);
+  font-size: 12px;
+}
+
+.pf-dropdown__item:hover:not(:disabled),
+.pf-dropdown__item--active {
+  background: var(--pf-surface-subtle);
+}
+
+.pf-dropdown__item--destructive {
+  color: #b42318;
+}
+
+.pf-dropdown__item--destructive .pf-dropdown__item-icon {
+  color: #f04438;
+}
+
+.pf-dropdown__item:disabled {
+  color: var(--color-semantic-text-muted);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
