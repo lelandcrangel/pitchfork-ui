@@ -1,0 +1,29 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as HeaderNavigationStories from './HeaderNavigation.stories';
+import * as HeaderNavigationExamples from './HeaderNavigation.examples.stories';
+
+<Meta of={HeaderNavigationStories} />
+
+# Header Navigation
+
+HeaderNavigation provides a top-level nav pattern with brand, links, and optional actions.
+
+## Examples
+
+### Default
+
+<Canvas of={HeaderNavigationExamples.Default} meta={HeaderNavigationExamples} />
+
+### No actions
+
+<Canvas
+  of={HeaderNavigationExamples.NoActions}
+  meta={HeaderNavigationExamples}
+/>
+
+### Action group
+
+<Canvas
+  of={HeaderNavigationExamples.ActionGroup}
+  meta={HeaderNavigationExamples}
+/>

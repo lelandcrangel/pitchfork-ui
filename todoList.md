@@ -56,7 +56,7 @@ Scope for this list:
 - [x] Content dividers
 - [x] Date pickers
 - [x] File uploaders
-- [ ] Header navigations
+- [x] Header navigations
 - [ ] Inline CTAs
 - [ ] Line and bar charts
 - [ ] Loading indicators
