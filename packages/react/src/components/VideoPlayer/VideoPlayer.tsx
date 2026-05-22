@@ -15,8 +15,10 @@ export interface VideoTrack {
   default?: boolean;
 }
 
-export interface VideoPlayerProps
-  extends Omit<React.VideoHTMLAttributes<HTMLVideoElement>, 'children'> {
+export interface VideoPlayerProps extends Omit<
+  React.VideoHTMLAttributes<HTMLVideoElement>,
+  'children'
+> {
   label?: string;
   description?: string;
   error?: string;
@@ -83,7 +85,11 @@ export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(
               aria-describedby={describedBy}
             >
               {sources?.map((source) => (
-                <source key={`${source.src}-${source.type ?? 'default'}`} src={source.src} type={source.type} />
+                <source
+                  key={`${source.src}-${source.type ?? 'default'}`}
+                  src={source.src}
+                  type={source.type}
+                />
               ))}
               {tracks?.map((track) => (
                 <track

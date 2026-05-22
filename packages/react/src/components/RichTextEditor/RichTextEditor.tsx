@@ -1,4 +1,11 @@
-import { forwardRef, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { cx } from '../../utils/cx';
 import './RichTextEditor.css';
 
@@ -10,7 +17,10 @@ type ToolbarCommand =
   | 'insertOrderedList'
   | 'removeFormat';
 
-export interface RichTextEditorProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
+export interface RichTextEditorProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'defaultValue'
+> {
   label?: string;
   description?: string;
   error?: string;
@@ -24,7 +34,8 @@ export interface RichTextEditorProps extends Omit<React.HTMLAttributes<HTMLDivEl
 }
 
 const normalizeHtml = (value: string | undefined) => value ?? '';
-const getTextLength = (element: HTMLDivElement) => element.textContent?.length ?? 0;
+const getTextLength = (element: HTMLDivElement) =>
+  element.textContent?.length ?? 0;
 
 export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
   (
@@ -50,8 +61,12 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
     const editorId = id ?? generatedId;
     const descriptionId = description ? `${editorId}-description` : undefined;
     const errorId = error ? `${editorId}-error` : undefined;
-    const countId = typeof characterMax === 'number' ? `${editorId}-count` : undefined;
-    const describedBy = [ariaDescribedBy, descriptionId, errorId, countId].filter(Boolean).join(' ') || undefined;
+    const countId =
+      typeof characterMax === 'number' ? `${editorId}-count` : undefined;
+    const describedBy =
+      [ariaDescribedBy, descriptionId, errorId, countId]
+        .filter(Boolean)
+        .join(' ') || undefined;
     const editorRef = useRef<HTMLDivElement>(null);
     const lastValidHtmlRef = useRef('');
     const [characterCount, setCharacterCount] = useState(0);
@@ -116,25 +131,72 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
           </label>
         ) : null}
 
-        <div className={cx('pf-rte', error && 'pf-rte--invalid', disabled && 'pf-rte--disabled', className)}>
-          <div className="pf-rte__toolbar" role="toolbar" aria-label="Formatting options">
-            <button type="button" className="pf-rte__tool" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('bold')} disabled={disabled}>
+        <div
+          className={cx(
+            'pf-rte',
+            error && 'pf-rte--invalid',
+            disabled && 'pf-rte--disabled',
+            className,
+          )}
+        >
+          <div
+            className="pf-rte__toolbar"
+            role="toolbar"
+            aria-label="Formatting options"
+          >
+            <button
+              type="button"
+              className="pf-rte__tool"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => handleCommand('bold')}
+              disabled={disabled}
+            >
               B
             </button>
-            <button type="button" className="pf-rte__tool" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('italic')} disabled={disabled}>
+            <button
+              type="button"
+              className="pf-rte__tool"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => handleCommand('italic')}
+              disabled={disabled}
+            >
               I
             </button>
-            <button type="button" className="pf-rte__tool" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('underline')} disabled={disabled}>
+            <button
+              type="button"
+              className="pf-rte__tool"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => handleCommand('underline')}
+              disabled={disabled}
+            >
               U
             </button>
             <span className="pf-rte__divider" aria-hidden />
-            <button type="button" className="pf-rte__tool" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('insertUnorderedList')} disabled={disabled}>
+            <button
+              type="button"
+              className="pf-rte__tool"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => handleCommand('insertUnorderedList')}
+              disabled={disabled}
+            >
               • List
             </button>
-            <button type="button" className="pf-rte__tool" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('insertOrderedList')} disabled={disabled}>
+            <button
+              type="button"
+              className="pf-rte__tool"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => handleCommand('insertOrderedList')}
+              disabled={disabled}
+            >
               1. List
             </button>
-            <button type="button" className="pf-rte__tool" onMouseDown={(event) => event.preventDefault()} onClick={() => handleCommand('removeFormat')} disabled={disabled}>
+            <button
+              type="button"
+              className="pf-rte__tool"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => handleCommand('removeFormat')}
+              disabled={disabled}
+            >
               Clear
             </button>
           </div>

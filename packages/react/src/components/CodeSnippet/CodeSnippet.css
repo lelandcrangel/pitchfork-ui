@@ -71,7 +71,9 @@
 .pf-code-snippet__pre code {
   color: inherit;
   display: block;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
+    'Courier New', monospace;
   font-size: 12px;
   line-height: 1.65;
   white-space: pre;

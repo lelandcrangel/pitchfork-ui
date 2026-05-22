@@ -73,7 +73,9 @@ export const CreditCard = forwardRef<HTMLDivElement, CreditCardProps>(
           {cvc ? (
             <div>
               <span className="pf-credit-card__label">CVC</span>
-              <span className="pf-credit-card__value">{masked ? '***' : cvc}</span>
+              <span className="pf-credit-card__value">
+                {masked ? '***' : cvc}
+              </span>
             </div>
           ) : null}
         </div>

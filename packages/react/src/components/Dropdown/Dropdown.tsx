@@ -192,7 +192,13 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           disabled={disabled}
         >
           <span>{label}</span>
-          <span className={cx('pf-dropdown__chevron', isOpen && 'pf-dropdown__chevron--open')} aria-hidden>
+          <span
+            className={cx(
+              'pf-dropdown__chevron',
+              isOpen && 'pf-dropdown__chevron--open',
+            )}
+            aria-hidden
+          >
             <Icon name="square-caret-down" aria-hidden />
           </span>
         </button>
@@ -242,7 +248,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                         <span>{item.label}</span>
                       </span>
                       {item.shortcut ? (
-                        <span className="pf-dropdown__item-shortcut">{item.shortcut}</span>
+                        <span className="pf-dropdown__item-shortcut">
+                          {item.shortcut}
+                        </span>
                       ) : null}
                     </button>
                   );

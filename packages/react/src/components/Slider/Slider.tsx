@@ -2,11 +2,10 @@ import { forwardRef, useId, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './Slider.css';
 
-export interface SliderProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    'type' | 'value' | 'defaultValue' | 'onChange'
-  > {
+export interface SliderProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'type' | 'value' | 'defaultValue' | 'onChange'
+> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -55,19 +54,14 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     const safeMin = Number.isFinite(minNumber) ? minNumber : 0;
     const safeMax = Number.isFinite(maxNumber) ? maxNumber : safeMin + 100;
     const normalizedMax = safeMax >= safeMin ? safeMax : safeMin;
-    const normalizedStep = Number.isFinite(stepNumber) && stepNumber > 0
-      ? stepNumber
-      : 1;
+    const normalizedStep =
+      Number.isFinite(stepNumber) && stepNumber > 0 ? stepNumber : 1;
 
     const isControlled = value !== undefined;
-    const initialValue = clamp(
-      defaultValue ?? safeMin,
-      safeMin,
-      normalizedMax,
-    );
+    const initialValue = clamp(defaultValue ?? safeMin, safeMin, normalizedMax);
     const [internalValue, setInternalValue] = useState(initialValue);
     const currentValue = clamp(
-      isControlled ? value ?? safeMin : internalValue,
+      isControlled ? (value ?? safeMin) : internalValue,
       safeMin,
       normalizedMax,
     );
@@ -80,7 +74,9 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
       return ((currentValue - safeMin) / range) * 100;
     }, [currentValue, normalizedMax, safeMin]);
 
-    const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const handleChange: React.ChangeEventHandler<HTMLInputElement> = (
+      event,
+    ) => {
       const nextValue = Number(event.target.value);
       if (!isControlled) {
         setInternalValue(nextValue);
@@ -90,7 +86,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
 
     return (
       <div className="pf-field">
-        {(label || showValue) ? (
+        {label || showValue ? (
           <div className="pf-slider__header">
             {label ? (
               <label className="pf-field__label" htmlFor={sliderId}>
@@ -121,7 +117,11 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           onChange={handleChange}
-          style={{ '--pf-slider-progress': `${progressPercent}%` } as React.CSSProperties}
+          style={
+            {
+              '--pf-slider-progress': `${progressPercent}%`,
+            } as React.CSSProperties
+          }
         />
 
         {description ? (

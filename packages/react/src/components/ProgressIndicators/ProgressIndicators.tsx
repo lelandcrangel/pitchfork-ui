@@ -77,7 +77,11 @@ export function ProgressCircle({
       aria-valuenow={Math.round((percent / 100) * max)}
       {...props}
     >
-      <svg viewBox={`0 0 ${size} ${size}`} className="pf-progress-circle__svg" aria-hidden>
+      <svg
+        viewBox={`0 0 ${size} ${size}`}
+        className="pf-progress-circle__svg"
+        aria-hidden
+      >
         <circle
           className="pf-progress-circle__track"
           cx={size / 2}
@@ -96,7 +100,9 @@ export function ProgressCircle({
         />
       </svg>
       {showValue ? (
-        <span className="pf-progress-circle__value">{Math.round(percent)}%</span>
+        <span className="pf-progress-circle__value">
+          {Math.round(percent)}%
+        </span>
       ) : null}
     </div>
   );

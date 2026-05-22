@@ -15,7 +15,11 @@
 }
 
 .pf-credit-card::before {
-  background: radial-gradient(circle at 20% 20%, rgb(255 255 255 / 0.22), transparent 40%);
+  background: radial-gradient(
+    circle at 20% 20%,
+    rgb(255 255 255 / 0.22),
+    transparent 40%
+  );
   border-radius: inherit;
   content: '';
   inset: 0;

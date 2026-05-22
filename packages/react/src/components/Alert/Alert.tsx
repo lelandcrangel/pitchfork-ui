@@ -35,7 +35,11 @@ export function Alert({
   const body = children ?? description;
 
   return (
-    <div className={cx('pf-alert', `pf-alert--${variant}`, className)} role="alert" {...props}>
+    <div
+      className={cx('pf-alert', `pf-alert--${variant}`, className)}
+      role="alert"
+      {...props}
+    >
       <span className="pf-alert__icon" aria-hidden>
         {resolvedIcon}
       </span>

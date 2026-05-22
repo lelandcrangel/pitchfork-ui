@@ -1,6 +1,12 @@
 import { far } from '@fortawesome/free-regular-svg-icons';
-import type { IconDefinition, IconPack } from '@fortawesome/fontawesome-svg-core';
-import { FontAwesomeIcon, type FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
+import type {
+  IconDefinition,
+  IconPack,
+} from '@fortawesome/fontawesome-svg-core';
+import {
+  FontAwesomeIcon,
+  type FontAwesomeIconProps,
+} from '@fortawesome/react-fontawesome';
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
@@ -58,7 +64,9 @@ const normalizeName = (name: IconName) => {
 };
 
 export const getAvailableIconNames = () => {
-  return [...new Set([...Object.keys(regularIcons), ...Object.keys(regularAliases)])].sort();
+  return [
+    ...new Set([...Object.keys(regularIcons), ...Object.keys(regularAliases)]),
+  ].sort();
 };
 
 export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
@@ -71,12 +79,7 @@ const resolveIcon = (name: IconName) => {
   return regularIcons[normalizedName] ?? regularAliases[normalizedName];
 };
 
-export function Icon({
-  name,
-  label,
-  className,
-  ...props
-}: IconProps) {
+export function Icon({ name, label, className, ...props }: IconProps) {
   const icon = resolveIcon(name);
 
   if (!icon) {

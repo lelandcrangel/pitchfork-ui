@@ -31,9 +31,21 @@ export const LeadingIcon: Story = {
   args: {
     'aria-label': 'Calendar range',
     items: [
-      { value: 'today', label: 'Today', icon: <Icon name="calendar-days" aria-hidden /> },
-      { value: 'tomorrow', label: 'Tomorrow', icon: <Icon name="calendar-days" aria-hidden /> },
-      { value: 'week', label: 'This week', icon: <Icon name="calendar-days" aria-hidden /> },
+      {
+        value: 'today',
+        label: 'Today',
+        icon: <Icon name="calendar-days" aria-hidden />,
+      },
+      {
+        value: 'tomorrow',
+        label: 'Tomorrow',
+        icon: <Icon name="calendar-days" aria-hidden />,
+      },
+      {
+        value: 'week',
+        label: 'This week',
+        icon: <Icon name="calendar-days" aria-hidden />,
+      },
     ],
     defaultValue: 'today',
   },

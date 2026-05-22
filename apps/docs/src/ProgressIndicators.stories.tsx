@@ -20,5 +20,11 @@ export const Interactive: Story = {
 };
 
 export const InteractiveCircle: Story = {
-  render: (args) => <ProgressCircle value={args.value ?? 62} max={args.max ?? 100} showValue={args.showValue} />,
+  render: (args) => (
+    <ProgressCircle
+      value={args.value ?? 62}
+      max={args.max ?? 100}
+      showValue={args.showValue}
+    />
+  ),
 };

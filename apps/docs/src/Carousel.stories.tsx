@@ -55,7 +55,9 @@ const meta = {
     loop: { control: 'boolean' },
     showIndicators: { control: 'boolean' },
     autoPlay: { control: 'boolean' },
-    autoPlayInterval: { control: { type: 'number', min: 1000, max: 10000, step: 500 } },
+    autoPlayInterval: {
+      control: { type: 'number', min: 1000, max: 10000, step: 500 },
+    },
     slides: { control: false },
     onIndexChange: { control: false },
   },

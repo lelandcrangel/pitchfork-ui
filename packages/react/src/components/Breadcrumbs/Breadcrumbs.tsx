@@ -21,26 +21,43 @@ export function Breadcrumbs({
   ...props
 }: BreadcrumbsProps) {
   return (
-    <nav className={cx('pf-breadcrumbs', className)} aria-label={ariaLabel} {...props}>
+    <nav
+      className={cx('pf-breadcrumbs', className)}
+      aria-label={ariaLabel}
+      {...props}
+    >
       <ol className="pf-breadcrumbs__list">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           const isCurrent = item.current ?? isLast;
 
           return (
-            <li key={`${index}-${typeof item.label === 'string' ? item.label : 'item'}`} className="pf-breadcrumbs__item">
+            <li
+              key={`${index}-${typeof item.label === 'string' ? item.label : 'item'}`}
+              className="pf-breadcrumbs__item"
+            >
               {item.href ? (
                 <a
                   href={item.href}
-                  onClick={item.onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined}
-                  className={cx('pf-breadcrumbs__link', isCurrent && 'pf-breadcrumbs__link--current')}
+                  onClick={
+                    item.onClick as
+                      | React.MouseEventHandler<HTMLAnchorElement>
+                      | undefined
+                  }
+                  className={cx(
+                    'pf-breadcrumbs__link',
+                    isCurrent && 'pf-breadcrumbs__link--current',
+                  )}
                   aria-current={isCurrent ? 'page' : undefined}
                 >
                   {item.label}
                 </a>
               ) : (
                 <span
-                  className={cx('pf-breadcrumbs__link', isCurrent && 'pf-breadcrumbs__link--current')}
+                  className={cx(
+                    'pf-breadcrumbs__link',
+                    isCurrent && 'pf-breadcrumbs__link--current',
+                  )}
                   aria-current={isCurrent ? 'page' : undefined}
                 >
                   {item.label}

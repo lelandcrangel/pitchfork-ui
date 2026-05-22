@@ -146,7 +146,11 @@ export function Tooltip({
               id={tooltipId}
               ref={tooltipRef}
               role="tooltip"
-              className={cx('pf-tooltip', `pf-tooltip--${placement}`, className)}
+              className={cx(
+                'pf-tooltip',
+                `pf-tooltip--${placement}`,
+                className,
+              )}
               style={style}
             >
               {content}

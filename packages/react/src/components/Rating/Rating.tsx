@@ -3,7 +3,8 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Rating.css';
 
-const clampRating = (value: number, max: number) => Math.min(Math.max(value, 0), max);
+const clampRating = (value: number, max: number) =>
+  Math.min(Math.max(value, 0), max);
 
 const getStarFillPercent = (value: number, index: number) => {
   const position = index + 1;
@@ -52,20 +53,33 @@ export function RatingStars({
             <span
               key={index}
               className="pf-rating-stars__star"
-              style={{
-                '--pf-rating-fill': `${fillPercent}%`,
-                '--pf-rating-size': `${size}px`,
-              } as CSSProperties}
+              style={
+                {
+                  '--pf-rating-fill': `${fillPercent}%`,
+                  '--pf-rating-size': `${size}px`,
+                } as CSSProperties
+              }
             >
-              <Icon name="star" aria-hidden className="pf-rating-stars__star-icon pf-rating-stars__star-icon--base" />
+              <Icon
+                name="star"
+                aria-hidden
+                className="pf-rating-stars__star-icon pf-rating-stars__star-icon--base"
+              />
               <span className="pf-rating-stars__star-fill" aria-hidden>
-                <Icon name="star" className="pf-rating-stars__star-icon pf-rating-stars__star-icon--fill" />
+                <Icon
+                  name="star"
+                  className="pf-rating-stars__star-icon pf-rating-stars__star-icon--fill"
+                />
               </span>
             </span>
           );
         })}
       </div>
-      {showValue ? <span className="pf-rating-stars__value">{clampedValue.toFixed(1)}</span> : null}
+      {showValue ? (
+        <span className="pf-rating-stars__value">
+          {clampedValue.toFixed(1)}
+        </span>
+      ) : null}
     </div>
   );
 }
@@ -88,7 +102,10 @@ export function RatingBadge({
   const clampedValue = clampRating(value, max);
 
   return (
-    <span className={cx('pf-rating-badge', `pf-rating-badge--${size}`, className)} {...props}>
+    <span
+      className={cx('pf-rating-badge', `pf-rating-badge--${size}`, className)}
+      {...props}
+    >
       <Icon name="star" aria-hidden className="pf-rating-badge__icon" />
       <span className="pf-rating-badge__value">
         {clampedValue.toFixed(1)}
@@ -96,7 +113,9 @@ export function RatingBadge({
         {max.toFixed(1)}
       </span>
       {typeof reviews === 'number' ? (
-        <span className="pf-rating-badge__reviews">({reviews.toLocaleString()})</span>
+        <span className="pf-rating-badge__reviews">
+          ({reviews.toLocaleString()})
+        </span>
       ) : null}
     </span>
   );

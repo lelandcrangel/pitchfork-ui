@@ -37,7 +37,9 @@ export const UtilityButton = forwardRef<HTMLButtonElement, UtilityButtonProps>(
         {...props}
       >
         {icon ? <span className="pf-utility-button__icon">{icon}</span> : null}
-        {children ? <span className="pf-utility-button__label">{children}</span> : null}
+        {children ? (
+          <span className="pf-utility-button__label">{children}</span>
+        ) : null}
       </button>
     );
   },

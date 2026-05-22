@@ -9,9 +9,17 @@ const meta = {
     label: 'Actions',
     align: 'start',
     items: [
-      { label: 'Edit profile', shortcut: 'E', icon: <Icon name="pen-to-square" aria-hidden /> },
+      {
+        label: 'Edit profile',
+        shortcut: 'E',
+        icon: <Icon name="pen-to-square" aria-hidden />,
+      },
       { label: 'Archive', shortcut: 'A' },
-      { label: 'Delete', destructive: true, icon: <Icon name="trash-can" aria-hidden /> },
+      {
+        label: 'Delete',
+        destructive: true,
+        icon: <Icon name="trash-can" aria-hidden />,
+      },
     ],
   },
   argTypes: {

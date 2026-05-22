@@ -16,7 +16,11 @@ export const Basic: Story = {
     items: [
       { label: 'Profile', icon: <Icon name="user" aria-hidden /> },
       { label: 'Settings', icon: <Icon name="rectangle-list" aria-hidden /> },
-      { label: 'Delete', icon: <Icon name="trash-can" aria-hidden />, destructive: true },
+      {
+        label: 'Delete',
+        icon: <Icon name="trash-can" aria-hidden />,
+        destructive: true,
+      },
     ],
   },
 };

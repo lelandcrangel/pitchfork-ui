@@ -79,10 +79,15 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
       undefined;
 
     const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState<string[]>(defaultValue ?? []);
-    const selectedValues = isControlled ? value ?? [] : internalValue;
+    const [internalValue, setInternalValue] = useState<string[]>(
+      defaultValue ?? [],
+    );
+    const selectedValues = isControlled ? (value ?? []) : internalValue;
 
-    const selectedSet = useMemo(() => new Set(selectedValues), [selectedValues]);
+    const selectedSet = useMemo(
+      () => new Set(selectedValues),
+      [selectedValues],
+    );
     const selectedOptions = useMemo(
       () => options.filter((option) => selectedSet.has(option.value)),
       [options, selectedSet],
@@ -172,7 +177,9 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
 
     const toggleValue = (nextValue: string) => {
       if (selectedSet.has(nextValue)) {
-        updateValue(selectedValues.filter((valueItem) => valueItem !== nextValue));
+        updateValue(
+          selectedValues.filter((valueItem) => valueItem !== nextValue),
+        );
         return;
       }
 
@@ -299,7 +306,9 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
                 ))}
               </span>
             ) : (
-              <span className="pf-multi-select__placeholder">{placeholder}</span>
+              <span className="pf-multi-select__placeholder">
+                {placeholder}
+              </span>
             )}
 
             <span
@@ -349,7 +358,8 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
                           'pf-multi-select__option',
                           isSelected && 'pf-multi-select__option--selected',
                           isActive && 'pf-multi-select__option--active',
-                          option.disabled && 'pf-multi-select__option--disabled',
+                          option.disabled &&
+                            'pf-multi-select__option--disabled',
                         )}
                         onMouseEnter={() => {
                           if (!option.disabled) {

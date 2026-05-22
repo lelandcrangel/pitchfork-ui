@@ -22,10 +22,7 @@ export const Default: Story = {};
 
 export const ShortPath: Story = {
   args: {
-    items: [
-      { label: 'Home', href: '#' },
-      { label: 'Profile' },
-    ],
+    items: [{ label: 'Home', href: '#' }, { label: 'Profile' }],
   },
 };
 

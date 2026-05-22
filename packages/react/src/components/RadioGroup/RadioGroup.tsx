@@ -9,7 +9,10 @@ export interface RadioGroupOption {
   disabled?: boolean;
 }
 
-export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLFieldSetElement>, 'onChange'> {
+export interface RadioGroupProps extends Omit<
+  React.HTMLAttributes<HTMLFieldSetElement>,
+  'onChange'
+> {
   name?: string;
   legend?: string;
   options: RadioGroupOption[];
@@ -39,7 +42,9 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
     const generatedName = useId();
     const groupName = name ?? generatedName;
     const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState<string | undefined>(defaultValue);
+    const [internalValue, setInternalValue] = useState<string | undefined>(
+      defaultValue,
+    );
     const selectedValue = isControlled ? value : internalValue;
 
     const handleChange = (nextValue: string) => {
@@ -61,7 +66,9 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
         disabled={disabled}
         {...props}
       >
-        {legend ? <legend className="pf-radio-group__legend">{legend}</legend> : null}
+        {legend ? (
+          <legend className="pf-radio-group__legend">{legend}</legend>
+        ) : null}
         {options.map((option) => {
           const optionId = `${groupName}-${option.value}`;
           const checked = selectedValue === option.value;
@@ -80,9 +87,13 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
                 onChange={() => handleChange(option.value)}
               />
               <label htmlFor={optionId} className="pf-radio-group__label">
-                <span className="pf-radio-group__label-text">{option.label}</span>
+                <span className="pf-radio-group__label-text">
+                  {option.label}
+                </span>
                 {option.description ? (
-                  <span className="pf-radio-group__description">{option.description}</span>
+                  <span className="pf-radio-group__description">
+                    {option.description}
+                  </span>
                 ) : null}
               </label>
             </div>

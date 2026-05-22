@@ -6,7 +6,9 @@ import './Calendar.css';
 const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const;
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, month) => {
   const date = new Date(2024, month, 1);
-  const label = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
+  const label = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
+    date,
+  );
   return { value: month, label };
 });
 
@@ -57,7 +59,10 @@ const buildCalendarDays = (monthDate: Date) => {
   });
 };
 
-export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
+export interface CalendarProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'defaultValue'
+> {
   value?: Date;
   defaultValue?: Date;
   onValueChange?: (value: Date) => void;
@@ -155,9 +160,11 @@ export function Calendar({
   }, [yearRange.end, yearRange.start]);
 
   const isPrevMonthDisabled =
-    displayMonth.getFullYear() === yearRange.start && displayMonth.getMonth() === 0;
+    displayMonth.getFullYear() === yearRange.start &&
+    displayMonth.getMonth() === 0;
   const isNextMonthDisabled =
-    displayMonth.getFullYear() === yearRange.end && displayMonth.getMonth() === 11;
+    displayMonth.getFullYear() === yearRange.end &&
+    displayMonth.getMonth() === 11;
 
   const dayItems = useMemo(() => {
     return buildCalendarDays(displayMonth);
@@ -189,7 +196,11 @@ export function Calendar({
       <div
         {...props}
         id={calendarId}
-        className={cx('pf-calendar', error && 'pf-calendar--invalid', className)}
+        className={cx(
+          'pf-calendar',
+          error && 'pf-calendar--invalid',
+          className,
+        )}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
       >
@@ -200,14 +211,19 @@ export function Calendar({
             aria-label="Previous month"
             disabled={isPrevMonthDisabled}
             onClick={() => {
-              setDisplayMonth((current) => clampToYearRange(addMonths(current, -1)));
+              setDisplayMonth((current) =>
+                clampToYearRange(addMonths(current, -1)),
+              );
             }}
           >
             <Icon name="square-caret-left" aria-hidden />
           </button>
 
           <div className="pf-calendar__month-controls">
-            <label className="pf-calendar__control-label" htmlFor={`${calendarId}-month`}>
+            <label
+              className="pf-calendar__control-label"
+              htmlFor={`${calendarId}-month`}
+            >
               Month
             </label>
             <select
@@ -218,7 +234,9 @@ export function Calendar({
               onChange={(event) => {
                 const nextMonth = Number(event.target.value);
                 setDisplayMonth((current) =>
-                  clampToYearRange(new Date(current.getFullYear(), nextMonth, 1, 12)),
+                  clampToYearRange(
+                    new Date(current.getFullYear(), nextMonth, 1, 12),
+                  ),
                 );
               }}
             >
@@ -229,7 +247,10 @@ export function Calendar({
               ))}
             </select>
 
-            <label className="pf-calendar__control-label" htmlFor={`${calendarId}-year`}>
+            <label
+              className="pf-calendar__control-label"
+              htmlFor={`${calendarId}-year`}
+            >
               Year
             </label>
             <select
@@ -240,7 +261,9 @@ export function Calendar({
               onChange={(event) => {
                 const nextYear = Number(event.target.value);
                 setDisplayMonth((current) =>
-                  clampToYearRange(new Date(nextYear, current.getMonth(), 1, 12)),
+                  clampToYearRange(
+                    new Date(nextYear, current.getMonth(), 1, 12),
+                  ),
                 );
               }}
             >
@@ -258,7 +281,9 @@ export function Calendar({
             aria-label="Next month"
             disabled={isNextMonthDisabled}
             onClick={() => {
-              setDisplayMonth((current) => clampToYearRange(addMonths(current, 1)));
+              setDisplayMonth((current) =>
+                clampToYearRange(addMonths(current, 1)),
+              );
             }}
           >
             <Icon name="square-caret-right" aria-hidden />
@@ -275,12 +300,20 @@ export function Calendar({
 
         <div className="pf-calendar__grid" role="grid" aria-label={monthLabel}>
           {dayItems.map(({ date, inCurrentMonth }) => {
-            const isSelected = selectedDate ? isSameDay(selectedDate, date) : false;
+            const isSelected = selectedDate
+              ? isSameDay(selectedDate, date)
+              : false;
             const isToday = isSameDay(today, date);
             const isDisabled = Boolean(disabledDates?.(date));
 
             if (!showOutsideDays && !inCurrentMonth) {
-              return <span key={date.toISOString()} className="pf-calendar__day-empty" aria-hidden />;
+              return (
+                <span
+                  key={date.toISOString()}
+                  className="pf-calendar__day-empty"
+                  aria-hidden
+                />
+              );
             }
 
             return (

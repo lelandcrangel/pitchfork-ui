@@ -30,11 +30,17 @@ export function Carousel({
   ...props
 }: CarouselProps) {
   const totalSlides = slides.length;
-  const boundedInitialIndex = clamp(initialIndex, 0, Math.max(totalSlides - 1, 0));
+  const boundedInitialIndex = clamp(
+    initialIndex,
+    0,
+    Math.max(totalSlides - 1, 0),
+  );
   const [activeIndex, setActiveIndex] = useState(boundedInitialIndex);
 
   useEffect(() => {
-    setActiveIndex((current) => clamp(current, 0, Math.max(totalSlides - 1, 0)));
+    setActiveIndex((current) =>
+      clamp(current, 0, Math.max(totalSlides - 1, 0)),
+    );
   }, [totalSlides]);
 
   const goToIndex = (nextIndex: number) => {
@@ -61,7 +67,9 @@ export function Carousel({
 
     const interval = window.setInterval(() => {
       setActiveIndex((current) => {
-        const next = loop ? (current + 1) % totalSlides : Math.min(current + 1, totalSlides - 1);
+        const next = loop
+          ? (current + 1) % totalSlides
+          : Math.min(current + 1, totalSlides - 1);
         onIndexChange?.(next);
         return next;
       });
@@ -84,14 +92,26 @@ export function Carousel({
   }, [activeIndex, totalSlides]);
 
   return (
-    <div className={cx('pf-carousel', className)} aria-label={ariaLabel} {...props}>
-      <div className="pf-carousel__viewport" role="region" aria-roledescription="carousel" aria-label={slideLabel}>
+    <div
+      className={cx('pf-carousel', className)}
+      aria-label={ariaLabel}
+      {...props}
+    >
+      <div
+        className="pf-carousel__viewport"
+        role="region"
+        aria-roledescription="carousel"
+        aria-label={slideLabel}
+      >
         {totalSlides === 0 ? (
           <div className="pf-carousel__empty" role="status">
             Add at least one slide.
           </div>
         ) : (
-          <div className="pf-carousel__track" style={{ transform: `translateX(-${activeIndex * 100}%)` }}>
+          <div
+            className="pf-carousel__track"
+            style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+          >
             {slides.map((slide, index) => (
               <div
                 key={`slide-${index}`}
@@ -122,7 +142,10 @@ export function Carousel({
         </button>
 
         {showIndicators && totalSlides > 1 ? (
-          <div className="pf-carousel__indicators" aria-label="Slide indicators">
+          <div
+            className="pf-carousel__indicators"
+            aria-label="Slide indicators"
+          >
             {slides.map((_, index) => {
               const isActive = index === activeIndex;
 
@@ -130,7 +153,10 @@ export function Carousel({
                 <button
                   key={`indicator-${index}`}
                   type="button"
-                  className={cx('pf-carousel__indicator', isActive && 'pf-carousel__indicator--active')}
+                  className={cx(
+                    'pf-carousel__indicator',
+                    isActive && 'pf-carousel__indicator--active',
+                  )}
                   aria-label={`Go to slide ${index + 1}`}
                   aria-current={isActive ? 'true' : undefined}
                   onClick={() => {

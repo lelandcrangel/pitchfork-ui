@@ -43,6 +43,7 @@ export const CharacterLimit: Story = {
     label: 'Product summary',
     description: 'Keep this concise so it fits in card layouts.',
     characterMax: 120,
-    defaultValue: '<p>Compact, fast, and flexible UI primitives for modern teams.</p>',
+    defaultValue:
+      '<p>Compact, fast, and flexible UI primitives for modern teams.</p>',
   },
 };

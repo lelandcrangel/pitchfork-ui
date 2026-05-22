@@ -3,7 +3,10 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './CodeSnippet.css';
 
-export interface CodeSnippetProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
+export interface CodeSnippetProps extends Omit<
+  React.HTMLAttributes<HTMLElement>,
+  'title'
+> {
   code: string;
   language?: string;
   title?: React.ReactNode;
@@ -72,8 +75,12 @@ export function CodeSnippet({
       {(title || language) && (
         <figcaption className="pf-code-snippet__header">
           <div className="pf-code-snippet__meta">
-            {title ? <span className="pf-code-snippet__title">{title}</span> : null}
-            {language ? <span className="pf-code-snippet__language">{language}</span> : null}
+            {title ? (
+              <span className="pf-code-snippet__title">{title}</span>
+            ) : null}
+            {language ? (
+              <span className="pf-code-snippet__language">{language}</span>
+            ) : null}
           </div>
 
           <button
@@ -119,7 +126,9 @@ export function CodeSnippet({
                     <td className="pf-code-snippet__line-number" aria-hidden>
                       {index + 1}
                     </td>
-                    <td className="pf-code-snippet__line-content">{line || ' '}</td>
+                    <td className="pf-code-snippet__line-content">
+                      {line || ' '}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -130,7 +139,11 @@ export function CodeSnippet({
         </code>
       </pre>
 
-      <span id={liveRegionId} className="pf-code-snippet__sr-only" aria-live="polite">
+      <span
+        id={liveRegionId}
+        className="pf-code-snippet__sr-only"
+        aria-live="polite"
+      >
         {copyError ? 'Copy failed' : copied ? copiedLabel : ''}
       </span>
     </figure>
