@@ -15,8 +15,10 @@ const bytesToSize = (bytes: number) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-export interface FileUploaderProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'value' | 'defaultValue'> {
+export interface FileUploaderProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'onChange' | 'value' | 'defaultValue'
+> {
   label?: string;
   description?: string;
   error?: string;
@@ -64,7 +66,7 @@ export function FileUploader({
   const [internalError, setInternalError] = useState<string | undefined>(
     undefined,
   );
-  const files = isControlled ? value ?? [] : internalFiles;
+  const files = isControlled ? (value ?? []) : internalFiles;
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -156,7 +158,11 @@ export function FileUploader({
         </label>
       ) : null}
 
-      <div {...props} id={uploaderId} className={cx('pf-file-uploader', className)}>
+      <div
+        {...props}
+        id={uploaderId}
+        className={cx('pf-file-uploader', className)}
+      >
         <input
           ref={inputRef}
           id={inputId}
@@ -209,16 +215,25 @@ export function FileUploader({
           <span className="pf-file-uploader__subtitle">
             Drag and drop files here, or click to browse.
           </span>
-          {hintText ? <span className="pf-file-uploader__hint">{hintText}</span> : null}
+          {hintText ? (
+            <span className="pf-file-uploader__hint">{hintText}</span>
+          ) : null}
         </button>
 
         {files.length > 0 ? (
           <ul className="pf-file-uploader__list" aria-label="Selected files">
             {files.map((file, index) => (
-              <li key={`${file.name}-${file.size}-${file.lastModified}`} className="pf-file-uploader__list-item">
+              <li
+                key={`${file.name}-${file.size}-${file.lastModified}`}
+                className="pf-file-uploader__list-item"
+              >
                 <span className="pf-file-uploader__file-meta">
-                  <span className="pf-file-uploader__file-name">{file.name}</span>
-                  <span className="pf-file-uploader__file-size">{bytesToSize(file.size)}</span>
+                  <span className="pf-file-uploader__file-name">
+                    {file.name}
+                  </span>
+                  <span className="pf-file-uploader__file-size">
+                    {bytesToSize(file.size)}
+                  </span>
                 </span>
                 <button
                   type="button"
