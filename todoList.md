@@ -65,7 +65,7 @@ Scope for this list:
 - [x] Page headers
 - [x] Paginations
 - [x] Pie charts
-- [ ] Progress steps
+- [x] Progress steps
 - [ ] Radar charts
 - [ ] Section footers
 - [ ] Section headers

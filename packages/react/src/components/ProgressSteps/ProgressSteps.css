@@ -1,0 +1,153 @@
+.pf-progress-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pf-progress-steps--horizontal {
+  --pf-progress-step-gap: var(--space-4);
+  display: grid;
+  gap: var(--pf-progress-step-gap);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.pf-progress-steps--vertical {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.pf-progress-steps__item {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.pf-progress-steps__marker-wrap {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.pf-progress-steps--horizontal .pf-progress-steps__marker-wrap {
+  justify-content: center;
+  flex: 1;
+  position: relative;
+  width: 100%;
+}
+
+.pf-progress-steps__marker {
+  align-items: center;
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-border-default);
+  border-radius: 999px;
+  color: var(--color-semantic-text-muted);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.pf-progress-steps__connector {
+  background: var(--color-semantic-border-default);
+  display: block;
+  flex: 1;
+  margin-left: var(--space-2);
+}
+
+.pf-progress-steps--horizontal .pf-progress-steps__connector {
+  height: 1px;
+  left: 50%;
+  margin-left: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: calc(100% + var(--pf-progress-step-gap));
+  z-index: 0;
+}
+
+.pf-progress-steps--horizontal .pf-progress-steps__item {
+  align-items: center;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.pf-progress-steps--horizontal .pf-progress-steps__content {
+  text-align: center;
+}
+
+.pf-progress-steps--vertical .pf-progress-steps__item {
+  align-items: flex-start;
+  position: relative;
+}
+
+.pf-progress-steps--vertical .pf-progress-steps__marker-wrap {
+  align-items: center;
+  flex-direction: column;
+}
+
+.pf-progress-steps--vertical .pf-progress-steps__connector {
+  bottom: calc(var(--space-3) * -1);
+  left: 14px;
+  margin: 0;
+  position: absolute;
+  top: 28px;
+  width: 1px;
+}
+
+.pf-progress-steps__content {
+  min-width: 0;
+}
+
+.pf-progress-steps__title {
+  color: var(--color-semantic-text-default);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin: 4px 0 0;
+}
+
+.pf-progress-steps__description {
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  margin: var(--space-1) 0 0;
+}
+
+.pf-progress-steps__item--complete .pf-progress-steps__marker {
+  background: #86efac;
+  border-color: #86efac;
+  color: #14532d;
+}
+
+.pf-progress-steps__item--current .pf-progress-steps__marker {
+  background: #15803d;
+  border-color: #15803d;
+  box-shadow: var(--focus-ring-shadow);
+  color: #f0fdf4;
+}
+
+.pf-progress-steps__item--complete .pf-progress-steps__connector {
+  background: #86efac;
+}
+
+.pf-progress-steps__item--current .pf-progress-steps__title {
+  color: #15803d;
+}
+
+@media (max-width: 640px) {
+  .pf-progress-steps--horizontal {
+    gap: var(--space-3);
+    grid-template-columns: 1fr;
+  }
+
+  .pf-progress-steps--horizontal .pf-progress-steps__marker-wrap {
+    flex: 0 0 auto;
+  }
+
+  .pf-progress-steps--horizontal .pf-progress-steps__connector {
+    display: none;
+  }
+}

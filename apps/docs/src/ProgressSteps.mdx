@@ -1,0 +1,29 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ProgressStepsStories from './ProgressSteps.stories';
+import * as ProgressStepsExamples from './ProgressSteps.examples.stories';
+
+<Meta of={ProgressStepsStories} />
+
+# Progress Steps
+
+ProgressSteps shows multi-step workflows with clear complete, current, and upcoming states.
+
+## Examples
+
+### Checkout flow
+
+<Canvas of={ProgressStepsExamples.CheckoutFlow} meta={ProgressStepsExamples} />
+
+### Vertical onboarding
+
+<Canvas
+  of={ProgressStepsExamples.VerticalOnboarding}
+  meta={ProgressStepsExamples}
+/>
+
+### Auto status from current
+
+<Canvas
+  of={ProgressStepsExamples.AutoStatusFromCurrent}
+  meta={ProgressStepsExamples}
+/>
