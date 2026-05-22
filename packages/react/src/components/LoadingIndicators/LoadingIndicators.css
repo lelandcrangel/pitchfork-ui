@@ -1,0 +1,106 @@
+@keyframes pf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pf-pulse-dots {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pf-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.pf-loading-spinner {
+  border: 3px solid
+    color-mix(in srgb, var(--color-semantic-border-default) 75%, transparent);
+  border-radius: 50%;
+  border-top-color: var(--color-semantic-action-primary);
+  display: inline-block;
+  flex: 0 0 auto;
+  min-height: 12px;
+  min-width: 12px;
+  animation: pf-spin 0.8s linear infinite;
+}
+
+.pf-loading-dots {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.pf-loading-dots__dot {
+  animation: pf-pulse-dots 1s ease-in-out infinite;
+  background: var(--color-semantic-action-primary);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.pf-loading-dots__dot:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.pf-loading-dots__dot:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.pf-loading-dots--sm .pf-loading-dots__dot {
+  height: 6px;
+  width: 6px;
+}
+
+.pf-loading-dots--md .pf-loading-dots__dot {
+  height: 8px;
+  width: 8px;
+}
+
+.pf-loading-dots--lg .pf-loading-dots__dot {
+  height: 10px;
+  width: 10px;
+}
+
+.pf-loading-skeleton {
+  animation: pf-skeleton-shimmer 1.4s linear infinite;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-semantic-background-subtle) 92%, white 8%)
+      25%,
+    color-mix(in srgb, var(--color-semantic-border-default) 72%, white 28%) 37%,
+    color-mix(in srgb, var(--color-semantic-background-subtle) 92%, white 8%)
+      63%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  max-width: 100%;
+}
+
+.pf-loading-skeleton--rounded {
+  border-radius: var(--radius-full);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-loading-spinner,
+  .pf-loading-dots__dot,
+  .pf-loading-skeleton {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}

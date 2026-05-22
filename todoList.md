@@ -58,8 +58,7 @@ Scope for this list:
 - [x] File uploaders
 - [x] Header navigations
 - [x] Inline CTAs
-- [ ] Line and bar charts
-- [ ] Loading indicators
+- [x] Loading indicators
 - [ ] Metrics
 - [ ] Modals
 - [ ] Notifications

@@ -21,6 +21,7 @@ export * from './components/FileUploader';
 export * from './components/HeaderNavigation';
 export * from './components/Icon';
 export * from './components/InlineCTA';
+export * from './components/LoadingIndicators';
 export * from './components/MultiSelect';
 export * from './components/ProgressIndicators';
 export * from './components/RadioButton';

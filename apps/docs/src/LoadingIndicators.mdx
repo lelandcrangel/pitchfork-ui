@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as LoadingStories from './LoadingIndicators.stories';
+import * as LoadingExamples from './LoadingIndicators.examples.stories';
+
+<Meta of={LoadingStories} />
+
+# Loading Indicators
+
+Loading indicators communicate in-progress states for asynchronous actions and content fetching.
+
+## Examples
+
+### Spinner sizes
+
+<Canvas of={LoadingExamples.SpinnerSizes} meta={LoadingExamples} />
+
+### Dots variants
+
+<Canvas of={LoadingExamples.DotsVariants} meta={LoadingExamples} />
+
+### Skeleton content block
+
+<Canvas of={LoadingExamples.SkeletonContentBlock} meta={LoadingExamples} />
