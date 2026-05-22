@@ -43,7 +43,11 @@
 }
 
 .pf-inline-cta--info {
-  background: color-mix(in srgb, var(--color-semantic-action-primary) 8%, white);
+  background: color-mix(
+    in srgb,
+    var(--color-semantic-action-primary) 8%,
+    white
+  );
 }
 
 .pf-inline-cta--success {

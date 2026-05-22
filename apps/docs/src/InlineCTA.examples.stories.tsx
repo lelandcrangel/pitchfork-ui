@@ -23,7 +23,11 @@ export const Info: Story = {
     tone: 'info',
     heading: 'New release notes',
     description: 'Version 2.4 is live with improved editing tools.',
-    action: <Button size="sm" variant="secondary">Read notes</Button>,
+    action: (
+      <Button size="sm" variant="secondary">
+        Read notes
+      </Button>
+    ),
   },
 };
 

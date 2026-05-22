@@ -27,14 +27,19 @@ export function InlineCTA({
   const resolvedIcon = icon ?? <Icon name={iconName} aria-hidden />;
 
   return (
-    <div className={cx('pf-inline-cta', `pf-inline-cta--${tone}`, className)} {...props}>
+    <div
+      className={cx('pf-inline-cta', `pf-inline-cta--${tone}`, className)}
+      {...props}
+    >
       <span className="pf-inline-cta__icon" aria-hidden>
         {resolvedIcon}
       </span>
 
       <div className="pf-inline-cta__content">
         {heading ? <p className="pf-inline-cta__heading">{heading}</p> : null}
-        {description ? <p className="pf-inline-cta__description">{description}</p> : null}
+        {description ? (
+          <p className="pf-inline-cta__description">{description}</p>
+        ) : null}
         {children}
       </div>
 
