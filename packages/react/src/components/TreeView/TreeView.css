@@ -1,0 +1,109 @@
+.pf-tree-view {
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+}
+
+.pf-tree-view__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pf-tree-view__item {
+  min-width: 0;
+}
+
+.pf-tree-view__row {
+  align-items: center;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  min-width: 0;
+  padding-left: calc(var(--pf-tree-level, 0) * var(--space-4));
+}
+
+.pf-tree-view__toggle-wrap {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  width: 24px;
+}
+
+.pf-tree-view__toggle,
+.pf-tree-view__spacer {
+  align-items: center;
+  color: var(--color-semantic-text-muted);
+  display: inline-flex;
+  font-size: 12px;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+}
+
+.pf-tree-view__toggle {
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: 0;
+}
+
+.pf-tree-view__toggle:hover {
+  background: var(--color-semantic-background-subtle);
+  color: var(--color-semantic-text-default);
+}
+
+.pf-tree-view__node {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-semantic-text-muted);
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  gap: var(--space-2);
+  grid-template-columns: auto 1fr auto;
+  justify-items: start;
+  min-height: 34px;
+  min-width: 0;
+  padding: 0 var(--space-2);
+  text-align: left;
+  width: 100%;
+}
+
+.pf-tree-view__node:hover {
+  background: var(--color-semantic-background-subtle);
+  color: var(--color-semantic-text-default);
+}
+
+.pf-tree-view__node:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.pf-tree-view__row--selected .pf-tree-view__node {
+  background: var(--color-semantic-background-subtle);
+  color: var(--color-semantic-text-default);
+  font-weight: var(--font-weight-semibold);
+}
+
+.pf-tree-view__row--disabled .pf-tree-view__node {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pf-tree-view__icon,
+.pf-tree-view__badge {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.pf-tree-view__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

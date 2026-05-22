@@ -1,0 +1,35 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TreeViewStories from './TreeView.stories';
+import * as TreeViewExamples from './TreeView.examples.stories';
+
+<Meta of={TreeViewStories} />
+
+# Tree Views
+
+TreeView presents hierarchical structures that can be expanded and collapsed while keeping the context of each level visible.
+
+## Examples
+
+### Default
+
+A balanced tree layout for workspace-style navigation.
+
+<Canvas of={TreeViewExamples.Default} />
+
+### With badges
+
+Attach badges to highlight counts or status on important branches.
+
+<Canvas of={TreeViewExamples.WithBadges} />
+
+### Compact root
+
+A minimal tree structure for smaller content maps.
+
+<Canvas of={TreeViewExamples.CompactRoot} />
+
+### Deep hierarchy (6 levels)
+
+Demonstrates a six-level nested tree path for complex information architectures.
+
+<Canvas of={TreeViewExamples.DeepHierarchy} />
