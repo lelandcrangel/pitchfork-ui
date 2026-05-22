@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { TreeView } from '@pitchfork-ui/react';
+import { useRef } from 'react';
+import {
+  Button,
+  TreeView,
+  type TreeViewHandle,
+  type TreeViewProps,
+} from '@pitchfork-ui/react';
 
 const nodes = [
   {
@@ -48,4 +54,28 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Interactive: Story = {};
+function InteractiveWithControls(args: TreeViewProps) {
+  const treeRef = useRef<TreeViewHandle>(null);
+
+  return (
+    <div style={{ display: 'grid', gap: 12 }}>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <Button size="sm" onClick={() => treeRef.current?.expandAll()}>
+          Expand all
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => treeRef.current?.collapseAll()}
+        >
+          Collapse all
+        </Button>
+      </div>
+      <TreeView ref={treeRef} {...args} />
+    </div>
+  );
+}
+
+export const Interactive: Story = {
+  render: (args) => <InteractiveWithControls {...args} />,
+};
