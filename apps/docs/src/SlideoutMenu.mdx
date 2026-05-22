@@ -1,0 +1,23 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SlideoutStories from './SlideoutMenu.stories';
+import * as SlideoutExamples from './SlideoutMenu.examples.stories';
+
+<Meta of={SlideoutStories} />
+
+# Slideout Menus
+
+SlideoutMenu presents tasks in a side panel while preserving context on the underlying page.
+
+## Examples
+
+### Right placement
+
+<Canvas of={SlideoutExamples.RightPlacement} meta={SlideoutExamples} />
+
+### Left placement
+
+<Canvas of={SlideoutExamples.LeftPlacement} meta={SlideoutExamples} />
+
+### Large panel
+
+<Canvas of={SlideoutExamples.LargePanel} meta={SlideoutExamples} />

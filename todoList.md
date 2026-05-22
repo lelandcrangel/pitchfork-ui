@@ -70,7 +70,7 @@ Scope for this list:
 - [x] Section footers
 - [x] Section headers
 - [x] Sidebar navigations
-- [ ] Slideout menus
+- [x] Slideout menus
 - [ ] Tables
 - [ ] Tabs
 - [ ] Tree views
