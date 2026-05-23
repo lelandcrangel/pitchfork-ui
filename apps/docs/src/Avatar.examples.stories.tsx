@@ -17,7 +17,7 @@ export const Initials: Story = {};
 
 export const WithImage: Story = {
   args: {
-    src: '/avatar.jpeg',
+    src: 'avatar.jpeg',
     alt: 'Profile image',
     name: 'Pitchfork User',
   },

@@ -2,7 +2,7 @@
 
 :root {
   color-scheme: light;
-  --pf-focus-ring: 0 0 0 3px rgb(249 115 22 / 0.35);
+  --pf-focus-ring: 0 0 0 3px rgb(59 130 246 / 0.35);
 
   /* Button aliases */
   --pf-button-primary-bg: var(--color-semantic-action-primary);
@@ -50,7 +50,7 @@
   --color-semantic-action-primary-hover: var(--color-brand-600);
   --color-semantic-action-primary-text: var(--color-base-white);
 
-  --pf-focus-ring: 0 0 0 3px rgb(249 115 22 / 0.45);
+  --pf-focus-ring: 0 0 0 3px rgb(59 130 246 / 0.45);
 }
 
 *,

@@ -8,9 +8,9 @@
 }
 
 .pf-alert--info {
-  background: #eff8ff;
-  border-color: #b2ddff;
-  color: #1849a9;
+  background: var(--color-brand-50);
+  border-color: var(--color-brand-300);
+  color: var(--color-brand-800);
 }
 
 .pf-alert--success {

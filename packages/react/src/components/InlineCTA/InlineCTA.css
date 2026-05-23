@@ -43,11 +43,20 @@
 }
 
 .pf-inline-cta--info {
-  background: color-mix(
-    in srgb,
-    var(--color-semantic-action-primary) 8%,
-    white
-  );
+  background: color-mix(in srgb, var(--color-brand-50) 70%, white);
+  border-color: var(--color-brand-300);
+}
+
+.pf-inline-cta--info .pf-inline-cta__icon {
+  color: var(--color-brand-700);
+}
+
+.pf-inline-cta--info .pf-inline-cta__heading {
+  color: var(--color-brand-800);
+}
+
+.pf-inline-cta--info .pf-inline-cta__description {
+  color: var(--color-brand-700);
 }
 
 .pf-inline-cta--success {

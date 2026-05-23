@@ -46,7 +46,8 @@
 }
 
 .pf-notification--info {
-  border-color: #b2ddff;
+  background: color-mix(in srgb, var(--color-brand-50) 45%, white);
+  border-color: var(--color-brand-300);
 }
 
 .pf-notification--success {
@@ -71,7 +72,25 @@
 }
 
 .pf-notification--info .pf-notification__icon {
-  color: #1849a9;
+  color: var(--color-brand-700);
+}
+
+.pf-notification--info .pf-notification__title {
+  color: var(--color-brand-800);
+}
+
+.pf-notification--info .pf-notification__description {
+  color: var(--color-brand-700);
+}
+
+.pf-notification--info .pf-notification__dismiss {
+  color: var(--color-brand-700);
+}
+
+.pf-notification--info .pf-notification__dismiss:hover,
+.pf-notification--info .pf-notification__dismiss:focus-visible {
+  background: var(--color-brand-100);
+  color: var(--color-brand-800);
 }
 
 .pf-notification--success .pf-notification__icon {

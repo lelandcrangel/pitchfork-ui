@@ -1,5 +1,13 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 
+const rawBasePath = process.env.STORYBOOK_BASE_PATH ?? '/';
+const withLeadingSlash = rawBasePath.startsWith('/')
+  ? rawBasePath
+  : `/${rawBasePath}`;
+const storybookBasePath = withLeadingSlash.endsWith('/')
+  ? withLeadingSlash
+  : `${withLeadingSlash}/`;
+
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.{js,jsx,mjs,ts,tsx}'],
   tags: {
@@ -26,6 +34,7 @@ const config: StorybookConfig = {
       ...(config.build ?? {}),
       minify: false,
     };
+    config.base = storybookBasePath;
 
     return config;
   },

@@ -3,7 +3,13 @@ import '@pitchfork-ui/react/styles.css';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { mswHandlers } from './msw-handlers';
 
-initialize({ onUnhandledRequest: 'bypass', quiet: true });
+initialize({
+  onUnhandledRequest: 'bypass',
+  quiet: true,
+  serviceWorker: {
+    url: './mockServiceWorker.js',
+  },
+});
 
 const preview: Preview = {
   decorators: [(Story) => Story()],
