@@ -28,6 +28,42 @@
       "800": { "$value": "#1e40af", "$type": "color" },
       "900": { "$value": "#1e3a8a", "$type": "color" }
     },
+    "success": {
+      "50": { "$value": "#ecfdf3", "$type": "color" },
+      "100": { "$value": "#d1fadf", "$type": "color" },
+      "200": { "$value": "#a6f4c5", "$type": "color" },
+      "300": { "$value": "#6ce9a6", "$type": "color" },
+      "400": { "$value": "#32d583", "$type": "color" },
+      "500": { "$value": "#12b76a", "$type": "color" },
+      "600": { "$value": "#039855", "$type": "color" },
+      "700": { "$value": "#027a48", "$type": "color" },
+      "800": { "$value": "#05603a", "$type": "color" },
+      "900": { "$value": "#054f31", "$type": "color" }
+    },
+    "warning": {
+      "50": { "$value": "#fffaeb", "$type": "color" },
+      "100": { "$value": "#fef0c7", "$type": "color" },
+      "200": { "$value": "#fedf89", "$type": "color" },
+      "300": { "$value": "#fec84b", "$type": "color" },
+      "400": { "$value": "#fdb022", "$type": "color" },
+      "500": { "$value": "#f79009", "$type": "color" },
+      "600": { "$value": "#dc6803", "$type": "color" },
+      "700": { "$value": "#b54708", "$type": "color" },
+      "800": { "$value": "#93370d", "$type": "color" },
+      "900": { "$value": "#7a2e0e", "$type": "color" }
+    },
+    "danger": {
+      "50": { "$value": "#fef3f2", "$type": "color" },
+      "100": { "$value": "#fee4e2", "$type": "color" },
+      "200": { "$value": "#fecdca", "$type": "color" },
+      "300": { "$value": "#fda29b", "$type": "color" },
+      "400": { "$value": "#f97066", "$type": "color" },
+      "500": { "$value": "#f04438", "$type": "color" },
+      "600": { "$value": "#d92d20", "$type": "color" },
+      "700": { "$value": "#b42318", "$type": "color" },
+      "800": { "$value": "#912018", "$type": "color" },
+      "900": { "$value": "#7a271a", "$type": "color" }
+    },
     "semantic": {
       "background": {
         "default": { "$value": "{color.base.white}", "$type": "color" },
@@ -46,6 +82,41 @@
         "primary": { "$value": "{color.brand.700}", "$type": "color" },
         "primaryHover": { "$value": "{color.brand.800}", "$type": "color" },
         "primaryText": { "$value": "{color.base.white}", "$type": "color" }
+      },
+      "status": {
+        "success": {
+          "background": {
+            "$value": "{color.success.50}",
+            "$type": "color"
+          },
+          "border": { "$value": "{color.success.200}", "$type": "color" },
+          "foreground": {
+            "$value": "{color.success.700}",
+            "$type": "color"
+          }
+        },
+        "warning": {
+          "background": {
+            "$value": "{color.warning.50}",
+            "$type": "color"
+          },
+          "border": { "$value": "{color.warning.200}", "$type": "color" },
+          "foreground": {
+            "$value": "{color.warning.700}",
+            "$type": "color"
+          }
+        },
+        "danger": {
+          "background": {
+            "$value": "{color.danger.50}",
+            "$type": "color"
+          },
+          "border": { "$value": "{color.danger.200}", "$type": "color" },
+          "foreground": {
+            "$value": "{color.danger.700}",
+            "$type": "color"
+          }
+        }
       }
     }
   }

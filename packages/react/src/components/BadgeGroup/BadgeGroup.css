@@ -59,26 +59,26 @@
 
 .pf-badge-group__badge--brand {
   background: var(--color-brand-100);
-  border-color: #fed7aa;
+  border-color: var(--color-brand-300);
   color: var(--color-brand-700);
 }
 
 .pf-badge-group__badge--error {
-  background: #fee4e2;
-  border-color: #fecdca;
-  color: #b42318;
+  background: var(--color-semantic-status-danger-background);
+  border-color: var(--color-semantic-status-danger-border);
+  color: var(--color-semantic-status-danger-foreground);
 }
 
 .pf-badge-group__badge--warning {
-  background: #fef0c7;
-  border-color: #fedf89;
-  color: #b54708;
+  background: var(--color-semantic-status-warning-background);
+  border-color: var(--color-semantic-status-warning-border);
+  color: var(--color-semantic-status-warning-foreground);
 }
 
 .pf-badge-group__badge--success {
-  background: #dcfae6;
-  border-color: #abefc6;
-  color: #067647;
+  background: var(--color-semantic-status-success-background);
+  border-color: var(--color-semantic-status-success-border);
+  color: var(--color-semantic-status-success-foreground);
 }
 
 .pf-badge-group__text--pill {
@@ -95,21 +95,21 @@
 }
 
 .pf-badge-group__text--brand {
-  border-color: #fed7aa;
+  border-color: var(--color-brand-300);
   color: var(--color-brand-700);
 }
 
 .pf-badge-group__text--error {
-  border-color: #fecdca;
-  color: #b42318;
+  border-color: var(--color-semantic-status-danger-border);
+  color: var(--color-semantic-status-danger-foreground);
 }
 
 .pf-badge-group__text--warning {
-  border-color: #fedf89;
-  color: #b54708;
+  border-color: var(--color-semantic-status-warning-border);
+  color: var(--color-semantic-status-warning-foreground);
 }
 
 .pf-badge-group__text--success {
-  border-color: #abefc6;
-  color: #067647;
+  border-color: var(--color-semantic-status-success-border);
+  color: var(--color-semantic-status-success-foreground);
 }

@@ -1,5 +1,5 @@
 .pf-video-player {
-  background: #000;
+  background: var(--color-base-black);
   border: 1px solid var(--color-semantic-border-default);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -19,7 +19,7 @@
 }
 
 .pf-video-player--invalid {
-  border-color: #d92d20;
+  border-color: var(--color-danger-600);
 }
 
 .pf-video-player__video {

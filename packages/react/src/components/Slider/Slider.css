@@ -16,7 +16,7 @@
 }
 
 .pf-field__error {
-  color: #b42318;
+  color: var(--color-semantic-status-danger-foreground);
   font-size: var(--font-size-sm);
   margin: 0;
 }
@@ -61,7 +61,7 @@
   background: var(--color-semantic-background-default);
   border: 2px solid var(--color-semantic-action-primary);
   border-radius: 50%;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
+  box-shadow: var(--pf-control-thumb-outline-shadow);
   height: 18px;
   margin-top: -5px;
   width: 18px;
@@ -71,7 +71,7 @@
   background: var(--color-semantic-background-default);
   border: 2px solid var(--color-semantic-action-primary);
   border-radius: 50%;
-  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
+  box-shadow: var(--pf-control-thumb-outline-shadow);
   height: 18px;
   width: 18px;
 }
@@ -90,17 +90,17 @@
 .pf-slider--invalid {
   background: linear-gradient(
     to right,
-    #f04438 0,
-    #f04438 var(--pf-slider-progress, 0%),
+    var(--color-danger-500) 0,
+    var(--color-danger-500) var(--pf-slider-progress, 0%),
     var(--color-semantic-border-default) var(--pf-slider-progress, 0%),
     var(--color-semantic-border-default) 100%
   );
 }
 
 .pf-slider--invalid::-webkit-slider-thumb {
-  border-color: #f04438;
+  border-color: var(--color-danger-500);
 }
 
 .pf-slider--invalid::-moz-range-thumb {
-  border-color: #f04438;
+  border-color: var(--color-danger-500);
 }

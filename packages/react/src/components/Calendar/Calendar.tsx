@@ -66,6 +66,7 @@ export interface CalendarProps extends Omit<
   value?: Date;
   defaultValue?: Date;
   onValueChange?: (value: Date) => void;
+  autoSelectToday?: boolean;
   label?: string;
   description?: string;
   error?: string;
@@ -80,6 +81,7 @@ export function Calendar({
   value,
   defaultValue,
   onValueChange,
+  autoSelectToday = true,
   label,
   description,
   error,
@@ -100,7 +102,11 @@ export function Calendar({
 
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<Date | undefined>(
-    defaultValue ? toMidday(defaultValue) : undefined,
+    defaultValue
+      ? toMidday(defaultValue)
+      : autoSelectToday
+        ? toMidday(new Date())
+        : undefined,
   );
   const selectedDate = isControlled
     ? value

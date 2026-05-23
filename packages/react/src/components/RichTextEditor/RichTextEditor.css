@@ -11,7 +11,7 @@
 }
 
 .pf-rte--invalid {
-  border-color: #d92d20;
+  border-color: var(--color-danger-600);
 }
 
 .pf-rte--disabled {

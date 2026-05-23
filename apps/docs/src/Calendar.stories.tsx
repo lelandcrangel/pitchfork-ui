@@ -8,7 +8,7 @@ const meta = {
   args: {
     label: 'Billing date',
     description: 'Pick the date your billing cycle starts.',
-    defaultValue: new Date(2026, 4, 22),
+    autoSelectToday: false,
     showOutsideDays: true,
   },
   argTypes: {

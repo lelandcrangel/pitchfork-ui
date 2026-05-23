@@ -79,13 +79,21 @@
 }
 
 .pf-metric-card__trend--positive {
-  background: color-mix(in srgb, #16a34a 10%, white);
-  color: #166534;
+  background: color-mix(
+    in srgb,
+    var(--color-semantic-status-success-background) 55%,
+    white
+  );
+  color: var(--color-semantic-status-success-foreground);
 }
 
 .pf-metric-card__trend--negative {
-  background: color-mix(in srgb, #dc2626 10%, white);
-  color: #991b1b;
+  background: color-mix(
+    in srgb,
+    var(--color-semantic-status-danger-background) 55%,
+    white
+  );
+  color: var(--color-semantic-status-danger-foreground);
 }
 
 .pf-metric-card__trend--neutral {

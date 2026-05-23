@@ -35,7 +35,7 @@
 }
 
 .pf-date-picker__trigger--invalid {
-  border-color: #d92d20;
+  border-color: var(--color-danger-600);
 }
 
 .pf-date-picker__value {

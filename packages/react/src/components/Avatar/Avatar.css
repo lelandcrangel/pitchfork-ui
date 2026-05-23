@@ -63,15 +63,15 @@
 }
 
 .pf-avatar__status--online {
-  background: #12b76a;
+  background: var(--color-semantic-status-success-foreground);
 }
 
 .pf-avatar__status--away {
-  background: #f79009;
+  background: var(--color-semantic-status-warning-foreground);
 }
 
 .pf-avatar__status--busy {
-  background: #f04438;
+  background: var(--color-semantic-status-danger-foreground);
 }
 
 .pf-avatar__status--offline {

@@ -35,7 +35,7 @@
 }
 
 .pf-multi-select__trigger--invalid {
-  border-color: #d92d20;
+  border-color: var(--color-danger-600);
 }
 
 .pf-multi-select__placeholder {
@@ -83,7 +83,7 @@
   background: var(--color-semantic-background-default);
   border: 1px solid var(--color-semantic-text-muted);
   border-radius: var(--radius-md);
-  box-shadow: 0 14px 30px rgb(0 0 0 / 0.12);
+  box-shadow: var(--pf-elevation-popover-shadow);
   list-style: none;
   margin: 0;
   max-height: 240px;

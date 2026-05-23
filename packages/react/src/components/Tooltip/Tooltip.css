@@ -3,10 +3,10 @@
 }
 
 .pf-tooltip {
-  background: #111827;
+  background: var(--pf-tooltip-bg);
   border-radius: var(--radius-sm);
-  box-shadow: 0 10px 24px rgb(0 0 0 / 0.24);
-  color: #fff;
+  box-shadow: var(--pf-elevation-tooltip-shadow);
+  color: var(--pf-tooltip-text);
   font-size: var(--font-size-sm);
   line-height: 1.35;
   max-width: 260px;

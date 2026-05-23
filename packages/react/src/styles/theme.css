@@ -19,7 +19,7 @@
   /* Field/input aliases */
   --pf-field-label: var(--color-semantic-text-default);
   --pf-field-description: var(--color-semantic-text-muted);
-  --pf-field-error: #d92d20;
+  --pf-field-error: var(--color-semantic-status-danger-foreground);
   --pf-input-bg: var(--color-semantic-background-default);
   --pf-input-border: var(--color-semantic-border-default);
   --pf-input-text: var(--color-semantic-text-default);
@@ -34,6 +34,20 @@
   --pf-select-menu-border: var(--color-semantic-text-muted);
   --pf-select-option-active-bg: var(--color-semantic-action-primary);
   --pf-select-option-active-text: var(--color-semantic-action-primary-text);
+
+  /* Overlay and elevation color aliases */
+  --pf-overlay-backdrop: rgb(15 23 42 / 0.48);
+  --pf-elevation-overlay-shadow: 0 24px 60px rgb(15 23 42 / 0.18);
+  --pf-elevation-popover-shadow: 0 14px 30px rgb(0 0 0 / 0.12);
+  --pf-elevation-floating-shadow: 0 16px 32px rgb(15 23 42 / 0.08);
+  --pf-elevation-tab-active-shadow: 0 1px 2px rgb(15 23 42 / 0.12);
+  --pf-elevation-tooltip-shadow: 0 10px 24px rgb(0 0 0 / 0.24);
+  --pf-control-thumb-outline-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
+
+  /* Utility color aliases */
+  --pf-tooltip-bg: var(--color-gray-900);
+  --pf-tooltip-text: var(--color-base-white);
+  --pf-subtle-hover-overlay: rgb(0 0 0 / 0.08);
 }
 
 [data-theme='dark'] {
@@ -49,6 +63,15 @@
   --color-semantic-action-primary: var(--color-brand-500);
   --color-semantic-action-primary-hover: var(--color-brand-600);
   --color-semantic-action-primary-text: var(--color-base-white);
+  --color-semantic-status-success-background: var(--color-success-900);
+  --color-semantic-status-success-border: var(--color-success-700);
+  --color-semantic-status-success-foreground: var(--color-success-300);
+  --color-semantic-status-warning-background: var(--color-warning-900);
+  --color-semantic-status-warning-border: var(--color-warning-700);
+  --color-semantic-status-warning-foreground: var(--color-warning-300);
+  --color-semantic-status-danger-background: var(--color-danger-900);
+  --color-semantic-status-danger-border: var(--color-danger-700);
+  --color-semantic-status-danger-foreground: var(--color-danger-300);
 
   --pf-focus-ring: 0 0 0 3px rgb(59 130 246 / 0.45);
 }

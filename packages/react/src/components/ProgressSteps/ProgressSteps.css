@@ -117,24 +117,24 @@
 }
 
 .pf-progress-steps__item--complete .pf-progress-steps__marker {
-  background: #86efac;
-  border-color: #86efac;
-  color: #14532d;
+  background: var(--color-semantic-status-success-border);
+  border-color: var(--color-semantic-status-success-border);
+  color: var(--color-success-900);
 }
 
 .pf-progress-steps__item--current .pf-progress-steps__marker {
-  background: #15803d;
-  border-color: #15803d;
+  background: var(--color-semantic-status-success-foreground);
+  border-color: var(--color-semantic-status-success-foreground);
   box-shadow: var(--focus-ring-shadow);
-  color: #f0fdf4;
+  color: var(--color-base-white);
 }
 
 .pf-progress-steps__item--complete .pf-progress-steps__connector {
-  background: #86efac;
+  background: var(--color-semantic-status-success-border);
 }
 
 .pf-progress-steps__item--current .pf-progress-steps__title {
-  color: #15803d;
+  color: var(--color-semantic-status-success-foreground);
 }
 
 @media (max-width: 640px) {

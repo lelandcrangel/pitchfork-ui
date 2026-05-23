@@ -60,13 +60,13 @@
 }
 
 .pf-utility-button--danger {
-  background: #fef3f2;
-  border-color: #fecdca;
-  color: #b42318;
+  background: var(--color-semantic-status-danger-background);
+  border-color: var(--color-semantic-status-danger-border);
+  color: var(--color-semantic-status-danger-foreground);
 }
 
 .pf-utility-button--danger:hover:not(:disabled) {
-  background: #fee4e2;
+  background: var(--color-danger-100);
 }
 
 .pf-utility-button__icon {

@@ -36,7 +36,7 @@
   background: var(--color-semantic-background-default);
   border: 1px solid var(--color-semantic-border-default);
   border-radius: var(--radius-md);
-  box-shadow: 0 16px 32px rgb(15 23 42 / 0.08);
+  box-shadow: var(--pf-elevation-floating-shadow);
   display: grid;
   gap: var(--space-3);
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -51,15 +51,30 @@
 }
 
 .pf-notification--success {
-  border-color: #abefc6;
+  background: color-mix(
+    in srgb,
+    var(--color-semantic-status-success-background) 45%,
+    white
+  );
+  border-color: var(--color-semantic-status-success-border);
 }
 
 .pf-notification--warning {
-  border-color: #fedf89;
+  background: color-mix(
+    in srgb,
+    var(--color-semantic-status-warning-background) 45%,
+    white
+  );
+  border-color: var(--color-semantic-status-warning-border);
 }
 
 .pf-notification--danger {
-  border-color: #fecdca;
+  background: color-mix(
+    in srgb,
+    var(--color-semantic-status-danger-background) 45%,
+    white
+  );
+  border-color: var(--color-semantic-status-danger-border);
 }
 
 .pf-notification__icon {
@@ -94,15 +109,15 @@
 }
 
 .pf-notification--success .pf-notification__icon {
-  color: #067647;
+  color: var(--color-semantic-status-success-foreground);
 }
 
 .pf-notification--warning .pf-notification__icon {
-  color: #b54708;
+  color: var(--color-semantic-status-warning-foreground);
 }
 
 .pf-notification--danger .pf-notification__icon {
-  color: #b42318;
+  color: var(--color-semantic-status-danger-foreground);
 }
 
 .pf-notification__content {

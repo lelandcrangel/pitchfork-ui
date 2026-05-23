@@ -36,7 +36,7 @@
 }
 
 .pf-rating-stars__star-icon--fill {
-  color: #f59e0b;
+  color: var(--color-warning-500);
 }
 
 .pf-rating-stars__value {
@@ -47,10 +47,10 @@
 
 .pf-rating-badge {
   align-items: center;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
+  background: var(--color-warning-50);
+  border: 1px solid var(--color-warning-200);
   border-radius: var(--radius-full);
-  color: #b45309;
+  color: var(--color-warning-700);
   display: inline-flex;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
@@ -86,6 +86,6 @@
 }
 
 .pf-rating-badge__reviews {
-  color: #92400e;
+  color: var(--color-warning-800);
   font-weight: var(--font-weight-medium);
 }

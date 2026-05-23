@@ -9,7 +9,7 @@
 }
 
 .pf-calendar--invalid {
-  border-color: #d92d20;
+  border-color: var(--color-danger-600);
 }
 
 .pf-calendar__header {
@@ -134,6 +134,11 @@
   background: var(--color-semantic-action-primary);
   color: var(--color-semantic-action-primary-text);
   font-weight: var(--font-weight-semibold);
+}
+
+.pf-calendar__day--selected:hover:not(:disabled) {
+  background: var(--color-semantic-action-primary-hover);
+  color: var(--color-semantic-action-primary-text);
 }
 
 .pf-calendar__day:disabled {

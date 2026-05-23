@@ -13,7 +13,7 @@ const meta = {
   args: {
     label: 'Event date',
     description: 'Choose a date for the event.',
-    defaultValue: new Date(2026, 4, 22),
+    autoSelectToday: false,
   },
 } satisfies Meta<typeof Calendar>;
 
@@ -21,6 +21,13 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
+
+export const PreselectedDay: Story = {
+  args: {
+    description: 'A date is preselected by default.',
+    defaultValue: new Date(2026, 4, 22),
+  },
+};
 
 export const NoOutsideDays: Story = {
   args: {

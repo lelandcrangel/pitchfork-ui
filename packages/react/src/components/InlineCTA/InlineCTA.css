@@ -60,11 +60,21 @@
 }
 
 .pf-inline-cta--success {
-  background: color-mix(in srgb, #16a34a 10%, white);
+  background: color-mix(
+    in srgb,
+    var(--color-semantic-status-success-background) 55%,
+    white
+  );
+  border-color: var(--color-semantic-status-success-border);
 }
 
 .pf-inline-cta--warning {
-  background: color-mix(in srgb, #f59e0b 14%, white);
+  background: color-mix(
+    in srgb,
+    var(--color-semantic-status-warning-background) 60%,
+    white
+  );
+  border-color: var(--color-semantic-status-warning-border);
 }
 
 @media (max-width: 720px) {

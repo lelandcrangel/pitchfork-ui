@@ -93,6 +93,10 @@
   width: 8px;
 }
 
+.pf-button-group__button--selected .pf-button-group__dot {
+  background: var(--color-base-white);
+}
+
 .pf-button-group__label {
   font: inherit;
   font-weight: var(--font-weight-semibold);

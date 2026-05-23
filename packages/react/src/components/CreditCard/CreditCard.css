@@ -1,5 +1,33 @@
 .pf-credit-card {
-  border: 1px solid rgb(255 255 255 / 0.25);
+  --pf-credit-card-border: rgb(255 255 255 / 0.25);
+  --pf-credit-card-glare: rgb(255 255 255 / 0.22);
+  --pf-credit-card-generic-gradient: linear-gradient(
+    135deg,
+    #1f2937,
+    #111827 55%,
+    #374151
+  );
+  --pf-credit-card-visa-gradient: linear-gradient(
+    135deg,
+    #1d4ed8,
+    #1e3a8a 55%,
+    #1d4ed8
+  );
+  --pf-credit-card-mastercard-gradient: linear-gradient(
+    135deg,
+    #ea580c,
+    #9a3412 55%,
+    #ef4444
+  );
+  --pf-credit-card-amex-gradient: linear-gradient(
+    135deg,
+    #0f766e,
+    #115e59 55%,
+    #164e63
+  );
+  --pf-credit-card-chip-gradient: linear-gradient(135deg, #f8fafc, #cbd5e1);
+
+  border: 1px solid var(--pf-credit-card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   color: var(--color-base-white);
@@ -17,7 +45,7 @@
 .pf-credit-card::before {
   background: radial-gradient(
     circle at 20% 20%,
-    rgb(255 255 255 / 0.22),
+    var(--pf-credit-card-glare),
     transparent 40%
   );
   border-radius: inherit;
@@ -28,19 +56,19 @@
 }
 
 .pf-credit-card--generic {
-  background: linear-gradient(135deg, #1f2937, #111827 55%, #374151);
+  background: var(--pf-credit-card-generic-gradient);
 }
 
 .pf-credit-card--visa {
-  background: linear-gradient(135deg, #1d4ed8, #1e3a8a 55%, #1d4ed8);
+  background: var(--pf-credit-card-visa-gradient);
 }
 
 .pf-credit-card--mastercard {
-  background: linear-gradient(135deg, #ea580c, #9a3412 55%, #ef4444);
+  background: var(--pf-credit-card-mastercard-gradient);
 }
 
 .pf-credit-card--amex {
-  background: linear-gradient(135deg, #0f766e, #115e59 55%, #164e63);
+  background: var(--pf-credit-card-amex-gradient);
 }
 
 .pf-credit-card__top-row {
@@ -52,7 +80,7 @@
 }
 
 .pf-credit-card__chip {
-  background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+  background: var(--pf-credit-card-chip-gradient);
   border-radius: 4px;
   display: inline-flex;
   height: 28px;

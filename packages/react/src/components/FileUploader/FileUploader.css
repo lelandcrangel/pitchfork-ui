@@ -38,7 +38,7 @@
 }
 
 .pf-file-uploader__dropzone--invalid {
-  border-color: #d92d20;
+  border-color: var(--color-danger-600);
 }
 
 .pf-file-uploader__dropzone:disabled {

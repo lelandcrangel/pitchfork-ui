@@ -26,6 +26,7 @@ export const flattenTokens = (node, path = []) => {
 export const colorRows = flattenTokens(colorTokens);
 export const spacingRows = flattenTokens(sizeTokens.space, ['space']);
 export const radiusRows = flattenTokens(sizeTokens.radius, ['radius']);
+export const dimensionRows = [...spacingRows, ...radiusRows];
 export const typographyRows = flattenTokens(typographyTokens);
 export const shadowRows = flattenTokens(shadowTokens);
 
@@ -68,6 +69,55 @@ export const cssVariableRows = [
   value: row.value,
   type: row.type,
 }));
+
+export const resolvedCssVariableRows = cssVariableRows.map((row) => ({
+  ...row,
+  resolvedValue:
+    row.type === 'color'
+      ? resolveReference(row.value, colorValueByName)
+      : row.value,
+}));
+
+export const cssColorVariableRows = resolvedCssVariableRows.filter(
+  (row) => row.type === 'color',
+);
+
+export const cssColorVariableGroups = [
+  { key: 'base', title: 'Base Colors' },
+  { key: 'gray', title: 'Gray Scale' },
+  { key: 'brand', title: 'Brand Scale' },
+  { key: 'success', title: 'Success Scale' },
+  { key: 'warning', title: 'Warning Scale' },
+  { key: 'danger', title: 'Danger Scale' },
+  { key: 'semantic', title: 'Semantic Colors' },
+]
+  .map((group) => ({
+    ...group,
+    rows: cssColorVariableRows.filter((row) =>
+      row.cssVar.startsWith(`--color-${group.key}-`),
+    ),
+  }))
+  .filter((group) => group.rows.length > 0);
+
+export const cssDimensionVariableRows = resolvedCssVariableRows.filter(
+  (row) => row.type === 'dimension' && !row.cssVar.startsWith('--font-'),
+);
+
+export const cssSpacingVariableRows = cssDimensionVariableRows.filter((row) =>
+  row.cssVar.startsWith('--space-'),
+);
+
+export const cssRadiusVariableRows = cssDimensionVariableRows.filter((row) =>
+  row.cssVar.startsWith('--radius-'),
+);
+
+export const cssFontVariableRows = resolvedCssVariableRows.filter((row) =>
+  row.cssVar.startsWith('--font-'),
+);
+
+export const cssShadowVariableRows = resolvedCssVariableRows.filter(
+  (row) => row.type === 'shadow',
+);
 
 export const aliasRows = [
   { name: '--pf-button-primary-bg', mapsTo: '--color-semantic-action-primary' },
@@ -266,6 +316,160 @@ export const ColorPreview = () => (
 
 );
 
+export const CssColorVariableGrid = ({ rows }) => (
+  <PreviewGrid>
+    {rows.map((row) => {
+      const renderable = isRenderableColor(row.resolvedValue);
+
+      return (
+        <PreviewCard key={row.cssVar}>
+          <div
+            style={{
+              height: '48px',
+              borderRadius: '6px',
+              border: '1px solid var(--color-semantic-border-default)',
+              background: renderable ? row.resolvedValue : 'transparent',
+              backgroundImage: renderable
+                ? 'none'
+                : 'linear-gradient(45deg, #f1f5f9 25%, #e2e8f0 25%, #e2e8f0 50%, #f1f5f9 50%, #f1f5f9 75%, #e2e8f0 75%, #e2e8f0 100%)',
+              backgroundSize: '12px 12px',
+            }}
+          />
+          <div style={{ marginTop: '8px', fontSize: '12px' }}>
+            <div>
+              <MetaCode>{row.cssVar}</MetaCode>
+            </div>
+            <div>
+              <MetaCode>{row.value}</MetaCode>
+            </div>
+            {row.resolvedValue !== row.value ? (
+              <div>
+                <MetaCode>{row.resolvedValue}</MetaCode>
+              </div>
+            ) : null}
+          </div>
+        </PreviewCard>
+      );
+    })}
+
+  </PreviewGrid>
+);
+
+export const CssColorVariableGroups = ({ groups }) => (
+  <div style={{ display: 'grid', gap: '10px', marginBottom: '20px' }}>
+    {groups.map((group) => (
+      <div key={group.key}>
+        <h4 style={{ marginBottom: '8px' }}>{group.title}</h4>
+        <CssColorVariableGrid rows={group.rows} />
+      </div>
+    ))}
+  </div>
+);
+
+export const CssSpacingVariablePreview = ({ rows }) => (
+  <PreviewGrid>
+    {rows.map((row) => (
+      <PreviewCard key={row.cssVar}>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.cssVar}</MetaCode>
+        </div>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.value}</MetaCode>
+        </div>
+        <div
+          style={{
+            height: '10px',
+            borderRadius: '9999px',
+            background: 'var(--color-semantic-action-primary)',
+            width: `var(${row.cssVar})`,
+            minWidth: row.value === '0px' ? '2px' : undefined,
+          }}
+        />
+      </PreviewCard>
+    ))}
+  </PreviewGrid>
+);
+
+export const CssRadiusVariablePreview = ({ rows }) => (
+  <PreviewGrid>
+    {rows.map((row) => (
+      <PreviewCard key={row.cssVar}>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.cssVar}</MetaCode>
+        </div>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.value}</MetaCode>
+        </div>
+        <div
+          style={{
+            height: '48px',
+            background: 'var(--color-semantic-background-subtle)',
+            border: '1px solid var(--color-semantic-border-default)',
+            borderRadius: `var(${row.cssVar})`,
+          }}
+        />
+      </PreviewCard>
+    ))}
+  </PreviewGrid>
+);
+
+export const CssFontVariablePreview = ({ rows }) => (
+  <PreviewGrid>
+    {rows.map((row) => {
+      const sampleStyle = {
+        margin: 0,
+        lineHeight: 1.3,
+      };
+
+      if (row.cssVar.startsWith('--font-family-')) {
+        sampleStyle.fontFamily = `var(${row.cssVar})`;
+      }
+      if (row.cssVar.startsWith('--font-size-')) {
+        sampleStyle.fontSize = `var(${row.cssVar})`;
+      }
+      if (row.cssVar.startsWith('--font-weight-')) {
+        sampleStyle.fontWeight = `var(${row.cssVar})`;
+      }
+
+      return (
+        <PreviewCard key={row.cssVar}>
+          <div style={{ marginBottom: '8px' }}>
+            <MetaCode>{row.cssVar}</MetaCode>
+          </div>
+          <div style={{ marginBottom: '8px' }}>
+            <MetaCode>{row.value}</MetaCode>
+          </div>
+          <p style={sampleStyle}>The quick brown fox jumps over the lazy dog.</p>
+        </PreviewCard>
+      );
+    })}
+
+  </PreviewGrid>
+);
+
+export const CssShadowVariablePreview = ({ rows }) => (
+  <PreviewGrid>
+    {rows.map((row) => (
+      <PreviewCard key={row.cssVar}>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.cssVar}</MetaCode>
+        </div>
+        <div style={{ marginBottom: '8px' }}>
+          <MetaCode>{row.value}</MetaCode>
+        </div>
+        <div
+          style={{
+            height: '56px',
+            borderRadius: '8px',
+            background: '#ffffff',
+            boxShadow: `var(${row.cssVar})`,
+          }}
+        />
+      </PreviewCard>
+    ))}
+  </PreviewGrid>
+);
+
 export const SpacingPreview = () => (
   <PreviewGrid>
     {spacingRows.map((row) => (
@@ -370,7 +574,35 @@ The React package imports generated CSS variables from `@pitchfork-ui/tokens/css
 
 All design tokens are compiled to CSS custom properties in `@pitchfork-ui/tokens/css`.
 
-<CssVariableTable rows={cssVariableRows} />
+### Color Custom Properties
+
+Color variables are shown as swatches in a grid so you can quickly scan hue and contrast.
+
+<CssColorVariableGroups groups={cssColorVariableGroups} />
+
+### Dimension Custom Properties
+
+Dimension variables include spacing and radius values used for layout rhythm and shape.
+
+<h4>Spacing</h4>
+
+<CssSpacingVariablePreview rows={cssSpacingVariableRows} />
+
+<h4>Radius</h4>
+
+<CssRadiusVariablePreview rows={cssRadiusVariableRows} />
+
+### Font Custom Properties
+
+Font variables define family, sizing, and weight choices used across components.
+
+<CssFontVariablePreview rows={cssFontVariableRows} />
+
+### Shadow Custom Properties
+
+Shadow variables provide elevation depth and surface layering.
+
+<CssShadowVariablePreview rows={cssShadowVariableRows} />
 
 ## Dark Theme Layer
 
@@ -395,33 +627,3 @@ To activate dark mode on any subtree:
 Component-level aliases are available in the React theme layer (`packages/react/src/styles/theme.css`) to make per-component theming simpler without changing semantic token names.
 
 <AliasTable rows={aliasRows} />
-
-## Color
-
-<ColorPreview />
-
-<TokenTable rows={colorRows} />
-
-## Spacing
-
-<SpacingPreview />
-
-<TokenTable rows={spacingRows} />
-
-## Radius
-
-<RadiusPreview />
-
-<TokenTable rows={radiusRows} />
-
-## Typography
-
-<TypographyPreview />
-
-<TokenTable rows={typographyRows} />
-
-## Shadow
-
-<ShadowPreview />
-
-<TokenTable rows={shadowRows} />

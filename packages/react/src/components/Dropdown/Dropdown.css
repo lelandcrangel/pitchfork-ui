@@ -105,11 +105,11 @@
 }
 
 .pf-dropdown__item--destructive {
-  color: #b42318;
+  color: var(--color-semantic-status-danger-foreground);
 }
 
 .pf-dropdown__item--destructive .pf-dropdown__item-icon {
-  color: #f04438;
+  color: var(--color-danger-500);
 }
 
 .pf-dropdown__item:disabled {
