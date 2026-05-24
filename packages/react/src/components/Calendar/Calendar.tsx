@@ -108,11 +108,7 @@ export function Calendar({
         ? toMidday(new Date())
         : undefined,
   );
-  const selectedDate = isControlled
-    ? value
-      ? toMidday(value)
-      : undefined
-    : internalValue;
+  const selectedDate = isControlled ? value : internalValue;
 
   const yearRange = useMemo(() => {
     const fallbackStart = new Date().getFullYear() - 50;

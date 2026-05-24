@@ -2,7 +2,7 @@
 
 :root {
   color-scheme: light;
-  --pf-focus-ring: 0 0 0 3px rgb(59 130 246 / 0.35);
+  --pf-focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-brand-500) 35%, transparent);
 
   /* Button aliases */
   --pf-button-primary-bg: var(--color-semantic-action-primary);
@@ -36,18 +36,18 @@
   --pf-select-option-active-text: var(--color-semantic-action-primary-text);
 
   /* Overlay and elevation color aliases */
-  --pf-overlay-backdrop: rgb(15 23 42 / 0.48);
-  --pf-elevation-overlay-shadow: 0 24px 60px rgb(15 23 42 / 0.18);
-  --pf-elevation-popover-shadow: 0 14px 30px rgb(0 0 0 / 0.12);
-  --pf-elevation-floating-shadow: 0 16px 32px rgb(15 23 42 / 0.08);
-  --pf-elevation-tab-active-shadow: 0 1px 2px rgb(15 23 42 / 0.12);
-  --pf-elevation-tooltip-shadow: 0 10px 24px rgb(0 0 0 / 0.24);
-  --pf-control-thumb-outline-shadow: 0 0 0 1px rgb(0 0 0 / 0.06);
+  --pf-overlay-backdrop: color-mix(in srgb, var(--color-gray-900) 48%, transparent);
+  --pf-elevation-overlay-shadow: 0 24px 60px color-mix(in srgb, var(--color-gray-900) 18%, transparent);
+  --pf-elevation-popover-shadow: 0 14px 30px color-mix(in srgb, var(--color-base-black) 12%, transparent);
+  --pf-elevation-floating-shadow: 0 16px 32px color-mix(in srgb, var(--color-gray-900) 8%, transparent);
+  --pf-elevation-tab-active-shadow: 0 1px 2px color-mix(in srgb, var(--color-gray-900) 12%, transparent);
+  --pf-elevation-tooltip-shadow: 0 10px 24px color-mix(in srgb, var(--color-base-black) 24%, transparent);
+  --pf-control-thumb-outline-shadow: 0 0 0 1px color-mix(in srgb, var(--color-base-black) 6%, transparent);
 
   /* Utility color aliases */
   --pf-tooltip-bg: var(--color-gray-900);
   --pf-tooltip-text: var(--color-base-white);
-  --pf-subtle-hover-overlay: rgb(0 0 0 / 0.08);
+  --pf-subtle-hover-overlay: color-mix(in srgb, var(--color-base-black) 8%, transparent);
 }
 
 [data-theme='dark'] {
@@ -73,7 +73,7 @@
   --color-semantic-status-danger-border: var(--color-danger-700);
   --color-semantic-status-danger-foreground: var(--color-danger-300);
 
-  --pf-focus-ring: 0 0 0 3px rgb(59 130 246 / 0.45);
+  --pf-focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-brand-500) 45%, transparent);
 }
 
 *,

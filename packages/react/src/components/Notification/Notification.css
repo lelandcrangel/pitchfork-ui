@@ -46,7 +46,11 @@
 }
 
 .pf-notification--info {
-  background: color-mix(in srgb, var(--pf-notification-color-brand-50, var(--color-brand-50)) 45%, white);
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-color-brand-50, var(--color-brand-50)) 45%,
+    var(--color-base-white)
+  );
   border-color: var(--pf-notification-color-brand-300, var(--color-brand-300));
 }
 
@@ -54,7 +58,7 @@
   background: color-mix(
     in srgb,
     var(--pf-notification-color-semantic-status-success-background, var(--color-semantic-status-success-background)) 45%,
-    white
+    var(--color-base-white)
   );
   border-color: var(--pf-notification-color-semantic-status-success-border, var(--color-semantic-status-success-border));
 }
@@ -63,7 +67,7 @@
   background: color-mix(
     in srgb,
     var(--pf-notification-color-semantic-status-warning-background, var(--color-semantic-status-warning-background)) 45%,
-    white
+    var(--color-base-white)
   );
   border-color: var(--pf-notification-color-semantic-status-warning-border, var(--color-semantic-status-warning-border));
 }
@@ -72,7 +76,7 @@
   background: color-mix(
     in srgb,
     var(--pf-notification-color-semantic-status-danger-background, var(--color-semantic-status-danger-background)) 45%,
-    white
+    var(--color-base-white)
   );
   border-color: var(--pf-notification-color-semantic-status-danger-border, var(--color-semantic-status-danger-border));
 }

@@ -80,10 +80,10 @@
   animation: pf-skeleton-shimmer 1.4s linear infinite;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-background-subtle, var(--color-semantic-background-subtle)) 92%, white 8%)
+    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-background-subtle, var(--color-semantic-background-subtle)) 92%, var(--color-base-white) 8%)
       25%,
-    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-border-default, var(--color-semantic-border-default)) 72%, white 28%) 37%,
-    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-background-subtle, var(--color-semantic-background-subtle)) 92%, white 8%)
+    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-border-default, var(--color-semantic-border-default)) 72%, var(--color-base-white) 28%) 37%,
+    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-background-subtle, var(--color-semantic-background-subtle)) 92%, var(--color-base-white) 8%)
       63%
   );
   background-size: 200% 100%;

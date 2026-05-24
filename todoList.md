@@ -82,3 +82,4 @@ Scope for this list:
   - exported via packages/react/src/index.ts
   - Docs + Interactive stories structure in apps/docs/src
 - Prefer alias tokens in theme.css for component theming consistency.
+- DatePicker should use the internal Input component for its trigger/input.

@@ -82,7 +82,7 @@
   background: color-mix(
     in srgb,
     var(--pf-metrics-color-semantic-status-success-background, var(--color-semantic-status-success-background)) 55%,
-    white
+    var(--color-base-white)
   );
   color: var(--pf-metrics-color-semantic-status-success-foreground, var(--color-semantic-status-success-foreground));
 }
@@ -91,7 +91,7 @@
   background: color-mix(
     in srgb,
     var(--pf-metrics-color-semantic-status-danger-background, var(--color-semantic-status-danger-background)) 55%,
-    white
+    var(--color-base-white)
   );
   color: var(--pf-metrics-color-semantic-status-danger-foreground, var(--color-semantic-status-danger-foreground));
 }

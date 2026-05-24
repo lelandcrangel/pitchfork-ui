@@ -33,7 +33,23 @@ export interface RichTextEditorProps extends Omit<
   disabled?: boolean;
 }
 
-const normalizeHtml = (value: string | undefined) => value ?? '';
+// Strips a single outer <p>...</p> wrapper if present
+const stripOuterPTags = (html: string): string => {
+  if (!html) return '';
+  const trimmed = html.trim();
+  if (
+    trimmed.startsWith('<p>') &&
+    trimmed.endsWith('</p>') &&
+    trimmed.indexOf('<p>') === 0 &&
+    trimmed.lastIndexOf('</p>') === trimmed.length - 4
+  ) {
+    // Remove only the outermost <p>...</p>
+    return trimmed.slice(3, -4);
+  }
+  return html;
+};
+
+const normalizeHtml = (value: string | undefined) => stripOuterPTags(value ?? '');
 const getTextLength = (element: HTMLDivElement) =>
   element.textContent?.length ?? 0;
 

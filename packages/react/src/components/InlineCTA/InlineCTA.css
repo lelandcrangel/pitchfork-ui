@@ -43,7 +43,11 @@
 }
 
 .pf-inline-cta--info {
-  background: color-mix(in srgb, var(--pf-inlinecta-color-brand-50, var(--color-brand-50)) 70%, white);
+  background: color-mix(
+    in srgb,
+    var(--pf-inlinecta-color-brand-50, var(--color-brand-50)) 70%,
+    var(--color-base-white)
+  );
   border-color: var(--pf-inlinecta-color-brand-300, var(--color-brand-300));
 }
 
@@ -63,7 +67,7 @@
   background: color-mix(
     in srgb,
     var(--pf-inlinecta-color-semantic-status-success-background, var(--color-semantic-status-success-background)) 55%,
-    white
+    var(--color-base-white)
   );
   border-color: var(--pf-inlinecta-color-semantic-status-success-border, var(--color-semantic-status-success-border));
 }
@@ -72,7 +76,7 @@
   background: color-mix(
     in srgb,
     var(--pf-inlinecta-color-semantic-status-warning-background, var(--color-semantic-status-warning-background)) 60%,
-    white
+    var(--color-base-white)
   );
   border-color: var(--pf-inlinecta-color-semantic-status-warning-border, var(--color-semantic-status-warning-border));
 }
