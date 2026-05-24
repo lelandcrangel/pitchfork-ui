@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "storybook": "storybook dev -p 6006",
-    "build": "storybook build",
-    "build:hostinger": "STORYBOOK_BASE_PATH=/pitchfork-ui/ storybook build"
+    "sync-changelog": "node ./sync-changelog.cjs",
+    "storybook": "npm run sync-changelog && storybook dev -p 6006",
+    "build": "npm run sync-changelog && storybook build",
+    "build:hostinger": "npm run sync-changelog && STORYBOOK_BASE_PATH=/pitchfork-ui/ storybook build"
   },
   "dependencies": {
     "@pitchfork-ui/react": "0.1.0",

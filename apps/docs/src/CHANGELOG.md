@@ -7,8 +7,6 @@ All notable changes to this project are documented below, grouped by date and fe
 - Fixed React runtime warning in CodeSnippet component by ensuring key props are passed directly to JSX elements, not via spread props.
 - Updated CodeSnippet to use correct Prism theme import (`themes.vsDark`) and fixed all build/runtime errors related to prism-react-renderer integration.
 - Rebuilt @pitchfork-ui/react and verified Storybook launch and syntax highlighting for code snippets.
-- Killed all running Storybook instances to allow for clean restarts.
-- Added reminder to update the changelog after each change for better tracking.
 
 ## [2026-05-24]
 
