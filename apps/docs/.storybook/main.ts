@@ -1,4 +1,12 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const storybookDir = dirname(fileURLToPath(import.meta.url));
+const reactSourceEntry = resolve(
+  storybookDir,
+  '../../../packages/react/src/index.ts',
+);
 
 const rawBasePath = process.env.STORYBOOK_BASE_PATH ?? '/';
 const withLeadingSlash = rawBasePath.startsWith('/')
@@ -35,6 +43,19 @@ const config: StorybookConfig = {
       minify: false,
     };
     config.base = storybookBasePath;
+    config.resolve = {
+      ...(config.resolve ?? {}),
+      alias: [
+        {
+          find: '@pitchfork-ui/react/styles.css',
+          replacement: reactSourceEntry,
+        },
+        {
+          find: '@pitchfork-ui/react',
+          replacement: reactSourceEntry,
+        },
+      ],
+    };
 
     return config;
   },

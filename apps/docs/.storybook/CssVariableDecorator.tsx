@@ -7,28 +7,32 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 
+type CssVariableScope =
+  | 'alert'
+  | 'avatar'
+  | 'badge'
+  | 'badgegroup'
+  | 'breadcrumbs'
+  | 'button'
+  | 'buttongroup'
+  | 'calendar'
+  | 'card'
+  | 'checkbox'
+  | 'inlinecta'
+  | 'input'
+  | 'notification'
+  | 'radio'
+  | 'select'
+  | 'switch'
+  | 'tag'
+  | 'utility';
+
 interface CssVariableControl {
   name: string;
   label: string;
   defaultValue: string;
-  type?: 'color' | 'text';
-  scopes: Array<
-    | 'button'
-    | 'breadcrumbs'
-    | 'input'
-    | 'select'
-    | 'checkbox'
-    | 'radio'
-    | 'switch'
-    | 'avatar'
-    | 'alert'
-    | 'notification'
-    | 'inlinecta'
-    | 'badge'
-    | 'badgegroup'
-    | 'tag'
-    | 'utility'
-  >;
+  type?: 'color' | 'radius' | 'shadow' | 'space' | 'text';
+  scopes: CssVariableScope[];
   variants?: string[];
 }
 
@@ -36,6 +40,11 @@ interface ColorOption {
   label: string;
   value: string;
   swatch: string;
+}
+
+interface TokenOption {
+  label: string;
+  value: string;
 }
 
 const COLOR_OPTIONS: ColorOption[] = [
@@ -216,7 +225,79 @@ const COLOR_OPTIONS: ColorOption[] = [
   },
 ];
 
+const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
+  radius: [
+    { label: 'Radius sm (6px)', value: 'var(--radius-sm)' },
+    { label: 'Radius md (8px)', value: 'var(--radius-md)' },
+    { label: 'Radius lg (12px)', value: 'var(--radius-lg)' },
+    { label: 'Radius full (9999px)', value: 'var(--radius-full)' },
+  ],
+  shadow: [
+    { label: 'Shadow sm', value: 'var(--shadow-sm)' },
+    { label: 'Shadow md', value: 'var(--shadow-md)' },
+  ],
+  space: [
+    { label: 'Space 0 (0px)', value: 'var(--space-0)' },
+    { label: 'Space 1 (4px)', value: 'var(--space-1)' },
+    { label: 'Space 2 (8px)', value: 'var(--space-2)' },
+    { label: 'Space 3 (12px)', value: 'var(--space-3)' },
+    { label: 'Space 4 (16px)', value: 'var(--space-4)' },
+    { label: 'Space 5 (20px)', value: 'var(--space-5)' },
+    { label: 'Space 6 (24px)', value: 'var(--space-6)' },
+  ],
+};
+
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // Card variables
+  {
+    name: '--pf-card-background',
+    label: 'Card background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['card'],
+  },
+  {
+    name: '--pf-card-border',
+    label: 'Card border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['card'],
+  },
+  {
+    name: '--pf-card-radius',
+    label: 'Card border radius',
+    defaultValue: 'var(--radius-lg)',
+    type: 'radius',
+    scopes: ['card'],
+  },
+  {
+    name: '--pf-card-shadow',
+    label: 'Card shadow',
+    defaultValue: 'var(--shadow-sm)',
+    type: 'shadow',
+    scopes: ['card'],
+  },
+  {
+    name: '--pf-card-section-padding',
+    label: 'Card section padding',
+    defaultValue: 'var(--space-4)',
+    type: 'space',
+    scopes: ['card'],
+  },
+  {
+    name: '--pf-card-header-border',
+    label: 'Card header border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['card'],
+  },
+  {
+    name: '--pf-card-footer-border',
+    label: 'Card footer border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['card'],
+  },
   // Calendar variables
   {
     name: '--pf-calendar-semantic-background-default',
@@ -1236,6 +1317,32 @@ function CssVariableController({
     ),
   );
 
+  // Apply variables to :root for global effect
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const root = document.documentElement;
+      for (const [key, value] of Object.entries(scopedVars)) {
+        root.style.setProperty(key, value);
+      }
+      // Remove any variables that are no longer set
+      const allVarNames = controls.map((c) => c.name);
+      for (const name of allVarNames) {
+        if (!(name in scopedVars)) {
+          root.style.removeProperty(name);
+        }
+      }
+    }
+    return () => {
+      if (typeof document !== 'undefined') {
+        const root = document.documentElement;
+        for (const key of Object.keys(scopedVars)) {
+          root.style.removeProperty(key);
+        }
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(scopedVars), controls]);
+
   useEffect(() => {
     const allowedNames = new Set(controls.map((control) => control.name));
     setValues((current) =>
@@ -1345,6 +1452,31 @@ function CssVariableController({
                                 });
                               }}
                             />
+                          ) : control.type === 'radius' ||
+                            control.type === 'shadow' ||
+                            control.type === 'space' ? (
+                            <TokenSelect
+                              id={inputId}
+                              options={TOKEN_OPTIONS[control.type]}
+                              value={
+                                values[control.name] ?? control.defaultValue
+                              }
+                              onChange={(nextValue) => {
+                                setValues((current) => {
+                                  if (nextValue === control.defaultValue) {
+                                    const {
+                                      [control.name]: _removed,
+                                      ...rest
+                                    } = current;
+                                    return rest;
+                                  }
+                                  return {
+                                    ...current,
+                                    [control.name]: nextValue,
+                                  };
+                                });
+                              }}
+                            />
                           ) : (
                             <input
                               id={inputId}
@@ -1431,6 +1563,48 @@ function CssVariableController({
           )
         : null}
     </>
+  );
+}
+
+function TokenSelect({
+  id,
+  options,
+  value,
+  onChange,
+}: {
+  id: string;
+  options: TokenOption[];
+  value: string;
+  onChange: (nextValue: string) => void;
+}) {
+  return (
+    <select
+      id={id}
+      value={value}
+      onChange={(event) => {
+        onChange(event.target.value);
+      }}
+      style={{
+        minHeight: '32px',
+        width: '100%',
+        border: '1px solid var(--color-semantic-border-default)',
+        borderRadius: '6px',
+        padding: '0 8px',
+        fontSize: '12px',
+        color: 'var(--color-semantic-text-default)',
+        background: 'var(--color-semantic-background-default)',
+        cursor: 'pointer',
+      }}
+    >
+      {options.some((option) => option.value === value) ? null : (
+        <option value={value}>{value}</option>
+      )}
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
   );
 }
 
@@ -1575,27 +1749,9 @@ function ColorSelect({
   );
 }
 
-const scopeByStoryTitle: Record<
-  string,
-  Array<
-    | 'button'
-    | 'breadcrumbs'
-    | 'input'
-    | 'select'
-    | 'checkbox'
-    | 'radio'
-    | 'switch'
-    | 'avatar'
-    | 'alert'
-    | 'notification'
-    | 'inlinecta'
-    | 'badge'
-    | 'badgegroup'
-    | 'tag'
-    | 'utility'
-  >
-> = {
+const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Button': ['button'],
+  'Components/Card': ['card'],
   'Components/Button Group': ['buttongroup'],
   'Components/Breadcrumbs': ['breadcrumbs'],
   'Components/Input': ['input'],
@@ -1636,23 +1792,7 @@ export function withCssVariableControls(
   const mappedScopes = context.title
     ? (scopeByStoryTitle[context.title] ?? [])
     : [];
-  const activeScopes: Array<
-    | 'button'
-    | 'breadcrumbs'
-    | 'input'
-    | 'select'
-    | 'checkbox'
-    | 'radio'
-    | 'switch'
-    | 'avatar'
-    | 'alert'
-    | 'notification'
-    | 'inlinecta'
-    | 'badge'
-    | 'badgegroup'
-    | 'tag'
-    | 'utility'
-  > = mappedScopes;
+  const activeScopes: CssVariableScope[] = mappedScopes;
   const activeVariants = [
     context.args?.variant,
     context.args?.color,
