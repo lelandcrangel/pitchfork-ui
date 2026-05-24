@@ -15,12 +15,15 @@ const meta = {
     showOutsideDays: { control: 'boolean' },
     startYear: { control: { type: 'number', min: 1900, max: 2100, step: 1 } },
     endYear: { control: { type: 'number', min: 1900, max: 2100, step: 1 } },
+    error: { control: 'text', description: 'Error message to display below the calendar.' },
   },
 } satisfies Meta<typeof Calendar>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+
 export const Interactive: Story = {
   render: (args) => <Calendar {...args} />,
 };
+
