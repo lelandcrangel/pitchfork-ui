@@ -14,14 +14,18 @@ interface CssVariableControl {
   type?: 'color' | 'text';
   scopes: Array<
     | 'button'
+    | 'breadcrumbs'
     | 'input'
     | 'select'
     | 'checkbox'
     | 'radio'
     | 'switch'
     | 'avatar'
-    | 'status'
+    | 'alert'
+    | 'notification'
+    | 'inlinecta'
     | 'badge'
+    | 'badgegroup'
     | 'tag'
     | 'utility'
   >;
@@ -213,6 +217,77 @@ const COLOR_OPTIONS: ColorOption[] = [
 ];
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+    // Calendar variables
+    {
+      name: '--pf-calendar-semantic-background-default',
+      label: 'Calendar background',
+      defaultValue: 'var(--color-semantic-background-default)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-semantic-border-default',
+      label: 'Calendar border',
+      defaultValue: 'var(--color-semantic-border-default)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-semantic-text-default',
+      label: 'Calendar text',
+      defaultValue: 'var(--color-semantic-text-default)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-semantic-background-subtle',
+      label: 'Calendar background subtle',
+      defaultValue: 'var(--color-semantic-background-subtle)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-semantic-text-muted',
+      label: 'Calendar text muted',
+      defaultValue: 'var(--color-semantic-text-muted)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-focus-ring',
+      label: 'Calendar focus ring',
+      defaultValue: 'var(--pf-focus-ring)',
+      type: 'text',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-danger-600',
+      label: 'Calendar danger border',
+      defaultValue: 'var(--color-danger-600)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-semantic-action-primary',
+      label: 'Calendar selected background',
+      defaultValue: 'var(--color-semantic-action-primary)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-semantic-action-primary-hover',
+      label: 'Calendar selected hover background',
+      defaultValue: 'var(--color-semantic-action-primary-hover)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
+    {
+      name: '--pf-calendar-semantic-action-primary-text',
+      label: 'Calendar selected text',
+      defaultValue: 'var(--color-semantic-action-primary-text)',
+      type: 'color',
+      scopes: ['calendar'],
+    },
   {
     name: '--pf-button-primary-bg',
     label: 'Button primary bg',
@@ -403,6 +478,63 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     type: 'color',
     scopes: ['avatar'],
   },
+      // ButtonGroup variables
+      {
+        name: '--pf-buttongroup-background-default',
+        label: 'ButtonGroup background',
+        defaultValue: 'var(--color-semantic-background-default)',
+        type: 'color',
+        scopes: ['buttongroup'],
+      },
+      {
+        name: '--pf-buttongroup-background-subtle',
+        label: 'ButtonGroup background subtle',
+        defaultValue: 'var(--color-semantic-background-subtle)',
+        type: 'color',
+        scopes: ['buttongroup'],
+      },
+      {
+        name: '--pf-buttongroup-border-default',
+        label: 'ButtonGroup border',
+        defaultValue: 'var(--color-semantic-border-default)',
+        type: 'color',
+        scopes: ['buttongroup'],
+      },
+      {
+        name: '--pf-buttongroup-text-default',
+        label: 'ButtonGroup text',
+        defaultValue: 'var(--color-semantic-text-default)',
+        type: 'color',
+        scopes: ['buttongroup'],
+      },
+      {
+        name: '--pf-buttongroup-focus-ring',
+        label: 'ButtonGroup focus ring',
+        defaultValue: 'var(--pf-focus-ring)',
+        type: 'text',
+        scopes: ['buttongroup'],
+      },
+      {
+        name: '--pf-buttongroup-action-primary',
+        label: 'ButtonGroup selected background',
+        defaultValue: 'var(--color-semantic-action-primary)',
+        type: 'color',
+        scopes: ['buttongroup'],
+      },
+      {
+        name: '--pf-buttongroup-action-primary-hover',
+        label: 'ButtonGroup selected hover background',
+        defaultValue: 'var(--color-semantic-action-primary-hover)',
+        type: 'color',
+        scopes: ['buttongroup'],
+      },
+      {
+        name: '--pf-buttongroup-action-primary-text',
+        label: 'ButtonGroup selected text',
+        defaultValue: 'var(--color-semantic-action-primary-text)',
+        type: 'color',
+        scopes: ['buttongroup'],
+      },
   {
     name: '--pf-avatar-color-semantic-status-warning-foreground',
     label: 'Avatar status away',
@@ -459,96 +591,504 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     type: 'text',
     scopes: [
       'button',
+      'breadcrumbs',
       'input',
       'select',
       'checkbox',
       'radio',
       'switch',
       'avatar',
-      'status',
+      'alert',
+      'notification',
+      'inlinecta',
       'badge',
+      'badgegroup',
       'tag',
       'utility',
     ],
   },
   {
-    name: '--pf-badge-neutral-bg',
-    label: 'Badge neutral bg',
+    name: '--pf-breadcrumbs-link-color',
+    label: 'Breadcrumbs link color',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['breadcrumbs'],
+  },
+  {
+    name: '--pf-breadcrumbs-link-hover-color',
+    label: 'Breadcrumbs link hover color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['breadcrumbs'],
+  },
+  {
+    name: '--pf-breadcrumbs-link-current-color',
+    label: 'Breadcrumbs current link color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['breadcrumbs'],
+  },
+  {
+    name: '--pf-breadcrumbs-separator-color',
+    label: 'Breadcrumbs separator color',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['breadcrumbs'],
+  },
+  {
+    name: '--pf-badge-neutral-background',
+    label: 'Badge neutral background',
     defaultValue: 'var(--color-gray-100)',
     type: 'color',
     scopes: ['badge'],
     variants: ['neutral'],
   },
   {
-    name: '--pf-badge-neutral-text',
-    label: 'Badge neutral text',
+    name: '--pf-badge-neutral-foreground',
+    label: 'Badge neutral foreground',
     defaultValue: 'var(--color-gray-700)',
     type: 'color',
     scopes: ['badge'],
     variants: ['neutral'],
   },
   {
-    name: '--pf-badge-brand-bg',
-    label: 'Badge brand bg',
+    name: '--pf-badge-brand-background',
+    label: 'Badge brand background',
     defaultValue: 'var(--color-brand-100)',
     type: 'color',
     scopes: ['badge'],
     variants: ['brand'],
   },
   {
-    name: '--pf-badge-brand-text',
-    label: 'Badge brand text',
+    name: '--pf-badge-brand-foreground',
+    label: 'Badge brand foreground',
     defaultValue: 'var(--color-brand-700)',
     type: 'color',
     scopes: ['badge'],
     variants: ['brand'],
   },
   {
-    name: '--pf-badge-success-bg',
-    label: 'Badge success bg',
+    name: '--pf-badge-success-background',
+    label: 'Badge success background',
     defaultValue: 'var(--color-semantic-status-success-background)',
     type: 'color',
     scopes: ['badge'],
     variants: ['success'],
   },
   {
-    name: '--pf-badge-success-text',
-    label: 'Badge success text',
+    name: '--pf-badge-success-foreground',
+    label: 'Badge success foreground',
     defaultValue: 'var(--color-semantic-status-success-foreground)',
     type: 'color',
     scopes: ['badge'],
     variants: ['success'],
   },
   {
-    name: '--pf-badge-warning-bg',
-    label: 'Badge warning bg',
+    name: '--pf-badge-warning-background',
+    label: 'Badge warning background',
     defaultValue: 'var(--color-semantic-status-warning-background)',
     type: 'color',
     scopes: ['badge'],
     variants: ['warning'],
   },
   {
-    name: '--pf-badge-warning-text',
-    label: 'Badge warning text',
+    name: '--pf-badge-warning-foreground',
+    label: 'Badge warning foreground',
     defaultValue: 'var(--color-semantic-status-warning-foreground)',
     type: 'color',
     scopes: ['badge'],
     variants: ['warning'],
   },
   {
-    name: '--color-brand-50',
-    label: 'Alert info bg (brand-50)',
+    name: '--pf-badgegroup-gray-100',
+    label: 'Badge Group gray badge background',
+    defaultValue: 'var(--color-gray-100)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['gray'],
+  },
+  {
+    name: '--pf-badgegroup-gray-200',
+    label: 'Badge Group gray border',
+    defaultValue: 'var(--color-gray-200)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['gray'],
+  },
+  {
+    name: '--pf-badgegroup-gray-700',
+    label: 'Badge Group gray foreground',
+    defaultValue: 'var(--color-gray-700)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['gray'],
+  },
+  {
+    name: '--pf-badgegroup-brand-100',
+    label: 'Badge Group brand badge background',
+    defaultValue: 'var(--color-brand-100)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['brand'],
+  },
+  {
+    name: '--pf-badgegroup-brand-300',
+    label: 'Badge Group brand border',
+    defaultValue: 'var(--color-brand-300)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['brand'],
+  },
+  {
+    name: '--pf-badgegroup-brand-700',
+    label: 'Badge Group brand foreground',
+    defaultValue: 'var(--color-brand-700)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['brand'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-success-background',
+    label: 'Badge Group success background',
+    defaultValue: 'var(--color-semantic-status-success-background)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-success-border',
+    label: 'Badge Group success border',
+    defaultValue: 'var(--color-semantic-status-success-border)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-success-foreground',
+    label: 'Badge Group success foreground',
+    defaultValue: 'var(--color-semantic-status-success-foreground)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-warning-background',
+    label: 'Badge Group warning background',
+    defaultValue: 'var(--color-semantic-status-warning-background)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-warning-border',
+    label: 'Badge Group warning border',
+    defaultValue: 'var(--color-semantic-status-warning-border)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-warning-foreground',
+    label: 'Badge Group warning foreground',
+    defaultValue: 'var(--color-semantic-status-warning-foreground)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-danger-background',
+    label: 'Badge Group error background',
+    defaultValue: 'var(--color-semantic-status-danger-background)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['error'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-danger-border',
+    label: 'Badge Group error border',
+    defaultValue: 'var(--color-semantic-status-danger-border)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['error'],
+  },
+  {
+    name: '--pf-badgegroup-semantic-status-danger-foreground',
+    label: 'Badge Group error foreground',
+    defaultValue: 'var(--color-semantic-status-danger-foreground)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['error'],
+  },
+  {
+    name: '--pf-badgegroup-surface-bg',
+    label: 'Badge Group pill text background',
+    defaultValue: 'var(--pf-surface-bg)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['pill'],
+  },
+  {
+    name: '--pf-badgegroup-surface-subtle',
+    label: 'Badge Group modern text background',
+    defaultValue: 'var(--pf-surface-subtle)',
+    type: 'color',
+    scopes: ['badgegroup'],
+    variants: ['modern'],
+  },
+  {
+    name: '--pf-alert-info-background',
+    label: 'Alert info background',
     defaultValue: 'var(--color-brand-50)',
     type: 'color',
-    scopes: ['status'],
+    scopes: ['alert'],
     variants: ['info'],
+  },
+  {
+    name: '--pf-alert-info-border',
+    label: 'Alert info border',
+    defaultValue: 'var(--color-brand-300)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['info'],
+  },
+  {
+    name: '--pf-alert-info-foreground',
+    label: 'Alert info foreground',
+    defaultValue: 'var(--color-brand-800)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['info'],
+  },
+  {
+    name: '--pf-alert-success-background',
+    label: 'Alert success background',
+    defaultValue: 'var(--color-semantic-status-success-background)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-alert-success-border',
+    label: 'Alert success border',
+    defaultValue: 'var(--color-semantic-status-success-border)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-alert-success-foreground',
+    label: 'Alert success foreground',
+    defaultValue: 'var(--color-semantic-status-success-foreground)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-alert-warning-background',
+    label: 'Alert warning background',
+    defaultValue: 'var(--color-semantic-status-warning-background)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-alert-warning-border',
+    label: 'Alert warning border',
+    defaultValue: 'var(--color-semantic-status-warning-border)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-alert-warning-foreground',
+    label: 'Alert warning foreground',
+    defaultValue: 'var(--color-semantic-status-warning-foreground)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-alert-danger-background',
+    label: 'Alert danger background',
+    defaultValue: 'var(--color-semantic-status-danger-background)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['danger'],
+  },
+  {
+    name: '--pf-alert-danger-border',
+    label: 'Alert danger border',
+    defaultValue: 'var(--color-semantic-status-danger-border)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['danger'],
+  },
+  {
+    name: '--pf-alert-danger-foreground',
+    label: 'Alert danger foreground',
+    defaultValue: 'var(--color-semantic-status-danger-foreground)',
+    type: 'color',
+    scopes: ['alert'],
+    variants: ['danger'],
+  },
+  {
+    name: '--pf-notification-color-brand-50',
+    label: 'Notification info background',
+    defaultValue: 'var(--color-brand-50)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['info'],
+  },
+  {
+    name: '--pf-notification-color-brand-300',
+    label: 'Notification info border',
+    defaultValue: 'var(--color-brand-300)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['info'],
+  },
+  {
+    name: '--pf-notification-color-brand-800',
+    label: 'Notification info foreground',
+    defaultValue: 'var(--color-brand-800)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['info'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-success-background',
+    label: 'Notification success background',
+    defaultValue: 'var(--color-semantic-status-success-background)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-success-border',
+    label: 'Notification success border',
+    defaultValue: 'var(--color-semantic-status-success-border)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-success-foreground',
+    label: 'Notification success foreground',
+    defaultValue: 'var(--color-semantic-status-success-foreground)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-warning-background',
+    label: 'Notification warning background',
+    defaultValue: 'var(--color-semantic-status-warning-background)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-warning-border',
+    label: 'Notification warning border',
+    defaultValue: 'var(--color-semantic-status-warning-border)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-warning-foreground',
+    label: 'Notification warning foreground',
+    defaultValue: 'var(--color-semantic-status-warning-foreground)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-danger-background',
+    label: 'Notification danger background',
+    defaultValue: 'var(--color-semantic-status-danger-background)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['danger'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-danger-border',
+    label: 'Notification danger border',
+    defaultValue: 'var(--color-semantic-status-danger-border)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['danger'],
+  },
+  {
+    name: '--pf-notification-color-semantic-status-danger-foreground',
+    label: 'Notification danger foreground',
+    defaultValue: 'var(--color-semantic-status-danger-foreground)',
+    type: 'color',
+    scopes: ['notification'],
+    variants: ['danger'],
+  },
+  {
+    name: '--pf-inlinecta-color-brand-50',
+    label: 'InlineCTA info background',
+    defaultValue: 'var(--color-brand-50)',
+    type: 'color',
+    scopes: ['inlinecta'],
+    variants: ['info'],
+  },
+  {
+    name: '--pf-inlinecta-color-brand-300',
+    label: 'InlineCTA info border',
+    defaultValue: 'var(--color-brand-300)',
+    type: 'color',
+    scopes: ['inlinecta'],
+    variants: ['info'],
+  },
+  {
+    name: '--pf-inlinecta-color-brand-700',
+    label: 'InlineCTA info foreground',
+    defaultValue: 'var(--color-brand-700)',
+    type: 'color',
+    scopes: ['inlinecta'],
+    variants: ['info'],
+  },
+  {
+    name: '--pf-inlinecta-color-semantic-status-success-background',
+    label: 'InlineCTA success background',
+    defaultValue: 'var(--color-semantic-status-success-background)',
+    type: 'color',
+    scopes: ['inlinecta'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-inlinecta-color-semantic-status-success-border',
+    label: 'InlineCTA success border',
+    defaultValue: 'var(--color-semantic-status-success-border)',
+    type: 'color',
+    scopes: ['inlinecta'],
+    variants: ['success'],
+  },
+  {
+    name: '--pf-inlinecta-color-semantic-status-warning-background',
+    label: 'InlineCTA warning background',
+    defaultValue: 'var(--color-semantic-status-warning-background)',
+    type: 'color',
+    scopes: ['inlinecta'],
+    variants: ['warning'],
+  },
+  {
+    name: '--pf-inlinecta-color-semantic-status-warning-border',
+    label: 'InlineCTA warning border',
+    defaultValue: 'var(--color-semantic-status-warning-border)',
+    type: 'color',
+    scopes: ['inlinecta'],
+    variants: ['warning'],
   },
   {
     name: '--color-brand-100',
     label: 'Brand 100',
     defaultValue: 'var(--color-brand-100)',
     type: 'color',
-    scopes: ['status', 'badge', 'tag', 'utility'],
+    scopes: ['badge', 'tag', 'utility'],
     variants: ['info', 'brand'],
   },
   {
@@ -564,7 +1104,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Alert info border (brand-300)',
     defaultValue: 'var(--color-brand-300)',
     type: 'color',
-    scopes: ['status', 'utility'],
+    scopes: ['utility'],
     variants: ['info', 'brand'],
   },
   {
@@ -572,15 +1112,15 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Brand 700',
     defaultValue: 'var(--color-brand-700)',
     type: 'color',
-    scopes: ['status', 'badge', 'tag', 'utility'],
+    scopes: ['badge', 'tag', 'utility'],
     variants: ['info', 'brand'],
   },
   {
     name: '--color-brand-800',
-    label: 'Alert info text (brand-800)',
+    label: 'Brand 800',
     defaultValue: 'var(--color-brand-800)',
     type: 'color',
-    scopes: ['status'],
+    scopes: [],
     variants: ['info'],
   },
   {
@@ -604,7 +1144,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Success background',
     defaultValue: 'var(--color-semantic-status-success-background)',
     type: 'color',
-    scopes: ['status', 'badge', 'tag'],
+    scopes: ['badge', 'tag'],
     variants: ['success'],
   },
   {
@@ -612,7 +1152,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Success border',
     defaultValue: 'var(--color-semantic-status-success-border)',
     type: 'color',
-    scopes: ['status'],
+    scopes: [],
     variants: ['success'],
   },
   {
@@ -620,7 +1160,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Success foreground',
     defaultValue: 'var(--color-semantic-status-success-foreground)',
     type: 'color',
-    scopes: ['status', 'badge', 'tag'],
+    scopes: ['badge', 'tag'],
     variants: ['success'],
   },
   {
@@ -628,7 +1168,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Warning background',
     defaultValue: 'var(--color-semantic-status-warning-background)',
     type: 'color',
-    scopes: ['status', 'badge', 'tag'],
+    scopes: ['badge', 'tag'],
     variants: ['warning'],
   },
   {
@@ -636,7 +1176,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Warning border',
     defaultValue: 'var(--color-semantic-status-warning-border)',
     type: 'color',
-    scopes: ['status'],
+    scopes: [],
     variants: ['warning'],
   },
   {
@@ -644,7 +1184,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Warning foreground',
     defaultValue: 'var(--color-semantic-status-warning-foreground)',
     type: 'color',
-    scopes: ['status', 'badge', 'tag'],
+    scopes: ['badge', 'tag'],
     variants: ['warning'],
   },
   {
@@ -652,7 +1192,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Danger background',
     defaultValue: 'var(--color-semantic-status-danger-background)',
     type: 'color',
-    scopes: ['status', 'utility'],
+    scopes: ['utility'],
     variants: ['danger'],
   },
   {
@@ -660,7 +1200,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Danger border',
     defaultValue: 'var(--color-semantic-status-danger-border)',
     type: 'color',
-    scopes: ['status', 'utility'],
+    scopes: ['utility'],
     variants: ['danger'],
   },
   {
@@ -668,7 +1208,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Danger foreground',
     defaultValue: 'var(--color-semantic-status-danger-foreground)',
     type: 'color',
-    scopes: ['status', 'utility'],
+    scopes: ['utility'],
     variants: ['danger'],
   },
   {
@@ -1039,32 +1579,40 @@ const scopeByStoryTitle: Record<
   string,
   Array<
     | 'button'
+    | 'breadcrumbs'
     | 'input'
     | 'select'
     | 'checkbox'
     | 'radio'
     | 'switch'
     | 'avatar'
-    | 'status'
+    | 'alert'
+    | 'notification'
+    | 'inlinecta'
     | 'badge'
+    | 'badgegroup'
     | 'tag'
     | 'utility'
   >
 > = {
   'Components/Button': ['button'],
+  'Components/Button Group': ['buttongroup'],
+  'Components/Breadcrumbs': ['breadcrumbs'],
   'Components/Input': ['input'],
   'Components/Select': ['select'],
   'Components/Checkbox': ['checkbox'],
   'Components/RadioButton': ['radio'],
   'Components/Switch': ['switch'],
   'Components/Avatar': ['avatar'],
-  'Components/Alert': ['status'],
-  'Components/Notification': ['status'],
-  'Components/InlineCTA': ['status'],
+  'Components/Alert': ['alert'],
+  'Components/Notification': ['notification'],
+  'Components/InlineCTA': ['inlinecta'],
   'Components/Badge': ['badge'],
-  'Components/BadgeGroup': ['badge'],
+  'Components/BadgeGroup': ['badgegroup'],
+  'Components/Badge Group': ['badgegroup'],
   'Components/Tag': ['tag'],
   'Components/UtilityButton': ['utility'],
+  'Components/Calendar': ['calendar'],
 };
 
 export function withCssVariableControls(
@@ -1074,7 +1622,11 @@ export function withCssVariableControls(
     name?: string;
     title?: string;
     id?: string;
-    args?: { variant?: string };
+    args?: {
+      variant?: string;
+      color?: string;
+      appearance?: string;
+    };
   },
 ) {
   const isInteractiveStory =
@@ -1086,25 +1638,34 @@ export function withCssVariableControls(
     : [];
   const activeScopes: Array<
     | 'button'
+    | 'breadcrumbs'
     | 'input'
     | 'select'
     | 'checkbox'
     | 'radio'
     | 'switch'
     | 'avatar'
-    | 'status'
+    | 'alert'
+    | 'notification'
+    | 'inlinecta'
     | 'badge'
+    | 'badgegroup'
     | 'tag'
     | 'utility'
   > = mappedScopes;
-  const activeVariant = context.args?.variant;
+  const activeVariants = [
+    context.args?.variant,
+    context.args?.color,
+    context.args?.appearance,
+  ].filter((value): value is string => typeof value === 'string');
 
   const controls = CSS_VARIABLE_CONTROLS.filter(
     (control) =>
       control.scopes.some((scope) => activeScopes.includes(scope)) &&
       (!control.variants ||
-        (typeof activeVariant === 'string' &&
-          control.variants.includes(activeVariant))),
+        activeVariants.some((activeVariant) =>
+          control.variants?.includes(activeVariant),
+        )),
   );
 
   if (!isInteractiveStory || !isComponentStory || controls.length === 0) {
