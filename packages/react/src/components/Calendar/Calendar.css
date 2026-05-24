@@ -1,7 +1,26 @@
 .pf-calendar {
-  background: var(--pf-calendar-semantic-background-default, var(--pf-calendar-color-semantic-background-default, var(--color-semantic-background-default)));
-  border: 1px solid var(--pf-calendar-semantic-border-default, var(--pf-calendar-color-semantic-border-default, var(--color-semantic-border-default)));
-  color: var(--pf-calendar-semantic-text-default, var(--pf-calendar-color-semantic-text-default, var(--color-semantic-text-default)));
+  background: var(
+    --pf-calendar-semantic-background-default,
+    var(
+      --pf-calendar-color-semantic-background-default,
+      var(--color-semantic-background-default)
+    )
+  );
+  border: 1px solid
+    var(
+      --pf-calendar-semantic-border-default,
+      var(
+        --pf-calendar-color-semantic-border-default,
+        var(--color-semantic-border-default)
+      )
+    );
+  color: var(
+    --pf-calendar-semantic-text-default,
+    var(
+      --pf-calendar-color-semantic-text-default,
+      var(--color-semantic-text-default)
+    )
+  );
   display: grid;
   gap: var(--space-2);
   max-width: 320px;
@@ -9,7 +28,10 @@
 }
 
 .pf-calendar--invalid {
-  border-color: var(--pf-calendar-danger-600, var(--pf-calendar-color-danger-600, var(--color-danger-600)));
+  border-color: var(
+    --pf-calendar-danger-600,
+    var(--pf-calendar-color-danger-600, var(--color-danger-600))
+  );
 }
 
 .pf-calendar__header {
@@ -40,10 +62,29 @@
 
 .pf-calendar__control {
   appearance: none;
-  background: var(--pf-calendar-semantic-background-default, var(--pf-calendar-color-semantic-background-default, var(--color-semantic-background-default)));
-  border: 1px solid var(--pf-calendar-semantic-border-default, var(--pf-calendar-color-semantic-border-default, var(--color-semantic-border-default)));
+  background: var(
+    --pf-calendar-semantic-background-default,
+    var(
+      --pf-calendar-color-semantic-background-default,
+      var(--color-semantic-background-default)
+    )
+  );
+  border: 1px solid
+    var(
+      --pf-calendar-semantic-border-default,
+      var(
+        --pf-calendar-color-semantic-border-default,
+        var(--color-semantic-border-default)
+      )
+    );
   border-radius: var(--radius-sm);
-  color: var(--pf-calendar-semantic-text-default, var(--pf-calendar-color-semantic-text-default, var(--color-semantic-text-default)));
+  color: var(
+    --pf-calendar-semantic-text-default,
+    var(
+      --pf-calendar-color-semantic-text-default,
+      var(--color-semantic-text-default)
+    )
+  );
   font-size: 12px;
   font-weight: var(--font-weight-medium);
   height: 28px;
@@ -61,7 +102,13 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--pf-calendar-semantic-text-muted, var(--pf-calendar-color-semantic-text-muted, var(--color-semantic-text-muted)));
+  color: var(
+    --pf-calendar-semantic-text-muted,
+    var(
+      --pf-calendar-color-semantic-text-muted,
+      var(--color-semantic-text-muted)
+    )
+  );
   cursor: pointer;
   display: inline-flex;
   font-size: 14px;
@@ -72,8 +119,20 @@
 }
 
 .pf-calendar__nav:hover {
-  background: var(--pf-calendar-semantic-background-subtle, var(--pf-calendar-color-semantic-background-subtle, var(--color-semantic-background-subtle)));
-  color: var(--pf-calendar-semantic-text-default, var(--pf-calendar-color-semantic-text-default, var(--color-semantic-text-default)));
+  background: var(
+    --pf-calendar-semantic-background-subtle,
+    var(
+      --pf-calendar-color-semantic-background-subtle,
+      var(--color-semantic-background-subtle)
+    )
+  );
+  color: var(
+    --pf-calendar-semantic-text-default,
+    var(
+      --pf-calendar-color-semantic-text-default,
+      var(--color-semantic-text-default)
+    )
+  );
 }
 
 .pf-calendar__nav:focus-visible {
@@ -88,7 +147,13 @@
 }
 
 .pf-calendar__weekday {
-  color: var(--pf-calendar-semantic-text-muted, var(--pf-calendar-color-semantic-text-muted, var(--color-semantic-text-muted)));
+  color: var(
+    --pf-calendar-semantic-text-muted,
+    var(
+      --pf-calendar-color-semantic-text-muted,
+      var(--color-semantic-text-muted)
+    )
+  );
   font-size: 12px;
   font-weight: var(--font-weight-medium);
   text-align: center;
@@ -113,36 +178,91 @@
 .pf-calendar__day {
   background: transparent;
   border: 0;
-  color: var(--pf-calendar-semantic-text-default, var(--pf-calendar-color-semantic-text-default, var(--color-semantic-text-default)));
+  color: var(
+    --pf-calendar-semantic-text-default,
+    var(
+      --pf-calendar-color-semantic-text-default,
+      var(--color-semantic-text-default)
+    )
+  );
   cursor: pointer;
 }
 
 .pf-calendar__day:hover:not(:disabled) {
-  background: var(--pf-calendar-semantic-background-subtle, var(--pf-calendar-color-semantic-background-subtle, var(--color-semantic-background-subtle)));
+  background: var(
+    --pf-calendar-semantic-background-subtle,
+    var(
+      --pf-calendar-color-semantic-background-subtle,
+      var(--color-semantic-background-subtle)
+    )
+  );
 }
 
 .pf-calendar__day--outside {
-  color: var(--pf-calendar-semantic-text-muted, var(--pf-calendar-color-semantic-text-muted, var(--color-semantic-text-muted)));
+  color: var(
+    --pf-calendar-semantic-text-muted,
+    var(
+      --pf-calendar-color-semantic-text-muted,
+      var(--color-semantic-text-muted)
+    )
+  );
   opacity: 0.55;
 }
 
 .pf-calendar__day--today {
-  box-shadow: inset 0 0 0 1px var(--pf-calendar-semantic-border-default, var(--pf-calendar-color-semantic-border-default, var(--color-semantic-border-default)));
+  box-shadow: inset 0 0 0 1px
+    var(
+      --pf-calendar-semantic-border-default,
+      var(
+        --pf-calendar-color-semantic-border-default,
+        var(--color-semantic-border-default)
+      )
+    );
 }
 
 .pf-calendar__day--selected {
-  background: var(--pf-calendar-semantic-action-primary, var(--pf-calendar-color-semantic-action-primary, var(--color-semantic-action-primary)));
-  color: var(--pf-calendar-semantic-action-primary-text, var(--pf-calendar-color-semantic-action-primary-text, var(--color-semantic-action-primary-text)));
+  background: var(
+    --pf-calendar-semantic-action-primary,
+    var(
+      --pf-calendar-color-semantic-action-primary,
+      var(--color-semantic-action-primary)
+    )
+  );
+  color: var(
+    --pf-calendar-semantic-action-primary-text,
+    var(
+      --pf-calendar-color-semantic-action-primary-text,
+      var(--color-semantic-action-primary-text)
+    )
+  );
   font-weight: var(--font-weight-semibold);
 }
 
 .pf-calendar__day--selected:hover:not(:disabled) {
-  background: var(--pf-calendar-semantic-action-primary-hover, var(--pf-calendar-color-semantic-action-primary-hover, var(--color-semantic-action-primary-hover)));
-  color: var(--pf-calendar-semantic-action-primary-text, var(--pf-calendar-color-semantic-action-primary-text, var(--color-semantic-action-primary-text)));
+  background: var(
+    --pf-calendar-semantic-action-primary-hover,
+    var(
+      --pf-calendar-color-semantic-action-primary-hover,
+      var(--color-semantic-action-primary-hover)
+    )
+  );
+  color: var(
+    --pf-calendar-semantic-action-primary-text,
+    var(
+      --pf-calendar-color-semantic-action-primary-text,
+      var(--color-semantic-action-primary-text)
+    )
+  );
 }
 
 .pf-calendar__day:disabled {
-  color: var(--pf-calendar-semantic-text-muted, var(--pf-calendar-color-semantic-text-muted, var(--color-semantic-text-muted)));
+  color: var(
+    --pf-calendar-semantic-text-muted,
+    var(
+      --pf-calendar-color-semantic-text-muted,
+      var(--color-semantic-text-muted)
+    )
+  );
   cursor: not-allowed;
   opacity: 0.45;
 }

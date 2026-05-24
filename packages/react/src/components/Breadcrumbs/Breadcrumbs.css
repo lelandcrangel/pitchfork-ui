@@ -23,7 +23,10 @@
     --pf-breadcrumbs-link-color,
     var(
       --pf-breadcrumbs-semantic-text-muted,
-      var(--pf-breadcrumbs-color-semantic-text-muted, var(--color-semantic-text-muted))
+      var(
+        --pf-breadcrumbs-color-semantic-text-muted,
+        var(--color-semantic-text-muted)
+      )
     )
   );
   font-size: var(--font-size-sm);
@@ -36,7 +39,10 @@
     --pf-breadcrumbs-link-hover-color,
     var(
       --pf-breadcrumbs-semantic-text-default,
-      var(--pf-breadcrumbs-color-semantic-text-default, var(--color-semantic-text-default))
+      var(
+        --pf-breadcrumbs-color-semantic-text-default,
+        var(--color-semantic-text-default)
+      )
     )
   );
   text-decoration: underline;
@@ -48,7 +54,10 @@
     --pf-breadcrumbs-link-current-color,
     var(
       --pf-breadcrumbs-semantic-text-default,
-      var(--pf-breadcrumbs-color-semantic-text-default, var(--color-semantic-text-default))
+      var(
+        --pf-breadcrumbs-color-semantic-text-default,
+        var(--color-semantic-text-default)
+      )
     )
   );
   font-weight: var(--font-weight-medium);
@@ -60,7 +69,10 @@
     --pf-breadcrumbs-separator-color,
     var(
       --pf-breadcrumbs-semantic-text-muted,
-      var(--pf-breadcrumbs-color-semantic-text-muted, var(--color-semantic-text-muted))
+      var(
+        --pf-breadcrumbs-color-semantic-text-muted,
+        var(--color-semantic-text-muted)
+      )
     )
   );
   display: inline-flex;
