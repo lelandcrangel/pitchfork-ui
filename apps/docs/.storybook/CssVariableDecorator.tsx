@@ -20,6 +20,7 @@ type CssVariableScope =
   | 'carousel'
   | 'checkbox'
   | 'codesnippet'
+  | 'contentdivider'
   | 'inlinecta'
   | 'input'
   | 'notification'
@@ -250,6 +251,21 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // ContentDivider variables
+  {
+    name: '--pf-contentdivider-color-semantic-text-muted',
+    label: 'Divider text color',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['contentdivider'],
+  },
+  {
+    name: '--pf-contentdivider-color-semantic-border-default',
+    label: 'Divider border color',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['contentdivider'],
+  },
   // Card variables
   {
     name: '--pf-card-background',
@@ -2082,6 +2098,7 @@ function ColorSelect({
 const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Button': ['button'],
   'Components/Card': ['card'],
+  'Components/ContentDivider': ['contentdivider'],
   'Components/Carousel': ['carousel'],
   'Components/Button Group': ['buttongroup'],
   'Components/Breadcrumbs': ['breadcrumbs'],

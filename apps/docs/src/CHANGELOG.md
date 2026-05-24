@@ -2,13 +2,12 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
-## [2026-05-24] (continued)
+## [2026-05-24]
 
+- Added CSS Variables button and controls for ContentDivider Interactive story in Storybook (text and border color).
 - Fixed React runtime warning in CodeSnippet component by ensuring key props are passed directly to JSX elements, not via spread props.
 - Updated CodeSnippet to use correct Prism theme import (`themes.vsDark`) and fixed all build/runtime errors related to prism-react-renderer integration.
 - Rebuilt @pitchfork-ui/react and verified Storybook launch and syntax highlighting for code snippets.
-
-## [2026-05-24]
 
 - Major CSS variable and theming overhaul for all components (Badge, BadgeGroup, Breadcrumbs, ButtonGroup, Calendar).
 - Fixed Calendar component CSS variable chains and restored correct appearance in Storybook.
