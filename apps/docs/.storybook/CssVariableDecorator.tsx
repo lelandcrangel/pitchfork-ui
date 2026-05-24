@@ -674,6 +674,20 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['checkbox'],
   },
   {
+    name: '--pf-checkbox-checked-border',
+    label: 'Checkbox checked border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['checkbox'],
+  },
+  {
+    name: '--pf-checkbox-check-color',
+    label: 'Checkbox check color',
+    defaultValue: 'var(--color-semantic-action-primary-text)',
+    type: 'color',
+    scopes: ['checkbox'],
+  },
+  {
     name: '--pf-checkbox-label-text',
     label: 'Checkbox label text',
     defaultValue: 'var(--color-semantic-text-default)',

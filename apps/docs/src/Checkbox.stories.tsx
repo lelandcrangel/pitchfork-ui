@@ -7,6 +7,7 @@ const meta = {
   tags: ['ai-generated', 'test'],
   args: {
     label: 'Enable notifications',
+    defaultChecked: true,
   },
 } satisfies Meta<typeof Checkbox>;
 
@@ -16,5 +17,6 @@ type Story = StoryObj<typeof meta>;
 export const Interactive: Story = {
   args: {
     label: 'Interactive checkbox',
+    defaultChecked: true,
   },
 };
