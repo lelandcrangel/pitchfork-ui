@@ -5,7 +5,7 @@
 .pf-tooltip {
   background: var(--pf-tooltip-bg);
   border-radius: var(--radius-sm);
-  box-shadow: var(--pf-elevation-tooltip-shadow);
+  box-shadow: var(--pf-tooltip-elevation-tooltip-shadow, var(--pf-elevation-tooltip-shadow));
   color: var(--pf-tooltip-text);
   font-size: var(--font-size-sm);
   line-height: 1.35;

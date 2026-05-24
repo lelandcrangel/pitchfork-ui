@@ -37,7 +37,7 @@
 }
 
 .pf-button-group__button:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-buttongroup-focus-ring, var(--pf-focus-ring));
   outline: none;
   z-index: 2;
 }

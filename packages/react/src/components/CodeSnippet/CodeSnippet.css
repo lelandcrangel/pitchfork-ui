@@ -3,39 +3,39 @@
   --pf-code-snippet-text: #e7edf6;
   --pf-code-snippet-header-bg: color-mix(
     in srgb,
-    var(--pf-code-snippet-bg) 78%,
+    var(--pf-codesnippet-code-snippet-bg, var(--pf-code-snippet-bg)) 78%,
     var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-header-border: color-mix(
     in srgb,
-    var(--pf-code-snippet-bg) 65%,
+    var(--pf-codesnippet-code-snippet-bg, var(--pf-code-snippet-bg)) 65%,
     var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-title: #f5f8fc;
   --pf-code-snippet-language: #a8b7cb;
   --pf-code-snippet-copy-bg: color-mix(
     in srgb,
-    var(--pf-code-snippet-bg) 70%,
+    var(--pf-codesnippet-code-snippet-bg, var(--pf-code-snippet-bg)) 70%,
     var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-copy-border: color-mix(
     in srgb,
-    var(--pf-code-snippet-bg) 55%,
+    var(--pf-codesnippet-code-snippet-bg, var(--pf-code-snippet-bg)) 55%,
     var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-copy-text: #dbe6f5;
   --pf-code-snippet-copy-hover-bg: color-mix(
     in srgb,
-    var(--pf-code-snippet-bg) 58%,
+    var(--pf-codesnippet-code-snippet-bg, var(--pf-code-snippet-bg)) 58%,
     var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-line-number: #8292a9;
 
-  background: var(--pf-code-snippet-bg);
+  background: var(--pf-codesnippet-code-snippet-bg, var(--pf-code-snippet-bg));
   border: 1px solid
-    color-mix(in srgb, var(--pf-code-snippet-bg) 82%, var(--pf-codesnippet-color-base-white, var(--color-base-white)));
+    color-mix(in srgb, var(--pf-codesnippet-code-snippet-bg, var(--pf-code-snippet-bg)) 82%, var(--pf-codesnippet-color-base-white, var(--color-base-white)));
   border-radius: var(--radius-md);
-  color: var(--pf-code-snippet-text);
+  color: var(--pf-codesnippet-code-snippet-text, var(--pf-code-snippet-text));
   display: grid;
   overflow: hidden;
 }
@@ -43,8 +43,8 @@
 .pf-code-snippet__header,
 .pf-code-snippet__toolbar {
   align-items: center;
-  background: var(--pf-code-snippet-header-bg);
-  border-bottom: 1px solid var(--pf-code-snippet-header-border);
+  background: var(--pf-codesnippet-code-snippet-header-bg, var(--pf-code-snippet-header-bg));
+  border-bottom: 1px solid var(--pf-codesnippet-code-snippet-header-border, var(--pf-code-snippet-header-border));
   display: flex;
   gap: var(--space-3);
   justify-content: space-between;
@@ -59,13 +59,13 @@
 }
 
 .pf-code-snippet__title {
-  color: var(--pf-code-snippet-title);
+  color: var(--pf-codesnippet-code-snippet-title, var(--pf-code-snippet-title));
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
 }
 
 .pf-code-snippet__language {
-  color: var(--pf-code-snippet-language);
+  color: var(--pf-codesnippet-code-snippet-language, var(--pf-code-snippet-language));
   font-size: 11px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -73,10 +73,10 @@
 
 .pf-code-snippet__copy {
   align-items: center;
-  background: var(--pf-code-snippet-copy-bg);
-  border: 1px solid var(--pf-code-snippet-copy-border);
+  background: var(--pf-codesnippet-code-snippet-copy-bg, var(--pf-code-snippet-copy-bg));
+  border: 1px solid var(--pf-codesnippet-code-snippet-copy-border, var(--pf-code-snippet-copy-border));
   border-radius: var(--radius-sm);
-  color: var(--pf-code-snippet-copy-text);
+  color: var(--pf-codesnippet-code-snippet-copy-text, var(--pf-code-snippet-copy-text));
   cursor: pointer;
   display: inline-flex;
   font-size: 12px;
@@ -86,11 +86,11 @@
 }
 
 .pf-code-snippet__copy:hover {
-  background: var(--pf-code-snippet-copy-hover-bg);
+  background: var(--pf-codesnippet-code-snippet-copy-hover-bg, var(--pf-code-snippet-copy-hover-bg));
 }
 
 .pf-code-snippet__copy:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-codesnippet-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 
@@ -118,7 +118,7 @@
 }
 
 .pf-code-snippet__line-number {
-  color: var(--pf-code-snippet-line-number);
+  color: var(--pf-codesnippet-code-snippet-line-number, var(--pf-code-snippet-line-number));
   min-width: 2.5ch;
   padding-right: var(--space-3);
   text-align: right;

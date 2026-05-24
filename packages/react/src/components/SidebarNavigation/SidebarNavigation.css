@@ -80,7 +80,7 @@
 }
 
 .pf-sidebar-navigation__link:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-sidebarnavigation-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 

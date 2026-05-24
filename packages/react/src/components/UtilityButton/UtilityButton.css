@@ -17,7 +17,7 @@
 }
 
 .pf-utility-button:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-utilitybutton-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 

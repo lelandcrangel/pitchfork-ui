@@ -52,7 +52,7 @@
 }
 
 .pf-calendar__control:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-calendar-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 
@@ -77,7 +77,7 @@
 }
 
 .pf-calendar__nav:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-calendar-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 

@@ -9,7 +9,7 @@
   width: 18px;
 }
 .pf-radio:focus-visible {
-  box-shadow: var(--pf-radio-focus-ring, var(--pf-focus-ring));
+  box-shadow: var(--pf-radio-focus-ring, var(--pf-radiobutton-focus-ring, var(--pf-focus-ring)));
   outline: none;
 }
 .pf-radio-field label {

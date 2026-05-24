@@ -84,7 +84,7 @@
 
 .pf-tabs__tab--pills.pf-tabs__tab--active {
   background: var(--pf-tabs-color-semantic-background-default, var(--color-semantic-background-default));
-  box-shadow: var(--pf-elevation-tab-active-shadow);
+  box-shadow: var(--pf-tabs-elevation-tab-active-shadow, var(--pf-elevation-tab-active-shadow));
   color: var(--pf-tabs-color-semantic-text-default, var(--color-semantic-text-default));
 }
 

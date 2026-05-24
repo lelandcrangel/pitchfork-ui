@@ -75,6 +75,6 @@
 }
 
 .pf-alert__dismiss:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-alert-focus-ring, var(--pf-focus-ring));
   outline: none;
 }

@@ -7,7 +7,7 @@
 .pf-progress-steps--horizontal {
   --pf-progress-step-gap: var(--space-4);
   display: grid;
-  gap: var(--pf-progress-step-gap);
+  gap: var(--pf-progresssteps-progress-step-gap, var(--pf-progress-step-gap));
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
 
@@ -65,7 +65,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: calc(100% + var(--pf-progress-step-gap));
+  width: calc(100% + var(--pf-progresssteps-progress-step-gap, var(--pf-progress-step-gap)));
   z-index: 0;
 }
 

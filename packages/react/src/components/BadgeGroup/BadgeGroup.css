@@ -82,11 +82,11 @@
 }
 
 .pf-badge-group__text--pill {
-  background: var(--pf-surface-bg);
+  background: var(--pf-badgegroup-surface-bg, var(--pf-surface-bg));
 }
 
 .pf-badge-group__text--modern {
-  background: var(--pf-surface-subtle);
+  background: var(--pf-badgegroup-surface-subtle, var(--pf-surface-subtle));
 }
 
 .pf-badge-group__text--gray {

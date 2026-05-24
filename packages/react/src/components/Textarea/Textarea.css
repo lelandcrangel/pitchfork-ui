@@ -40,7 +40,7 @@
 
 .pf-textarea:focus-visible {
   border-color: var(--pf-textarea-color-semantic-action-primary, var(--color-semantic-action-primary));
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-textarea-focus-ring, var(--pf-focus-ring));
 }
 
 .pf-textarea::placeholder {

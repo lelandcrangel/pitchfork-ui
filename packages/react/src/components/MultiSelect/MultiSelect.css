@@ -27,7 +27,7 @@
   border-color: var(--pf-multiselect-color-semantic-action-primary, var(--color-semantic-action-primary));
   outline: 2px solid var(--pf-multiselect-color-semantic-action-primary, var(--color-semantic-action-primary));
   outline-offset: 1px;
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-multiselect-focus-ring, var(--pf-focus-ring));
 }
 
 .pf-multi-select__trigger--open {
@@ -83,7 +83,7 @@
   background: var(--pf-multiselect-color-semantic-background-default, var(--color-semantic-background-default));
   border: 1px solid var(--pf-multiselect-color-semantic-text-muted, var(--color-semantic-text-muted));
   border-radius: var(--radius-md);
-  box-shadow: var(--pf-elevation-popover-shadow);
+  box-shadow: var(--pf-multiselect-elevation-popover-shadow, var(--pf-elevation-popover-shadow));
   list-style: none;
   margin: 0;
   max-height: 240px;

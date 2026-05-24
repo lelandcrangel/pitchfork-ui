@@ -181,12 +181,14 @@ export const buttonAliasRows = aliasRows.filter((row) =>
   row.name.startsWith('--pf-button-'),
 );
 
-export const fieldAliasRows = aliasRows.filter((row) =>
-  row.name.startsWith('--pf-field-') || row.name.startsWith('--pf-input-'),
+export const fieldAliasRows = aliasRows.filter(
+  (row) =>
+    row.name.startsWith('--pf-field-') || row.name.startsWith('--pf-input-'),
 );
 
-export const selectAliasRows = aliasRows.filter((row) =>
-  row.name.startsWith('--pf-select-') || row.name.startsWith('--pf-input-'),
+export const selectAliasRows = aliasRows.filter(
+  (row) =>
+    row.name.startsWith('--pf-select-') || row.name.startsWith('--pf-input-'),
 );
 
 export const isRenderableColor = (value) =>
@@ -238,40 +240,40 @@ export const copyToClipboard = async (text) => {
     return;
   }
 
-  if (typeof document === 'undefined') {
-    return;
-  }
+if (typeof document === 'undefined') {
+return;
+}
 
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.setAttribute('readonly', '');
-  textarea.style.position = 'absolute';
-  textarea.style.left = '-9999px';
-  document.body.appendChild(textarea);
-  textarea.select();
+const textarea = document.createElement('textarea');
+textarea.value = text;
+textarea.setAttribute('readonly', '');
+textarea.style.position = 'absolute';
+textarea.style.left = '-9999px';
+document.body.appendChild(textarea);
+textarea.select();
 
-  try {
-    document.execCommand('copy');
-  } finally {
-    document.body.removeChild(textarea);
-  }
+try {
+document.execCommand('copy');
+} finally {
+document.body.removeChild(textarea);
+}
 };
 
 export const CopyableCssVar = ({ value }) => {
   const [copied, setCopied] = useState(false);
 
-  return (
-    <div style={{ display: 'grid', gap: '4px' }}>
-      <button
-        type="button"
-        onClick={async () => {
-          await copyToClipboard(value);
-          setCopied(true);
-          setTimeout(() => {
-            setCopied(false);
-          }, 1200);
-        }}
-        style={{
+return (
+<div style={{ display: 'grid', gap: '4px' }}>
+<button
+type="button"
+onClick={async () => {
+await copyToClipboard(value);
+setCopied(true);
+setTimeout(() => {
+setCopied(false);
+}, 1200);
+}}
+style={{
           background: 'transparent',
           border: 0,
           color: 'inherit',
@@ -279,24 +281,22 @@ export const CopyableCssVar = ({ value }) => {
           padding: 0,
           textAlign: 'left',
         }}
-        aria-label={`Copy ${value} to clipboard`}
-        title="Click to copy"
-      >
-        <MetaCode>{value}</MetaCode>
-      </button>
-      {copied ? (
-        <span
-          style={{
+aria-label={`Copy ${value} to clipboard`}
+title="Click to copy" >
+<MetaCode>{value}</MetaCode>
+</button>
+{copied ? (
+<span
+style={{
             color: 'var(--color-semantic-text-muted)',
             fontSize: '11px',
             lineHeight: 1,
-          }}
-        >
-          Copied
-        </span>
-      ) : null}
-    </div>
-  );
+          }} >
+Copied
+</span>
+) : null}
+</div>
+);
 };
 
 export const TokenTable = ({ rows }) => (
@@ -416,49 +416,47 @@ export const AliasPlayground = ({
     Object.fromEntries(rows.map((row) => [row.name, aliasDefaults[row.name]])),
   );
 
-  return (
-    <PreviewCard>
-      <h4 style={{ margin: '0 0 6px 0' }}>{title}</h4>
-      <p
-        style={{
+return (
+<PreviewCard>
+<h4 style={{ margin: '0 0 6px 0' }}>{title}</h4>
+<p
+style={{
           margin: '0 0 12px 0',
           color: 'var(--color-semantic-text-muted)',
           fontSize: '13px',
           lineHeight: 1.4,
-        }}
-      >
-        {description}
-      </p>
-      <div style={{ display: 'grid', gap: '12px', gridTemplateColumns: '1fr 1fr' }}>
-        <div>
-          {rows.map((row) => (
-            <AliasValueEditor
-              key={row.name}
-              variable={row.name}
-              value={aliasValues[row.name]}
-              onChange={(nextValue) => {
-                setAliasValues((current) => ({
-                  ...current,
-                  [row.name]: nextValue,
-                }));
-              }}
-            />
-          ))}
-        </div>
-        <div
-          style={{
+        }} >
+{description}
+</p>
+<div style={{ display: 'grid', gap: '12px', gridTemplateColumns: '1fr 1fr' }}>
+<div>
+{rows.map((row) => (
+<AliasValueEditor
+key={row.name}
+variable={row.name}
+value={aliasValues[row.name]}
+onChange={(nextValue) => {
+setAliasValues((current) => ({
+...current,
+[row.name]: nextValue,
+}));
+}}
+/>
+))}
+</div>
+<div
+style={{
             border: '1px solid var(--color-semantic-border-default)',
             borderRadius: '8px',
             padding: '12px',
             background: 'var(--color-semantic-background-subtle)',
             ...aliasValues,
-          }}
-        >
-          {preview(aliasValues)}
-        </div>
-      </div>
-    </PreviewCard>
-  );
+          }} >
+{preview(aliasValues)}
+</div>
+</div>
+</PreviewCard>
+);
 };
 
 export const ComponentAliasPlaygrounds = () => {
@@ -468,20 +466,20 @@ export const ComponentAliasPlaygrounds = () => {
     { value: 'enterprise', label: 'Enterprise plan' },
   ];
 
-  return (
-    <div style={{ display: 'grid', gap: '12px' }}>
-      <AliasPlayground
-        title="Button aliases"
-        description="Edit button alias variables and watch primary/secondary buttons update immediately."
-        rows={buttonAliasRows}
-        preview={() => (
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <Button variant="primary">Primary</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="ghost">Ghost</Button>
-          </div>
-        )}
-      />
+return (
+<div style={{ display: 'grid', gap: '12px' }}>
+<AliasPlayground
+title="Button aliases"
+description="Edit button alias variables and watch primary/secondary buttons update immediately."
+rows={buttonAliasRows}
+preview={() => (
+<div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+<Button variant="primary">Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="ghost">Ghost</Button>
+</div>
+)}
+/>
 
       <AliasPlayground
         title="Input field aliases"
@@ -510,7 +508,8 @@ export const ComponentAliasPlaygrounds = () => {
         )}
       />
     </div>
-  );
+
+);
 };
 
 export const ColorPreview = () => (

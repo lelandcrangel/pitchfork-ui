@@ -28,7 +28,7 @@
 }
 
 .pf-file-uploader__dropzone:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-fileuploader-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 
@@ -125,7 +125,7 @@
 }
 
 .pf-file-uploader__remove:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-fileuploader-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 

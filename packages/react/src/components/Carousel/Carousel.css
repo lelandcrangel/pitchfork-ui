@@ -66,7 +66,7 @@
 }
 
 .pf-carousel__nav:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-carousel-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 
@@ -100,7 +100,7 @@
 }
 
 .pf-carousel__indicator:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-carousel-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 

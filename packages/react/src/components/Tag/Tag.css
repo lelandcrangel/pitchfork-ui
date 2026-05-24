@@ -49,11 +49,11 @@
 }
 
 .pf-tag__dismiss:hover {
-  background: var(--pf-subtle-hover-overlay);
+  background: var(--pf-tag-subtle-hover-overlay, var(--pf-subtle-hover-overlay));
 }
 
 .pf-tag__dismiss:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-tag-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 

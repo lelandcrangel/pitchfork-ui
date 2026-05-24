@@ -4,10 +4,10 @@
 
 .pf-dropdown__trigger {
   align-items: center;
-  background: var(--pf-button-secondary-bg);
-  border: 1px solid var(--pf-button-secondary-border);
+  background: var(--pf-dropdown-button-secondary-bg, var(--pf-button-secondary-bg));
+  border: 1px solid var(--pf-dropdown-button-secondary-border, var(--pf-button-secondary-border));
   border-radius: var(--radius-md);
-  color: var(--pf-button-secondary-text);
+  color: var(--pf-dropdown-button-secondary-text, var(--pf-button-secondary-text));
   cursor: pointer;
   display: inline-flex;
   gap: var(--space-2);
@@ -16,12 +16,12 @@
 }
 
 .pf-dropdown__trigger:hover:not(:disabled) {
-  background: var(--pf-button-secondary-bg-hover);
-  border-color: var(--pf-button-secondary-border-hover);
+  background: var(--pf-dropdown-button-secondary-bg-hover, var(--pf-button-secondary-bg-hover));
+  border-color: var(--pf-dropdown-button-secondary-border-hover, var(--pf-button-secondary-border-hover));
 }
 
 .pf-dropdown__trigger:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-dropdown-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 
@@ -48,8 +48,8 @@
 }
 
 .pf-dropdown__menu {
-  background: var(--pf-surface-bg);
-  border: 1px solid var(--pf-surface-border);
+  background: var(--pf-dropdown-surface-bg, var(--pf-surface-bg));
+  border: 1px solid var(--pf-dropdown-surface-border, var(--pf-surface-border));
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   display: flex;
@@ -101,7 +101,7 @@
 
 .pf-dropdown__item:hover:not(:disabled),
 .pf-dropdown__item--active {
-  background: var(--pf-surface-subtle);
+  background: var(--pf-dropdown-surface-subtle, var(--pf-surface-subtle));
 }
 
 .pf-dropdown__item--destructive {

@@ -6,7 +6,7 @@
 }
 
 .pf-progress-bar__track {
-  background: var(--pf-surface-subtle);
+  background: var(--pf-progressindicators-surface-subtle, var(--pf-surface-subtle));
   border-radius: var(--radius-full);
   flex: 1;
   height: 8px;
@@ -46,7 +46,7 @@
 }
 
 .pf-progress-circle__track {
-  stroke: var(--pf-surface-subtle);
+  stroke: var(--pf-progressindicators-surface-subtle, var(--pf-surface-subtle));
 }
 
 .pf-progress-circle__fill {

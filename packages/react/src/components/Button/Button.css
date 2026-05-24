@@ -11,11 +11,15 @@
   line-height: 1;
   min-height: 40px;
   text-decoration: none;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
 }
 
 .pf-button:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-button-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 
@@ -24,14 +28,45 @@
   opacity: 0.55;
 }
 
-.pf-button--sm { font-size: var(--font-size-sm); min-height: 36px; padding: 0 var(--space-3); }
-.pf-button--md { font-size: var(--font-size-md); min-height: 40px; padding: 0 var(--space-4); }
-.pf-button--lg { font-size: var(--font-size-lg); min-height: 48px; padding: 0 var(--space-5); }
-.pf-button--full { width: 100%; }
+.pf-button--sm {
+  font-size: var(--font-size-sm);
+  min-height: 36px;
+  padding: 0 var(--space-3);
+}
+.pf-button--md {
+  font-size: var(--font-size-md);
+  min-height: 40px;
+  padding: 0 var(--space-4);
+}
+.pf-button--lg {
+  font-size: var(--font-size-lg);
+  min-height: 48px;
+  padding: 0 var(--space-5);
+}
+.pf-button--full {
+  width: 100%;
+}
 
-.pf-button--primary { background: var(--pf-button-primary-bg); color: var(--pf-button-primary-text); }
-.pf-button--primary:hover:not(:disabled) { background: var(--pf-button-primary-bg-hover); }
-.pf-button--secondary { background: var(--pf-button-secondary-bg); border-color: var(--pf-button-secondary-border); color: var(--pf-button-secondary-text); }
-.pf-button--secondary:hover:not(:disabled) { background: var(--pf-button-secondary-bg-hover); border-color: var(--pf-button-secondary-border-hover); }
-.pf-button--ghost { background: transparent; color: var(--pf-button-ghost-text); }
-.pf-button--ghost:hover:not(:disabled) { background: var(--pf-button-ghost-bg-hover); }
+.pf-button--primary {
+  background: var(--pf-button-primary-bg);
+  color: var(--pf-button-primary-text);
+}
+.pf-button--primary:hover:not(:disabled) {
+  background: var(--pf-button-primary-bg-hover);
+}
+.pf-button--secondary {
+  background: var(--pf-button-secondary-bg);
+  border-color: var(--pf-button-secondary-border);
+  color: var(--pf-button-secondary-text);
+}
+.pf-button--secondary:hover:not(:disabled) {
+  background: var(--pf-button-secondary-bg-hover);
+  border-color: var(--pf-button-secondary-border-hover);
+}
+.pf-button--ghost {
+  background: transparent;
+  color: var(--pf-button-ghost-text);
+}
+.pf-button--ghost:hover:not(:disabled) {
+  background: var(--pf-button-ghost-bg-hover);
+}

@@ -4,10 +4,10 @@
 
 .pf-select__trigger {
   align-items: center;
-  background: var(--pf-input-bg);
-  border: 1px solid var(--pf-input-border);
+  background: var(--pf-select-input-bg, var(--pf-input-bg));
+  border: 1px solid var(--pf-select-input-border, var(--pf-input-border));
   border-radius: var(--radius-md);
-  color: var(--pf-input-text);
+  color: var(--pf-select-input-text, var(--pf-input-text));
   cursor: pointer;
   display: flex;
   font: inherit;
@@ -27,7 +27,7 @@
   border-color: var(--pf-select-color-semantic-action-primary, var(--color-semantic-action-primary));
   outline: 2px solid var(--pf-select-color-semantic-action-primary, var(--color-semantic-action-primary));
   outline-offset: 1px;
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-select-focus-ring, var(--pf-focus-ring));
 }
 
 .pf-select__trigger--open {
@@ -45,12 +45,12 @@
 }
 
 .pf-select__placeholder {
-  color: var(--pf-input-placeholder);
+  color: var(--pf-select-input-placeholder, var(--pf-input-placeholder));
 }
 
 .pf-select__icon {
   align-items: center;
-  color: var(--pf-input-text);
+  color: var(--pf-select-input-text, var(--pf-input-text));
   display: inline-flex;
   flex-shrink: 0;
   height: 20px;
@@ -74,7 +74,7 @@
   background: var(--pf-select-menu-bg);
   border: 1px solid var(--pf-select-menu-border);
   border-radius: var(--radius-md);
-  box-shadow: var(--pf-elevation-popover-shadow);
+  box-shadow: var(--pf-select-elevation-popover-shadow, var(--pf-elevation-popover-shadow));
   list-style: none;
   margin: 0;
   max-height: 220px;
@@ -86,7 +86,7 @@
 
 .pf-select__option {
   border-radius: var(--radius-sm);
-  color: var(--pf-input-text);
+  color: var(--pf-select-input-text, var(--pf-input-text));
   cursor: pointer;
   padding: var(--space-2) var(--space-3);
 }
@@ -103,16 +103,16 @@
 
 .pf-select__option--disabled {
   background: transparent;
-  color: var(--pf-input-placeholder);
+  color: var(--pf-select-input-placeholder, var(--pf-input-placeholder));
   cursor: not-allowed;
 }
 
 .pf-select__option--disabled:hover {
   background: transparent;
-  color: var(--pf-input-placeholder);
+  color: var(--pf-select-input-placeholder, var(--pf-input-placeholder));
 }
 
 .pf-select__option--disabled.pf-select__option--active {
   background: transparent;
-  color: var(--pf-input-placeholder);
+  color: var(--pf-select-input-placeholder, var(--pf-input-placeholder));
 }

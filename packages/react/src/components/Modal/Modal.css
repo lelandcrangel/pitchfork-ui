@@ -5,7 +5,7 @@
 }
 
 .pf-modal__overlay {
-  background: var(--pf-overlay-backdrop);
+  background: var(--pf-modal-overlay-backdrop, var(--pf-overlay-backdrop));
   inset: 0;
   position: absolute;
 }
@@ -25,7 +25,7 @@
   border: 1px solid
     color-mix(in srgb, var(--pf-modal-color-semantic-border-default, var(--color-semantic-border-default)) 85%, transparent);
   border-radius: var(--radius-lg);
-  box-shadow: var(--pf-elevation-overlay-shadow);
+  box-shadow: var(--pf-modal-elevation-overlay-shadow, var(--pf-elevation-overlay-shadow));
   color: var(--pf-modal-color-semantic-text-default, var(--color-semantic-text-default));
   display: grid;
   max-height: min(90vh, 720px);

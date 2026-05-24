@@ -35,32 +35,136 @@ interface ColorOption {
 }
 
 const COLOR_OPTIONS: ColorOption[] = [
-  { label: 'Base White', value: 'var(--color-base-white)', swatch: 'var(--color-base-white)' },
-  { label: 'Base Black', value: 'var(--color-base-black)', swatch: 'var(--color-base-black)' },
-  { label: 'Gray 100', value: 'var(--color-gray-100)', swatch: 'var(--color-gray-100)' },
-  { label: 'Gray 300', value: 'var(--color-gray-300)', swatch: 'var(--color-gray-300)' },
-  { label: 'Gray 500', value: 'var(--color-gray-500)', swatch: 'var(--color-gray-500)' },
-  { label: 'Gray 700', value: 'var(--color-gray-700)', swatch: 'var(--color-gray-700)' },
-  { label: 'Gray 900', value: 'var(--color-gray-900)', swatch: 'var(--color-gray-900)' },
-  { label: 'Brand 400', value: 'var(--color-brand-400)', swatch: 'var(--color-brand-400)' },
-  { label: 'Brand 500', value: 'var(--color-brand-500)', swatch: 'var(--color-brand-500)' },
-  { label: 'Brand 600', value: 'var(--color-brand-600)', swatch: 'var(--color-brand-600)' },
-  { label: 'Brand 50', value: 'var(--color-brand-50)', swatch: 'var(--color-brand-50)' },
-  { label: 'Brand 100', value: 'var(--color-brand-100)', swatch: 'var(--color-brand-100)' },
-  { label: 'Brand 200', value: 'var(--color-brand-200)', swatch: 'var(--color-brand-200)' },
-  { label: 'Brand 300', value: 'var(--color-brand-300)', swatch: 'var(--color-brand-300)' },
-  { label: 'Brand 700', value: 'var(--color-brand-700)', swatch: 'var(--color-brand-700)' },
-  { label: 'Brand 800', value: 'var(--color-brand-800)', swatch: 'var(--color-brand-800)' },
-  { label: 'Danger 100', value: 'var(--color-danger-100)', swatch: 'var(--color-danger-100)' },
-  { label: 'Success 400', value: 'var(--color-success-400)', swatch: 'var(--color-success-400)' },
-  { label: 'Success 500', value: 'var(--color-success-500)', swatch: 'var(--color-success-500)' },
-  { label: 'Success 600', value: 'var(--color-success-600)', swatch: 'var(--color-success-600)' },
-  { label: 'Warning 400', value: 'var(--color-warning-400)', swatch: 'var(--color-warning-400)' },
-  { label: 'Warning 500', value: 'var(--color-warning-500)', swatch: 'var(--color-warning-500)' },
-  { label: 'Warning 600', value: 'var(--color-warning-600)', swatch: 'var(--color-warning-600)' },
-  { label: 'Danger 400', value: 'var(--color-danger-400)', swatch: 'var(--color-danger-400)' },
-  { label: 'Danger 500', value: 'var(--color-danger-500)', swatch: 'var(--color-danger-500)' },
-  { label: 'Danger 600', value: 'var(--color-danger-600)', swatch: 'var(--color-danger-600)' },
+  {
+    label: 'Base White',
+    value: 'var(--color-base-white)',
+    swatch: 'var(--color-base-white)',
+  },
+  {
+    label: 'Base Black',
+    value: 'var(--color-base-black)',
+    swatch: 'var(--color-base-black)',
+  },
+  {
+    label: 'Gray 100',
+    value: 'var(--color-gray-100)',
+    swatch: 'var(--color-gray-100)',
+  },
+  {
+    label: 'Gray 300',
+    value: 'var(--color-gray-300)',
+    swatch: 'var(--color-gray-300)',
+  },
+  {
+    label: 'Gray 500',
+    value: 'var(--color-gray-500)',
+    swatch: 'var(--color-gray-500)',
+  },
+  {
+    label: 'Gray 700',
+    value: 'var(--color-gray-700)',
+    swatch: 'var(--color-gray-700)',
+  },
+  {
+    label: 'Gray 900',
+    value: 'var(--color-gray-900)',
+    swatch: 'var(--color-gray-900)',
+  },
+  {
+    label: 'Brand 400',
+    value: 'var(--color-brand-400)',
+    swatch: 'var(--color-brand-400)',
+  },
+  {
+    label: 'Brand 500',
+    value: 'var(--color-brand-500)',
+    swatch: 'var(--color-brand-500)',
+  },
+  {
+    label: 'Brand 600',
+    value: 'var(--color-brand-600)',
+    swatch: 'var(--color-brand-600)',
+  },
+  {
+    label: 'Brand 50',
+    value: 'var(--color-brand-50)',
+    swatch: 'var(--color-brand-50)',
+  },
+  {
+    label: 'Brand 100',
+    value: 'var(--color-brand-100)',
+    swatch: 'var(--color-brand-100)',
+  },
+  {
+    label: 'Brand 200',
+    value: 'var(--color-brand-200)',
+    swatch: 'var(--color-brand-200)',
+  },
+  {
+    label: 'Brand 300',
+    value: 'var(--color-brand-300)',
+    swatch: 'var(--color-brand-300)',
+  },
+  {
+    label: 'Brand 700',
+    value: 'var(--color-brand-700)',
+    swatch: 'var(--color-brand-700)',
+  },
+  {
+    label: 'Brand 800',
+    value: 'var(--color-brand-800)',
+    swatch: 'var(--color-brand-800)',
+  },
+  {
+    label: 'Danger 100',
+    value: 'var(--color-danger-100)',
+    swatch: 'var(--color-danger-100)',
+  },
+  {
+    label: 'Success 400',
+    value: 'var(--color-success-400)',
+    swatch: 'var(--color-success-400)',
+  },
+  {
+    label: 'Success 500',
+    value: 'var(--color-success-500)',
+    swatch: 'var(--color-success-500)',
+  },
+  {
+    label: 'Success 600',
+    value: 'var(--color-success-600)',
+    swatch: 'var(--color-success-600)',
+  },
+  {
+    label: 'Warning 400',
+    value: 'var(--color-warning-400)',
+    swatch: 'var(--color-warning-400)',
+  },
+  {
+    label: 'Warning 500',
+    value: 'var(--color-warning-500)',
+    swatch: 'var(--color-warning-500)',
+  },
+  {
+    label: 'Warning 600',
+    value: 'var(--color-warning-600)',
+    swatch: 'var(--color-warning-600)',
+  },
+  {
+    label: 'Danger 400',
+    value: 'var(--color-danger-400)',
+    swatch: 'var(--color-danger-400)',
+  },
+  {
+    label: 'Danger 500',
+    value: 'var(--color-danger-500)',
+    swatch: 'var(--color-danger-500)',
+  },
+  {
+    label: 'Danger 600',
+    value: 'var(--color-danger-600)',
+    swatch: 'var(--color-danger-600)',
+  },
   {
     label: 'Semantic Action Primary',
     value: 'var(--color-semantic-action-primary)',
@@ -587,7 +691,9 @@ function CssVariableController({
   const [isOpen, setIsOpen] = useState(false);
   const [values, setValues] = useState<Record<string, string>>({});
   const scopedVars = Object.fromEntries(
-    Object.entries(values).filter(([, value]) => value && value.trim().length > 0),
+    Object.entries(values).filter(
+      ([, value]) => value && value.trim().length > 0,
+    ),
   );
 
   useEffect(() => {
@@ -631,7 +737,9 @@ function CssVariableController({
                       marginBottom: '10px',
                     }}
                   >
-                    <strong style={{ fontSize: '13px' }}>CSS Variable Controls</strong>
+                    <strong style={{ fontSize: '13px' }}>
+                      CSS Variable Controls
+                    </strong>
                     <button
                       type="button"
                       onClick={() => {
@@ -650,28 +758,44 @@ function CssVariableController({
                   </div>
 
                   <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-                    <legend className="pf-sr-only">Global CSS variable controls</legend>
+                    <legend className="pf-sr-only">
+                      Global CSS variable controls
+                    </legend>
                     {controls.map((control) => {
                       const inputId = `global-css-var-${control.name.replace(/[^a-z0-9-]/gi, '-')}`;
                       return (
                         <div
                           key={control.name}
-                          style={{ display: 'grid', gap: '4px', marginBottom: '10px' }}
+                          style={{
+                            display: 'grid',
+                            gap: '4px',
+                            marginBottom: '10px',
+                          }}
                         >
                           <label htmlFor={inputId} style={{ fontSize: '12px' }}>
                             {control.label}
                           </label>
-                          <code style={{ fontSize: '11px', color: 'var(--color-semantic-text-muted)' }}>
+                          <code
+                            style={{
+                              fontSize: '11px',
+                              color: 'var(--color-semantic-text-muted)',
+                            }}
+                          >
                             {control.name}
                           </code>
                           {control.type === 'color' ? (
                             <ColorSelect
                               id={inputId}
-                              value={values[control.name] ?? control.defaultValue}
+                              value={
+                                values[control.name] ?? control.defaultValue
+                              }
                               onChange={(nextValue) => {
                                 setValues((current) => {
                                   if (nextValue === control.defaultValue) {
-                                    const { [control.name]: _removed, ...rest } = current;
+                                    const {
+                                      [control.name]: _removed,
+                                      ...rest
+                                    } = current;
                                     return rest;
                                   }
                                   return {
@@ -685,12 +809,17 @@ function CssVariableController({
                             <input
                               id={inputId}
                               type="text"
-                              value={values[control.name] ?? control.defaultValue}
+                              value={
+                                values[control.name] ?? control.defaultValue
+                              }
                               onChange={(event) => {
                                 const nextValue = event.target.value;
                                 setValues((current) => {
                                   if (nextValue === control.defaultValue) {
-                                    const { [control.name]: _removed, ...rest } = current;
+                                    const {
+                                      [control.name]: _removed,
+                                      ...rest
+                                    } = current;
                                     return rest;
                                   }
                                   return {
@@ -701,13 +830,15 @@ function CssVariableController({
                               }}
                               style={{
                                 minHeight: '32px',
-                                border: '1px solid var(--color-semantic-border-default)',
+                                border:
+                                  '1px solid var(--color-semantic-border-default)',
                                 borderRadius: '6px',
                                 padding: '0 8px',
                                 fontFamily: 'var(--font-family-mono)',
                                 fontSize: '12px',
                                 color: 'var(--color-semantic-text-default)',
-                                background: 'var(--color-semantic-background-default)',
+                                background:
+                                  'var(--color-semantic-background-default)',
                               }}
                             />
                           )}
@@ -775,12 +906,13 @@ function ColorSelect({
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedOption =
-    COLOR_OPTIONS.find((option) => option.value === value) ?? {
-      label: value,
-      value,
-      swatch: value,
-    };
+  const selectedOption = COLOR_OPTIONS.find(
+    (option) => option.value === value,
+  ) ?? {
+    label: value,
+    value,
+    swatch: value,
+  };
 
   useEffect(() => {
     const onPointerDown = (event: PointerEvent) => {
@@ -949,7 +1081,9 @@ export function withCssVariableControls(
     (context.viewMode === 'story' && context.name === 'Interactive') ||
     context.id?.endsWith('--interactive');
   const isComponentStory = Boolean(context.title?.startsWith('Components/'));
-  const mappedScopes = context.title ? scopeByStoryTitle[context.title] ?? [] : [];
+  const mappedScopes = context.title
+    ? (scopeByStoryTitle[context.title] ?? [])
+    : [];
   const activeScopes: Array<
     | 'button'
     | 'input'
@@ -965,10 +1099,12 @@ export function withCssVariableControls(
   > = mappedScopes;
   const activeVariant = context.args?.variant;
 
-  const controls = CSS_VARIABLE_CONTROLS.filter((control) =>
-    control.scopes.some((scope) => activeScopes.includes(scope)) &&
-    (!control.variants ||
-      (typeof activeVariant === 'string' && control.variants.includes(activeVariant))),
+  const controls = CSS_VARIABLE_CONTROLS.filter(
+    (control) =>
+      control.scopes.some((scope) => activeScopes.includes(scope)) &&
+      (!control.variants ||
+        (typeof activeVariant === 'string' &&
+          control.variants.includes(activeVariant))),
   );
 
   if (!isInteractiveStory || !isComponentStory || controls.length === 0) {

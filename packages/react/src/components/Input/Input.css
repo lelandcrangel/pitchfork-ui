@@ -3,17 +3,17 @@
   gap: var(--space-2);
 }
 .pf-field__label {
-  color: var(--pf-field-label);
+  color: var(--pf-input-field-label, var(--pf-field-label));
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
 .pf-field__description {
-  color: var(--pf-field-description);
+  color: var(--pf-input-field-description, var(--pf-field-description));
   font-size: var(--font-size-sm);
   margin: 0;
 }
 .pf-field__error {
-  color: var(--pf-field-error);
+  color: var(--pf-input-field-error, var(--pf-field-error));
   font-size: var(--font-size-sm);
   margin: 0;
 }
@@ -31,8 +31,11 @@
   outline: none;
 }
 .pf-input:focus-visible {
-  border-color: var(--pf-input-color-semantic-action-primary, var(--color-semantic-action-primary));
-  box-shadow: var(--pf-focus-ring);
+  border-color: var(
+    --pf-input-color-semantic-action-primary,
+    var(--color-semantic-action-primary)
+  );
+  box-shadow: var(--pf-input-focus-ring, var(--pf-focus-ring));
 }
 .pf-input::placeholder {
   color: var(--pf-input-placeholder);

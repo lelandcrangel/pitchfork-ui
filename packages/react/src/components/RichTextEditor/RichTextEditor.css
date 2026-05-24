@@ -7,7 +7,7 @@
 
 .pf-rte:focus-within {
   border-color: var(--pf-richtexteditor-color-semantic-action-primary, var(--color-semantic-action-primary));
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-richtexteditor-focus-ring, var(--pf-focus-ring));
 }
 
 .pf-rte--invalid {
@@ -46,7 +46,7 @@
 }
 
 .pf-rte__tool:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-richtexteditor-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 

@@ -9,18 +9,54 @@
   padding: 0 var(--space-2);
 }
 .pf-badge--neutral {
-  background: var(--pf-badge-neutral-bg, var(--pf-badge-color-gray-100, var(--color-gray-100)));
-  color: var(--pf-badge-neutral-text, var(--pf-badge-color-gray-700, var(--color-gray-700)));
+  background: var(
+    --pf-badge-neutral-bg,
+    var(--pf-badge-color-gray-100, var(--color-gray-100))
+  );
+  color: var(
+    --pf-badge-neutral-text,
+    var(--pf-badge-color-gray-700, var(--color-gray-700))
+  );
 }
 .pf-badge--brand {
-  background: var(--pf-badge-brand-bg, var(--pf-badge-color-brand-100, var(--color-brand-100)));
-  color: var(--pf-badge-brand-text, var(--pf-badge-color-brand-700, var(--color-brand-700)));
+  background: var(
+    --pf-badge-brand-bg,
+    var(--pf-badge-color-brand-100, var(--color-brand-100))
+  );
+  color: var(
+    --pf-badge-brand-text,
+    var(--pf-badge-color-brand-700, var(--color-brand-700))
+  );
 }
 .pf-badge--success {
-  background: var(--pf-badge-success-bg, var(--pf-badge-color-semantic-status-success-background, var(--color-semantic-status-success-background)));
-  color: var(--pf-badge-success-text, var(--pf-badge-color-semantic-status-success-foreground, var(--color-semantic-status-success-foreground)));
+  background: var(
+    --pf-badge-success-bg,
+    var(
+      --pf-badge-color-semantic-status-success-background,
+      var(--color-semantic-status-success-background)
+    )
+  );
+  color: var(
+    --pf-badge-success-text,
+    var(
+      --pf-badge-color-semantic-status-success-foreground,
+      var(--color-semantic-status-success-foreground)
+    )
+  );
 }
 .pf-badge--warning {
-  background: var(--pf-badge-warning-bg, var(--pf-badge-color-semantic-status-warning-background, var(--color-semantic-status-warning-background)));
-  color: var(--pf-badge-warning-text, var(--pf-badge-color-semantic-status-warning-foreground, var(--color-semantic-status-warning-foreground)));
+  background: var(
+    --pf-badge-warning-bg,
+    var(
+      --pf-badge-color-semantic-status-warning-background,
+      var(--color-semantic-status-warning-background)
+    )
+  );
+  color: var(
+    --pf-badge-warning-text,
+    var(
+      --pf-badge-color-semantic-status-warning-foreground,
+      var(--color-semantic-status-warning-foreground)
+    )
+  );
 }

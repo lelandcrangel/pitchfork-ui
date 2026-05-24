@@ -53,7 +53,7 @@
 }
 
 .pf-slider:focus-visible {
-  box-shadow: var(--pf-focus-ring);
+  box-shadow: var(--pf-slider-focus-ring, var(--pf-focus-ring));
 }
 
 .pf-slider::-webkit-slider-thumb {
@@ -61,7 +61,7 @@
   background: var(--pf-slider-color-semantic-background-default, var(--color-semantic-background-default));
   border: 2px solid var(--pf-slider-color-semantic-action-primary, var(--color-semantic-action-primary));
   border-radius: 50%;
-  box-shadow: var(--pf-control-thumb-outline-shadow);
+  box-shadow: var(--pf-slider-control-thumb-outline-shadow, var(--pf-control-thumb-outline-shadow));
   height: 18px;
   margin-top: -5px;
   width: 18px;
@@ -71,7 +71,7 @@
   background: var(--pf-slider-color-semantic-background-default, var(--color-semantic-background-default));
   border: 2px solid var(--pf-slider-color-semantic-action-primary, var(--color-semantic-action-primary));
   border-radius: 50%;
-  box-shadow: var(--pf-control-thumb-outline-shadow);
+  box-shadow: var(--pf-slider-control-thumb-outline-shadow, var(--pf-control-thumb-outline-shadow));
   height: 18px;
   width: 18px;
 }

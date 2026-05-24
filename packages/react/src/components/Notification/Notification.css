@@ -36,7 +36,7 @@
   background: var(--pf-notification-color-semantic-background-default, var(--color-semantic-background-default));
   border: 1px solid var(--pf-notification-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
-  box-shadow: var(--pf-elevation-floating-shadow);
+  box-shadow: var(--pf-notification-elevation-floating-shadow, var(--pf-elevation-floating-shadow));
   display: grid;
   gap: var(--space-3);
   grid-template-columns: auto minmax(0, 1fr) auto;
