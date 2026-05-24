@@ -13,12 +13,12 @@
 }
 
 .pf-tabs__list--underline {
-  border-bottom: 1px solid var(--color-semantic-border-default);
+  border-bottom: 1px solid var(--pf-tabs-color-semantic-border-default, var(--color-semantic-border-default));
   gap: var(--space-1);
 }
 
 .pf-tabs__list--pills {
-  background: var(--color-semantic-background-subtle);
+  background: var(--pf-tabs-color-semantic-background-subtle, var(--color-semantic-background-subtle));
   border-radius: var(--radius-md);
   gap: 4px;
   padding: 4px;
@@ -28,7 +28,7 @@
   appearance: none;
   background: transparent;
   border: 0;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-tabs-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: pointer;
   font-family: inherit;
   font-weight: var(--font-weight-medium);
@@ -65,12 +65,12 @@
 
 .pf-tabs__tab--underline:hover:not(:disabled),
 .pf-tabs__tab--underline:focus-visible {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-tabs-color-semantic-text-default, var(--color-semantic-text-default));
 }
 
 .pf-tabs__tab--underline.pf-tabs__tab--active {
-  border-bottom-color: var(--color-semantic-text-default);
-  color: var(--color-semantic-text-default);
+  border-bottom-color: var(--pf-tabs-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-tabs-color-semantic-text-default, var(--color-semantic-text-default));
 }
 
 .pf-tabs__tab--pills {
@@ -79,23 +79,23 @@
 
 .pf-tabs__tab--pills:hover:not(:disabled),
 .pf-tabs__tab--pills:focus-visible {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-tabs-color-semantic-text-default, var(--color-semantic-text-default));
 }
 
 .pf-tabs__tab--pills.pf-tabs__tab--active {
-  background: var(--color-semantic-background-default);
+  background: var(--pf-tabs-color-semantic-background-default, var(--color-semantic-background-default));
   box-shadow: var(--pf-elevation-tab-active-shadow);
-  color: var(--color-semantic-text-default);
+  color: var(--pf-tabs-color-semantic-text-default, var(--color-semantic-text-default));
 }
 
 .pf-tabs__tab:focus-visible {
   outline: 2px solid
-    color-mix(in srgb, var(--color-semantic-text-default) 32%, transparent);
+    color-mix(in srgb, var(--pf-tabs-color-semantic-text-default, var(--color-semantic-text-default)) 32%, transparent);
   outline-offset: 2px;
 }
 
 .pf-tabs__panel {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-tabs-color-semantic-text-default, var(--color-semantic-text-default));
   line-height: 1.5;
   min-width: 0;
 }

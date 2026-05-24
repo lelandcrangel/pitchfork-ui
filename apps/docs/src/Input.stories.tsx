@@ -9,6 +9,25 @@ const meta = {
     label: 'Email address',
     placeholder: 'you@example.com',
     description: 'We will never share your email.',
+    type: 'text',
+    disabled: false,
+    required: false,
+  },
+  argTypes: {
+    label: { control: 'text' },
+    placeholder: { control: 'text' },
+    description: { control: 'text' },
+    error: { control: 'text' },
+    type: {
+      control: 'select',
+      options: ['text', 'email', 'password', 'search', 'tel', 'url', 'number'],
+    },
+    disabled: { control: 'boolean' },
+    required: { control: 'boolean' },
+    style: { control: false, table: { disable: true } },
+    onChange: { control: false, table: { disable: true } },
+    value: { control: false, table: { disable: true } },
+    defaultValue: { control: 'text' },
   },
 } satisfies Meta<typeof Input>;
 

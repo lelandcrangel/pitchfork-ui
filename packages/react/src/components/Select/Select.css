@@ -4,10 +4,10 @@
 
 .pf-select__trigger {
   align-items: center;
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-text-muted);
+  background: var(--pf-input-bg);
+  border: 1px solid var(--pf-input-border);
   border-radius: var(--radius-md);
-  color: var(--color-semantic-text-default);
+  color: var(--pf-input-text);
   cursor: pointer;
   display: flex;
   font: inherit;
@@ -24,18 +24,18 @@
 }
 
 .pf-select__trigger:focus-visible {
-  border-color: var(--color-semantic-action-primary);
-  outline: 2px solid var(--color-semantic-action-primary);
+  border-color: var(--pf-select-color-semantic-action-primary, var(--color-semantic-action-primary));
+  outline: 2px solid var(--pf-select-color-semantic-action-primary, var(--color-semantic-action-primary));
   outline-offset: 1px;
   box-shadow: var(--pf-focus-ring);
 }
 
 .pf-select__trigger--open {
-  border-color: var(--color-semantic-action-primary);
+  border-color: var(--pf-select-color-semantic-action-primary, var(--color-semantic-action-primary));
 }
 
 .pf-select__trigger--invalid {
-  border-color: var(--color-danger-600);
+  border-color: var(--pf-select-color-danger-600, var(--color-danger-600));
 }
 
 .pf-select__value {
@@ -45,12 +45,12 @@
 }
 
 .pf-select__placeholder {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-input-placeholder);
 }
 
 .pf-select__icon {
   align-items: center;
-  color: var(--color-semantic-text-default);
+  color: var(--pf-input-text);
   display: inline-flex;
   flex-shrink: 0;
   height: 20px;
@@ -71,8 +71,8 @@
 }
 
 .pf-select__menu {
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-text-muted);
+  background: var(--pf-select-menu-bg);
+  border: 1px solid var(--pf-select-menu-border);
   border-radius: var(--radius-md);
   box-shadow: var(--pf-elevation-popover-shadow);
   list-style: none;
@@ -86,15 +86,15 @@
 
 .pf-select__option {
   border-radius: var(--radius-sm);
-  color: var(--color-semantic-text-default);
+  color: var(--pf-input-text);
   cursor: pointer;
   padding: var(--space-2) var(--space-3);
 }
 
 .pf-select__option:hover,
 .pf-select__option--active {
-  background: var(--color-semantic-action-primary);
-  color: var(--color-semantic-action-primary-text);
+  background: var(--pf-select-option-active-bg);
+  color: var(--pf-select-option-active-text);
 }
 
 .pf-select__option--selected {
@@ -103,16 +103,16 @@
 
 .pf-select__option--disabled {
   background: transparent;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-input-placeholder);
   cursor: not-allowed;
 }
 
 .pf-select__option--disabled:hover {
   background: transparent;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-input-placeholder);
 }
 
 .pf-select__option--disabled.pf-select__option--active {
   background: transparent;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-input-placeholder);
 }

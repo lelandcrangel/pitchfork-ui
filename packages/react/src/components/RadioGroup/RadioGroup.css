@@ -14,7 +14,7 @@
 }
 
 .pf-radio-group__legend {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-radiogroup-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--space-1);
@@ -28,7 +28,7 @@
 }
 
 .pf-radio-group__input {
-  accent-color: var(--color-semantic-action-primary);
+  accent-color: var(--pf-radiogroup-color-semantic-action-primary, var(--color-semantic-action-primary));
   height: 18px;
   margin-top: 2px;
   width: 18px;
@@ -40,7 +40,7 @@
 }
 
 .pf-radio-group__label {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-radiogroup-color-semantic-text-default, var(--color-semantic-text-default));
   cursor: pointer;
   display: grid;
   gap: 2px;
@@ -52,7 +52,7 @@
 }
 
 .pf-radio-group__description {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-radiogroup-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   line-height: 1.35;
 }

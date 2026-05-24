@@ -9,10 +9,10 @@
 
 .pf-file-uploader__dropzone {
   align-items: center;
-  background: var(--color-semantic-background-default);
-  border: 1px dashed var(--color-semantic-border-default);
+  background: var(--pf-fileuploader-color-semantic-background-default, var(--color-semantic-background-default));
+  border: 1px dashed var(--pf-fileuploader-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
-  color: var(--color-semantic-text-default);
+  color: var(--pf-fileuploader-color-semantic-text-default, var(--color-semantic-text-default));
   cursor: pointer;
   display: grid;
   gap: var(--space-1);
@@ -23,8 +23,8 @@
 }
 
 .pf-file-uploader__dropzone:hover:not(:disabled) {
-  border-color: var(--color-semantic-border-strong);
-  background: var(--color-semantic-background-subtle);
+  border-color: var(--pf-fileuploader-color-semantic-border-strong, var(--color-semantic-border-strong));
+  background: var(--pf-fileuploader-color-semantic-background-subtle, var(--color-semantic-background-subtle));
 }
 
 .pf-file-uploader__dropzone:focus-visible {
@@ -33,12 +33,12 @@
 }
 
 .pf-file-uploader__dropzone--active {
-  border-color: var(--color-semantic-action-primary);
-  box-shadow: inset 0 0 0 1px var(--color-semantic-action-primary);
+  border-color: var(--pf-fileuploader-color-semantic-action-primary, var(--color-semantic-action-primary));
+  box-shadow: inset 0 0 0 1px var(--pf-fileuploader-color-semantic-action-primary, var(--color-semantic-action-primary));
 }
 
 .pf-file-uploader__dropzone--invalid {
-  border-color: var(--color-danger-600);
+  border-color: var(--pf-fileuploader-color-danger-600, var(--color-danger-600));
 }
 
 .pf-file-uploader__dropzone:disabled {
@@ -48,10 +48,10 @@
 
 .pf-file-uploader__icon {
   align-items: center;
-  background: var(--color-semantic-background-subtle);
-  border: 1px solid var(--color-semantic-border-default);
+  background: var(--pf-fileuploader-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  border: 1px solid var(--pf-fileuploader-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: 999px;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-fileuploader-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   height: 36px;
   justify-content: center;
@@ -65,7 +65,7 @@
 
 .pf-file-uploader__subtitle,
 .pf-file-uploader__hint {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-fileuploader-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-xs);
 }
 
@@ -79,8 +79,8 @@
 
 .pf-file-uploader__list-item {
   align-items: center;
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
+  background: var(--pf-fileuploader-color-semantic-background-default, var(--color-semantic-background-default));
+  border: 1px solid var(--pf-fileuploader-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-sm);
   display: flex;
   justify-content: space-between;
@@ -94,7 +94,7 @@
 }
 
 .pf-file-uploader__file-name {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-fileuploader-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: var(--font-size-sm);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -102,7 +102,7 @@
 }
 
 .pf-file-uploader__file-size {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-fileuploader-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-xs);
 }
 
@@ -111,7 +111,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-fileuploader-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: pointer;
   display: inline-flex;
   height: 24px;
@@ -120,8 +120,8 @@
 }
 
 .pf-file-uploader__remove:hover:not(:disabled) {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-default);
+  background: var(--pf-fileuploader-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-fileuploader-color-semantic-text-default, var(--color-semantic-text-default));
 }
 
 .pf-file-uploader__remove:focus-visible {

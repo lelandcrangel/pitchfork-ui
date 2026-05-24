@@ -21,7 +21,7 @@
 }
 
 .pf-page-header__eyebrow {
-  color: var(--color-semantic-action-primary);
+  color: var(--pf-pageheader-color-semantic-action-primary, var(--color-semantic-action-primary));
   font-size: 12px;
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.08em;
@@ -30,7 +30,7 @@
 }
 
 .pf-page-header__heading {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-pageheader-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: clamp(1.75rem, 3vw, 2.5rem);
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.03em;
@@ -39,7 +39,7 @@
 }
 
 .pf-page-header__description {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-pageheader-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-md);
   line-height: 1.5;
   margin: 0;
@@ -48,7 +48,7 @@
 
 .pf-page-header__meta {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-pageheader-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   flex-wrap: wrap;
   gap: var(--space-2);

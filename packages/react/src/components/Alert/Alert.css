@@ -1,6 +1,6 @@
 .pf-alert {
   align-items: flex-start;
-  border: 1px solid var(--color-semantic-border-default);
+  border: 1px solid var(--pf-alert-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
   display: flex;
   gap: var(--space-3);
@@ -8,27 +8,27 @@
 }
 
 .pf-alert--info {
-  background: var(--color-brand-50);
-  border-color: var(--color-brand-300);
-  color: var(--color-brand-800);
+  background: var(--pf-alert-color-brand-50, var(--color-brand-50));
+  border-color: var(--pf-alert-color-brand-300, var(--color-brand-300));
+  color: var(--pf-alert-color-brand-800, var(--color-brand-800));
 }
 
 .pf-alert--success {
-  background: var(--color-semantic-status-success-background);
-  border-color: var(--color-semantic-status-success-border);
-  color: var(--color-semantic-status-success-foreground);
+  background: var(--pf-alert-color-semantic-status-success-background, var(--color-semantic-status-success-background));
+  border-color: var(--pf-alert-color-semantic-status-success-border, var(--color-semantic-status-success-border));
+  color: var(--pf-alert-color-semantic-status-success-foreground, var(--color-semantic-status-success-foreground));
 }
 
 .pf-alert--warning {
-  background: var(--color-semantic-status-warning-background);
-  border-color: var(--color-semantic-status-warning-border);
-  color: var(--color-semantic-status-warning-foreground);
+  background: var(--pf-alert-color-semantic-status-warning-background, var(--color-semantic-status-warning-background));
+  border-color: var(--pf-alert-color-semantic-status-warning-border, var(--color-semantic-status-warning-border));
+  color: var(--pf-alert-color-semantic-status-warning-foreground, var(--color-semantic-status-warning-foreground));
 }
 
 .pf-alert--danger {
-  background: var(--color-semantic-status-danger-background);
-  border-color: var(--color-semantic-status-danger-border);
-  color: var(--color-semantic-status-danger-foreground);
+  background: var(--pf-alert-color-semantic-status-danger-background, var(--color-semantic-status-danger-background));
+  border-color: var(--pf-alert-color-semantic-status-danger-border, var(--color-semantic-status-danger-border));
+  color: var(--pf-alert-color-semantic-status-danger-foreground, var(--color-semantic-status-danger-foreground));
 }
 
 .pf-alert__icon {

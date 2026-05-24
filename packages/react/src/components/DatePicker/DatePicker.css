@@ -4,10 +4,10 @@
 
 .pf-date-picker__trigger {
   align-items: center;
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
+  background: var(--pf-datepicker-color-semantic-background-default, var(--color-semantic-background-default));
+  border: 1px solid var(--pf-datepicker-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
-  color: var(--color-semantic-text-default);
+  color: var(--pf-datepicker-color-semantic-text-default, var(--color-semantic-text-default));
   cursor: pointer;
   display: inline-flex;
   font-size: var(--font-size-sm);
@@ -20,7 +20,7 @@
 }
 
 .pf-date-picker__trigger:hover:not(:disabled) {
-  border-color: var(--color-semantic-border-strong);
+  border-color: var(--pf-datepicker-color-semantic-border-strong, var(--color-semantic-border-strong));
 }
 
 .pf-date-picker__trigger:focus-visible {
@@ -29,13 +29,13 @@
 }
 
 .pf-date-picker__trigger:disabled {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-muted);
+  background: var(--pf-datepicker-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-datepicker-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: not-allowed;
 }
 
 .pf-date-picker__trigger--invalid {
-  border-color: var(--color-danger-600);
+  border-color: var(--pf-datepicker-color-danger-600, var(--color-danger-600));
 }
 
 .pf-date-picker__value {
@@ -45,12 +45,12 @@
 }
 
 .pf-date-picker__value--placeholder {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-datepicker-color-semantic-text-muted, var(--color-semantic-text-muted));
 }
 
 .pf-date-picker__icons {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-datepicker-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   gap: var(--space-2);
 }
@@ -66,8 +66,8 @@
 
 .pf-date-picker__icon-button:focus-visible,
 .pf-date-picker__icon-button:hover {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-default);
+  background: var(--pf-datepicker-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-datepicker-color-semantic-text-default, var(--color-semantic-text-default));
   outline: none;
 }
 

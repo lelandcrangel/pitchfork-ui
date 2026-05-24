@@ -7,7 +7,7 @@
 }
 
 .pf-section-header--divider {
-  border-bottom: 1px solid var(--color-semantic-border-default);
+  border-bottom: 1px solid var(--pf-sectionheader-color-semantic-border-default, var(--color-semantic-border-default));
 }
 
 .pf-section-header--start {
@@ -23,7 +23,7 @@
 }
 
 .pf-section-header__eyebrow {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-sectionheader-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.04em;
@@ -32,14 +32,14 @@
 }
 
 .pf-section-header__heading {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-sectionheader-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .pf-section-header__description {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-sectionheader-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   line-height: 1.5;
   margin: var(--space-1) 0 0;
@@ -47,7 +47,7 @@
 
 .pf-section-header__metadata {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-sectionheader-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   flex-wrap: wrap;
   font-size: var(--font-size-sm);

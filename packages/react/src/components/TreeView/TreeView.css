@@ -1,6 +1,6 @@
 .pf-tree-view {
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
+  background: var(--pf-treeview-color-semantic-background-default, var(--color-semantic-background-default));
+  border: 1px solid var(--pf-treeview-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
   padding: var(--space-2);
 }
@@ -33,7 +33,7 @@
 .pf-tree-view__toggle,
 .pf-tree-view__spacer {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-treeview-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   font-size: 12px;
   height: 24px;
@@ -50,8 +50,8 @@
 }
 
 .pf-tree-view__toggle:hover {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-default);
+  background: var(--pf-treeview-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-treeview-color-semantic-text-default, var(--color-semantic-text-default));
 }
 
 .pf-tree-view__node {
@@ -59,7 +59,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-treeview-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: pointer;
   display: grid;
   font: inherit;
@@ -74,8 +74,8 @@
 }
 
 .pf-tree-view__node:hover {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-default);
+  background: var(--pf-treeview-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-treeview-color-semantic-text-default, var(--color-semantic-text-default));
 }
 
 .pf-tree-view__node:focus-visible {
@@ -84,8 +84,8 @@
 }
 
 .pf-tree-view__row--selected .pf-tree-view__node {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-default);
+  background: var(--pf-treeview-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-treeview-color-semantic-text-default, var(--color-semantic-text-default));
   font-weight: var(--font-weight-semibold);
 }
 

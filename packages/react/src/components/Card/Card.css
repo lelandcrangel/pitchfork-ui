@@ -1,4 +1,4 @@
-.pf-card { background: var(--color-semantic-background-default); border: 1px solid var(--color-semantic-border-default); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
+.pf-card { background: var(--pf-card-color-semantic-background-default, var(--color-semantic-background-default)); border: 1px solid var(--pf-card-color-semantic-border-default, var(--color-semantic-border-default)); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden; }
 .pf-card__header, .pf-card__content, .pf-card__footer { padding: var(--space-4); }
-.pf-card__header { border-bottom: 1px solid var(--color-semantic-border-default); }
-.pf-card__footer { border-top: 1px solid var(--color-semantic-border-default); }
+.pf-card__header { border-bottom: 1px solid var(--pf-card-color-semantic-border-default, var(--color-semantic-border-default)); }
+.pf-card__footer { border-top: 1px solid var(--pf-card-color-semantic-border-default, var(--color-semantic-border-default)); }

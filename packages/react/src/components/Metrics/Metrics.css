@@ -5,8 +5,8 @@
 }
 
 .pf-metric-card {
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
+  background: var(--pf-metrics-color-semantic-background-default, var(--color-semantic-background-default));
+  border: 1px solid var(--pf-metrics-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
   display: grid;
   gap: var(--space-3);
@@ -28,14 +28,14 @@
 }
 
 .pf-metric-card__heading {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-metrics-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   margin: 0;
 }
 
 .pf-metric-card__icon {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-metrics-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   font-size: 14px;
   justify-content: center;
@@ -55,7 +55,7 @@
 }
 
 .pf-metric-card__value {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-metrics-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: clamp(1.75rem, 3vw, 2.25rem);
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.02em;
@@ -81,28 +81,28 @@
 .pf-metric-card__trend--positive {
   background: color-mix(
     in srgb,
-    var(--color-semantic-status-success-background) 55%,
+    var(--pf-metrics-color-semantic-status-success-background, var(--color-semantic-status-success-background)) 55%,
     white
   );
-  color: var(--color-semantic-status-success-foreground);
+  color: var(--pf-metrics-color-semantic-status-success-foreground, var(--color-semantic-status-success-foreground));
 }
 
 .pf-metric-card__trend--negative {
   background: color-mix(
     in srgb,
-    var(--color-semantic-status-danger-background) 55%,
+    var(--pf-metrics-color-semantic-status-danger-background, var(--color-semantic-status-danger-background)) 55%,
     white
   );
-  color: var(--color-semantic-status-danger-foreground);
+  color: var(--pf-metrics-color-semantic-status-danger-foreground, var(--color-semantic-status-danger-foreground));
 }
 
 .pf-metric-card__trend--neutral {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-muted);
+  background: var(--pf-metrics-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-metrics-color-semantic-text-muted, var(--color-semantic-text-muted));
 }
 
 .pf-metric-card__description {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-metrics-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   margin: 0;
 }

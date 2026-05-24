@@ -31,7 +31,7 @@
 }
 
 .pf-dropdown__chevron {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-dropdown-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   height: 16px;
   transition: transform 140ms ease;
@@ -65,7 +65,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--color-semantic-text-default);
+  color: var(--pf-dropdown-color-semantic-text-default, var(--color-semantic-text-default));
   cursor: pointer;
   display: inline-flex;
   font: inherit;
@@ -83,7 +83,7 @@
 }
 
 .pf-dropdown__item-icon {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-dropdown-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   height: 16px;
   width: 16px;
@@ -95,7 +95,7 @@
 }
 
 .pf-dropdown__item-shortcut {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-dropdown-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: 12px;
 }
 
@@ -105,15 +105,15 @@
 }
 
 .pf-dropdown__item--destructive {
-  color: var(--color-semantic-status-danger-foreground);
+  color: var(--pf-dropdown-color-semantic-status-danger-foreground, var(--color-semantic-status-danger-foreground));
 }
 
 .pf-dropdown__item--destructive .pf-dropdown__item-icon {
-  color: var(--color-danger-500);
+  color: var(--pf-dropdown-color-danger-500, var(--color-danger-500));
 }
 
 .pf-dropdown__item:disabled {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-dropdown-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: not-allowed;
   opacity: 0.7;
 }

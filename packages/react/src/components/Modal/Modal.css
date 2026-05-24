@@ -21,12 +21,12 @@
 }
 
 .pf-modal {
-  background: var(--color-semantic-background-default);
+  background: var(--pf-modal-color-semantic-background-default, var(--color-semantic-background-default));
   border: 1px solid
-    color-mix(in srgb, var(--color-semantic-border-default) 85%, transparent);
+    color-mix(in srgb, var(--pf-modal-color-semantic-border-default, var(--color-semantic-border-default)) 85%, transparent);
   border-radius: var(--radius-lg);
   box-shadow: var(--pf-elevation-overlay-shadow);
-  color: var(--color-semantic-text-default);
+  color: var(--pf-modal-color-semantic-text-default, var(--color-semantic-text-default));
   display: grid;
   max-height: min(90vh, 720px);
   overflow: hidden;
@@ -59,11 +59,11 @@
 }
 
 .pf-modal__header {
-  border-bottom: 1px solid var(--color-semantic-border-default);
+  border-bottom: 1px solid var(--pf-modal-color-semantic-border-default, var(--color-semantic-border-default));
 }
 
 .pf-modal__footer {
-  border-top: 1px solid var(--color-semantic-border-default);
+  border-top: 1px solid var(--pf-modal-color-semantic-border-default, var(--color-semantic-border-default));
   justify-content: flex-end;
 }
 
@@ -86,7 +86,7 @@
 }
 
 .pf-modal__description {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-modal-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   line-height: 1.45;
   margin: 0;
@@ -97,7 +97,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-modal-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
@@ -109,8 +109,8 @@
 
 .pf-modal__close:hover,
 .pf-modal__close:focus-visible {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-default);
+  background: var(--pf-modal-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-modal-color-semantic-text-default, var(--color-semantic-text-default));
   outline: none;
 }
 

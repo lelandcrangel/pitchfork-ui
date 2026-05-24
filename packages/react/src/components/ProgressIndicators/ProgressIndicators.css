@@ -14,14 +14,14 @@
 }
 
 .pf-progress-bar__fill {
-  background: var(--color-semantic-action-primary);
+  background: var(--pf-progressindicators-color-semantic-action-primary, var(--color-semantic-action-primary));
   border-radius: inherit;
   height: 100%;
   transition: width 200ms ease;
 }
 
 .pf-progress-bar__value {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-progressindicators-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
@@ -50,13 +50,13 @@
 }
 
 .pf-progress-circle__fill {
-  stroke: var(--color-semantic-action-primary);
+  stroke: var(--pf-progressindicators-color-semantic-action-primary, var(--color-semantic-action-primary));
   stroke-linecap: round;
   transition: stroke-dashoffset 200ms ease;
 }
 
 .pf-progress-circle__value {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-progressindicators-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: 12px;
   font-weight: var(--font-weight-semibold);
   left: 50%;

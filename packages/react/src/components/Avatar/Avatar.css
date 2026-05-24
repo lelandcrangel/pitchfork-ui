@@ -1,42 +1,58 @@
 .pf-avatar {
-  background: var(--pf-surface-subtle);
-  border: 1px solid var(--pf-surface-border);
+  --pf-avatar-status-size: 10px;
+  --pf-avatar-status-offset: -2px;
+
+  background: var(--pf-avatar-bg, var(--pf-surface-subtle));
+  border: 1px solid var(--pf-avatar-border, var(--pf-surface-border));
   border-radius: var(--radius-full);
-  color: var(--color-semantic-text-default);
+  color: var(--pf-avatar-color-semantic-text-default, var(--pf-avatar-text, var(--color-semantic-text-default)));
   display: inline-flex;
   font-weight: var(--font-weight-semibold);
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   text-transform: uppercase;
   user-select: none;
 }
 
 .pf-avatar--sm {
+  --pf-avatar-status-size: 9px;
+  --pf-avatar-status-offset: -2px;
+
   font-size: 10px;
   height: 24px;
   width: 24px;
 }
 
 .pf-avatar--md {
+  --pf-avatar-status-size: 10px;
+  --pf-avatar-status-offset: -2px;
+
   font-size: 12px;
   height: 32px;
   width: 32px;
 }
 
 .pf-avatar--lg {
+  --pf-avatar-status-size: 12px;
+  --pf-avatar-status-offset: -2px;
+
   font-size: 14px;
   height: 40px;
   width: 40px;
 }
 
 .pf-avatar--xl {
+  --pf-avatar-status-size: 14px;
+  --pf-avatar-status-offset: -1px;
+
   font-size: 16px;
   height: 56px;
   width: 56px;
 }
 
 .pf-avatar__image {
+  border-radius: inherit;
   display: block;
   height: 100%;
   object-fit: cover;
@@ -45,6 +61,7 @@
 
 .pf-avatar__fallback {
   align-items: center;
+  border-radius: inherit;
   display: inline-flex;
   height: 100%;
   justify-content: center;
@@ -53,27 +70,28 @@
 }
 
 .pf-avatar__status {
-  border: 2px solid var(--pf-surface-bg);
+  border: 2px solid var(--pf-avatar-status-border, var(--pf-surface-bg));
   border-radius: var(--radius-full);
-  bottom: -1px;
-  height: 10px;
+  top: var(--pf-avatar-status-offset);
+  height: var(--pf-avatar-status-size, 10px);
   position: absolute;
-  right: -1px;
-  width: 10px;
+  right: var(--pf-avatar-status-offset);
+  width: var(--pf-avatar-status-size, 10px);
+  z-index: 1;
 }
 
 .pf-avatar__status--online {
-  background: var(--color-semantic-status-success-foreground);
+  background: var(--pf-avatar-status-online-color, #16a34a);
 }
 
 .pf-avatar__status--away {
-  background: var(--color-semantic-status-warning-foreground);
+  background: var(--pf-avatar-color-semantic-status-warning-foreground, var(--pf-avatar-status-away, var(--color-semantic-status-warning-foreground)));
 }
 
 .pf-avatar__status--busy {
-  background: var(--color-semantic-status-danger-foreground);
+  background: var(--pf-avatar-color-semantic-status-danger-foreground, var(--pf-avatar-status-busy, var(--color-semantic-status-danger-foreground)));
 }
 
 .pf-avatar__status--offline {
-  background: var(--color-semantic-text-muted);
+  background: var(--pf-avatar-color-semantic-text-muted, var(--pf-avatar-status-offline, var(--color-semantic-text-muted)));
 }

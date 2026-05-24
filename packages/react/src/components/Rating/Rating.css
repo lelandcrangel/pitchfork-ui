@@ -1,6 +1,6 @@
 .pf-rating-stars {
   align-items: center;
-  color: var(--color-semantic-text-default);
+  color: var(--pf-rating-color-semantic-text-default, var(--color-semantic-text-default));
   display: inline-flex;
   gap: var(--space-2);
 }
@@ -24,7 +24,7 @@
 }
 
 .pf-rating-stars__star-icon--base {
-  color: var(--color-gray-300);
+  color: var(--pf-rating-color-gray-300, var(--color-gray-300));
 }
 
 .pf-rating-stars__star-fill {
@@ -36,21 +36,21 @@
 }
 
 .pf-rating-stars__star-icon--fill {
-  color: var(--color-warning-500);
+  color: var(--pf-rating-color-warning-500, var(--color-warning-500));
 }
 
 .pf-rating-stars__value {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-rating-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
 
 .pf-rating-badge {
   align-items: center;
-  background: var(--color-warning-50);
-  border: 1px solid var(--color-warning-200);
+  background: var(--pf-rating-color-warning-50, var(--color-warning-50));
+  border: 1px solid var(--pf-rating-color-warning-200, var(--color-warning-200));
   border-radius: var(--radius-full);
-  color: var(--color-warning-700);
+  color: var(--pf-rating-color-warning-700, var(--color-warning-700));
   display: inline-flex;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
@@ -86,6 +86,6 @@
 }
 
 .pf-rating-badge__reviews {
-  color: var(--color-warning-800);
+  color: var(--pf-rating-color-warning-800, var(--color-warning-800));
   font-weight: var(--font-weight-medium);
 }

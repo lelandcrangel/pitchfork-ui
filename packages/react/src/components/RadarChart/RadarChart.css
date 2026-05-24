@@ -12,12 +12,12 @@
 
 .pf-radar-chart__grid {
   fill: none;
-  stroke: var(--color-semantic-border-default);
+  stroke: var(--pf-radarchart-color-semantic-border-default, var(--color-semantic-border-default));
   stroke-width: 1;
 }
 
 .pf-radar-chart__axis {
-  stroke: var(--color-semantic-border-muted);
+  stroke: var(--pf-radarchart-color-semantic-border-muted, var(--color-semantic-border-muted));
   stroke-width: 1;
 }
 
@@ -27,12 +27,12 @@
 }
 
 .pf-radar-chart__point {
-  stroke: var(--color-semantic-background-default);
+  stroke: var(--pf-radarchart-color-semantic-background-default, var(--color-semantic-background-default));
   stroke-width: 1.5;
 }
 
 .pf-radar-chart__label {
-  fill: var(--color-semantic-text-muted);
+  fill: var(--pf-radarchart-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: 11px;
   font-weight: var(--font-weight-medium);
 }
@@ -54,21 +54,21 @@
 }
 
 .pf-radar-chart__legend-label {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-radarchart-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: var(--font-size-sm);
 }
 
 .pf-radar-chart__legend-value {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-radarchart-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   font-variant-numeric: tabular-nums;
 }
 
 .pf-radar-chart__empty {
   align-items: center;
-  border: 1px dashed var(--color-semantic-border-default);
+  border: 1px dashed var(--pf-radarchart-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-radarchart-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   font-size: var(--font-size-sm);
   justify-content: center;

@@ -1,5 +1,5 @@
 .pf-icon {
   display: inline-block;
-  line-height: 1;
-  vertical-align: middle;
+  line-height: var(--pf-icon-line-height, 1);
+  vertical-align: var(--pf-icon-vertical-align, middle);
 }

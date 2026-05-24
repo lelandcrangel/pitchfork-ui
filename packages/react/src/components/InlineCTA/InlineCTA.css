@@ -1,7 +1,7 @@
 .pf-inline-cta {
   align-items: center;
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
+  background: var(--pf-inlinecta-color-semantic-background-default, var(--color-semantic-background-default));
+  border: 1px solid var(--pf-inlinecta-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
   display: grid;
   gap: var(--space-3);
@@ -11,7 +11,7 @@
 
 .pf-inline-cta__icon {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-inlinecta-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
   font-size: 16px;
   justify-content: center;
@@ -24,14 +24,14 @@
 }
 
 .pf-inline-cta__heading {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-inlinecta-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .pf-inline-cta__description {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-inlinecta-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   margin: 0;
 }
@@ -43,38 +43,38 @@
 }
 
 .pf-inline-cta--info {
-  background: color-mix(in srgb, var(--color-brand-50) 70%, white);
-  border-color: var(--color-brand-300);
+  background: color-mix(in srgb, var(--pf-inlinecta-color-brand-50, var(--color-brand-50)) 70%, white);
+  border-color: var(--pf-inlinecta-color-brand-300, var(--color-brand-300));
 }
 
 .pf-inline-cta--info .pf-inline-cta__icon {
-  color: var(--color-brand-700);
+  color: var(--pf-inlinecta-color-brand-700, var(--color-brand-700));
 }
 
 .pf-inline-cta--info .pf-inline-cta__heading {
-  color: var(--color-brand-800);
+  color: var(--pf-inlinecta-color-brand-800, var(--color-brand-800));
 }
 
 .pf-inline-cta--info .pf-inline-cta__description {
-  color: var(--color-brand-700);
+  color: var(--pf-inlinecta-color-brand-700, var(--color-brand-700));
 }
 
 .pf-inline-cta--success {
   background: color-mix(
     in srgb,
-    var(--color-semantic-status-success-background) 55%,
+    var(--pf-inlinecta-color-semantic-status-success-background, var(--color-semantic-status-success-background)) 55%,
     white
   );
-  border-color: var(--color-semantic-status-success-border);
+  border-color: var(--pf-inlinecta-color-semantic-status-success-border, var(--color-semantic-status-success-border));
 }
 
 .pf-inline-cta--warning {
   background: color-mix(
     in srgb,
-    var(--color-semantic-status-warning-background) 60%,
+    var(--pf-inlinecta-color-semantic-status-warning-background, var(--color-semantic-status-warning-background)) 60%,
     white
   );
-  border-color: var(--color-semantic-status-warning-border);
+  border-color: var(--pf-inlinecta-color-semantic-status-warning-border, var(--color-semantic-status-warning-border));
 }
 
 @media (max-width: 720px) {

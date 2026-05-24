@@ -1,6 +1,6 @@
 .pf-carousel {
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
+  background: var(--pf-carousel-color-semantic-background-default, var(--color-semantic-background-default));
+  border: 1px solid var(--pf-carousel-color-semantic-border-default, var(--color-semantic-border-default));
   border-radius: var(--radius-md);
   display: grid;
   gap: var(--space-3);
@@ -10,7 +10,7 @@
 }
 
 .pf-carousel__viewport {
-  background: var(--color-semantic-background-subtle);
+  background: var(--pf-carousel-color-semantic-background-subtle, var(--color-semantic-background-subtle));
   border-radius: var(--radius-sm);
   overflow: hidden;
   width: 100%;
@@ -29,7 +29,7 @@
 
 .pf-carousel__empty {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-carousel-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: flex;
   font-size: var(--font-size-sm);
   justify-content: center;
@@ -50,7 +50,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-carousel-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: pointer;
   display: inline-flex;
   font-size: 14px;
@@ -61,8 +61,8 @@
 }
 
 .pf-carousel__nav:hover:not(:disabled) {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-default);
+  background: var(--pf-carousel-color-semantic-background-subtle, var(--color-semantic-background-subtle));
+  color: var(--pf-carousel-color-semantic-text-default, var(--color-semantic-text-default));
 }
 
 .pf-carousel__nav:focus-visible {
@@ -71,7 +71,7 @@
 }
 
 .pf-carousel__nav:disabled {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-carousel-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: not-allowed;
   opacity: 0.45;
 }
@@ -84,7 +84,7 @@
 }
 
 .pf-carousel__indicator {
-  background: var(--color-semantic-border-default);
+  background: var(--pf-carousel-color-semantic-border-default, var(--color-semantic-border-default));
   border: 0;
   border-radius: 999px;
   cursor: pointer;
@@ -95,7 +95,7 @@
 }
 
 .pf-carousel__indicator--active {
-  background: var(--color-semantic-action-primary);
+  background: var(--pf-carousel-color-semantic-action-primary, var(--color-semantic-action-primary));
   width: 20px;
 }
 

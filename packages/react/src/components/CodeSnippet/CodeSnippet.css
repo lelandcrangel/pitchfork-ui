@@ -4,36 +4,36 @@
   --pf-code-snippet-header-bg: color-mix(
     in srgb,
     var(--pf-code-snippet-bg) 78%,
-    var(--color-base-white)
+    var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-header-border: color-mix(
     in srgb,
     var(--pf-code-snippet-bg) 65%,
-    var(--color-base-white)
+    var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-title: #f5f8fc;
   --pf-code-snippet-language: #a8b7cb;
   --pf-code-snippet-copy-bg: color-mix(
     in srgb,
     var(--pf-code-snippet-bg) 70%,
-    var(--color-base-white)
+    var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-copy-border: color-mix(
     in srgb,
     var(--pf-code-snippet-bg) 55%,
-    var(--color-base-white)
+    var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-copy-text: #dbe6f5;
   --pf-code-snippet-copy-hover-bg: color-mix(
     in srgb,
     var(--pf-code-snippet-bg) 58%,
-    var(--color-base-white)
+    var(--pf-codesnippet-color-base-white, var(--color-base-white))
   );
   --pf-code-snippet-line-number: #8292a9;
 
   background: var(--pf-code-snippet-bg);
   border: 1px solid
-    color-mix(in srgb, var(--pf-code-snippet-bg) 82%, var(--color-base-white));
+    color-mix(in srgb, var(--pf-code-snippet-bg) 82%, var(--pf-codesnippet-color-base-white, var(--color-base-white)));
   border-radius: var(--radius-md);
   color: var(--pf-code-snippet-text);
   display: grid;

@@ -2,6 +2,7 @@ import type { Preview } from '@storybook/react-vite';
 import '@pitchfork-ui/react/styles.css';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { mswHandlers } from './msw-handlers';
+import { withCssVariableControls } from './CssVariableDecorator';
 
 initialize({
   onUnhandledRequest: 'bypass',
@@ -12,7 +13,7 @@ initialize({
 });
 
 const preview: Preview = {
-  decorators: [(Story) => Story()],
+  decorators: [withCssVariableControls],
   loaders: [mswLoader],
   parameters: {
     msw: {

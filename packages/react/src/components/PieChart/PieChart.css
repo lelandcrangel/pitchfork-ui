@@ -13,14 +13,14 @@
 }
 
 .pf-pie-chart__visual--empty {
-  outline: 1px solid var(--color-semantic-border-muted);
+  outline: 1px solid var(--pf-piechart-color-semantic-border-muted, var(--color-semantic-border-muted));
 }
 
 .pf-pie-chart__center {
   align-items: center;
-  background: var(--color-semantic-background-default);
+  background: var(--pf-piechart-color-semantic-background-default, var(--color-semantic-background-default));
   border-radius: 999px;
-  color: var(--color-semantic-text-default);
+  color: var(--pf-piechart-color-semantic-text-default, var(--color-semantic-text-default));
   display: inline-flex;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
@@ -53,12 +53,12 @@
 }
 
 .pf-pie-chart__legend-label {
-  color: var(--color-semantic-text-default);
+  color: var(--pf-piechart-color-semantic-text-default, var(--color-semantic-text-default));
   font-size: var(--font-size-sm);
 }
 
 .pf-pie-chart__legend-value {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-piechart-color-semantic-text-muted, var(--color-semantic-text-muted));
   font-size: var(--font-size-sm);
   font-variant-numeric: tabular-nums;
 }
