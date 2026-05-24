@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from 'react';
+import { Highlight, Language, themes } from 'prism-react-renderer';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './CodeSnippet.css';
@@ -82,7 +83,6 @@ export function CodeSnippet({
               <span className="pf-code-snippet__language">{language}</span>
             ) : null}
           </div>
-
           <button
             type="button"
             className="pf-code-snippet__copy"
@@ -113,31 +113,64 @@ export function CodeSnippet({
         </div>
       ) : null}
 
-      <pre
-        className="pf-code-snippet__pre"
-        style={maxHeight ? { maxHeight, overflow: 'auto' } : undefined}
+      <Highlight
+        code={code}
+        language={(language as Language) || 'tsx'}
+        theme={themes.vsDark}
       >
-        <code>
-          {showLineNumbers ? (
-            <table className="pf-code-snippet__table" role="presentation">
-              <tbody>
-                {lines.map((line, index) => (
-                  <tr key={`${index}-${line}`}>
-                    <td className="pf-code-snippet__line-number" aria-hidden>
-                      {index + 1}
-                    </td>
-                    <td className="pf-code-snippet__line-content">
-                      {line || ' '}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            code
-          )}
-        </code>
-      </pre>
+        {({
+          className: prismClass,
+          style,
+          tokens,
+          getLineProps,
+          getTokenProps,
+        }) => (
+          <pre
+            className={cx('pf-code-snippet__pre', prismClass)}
+            style={{
+              ...style,
+              ...(maxHeight ? { maxHeight, overflow: 'auto' } : undefined),
+            }}
+          >
+            <code>
+              {showLineNumbers ? (
+                <table className="pf-code-snippet__table" role="presentation">
+                  <tbody>
+                    {tokens.map((line, i) => (
+                      <tr key={i}>
+                        <td
+                          className="pf-code-snippet__line-number"
+                          aria-hidden
+                        >
+                          {i + 1}
+                        </td>
+                        <td className="pf-code-snippet__line-content">
+                          {line.map((token, key) => {
+                            const tokenProps = getTokenProps({ token });
+                            return <span key={key} {...tokenProps} />;
+                          })}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                tokens.map((line, i) => {
+                  const lineProps = getLineProps({ line });
+                  return (
+                    <div key={i} {...lineProps}>
+                      {line.map((token, key) => {
+                        const tokenProps = getTokenProps({ token });
+                        return <span key={key} {...tokenProps} />;
+                      })}
+                    </div>
+                  );
+                })
+              )}
+            </code>
+          </pre>
+        )}
+      </Highlight>
 
       <span
         id={liveRegionId}

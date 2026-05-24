@@ -19,6 +19,7 @@ type CssVariableScope =
   | 'card'
   | 'carousel'
   | 'checkbox'
+  | 'codesnippet'
   | 'inlinecta'
   | 'input'
   | 'notification'
@@ -700,6 +701,103 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     defaultValue: 'var(--pf-focus-ring)',
     type: 'text',
     scopes: ['checkbox'],
+  },
+  {
+    name: '--pf-code-snippet-bg',
+    label: 'CodeSnippet background',
+    defaultValue: 'var(--color-gray-900)',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-text',
+    label: 'CodeSnippet text',
+    defaultValue: 'var(--color-gray-100)',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-border',
+    label: 'CodeSnippet border',
+    defaultValue:
+      'color-mix(in srgb, var(--pf-code-snippet-bg) 82%, var(--color-base-white))',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-header-bg',
+    label: 'CodeSnippet header background',
+    defaultValue:
+      'color-mix(in srgb, var(--pf-code-snippet-bg) 78%, var(--color-base-white))',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-header-border',
+    label: 'CodeSnippet header border',
+    defaultValue:
+      'color-mix(in srgb, var(--pf-code-snippet-bg) 65%, var(--color-base-white))',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-title',
+    label: 'CodeSnippet title',
+    defaultValue: 'var(--color-base-white)',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-language',
+    label: 'CodeSnippet language',
+    defaultValue: 'var(--color-gray-300)',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-copy-bg',
+    label: 'CodeSnippet copy background',
+    defaultValue:
+      'color-mix(in srgb, var(--pf-code-snippet-bg) 70%, var(--color-base-white))',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-copy-border',
+    label: 'CodeSnippet copy border',
+    defaultValue:
+      'color-mix(in srgb, var(--pf-code-snippet-bg) 55%, var(--color-base-white))',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-copy-text',
+    label: 'CodeSnippet copy text',
+    defaultValue: 'var(--color-gray-100)',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-copy-hover-bg',
+    label: 'CodeSnippet copy hover background',
+    defaultValue:
+      'color-mix(in srgb, var(--pf-code-snippet-bg) 58%, var(--color-base-white))',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-line-number',
+    label: 'CodeSnippet line number',
+    defaultValue: 'var(--color-gray-400)',
+    type: 'color',
+    scopes: ['codesnippet'],
+  },
+  {
+    name: '--pf-code-snippet-focus-ring',
+    label: 'CodeSnippet focus ring',
+    defaultValue: 'var(--pf-focus-ring)',
+    type: 'text',
+    scopes: ['codesnippet'],
   },
   {
     name: '--pf-radio-checked-color',
@@ -1990,6 +2088,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Input': ['input'],
   'Components/Select': ['select'],
   'Components/Checkbox': ['checkbox'],
+  'Components/CodeSnippet': ['codesnippet'],
   'Components/RadioButton': ['radio'],
   'Components/Switch': ['switch'],
   'Components/Avatar': ['avatar'],

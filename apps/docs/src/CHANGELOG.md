@@ -19,6 +19,8 @@ All notable changes to this project are documented below, grouped by date and fe
 - Added Carousel slide item CSS variable controls for the Interactive story.
 - Added Checkbox checkmark color CSS variable control.
 - Fixed Checkbox checked-state layout shift and restored a visible checked border.
+- Reworked CodeSnippet CSS colors to use token-backed CSS variables and added Interactive CSS variable controls.
+- Removed hardcoded hex colors from React component CSS files.
 - Updated Storybook to resolve the React package from source during docs development so component CSS variable changes apply immediately.
 - Removed the "What buyers receive" section from the Introduction page.
 - Ensured all PF-prefixed variables and controls are present for all key components.

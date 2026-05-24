@@ -2,8 +2,15 @@
   --pf-avatar-status-size: 10px;
   --pf-avatar-status-offset: -2px;
 
-  background: var(--pf-avatar-bg, var(--pf-avatar-surface-subtle, var(--pf-surface-subtle)));
-  border: 1px solid var(--pf-avatar-border, var(--pf-avatar-surface-border, var(--pf-surface-border)));
+  background: var(
+    --pf-avatar-bg,
+    var(--pf-avatar-surface-subtle, var(--pf-surface-subtle))
+  );
+  border: 1px solid
+    var(
+      --pf-avatar-border,
+      var(--pf-avatar-surface-border, var(--pf-surface-border))
+    );
   border-radius: var(--radius-full);
   color: var(
     --pf-avatar-color-semantic-text-default,
@@ -73,7 +80,11 @@
 }
 
 .pf-avatar__status {
-  border: 2px solid var(--pf-avatar-status-border, var(--pf-avatar-surface-bg, var(--pf-surface-bg)));
+  border: 2px solid
+    var(
+      --pf-avatar-status-border,
+      var(--pf-avatar-surface-bg, var(--pf-surface-bg))
+    );
   border-radius: var(--radius-full);
   top: var(--pf-avatar-status-offset);
   height: var(--pf-avatar-status-size, 10px);
@@ -84,7 +95,10 @@
 }
 
 .pf-avatar__status--online {
-  background: var(--pf-avatar-status-online-color, #16a34a);
+  background: var(
+    --pf-avatar-status-online-color,
+    var(--color-semantic-status-success-foreground)
+  );
 }
 
 .pf-avatar__status--away {

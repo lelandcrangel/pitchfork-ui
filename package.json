@@ -31,19 +31,22 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest",
     "eslint": "latest",
     "eslint-plugin-react-hooks": "latest",
     "eslint-plugin-react-refresh": "latest",
     "globals": "latest",
     "jsdom": "latest",
+    "playwright": "^1.60.0",
     "prettier": "latest",
     "typescript": "latest",
     "typescript-eslint": "latest",
     "vite": "latest",
     "vite-plugin-dts": "latest",
-    "vitest": "latest",
-    "playwright": "^1.60.0",
-    "@vitest/browser-playwright": "latest",
-    "@vitest/coverage-v8": "latest"
+    "vitest": "latest"
+  },
+  "dependencies": {
+    "prism-react-renderer": "^2.4.1"
   }
 }
