@@ -1,68 +1,83 @@
 .pf-carousel {
-  background: var(--pf-carousel-color-semantic-background-default, var(--color-semantic-background-default));
-  border: 1px solid var(--pf-carousel-color-semantic-border-default, var(--color-semantic-border-default));
-  border-radius: var(--radius-md);
+  background: var(
+    --pf-carousel-background,
+    var(--color-semantic-background-default)
+  );
+  border: 1px solid
+    var(--pf-carousel-border, var(--color-semantic-border-default));
+  border-radius: var(--pf-carousel-radius, var(--radius-md));
   display: grid;
-  gap: var(--space-3);
+  gap: var(--pf-carousel-gap, var(--space-3));
   overflow: hidden;
-  padding: var(--space-3);
+  padding: var(--pf-carousel-padding, var(--space-3));
   width: 100%;
 }
 
 .pf-carousel__viewport {
-  background: var(--pf-carousel-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  border-radius: var(--radius-sm);
+  background: var(
+    --pf-carousel-viewport-background,
+    var(--color-semantic-background-subtle)
+  );
+  border-radius: var(--pf-carousel-viewport-radius, var(--radius-sm));
   overflow: hidden;
   width: 100%;
 }
 
 .pf-carousel__track {
   display: flex;
-  transition: transform 180ms ease-out;
+  transition: transform var(--pf-carousel-transition-duration, 180ms) ease-out;
   width: 100%;
 }
 
 .pf-carousel__slide {
+  background: var(--pf-carousel-slide-background, transparent);
+  color: var(--pf-carousel-slide-text, var(--color-semantic-text-default));
   flex: 0 0 100%;
   min-width: 0;
+  padding: var(--pf-carousel-slide-padding, 0);
 }
 
 .pf-carousel__empty {
   align-items: center;
-  color: var(--pf-carousel-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-carousel-empty-text, var(--color-semantic-text-muted));
   display: flex;
-  font-size: var(--font-size-sm);
+  font-size: var(--pf-carousel-empty-font-size, var(--font-size-sm));
   justify-content: center;
-  min-height: 180px;
-  padding: var(--space-4);
+  min-height: var(--pf-carousel-empty-min-height, 180px);
+  padding: var(--pf-carousel-empty-padding, var(--space-4));
   text-align: center;
 }
 
 .pf-carousel__controls {
   align-items: center;
   display: grid;
-  gap: var(--space-2);
-  grid-template-columns: 28px 1fr 28px;
+  gap: var(--pf-carousel-controls-gap, var(--space-2));
+  grid-template-columns:
+    var(--pf-carousel-nav-size, 28px) 1fr
+    var(--pf-carousel-nav-size, 28px);
 }
 
 .pf-carousel__nav {
   align-items: center;
   background: transparent;
   border: 0;
-  border-radius: var(--radius-sm);
-  color: var(--pf-carousel-color-semantic-text-muted, var(--color-semantic-text-muted));
+  border-radius: var(--pf-carousel-nav-radius, var(--radius-sm));
+  color: var(--pf-carousel-nav-text, var(--color-semantic-text-muted));
   cursor: pointer;
   display: inline-flex;
-  font-size: 14px;
-  height: 28px;
+  font-size: var(--pf-carousel-nav-font-size, 14px);
+  height: var(--pf-carousel-nav-size, 28px);
   justify-content: center;
   padding: 0;
-  width: 28px;
+  width: var(--pf-carousel-nav-size, 28px);
 }
 
 .pf-carousel__nav:hover:not(:disabled) {
-  background: var(--pf-carousel-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  color: var(--pf-carousel-color-semantic-text-default, var(--color-semantic-text-default));
+  background: var(
+    --pf-carousel-nav-hover-background,
+    var(--color-semantic-background-subtle)
+  );
+  color: var(--pf-carousel-nav-hover-text, var(--color-semantic-text-default));
 }
 
 .pf-carousel__nav:focus-visible {
@@ -71,32 +86,39 @@
 }
 
 .pf-carousel__nav:disabled {
-  color: var(--pf-carousel-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-carousel-nav-text, var(--color-semantic-text-muted));
   cursor: not-allowed;
-  opacity: 0.45;
+  opacity: var(--pf-carousel-disabled-opacity, 0.45);
 }
 
 .pf-carousel__indicators {
   align-items: center;
   display: inline-flex;
-  gap: var(--space-1);
+  gap: var(--pf-carousel-indicator-gap, var(--space-1));
   justify-content: center;
 }
 
 .pf-carousel__indicator {
-  background: var(--pf-carousel-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(
+    --pf-carousel-indicator-background,
+    var(--color-semantic-border-default)
+  );
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--pf-carousel-indicator-radius, 999px);
   cursor: pointer;
-  height: 8px;
+  height: var(--pf-carousel-indicator-size, 8px);
   padding: 0;
-  transition: all 120ms ease-out;
-  width: 8px;
+  transition: all var(--pf-carousel-indicator-transition-duration, 120ms)
+    ease-out;
+  width: var(--pf-carousel-indicator-size, 8px);
 }
 
 .pf-carousel__indicator--active {
-  background: var(--pf-carousel-color-semantic-action-primary, var(--color-semantic-action-primary));
-  width: 20px;
+  background: var(
+    --pf-carousel-indicator-active-background,
+    var(--color-semantic-action-primary)
+  );
+  width: var(--pf-carousel-indicator-active-width, 20px);
 }
 
 .pf-carousel__indicator:focus-visible {
@@ -106,5 +128,5 @@
 
 .pf-carousel__indicator-spacer {
   display: block;
-  min-height: 8px;
+  min-height: var(--pf-carousel-indicator-size, 8px);
 }

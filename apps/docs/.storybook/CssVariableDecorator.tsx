@@ -17,6 +17,7 @@ type CssVariableScope =
   | 'buttongroup'
   | 'calendar'
   | 'card'
+  | 'carousel'
   | 'checkbox'
   | 'inlinecta'
   | 'input'
@@ -297,6 +298,238 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     defaultValue: 'var(--color-semantic-border-default)',
     type: 'color',
     scopes: ['card'],
+  },
+  // Carousel variables
+  {
+    name: '--pf-carousel-background',
+    label: 'Carousel background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-border',
+    label: 'Carousel border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-radius',
+    label: 'Carousel border radius',
+    defaultValue: 'var(--radius-md)',
+    type: 'radius',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-gap',
+    label: 'Carousel gap',
+    defaultValue: 'var(--space-3)',
+    type: 'space',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-padding',
+    label: 'Carousel padding',
+    defaultValue: 'var(--space-3)',
+    type: 'space',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-viewport-background',
+    label: 'Carousel viewport background',
+    defaultValue: 'var(--color-semantic-background-subtle)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-viewport-radius',
+    label: 'Carousel viewport radius',
+    defaultValue: 'var(--radius-sm)',
+    type: 'radius',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-transition-duration',
+    label: 'Carousel slide transition',
+    defaultValue: '180ms',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-slide-background',
+    label: 'Carousel slide background',
+    defaultValue: 'transparent',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-slide-text',
+    label: 'Carousel slide text',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-slide-muted-text',
+    label: 'Carousel slide muted text',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-slide-border',
+    label: 'Carousel slide border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-slide-padding',
+    label: 'Carousel slide padding',
+    defaultValue: 'var(--space-0)',
+    type: 'space',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-empty-text',
+    label: 'Carousel empty text',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-empty-font-size',
+    label: 'Carousel empty font size',
+    defaultValue: 'var(--font-size-sm)',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-empty-min-height',
+    label: 'Carousel empty min height',
+    defaultValue: '180px',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-empty-padding',
+    label: 'Carousel empty padding',
+    defaultValue: 'var(--space-4)',
+    type: 'space',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-controls-gap',
+    label: 'Carousel controls gap',
+    defaultValue: 'var(--space-2)',
+    type: 'space',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-nav-text',
+    label: 'Carousel nav text',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-nav-hover-background',
+    label: 'Carousel nav hover background',
+    defaultValue: 'var(--color-semantic-background-subtle)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-nav-hover-text',
+    label: 'Carousel nav hover text',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-nav-radius',
+    label: 'Carousel nav radius',
+    defaultValue: 'var(--radius-sm)',
+    type: 'radius',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-nav-size',
+    label: 'Carousel nav size',
+    defaultValue: '28px',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-nav-font-size',
+    label: 'Carousel nav font size',
+    defaultValue: '14px',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-disabled-opacity',
+    label: 'Carousel disabled opacity',
+    defaultValue: '0.45',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-focus-ring',
+    label: 'Carousel focus ring',
+    defaultValue: 'var(--pf-focus-ring)',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-indicator-background',
+    label: 'Carousel indicator background',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-indicator-active-background',
+    label: 'Carousel active indicator',
+    defaultValue: 'var(--color-semantic-action-primary)',
+    type: 'color',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-indicator-gap',
+    label: 'Carousel indicator gap',
+    defaultValue: 'var(--space-1)',
+    type: 'space',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-indicator-size',
+    label: 'Carousel indicator size',
+    defaultValue: '8px',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-indicator-active-width',
+    label: 'Carousel active indicator width',
+    defaultValue: '20px',
+    type: 'text',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-indicator-radius',
+    label: 'Carousel indicator radius',
+    defaultValue: 'var(--radius-full)',
+    type: 'radius',
+    scopes: ['carousel'],
+  },
+  {
+    name: '--pf-carousel-indicator-transition-duration',
+    label: 'Carousel indicator transition',
+    defaultValue: '120ms',
+    type: 'text',
+    scopes: ['carousel'],
   },
   // Calendar variables
   {
@@ -1311,11 +1544,30 @@ function CssVariableController({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [values, setValues] = useState<Record<string, string>>({});
+  const controlNames = controls.map((control) => control.name);
   const scopedVars = Object.fromEntries(
     Object.entries(values).filter(
       ([, value]) => value && value.trim().length > 0,
     ),
   );
+  const updateControlValue = (
+    name: string,
+    defaultValue: string,
+    nextValue: string,
+  ) => {
+    setValues((current) => {
+      if (nextValue === defaultValue) {
+        const next = { ...current };
+        delete next[name];
+        return next;
+      }
+
+      return {
+        ...current,
+        [name]: nextValue,
+      };
+    });
+  };
 
   // Apply variables to :root for global effect
   useEffect(() => {
@@ -1325,8 +1577,7 @@ function CssVariableController({
         root.style.setProperty(key, value);
       }
       // Remove any variables that are no longer set
-      const allVarNames = controls.map((c) => c.name);
-      for (const name of allVarNames) {
+      for (const name of controlNames) {
         if (!(name in scopedVars)) {
           root.style.removeProperty(name);
         }
@@ -1341,16 +1592,7 @@ function CssVariableController({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(scopedVars), controls]);
-
-  useEffect(() => {
-    const allowedNames = new Set(controls.map((control) => control.name));
-    setValues((current) =>
-      Object.fromEntries(
-        Object.entries(current).filter(([name]) => allowedNames.has(name)),
-      ),
-    );
-  }, [controls]);
+  }, [JSON.stringify(scopedVars), controlNames.join('|')]);
 
   return (
     <>
@@ -1437,19 +1679,11 @@ function CssVariableController({
                                 values[control.name] ?? control.defaultValue
                               }
                               onChange={(nextValue) => {
-                                setValues((current) => {
-                                  if (nextValue === control.defaultValue) {
-                                    const {
-                                      [control.name]: _removed,
-                                      ...rest
-                                    } = current;
-                                    return rest;
-                                  }
-                                  return {
-                                    ...current,
-                                    [control.name]: nextValue,
-                                  };
-                                });
+                                updateControlValue(
+                                  control.name,
+                                  control.defaultValue,
+                                  nextValue,
+                                );
                               }}
                             />
                           ) : control.type === 'radius' ||
@@ -1462,19 +1696,11 @@ function CssVariableController({
                                 values[control.name] ?? control.defaultValue
                               }
                               onChange={(nextValue) => {
-                                setValues((current) => {
-                                  if (nextValue === control.defaultValue) {
-                                    const {
-                                      [control.name]: _removed,
-                                      ...rest
-                                    } = current;
-                                    return rest;
-                                  }
-                                  return {
-                                    ...current,
-                                    [control.name]: nextValue,
-                                  };
-                                });
+                                updateControlValue(
+                                  control.name,
+                                  control.defaultValue,
+                                  nextValue,
+                                );
                               }}
                             />
                           ) : (
@@ -1486,19 +1712,11 @@ function CssVariableController({
                               }
                               onChange={(event) => {
                                 const nextValue = event.target.value;
-                                setValues((current) => {
-                                  if (nextValue === control.defaultValue) {
-                                    const {
-                                      [control.name]: _removed,
-                                      ...rest
-                                    } = current;
-                                    return rest;
-                                  }
-                                  return {
-                                    ...current,
-                                    [control.name]: nextValue,
-                                  };
-                                });
+                                updateControlValue(
+                                  control.name,
+                                  control.defaultValue,
+                                  nextValue,
+                                );
                               }}
                               style={{
                                 minHeight: '32px',
@@ -1752,6 +1970,7 @@ function ColorSelect({
 const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Button': ['button'],
   'Components/Card': ['card'],
+  'Components/Carousel': ['carousel'],
   'Components/Button Group': ['buttongroup'],
   'Components/Breadcrumbs': ['breadcrumbs'],
   'Components/Input': ['input'],
