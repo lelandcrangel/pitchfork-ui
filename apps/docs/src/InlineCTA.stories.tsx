@@ -16,8 +16,8 @@ const meta = {
       control: 'inline-radio',
       options: ['default', 'info', 'success', 'warning'],
     },
-    action: { control: false },
-    icon: { control: false },
+    action: { control: 'text' },
+    icon: { control: 'text' },
   },
 } satisfies Meta<typeof InlineCTA>;
 

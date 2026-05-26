@@ -67,21 +67,32 @@
     "semantic": {
       "background": {
         "default": { "$value": "{color.base.white}", "$type": "color" },
-        "subtle": { "$value": "{color.gray.50}", "$type": "color" }
+        "subtle": { "$value": "{color.gray.50}", "$type": "color" },
+        "raised": { "$value": "{color.base.white}", "$type": "color" },
+        "disabled": { "$value": "{color.gray.100}", "$type": "color" }
       },
       "text": {
         "default": { "$value": "{color.gray.900}", "$type": "color" },
         "muted": { "$value": "{color.gray.500}", "$type": "color" },
-        "inverse": { "$value": "{color.base.white}", "$type": "color" }
+        "subtle": { "$value": "{color.gray.600}", "$type": "color" },
+        "inverse": { "$value": "{color.base.white}", "$type": "color" },
+        "disabled": { "$value": "{color.gray.400}", "$type": "color" }
       },
       "border": {
+        "muted": { "$value": "{color.gray.100}", "$type": "color" },
         "default": { "$value": "{color.gray.200}", "$type": "color" },
-        "strong": { "$value": "{color.gray.300}", "$type": "color" }
+        "strong": { "$value": "{color.gray.300}", "$type": "color" },
+        "focus": { "$value": "{color.brand.500}", "$type": "color" },
+        "disabled": { "$value": "{color.gray.200}", "$type": "color" }
       },
       "action": {
         "primary": { "$value": "{color.brand.700}", "$type": "color" },
         "primaryHover": { "$value": "{color.brand.800}", "$type": "color" },
-        "primaryText": { "$value": "{color.base.white}", "$type": "color" }
+        "primaryActive": { "$value": "{color.brand.900}", "$type": "color" },
+        "primaryText": { "$value": "{color.base.white}", "$type": "color" },
+        "secondary": { "$value": "{color.gray.100}", "$type": "color" },
+        "secondaryHover": { "$value": "{color.gray.200}", "$type": "color" },
+        "secondaryText": { "$value": "{color.gray.900}", "$type": "color" }
       },
       "status": {
         "success": {

@@ -8,6 +8,7 @@ const meta = {
   args: {
     label: 'Actions',
     align: 'start',
+    disabled: false,
     items: [
       {
         label: 'Edit profile',
@@ -27,6 +28,7 @@ const meta = {
       control: 'select',
       options: ['start', 'end'],
     },
+    disabled: { control: 'boolean' },
   },
 } satisfies Meta<typeof Dropdown>;
 

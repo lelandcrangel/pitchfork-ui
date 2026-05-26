@@ -23,10 +23,7 @@ const config: StorybookConfig = {
       excludeFromSidebar: true,
     },
   },
-  addons: [
-    '@storybook/addon-docs',
-    '@storybook/addon-a11y',
-  ],
+  addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
   staticDirs: ['../public'],
   framework: {
     name: '@storybook/react-vite',

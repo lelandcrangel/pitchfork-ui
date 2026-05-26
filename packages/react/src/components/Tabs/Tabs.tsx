@@ -74,25 +74,26 @@ export function Tabs({
       return;
     }
 
-    let targetIndex = currentIndex;
-
-    if (direction === 'first') {
-      targetIndex = enabledIndexes[0] ?? currentIndex;
-    } else if (direction === 'last') {
-      targetIndex = enabledIndexes[enabledIndexes.length - 1] ?? currentIndex;
-    } else {
-      const currentEnabledPosition = enabledIndexes.indexOf(currentIndex);
-      const fallbackPosition =
-        direction === 'next' ? 0 : enabledIndexes.length - 1;
-      const safePosition =
-        currentEnabledPosition === -1
-          ? fallbackPosition
-          : currentEnabledPosition;
-      const offset = direction === 'next' ? 1 : -1;
-      const wrappedPosition =
-        (safePosition + offset + enabledIndexes.length) % enabledIndexes.length;
-      targetIndex = enabledIndexes[wrappedPosition] ?? currentIndex;
-    }
+    const targetIndex =
+      direction === 'first'
+        ? (enabledIndexes[0] ?? currentIndex)
+        : direction === 'last'
+          ? (enabledIndexes[enabledIndexes.length - 1] ?? currentIndex)
+          : (() => {
+              const currentEnabledPosition =
+                enabledIndexes.indexOf(currentIndex);
+              const fallbackPosition =
+                direction === 'next' ? 0 : enabledIndexes.length - 1;
+              const safePosition =
+                currentEnabledPosition === -1
+                  ? fallbackPosition
+                  : currentEnabledPosition;
+              const offset = direction === 'next' ? 1 : -1;
+              const wrappedPosition =
+                (safePosition + offset + enabledIndexes.length) %
+                enabledIndexes.length;
+              return enabledIndexes[wrappedPosition] ?? currentIndex;
+            })();
 
     const nextItem = items[targetIndex];
     if (!nextItem || nextItem.disabled) {

@@ -20,7 +20,7 @@ const meta = {
     ),
   },
   argTypes: {
-    actions: { control: false },
+    actions: { control: 'text' },
   },
 } satisfies Meta<typeof SectionFooter>;
 

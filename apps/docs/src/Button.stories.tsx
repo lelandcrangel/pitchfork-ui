@@ -20,8 +20,8 @@ const meta = {
     fullWidth: { control: 'boolean' },
     type: { control: 'select', options: ['button', 'submit', 'reset'] },
     disabled: { control: 'boolean' },
-    style: { control: false, table: { disable: true } },
-    onClick: { control: false, table: { disable: true } },
+    style: { control: 'object' },
+    onClick: { action: 'clicked' },
   },
 } satisfies Meta<typeof Button>;
 

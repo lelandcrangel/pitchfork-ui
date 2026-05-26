@@ -14,8 +14,8 @@ const meta = {
     iconName: 'chart-bar',
   },
   argTypes: {
-    icon: { control: false },
-    action: { control: false },
+    icon: { control: 'text' },
+    action: { control: 'text' },
   },
 } satisfies Meta<typeof MetricCard>;
 

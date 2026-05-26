@@ -1,5 +1,12 @@
 import { createPortal } from 'react-dom';
-import { forwardRef, useEffect, useId, useRef, useState } from 'react';
+import { forwardRef, useEffect, useId, useRef } from 'react';
+import { isActivationKey, Keys } from '../../a11y';
+import {
+  useAnchoredPosition,
+  useDisclosure,
+  useListNavigation,
+  useOutsideInteraction,
+} from '../../hooks';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Dropdown.css';
@@ -21,30 +28,6 @@ export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean;
 }
 
-const findNextEnabledIndex = (
-  items: DropdownItem[],
-  startIndex: number,
-  direction: 1 | -1,
-) => {
-  if (items.length === 0) {
-    return -1;
-  }
-
-  let index = startIndex;
-  for (let step = 0; step < items.length; step += 1) {
-    index = (index + direction + items.length) % items.length;
-    if (!items[index]?.disabled) {
-      return index;
-    }
-  }
-
-  return -1;
-};
-
-const findFirstEnabledIndex = (items: DropdownItem[]) => {
-  return items.findIndex((item) => !item.disabled);
-};
-
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
   (
     {
@@ -61,82 +44,49 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     const rootRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
+    const disclosure = useDisclosure({ disabled });
+    const { isOpen } = disclosure;
+    const { activeIndex, firstEnabledIndex, move, setActiveIndex } =
+      useListNavigation({
+        items,
+        isDisabled: (item) => Boolean(item.disabled),
+      });
+    const menuStyle = useAnchoredPosition({
+      anchorRef: triggerRef,
+      align,
+      enabled: isOpen,
+      matchAnchorWidth: false,
+      minWidth: 200,
+    });
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [activeIndex, setActiveIndex] = useState<number>(() =>
-      findFirstEnabledIndex(items),
-    );
-    const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
+    useOutsideInteraction({
+      refs: [rootRef, menuRef],
+      enabled: isOpen,
+      onInteractOutside: disclosure.close,
+    });
 
     useEffect(() => {
       if (!isOpen) {
         return;
       }
 
-      setActiveIndex(findFirstEnabledIndex(items));
-    }, [isOpen, items]);
+      setActiveIndex(firstEnabledIndex);
+    }, [firstEnabledIndex, isOpen, setActiveIndex]);
 
     useEffect(() => {
-      const handlePointerDown = (event: PointerEvent) => {
-        const target = event.target as Node;
-        if (
-          !rootRef.current?.contains(target) &&
-          !menuRef.current?.contains(target)
-        ) {
-          setIsOpen(false);
-        }
-      };
-
       const handleEscape = (event: KeyboardEvent) => {
-        if (event.key === 'Escape') {
-          setIsOpen(false);
+        if (event.key === Keys.Escape) {
+          disclosure.close();
           triggerRef.current?.focus();
         }
       };
 
-      document.addEventListener('pointerdown', handlePointerDown);
       document.addEventListener('keydown', handleEscape);
 
       return () => {
-        document.removeEventListener('pointerdown', handlePointerDown);
         document.removeEventListener('keydown', handleEscape);
       };
-    }, []);
-
-    useEffect(() => {
-      if (!isOpen) {
-        return;
-      }
-
-      const updateMenuPosition = () => {
-        const trigger = triggerRef.current;
-        if (!trigger) {
-          return;
-        }
-
-        const rect = trigger.getBoundingClientRect();
-        const width = Math.max(rect.width, 200);
-        const left =
-          align === 'end'
-            ? Math.max(8, rect.right - width)
-            : Math.min(rect.left, window.innerWidth - width - 8);
-
-        setMenuStyle({
-          left,
-          top: rect.bottom + 8,
-          width,
-        });
-      };
-
-      updateMenuPosition();
-      window.addEventListener('resize', updateMenuPosition);
-      window.addEventListener('scroll', updateMenuPosition, true);
-
-      return () => {
-        window.removeEventListener('resize', updateMenuPosition);
-        window.removeEventListener('scroll', updateMenuPosition, true);
-      };
-    }, [align, isOpen]);
+    }, [disclosure]);
 
     const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
       event,
@@ -145,25 +95,21 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         return;
       }
 
-      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (event.key === Keys.ArrowDown || event.key === Keys.ArrowUp) {
         event.preventDefault();
 
         if (!isOpen) {
-          setIsOpen(true);
+          disclosure.open();
           return;
         }
 
-        const direction = event.key === 'ArrowDown' ? 1 : -1;
         const startIndex = activeIndex >= 0 ? activeIndex : 0;
-        const nextIndex = findNextEnabledIndex(items, startIndex, direction);
-        if (nextIndex >= 0) {
-          setActiveIndex(nextIndex);
-        }
+        move(event.key === Keys.ArrowDown ? 'next' : 'previous', startIndex);
       }
 
-      if (event.key === 'Enter' || event.key === ' ') {
+      if (isActivationKey(event.key)) {
         event.preventDefault();
-        setIsOpen((value) => !value);
+        disclosure.toggle();
       }
     };
 
@@ -184,9 +130,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           aria-expanded={isOpen}
           aria-controls={isOpen ? menuId : undefined}
           onClick={() => {
-            if (!disabled) {
-              setIsOpen((value) => !value);
-            }
+            disclosure.toggle();
           }}
           onKeyDown={onTriggerKeyDown}
           disabled={disabled}
@@ -217,6 +161,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                   return (
                     <button
                       key={item.id ?? `${item.label}-${index}`}
+                      id={`${menuId}-item-${index}`}
                       type="button"
                       role="menuitem"
                       disabled={item.disabled}
@@ -235,7 +180,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                           return;
                         }
                         item.onSelect?.();
-                        setIsOpen(false);
+                        disclosure.close();
                         triggerRef.current?.focus();
                       }}
                     >

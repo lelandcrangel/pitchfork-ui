@@ -1,6 +1,8 @@
 {
   "shadow": {
     "sm": { "$value": "0 1px 2px rgb(15 23 42 / 0.08)", "$type": "shadow" },
-    "md": { "$value": "0 8px 24px rgb(15 23 42 / 0.12)", "$type": "shadow" }
+    "md": { "$value": "0 8px 24px rgb(15 23 42 / 0.12)", "$type": "shadow" },
+    "lg": { "$value": "0 18px 48px rgb(15 23 42 / 0.16)", "$type": "shadow" },
+    "focus": { "$value": "0 0 0 3px rgb(59 130 246 / 0.35)", "$type": "shadow" }
   }
 }

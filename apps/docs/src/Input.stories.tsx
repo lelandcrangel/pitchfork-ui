@@ -24,9 +24,9 @@ const meta = {
     },
     disabled: { control: 'boolean' },
     required: { control: 'boolean' },
-    style: { control: false, table: { disable: true } },
-    onChange: { control: false, table: { disable: true } },
-    value: { control: false, table: { disable: true } },
+    style: { control: 'object' },
+    onChange: { action: 'changed' },
+    value: { control: 'text' },
     defaultValue: { control: 'text' },
   },
 } satisfies Meta<typeof Input>;

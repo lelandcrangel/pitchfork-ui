@@ -6,6 +6,7 @@ type CarouselSlideState = 'multiple' | 'single' | 'empty';
 
 interface CarouselStoryArgs extends ComponentProps<typeof Carousel> {
   slideState: CarouselSlideState;
+  initialIndex: number;
 }
 
 const demoSlides = [
@@ -78,8 +79,10 @@ const meta = {
   component: Carousel,
   tags: ['ai-generated', 'test'],
   args: {
+    'aria-label': 'Product highlights',
     slides,
     slideState: 'multiple',
+    initialIndex: 1,
     loop: true,
     showIndicators: true,
     autoPlay: false,
@@ -90,18 +93,23 @@ const meta = {
       control: 'select',
       options: ['multiple', 'single', 'empty'],
     },
-    initialIndex: { control: { type: 'number', min: 0, max: 4, step: 1 } },
+    initialIndex: { control: { type: 'number', min: 1, max: 5, step: 1 } },
     loop: { control: 'boolean' },
     showIndicators: { control: 'boolean' },
     autoPlay: { control: 'boolean' },
     autoPlayInterval: {
       control: { type: 'number', min: 1000, max: 10000, step: 500 },
     },
-    slides: { control: false },
-    onIndexChange: { control: false },
+    'aria-label': { control: 'text' },
+    slides: { control: 'object' },
+    onIndexChange: { action: 'index changed' },
   },
-  render: ({ slideState, ...args }) => (
-    <Carousel {...args} slides={getSlidesForState(slideState)} />
+  render: ({ initialIndex, slideState, ...args }) => (
+    <Carousel
+      {...args}
+      initialIndex={Math.max(initialIndex - 1, 0)}
+      slides={getSlidesForState(slideState)}
+    />
   ),
 } satisfies Meta<CarouselStoryArgs>;
 

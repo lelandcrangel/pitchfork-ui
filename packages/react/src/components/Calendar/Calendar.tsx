@@ -146,7 +146,11 @@ export function Calendar({
       return;
     }
 
+    // Keep externally controlled values centered in the visible month.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDisplayMonth(clampToYearRange(startOfMonth(selectedDate)));
+    // clampToYearRange is intentionally represented by the year bounds here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, yearRange.end, yearRange.start]);
 
   const monthLabel = useMemo(() => {

@@ -1,5 +1,34 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Notification, NotificationStack } from '@pitchfork-ui/react';
+import {
+  Button,
+  Notification,
+  NotificationStack,
+  type NotificationPlacement,
+} from '@pitchfork-ui/react';
+
+function NotificationPreview({
+  children,
+  minHeight = 160,
+  placement = 'top-right',
+}: {
+  children: React.ReactNode;
+  minHeight?: number;
+  placement?: NotificationPlacement;
+}) {
+  return (
+    <div style={{ minHeight, position: 'relative', width: '100%' }}>
+      <NotificationStack
+        placement={placement}
+        style={{
+          position: 'absolute',
+          width: 'min(420px, calc(100% - 32px))',
+        }}
+      >
+        {children}
+      </NotificationStack>
+    </div>
+  );
+}
 
 const meta = {
   title: 'Examples/Notifications',
@@ -15,7 +44,7 @@ export const StackedToasts: Story = {
     heading: 'Example',
   },
   render: () => (
-    <NotificationStack style={{ maxWidth: 420 }}>
+    <NotificationPreview minHeight={360}>
       <Notification
         variant="success"
         heading="Changes published"
@@ -33,7 +62,7 @@ export const StackedToasts: Story = {
         description="You have 12% of your storage remaining."
         action={<Button size="sm">Upgrade plan</Button>}
       />
-    </NotificationStack>
+    </NotificationPreview>
   ),
 };
 
@@ -62,11 +91,11 @@ export const BottomLeftPlacement: Story = {
     heading: 'Placement',
   },
   render: () => (
-    <NotificationStack placement="bottom-left" style={{ maxWidth: 420 }}>
+    <NotificationPreview placement="bottom-left" minHeight={160}>
       <Notification
         heading="Invite sent"
         description="Jordan will receive an invitation email shortly."
       />
-    </NotificationStack>
+    </NotificationPreview>
   ),
 };

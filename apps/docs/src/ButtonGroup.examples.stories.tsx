@@ -13,6 +13,8 @@ const meta = {
       { value: 'week', label: 'This week' },
     ],
     defaultValue: 'today',
+    multiple: false,
+    disabled: false,
   },
   argTypes: {
     multiple: { control: 'boolean' },

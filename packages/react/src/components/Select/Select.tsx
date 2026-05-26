@@ -1,5 +1,14 @@
-import { forwardRef, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { composeDescribedBy, isActivationKey, Keys } from '../../a11y';
+import {
+  useAnchoredPosition,
+  useComposedRefs,
+  useControllableState,
+  useDisclosure,
+  useListNavigation,
+  useOutsideInteraction,
+} from '../../hooks';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Select.css';
@@ -24,30 +33,6 @@ export interface SelectProps extends Omit<
   description?: string;
   error?: string;
 }
-
-const findNextEnabledIndex = (
-  options: SelectOption[],
-  startIndex: number,
-  direction: 1 | -1,
-) => {
-  if (options.length === 0) {
-    return -1;
-  }
-
-  let index = startIndex;
-  for (let step = 0; step < options.length; step += 1) {
-    index = (index + direction + options.length) % options.length;
-    if (!options[index]?.disabled) {
-      return index;
-    }
-  }
-
-  return -1;
-};
-
-const findFirstEnabledIndex = (options: SelectOption[]) => {
-  return options.findIndex((option) => !option.disabled);
-};
 
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(
   (
@@ -74,13 +59,17 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
     const descriptionId = description ? `${selectId}-description` : undefined;
     const errorId = error ? `${selectId}-error` : undefined;
     const listboxId = `${selectId}-listbox`;
-    const describedBy =
-      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') ||
-      undefined;
+    const describedBy = composeDescribedBy(
+      ariaDescribedBy,
+      descriptionId,
+      errorId,
+    );
 
-    const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState(defaultValue);
-    const selectedValue = isControlled ? value : internalValue;
+    const [selectedValue, setSelectedValue] = useControllableState({
+      value,
+      defaultValue,
+      onChange: onValueChange,
+    });
     const selectedIndex = useMemo(
       () => options.findIndex((option) => option.value === selectedValue),
       [options, selectedValue],
@@ -88,18 +77,39 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
     const selectedOption =
       selectedIndex >= 0 ? options[selectedIndex] : undefined;
 
-    const [isOpen, setIsOpen] = useState(false);
-    const [activeIndex, setActiveIndex] = useState<number>(() => {
-      if (selectedIndex >= 0 && !options[selectedIndex]?.disabled) {
-        return selectedIndex;
-      }
-      return findFirstEnabledIndex(options);
+    const disclosure = useDisclosure({ disabled });
+    const {
+      activeIndex,
+      firstEnabledIndex,
+      lastEnabledIndex,
+      move,
+      setActiveIndex,
+    } = useListNavigation({
+      items: options,
+      isDisabled: (option) => Boolean(option.disabled),
+      initialIndex:
+        selectedIndex >= 0 && !options[selectedIndex]?.disabled
+          ? selectedIndex
+          : undefined,
     });
+
+    const { isOpen } = disclosure;
 
     const rootRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
     const menuRef = useRef<HTMLUListElement>(null);
-    const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
+    const triggerRefs = useComposedRefs(triggerRef, ref);
+    const menuStyle = useAnchoredPosition({
+      anchorRef: triggerRef,
+      enabled: isOpen,
+      matchAnchorWidth: true,
+    });
+
+    useOutsideInteraction({
+      refs: [rootRef, menuRef],
+      enabled: isOpen,
+      onInteractOutside: disclosure.close,
+    });
 
     useEffect(() => {
       if (!isOpen) {
@@ -109,72 +119,12 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
       const nextIndex =
         selectedIndex >= 0 && !options[selectedIndex]?.disabled
           ? selectedIndex
-          : findFirstEnabledIndex(options);
+          : firstEnabledIndex;
       setActiveIndex(nextIndex);
-    }, [isOpen, options, selectedIndex]);
-
-    useEffect(() => {
-      const handlePointerDown = (event: PointerEvent) => {
-        const target = event.target as Node;
-        if (
-          !rootRef.current?.contains(target) &&
-          !menuRef.current?.contains(target)
-        ) {
-          setIsOpen(false);
-        }
-      };
-
-      document.addEventListener('pointerdown', handlePointerDown);
-      return () => {
-        document.removeEventListener('pointerdown', handlePointerDown);
-      };
-    }, []);
-
-    useEffect(() => {
-      if (!isOpen) {
-        return;
-      }
-
-      const updateMenuPosition = () => {
-        const trigger = triggerRef.current;
-        if (!trigger) {
-          return;
-        }
-
-        const rect = trigger.getBoundingClientRect();
-        setMenuStyle({
-          left: rect.left,
-          top: rect.bottom + 8,
-          width: rect.width,
-        });
-      };
-
-      updateMenuPosition();
-      window.addEventListener('resize', updateMenuPosition);
-      window.addEventListener('scroll', updateMenuPosition, true);
-
-      return () => {
-        window.removeEventListener('resize', updateMenuPosition);
-        window.removeEventListener('scroll', updateMenuPosition, true);
-      };
-    }, [isOpen]);
+    }, [firstEnabledIndex, isOpen, options, selectedIndex, setActiveIndex]);
 
     const selectValue = (nextValue: string) => {
-      if (!isControlled) {
-        setInternalValue(nextValue);
-      }
-      onValueChange?.(nextValue);
-    };
-
-    const openMenu = () => {
-      if (disabled) {
-        return;
-      }
-      setIsOpen(true);
-    };
-
-    const closeMenu = () => {
-      setIsOpen(false);
+      setSelectedValue(nextValue);
     };
 
     const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
@@ -184,61 +134,53 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
         return;
       }
 
-      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      if (event.key === Keys.ArrowDown || event.key === Keys.ArrowUp) {
         event.preventDefault();
 
         if (!isOpen) {
-          openMenu();
+          disclosure.open();
           return;
         }
 
-        const direction = event.key === 'ArrowDown' ? 1 : -1;
         const startIndex = activeIndex >= 0 ? activeIndex : selectedIndex;
-        const nextIndex = findNextEnabledIndex(options, startIndex, direction);
-        if (nextIndex >= 0) {
-          setActiveIndex(nextIndex);
-        }
+        move(event.key === Keys.ArrowDown ? 'next' : 'previous', startIndex);
         return;
       }
 
-      if (event.key === 'Home') {
+      if (event.key === Keys.Home) {
         event.preventDefault();
-        const firstEnabled = findFirstEnabledIndex(options);
-        if (firstEnabled >= 0) {
-          setActiveIndex(firstEnabled);
+        if (firstEnabledIndex >= 0) {
+          setActiveIndex(firstEnabledIndex);
         }
         return;
       }
 
-      if (event.key === 'End') {
+      if (event.key === Keys.End) {
         event.preventDefault();
-        const lastEnabled = [...options]
-          .reverse()
-          .findIndex((option) => !option.disabled);
-        if (lastEnabled >= 0) {
-          setActiveIndex(options.length - 1 - lastEnabled);
+        if (lastEnabledIndex >= 0) {
+          setActiveIndex(lastEnabledIndex);
         }
         return;
       }
 
-      if (event.key === 'Enter' || event.key === ' ') {
+      if (isActivationKey(event.key)) {
         event.preventDefault();
 
         if (!isOpen) {
-          openMenu();
+          disclosure.open();
           return;
         }
 
         const activeOption = options[activeIndex];
         if (activeOption && !activeOption.disabled) {
           selectValue(activeOption.value);
-          closeMenu();
+          disclosure.close();
         }
         return;
       }
 
-      if (event.key === 'Escape') {
-        closeMenu();
+      if (event.key === Keys.Escape) {
+        disclosure.close();
       }
     };
 
@@ -253,14 +195,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
           <button
             {...props}
             id={selectId}
-            ref={(node) => {
-              triggerRef.current = node;
-              if (typeof ref === 'function') {
-                ref(node);
-              } else if (ref) {
-                ref.current = node;
-              }
-            }}
+            ref={triggerRefs}
             type="button"
             className={cx(
               'pf-select__trigger',
@@ -274,10 +209,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
             aria-controls={isOpen ? listboxId : undefined}
             aria-describedby={describedBy}
             onClick={() => {
-              if (disabled) {
-                return;
-              }
-              setIsOpen((current) => !current);
+              disclosure.toggle();
             }}
             onKeyDown={onTriggerKeyDown}
           >
@@ -324,6 +256,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
                     return (
                       <li
                         key={option.value}
+                        id={`${listboxId}-option-${index}`}
                         role="option"
                         aria-selected={isSelected}
                         aria-disabled={option.disabled ? true : undefined}
@@ -346,7 +279,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
                             return;
                           }
                           selectValue(option.value);
-                          closeMenu();
+                          disclosure.close();
                           triggerRef.current?.focus();
                         }}
                       >

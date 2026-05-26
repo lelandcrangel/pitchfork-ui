@@ -2,7 +2,51 @@
 
 :root {
   color-scheme: light;
-  --pf-focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-brand-500) 35%, transparent);
+
+  /* Interaction aliases */
+  --pf-focus-ring-color: var(
+    --color-semantic-border-focus,
+    var(--color-brand-500)
+  );
+  --pf-focus-ring-width: 3px;
+  --pf-focus-ring-offset: 2px;
+  --pf-focus-ring: 0 0 0 var(--pf-focus-ring-width)
+    color-mix(in srgb, var(--pf-focus-ring-color) 35%, transparent);
+  --pf-focus-outline: var(--pf-focus-ring-width) solid
+    var(--pf-focus-ring-color);
+  --pf-transition-fast: 120ms ease;
+  --pf-transition-medium: 180ms ease;
+
+  /* Control aliases */
+  --pf-control-height-sm: var(--size-control-sm, 36px);
+  --pf-control-height-md: var(--size-control-md, 40px);
+  --pf-control-height-lg: var(--size-control-lg, 48px);
+  --pf-control-padding-x-sm: var(--space-3);
+  --pf-control-padding-x-md: var(--space-3);
+  --pf-control-padding-x-lg: var(--space-5);
+  --pf-control-radius: var(--radius-md);
+  --pf-control-border: var(--color-semantic-border-default);
+  --pf-control-border-hover: var(--color-semantic-border-strong);
+  --pf-control-border-focus: var(
+    --color-semantic-border-focus,
+    var(--color-semantic-action-primary)
+  );
+  --pf-control-bg: var(--color-semantic-background-default);
+  --pf-control-bg-disabled: var(
+    --color-semantic-background-disabled,
+    var(--color-gray-100)
+  );
+  --pf-control-text: var(--color-semantic-text-default);
+  --pf-control-text-muted: var(--color-semantic-text-muted);
+  --pf-control-text-disabled: var(
+    --color-semantic-text-disabled,
+    var(--color-gray-400)
+  );
+
+  /* Overlay aliases */
+  --pf-z-index-dropdown: 1000;
+  --pf-z-index-popover: 1100;
+  --pf-z-index-modal: 1200;
 
   /* Button aliases */
   --pf-button-primary-bg: var(--color-semantic-action-primary);
@@ -20,34 +64,51 @@
   --pf-field-label: var(--color-semantic-text-default);
   --pf-field-description: var(--color-semantic-text-muted);
   --pf-field-error: var(--color-semantic-status-danger-foreground);
-  --pf-input-bg: var(--color-semantic-background-default);
-  --pf-input-border: var(--color-semantic-border-default);
-  --pf-input-text: var(--color-semantic-text-default);
-  --pf-input-placeholder: var(--color-semantic-text-muted);
+  --pf-input-bg: var(--pf-control-bg);
+  --pf-input-border: var(--pf-control-border);
+  --pf-input-text: var(--pf-control-text);
+  --pf-input-placeholder: var(--pf-control-text-muted);
 
   /* Surface/select aliases */
-  --pf-surface-bg: var(--color-semantic-background-default);
+  --pf-surface-bg: var(
+    --color-semantic-background-raised,
+    var(--color-semantic-background-default)
+  );
   --pf-surface-subtle: var(--color-semantic-background-subtle);
   --pf-surface-border: var(--color-semantic-border-default);
   --pf-surface-border-strong: var(--color-semantic-border-strong);
-  --pf-select-menu-bg: var(--color-semantic-background-default);
-  --pf-select-menu-border: var(--color-semantic-text-muted);
+  --pf-select-menu-bg: var(--pf-surface-bg);
+  --pf-select-menu-border: var(--pf-surface-border-strong);
   --pf-select-option-active-bg: var(--color-semantic-action-primary);
   --pf-select-option-active-text: var(--color-semantic-action-primary-text);
 
   /* Overlay and elevation color aliases */
-  --pf-overlay-backdrop: color-mix(in srgb, var(--color-gray-900) 48%, transparent);
-  --pf-elevation-overlay-shadow: 0 24px 60px color-mix(in srgb, var(--color-gray-900) 18%, transparent);
-  --pf-elevation-popover-shadow: 0 14px 30px color-mix(in srgb, var(--color-base-black) 12%, transparent);
-  --pf-elevation-floating-shadow: 0 16px 32px color-mix(in srgb, var(--color-gray-900) 8%, transparent);
-  --pf-elevation-tab-active-shadow: 0 1px 2px color-mix(in srgb, var(--color-gray-900) 12%, transparent);
-  --pf-elevation-tooltip-shadow: 0 10px 24px color-mix(in srgb, var(--color-base-black) 24%, transparent);
-  --pf-control-thumb-outline-shadow: 0 0 0 1px color-mix(in srgb, var(--color-base-black) 6%, transparent);
+  --pf-overlay-backdrop: color-mix(
+    in srgb,
+    var(--color-gray-900) 48%,
+    transparent
+  );
+  --pf-elevation-overlay-shadow: 0 24px 60px
+    color-mix(in srgb, var(--color-gray-900) 18%, transparent);
+  --pf-elevation-popover-shadow: 0 14px 30px
+    color-mix(in srgb, var(--color-base-black) 12%, transparent);
+  --pf-elevation-floating-shadow: 0 16px 32px
+    color-mix(in srgb, var(--color-gray-900) 8%, transparent);
+  --pf-elevation-tab-active-shadow: 0 1px 2px
+    color-mix(in srgb, var(--color-gray-900) 12%, transparent);
+  --pf-elevation-tooltip-shadow: 0 10px 24px
+    color-mix(in srgb, var(--color-base-black) 24%, transparent);
+  --pf-control-thumb-outline-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--color-base-black) 6%, transparent);
 
   /* Utility color aliases */
   --pf-tooltip-bg: var(--color-gray-900);
   --pf-tooltip-text: var(--color-base-white);
-  --pf-subtle-hover-overlay: color-mix(in srgb, var(--color-base-black) 8%, transparent);
+  --pf-subtle-hover-overlay: color-mix(
+    in srgb,
+    var(--color-base-black) 8%,
+    transparent
+  );
 }
 
 [data-theme='dark'] {
@@ -55,14 +116,24 @@
 
   --color-semantic-background-default: var(--color-gray-900);
   --color-semantic-background-subtle: var(--color-gray-700);
+  --color-semantic-background-raised: var(--color-gray-800);
+  --color-semantic-background-disabled: var(--color-gray-800);
   --color-semantic-text-default: var(--color-gray-50);
   --color-semantic-text-muted: var(--color-gray-300);
+  --color-semantic-text-subtle: var(--color-gray-200);
   --color-semantic-text-inverse: var(--color-gray-900);
+  --color-semantic-text-disabled: var(--color-gray-500);
+  --color-semantic-border-muted: var(--color-gray-800);
   --color-semantic-border-default: var(--color-gray-700);
   --color-semantic-border-strong: var(--color-gray-500);
+  --color-semantic-border-focus: var(--color-brand-400);
   --color-semantic-action-primary: var(--color-brand-500);
   --color-semantic-action-primary-hover: var(--color-brand-600);
+  --color-semantic-action-primary-active: var(--color-brand-700);
   --color-semantic-action-primary-text: var(--color-base-white);
+  --color-semantic-action-secondary: var(--color-gray-800);
+  --color-semantic-action-secondary-hover: var(--color-gray-700);
+  --color-semantic-action-secondary-text: var(--color-gray-50);
   --color-semantic-status-success-background: var(--color-success-900);
   --color-semantic-status-success-border: var(--color-success-700);
   --color-semantic-status-success-foreground: var(--color-success-300);
@@ -73,7 +144,8 @@
   --color-semantic-status-danger-border: var(--color-danger-700);
   --color-semantic-status-danger-foreground: var(--color-danger-300);
 
-  --pf-focus-ring: 0 0 0 3px color-mix(in srgb, var(--color-brand-500) 45%, transparent);
+  --pf-focus-ring: 0 0 0 var(--pf-focus-ring-width)
+    color-mix(in srgb, var(--pf-focus-ring-color) 45%, transparent);
 }
 
 *,
@@ -99,4 +171,14 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+.pf-focus-ring:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.pf-focus-outline:focus-visible {
+  outline: var(--pf-focus-outline);
+  outline-offset: var(--pf-focus-ring-offset);
 }

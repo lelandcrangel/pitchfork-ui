@@ -16,8 +16,8 @@ const meta = {
     actions: <Button size="sm">Create project</Button>,
   },
   argTypes: {
-    items: { control: false },
-    actions: { control: false },
+    items: { control: 'object' },
+    actions: { control: 'text' },
     brand: { control: 'text' },
   },
 } satisfies Meta<typeof HeaderNavigation>;

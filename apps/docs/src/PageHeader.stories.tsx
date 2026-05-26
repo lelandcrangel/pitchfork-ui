@@ -19,8 +19,9 @@ const meta = {
     actions: <Button size="sm">New report</Button>,
   },
   argTypes: {
-    metadata: { control: false },
-    actions: { control: false },
+    breadcrumbs: { control: 'object' },
+    metadata: { control: 'text' },
+    actions: { control: 'text' },
   },
 } satisfies Meta<typeof PageHeader>;
 

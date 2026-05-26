@@ -22,6 +22,10 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+export const Interactive: Story = {
+  render: (args) => <RatingStars {...args} />,
+};
+
 export const InteractiveStars: Story = {
   render: (args) => <RatingStars {...args} />,
 };

@@ -1,5 +1,11 @@
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { composeDescribedBy, Keys } from '../../a11y';
+import {
+  useAnchoredPosition,
+  useDisclosure,
+  useOutsideInteraction,
+} from '../../hooks';
 import { cx } from '../../utils/cx';
 import { Calendar } from '../Calendar';
 import { Icon } from '../Icon';
@@ -53,9 +59,11 @@ export function DatePicker({
   const pickerId = id ?? generatedId;
   const descriptionId = description ? `${pickerId}-description` : undefined;
   const errorId = error ? `${pickerId}-error` : undefined;
-  const describedBy =
-    [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') ||
-    undefined;
+  const describedBy = composeDescribedBy(
+    ariaDescribedBy,
+    descriptionId,
+    errorId,
+  );
 
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<Date | undefined>(
@@ -67,100 +75,25 @@ export function DatePicker({
       : undefined
     : internalValue;
 
-  const [isOpen, setIsOpen] = useState(false);
+  const disclosure = useDisclosure({ disabled });
+  const { isOpen } = disclosure;
   const rootRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
+  const popoverStyle = useAnchoredPosition({
+    anchorRef: triggerRef,
+    floatingRef: popoverRef,
+    enabled: isOpen,
+    flip: true,
+    matchAnchorWidth: false,
+  });
 
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const updatePopoverPosition = () => {
-      if (!triggerRef.current || !popoverRef.current) {
-        return;
-      }
-
-      const viewportPadding = 8;
-      const offset = 8;
-      const triggerRect = triggerRef.current.getBoundingClientRect();
-      const popoverRect = popoverRef.current.getBoundingClientRect();
-
-      let left = triggerRect.left;
-      const minLeft = viewportPadding;
-      const maxLeft = window.innerWidth - viewportPadding - popoverRect.width;
-
-      if (maxLeft >= minLeft) {
-        left = Math.min(Math.max(left, minLeft), maxLeft);
-      } else {
-        left = minLeft;
-      }
-
-      const spaceBelow = window.innerHeight - triggerRect.bottom;
-      const canOpenBelow =
-        spaceBelow >= popoverRect.height + offset + viewportPadding;
-
-      let top = canOpenBelow
-        ? triggerRect.bottom + offset
-        : triggerRect.top - popoverRect.height - offset;
-
-      const minTop = viewportPadding;
-      const maxTop = window.innerHeight - viewportPadding - popoverRect.height;
-
-      if (maxTop >= minTop) {
-        top = Math.min(Math.max(top, minTop), maxTop);
-      } else {
-        top = minTop;
-      }
-
-      setPopoverStyle({
-        left,
-        minWidth: triggerRect.width,
-        top,
-      });
-    };
-
-    updatePopoverPosition();
-    window.addEventListener('resize', updatePopoverPosition);
-    window.addEventListener('scroll', updatePopoverPosition, true);
-
-    return () => {
-      window.removeEventListener('resize', updatePopoverPosition);
-      window.removeEventListener('scroll', updatePopoverPosition, true);
-    };
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const onPointerDown = (event: MouseEvent) => {
-      const target = event.target as Node;
-      const isInsideTrigger = Boolean(rootRef.current?.contains(target));
-      const isInsidePopover = Boolean(popoverRef.current?.contains(target));
-
-      if (!isInsideTrigger && !isInsidePopover) {
-        setIsOpen(false);
-      }
-    };
-
-    const onEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', onPointerDown);
-    document.addEventListener('keydown', onEscape);
-
-    return () => {
-      document.removeEventListener('mousedown', onPointerDown);
-      document.removeEventListener('keydown', onEscape);
-    };
-  }, [isOpen]);
+  useOutsideInteraction({
+    refs: [rootRef, popoverRef],
+    enabled: isOpen,
+    eventName: 'mousedown',
+    onInteractOutside: disclosure.close,
+  });
 
   const formattedDate = useMemo(() => {
     if (!selectedDate) {
@@ -182,7 +115,7 @@ export function DatePicker({
     }
 
     onValueChange?.(normalized);
-    setIsOpen(false);
+    disclosure.close();
   };
 
   const clearDate = () => {
@@ -220,7 +153,12 @@ export function DatePicker({
           aria-haspopup="dialog"
           aria-expanded={isOpen}
           onClick={() => {
-            setIsOpen((current) => !current);
+            disclosure.toggle();
+          }}
+          onKeyDown={(event) => {
+            if (event.key === Keys.Escape) {
+              disclosure.close();
+            }
           }}
         >
           <span

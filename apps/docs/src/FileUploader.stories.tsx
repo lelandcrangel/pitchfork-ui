@@ -9,19 +9,21 @@ const meta = {
     label: 'Attachments',
     description: 'Upload one or more files to include with this request.',
     multiple: true,
+    disabled: false,
     accept: '.png,.jpg,.pdf',
     maxFiles: 3,
     maxFileSize: 2 * 1024 * 1024,
   },
   argTypes: {
     multiple: { control: 'boolean' },
+    disabled: { control: 'boolean' },
     maxFiles: { control: { type: 'number', min: 1, max: 10, step: 1 } },
     maxFileSize: {
       control: { type: 'number', min: 100000, max: 10000000, step: 100000 },
     },
-    onFilesChange: { control: false },
-    value: { control: false },
-    defaultValue: { control: false },
+    onFilesChange: { action: 'files changed' },
+    value: { control: 'object' },
+    defaultValue: { control: 'object' },
   },
 } satisfies Meta<typeof FileUploader>;
 

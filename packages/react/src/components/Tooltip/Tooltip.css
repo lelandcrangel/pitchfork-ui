@@ -9,7 +9,10 @@
   color: var(--pf-tooltip-text);
   font-size: var(--font-size-sm);
   line-height: 1.35;
-  max-width: 260px;
+  max-height: calc(100vh - 16px);
+  max-width: min(260px, calc(100vw - 16px));
+  overflow: hidden;
+  overflow-wrap: anywhere;
   padding: 8px 10px;
   pointer-events: none;
   position: fixed;

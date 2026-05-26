@@ -36,25 +36,20 @@ export function Carousel({
     Math.max(totalSlides - 1, 0),
   );
   const [activeIndex, setActiveIndex] = useState(boundedInitialIndex);
-
-  useEffect(() => {
-    setActiveIndex((current) =>
-      clamp(current, 0, Math.max(totalSlides - 1, 0)),
-    );
-  }, [totalSlides]);
+  const resolvedActiveIndex = clamp(
+    activeIndex,
+    0,
+    Math.max(totalSlides - 1, 0),
+  );
 
   const goToIndex = (nextIndex: number) => {
     if (totalSlides === 0) {
       return;
     }
 
-    let resolvedIndex = nextIndex;
-
-    if (loop) {
-      resolvedIndex = ((nextIndex % totalSlides) + totalSlides) % totalSlides;
-    } else {
-      resolvedIndex = clamp(nextIndex, 0, totalSlides - 1);
-    }
+    const resolvedIndex = loop
+      ? ((nextIndex % totalSlides) + totalSlides) % totalSlides
+      : clamp(nextIndex, 0, totalSlides - 1);
 
     setActiveIndex(resolvedIndex);
     onIndexChange?.(resolvedIndex);
@@ -80,16 +75,16 @@ export function Carousel({
     };
   }, [autoPlay, autoPlayInterval, loop, onIndexChange, totalSlides]);
 
-  const isPrevDisabled = !loop && activeIndex <= 0;
-  const isNextDisabled = !loop && activeIndex >= totalSlides - 1;
+  const isPrevDisabled = !loop && resolvedActiveIndex <= 0;
+  const isNextDisabled = !loop && resolvedActiveIndex >= totalSlides - 1;
 
   const slideLabel = useMemo(() => {
     if (totalSlides === 0) {
       return 'No slides';
     }
 
-    return `Slide ${activeIndex + 1} of ${totalSlides}`;
-  }, [activeIndex, totalSlides]);
+    return `Slide ${resolvedActiveIndex + 1} of ${totalSlides}`;
+  }, [resolvedActiveIndex, totalSlides]);
 
   return (
     <div
@@ -110,7 +105,7 @@ export function Carousel({
         ) : (
           <div
             className="pf-carousel__track"
-            style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+            style={{ transform: `translateX(-${resolvedActiveIndex * 100}%)` }}
           >
             {slides.map((slide, index) => (
               <div
@@ -119,7 +114,7 @@ export function Carousel({
                 role="group"
                 aria-roledescription="slide"
                 aria-label={`Slide ${index + 1} of ${totalSlides}`}
-                aria-hidden={index !== activeIndex}
+                aria-hidden={index !== resolvedActiveIndex}
               >
                 {slide}
               </div>
@@ -135,7 +130,7 @@ export function Carousel({
           aria-label="Previous slide"
           disabled={isPrevDisabled || totalSlides < 2}
           onClick={() => {
-            goToIndex(activeIndex - 1);
+            goToIndex(resolvedActiveIndex - 1);
           }}
         >
           <Icon name="square-caret-left" aria-hidden />
@@ -147,7 +142,7 @@ export function Carousel({
             aria-label="Slide indicators"
           >
             {slides.map((_, index) => {
-              const isActive = index === activeIndex;
+              const isActive = index === resolvedActiveIndex;
 
               return (
                 <button
@@ -176,7 +171,7 @@ export function Carousel({
           aria-label="Next slide"
           disabled={isNextDisabled || totalSlides < 2}
           onClick={() => {
-            goToIndex(activeIndex + 1);
+            goToIndex(resolvedActiveIndex + 1);
           }}
         >
           <Icon name="square-caret-right" aria-hidden />

@@ -10,6 +10,30 @@ type NotificationStoryArgs = React.ComponentProps<typeof Notification> & {
   placement: NotificationPlacement;
 };
 
+function NotificationPreview({
+  children,
+  minHeight = 160,
+  placement = 'top-right',
+}: {
+  children: React.ReactNode;
+  minHeight?: number;
+  placement?: NotificationPlacement;
+}) {
+  return (
+    <div style={{ minHeight, position: 'relative', width: '100%' }}>
+      <NotificationStack
+        placement={placement}
+        style={{
+          position: 'absolute',
+          width: 'min(420px, calc(100% - 32px))',
+        }}
+      >
+        {children}
+      </NotificationStack>
+    </div>
+  );
+}
+
 const meta = {
   title: 'Components/Notifications',
   component: Notification,
@@ -32,9 +56,9 @@ const meta = {
       control: 'inline-radio',
       options: ['top-right', 'top-left', 'bottom-right', 'bottom-left'],
     },
-    icon: { control: false },
-    action: { control: false },
-    onDismiss: { control: false },
+    icon: { control: 'text' },
+    action: { control: 'text' },
+    onDismiss: { action: 'dismissed' },
   },
 } satisfies Meta<NotificationStoryArgs>;
 
@@ -47,8 +71,8 @@ export const Interactive: Story = {
   },
 
   render: ({ placement, ...args }) => (
-    <NotificationStack placement={placement} style={{ maxWidth: 420 }}>
+    <NotificationPreview placement={placement}>
       <Notification {...args} />
-    </NotificationStack>
+    </NotificationPreview>
   ),
 };

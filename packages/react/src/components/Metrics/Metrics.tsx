@@ -4,7 +4,7 @@ import './Metrics.css';
 
 export type MetricTrend = 'positive' | 'negative' | 'neutral';
 
-export interface MetricGridProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type MetricGridProps = React.HTMLAttributes<HTMLDivElement>;
 
 export interface MetricCardProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,

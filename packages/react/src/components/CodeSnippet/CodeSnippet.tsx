@@ -18,14 +18,6 @@ export interface CodeSnippetProps extends Omit<
   onCodeCopy?: (code: string) => void;
 }
 
-const splitLines = (value: string) => {
-  if (!value.length) {
-    return [''];
-  }
-
-  return value.replace(/\n$/, '').split('\n');
-};
-
 export function CodeSnippet({
   className,
   code,
@@ -41,7 +33,6 @@ export function CodeSnippet({
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const liveRegionId = useId();
-  const lines = splitLines(code);
 
   useEffect(() => {
     if (!copied) {

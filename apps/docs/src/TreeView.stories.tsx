@@ -47,7 +47,8 @@ const meta = {
     defaultSelectedValue: 'assets',
   },
   argTypes: {
-    nodes: { control: false },
+    nodes: { control: 'object' },
+    defaultExpandedValues: { control: 'object' },
   },
 } satisfies Meta<typeof TreeView>;
 

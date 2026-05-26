@@ -59,6 +59,8 @@ export function SlideoutMenu({
         closeTimerRef.current = null;
       }
 
+      // Animation state is synchronized with the external `open` prop.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMounted(true);
       setVisible(false);
       closeTimerRef.current = setTimeout(() => {

@@ -28,7 +28,7 @@ const meta = {
     showLineNumbers: { control: 'boolean' },
     maxHeight: { control: { type: 'number', min: 120, max: 600, step: 20 } },
     code: { control: 'text' },
-    onCodeCopy: { control: false },
+    onCodeCopy: { action: 'code copied' },
   },
 } satisfies Meta<typeof CodeSnippet>;
 

@@ -93,10 +93,6 @@ export function Pagination({
     clampPage(defaultPage, safeTotalPages),
   );
 
-  React.useEffect(() => {
-    setInternalPage((current) => clampPage(current, safeTotalPages));
-  }, [safeTotalPages]);
-
   const currentPage = clampPage(page ?? internalPage, safeTotalPages);
   const items = getPaginationItems(
     currentPage,

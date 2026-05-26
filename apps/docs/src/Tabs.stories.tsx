@@ -51,7 +51,7 @@ const meta = {
     defaultValue: 'overview',
   },
   argTypes: {
-    items: { control: false },
+    items: { control: 'object' },
     variant: {
       control: 'select',
       options: ['underline', 'pills'],

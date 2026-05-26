@@ -23,48 +23,52 @@ const meta = {
       control: 'select',
       options: ['sm', 'md', 'lg'],
     },
-    footer: { control: false },
-    children: { control: false },
-    onOpenChange: { control: false },
+    footer: { control: 'text' },
+    children: { control: 'text' },
+    onOpenChange: { action: 'open changed' },
   },
 } satisfies Meta<typeof SlideoutMenu>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+function InteractiveSlideoutStory(
+  args: React.ComponentProps<typeof SlideoutMenu>,
+) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open slideout</Button>
+      <SlideoutMenu
+        {...args}
+        open={open}
+        onOpenChange={setOpen}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => setOpen(false)}>Save changes</Button>
+          </>
+        }
+      >
+        <p style={{ marginTop: 0 }}>
+          Slideout menus are useful for editing flows that should keep page
+          context visible in the background.
+        </p>
+        <p style={{ marginBottom: 0 }}>
+          You can control placement, size, overlay behavior, and footer actions
+          from this interactive story.
+        </p>
+      </SlideoutMenu>
+    </>
+  );
+}
+
 export const Interactive: Story = {
   args: {
     open: false,
   },
-  render: (args) => {
-    const [open, setOpen] = useState(false);
-
-    return (
-      <>
-        <Button onClick={() => setOpen(true)}>Open slideout</Button>
-        <SlideoutMenu
-          {...args}
-          open={open}
-          onOpenChange={setOpen}
-          footer={
-            <>
-              <Button variant="secondary" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={() => setOpen(false)}>Save changes</Button>
-            </>
-          }
-        >
-          <p style={{ marginTop: 0 }}>
-            Slideout menus are useful for editing flows that should keep page
-            context visible in the background.
-          </p>
-          <p style={{ marginBottom: 0 }}>
-            You can control placement, size, overlay behavior, and footer
-            actions from this interactive story.
-          </p>
-        </SlideoutMenu>
-      </>
-    );
-  },
+  render: (args) => <InteractiveSlideoutStory {...args} />,
 };

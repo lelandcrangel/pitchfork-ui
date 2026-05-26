@@ -1,4 +1,10 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import { cx } from '../../utils/cx';
 import './Tooltip.css';
@@ -8,6 +14,7 @@ export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 export interface TooltipProps {
   content: React.ReactNode;
   children?: React.ReactNode;
+  open?: boolean;
   placement?: TooltipPlacement;
   delay?: number;
   disabled?: boolean;
@@ -15,12 +22,28 @@ export interface TooltipProps {
 }
 
 const GAP = 10;
+const VIEWPORT_MARGIN = 8;
 
-const getTooltipStyle = (
+const placementFallbacks: Record<TooltipPlacement, TooltipPlacement[]> = {
+  top: ['top', 'bottom', 'right', 'left'],
+  bottom: ['bottom', 'top', 'right', 'left'],
+  left: ['left', 'right', 'top', 'bottom'],
+  right: ['right', 'left', 'top', 'bottom'],
+};
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), Math.max(min, max));
+
+const getViewportSize = () => ({
+  width: window.innerWidth || document.documentElement.clientWidth,
+  height: window.innerHeight || document.documentElement.clientHeight,
+});
+
+const getTooltipCoordinates = (
   triggerRect: DOMRect,
   tooltipRect: DOMRect,
   placement: TooltipPlacement,
-): React.CSSProperties => {
+) => {
   const centerX = triggerRect.left + triggerRect.width / 2;
   const centerY = triggerRect.top + triggerRect.height / 2;
 
@@ -51,9 +74,69 @@ const getTooltipStyle = (
   };
 };
 
+const getOverflow = (
+  coordinates: { left: number; top: number },
+  tooltipRect: DOMRect,
+) => {
+  const viewport = getViewportSize();
+
+  return (
+    Math.max(VIEWPORT_MARGIN - coordinates.left, 0) +
+    Math.max(VIEWPORT_MARGIN - coordinates.top, 0) +
+    Math.max(
+      coordinates.left + tooltipRect.width - viewport.width + VIEWPORT_MARGIN,
+      0,
+    ) +
+    Math.max(
+      coordinates.top + tooltipRect.height - viewport.height + VIEWPORT_MARGIN,
+      0,
+    )
+  );
+};
+
+const getTooltipPosition = (
+  triggerRect: DOMRect,
+  tooltipRect: DOMRect,
+  placement: TooltipPlacement,
+): { placement: TooltipPlacement; style: React.CSSProperties } => {
+  const candidates = placementFallbacks[placement].map((candidatePlacement) => ({
+    placement: candidatePlacement,
+    coordinates: getTooltipCoordinates(
+      triggerRect,
+      tooltipRect,
+      candidatePlacement,
+    ),
+  }));
+  const bestPlacement = candidates.reduce((best, candidate) =>
+    getOverflow(candidate.coordinates, tooltipRect) <
+    getOverflow(best.coordinates, tooltipRect)
+      ? candidate
+      : best,
+  );
+  const viewport = getViewportSize();
+
+  return {
+    placement: bestPlacement.placement,
+    style: {
+      left: clamp(
+        bestPlacement.coordinates.left,
+        VIEWPORT_MARGIN,
+        viewport.width - tooltipRect.width - VIEWPORT_MARGIN,
+      ),
+      top: clamp(
+        bestPlacement.coordinates.top,
+        VIEWPORT_MARGIN,
+        viewport.height - tooltipRect.height - VIEWPORT_MARGIN,
+      ),
+      visibility: 'visible',
+    },
+  };
+};
+
 export function Tooltip({
   content,
   children,
+  open,
   placement = 'top',
   delay = 120,
   disabled = false,
@@ -65,7 +148,13 @@ export function Tooltip({
   const showTimerRef = useRef<number | undefined>(undefined);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [style, setStyle] = useState<React.CSSProperties>({});
+  const [style, setStyle] = useState<React.CSSProperties>({
+    visibility: 'hidden',
+  });
+  const [resolvedPlacement, setResolvedPlacement] =
+    useState<TooltipPlacement>(placement);
+  const isControlled = open !== undefined;
+  const isVisible = !disabled && (isControlled ? open : isOpen);
 
   const clearShowTimer = () => {
     if (showTimerRef.current !== undefined) {
@@ -79,6 +168,10 @@ export function Tooltip({
       return;
     }
 
+    if (isControlled) {
+      return;
+    }
+
     clearShowTimer();
     showTimerRef.current = window.setTimeout(() => {
       setIsOpen(true);
@@ -87,7 +180,13 @@ export function Tooltip({
 
   const closeTooltip = () => {
     clearShowTimer();
+    if (isControlled) {
+      return;
+    }
+
     setIsOpen(false);
+    setStyle({ visibility: 'hidden' });
+    setResolvedPlacement(placement);
   };
 
   useEffect(() => {
@@ -96,8 +195,8 @@ export function Tooltip({
     };
   }, []);
 
-  useEffect(() => {
-    if (!isOpen) {
+  useLayoutEffect(() => {
+    if (!isVisible) {
       return;
     }
 
@@ -108,7 +207,9 @@ export function Tooltip({
 
       const triggerRect = triggerRef.current.getBoundingClientRect();
       const tooltipRect = tooltipRef.current.getBoundingClientRect();
-      setStyle(getTooltipStyle(triggerRect, tooltipRect, placement));
+      const position = getTooltipPosition(triggerRect, tooltipRect, placement);
+      setStyle(position.style);
+      setResolvedPlacement(position.placement);
     };
 
     updatePosition();
@@ -119,7 +220,7 @@ export function Tooltip({
       window.removeEventListener('resize', updatePosition);
       window.removeEventListener('scroll', updatePosition, true);
     };
-  }, [isOpen, placement]);
+  }, [isVisible, placement]);
 
   return (
     <>
@@ -135,12 +236,12 @@ export function Tooltip({
             closeTooltip();
           }
         }}
-        aria-describedby={isOpen ? tooltipId : undefined}
+        aria-describedby={isVisible ? tooltipId : undefined}
       >
         {children ?? <span />}
       </span>
 
-      {isOpen && !disabled && typeof document !== 'undefined'
+      {isVisible && typeof document !== 'undefined'
         ? createPortal(
             <div
               id={tooltipId}
@@ -148,7 +249,7 @@ export function Tooltip({
               role="tooltip"
               className={cx(
                 'pf-tooltip',
-                `pf-tooltip--${placement}`,
+                `pf-tooltip--${resolvedPlacement}`,
                 className,
               )}
               style={style}

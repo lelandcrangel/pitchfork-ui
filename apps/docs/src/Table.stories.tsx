@@ -71,8 +71,8 @@ const meta = {
     defaultSortState: { key: 'name', direction: 'asc' as const },
   },
   argTypes: {
-    columns: { control: false },
-    rows: { control: false },
+    columns: { control: 'object' },
+    rows: { control: 'object' },
     emptyState: { control: 'text' },
   },
 } satisfies Meta<typeof Table>;

@@ -1,5 +1,6 @@
 import './styles/theme.css';
 
+export * from './a11y';
 export * from './components/Alert';
 export * from './components/Avatar';
 export * from './components/Button';
@@ -51,3 +52,4 @@ export * from './components/Tooltip';
 export * from './components/TreeView';
 export * from './components/UtilityButton';
 export * from './components/VideoPlayer';
+export * from './hooks';

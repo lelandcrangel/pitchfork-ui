@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { composeDescribedBy } from '../../a11y';
 import { cx } from '../../utils/cx';
 import './RichTextEditor.css';
 
@@ -49,7 +50,8 @@ const stripOuterPTags = (html: string): string => {
   return html;
 };
 
-const normalizeHtml = (value: string | undefined) => stripOuterPTags(value ?? '');
+const normalizeHtml = (value: string | undefined) =>
+  stripOuterPTags(value ?? '');
 const getTextLength = (element: HTMLDivElement) =>
   element.textContent?.length ?? 0;
 
@@ -79,10 +81,12 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
     const errorId = error ? `${editorId}-error` : undefined;
     const countId =
       typeof characterMax === 'number' ? `${editorId}-count` : undefined;
-    const describedBy =
-      [ariaDescribedBy, descriptionId, errorId, countId]
-        .filter(Boolean)
-        .join(' ') || undefined;
+    const describedBy = composeDescribedBy(
+      ariaDescribedBy,
+      descriptionId,
+      errorId,
+      countId,
+    );
     const editorRef = useRef<HTMLDivElement>(null);
     const lastValidHtmlRef = useRef('');
     const [characterCount, setCharacterCount] = useState(0);
@@ -166,6 +170,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => handleCommand('bold')}
               disabled={disabled}
+              aria-label="Bold"
             >
               B
             </button>
@@ -175,6 +180,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => handleCommand('italic')}
               disabled={disabled}
+              aria-label="Italic"
             >
               I
             </button>
@@ -184,6 +190,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => handleCommand('underline')}
               disabled={disabled}
+              aria-label="Underline"
             >
               U
             </button>
@@ -194,6 +201,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => handleCommand('insertUnorderedList')}
               disabled={disabled}
+              aria-label="Bulleted list"
             >
               • List
             </button>
@@ -203,6 +211,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => handleCommand('insertOrderedList')}
               disabled={disabled}
+              aria-label="Numbered list"
             >
               1. List
             </button>
@@ -212,6 +221,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => handleCommand('removeFormat')}
               disabled={disabled}
+              aria-label="Clear formatting"
             >
               Clear
             </button>
@@ -226,6 +236,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
             aria-multiline="true"
             aria-invalid={error ? true : undefined}
             aria-describedby={describedBy}
+            aria-disabled={disabled ? true : undefined}
             data-placeholder={placeholder}
             suppressContentEditableWarning
             onInput={enforceLimitAndEmit}

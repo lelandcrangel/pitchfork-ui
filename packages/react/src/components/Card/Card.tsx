@@ -1,8 +1,8 @@
 import { cx } from '../../utils/cx';
 import './Card.css';
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
-export interface CardSectionProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type CardProps = React.HTMLAttributes<HTMLDivElement>;
+export type CardSectionProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function Card({ className, ...props }: CardProps) {
   return <div className={cx('pf-card', className)} {...props} />;

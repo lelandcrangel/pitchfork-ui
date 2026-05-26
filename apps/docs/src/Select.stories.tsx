@@ -28,11 +28,14 @@ const meta = {
       control: 'select',
       options: ['', 'starter', 'pro', 'enterprise'],
     },
-    options: { control: false, table: { disable: true } },
-    style: { control: false, table: { disable: true } },
-    onClick: { control: false, table: { disable: true } },
-    onValueChange: { control: false, table: { disable: true } },
-    value: { control: false, table: { disable: true } },
+    options: { control: 'object' },
+    style: { control: 'object' },
+    onClick: { action: 'clicked' },
+    onValueChange: { action: 'value changed' },
+    value: {
+      control: 'select',
+      options: ['', 'starter', 'pro', 'enterprise'],
+    },
   },
 } satisfies Meta<typeof Select>;
 

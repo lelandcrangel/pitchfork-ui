@@ -11,7 +11,7 @@ export interface PageHeaderProps extends React.HTMLAttributes<HTMLElement> {
   actions?: React.ReactNode;
 }
 
-export interface PageHeaderMetaProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type PageHeaderMetaProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function PageHeaderMeta({ className, ...props }: PageHeaderMetaProps) {
   return <div className={cx('pf-page-header__meta', className)} {...props} />;

@@ -12,12 +12,14 @@ const meta = {
     placeholder: 'Select a date',
     showOutsideDays: true,
     allowClear: true,
+    disabled: false,
   },
   argTypes: {
     showOutsideDays: { control: 'boolean' },
     allowClear: { control: 'boolean' },
-    disabledDates: { control: false },
-    onValueChange: { control: false },
+    disabled: { control: 'boolean' },
+    disabledDates: { control: 'object' },
+    onValueChange: { action: 'value changed' },
   },
 } satisfies Meta<typeof DatePicker>;
 
