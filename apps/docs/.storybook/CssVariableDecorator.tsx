@@ -1,3 +1,4 @@
+// ...existing code...
 import {
   type CSSProperties,
   useEffect,
@@ -396,8 +397,119 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     type: 'color',
     scopes: ['creditcard'],
   },
-  // ...existing code...
-  // ContentDivider variables
+  // Dropdown variables
+  {
+    name: '--pf-dropdown-button-secondary-bg',
+    label: 'Trigger background',
+    defaultValue: 'var(--pf-button-secondary-bg)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-button-secondary-bg-hover',
+    label: 'Trigger background (hover)',
+    defaultValue: 'var(--pf-button-secondary-bg-hover)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-button-secondary-border',
+    label: 'Trigger border',
+    defaultValue: 'var(--pf-button-secondary-border)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-button-secondary-border-hover',
+    label: 'Trigger border (hover)',
+    defaultValue: 'var(--pf-button-secondary-border-hover)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-button-secondary-text',
+    label: 'Trigger text color',
+    defaultValue: 'var(--pf-button-secondary-text)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-focus-ring',
+    label: 'Focus ring',
+    defaultValue: 'var(--pf-focus-ring)',
+    type: 'text',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-surface-bg',
+    label: 'Menu background',
+    defaultValue: 'var(--pf-surface-bg)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-surface-border',
+    label: 'Menu border',
+    defaultValue: 'var(--pf-surface-border)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-surface-subtle',
+    label: 'Menu item hover',
+    defaultValue: 'var(--pf-surface-subtle)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-color-semantic-text-default',
+    label: 'Menu text color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-color-semantic-text-muted',
+    label: 'Menu text color (muted)',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-color-semantic-status-danger-foreground',
+    label: 'Destructive item color',
+    defaultValue: 'var(--color-semantic-status-danger-foreground)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--pf-dropdown-color-danger-500',
+    label: 'Destructive icon color',
+    defaultValue: 'var(--color-danger-500)',
+    type: 'color',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--radius-md',
+    label: 'Menu/trigger border radius',
+    defaultValue: 'var(--radius-md)',
+    type: 'radius',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--radius-sm',
+    label: 'Menu item border radius',
+    defaultValue: 'var(--radius-sm)',
+    type: 'radius',
+    scopes: ['dropdown'],
+  },
+  {
+    name: '--shadow-md',
+    label: 'Menu shadow',
+    defaultValue: 'var(--shadow-md)',
+    type: 'shadow',
+    scopes: ['dropdown'],
+  },
   {
     name: '--pf-contentdivider-color-semantic-text-muted',
     label: 'Divider text color',
@@ -2072,34 +2184,114 @@ function TokenSelect({
   value: string;
   onChange: (nextValue: string) => void;
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  const selectedOption = options.find((option) => option.value === value) ?? {
+    label: value,
+    value,
+  };
+
+  useEffect(() => {
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (!wrapperRef.current?.contains(target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+    };
+  }, []);
+
   return (
-    <select
-      id={id}
-      value={value}
-      onChange={(event) => {
-        onChange(event.target.value);
-      }}
-      style={{
-        minHeight: '32px',
-        width: '100%',
-        border: '1px solid var(--color-semantic-border-default)',
-        borderRadius: '6px',
-        padding: '0 8px',
-        fontSize: '12px',
-        color: 'var(--color-semantic-text-default)',
-        background: 'var(--color-semantic-background-default)',
-        cursor: 'pointer',
-      }}
-    >
-      {options.some((option) => option.value === value) ? null : (
-        <option value={value}>{value}</option>
-      )}
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+    <div ref={wrapperRef} style={{ position: 'relative' }}>
+      <button
+        id={id}
+        type="button"
+        onClick={() => {
+          setIsOpen((current) => !current);
+        }}
+        style={{
+          alignItems: 'center',
+          display: 'flex',
+          gap: '8px',
+          minHeight: '32px',
+          width: '100%',
+          border: '1px solid var(--color-semantic-border-default)',
+          borderRadius: '6px',
+          padding: '0 8px',
+          fontSize: '12px',
+          color: 'var(--color-semantic-text-default)',
+          background: 'var(--color-semantic-background-default)',
+          cursor: 'pointer',
+          textAlign: 'left',
+        }}
+      >
+        <span style={{ flexGrow: 1 }}>{selectedOption.label}</span>
+        <Icon
+          name="chevron-down"
+          aria-hidden
+          style={{
+            color: 'var(--color-semantic-text-muted)',
+            fontSize: '16px',
+          }}
+        />
+      </button>
+
+      {isOpen ? (
+        <div
+          role="listbox"
+          aria-label="Token options"
+          style={{
+            position: 'absolute',
+            zIndex: 20,
+            left: 0,
+            right: 0,
+            marginTop: '4px',
+            maxHeight: '180px',
+            overflow: 'auto',
+            border: '1px solid var(--color-semantic-border-default)',
+            borderRadius: '8px',
+            background: 'var(--color-semantic-background-default)',
+            boxShadow: 'var(--pf-elevation-popover-shadow)',
+          }}
+        >
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              role="option"
+              aria-selected={option.value === value}
+              onClick={() => {
+                onChange(option.value);
+                setIsOpen(false);
+              }}
+              style={{
+                alignItems: 'center',
+                display: 'flex',
+                gap: '8px',
+                width: '100%',
+                border: 0,
+                borderBottom: '1px solid var(--color-semantic-border-default)',
+                background:
+                  option.value === value
+                    ? 'var(--color-semantic-background-subtle)'
+                    : 'var(--color-semantic-background-default)',
+                color: 'var(--color-semantic-text-default)',
+                cursor: 'pointer',
+                padding: '7px 8px',
+                fontSize: '12px',
+              }}
+            >
+              <span>{option.label}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -2258,6 +2450,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Button Group': ['buttongroup'],
   'Components/Breadcrumbs': ['breadcrumbs'],
   'Components/Input': ['input'],
+  'Components/Dropdown': ['dropdown'],
   'Components/Select': ['select'],
   'Components/Checkbox': ['checkbox'],
   'Components/CodeSnippet': ['codesnippet'],
