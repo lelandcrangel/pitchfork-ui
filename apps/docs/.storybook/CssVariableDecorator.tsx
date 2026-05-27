@@ -34,7 +34,8 @@ type CssVariableScope =
   | 'switch'
   | 'tag'
   | 'utility'
-  | 'headernavigation';
+  | 'headernavigation'
+  | 'icon';
 
 interface CssVariableControl {
   name: string;
@@ -257,6 +258,15 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // Icon color variable
+  {
+    name: '--pf-icon-color',
+    label: 'Icon color',
+    defaultValue: 'currentColor',
+    type: 'color',
+    scopes: ['icon'],
+  },
+
   // HeaderNavigation variables
   {
     name: '--pf-headernavigation-color-semantic-background-default',
@@ -2563,6 +2573,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/UtilityButton': ['utility'],
   'Components/Calendar': ['calendar'],
   'Components/DatePicker': ['datepicker'],
+  'Components/Icon': ['icon'],
   'Components/HeaderNavigation': ['headernavigation'],
 };
 

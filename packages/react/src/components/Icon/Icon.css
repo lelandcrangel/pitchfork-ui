@@ -2,4 +2,5 @@
   display: inline-block;
   line-height: var(--pf-icon-line-height, 1);
   vertical-align: var(--pf-icon-vertical-align, middle);
+  color: var(--pf-icon-color, currentColor);
 }

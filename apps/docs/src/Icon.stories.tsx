@@ -14,7 +14,8 @@ const meta = {
   },
   argTypes: {
     name: {
-      control: 'text',
+      control: 'select',
+      options: getAvailableIconNames(),
       description: `Font Awesome Free Regular icon name. Available icons: ${regularCount}.`,
     },
     size: {

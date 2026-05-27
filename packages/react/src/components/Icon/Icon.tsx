@@ -153,8 +153,11 @@ const resolveIcon = (name: IconName) => {
   return regularIcons[normalizedName] ?? regularAliases[normalizedName];
 };
 
-export function Icon({ name, label, className, ...props }: IconProps) {
+export function Icon({ name, label, className, style, ...props }: IconProps) {
   const icon = resolveIcon(name);
+
+  // Always apply the CSS variable for color
+  const mergedStyle = { ...style, color: 'var(--pf-icon-color, currentColor)' };
 
   // Render custom SVG chevrons directly
   if (customChevrons[name]) {
@@ -163,6 +166,7 @@ export function Icon({ name, label, className, ...props }: IconProps) {
         className={cx('pf-icon', className)}
         aria-hidden={label ? undefined : true}
         aria-label={label}
+        style={mergedStyle}
         {...props}
       >
         {icon}
@@ -180,6 +184,7 @@ export function Icon({ name, label, className, ...props }: IconProps) {
       className={cx('pf-icon', className)}
       aria-hidden={label ? undefined : true}
       aria-label={label}
+      style={mergedStyle}
       {...props}
     />
   );
