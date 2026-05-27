@@ -32,6 +32,10 @@ export interface SelectProps extends Omit<
   label?: string;
   description?: string;
   error?: string;
+  /**
+   * Maximum number of options to show before scrolling. If not set, menu grows to fit all options.
+   */
+  maxVisibleOptions?: number;
 }
 
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(
@@ -50,6 +54,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
       className,
       disabled,
       'aria-describedby': ariaDescribedBy,
+      maxVisibleOptions,
       ...props
     },
     ref,
@@ -246,7 +251,15 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
                   id={listboxId}
                   ref={menuRef}
                   className="pf-select__menu"
-                  style={menuStyle}
+                  style={{
+                    ...menuStyle,
+                    ...(maxVisibleOptions && options.length > 0
+                      ? {
+                          maxHeight: `calc(${maxVisibleOptions} * 36px)`,
+                          overflowY: 'auto',
+                        }
+                      : {}),
+                  }}
                   role="listbox"
                   aria-labelledby={label ? selectId : undefined}
                 >

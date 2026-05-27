@@ -1,3 +1,4 @@
+import { Dropdown } from '../Dropdown';
 import { useEffect, useId, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
@@ -226,59 +227,40 @@ export function Calendar({
           </button>
 
           <div className="pf-calendar__month-controls">
-            <label
-              className="pf-calendar__control-label"
-              htmlFor={`${calendarId}-month`}
-            >
-              Month
-            </label>
-            <select
-              id={`${calendarId}-month`}
-              className="pf-calendar__control"
-              value={displayMonth.getMonth()}
-              aria-label="Select month"
-              onChange={(event) => {
-                const nextMonth = Number(event.target.value);
-                setDisplayMonth((current) =>
-                  clampToYearRange(
-                    new Date(current.getFullYear(), nextMonth, 1, 12),
-                  ),
-                );
-              }}
-            >
-              {MONTH_OPTIONS.map((month) => (
-                <option key={month.value} value={month.value}>
-                  {month.label}
-                </option>
-              ))}
-            </select>
+            <label className="pf-calendar__control-label">Month</label>
+            <Dropdown
+              label={MONTH_OPTIONS[displayMonth.getMonth()].label}
+              items={MONTH_OPTIONS.map((month) => ({
+                id: String(month.value),
+                label: month.label,
+                onSelect: () => {
+                  setDisplayMonth((current) =>
+                    clampToYearRange(
+                      new Date(current.getFullYear(), month.value, 1, 12),
+                    ),
+                  );
+                },
+                disabled: false,
+              }))}
+              align="start"
+            />
 
-            <label
-              className="pf-calendar__control-label"
-              htmlFor={`${calendarId}-year`}
-            >
-              Year
-            </label>
-            <select
-              id={`${calendarId}-year`}
-              className="pf-calendar__control"
-              value={displayMonth.getFullYear()}
-              aria-label="Select year"
-              onChange={(event) => {
-                const nextYear = Number(event.target.value);
-                setDisplayMonth((current) =>
-                  clampToYearRange(
-                    new Date(nextYear, current.getMonth(), 1, 12),
-                  ),
-                );
-              }}
-            >
-              {yearOptions.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
+            <label className="pf-calendar__control-label">Year</label>
+            <Dropdown
+              label={String(displayMonth.getFullYear())}
+              items={yearOptions.map((year) => ({
+                id: String(year),
+                label: String(year),
+                onSelect: () => {
+                  setDisplayMonth((current) =>
+                    clampToYearRange(new Date(year, current.getMonth(), 1, 12)),
+                  );
+                },
+                disabled: false,
+              }))}
+              align="start"
+              maxVisibleItems={7}
+            />
           </div>
 
           <button

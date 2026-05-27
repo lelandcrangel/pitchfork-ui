@@ -26,6 +26,10 @@ export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
   items: DropdownItem[];
   align?: 'start' | 'end';
   disabled?: boolean;
+  /**
+   * Maximum number of items to show before scrolling. If not set, menu grows to fit all items.
+   */
+  maxVisibleItems?: number;
 }
 
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
@@ -36,6 +40,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       align = 'start',
       disabled,
       className,
+      maxVisibleItems,
       ...props
     },
     ref,
@@ -113,6 +118,13 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       }
     };
 
+    // Calculate maxHeight for menu if maxVisibleItems is set
+    let menuMaxHeight: string | undefined;
+    if (maxVisibleItems && items.length > 0) {
+      // Each item is min-height: 34px + 2px gap except last
+      menuMaxHeight = `calc(${maxVisibleItems} * 36px)`;
+    }
+
     return (
       <div ref={rootRef} className={cx('pf-dropdown', className)} {...props}>
         <button
@@ -154,7 +166,12 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                 ref={menuRef}
                 className="pf-dropdown__menu"
                 role="menu"
-                style={menuStyle}
+                style={{
+                  ...menuStyle,
+                  ...(menuMaxHeight
+                    ? { maxHeight: menuMaxHeight, overflowY: 'auto' }
+                    : {}),
+                }}
               >
                 {items.map((item, index) => {
                   const isActive = index === activeIndex;
