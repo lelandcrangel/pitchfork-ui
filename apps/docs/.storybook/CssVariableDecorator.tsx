@@ -23,6 +23,7 @@ type CssVariableScope =
   | 'codesnippet'
   | 'contentdivider'
   | 'creditcard'
+  | 'datepicker'
   | 'inlinecta'
   | 'input'
   | 'notification'
@@ -261,6 +262,63 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
       'color-mix(in srgb, var(--color-base-white) 25%, transparent)',
     type: 'color',
     scopes: ['creditcard'],
+  },
+  // DatePicker variables
+  {
+    name: '--pf-datepicker-color-semantic-background-default',
+    label: 'Background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['datepicker'],
+  },
+  {
+    name: '--pf-datepicker-color-semantic-background-subtle',
+    label: 'Background subtle (disabled)',
+    defaultValue: 'var(--color-semantic-background-subtle)',
+    type: 'color',
+    scopes: ['datepicker'],
+  },
+  {
+    name: '--pf-datepicker-color-semantic-border-default',
+    label: 'Border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['datepicker'],
+  },
+  {
+    name: '--pf-datepicker-color-semantic-border-strong',
+    label: 'Border (hover)',
+    defaultValue: 'var(--color-semantic-border-strong)',
+    type: 'color',
+    scopes: ['datepicker'],
+  },
+  {
+    name: '--pf-datepicker-color-semantic-text-default',
+    label: 'Text color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['datepicker'],
+  },
+  {
+    name: '--pf-datepicker-color-semantic-text-muted',
+    label: 'Text color (muted/placeholder)',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['datepicker'],
+  },
+  {
+    name: '--pf-datepicker-focus-ring',
+    label: 'Focus ring',
+    defaultValue: 'var(--pf-focus-ring)',
+    type: 'text',
+    scopes: ['datepicker'],
+  },
+  {
+    name: '--pf-datepicker-color-danger-600',
+    label: 'Border (invalid)',
+    defaultValue: 'var(--color-danger-600)',
+    type: 'color',
+    scopes: ['datepicker'],
   },
   {
     name: '--pf-credit-card-glare',
@@ -2215,6 +2273,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Tag': ['tag'],
   'Components/UtilityButton': ['utility'],
   'Components/Calendar': ['calendar'],
+  'Components/DatePicker': ['datepicker'],
 };
 
 export function withCssVariableControls(
