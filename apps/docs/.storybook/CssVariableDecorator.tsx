@@ -1,4 +1,3 @@
-// ...existing code...
 import {
   type CSSProperties,
   useEffect,
@@ -25,6 +24,8 @@ type CssVariableScope =
   | 'contentdivider'
   | 'creditcard'
   | 'datepicker'
+  | 'dropdown'
+  | 'fileuploader'
   | 'inlinecta'
   | 'input'
   | 'notification'
@@ -255,6 +256,56 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // FileUploader variables
+  {
+    name: '--pf-fileuploader-color-semantic-background-default',
+    label: 'Background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['fileuploader'],
+  },
+  {
+    name: '--pf-fileuploader-color-semantic-background-subtle',
+    label: 'Background subtle (hover)',
+    defaultValue: 'var(--color-semantic-background-subtle)',
+    type: 'color',
+    scopes: ['fileuploader'],
+  },
+  {
+    name: '--pf-fileuploader-color-semantic-border-default',
+    label: 'Border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['fileuploader'],
+  },
+  {
+    name: '--pf-fileuploader-color-semantic-border-strong',
+    label: 'Border (hover)',
+    defaultValue: 'var(--color-semantic-border-strong)',
+    type: 'color',
+    scopes: ['fileuploader'],
+  },
+  {
+    name: '--pf-fileuploader-color-semantic-text-default',
+    label: 'Text color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['fileuploader'],
+  },
+  {
+    name: '--pf-fileuploader-color-semantic-action-primary',
+    label: 'Active border',
+    defaultValue: 'var(--color-semantic-action-primary)',
+    type: 'color',
+    scopes: ['fileuploader'],
+  },
+  {
+    name: '--pf-fileuploader-focus-ring',
+    label: 'Focus ring',
+    defaultValue: 'var(--pf-focus-ring)',
+    type: 'text',
+    scopes: ['fileuploader'],
+  },
   // CreditCard variables
   {
     name: '--pf-credit-card-border',
@@ -2451,6 +2502,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Breadcrumbs': ['breadcrumbs'],
   'Components/Input': ['input'],
   'Components/Dropdown': ['dropdown'],
+  'Components/FileUploader': ['fileuploader'],
   'Components/Select': ['select'],
   'Components/Checkbox': ['checkbox'],
   'Components/CodeSnippet': ['codesnippet'],
