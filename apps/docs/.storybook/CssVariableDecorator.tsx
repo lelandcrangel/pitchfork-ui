@@ -33,7 +33,8 @@ type CssVariableScope =
   | 'select'
   | 'switch'
   | 'tag'
-  | 'utility';
+  | 'utility'
+  | 'headernavigation';
 
 interface CssVariableControl {
   name: string;
@@ -256,6 +257,49 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // HeaderNavigation variables
+  {
+    name: '--pf-headernavigation-color-semantic-background-default',
+    label: 'Background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['headernavigation'],
+  },
+  {
+    name: '--pf-headernavigation-color-semantic-border-default',
+    label: 'Border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['headernavigation'],
+  },
+  {
+    name: '--pf-headernavigation-color-semantic-background-subtle',
+    label: 'Background subtle (hover/active)',
+    defaultValue: 'var(--color-semantic-background-subtle)',
+    type: 'color',
+    scopes: ['headernavigation'],
+  },
+  {
+    name: '--pf-headernavigation-color-semantic-text-default',
+    label: 'Text color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['headernavigation'],
+  },
+  {
+    name: '--pf-headernavigation-color-semantic-text-muted',
+    label: 'Text color (muted)',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['headernavigation'],
+  },
+  {
+    name: '--pf-headernavigation-focus-ring',
+    label: 'Focus ring',
+    defaultValue: 'var(--pf-focus-ring)',
+    type: 'text',
+    scopes: ['headernavigation'],
+  },
   // FileUploader variables
   {
     name: '--pf-fileuploader-color-semantic-background-default',
@@ -2519,6 +2563,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/UtilityButton': ['utility'],
   'Components/Calendar': ['calendar'],
   'Components/DatePicker': ['datepicker'],
+  'Components/HeaderNavigation': ['headernavigation'],
 };
 
 export function withCssVariableControls(
