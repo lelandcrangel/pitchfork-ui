@@ -210,14 +210,22 @@
 }
 
 .pf-calendar__day--today {
-  box-shadow: inset 0 0 0 1px
+  background: var(
+    --pf-calendar-semantic-today-background,
     var(
-      --pf-calendar-semantic-border-default,
+      --pf-calendar-color-semantic-today-background,
+      var(--color-semantic-status-warning-background)
+    )
+  );
+  border: 1.5px solid
+    var(
+      --pf-calendar-semantic-today-border,
       var(
-        --pf-calendar-color-semantic-border-default,
-        var(--color-semantic-border-default)
+        --pf-calendar-color-semantic-today-border,
+        var(--color-semantic-today-border)
       )
     );
+  box-shadow: none;
 }
 
 .pf-calendar__day--selected {
