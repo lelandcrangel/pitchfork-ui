@@ -51,31 +51,29 @@ export const CreditCard = forwardRef<HTMLDivElement, CreditCardProps>(
     return (
       <div
         ref={ref}
-        className={cx('pf-credit-card', `pf-credit-card--${brand}`, className)}
+        className={cx('pf-credit-card', `is-${brand}`, className)}
         {...props}
       >
-        <div className="pf-credit-card__top-row">
-          <span className="pf-credit-card__chip" aria-hidden />
-          <span className="pf-credit-card__brand">{brand.toUpperCase()}</span>
+        <div className="top-row">
+          <span className="chip" aria-hidden />
+          <span className="brand">{brand.toUpperCase()}</span>
         </div>
 
-        <p className="pf-credit-card__number">{displayNumber}</p>
+        <p className="number">{displayNumber}</p>
 
-        <div className="pf-credit-card__meta">
+        <div className="meta">
           <div>
-            <span className="pf-credit-card__label">Card holder</span>
-            <span className="pf-credit-card__value">{cardholderName}</span>
+            <span className="label">Card holder</span>
+            <span className="value">{cardholderName}</span>
           </div>
           <div>
-            <span className="pf-credit-card__label">Expires</span>
-            <span className="pf-credit-card__value">{expiry}</span>
+            <span className="label">Expires</span>
+            <span className="value">{expiry}</span>
           </div>
           {cvc ? (
             <div>
-              <span className="pf-credit-card__label">CVC</span>
-              <span className="pf-credit-card__value">
-                {masked ? '***' : cvc}
-              </span>
+              <span className="label">CVC</span>
+              <span className="value">{masked ? '***' : cvc}</span>
             </div>
           ) : null}
         </div>
