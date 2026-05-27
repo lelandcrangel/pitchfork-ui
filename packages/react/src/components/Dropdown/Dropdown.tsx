@@ -143,7 +143,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
             )}
             aria-hidden
           >
-            <Icon name="square-caret-down" aria-hidden />
+            <Icon name="chevron-down" aria-hidden />
           </span>
         </button>
 

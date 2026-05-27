@@ -10,7 +10,73 @@ import {
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
-export type IconName = string;
+// Custom chevron SVGs (not filled, minimal, browser-like)
+const customChevrons = {
+  'chevron-down': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <polyline points="5 9 12 18 19 9" />
+    </svg>
+  ),
+  'chevron-up': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <polyline points="5 15 12 6 19 15" />
+    </svg>
+  ),
+  'chevron-left': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <polyline points="15 5 6 12 15 19" />
+    </svg>
+  ),
+  'chevron-right': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <polyline points="9 5 18 12 9 19" />
+    </svg>
+  ),
+};
 
 const toLookup = (pack: IconPack) => {
   const lookup: Record<string, IconDefinition> = {};
@@ -65,7 +131,11 @@ const normalizeName = (name: IconName) => {
 
 export const getAvailableIconNames = () => {
   return [
-    ...new Set([...Object.keys(regularIcons), ...Object.keys(regularAliases)]),
+    ...new Set([
+      ...Object.keys(regularIcons),
+      ...Object.keys(regularAliases),
+      ...Object.keys(customChevrons),
+    ]),
   ].sort();
 };
 
@@ -75,12 +145,30 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
 }
 
 const resolveIcon = (name: IconName) => {
+  // Check for custom chevrons first
+  if (customChevrons[name]) {
+    return customChevrons[name];
+  }
   const normalizedName = normalizeName(name);
   return regularIcons[normalizedName] ?? regularAliases[normalizedName];
 };
 
 export function Icon({ name, label, className, ...props }: IconProps) {
   const icon = resolveIcon(name);
+
+  // Render custom SVG chevrons directly
+  if (customChevrons[name]) {
+    return (
+      <span
+        className={cx('pf-icon', className)}
+        aria-hidden={label ? undefined : true}
+        aria-label={label}
+        {...props}
+      >
+        {icon}
+      </span>
+    );
+  }
 
   if (!icon) {
     return null;

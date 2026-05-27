@@ -228,7 +228,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
                 isOpen && 'pf-select__icon--open',
               )}
             >
-              <Icon name="square-caret-down" aria-hidden />
+              <Icon name="chevron-down" aria-hidden />
             </span>
           </button>
 

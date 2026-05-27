@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { Icon } from '@pitchfork-ui/react';
 import { createPortal } from 'react-dom';
 
 type CssVariableScope =
@@ -2024,9 +2025,14 @@ function ColorSelect({
           }}
         />
         <span style={{ flexGrow: 1 }}>{selectedOption.label}</span>
-        <span aria-hidden style={{ color: 'var(--color-semantic-text-muted)' }}>
-          v
-        </span>
+        <Icon
+          name="chevron-down"
+          aria-hidden
+          style={{
+            color: 'var(--color-semantic-text-muted)',
+            fontSize: '16px',
+          }}
+        />
       </button>
 
       {isOpen ? (
