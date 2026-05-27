@@ -35,7 +35,8 @@ type CssVariableScope =
   | 'tag'
   | 'utility'
   | 'headernavigation'
-  | 'icon';
+  | 'icon'
+  | 'inlinecta';
 
 interface CssVariableControl {
   name: string;
@@ -258,6 +259,49 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // InlineCTA base variables
+  {
+    name: '--pf-inlinecta-color-semantic-background-default',
+    label: 'Background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['inlinecta'],
+  },
+  {
+    name: '--pf-inlinecta-color-semantic-border-default',
+    label: 'Border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['inlinecta'],
+  },
+  {
+    name: '--pf-inlinecta-color-semantic-text-default',
+    label: 'Heading color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['inlinecta'],
+  },
+  {
+    name: '--pf-inlinecta-color-semantic-text-muted',
+    label: 'Description/icon color',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['inlinecta'],
+  },
+  {
+    name: '--radius-md',
+    label: 'Border radius',
+    defaultValue: 'var(--radius-md)',
+    type: 'radius',
+    scopes: ['inlinecta'],
+  },
+  {
+    name: '--space-3',
+    label: 'Padding/gap',
+    defaultValue: 'var(--space-3)',
+    type: 'space',
+    scopes: ['inlinecta'],
+  },
   // Icon color variable
   {
     name: '--pf-icon-color',
