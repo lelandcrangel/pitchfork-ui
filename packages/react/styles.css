@@ -1,0 +1,6 @@
+@import '@pitchfork-ui/tokens/css';
+@import './src/styles/theme.css';
+
+:root {
+  --pf-credit-card-text-color: var(--color-base-white);
+}

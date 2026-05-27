@@ -1,3 +1,9 @@
+/* Ensure Storybook CSS variable controls always apply to the card */
+/* Ensure Storybook CSS variable controls always apply to the card */
+.css-var-scope .pf-credit-card {
+  color: var(--pf-credit-card-text-color, var(--color-base-white));
+}
+/* ...existing code... */
 .pf-credit-card {
   --pf-credit-card-border: color-mix(
     in srgb,
@@ -42,7 +48,7 @@
   border: 1px solid var(--pf-credit-card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  color: var(--color-base-white);
+  color: var(--pf-credit-card-text-color, var(--color-base-white));
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -94,6 +100,13 @@
   display: inline-flex;
   height: 28px;
   width: 38px;
+}
+
+.pf-credit-card .brand,
+.pf-credit-card .number,
+.pf-credit-card .label,
+.pf-credit-card .value {
+  color: inherit;
 }
 
 .pf-credit-card .brand {

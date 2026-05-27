@@ -22,6 +22,7 @@ type CssVariableScope =
   | 'checkbox'
   | 'codesnippet'
   | 'contentdivider'
+  | 'creditcard'
   | 'inlinecta'
   | 'input'
   | 'notification'
@@ -252,6 +253,92 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // CreditCard variables
+  {
+    name: '--pf-credit-card-border',
+    label: 'Card border',
+    defaultValue:
+      'color-mix(in srgb, var(--color-base-white) 25%, transparent)',
+    type: 'color',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--pf-credit-card-glare',
+    label: 'Card glare highlight',
+    defaultValue:
+      'color-mix(in srgb, var(--color-base-white) 22%, transparent)',
+    type: 'color',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--pf-credit-card-generic-gradient',
+    label: 'Generic card background',
+    defaultValue:
+      'linear-gradient(135deg, var(--color-gray-800), var(--color-gray-900) 55%, var(--color-gray-700))',
+    type: 'color',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--pf-credit-card-visa-gradient',
+    label: 'Visa card background',
+    defaultValue:
+      'linear-gradient(135deg, var(--color-brand-700), var(--color-brand-900) 55%, var(--color-brand-700))',
+    type: 'color',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--pf-credit-card-mastercard-gradient',
+    label: 'Mastercard background',
+    defaultValue:
+      'linear-gradient(135deg, var(--color-warning-600), var(--color-warning-800) 55%, var(--color-danger-500))',
+    type: 'color',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--pf-credit-card-amex-gradient',
+    label: 'Amex card background',
+    defaultValue:
+      'linear-gradient(135deg, var(--color-success-700), var(--color-success-800) 55%, var(--color-gray-800))',
+    type: 'color',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--pf-credit-card-chip-gradient',
+    label: 'Chip background',
+    defaultValue:
+      'linear-gradient(135deg, var(--color-gray-50), var(--color-gray-300))',
+    type: 'color',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--radius-lg',
+    label: 'Card border radius',
+    defaultValue: 'var(--radius-lg)',
+    type: 'radius',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--shadow-md',
+    label: 'Card shadow',
+    defaultValue: '0 4px 24px 0 rgb(16 30 54 / 8%)',
+    type: 'shadow',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--space-4',
+    label: 'Card padding',
+    defaultValue: '16px',
+    type: 'space',
+    scopes: ['creditcard'],
+  },
+  {
+    name: '--pf-credit-card-text-color',
+    label: 'Text color',
+    defaultValue: 'var(--color-base-white)',
+    type: 'color',
+    scopes: ['creditcard'],
+  },
+  // ...existing code...
   // ContentDivider variables
   {
     name: '--pf-contentdivider-color-semantic-text-muted',
@@ -1698,7 +1785,8 @@ function CssVariableController({
     });
   };
 
-  // Apply variables to :root for global effect
+  // No longer apply variables to :root. Only apply to wrapper div for local scoping.
+  // Also set variables on :root for global scope (Storybook workaround)
   useEffect(() => {
     if (typeof document !== 'undefined') {
       const root = document.documentElement;
@@ -1725,7 +1813,9 @@ function CssVariableController({
 
   return (
     <>
-      <div style={scopedVars as CSSProperties}>{children}</div>
+      <div className="css-var-scope" style={scopedVars as CSSProperties}>
+        {children}
+      </div>
 
       {typeof document !== 'undefined'
         ? createPortal(
@@ -2102,6 +2192,7 @@ function ColorSelect({
 }
 
 const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
+  'Components/Credit Card': ['creditcard'],
   'Components/Button': ['button'],
   'Components/Card': ['card'],
   'Components/ContentDivider': ['contentdivider'],
