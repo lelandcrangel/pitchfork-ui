@@ -97,7 +97,7 @@
 .pf-avatar__status--online {
   background: var(
     --pf-avatar-status-online-color,
-    var(--color-semantic-status-success-foreground)
+    var(--color-semantic-status-success-bright)
   );
 }
 
