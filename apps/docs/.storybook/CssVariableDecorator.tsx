@@ -36,7 +36,8 @@ type CssVariableScope =
   | 'utility'
   | 'headernavigation'
   | 'icon'
-  | 'inlinecta';
+  | 'inlinecta'
+  | 'loadingindicators';
 
 interface CssVariableControl {
   name: string;
@@ -259,6 +260,28 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // LoadingIndicators variables
+  {
+    name: '--pf-loadingindicators-color-semantic-border-default',
+    label: 'Spinner/Border color',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['loadingindicators'],
+  },
+  {
+    name: '--pf-loadingindicators-color-semantic-action-primary',
+    label: 'Spinner/Dots color',
+    defaultValue: 'var(--color-semantic-action-primary)',
+    type: 'color',
+    scopes: ['loadingindicators'],
+  },
+  {
+    name: '--pf-loadingindicators-color-semantic-background-subtle',
+    label: 'Skeleton background',
+    defaultValue: 'var(--color-semantic-background-subtle)',
+    type: 'color',
+    scopes: ['loadingindicators'],
+  },
   // InlineCTA base variables
   {
     name: '--pf-inlinecta-color-semantic-background-default',
@@ -2591,6 +2614,7 @@ function ColorSelect({
 }
 
 const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
+  'Components/Loading Indicators': ['loadingindicators'],
   'Components/Credit Card': ['creditcard'],
   'Components/Button': ['button'],
   'Components/Card': ['card'],
@@ -2636,8 +2660,11 @@ export function withCssVariableControls(
   },
 ) {
   const isInteractiveStory =
-    (context.viewMode === 'story' && context.name === 'Interactive') ||
-    context.id?.endsWith('--interactive');
+    context.viewMode === 'story' &&
+    ((typeof context.name === 'string' &&
+      context.name.toLowerCase().startsWith('interactive')) ||
+      (typeof context.id === 'string' &&
+        context.id.toLowerCase().includes('--interactive')));
   const isComponentStory = Boolean(context.title?.startsWith('Components/'));
   const mappedScopes = context.title
     ? (scopeByStoryTitle[context.title] ?? [])
