@@ -1,6 +1,7 @@
 import { Canvas, Meta } from '@storybook/addon-docs/blocks';
 import * as InputStories from './Input.stories';
 import * as InputExamples from './Input.examples.stories';
+import { Input } from '@pitchfork-ui/react';
 
 <Meta of={InputStories} />
 
@@ -17,3 +18,7 @@ Inputs collect free-form text and support labels, descriptions, and inline valid
 ### With Error
 
 <Canvas of={InputExamples.WithError} meta={InputExamples} />
+
+### Disabled
+
+<Canvas of={InputStories.Disabled} meta={InputStories} />

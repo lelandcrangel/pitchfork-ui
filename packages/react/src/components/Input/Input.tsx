@@ -9,26 +9,51 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ id, label, description, error, className, 'aria-describedby': ariaDescribedBy, ...props }, ref) => {
+  (
+    {
+      id,
+      label,
+      description,
+      error,
+      className,
+      'aria-describedby': ariaDescribedBy,
+      ...props
+    },
+    ref,
+  ) => {
     const generatedId = useId();
     const inputId = id ?? generatedId;
     const descriptionId = description ? `${inputId}-description` : undefined;
     const errorId = error ? `${inputId}-error` : undefined;
-    const describedBy = [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') || undefined;
+    const describedBy =
+      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') ||
+      undefined;
 
     return (
       <div className="pf-field">
-        {label ? <label className="pf-field__label" htmlFor={inputId}>{label}</label> : null}
+        {label ? (
+          <label className="pf-field__label" htmlFor={inputId}>
+            {label}
+          </label>
+        ) : null}
         <input
+          {...props}
           ref={ref}
           id={inputId}
           className={cx('pf-input', error && 'pf-input--invalid', className)}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
-          {...props}
         />
-        {description ? <p className="pf-field__description" id={descriptionId}>{description}</p> : null}
-        {error ? <p className="pf-field__error" id={errorId}>{error}</p> : null}
+        {description ? (
+          <p className="pf-field__description" id={descriptionId}>
+            {description}
+          </p>
+        ) : null}
+        {error ? (
+          <p className="pf-field__error" id={errorId}>
+            {error}
+          </p>
+        ) : null}
       </div>
     );
   },
