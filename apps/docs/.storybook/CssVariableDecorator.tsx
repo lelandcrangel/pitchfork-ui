@@ -37,7 +37,8 @@ type CssVariableScope =
   | 'headernavigation'
   | 'icon'
   | 'inlinecta'
-  | 'loadingindicators';
+  | 'loadingindicators'
+  | 'metrics';
 
 interface CssVariableControl {
   name: string;
@@ -260,6 +261,70 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // Metrics variables
+  {
+    name: '--pf-metrics-color-semantic-background-default',
+    label: 'Card background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
+  {
+    name: '--pf-metrics-color-semantic-border-default',
+    label: 'Card border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
+  {
+    name: '--pf-metrics-color-semantic-text-default',
+    label: 'Value text color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
+  {
+    name: '--pf-metrics-color-semantic-text-muted',
+    label: 'Muted/label text color',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
+  {
+    name: '--pf-metrics-color-semantic-status-success-background',
+    label: 'Trend positive background',
+    defaultValue: 'var(--color-semantic-status-success-background)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
+  {
+    name: '--pf-metrics-color-semantic-status-success-foreground',
+    label: 'Trend positive text',
+    defaultValue: 'var(--color-semantic-status-success-foreground)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
+  {
+    name: '--pf-metrics-color-semantic-status-danger-background',
+    label: 'Trend negative background',
+    defaultValue: 'var(--color-semantic-status-danger-background)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
+  {
+    name: '--pf-metrics-color-semantic-status-danger-foreground',
+    label: 'Trend negative text',
+    defaultValue: 'var(--color-semantic-status-danger-foreground)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
+  {
+    name: '--pf-metrics-color-semantic-background-subtle',
+    label: 'Trend neutral background',
+    defaultValue: 'var(--color-semantic-background-subtle)',
+    type: 'color',
+    scopes: ['metrics'],
+  },
   // LoadingIndicators variables
   {
     name: '--pf-loadingindicators-color-semantic-border-default',
@@ -2614,6 +2679,7 @@ function ColorSelect({
 }
 
 const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
+  'Components/Metrics': ['metrics'],
   'Components/Loading Indicators': ['loadingindicators'],
   'Components/Credit Card': ['creditcard'],
   'Components/Button': ['button'],
