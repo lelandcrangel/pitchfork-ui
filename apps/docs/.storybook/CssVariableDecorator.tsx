@@ -38,7 +38,8 @@ type CssVariableScope =
   | 'icon'
   | 'inlinecta'
   | 'loadingindicators'
-  | 'metrics';
+  | 'metrics'
+  | 'modal';
 
 interface CssVariableControl {
   name: string;
@@ -261,6 +262,77 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 };
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
+  // Modal variables
+  {
+    name: '--pf-modal-overlay-backdrop',
+    label: 'Overlay backdrop',
+    defaultValue: 'rgba(16, 30, 54, 0.48)',
+    type: 'color',
+    scopes: ['modal'],
+  },
+  {
+    name: '--pf-modal-color-semantic-background-default',
+    label: 'Modal background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['modal'],
+  },
+  {
+    name: '--pf-modal-color-semantic-border-default',
+    label: 'Modal border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['modal'],
+  },
+  {
+    name: '--pf-modal-elevation-overlay-shadow',
+    label: 'Modal shadow',
+    defaultValue: '0 8px 32px 0 rgb(16 30 54 / 24%)',
+    type: 'shadow',
+    scopes: ['modal'],
+  },
+  {
+    name: '--pf-modal-color-semantic-text-default',
+    label: 'Text color',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['modal'],
+  },
+  {
+    name: '--pf-modal-color-semantic-text-muted',
+    label: 'Muted/description color',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['modal'],
+  },
+  {
+    name: '--pf-modal-color-semantic-background-subtle',
+    label: 'Close hover/active background',
+    defaultValue: 'var(--color-semantic-background-subtle)',
+    type: 'color',
+    scopes: ['modal'],
+  },
+  {
+    name: '--radius-lg',
+    label: 'Modal border radius',
+    defaultValue: 'var(--radius-lg)',
+    type: 'radius',
+    scopes: ['modal'],
+  },
+  {
+    name: '--radius-sm',
+    label: 'Close button radius',
+    defaultValue: 'var(--radius-sm)',
+    type: 'radius',
+    scopes: ['modal'],
+  },
+  {
+    name: '--space-4',
+    label: 'Modal padding',
+    defaultValue: 'var(--space-4)',
+    type: 'space',
+    scopes: ['modal'],
+  },
   // Metrics variables
   {
     name: '--pf-metrics-color-semantic-background-default',
@@ -2679,6 +2751,7 @@ function ColorSelect({
 }
 
 const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
+    'Components/Modals': ['modal'],
   'Components/Metrics': ['metrics'],
   'Components/Loading Indicators': ['loadingindicators'],
   'Components/Credit Card': ['creditcard'],
