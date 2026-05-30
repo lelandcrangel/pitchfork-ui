@@ -19,7 +19,7 @@ Items found during codebase review. See `todoList.md` for component parity track
 - [ ] **Form fields: no `required` visual indicator** — `Input`, `Select`, `Textarea`, `MultiSelect`, `RadioGroup` etc. forward `required` natively but have no asterisk or `aria-required` wiring at the field-wrapper level. [`Input.tsx`](packages/react/src/components/Input/Input.tsx), [`Select.tsx`](packages/react/src/components/Select/Select.tsx)
 - [ ] **`EmptyState` component** — directory exists with no files, not exported. Implement or remove the placeholder. [`components/EmptyState/`](packages/react/src/components/EmptyState/)
 - [ ] **`LineBarCharts` component** — directory exists with no files, not exported. Implement or remove the placeholder. [`components/LineBarCharts/`](packages/react/src/components/LineBarCharts/)
-- [ ] **CLAUDE.md** — no AI-assistant context file exists. Needs project overview, CSS variable naming convention, token inheritance chain, and component checklist.
+- [x] **CLAUDE.md** — no AI-assistant context file exists. Needs project overview, CSS variable naming convention, token inheritance chain, and component checklist.
 
 ---
 
