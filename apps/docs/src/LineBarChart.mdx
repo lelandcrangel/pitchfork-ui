@@ -1,0 +1,68 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as LineBarChartStories from './LineBarChart.stories';
+import * as LineBarChartExamples from './LineBarChart.examples.stories';
+
+<Meta of={LineBarChartStories} />
+
+# Line & Bar Charts
+
+Pure SVG charts — no external dependencies. Both `LineChart` and `BarChart` accept the same `data` and `series` shape and render responsively inside their container.
+
+```tsx
+import { LineChart, BarChart } from '@pitchfork-ui/react';
+
+const data = [
+  { label: 'Jan', sessions: 420, users: 280 },
+  { label: 'Feb', sessions: 380, users: 240 },
+  // ...
+];
+
+const series = [
+  { key: 'sessions', label: 'Sessions' },
+  { key: 'users', label: 'Users' },
+];
+```
+
+## Line chart
+
+### Default
+
+<Canvas of={LineBarChartExamples.Line} meta={LineBarChartExamples} />
+
+### Area fill
+
+<Canvas of={LineBarChartExamples.LineArea} meta={LineBarChartExamples} />
+
+### Dashed secondary series
+
+<Canvas of={LineBarChartExamples.LineDashed} meta={LineBarChartExamples} />
+
+### Three series
+
+<Canvas of={LineBarChartExamples.LineThreeSeries} meta={LineBarChartExamples} />
+
+### Straight lines
+
+<Canvas of={LineBarChartExamples.LineStraight} meta={LineBarChartExamples} />
+
+### Empty state
+
+<Canvas of={LineBarChartExamples.LineEmpty} meta={LineBarChartExamples} />
+
+## Bar chart
+
+### Grouped
+
+<Canvas of={LineBarChartExamples.BarGrouped} meta={LineBarChartExamples} />
+
+### Stacked
+
+<Canvas of={LineBarChartExamples.BarStacked} meta={LineBarChartExamples} />
+
+### Single series
+
+<Canvas of={LineBarChartExamples.BarSingle} meta={LineBarChartExamples} />
+
+### Empty state
+
+<Canvas of={LineBarChartExamples.BarEmpty} meta={LineBarChartExamples} />

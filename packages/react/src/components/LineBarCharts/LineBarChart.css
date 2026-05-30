@@ -1,0 +1,114 @@
+/* ─── Chart color palette ─────────────────────────────────────────────── */
+:root {
+  --pf-chart-color-1: var(--color-brand-600);
+  --pf-chart-color-2: var(--color-brand-400);
+  --pf-chart-color-3: var(--color-gray-500);
+  --pf-chart-color-4: var(--color-gray-400);
+  --pf-chart-color-5: #0ea5e9;
+  --pf-chart-color-6: #22c55e;
+  --pf-chart-grid: var(--color-semantic-border-default);
+}
+
+[data-theme='dark'] {
+  --pf-chart-color-1: var(--color-brand-400);
+  --pf-chart-color-2: var(--color-brand-300);
+  --pf-chart-color-3: var(--color-gray-400);
+  --pf-chart-color-4: var(--color-gray-500);
+}
+
+/* ─── Container ──────────────────────────────────────────────────────── */
+.pf-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.pf-chart__svg {
+  display: block;
+  height: auto;
+  overflow: visible;
+  width: 100%;
+}
+
+.pf-chart__empty {
+  align-items: center;
+  color: var(--color-semantic-text-muted);
+  display: flex;
+  font-size: var(--font-size-sm);
+  height: 120px;
+  justify-content: center;
+}
+
+/* ─── Grid & axes ────────────────────────────────────────────────────── */
+.pf-chart__grid {
+  stroke: var(--pf-chart-grid);
+  stroke-width: 1;
+}
+
+.pf-chart__tick {
+  fill: var(--color-semantic-text-muted);
+  font-family: inherit;
+  font-size: 11px;
+}
+
+.pf-chart__tick--y {
+  dominant-baseline: middle;
+  text-anchor: end;
+}
+
+.pf-chart__tick--x {
+  dominant-baseline: hanging;
+  text-anchor: middle;
+}
+
+.pf-chart__axis-label {
+  fill: var(--color-semantic-text-muted);
+  font-family: inherit;
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+/* ─── Line dots ──────────────────────────────────────────────────────── */
+.pf-chart__dot {
+  opacity: 0;
+  transition: opacity 80ms ease;
+}
+
+.pf-chart__svg:hover .pf-chart__dot {
+  opacity: 1;
+}
+
+/* ─── Bars ───────────────────────────────────────────────────────────── */
+.pf-chart__bar {
+  transition: opacity 80ms ease;
+}
+
+.pf-chart__bar:hover {
+  opacity: 0.75;
+}
+
+/* ─── Legend ─────────────────────────────────────────────────────────── */
+.pf-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pf-chart-legend__item {
+  align-items: center;
+  color: var(--color-semantic-text-muted);
+  display: flex;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+}
+
+.pf-chart-legend__swatch {
+  border-radius: 50%;
+  flex-shrink: 0;
+  height: 8px;
+  width: 8px;
+}
