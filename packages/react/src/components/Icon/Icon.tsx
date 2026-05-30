@@ -164,23 +164,11 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   label?: string;
 }
 
-const resolveIcon = (name: IconName) => {
-  // Check for custom chevrons first
-  if (customIcons[name]) {
-    return customIcons[name];
-  }
-  const normalizedName = normalizeName(name);
-  return regularIcons[normalizedName] ?? regularAliases[normalizedName];
-};
-
 export function Icon({ name, label, className, style, ref: _ref, ...props }: IconProps) {
-  const icon = resolveIcon(name);
-
-  // Always apply the CSS variable for color
   const mergedStyle = { ...style, color: 'var(--pf-icon-color, currentColor)' };
 
-  // Render custom icons directly — span is intentional (not SVGSVGElement)
-  if (customIcons[name]) {
+  const customIcon = customIcons[name];
+  if (customIcon !== undefined) {
     return (
       <span
         className={cx('pf-icon', className)}
@@ -189,18 +177,21 @@ export function Icon({ name, label, className, style, ref: _ref, ...props }: Ico
         style={mergedStyle}
         {...(props as React.HTMLAttributes<HTMLSpanElement>)}
       >
-        {icon}
+        {customIcon}
       </span>
     );
   }
 
-  if (!icon) {
+  const normalizedName = normalizeName(name);
+  const faIcon = regularIcons[normalizedName] ?? regularAliases[normalizedName];
+
+  if (!faIcon) {
     return null;
   }
 
   return (
     <FontAwesomeIcon
-      icon={icon}
+      icon={faIcon}
       className={cx('pf-icon', className)}
       aria-hidden={label ? undefined : true}
       aria-label={label}

@@ -5,10 +5,17 @@ import './Alert.css';
 export type AlertVariant = 'info' | 'success' | 'warning' | 'danger';
 
 const variantIcon: Record<AlertVariant, IconName> = {
-  info: 'circle-question',
+  info: 'circle-info',
   success: 'circle-check',
-  warning: 'circle-question',
+  warning: 'triangle-exclamation',
   danger: 'circle-xmark',
+};
+
+const variantRole: Record<AlertVariant, React.AriaRole> = {
+  info: 'status',
+  success: 'status',
+  warning: 'alert',
+  danger: 'alert',
 };
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -37,7 +44,7 @@ export function Alert({
   return (
     <div
       className={cx('pf-alert', `pf-alert--${variant}`, className)}
-      role="alert"
+      role={variantRole[variant]}
       {...props}
     >
       <span className="pf-alert__icon" aria-hidden>
