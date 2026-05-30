@@ -6,13 +6,19 @@ import * as IconExamples from './Icon.examples.stories';
 
 # Icon
 
-Icons are powered by Font Awesome Free Regular set.
+Icons come from two sources: the **Font Awesome Free Regular** set, and a small set of **custom SVGs** for icons not available in the regular set (chevrons, `triangle-exclamation`).
 
 ## Examples
 
-### Regular set (all available)
+### Regular set (Font Awesome Free Regular)
 
 <Canvas of={IconExamples.RegularSet} meta={IconExamples} />
+
+### Custom icons
+
+Custom SVGs maintained in `Icon.tsx`. Add to `customIcons` when a needed icon isn't in the FA regular set.
+
+<Canvas of={IconExamples.CustomIcons} meta={IconExamples} />
 
 ### Sizes
 

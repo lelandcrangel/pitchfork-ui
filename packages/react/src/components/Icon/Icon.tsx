@@ -78,6 +78,24 @@ const customIcons: Record<string, React.ReactNode> = {
       <polyline points="9 5 18 12 9 19" />
     </svg>
   ),
+  'circle-info': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </svg>
+  ),
   'triangle-exclamation': (
     <svg
       width="1em"
@@ -158,6 +176,8 @@ export const getAvailableIconNames = () => {
     ]),
   ].sort();
 };
+
+export const getCustomIconNames = () => Object.keys(customIcons).sort();
 
 export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   name: IconName;

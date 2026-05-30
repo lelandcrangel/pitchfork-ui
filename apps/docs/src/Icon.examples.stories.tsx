@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Icon, getAvailableIconNames } from '@pitchfork-ui/react';
+import { Icon, getAvailableIconNames, getCustomIconNames } from '@pitchfork-ui/react';
 import type { IconName } from '@pitchfork-ui/react';
 
 const stackStyle: React.CSSProperties = {
@@ -32,7 +32,10 @@ const iconNameStyle: React.CSSProperties = {
   lineHeight: 1.25,
 };
 
-const regularNames = getAvailableIconNames() as readonly IconName[];
+const customIconNames = getCustomIconNames() as readonly IconName[];
+const regularNames = getAvailableIconNames().filter(
+  (n) => !customIconNames.includes(n as IconName),
+) as readonly IconName[];
 
 const IconGrid = ({
   names,
@@ -68,6 +71,10 @@ type Story = StoryObj<typeof meta>;
 
 export const RegularSet: Story = {
   render: () => <IconGrid names={regularNames} size="lg" />,
+};
+
+export const CustomIcons: Story = {
+  render: () => <IconGrid names={customIconNames} size="lg" />,
 };
 
 export const Sizes: Story = {

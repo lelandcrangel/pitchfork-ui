@@ -8,6 +8,8 @@ import * as AlertExamples from './Alert.examples.stories';
 
 Alert surfaces contextual feedback with semantic variants and optional dismissal.
 
+`warning` and `danger` variants use `role="alert"` (assertive — interrupts screen readers immediately). `info` and `success` use `role="status"` (polite — announces when the reader is idle). Consumers can override via the `role` prop.
+
 ## Examples
 
 ### Info
