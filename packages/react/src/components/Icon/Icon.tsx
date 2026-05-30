@@ -10,8 +10,10 @@ import {
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
-// Custom chevron SVGs (not filled, minimal, browser-like)
-const customChevrons = {
+export type IconName = string;
+
+// Custom SVGs not available in the free-regular FA set
+const customIcons: Record<string, React.ReactNode> = {
   'chevron-down': (
     <svg
       width="1em"
@@ -76,6 +78,24 @@ const customChevrons = {
       <polyline points="9 5 18 12 9 19" />
     </svg>
   ),
+  'triangle-exclamation': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+      <path d="M12 9v4" />
+      <path d="M12 17h.01" />
+    </svg>
+  ),
 };
 
 const toLookup = (pack: IconPack) => {
@@ -134,7 +154,7 @@ export const getAvailableIconNames = () => {
     ...new Set([
       ...Object.keys(regularIcons),
       ...Object.keys(regularAliases),
-      ...Object.keys(customChevrons),
+      ...Object.keys(customIcons),
     ]),
   ].sort();
 };
@@ -146,28 +166,28 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
 
 const resolveIcon = (name: IconName) => {
   // Check for custom chevrons first
-  if (customChevrons[name]) {
-    return customChevrons[name];
+  if (customIcons[name]) {
+    return customIcons[name];
   }
   const normalizedName = normalizeName(name);
   return regularIcons[normalizedName] ?? regularAliases[normalizedName];
 };
 
-export function Icon({ name, label, className, style, ...props }: IconProps) {
+export function Icon({ name, label, className, style, ref: _ref, ...props }: IconProps) {
   const icon = resolveIcon(name);
 
   // Always apply the CSS variable for color
   const mergedStyle = { ...style, color: 'var(--pf-icon-color, currentColor)' };
 
-  // Render custom SVG chevrons directly
-  if (customChevrons[name]) {
+  // Render custom icons directly — span is intentional (not SVGSVGElement)
+  if (customIcons[name]) {
     return (
       <span
         className={cx('pf-icon', className)}
         aria-hidden={label ? undefined : true}
         aria-label={label}
         style={mergedStyle}
-        {...props}
+        {...(props as React.HTMLAttributes<HTMLSpanElement>)}
       >
         {icon}
       </span>
