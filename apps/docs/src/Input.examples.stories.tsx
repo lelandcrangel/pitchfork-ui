@@ -18,6 +18,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+export const Required: Story = {
+  args: { required: true },
+};
+
 export const WithError: Story = {
   args: { error: 'Enter a valid email address.' },
   play: async ({ canvas }) => {

@@ -34,6 +34,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label ? (
           <label className="pf-field__label" htmlFor={inputId}>
             {label}
+            {props.required && <span className="pf-field__required" aria-hidden="true">*</span>}
           </label>
         ) : null}
         <input

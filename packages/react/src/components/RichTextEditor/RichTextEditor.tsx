@@ -31,6 +31,7 @@ export interface RichTextEditorProps extends Omit<
   placeholder?: string;
   minHeight?: number;
   characterMax?: number;
+  required?: boolean;
   disabled?: boolean;
 }
 
@@ -68,6 +69,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
       placeholder = 'Start typing...',
       minHeight = 140,
       characterMax,
+      required = false,
       disabled = false,
       className,
       'aria-describedby': ariaDescribedBy,
@@ -148,6 +150,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
         {label ? (
           <label className="pf-field__label" htmlFor={editorId}>
             {label}
+            {required && <span className="pf-field__required" aria-hidden="true">*</span>}
           </label>
         ) : null}
 
@@ -234,6 +237,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
             contentEditable={!disabled}
             role="textbox"
             aria-multiline="true"
+            aria-required={required || undefined}
             aria-invalid={error ? true : undefined}
             aria-describedby={describedBy}
             aria-disabled={disabled ? true : undefined}

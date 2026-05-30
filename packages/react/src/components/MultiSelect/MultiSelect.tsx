@@ -32,6 +32,7 @@ export interface MultiSelectProps extends Omit<
   label?: string;
   description?: string;
   error?: string;
+  required?: boolean;
 }
 
 export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
@@ -49,6 +50,7 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
       error,
       className,
       disabled,
+      required,
       'aria-describedby': ariaDescribedBy,
       ...props
     },
@@ -202,6 +204,7 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
         {label ? (
           <label className="pf-field__label" htmlFor={selectId}>
             {label}
+            {required && <span className="pf-field__required" aria-hidden="true">*</span>}
           </label>
         ) : null}
 
@@ -220,6 +223,7 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
             disabled={disabled}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
+            aria-required={required || undefined}
             aria-controls={isOpen ? listboxId : undefined}
             aria-describedby={describedBy}
             onClick={() => {

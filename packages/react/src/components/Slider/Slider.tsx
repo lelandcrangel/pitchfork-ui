@@ -91,6 +91,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             {label ? (
               <label className="pf-field__label" htmlFor={sliderId}>
                 {label}
+                {props.required && <span className="pf-field__required" aria-hidden="true">*</span>}
               </label>
             ) : (
               <span />

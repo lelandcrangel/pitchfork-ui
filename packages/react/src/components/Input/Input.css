@@ -7,6 +7,10 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
+.pf-field__required {
+  color: var(--pf-field-required, var(--color-semantic-status-danger-foreground));
+  margin-inline-start: var(--space-1);
+}
 .pf-field__description {
   color: var(--pf-input-field-description, var(--pf-field-description));
   font-size: var(--font-size-sm);

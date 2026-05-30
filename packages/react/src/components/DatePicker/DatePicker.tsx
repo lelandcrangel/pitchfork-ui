@@ -28,6 +28,7 @@ export interface DatePickerProps extends Omit<
   description?: string;
   error?: string;
   placeholder?: string;
+  required?: boolean;
   disabled?: boolean;
   allowClear?: boolean;
   disabledDates?: (date: Date) => boolean;
@@ -46,6 +47,7 @@ export function DatePicker({
   description,
   error,
   placeholder = 'Select a date',
+  required = false,
   disabled = false,
   allowClear = false,
   disabledDates,
@@ -131,6 +133,7 @@ export function DatePicker({
       {label ? (
         <label className="pf-field__label" htmlFor={`${pickerId}-trigger`}>
           {label}
+          {required && <span className="pf-field__required" aria-hidden="true">*</span>}
         </label>
       ) : null}
 
@@ -152,6 +155,7 @@ export function DatePicker({
           aria-invalid={error ? true : undefined}
           aria-haspopup="dialog"
           aria-expanded={isOpen}
+          aria-required={required || undefined}
           onClick={() => {
             disclosure.toggle();
           }}

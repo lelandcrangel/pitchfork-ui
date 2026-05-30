@@ -36,6 +36,7 @@ export interface SelectProps extends Omit<
    * Maximum number of options to show before scrolling. If not set, menu grows to fit all options.
    */
   maxVisibleOptions?: number;
+  required?: boolean;
 }
 
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(
@@ -53,6 +54,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
       error,
       className,
       disabled,
+      required,
       'aria-describedby': ariaDescribedBy,
       maxVisibleOptions,
       ...props
@@ -194,6 +196,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
         {label ? (
           <label className="pf-field__label" htmlFor={selectId}>
             {label}
+            {required && <span className="pf-field__required" aria-hidden="true">*</span>}
           </label>
         ) : null}
         <div className="pf-select" ref={rootRef}>
@@ -212,6 +215,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
             aria-haspopup="listbox"
             aria-expanded={isOpen}
             aria-controls={isOpen ? listboxId : undefined}
+            aria-required={required || undefined}
             aria-describedby={describedBy}
             onClick={() => {
               disclosure.toggle();

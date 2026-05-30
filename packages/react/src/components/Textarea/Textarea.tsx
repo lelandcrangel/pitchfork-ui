@@ -35,6 +35,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label ? (
           <label className="pf-field__label" htmlFor={textareaId}>
             {label}
+            {props.required && <span className="pf-field__required" aria-hidden="true">*</span>}
           </label>
         ) : null}
         <textarea

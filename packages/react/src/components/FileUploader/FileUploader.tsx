@@ -26,6 +26,7 @@ export interface FileUploaderProps extends Omit<
   multiple?: boolean;
   maxFiles?: number;
   maxFileSize?: number;
+  required?: boolean;
   disabled?: boolean;
   value?: File[];
   defaultValue?: File[];
@@ -42,6 +43,7 @@ export function FileUploader({
   multiple = true,
   maxFiles,
   maxFileSize,
+  required,
   disabled = false,
   value,
   defaultValue = [],
@@ -155,6 +157,7 @@ export function FileUploader({
       {label ? (
         <label className="pf-field__label" htmlFor={inputId}>
           {label}
+          {required && <span className="pf-field__required" aria-hidden="true">*</span>}
         </label>
       ) : null}
 
@@ -170,6 +173,7 @@ export function FileUploader({
           className="pf-file-uploader__input"
           accept={accept}
           multiple={multiple}
+          required={required}
           disabled={disabled}
           onChange={(event) => {
             addFiles(event.target.files);
