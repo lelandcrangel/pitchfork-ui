@@ -11,6 +11,7 @@ const meta = {
     size: 'md',
     fullWidth: false,
     disabled: false,
+    loading: false,
     type: 'button',
   },
   argTypes: {
@@ -20,6 +21,7 @@ const meta = {
     fullWidth: { control: 'boolean' },
     type: { control: 'select', options: ['button', 'submit', 'reset'] },
     disabled: { control: 'boolean' },
+    loading: { control: 'boolean' },
     style: { control: 'object' },
     onClick: { action: 'clicked' },
   },

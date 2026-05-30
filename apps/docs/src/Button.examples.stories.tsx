@@ -30,3 +30,4 @@ export const Primary: Story = {
 export const Secondary: Story = { args: { variant: 'secondary' } };
 export const Ghost: Story = { args: { variant: 'ghost' } };
 export const Disabled: Story = { args: { disabled: true } };
+export const Loading: Story = { args: { loading: true, children: 'Saving…' } };
