@@ -48,7 +48,7 @@ Priority order for adding tests:
 **Interactive — form fields**
 - [x] `Input` — label association, description, error, required asterisk, disabled, aria-invalid (17 tests)
 - [x] `Textarea` — same pattern as Input plus rows default (17 tests)
-- [ ] `Switch` — toggle state, label, disabled, onChange
+- [x] `Switch` — toggle state, label, disabled, onChange (13 tests)
 - [ ] `RadioButton` — standalone radio, label, checked, disabled
 
 **Interactive — overlays & navigation**
