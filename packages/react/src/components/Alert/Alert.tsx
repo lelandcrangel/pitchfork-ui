@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon, type IconName } from '../Icon';
 import './Alert.css';
@@ -27,22 +28,14 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
 }
 
-export function Alert({
-  className,
-  variant = 'info',
-  heading,
-  description,
-  dismissible = false,
-  onDismiss,
-  icon,
-  children,
-  ...props
-}: AlertProps) {
+export const Alert = forwardRef<HTMLDivElement, AlertProps>(
+  ({ className, variant = 'info', heading, description, dismissible = false, onDismiss, icon, children, ...props }, ref) => {
   const resolvedIcon = icon ?? <Icon name={variantIcon[variant]} aria-hidden />;
   const body = children ?? description;
 
   return (
     <div
+      ref={ref}
       className={cx('pf-alert', `pf-alert--${variant}`, className)}
       role={variantRole[variant]}
       {...props}
@@ -68,4 +61,6 @@ export function Alert({
       ) : null}
     </div>
   );
-}
+});
+
+Alert.displayName = 'Alert';

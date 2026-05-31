@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './ContentDivider.css';
 
@@ -9,16 +10,12 @@ export interface ContentDividerProps extends React.HTMLAttributes<HTMLDivElement
   inset?: boolean;
 }
 
-export function ContentDivider({
-  className,
-  label,
-  orientation = 'horizontal',
-  inset = false,
-  ...props
-}: ContentDividerProps) {
+export const ContentDivider = forwardRef<HTMLDivElement, ContentDividerProps>(
+  ({ className, label, orientation = 'horizontal', inset = false, ...props }, ref) => {
   if (orientation === 'vertical') {
     return (
       <div
+        ref={ref}
         {...props}
         className={cx(
           'pf-content-divider',
@@ -34,6 +31,7 @@ export function ContentDivider({
 
   return (
     <div
+      ref={ref}
       {...props}
       className={cx(
         'pf-content-divider',
@@ -54,4 +52,6 @@ export function ContentDivider({
       )}
     </div>
   );
-}
+});
+
+ContentDivider.displayName = 'ContentDivider';

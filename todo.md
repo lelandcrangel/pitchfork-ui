@@ -27,7 +27,7 @@ Items found during codebase review. See `todoList.md` for component parity track
 
 - [x] **`DatePicker` doesn't use the `Input` component internally** — `todoList.md` explicitly notes it should, but it just reuses `pf-field` CSS classes directly. If `Input` changes, DatePicker won't track. [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
 - [x] **`Icon` returns `null` silently for unknown names** — no dev-mode warning. A `console.warn` gated on `import.meta.env.DEV` would surface typos faster. [`Icon.tsx:197`](packages/react/src/components/Icon/Icon.tsx)
-- [ ] **`forwardRef` missing on display components** — `Alert`, `Badge`, `Card`, `Tag`, `Notification`, `Breadcrumbs`, `ContentDivider` don't forward refs. Refs are useful for measuring layout and animation even on non-interactive components. Lower priority than form/interactive components. (32 components total are missing it)
+- [x] **`forwardRef` missing on display components** — `Alert`, `Badge`, `Card`, `Tag`, `Notification`, `Breadcrumbs`, `ContentDivider` don't forward refs. Refs are useful for measuring layout and animation even on non-interactive components. Lower priority than form/interactive components. (32 components total are missing it)
 
 ---
 

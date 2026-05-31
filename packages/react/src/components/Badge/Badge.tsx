@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Badge.css';
 
@@ -7,6 +8,10 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
 }
 
-export function Badge({ className, variant = 'neutral', ...props }: BadgeProps) {
-  return <span className={cx('pf-badge', `pf-badge--${variant}`, className)} {...props} />;
-}
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ className, variant = 'neutral', ...props }, ref) => (
+    <span ref={ref} className={cx('pf-badge', `pf-badge--${variant}`, className)} {...props} />
+  ),
+);
+
+Badge.displayName = 'Badge';

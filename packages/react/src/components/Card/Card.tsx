@@ -1,18 +1,34 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Card.css';
 
 export type CardProps = React.HTMLAttributes<HTMLDivElement>;
 export type CardSectionProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function Card({ className, ...props }: CardProps) {
-  return <div className={cx('pf-card', className)} {...props} />;
-}
-export function CardHeader({ className, ...props }: CardSectionProps) {
-  return <div className={cx('pf-card__header', className)} {...props} />;
-}
-export function CardContent({ className, ...props }: CardSectionProps) {
-  return <div className={cx('pf-card__content', className)} {...props} />;
-}
-export function CardFooter({ className, ...props }: CardSectionProps) {
-  return <div className={cx('pf-card__footer', className)} {...props} />;
-}
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-card', className)} {...props} />
+  ),
+);
+Card.displayName = 'Card';
+
+export const CardHeader = forwardRef<HTMLDivElement, CardSectionProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-card__header', className)} {...props} />
+  ),
+);
+CardHeader.displayName = 'CardHeader';
+
+export const CardContent = forwardRef<HTMLDivElement, CardSectionProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-card__content', className)} {...props} />
+  ),
+);
+CardContent.displayName = 'CardContent';
+
+export const CardFooter = forwardRef<HTMLDivElement, CardSectionProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-card__footer', className)} {...props} />
+  ),
+);
+CardFooter.displayName = 'CardFooter';

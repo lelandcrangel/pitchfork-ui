@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon, type IconName } from '../Icon';
 import './Notification.css';
@@ -10,7 +11,7 @@ export type NotificationPlacement =
   | 'bottom-left';
 
 const variantIcon: Record<NotificationVariant, IconName> = {
-  info: 'circle-question',
+  info: 'circle-info',
   success: 'circle-check',
   warning: 'triangle-exclamation',
   danger: 'circle-xmark',
@@ -33,13 +34,10 @@ export interface NotificationProps extends Omit<
   onDismiss?: () => void;
 }
 
-export function NotificationStack({
-  className,
-  placement = 'top-right',
-  ...props
-}: NotificationStackProps) {
-  return (
+export const NotificationStack = forwardRef<HTMLDivElement, NotificationStackProps>(
+  ({ className, placement = 'top-right', ...props }, ref) => (
     <div
+      ref={ref}
       className={cx(
         'pf-notification-stack',
         `pf-notification-stack--${placement}`,
@@ -47,26 +45,18 @@ export function NotificationStack({
       )}
       {...props}
     />
-  );
-}
+  ),
+);
+NotificationStack.displayName = 'NotificationStack';
 
-export function Notification({
-  className,
-  variant = 'info',
-  heading,
-  description,
-  icon,
-  action,
-  dismissible = false,
-  onDismiss,
-  children,
-  ...props
-}: NotificationProps) {
+export const Notification = forwardRef<HTMLDivElement, NotificationProps>(
+  ({ className, variant = 'info', heading, description, icon, action, dismissible = false, onDismiss, children, ...props }, ref) => {
   const resolvedIcon = icon ?? <Icon name={variantIcon[variant]} aria-hidden />;
   const body = children ?? description;
 
   return (
     <div
+      ref={ref}
       className={cx(
         'pf-notification',
         `pf-notification--${variant}`,
@@ -101,4 +91,6 @@ export function Notification({
       ) : null}
     </div>
   );
-}
+});
+
+Notification.displayName = 'Notification';

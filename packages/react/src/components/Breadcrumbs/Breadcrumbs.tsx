@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Breadcrumbs.css';
 
@@ -13,15 +14,10 @@ export interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
   separator?: React.ReactNode;
 }
 
-export function Breadcrumbs({
-  className,
-  items,
-  separator = '/',
-  'aria-label': ariaLabel = 'Breadcrumb',
-  ...props
-}: BreadcrumbsProps) {
-  return (
+export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
+  ({ className, items, separator = '/', 'aria-label': ariaLabel = 'Breadcrumb', ...props }, ref) => (
     <nav
+      ref={ref}
       className={cx('pf-breadcrumbs', className)}
       aria-label={ariaLabel}
       {...props}
@@ -74,5 +70,7 @@ export function Breadcrumbs({
         })}
       </ol>
     </nav>
-  );
-}
+  ),
+);
+
+Breadcrumbs.displayName = 'Breadcrumbs';

@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Tag.css';
@@ -10,16 +11,9 @@ export interface TagProps extends React.HTMLAttributes<HTMLSpanElement> {
   onDismiss?: () => void;
 }
 
-export function Tag({
-  className,
-  variant = 'neutral',
-  dismissible = false,
-  onDismiss,
-  children,
-  ...props
-}: TagProps) {
-  return (
-    <span className={cx('pf-tag', `pf-tag--${variant}`, className)} {...props}>
+export const Tag = forwardRef<HTMLSpanElement, TagProps>(
+  ({ className, variant = 'neutral', dismissible = false, onDismiss, children, ...props }, ref) => (
+    <span ref={ref} className={cx('pf-tag', `pf-tag--${variant}`, className)} {...props}>
       <span className="pf-tag__label">{children}</span>
       {dismissible ? (
         <button
@@ -32,5 +26,7 @@ export function Tag({
         </button>
       ) : null}
     </span>
-  );
-}
+  ),
+);
+
+Tag.displayName = 'Tag';
