@@ -59,7 +59,7 @@ Priority order for adding tests:
 
 **Interactive — complex content**
 - [x] `Table` — column rendering, sort state, sortable click, empty state, striped/dense classes (18 tests)
-- [ ] `FileUploader` — file selection, maxFiles, maxFileSize validation, remove file, required
+- [x] `FileUploader` — file selection, maxFiles, maxFileSize validation, remove file, required (15 tests)
 - [ ] `Calendar` — month navigation (prev/next), date selection, disabled dates, selected state
 - [ ] `RichTextEditor` — typing, toolbar bold/italic/underline, characterMax limit, disabled
 - [ ] `TreeView` — expand/collapse nodes, nested structure, keyboard nav
