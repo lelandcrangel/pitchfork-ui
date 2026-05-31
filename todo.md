@@ -38,7 +38,7 @@ Current coverage: **2 / 54 components** (Button, Tooltip). `CONTRIBUTING.md` req
 Priority order for adding tests:
 
 - [x] `Select` — custom keyboard navigation, listbox ARIA (26 tests)
-- [ ] `MultiSelect` — same as Select, plus chip removal
+- [x] `MultiSelect` — same as Select, plus chip removal (27 tests)
 - [ ] `Modal` — focus trap, Escape key, scroll lock
 - [ ] `DatePicker` — calendar navigation, value selection
 - [ ] `Slider` — arrow key step, min/max clamping
