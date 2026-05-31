@@ -55,7 +55,7 @@ Priority order for adding tests:
 - [x] `Dropdown` — open/close, option click, keyboard nav, disabled options (20 tests)
 - [x] `Tabs` — tab switching, aria-selected, keyboard nav (ArrowLeft/Right) (19 tests)
 - [x] `SlideoutMenu` — open/close, Escape key, overlay click, focus trap (20 tests)
-- [ ] `Pagination` — page change, prev/next, disabled at boundaries
+- [x] `Pagination` — page change, prev/next, disabled at boundaries (20 tests)
 
 **Interactive — complex content**
 - [ ] `Table` — column rendering, sort state, sortable click, empty state, striped/dense classes
