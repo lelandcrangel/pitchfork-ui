@@ -39,7 +39,7 @@ Priority order for adding tests:
 
 - [x] `Select` — custom keyboard navigation, listbox ARIA (26 tests)
 - [x] `MultiSelect` — same as Select, plus chip removal (27 tests)
-- [ ] `Modal` — focus trap, Escape key, scroll lock
+- [x] `Modal` — focus trap, Escape key, scroll lock (20 tests)
 - [ ] `DatePicker` — calendar navigation, value selection
 - [ ] `Slider` — arrow key step, min/max clamping
 - [ ] `Checkbox` / `RadioGroup` — group association, indeterminate state
