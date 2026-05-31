@@ -53,7 +53,7 @@ Priority order for adding tests:
 
 **Interactive — overlays & navigation**
 - [x] `Dropdown` — open/close, option click, keyboard nav, disabled options (20 tests)
-- [ ] `Tabs` — tab switching, aria-selected, keyboard nav (ArrowLeft/Right)
+- [x] `Tabs` — tab switching, aria-selected, keyboard nav (ArrowLeft/Right) (19 tests)
 - [ ] `SlideoutMenu` — open/close, Escape key, overlay click, focus trap
 - [ ] `Pagination` — page change, prev/next, disabled at boundaries
 
