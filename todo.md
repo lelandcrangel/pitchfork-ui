@@ -47,7 +47,7 @@ Priority order for adding tests:
 - [x] `Tooltip` — delay timing, viewport clipping (16 tests)
 **Interactive — form fields**
 - [x] `Input` — label association, description, error, required asterisk, disabled, aria-invalid (17 tests)
-- [ ] `Textarea` — same pattern as Input plus rows default
+- [x] `Textarea` — same pattern as Input plus rows default (17 tests)
 - [ ] `Switch` — toggle state, label, disabled, onChange
 - [ ] `RadioButton` — standalone radio, label, checked, disabled
 
