@@ -42,7 +42,7 @@ Priority order for adding tests:
 - [x] `Modal` — focus trap, Escape key, scroll lock (20 tests)
 - [x] `DatePicker` — calendar navigation, value selection (21 tests)
 - [x] `Slider` — arrow key step, min/max clamping (20 tests)
-- [ ] `Checkbox` / `RadioGroup` — group association, indeterminate state
+- [x] `Checkbox` / `RadioGroup` — group association, indeterminate state (30 tests)
 - [ ] `Alert` — role announcement, dismiss callback
 - [ ] `Tooltip` — delay timing, viewport clipping (partially done)
 - [ ] Remaining 46 components
