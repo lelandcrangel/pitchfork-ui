@@ -52,7 +52,7 @@ Priority order for adding tests:
 - [x] `RadioButton` — standalone radio, label, checked, disabled (12 tests)
 
 **Interactive — overlays & navigation**
-- [ ] `Dropdown` — open/close, option click, keyboard nav, disabled options
+- [x] `Dropdown` — open/close, option click, keyboard nav, disabled options (20 tests)
 - [ ] `Tabs` — tab switching, aria-selected, keyboard nav (ArrowLeft/Right)
 - [ ] `SlideoutMenu` — open/close, Escape key, overlay click, focus trap
 - [ ] `Pagination` — page change, prev/next, disabled at boundaries
