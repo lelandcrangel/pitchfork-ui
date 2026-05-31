@@ -44,5 +44,5 @@ Priority order for adding tests:
 - [x] `Slider` — arrow key step, min/max clamping (20 tests)
 - [x] `Checkbox` / `RadioGroup` — group association, indeterminate state (30 tests)
 - [x] `Alert` — role announcement, dismiss callback (17 tests)
-- [ ] `Tooltip` — delay timing, viewport clipping (partially done)
+- [x] `Tooltip` — delay timing, viewport clipping (16 tests)
 - [ ] Remaining 46 components
