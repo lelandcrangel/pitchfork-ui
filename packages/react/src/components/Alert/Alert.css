@@ -144,8 +144,11 @@
   align-items: center;
   display: inline-flex;
   font-size: 18px;
+  height: 1em;
+  justify-content: center;
   line-height: 1;
   margin-top: 1px;
+  width: 1em;
 }
 
 .pf-alert__content {
