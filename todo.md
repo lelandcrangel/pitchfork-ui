@@ -43,6 +43,6 @@ Priority order for adding tests:
 - [x] `DatePicker` — calendar navigation, value selection (21 tests)
 - [x] `Slider` — arrow key step, min/max clamping (20 tests)
 - [x] `Checkbox` / `RadioGroup` — group association, indeterminate state (30 tests)
-- [ ] `Alert` — role announcement, dismiss callback
+- [x] `Alert` — role announcement, dismiss callback (17 tests)
 - [ ] `Tooltip` — delay timing, viewport clipping (partially done)
 - [ ] Remaining 46 components
