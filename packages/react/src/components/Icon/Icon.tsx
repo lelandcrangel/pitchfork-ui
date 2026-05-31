@@ -186,8 +186,6 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
 }
 
 export function Icon({ name, label, className, style, ref: _ref, ...props }: IconProps) {
-  const mergedStyle = { ...style, color: 'var(--pf-icon-color, currentColor)' };
-
   const customIcon = customIcons[name];
   if (customIcon !== undefined) {
     return (
@@ -195,7 +193,7 @@ export function Icon({ name, label, className, style, ref: _ref, ...props }: Ico
         className={cx('pf-icon', className)}
         aria-hidden={label ? undefined : true}
         aria-label={label}
-        style={mergedStyle}
+        style={style}
         {...(props as React.HTMLAttributes<HTMLSpanElement>)}
       >
         {customIcon}
@@ -219,7 +217,7 @@ export function Icon({ name, label, className, style, ref: _ref, ...props }: Ico
       className={cx('pf-icon', className)}
       aria-hidden={label ? undefined : true}
       aria-label={label}
-      style={mergedStyle}
+      style={style}
       {...props}
     />
   );
