@@ -58,7 +58,7 @@ Priority order for adding tests:
 - [x] `Pagination` — page change, prev/next, disabled at boundaries (20 tests)
 
 **Interactive — complex content**
-- [ ] `Table` — column rendering, sort state, sortable click, empty state, striped/dense classes
+- [x] `Table` — column rendering, sort state, sortable click, empty state, striped/dense classes (18 tests)
 - [ ] `FileUploader` — file selection, maxFiles, maxFileSize validation, remove file, required
 - [ ] `Calendar` — month navigation (prev/next), date selection, disabled dates, selected state
 - [ ] `RichTextEditor` — typing, toolbar bold/italic/underline, characterMax limit, disabled
