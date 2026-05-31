@@ -1,4 +1,5 @@
 import { useId, useMemo, useRef, useState } from 'react';
+import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './FileUploader.css';
@@ -153,13 +154,22 @@ export function FileUploader({
   }, [accept, maxFileSize, maxFiles]);
 
   return (
-    <div className="pf-field">
-      {label ? (
-        <label className="pf-field__label" htmlFor={inputId}>
-          {label}
-          {required && <span className="pf-field__required" aria-hidden="true">*</span>}
-        </label>
-      ) : null}
+    <FieldWrapper
+      labelFor={inputId}
+      label={label}
+      description={description}
+      descriptionId={descriptionId}
+      error={error}
+      errorId={errorId}
+      required={required}
+      footer={
+        internalError ? (
+          <p className="pf-field__error" id={internalErrorId}>
+            {internalError}
+          </p>
+        ) : null
+      }
+    >
 
       <div
         {...props}
@@ -255,22 +265,6 @@ export function FileUploader({
           </ul>
         ) : null}
       </div>
-
-      {description ? (
-        <p className="pf-field__description" id={descriptionId}>
-          {description}
-        </p>
-      ) : null}
-      {error ? (
-        <p className="pf-field__error" id={errorId}>
-          {error}
-        </p>
-      ) : null}
-      {internalError ? (
-        <p className="pf-field__error" id={internalErrorId}>
-          {internalError}
-        </p>
-      ) : null}
-    </div>
+    </FieldWrapper>
   );
 }

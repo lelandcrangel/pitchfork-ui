@@ -9,6 +9,7 @@ import {
   useListNavigation,
   useOutsideInteraction,
 } from '../../hooks';
+import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Select.css';
@@ -192,13 +193,15 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
     };
 
     return (
-      <div className="pf-field">
-        {label ? (
-          <label className="pf-field__label" htmlFor={selectId}>
-            {label}
-            {required && <span className="pf-field__required" aria-hidden="true">*</span>}
-          </label>
-        ) : null}
+      <FieldWrapper
+        labelFor={selectId}
+        label={label}
+        description={description}
+        descriptionId={descriptionId}
+        error={error}
+        errorId={errorId}
+        required={required}
+      >
         <div className="pf-select" ref={rootRef}>
           <button
             {...props}
@@ -309,17 +312,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
               )
             : null}
         </div>
-        {description ? (
-          <p className="pf-field__description" id={descriptionId}>
-            {description}
-          </p>
-        ) : null}
-        {error ? (
-          <p className="pf-field__error" id={errorId}>
-            {error}
-          </p>
-        ) : null}
-      </div>
+      </FieldWrapper>
     );
   },
 );

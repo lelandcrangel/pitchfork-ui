@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import { composeDescribedBy } from '../../a11y';
+import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import './RichTextEditor.css';
 
@@ -146,13 +147,15 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
     };
 
     return (
-      <div className="pf-field">
-        {label ? (
-          <label className="pf-field__label" htmlFor={editorId}>
-            {label}
-            {required && <span className="pf-field__required" aria-hidden="true">*</span>}
-          </label>
-        ) : null}
+      <FieldWrapper
+        labelFor={editorId}
+        label={label}
+        description={description}
+        descriptionId={descriptionId}
+        error={error}
+        errorId={errorId}
+        required={required}
+      >
 
         <div
           className={cx(
@@ -255,17 +258,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
           </p>
         ) : null}
 
-        {description ? (
-          <p className="pf-field__description" id={descriptionId}>
-            {description}
-          </p>
-        ) : null}
-        {error ? (
-          <p className="pf-field__error" id={errorId}>
-            {error}
-          </p>
-        ) : null}
-      </div>
+      </FieldWrapper>
     );
   },
 );

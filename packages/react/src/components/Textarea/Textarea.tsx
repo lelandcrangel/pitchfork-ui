@@ -1,4 +1,5 @@
 import { forwardRef, useId } from 'react';
+import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import './Textarea.css';
 
@@ -31,13 +32,15 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       undefined;
 
     return (
-      <div className="pf-field">
-        {label ? (
-          <label className="pf-field__label" htmlFor={textareaId}>
-            {label}
-            {props.required && <span className="pf-field__required" aria-hidden="true">*</span>}
-          </label>
-        ) : null}
+      <FieldWrapper
+        labelFor={textareaId}
+        label={label}
+        description={description}
+        descriptionId={descriptionId}
+        error={error}
+        errorId={errorId}
+        required={props.required}
+      >
         <textarea
           ref={ref}
           id={textareaId}
@@ -51,17 +54,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           aria-describedby={describedBy}
           {...props}
         />
-        {description ? (
-          <p className="pf-field__description" id={descriptionId}>
-            {description}
-          </p>
-        ) : null}
-        {error ? (
-          <p className="pf-field__error" id={errorId}>
-            {error}
-          </p>
-        ) : null}
-      </div>
+      </FieldWrapper>
     );
   },
 );

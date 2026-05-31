@@ -1,4 +1,5 @@
 import { forwardRef, useId } from 'react';
+import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import './Input.css';
 
@@ -30,13 +31,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       undefined;
 
     return (
-      <div className="pf-field">
-        {label ? (
-          <label className="pf-field__label" htmlFor={inputId}>
-            {label}
-            {props.required && <span className="pf-field__required" aria-hidden="true">*</span>}
-          </label>
-        ) : null}
+      <FieldWrapper
+        labelFor={inputId}
+        label={label}
+        description={description}
+        descriptionId={descriptionId}
+        error={error}
+        errorId={errorId}
+        required={props.required}
+      >
         <input
           {...props}
           ref={ref}
@@ -45,17 +48,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
         />
-        {description ? (
-          <p className="pf-field__description" id={descriptionId}>
-            {description}
-          </p>
-        ) : null}
-        {error ? (
-          <p className="pf-field__error" id={errorId}>
-            {error}
-          </p>
-        ) : null}
-      </div>
+      </FieldWrapper>
     );
   },
 );

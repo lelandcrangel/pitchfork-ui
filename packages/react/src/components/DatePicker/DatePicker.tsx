@@ -6,6 +6,7 @@ import {
   useDisclosure,
   useOutsideInteraction,
 } from '../../hooks';
+import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import { Calendar } from '../Calendar';
 import { Icon } from '../Icon';
@@ -129,14 +130,16 @@ export function DatePicker({
   };
 
   return (
-    <div className="pf-field" ref={rootRef}>
-      {label ? (
-        <label className="pf-field__label" htmlFor={`${pickerId}-trigger`}>
-          {label}
-          {required && <span className="pf-field__required" aria-hidden="true">*</span>}
-        </label>
-      ) : null}
-
+    <FieldWrapper
+      ref={rootRef}
+      labelFor={`${pickerId}-trigger`}
+      label={label}
+      description={description}
+      descriptionId={descriptionId}
+      error={error}
+      errorId={errorId}
+      required={required}
+    >
       <div
         {...props}
         id={pickerId}
@@ -222,17 +225,6 @@ export function DatePicker({
             )
           : null}
       </div>
-
-      {description ? (
-        <p className="pf-field__description" id={descriptionId}>
-          {description}
-        </p>
-      ) : null}
-      {error ? (
-        <p className="pf-field__error" id={errorId}>
-          {error}
-        </p>
-      ) : null}
-    </div>
+    </FieldWrapper>
   );
 }
