@@ -33,7 +33,7 @@ Items found during codebase review. See `todoList.md` for component parity track
 
 ## Test Coverage
 
-Current coverage: **2 / 54 components** (Button, Tooltip). `CONTRIBUTING.md` requires at least one a11y-focused test per component.
+Current coverage: **21 / 54 components** (Button, Tooltip, Select, MultiSelect, Modal, DatePicker, Slider, Checkbox, RadioGroup, Alert, Input, Textarea, Switch, RadioButton, Dropdown, Tabs, SlideoutMenu, Pagination, Table, FileUploader, Calendar). `CONTRIBUTING.md` requires at least one a11y-focused test per component.
 
 Priority order for adding tests:
 
@@ -60,7 +60,7 @@ Priority order for adding tests:
 **Interactive — complex content**
 - [x] `Table` — column rendering, sort state, sortable click, empty state, striped/dense classes (18 tests)
 - [x] `FileUploader` — file selection, maxFiles, maxFileSize validation, remove file, required (15 tests)
-- [ ] `Calendar` — month navigation (prev/next), date selection, disabled dates, selected state
+- [x] `Calendar` — month navigation (prev/next), date selection, disabled dates, selected state (16 tests)
 - [ ] `RichTextEditor` — typing, toolbar bold/italic/underline, characterMax limit, disabled
 - [ ] `TreeView` — expand/collapse nodes, nested structure, keyboard nav
 - [ ] `Carousel` — next/prev navigation, wrapping, slide count
