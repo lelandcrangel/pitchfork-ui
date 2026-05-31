@@ -46,7 +46,7 @@ Priority order for adding tests:
 - [x] `Alert` — role announcement, dismiss callback (17 tests)
 - [x] `Tooltip` — delay timing, viewport clipping (16 tests)
 **Interactive — form fields**
-- [ ] `Input` — label association, description, error, required asterisk, disabled, aria-invalid
+- [x] `Input` — label association, description, error, required asterisk, disabled, aria-invalid (17 tests)
 - [ ] `Textarea` — same pattern as Input plus rows default
 - [ ] `Switch` — toggle state, label, disabled, onChange
 - [ ] `RadioButton` — standalone radio, label, checked, disabled
