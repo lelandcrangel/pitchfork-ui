@@ -45,4 +45,62 @@ Priority order for adding tests:
 - [x] `Checkbox` / `RadioGroup` — group association, indeterminate state (30 tests)
 - [x] `Alert` — role announcement, dismiss callback (17 tests)
 - [x] `Tooltip` — delay timing, viewport clipping (16 tests)
-- [ ] Remaining 46 components
+**Interactive — form fields**
+- [ ] `Input` — label association, description, error, required asterisk, disabled, aria-invalid
+- [ ] `Textarea` — same pattern as Input plus rows default
+- [ ] `Switch` — toggle state, label, disabled, onChange
+- [ ] `RadioButton` — standalone radio, label, checked, disabled
+
+**Interactive — overlays & navigation**
+- [ ] `Dropdown` — open/close, option click, keyboard nav, disabled options
+- [ ] `Tabs` — tab switching, aria-selected, keyboard nav (ArrowLeft/Right)
+- [ ] `SlideoutMenu` — open/close, Escape key, overlay click, focus trap
+- [ ] `Pagination` — page change, prev/next, disabled at boundaries
+
+**Interactive — complex content**
+- [ ] `Table` — column rendering, sort state, sortable click, empty state, striped/dense classes
+- [ ] `FileUploader` — file selection, maxFiles, maxFileSize validation, remove file, required
+- [ ] `Calendar` — month navigation (prev/next), date selection, disabled dates, selected state
+- [ ] `RichTextEditor` — typing, toolbar bold/italic/underline, characterMax limit, disabled
+- [ ] `TreeView` — expand/collapse nodes, nested structure, keyboard nav
+- [ ] `Carousel` — next/prev navigation, wrapping, slide count
+
+**Display — feedback & status**
+- [ ] `Notification` — role per variant (status), dismiss callback, icon, action slot
+- [ ] `Rating` — RatingStars fill percent, clamping, RatingBadge value display
+- [ ] `LoadingIndicators` — LoadingSpinner role=status, LoadingSkeleton, LoadingDots
+- [ ] `ProgressIndicators` — value/max, aria-valuenow/min/max, label
+- [ ] `ProgressSteps` — active/completed/upcoming step states, step count
+
+**Display — simple components**
+- [ ] `Badge` — variant class, content renders
+- [ ] `BadgeGroup` — renders multiple badges
+- [ ] `Tag` — variant, dismissible, onDismiss callback
+- [ ] `Card` — Card, CardHeader, CardContent, CardFooter render and accept children
+- [ ] `Avatar` — image render, initials fallback, size
+- [ ] `ContentDivider` — horizontal/vertical orientation, label, role=separator
+- [ ] `Breadcrumbs` — link vs span per item, aria-current on last item, custom separator
+- [ ] `Icon` — known names render, unknown name returns null + dev warning, custom icons
+- [ ] `Metrics` — value, label, change indicator renders
+
+**Display — content**
+- [ ] `CodeSnippet` — renders code content, copy button
+- [ ] `VideoPlayer` — renders video element, label association
+- [ ] `CreditCard` — card number masking, card type, expiry
+- [ ] `InlineCTA` — title, description, action slot renders
+
+**Display — page structure**
+- [ ] `PageHeader` — title, subtitle, breadcrumb slot, actions slot
+- [ ] `SectionHeader` — title, description, action slot
+- [ ] `SectionFooter` — renders children
+- [ ] `HeaderNavigation` — logo, nav links, active state
+- [ ] `SidebarNavigation` — links, active state, nested items
+
+**Data visualisation**
+- [ ] `PieChart` — segment rendering, legend, empty state, conic gradient
+- [ ] `RadarChart` — axes, value polygon, empty/insufficient data state
+- [ ] `LineBarCharts` — LineChart series rendering, BarChart grouped/stacked, empty state
+
+**Groups & utilities**
+- [ ] `ButtonGroup` — renders grouped buttons, passes className
+- [ ] `UtilityButton` — variants, sizes, disabled
