@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import { far } from '@fortawesome/free-regular-svg-icons';
 import type {
   IconDefinition,
@@ -206,6 +207,9 @@ export function Icon({ name, label, className, style, ref: _ref, ...props }: Ico
   const faIcon = regularIcons[normalizedName] ?? regularAliases[normalizedName];
 
   if (!faIcon) {
+    if (import.meta.env.DEV) {
+      console.warn(`[Icon] Unknown icon name: "${name}". Check getAvailableIconNames() for valid options.`);
+    }
     return null;
   }
 
