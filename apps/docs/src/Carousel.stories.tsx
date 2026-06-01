@@ -120,4 +120,12 @@ export const Interactive: Story = {
   args: {
     slideState: 'multiple',
   },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Navigate slides with the Previous/Next buttons or indicator dots. **Keyboard:** `ArrowLeft` / `ArrowRight` when any control button has focus.',
+      },
+    },
+  },
 };

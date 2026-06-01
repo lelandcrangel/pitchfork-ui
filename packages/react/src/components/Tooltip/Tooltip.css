@@ -3,7 +3,7 @@
   display: inline-flex;
 }
 
-.pf-tooltip__trigger:focus-within {
+.pf-tooltip__trigger:has(:focus-visible) {
   outline: var(--pf-focus-ring);
   outline-offset: 2px;
 }

@@ -13,13 +13,13 @@ const meta = {
       {
         label: 'Edit profile',
         shortcut: 'E',
-        icon: <Icon name="pen-to-square" aria-hidden />,
+        icon: <Icon name="copy" aria-hidden />,
       },
       { label: 'Archive', shortcut: 'A' },
       {
         label: 'Delete',
         destructive: true,
-        icon: <Icon name="trash-can" aria-hidden />,
+        icon: <Icon name="circle-xmark" aria-hidden />,
       },
     ],
   },

@@ -50,7 +50,7 @@ export const ActionGroup: Story = {
     actions: (
       <>
         <UtilityButton aria-label="Search">
-          <Icon name="magnifying-glass" aria-hidden />
+          <Icon name="circle-question" aria-hidden />
         </UtilityButton>
         <Button size="sm" variant="secondary">
           Invite

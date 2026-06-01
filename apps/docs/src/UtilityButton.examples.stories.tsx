@@ -10,7 +10,7 @@ const meta = {
     children: 'Quick action',
     variant: 'neutral',
     size: 'md',
-    icon: <Icon name="rectangle-list" aria-hidden />,
+    icon: <Icon name="copy" aria-hidden />,
     onClick: fn(),
   },
 } satisfies Meta<typeof UtilityButton>;
@@ -24,7 +24,7 @@ export const Brand: Story = {
   args: {
     variant: 'brand',
     children: 'Create',
-    icon: <Icon name="square-plus" aria-hidden />,
+    icon: <Icon name="square-check" aria-hidden />,
   },
 };
 
@@ -32,7 +32,7 @@ export const Danger: Story = {
   args: {
     variant: 'danger',
     children: 'Delete',
-    icon: <Icon name="trash-can" aria-hidden />,
+    icon: <Icon name="circle-xmark" aria-hidden />,
   },
 };
 
@@ -40,7 +40,7 @@ export const IconOnly: Story = {
   args: {
     'aria-label': 'More options',
     children: undefined,
-    icon: <Icon name="rectangle-list" aria-hidden />,
+    icon: <Icon name="copy" aria-hidden />,
   },
 };
 

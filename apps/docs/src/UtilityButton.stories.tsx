@@ -9,7 +9,7 @@ const meta = {
     children: 'Quick action',
     variant: 'neutral',
     size: 'md',
-    icon: <Icon name="circle-dot" aria-hidden />,
+    icon: <Icon name="copy" aria-hidden />,
   },
   argTypes: {
     variant: { control: 'select', options: ['neutral', 'brand', 'danger'] },

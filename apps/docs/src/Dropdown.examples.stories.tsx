@@ -14,11 +14,11 @@ export const Basic: Story = {
   args: {
     label: 'Actions',
     items: [
-      { label: 'Profile', icon: <Icon name="user" aria-hidden /> },
-      { label: 'Settings', icon: <Icon name="rectangle-list" aria-hidden /> },
+      { label: 'Profile', icon: <Icon name="circle-check" aria-hidden /> },
+      { label: 'Settings', icon: <Icon name="copy" aria-hidden /> },
       {
         label: 'Delete',
-        icon: <Icon name="trash-can" aria-hidden />,
+        icon: <Icon name="circle-xmark" aria-hidden />,
         destructive: true,
       },
     ],

@@ -36,17 +36,17 @@ export const LeadingIcon: Story = {
       {
         value: 'today',
         label: 'Today',
-        icon: <Icon name="calendar-days" aria-hidden />,
+        icon: <Icon name="calendar" aria-hidden />,
       },
       {
         value: 'tomorrow',
         label: 'Tomorrow',
-        icon: <Icon name="calendar-days" aria-hidden />,
+        icon: <Icon name="calendar" aria-hidden />,
       },
       {
         value: 'week',
         label: 'This week',
-        icon: <Icon name="calendar-days" aria-hidden />,
+        icon: <Icon name="calendar" aria-hidden />,
       },
     ],
     defaultValue: 'today',

@@ -58,3 +58,35 @@ export const Interactive: Story = {
     );
   },
 };
+
+export const KeyboardFocus: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'When the trigger wraps a non-interactive element, the trigger itself shows a focus ring on keyboard navigation via `:has(:focus-visible)`. Tab to the element below to see it.',
+      },
+    },
+  },
+  render: ({ open, ...args }) => {
+    const controlledOpen = open ? true : undefined;
+
+    return (
+      <TooltipStoryFrame>
+        <Tooltip {...args} open={controlledOpen} content="Keyboard accessible tooltip">
+          <span
+            tabIndex={0}
+            style={{
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--color-semantic-text-default)',
+              cursor: 'default',
+              padding: '4px 8px',
+            }}
+          >
+            Tab to focus me
+          </span>
+        </Tooltip>
+      </TooltipStoryFrame>
+    );
+  },
+};
