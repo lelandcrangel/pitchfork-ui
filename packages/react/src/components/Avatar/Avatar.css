@@ -95,32 +95,17 @@
 }
 
 .pf-avatar__status--online {
-  background: var(
-    --pf-avatar-status-online-color,
-    var(--color-semantic-status-success-bright)
-  );
+  background: var(--pf-avatar-status-online, var(--color-semantic-status-success-bright));
 }
 
 .pf-avatar__status--away {
-  background: var(
-    --pf-avatar-color-semantic-status-warning-foreground,
-    var(
-      --pf-avatar-status-away,
-      var(--color-semantic-status-warning-foreground)
-    )
-  );
+  background: var(--pf-avatar-status-away, var(--color-semantic-status-warning-bright));
 }
 
 .pf-avatar__status--busy {
-  background: var(
-    --pf-avatar-color-semantic-status-danger-foreground,
-    var(--pf-avatar-status-busy, var(--color-semantic-status-danger-foreground))
-  );
+  background: var(--pf-avatar-status-busy, var(--color-semantic-status-danger-bright));
 }
 
 .pf-avatar__status--offline {
-  background: var(
-    --pf-avatar-color-semantic-text-muted,
-    var(--pf-avatar-status-offline, var(--color-semantic-text-muted))
-  );
+  background: var(--pf-avatar-status-offline, var(--color-semantic-text-muted));
 }

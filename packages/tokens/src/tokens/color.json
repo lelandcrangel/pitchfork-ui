@@ -104,7 +104,8 @@
           "foreground": {
             "$value": "{color.success.700}",
             "$type": "color"
-          }
+          },
+          "bright": { "$value": "{color.success.500}", "$type": "color" }
         },
         "warning": {
           "background": {
@@ -115,7 +116,8 @@
           "foreground": {
             "$value": "{color.warning.700}",
             "$type": "color"
-          }
+          },
+          "bright": { "$value": "{color.warning.500}", "$type": "color" }
         },
         "danger": {
           "background": {
@@ -126,7 +128,8 @@
           "foreground": {
             "$value": "{color.danger.700}",
             "$type": "color"
-          }
+          },
+          "bright": { "$value": "{color.danger.500}", "$type": "color" }
         }
       }
     }
