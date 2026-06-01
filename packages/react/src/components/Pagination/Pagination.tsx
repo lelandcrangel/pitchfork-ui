@@ -73,21 +73,25 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   nextLabel?: React.ReactNode;
 }
 
-export function Pagination({
-  className,
-  page,
-  defaultPage = 1,
-  totalPages,
-  siblingCount = 1,
-  boundaryCount = 1,
-  showPrevNext = true,
-  disabled = false,
-  onPageChange,
-  prevLabel = 'Previous',
-  nextLabel = 'Next',
-  'aria-label': ariaLabel = 'Pagination',
-  ...props
-}: PaginationProps) {
+export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
+  function Pagination(
+    {
+      className,
+      page,
+      defaultPage = 1,
+      totalPages,
+      siblingCount = 1,
+      boundaryCount = 1,
+      showPrevNext = true,
+      disabled = false,
+      onPageChange,
+      prevLabel = 'Previous',
+      nextLabel = 'Next',
+      'aria-label': ariaLabel = 'Pagination',
+      ...props
+    },
+    ref,
+  ) {
   const safeTotalPages = Math.max(totalPages, 1);
   const [internalPage, setInternalPage] = React.useState(() =>
     clampPage(defaultPage, safeTotalPages),
@@ -119,6 +123,7 @@ export function Pagination({
 
   return (
     <nav
+      ref={ref}
       className={cx(
         'pf-pagination',
         disabled && 'pf-pagination--disabled',
@@ -185,6 +190,6 @@ export function Pagination({
       ) : null}
     </nav>
   );
-}
+});
 
 Pagination.displayName = 'Pagination';

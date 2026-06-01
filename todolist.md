@@ -39,7 +39,7 @@ These are the cases where consumers are likely to need a ref for focus managemen
 - [x] **DatePicker** — programmatic focus on the trigger [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
 - [x] **Tooltip** — measure trigger for external positioning overrides [`Tooltip.tsx`](packages/react/src/components/Tooltip/Tooltip.tsx)
 - [x] **Carousel** — measure slide dimensions [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
-- [ ] **Pagination** — layout measurement [`Pagination.tsx`](packages/react/src/components/Pagination/Pagination.tsx)
+- [x] **Pagination** — layout measurement [`Pagination.tsx`](packages/react/src/components/Pagination/Pagination.tsx)
 - [ ] **FileUploader** — focus the drop zone [`FileUploader.tsx`](packages/react/src/components/FileUploader/FileUploader.tsx)
 - [ ] **Calendar** — embedded use needs ref [`Calendar.tsx`](packages/react/src/components/Calendar/Calendar.tsx)
 
