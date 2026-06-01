@@ -23,15 +23,15 @@ describe('LoadingSpinner', () => {
     expect(screen.getByText('Please wait')).toBeInTheDocument();
   });
 
-  it('applies the size via inline style', () => {
+  it('applies the size via CSS variable', () => {
     render(<LoadingSpinner size={48} />);
     const el = screen.getByRole('status');
-    expect(el).toHaveStyle({ width: '48px', height: '48px' });
+    expect(el.style.getPropertyValue('--pf-spinner-size')).toBe('48px');
   });
 
-  it('defaults to 24px size', () => {
+  it('defaults to 24px via CSS variable', () => {
     render(<LoadingSpinner />);
-    expect(screen.getByRole('status')).toHaveStyle({ width: '24px', height: '24px' });
+    expect(screen.getByRole('status').style.getPropertyValue('--pf-spinner-size')).toBe('24px');
   });
 });
 
@@ -83,19 +83,25 @@ describe('LoadingSkeleton', () => {
     expect(screen.getByRole('status')).toHaveAttribute('aria-label', 'Loading profile');
   });
 
-  it('applies width and height via inline style', () => {
+  it('applies width and height via CSS variables', () => {
     render(<LoadingSkeleton width={200} height={32} />);
-    expect(screen.getByRole('status')).toHaveStyle({ width: '200px', height: '32px' });
+    const el = screen.getByRole('status');
+    expect(el.style.getPropertyValue('--pf-skeleton-width')).toBe('200px');
+    expect(el.style.getPropertyValue('--pf-skeleton-height')).toBe('32px');
   });
 
   it('accepts string width values', () => {
     render(<LoadingSkeleton width="50%" height="1rem" />);
-    expect(screen.getByRole('status')).toHaveStyle({ width: '50%', height: '1rem' });
+    const el = screen.getByRole('status');
+    expect(el.style.getPropertyValue('--pf-skeleton-width')).toBe('50%');
+    expect(el.style.getPropertyValue('--pf-skeleton-height')).toBe('1rem');
   });
 
-  it('defaults to 100% width and 16px height', () => {
+  it('defaults to 100% width and 16px height via CSS variables', () => {
     render(<LoadingSkeleton />);
-    expect(screen.getByRole('status')).toHaveStyle({ width: '100%', height: '16px' });
+    const el = screen.getByRole('status');
+    expect(el.style.getPropertyValue('--pf-skeleton-width')).toBe('100%');
+    expect(el.style.getPropertyValue('--pf-skeleton-height')).toBe('16px');
   });
 
   it('applies the rounded modifier class when rounded=true', () => {

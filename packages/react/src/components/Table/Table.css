@@ -41,6 +41,7 @@
   font-weight: var(--font-weight-semibold);
   position: relative;
   text-transform: none;
+  width: var(--pf-col-width, auto);
 }
 
 .pf-table__sort-button {

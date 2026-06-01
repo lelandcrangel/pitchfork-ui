@@ -36,7 +36,7 @@ export function LoadingSpinner({
   return (
     <div
       className={cx('pf-loading-spinner', className)}
-      style={{ width: size, height: size }}
+      style={{ '--pf-spinner-size': `${size}px` } as React.CSSProperties}
       role="status"
       aria-label={label}
       {...props}
@@ -82,7 +82,10 @@ export function LoadingSkeleton({
         rounded ? 'pf-loading-skeleton--rounded' : undefined,
         className,
       )}
-      style={{ width, height }}
+      style={{
+        '--pf-skeleton-width': typeof width === 'number' ? `${width}px` : width,
+        '--pf-skeleton-height': typeof height === 'number' ? `${height}px` : height,
+      } as React.CSSProperties}
       role="status"
       aria-label={label}
       {...props}

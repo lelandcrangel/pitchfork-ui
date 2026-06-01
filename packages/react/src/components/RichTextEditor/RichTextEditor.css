@@ -66,6 +66,7 @@
   color: var(--pf-richtexteditor-color-semantic-text-default, var(--color-semantic-text-default));
   font: inherit;
   line-height: 1.5;
+  min-height: var(--pf-rte-min-height, 140px);
   outline: none;
   overflow-wrap: anywhere;
   padding: var(--space-3);

@@ -73,10 +73,10 @@ describe('ProgressBar', () => {
 
   // ─── Fill width ──────────────────────────────────────────────────────────
 
-  it('sets the fill element width to the computed percent', () => {
+  it('sets the fill element width via CSS variable', () => {
     const { container } = render(<ProgressBar value={25} max={100} />);
-    const fill = container.querySelector<HTMLElement>('.pf-progress-bar__fill');
-    expect(fill).toHaveStyle({ width: '25%' });
+    const fill = container.querySelector<HTMLElement>('.pf-progress-bar__fill')!;
+    expect(fill.style.getPropertyValue('--pf-progress-fill')).toBe('25%');
   });
 });
 
@@ -137,8 +137,10 @@ describe('ProgressCircle', () => {
     expect(svg).toHaveAttribute('aria-hidden');
   });
 
-  it('applies size via inline style', () => {
+  it('applies size via CSS variable', () => {
     render(<ProgressCircle value={50} size={96} />);
-    expect(screen.getByRole('progressbar')).toHaveStyle({ width: '96px', height: '96px' });
+    expect(
+      screen.getByRole('progressbar').style.getPropertyValue('--pf-progress-circle-size'),
+    ).toBe('96px');
   });
 });

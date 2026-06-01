@@ -43,7 +43,7 @@ export function ProgressBar({
       >
         <div
           className="pf-progress-bar__fill"
-          style={{ width: `${percent}%` }}
+          style={{ '--pf-progress-fill': `${percent}%` } as React.CSSProperties}
         />
       </div>
       {showValue ? (
@@ -70,7 +70,7 @@ export function ProgressCircle({
   return (
     <div
       className={cx('pf-progress-circle', className)}
-      style={{ width: size, height: size }}
+      style={{ '--pf-progress-circle-size': `${size}px` } as React.CSSProperties}
       role="progressbar"
       aria-valuemin={0}
       aria-valuemax={max}

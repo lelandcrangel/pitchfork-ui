@@ -161,12 +161,12 @@ export function Table({
                 }
                 style={
                   column.width !== undefined
-                    ? {
-                        width:
+                    ? ({
+                        '--pf-col-width':
                           typeof column.width === 'number'
                             ? `${column.width}px`
                             : column.width,
-                      }
+                      } as React.CSSProperties)
                     : undefined
                 }
               >

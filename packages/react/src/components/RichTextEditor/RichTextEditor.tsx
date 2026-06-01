@@ -247,7 +247,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
             data-placeholder={placeholder}
             suppressContentEditableWarning
             onInput={enforceLimitAndEmit}
-            style={{ minHeight }}
+            style={{ '--pf-rte-min-height': `${minHeight}px` } as React.CSSProperties}
             {...props}
           />
         </div>
