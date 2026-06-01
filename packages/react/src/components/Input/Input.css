@@ -70,3 +70,9 @@
 .pf-input--invalid {
   border-color: var(--pf-input-color-danger-600, var(--color-danger-600));
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-input {
+    transition: none;
+  }
+}

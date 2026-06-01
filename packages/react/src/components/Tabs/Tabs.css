@@ -105,3 +105,9 @@
     gap: var(--space-3);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-tabs__tab {
+    transition: none;
+  }
+}

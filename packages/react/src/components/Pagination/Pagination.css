@@ -90,3 +90,10 @@
     padding: 0 var(--space-2);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-pagination__page,
+  .pf-pagination__nav {
+    transition: none;
+  }
+}

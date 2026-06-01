@@ -61,3 +61,10 @@
   );
   font-size: var(--font-size-md);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-switch,
+  .pf-switch::after {
+    transition: none;
+  }
+}

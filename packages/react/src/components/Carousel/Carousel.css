@@ -130,3 +130,10 @@
   display: block;
   min-height: var(--pf-carousel-indicator-size, 8px);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-carousel__track,
+  .pf-carousel__indicator {
+    transition: none;
+  }
+}

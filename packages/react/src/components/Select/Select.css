@@ -137,3 +137,10 @@
   background: transparent;
   color: var(--pf-select-input-placeholder, var(--pf-input-placeholder));
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-select__trigger,
+  .pf-select__icon {
+    transition: none;
+  }
+}

@@ -82,3 +82,9 @@
 .pf-utility-button__label {
   white-space: nowrap;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-utility-button {
+    transition: none;
+  }
+}

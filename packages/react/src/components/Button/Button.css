@@ -80,3 +80,14 @@
   animation: pf-spin 0.65s linear infinite;
   flex-shrink: 0;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-button {
+    transition: none;
+  }
+
+  .pf-button__spinner {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}

@@ -225,3 +225,9 @@
   font: inherit;
   font-weight: var(--font-weight-semibold);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-button-group__button {
+    transition: none;
+  }
+}

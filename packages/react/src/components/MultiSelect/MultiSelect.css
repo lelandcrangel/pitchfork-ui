@@ -201,3 +201,10 @@
   height: 16px;
   width: 16px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-multi-select__trigger,
+  .pf-multi-select__icon {
+    transition: none;
+  }
+}
