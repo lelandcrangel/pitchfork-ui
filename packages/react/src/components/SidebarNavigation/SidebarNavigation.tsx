@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './SidebarNavigation.css';
 
@@ -88,16 +89,13 @@ function renderItem(item: SidebarNavigationItem, key: string) {
   );
 }
 
-export function SidebarNavigation({
-  className,
-  sections,
-  header,
-  footer,
-  'aria-label': ariaLabel = 'Sidebar navigation',
-  ...props
-}: SidebarNavigationProps) {
+export const SidebarNavigation = forwardRef<HTMLElement, SidebarNavigationProps>(
+  function SidebarNavigation(
+    { className, sections, header, footer, 'aria-label': ariaLabel = 'Sidebar navigation', ...props },
+    ref,
+  ) {
   return (
-    <aside className={cx('pf-sidebar-navigation', className)} {...props}>
+    <aside ref={ref} className={cx('pf-sidebar-navigation', className)} {...props}>
       {header ? (
         <div className="pf-sidebar-navigation__header">{header}</div>
       ) : null}
@@ -129,6 +127,6 @@ export function SidebarNavigation({
       ) : null}
     </aside>
   );
-}
+});
 
 SidebarNavigation.displayName = 'SidebarNavigation';

@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './SectionFooter.css';
 
@@ -9,18 +10,23 @@ export interface SectionFooterProps extends React.HTMLAttributes<HTMLElement> {
   align?: 'start' | 'between' | 'end';
 }
 
-export function SectionFooter({
-  className,
-  heading,
-  description,
-  actions,
-  divider = true,
-  align = 'between',
-  children,
-  ...props
-}: SectionFooterProps) {
+export const SectionFooter = forwardRef<HTMLElement, SectionFooterProps>(
+  function SectionFooter(
+    {
+      className,
+      heading,
+      description,
+      actions,
+      divider = true,
+      align = 'between',
+      children,
+      ...props
+    },
+    ref,
+  ) {
   return (
     <footer
+      ref={ref}
       className={cx(
         'pf-section-footer',
         divider && 'pf-section-footer--divider',
@@ -44,6 +50,6 @@ export function SectionFooter({
       ) : null}
     </footer>
   );
-}
+});
 
 SectionFooter.displayName = 'SectionFooter';

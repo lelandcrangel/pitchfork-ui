@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './RadarChart.css';
 
@@ -35,18 +36,22 @@ function toPointsString(points: Array<{ x: number; y: number }>): string {
     .join(' ');
 }
 
-export function RadarChart({
-  className,
-  data,
-  size = 280,
-  max,
-  levels = 4,
-  showAxes = true,
-  showLegend = true,
-  strokeColor = 'var(--color-semantic-action-primary)',
-  fillColor = 'rgb(249 115 22 / 0.18)',
-  ...props
-}: RadarChartProps) {
+export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(
+  function RadarChart(
+    {
+      className,
+      data,
+      size = 280,
+      max,
+      levels = 4,
+      showAxes = true,
+      showLegend = true,
+      strokeColor = 'var(--color-semantic-action-primary)',
+      fillColor = 'rgb(249 115 22 / 0.18)',
+      ...props
+    },
+    ref,
+  ) {
   const safeData = data.filter((item) => item.value >= 0);
   const count = safeData.length;
   const safeSize = Math.max(size, 180);
@@ -54,7 +59,7 @@ export function RadarChart({
 
   if (count < 3) {
     return (
-      <div className={cx('pf-radar-chart', className)} {...props}>
+      <div ref={ref} className={cx('pf-radar-chart', className)} {...props}>
         <div className="pf-radar-chart__empty">
           RadarChart needs at least 3 data points.
         </div>
@@ -100,7 +105,7 @@ export function RadarChart({
   const valuePolygon = toPointsString(valuePoints);
 
   return (
-    <div className={cx('pf-radar-chart', className)} {...props}>
+    <div ref={ref} className={cx('pf-radar-chart', className)} {...props}>
       <svg
         className="pf-radar-chart__svg"
         viewBox={`0 0 ${safeSize} ${safeSize}`}
@@ -183,6 +188,6 @@ export function RadarChart({
       ) : null}
     </div>
   );
-}
+});
 
 RadarChart.displayName = 'RadarChart';

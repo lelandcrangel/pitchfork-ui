@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './SectionHeader.css';
 
@@ -11,20 +12,25 @@ export interface SectionHeaderProps extends React.HTMLAttributes<HTMLElement> {
   align?: 'start' | 'between' | 'end';
 }
 
-export function SectionHeader({
-  className,
-  eyebrow,
-  heading,
-  description,
-  metadata,
-  actions,
-  divider = false,
-  align = 'between',
-  children,
-  ...props
-}: SectionHeaderProps) {
+export const SectionHeader = forwardRef<HTMLElement, SectionHeaderProps>(
+  function SectionHeader(
+    {
+      className,
+      eyebrow,
+      heading,
+      description,
+      metadata,
+      actions,
+      divider = false,
+      align = 'between',
+      children,
+      ...props
+    },
+    ref,
+  ) {
   return (
     <header
+      ref={ref}
       className={cx(
         'pf-section-header',
         divider && 'pf-section-header--divider',
@@ -52,6 +58,6 @@ export function SectionHeader({
       ) : null}
     </header>
   );
-}
+});
 
 SectionHeader.displayName = 'SectionHeader';

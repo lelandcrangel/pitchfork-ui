@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './LineBarChart.css';
 
@@ -182,20 +183,14 @@ export interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   valueFormatter?: (value: number) => string;
 }
 
-export function LineChart({
-  className,
-  data,
-  series,
-  yAxisLabel,
-  showLegend = true,
-  area = false,
-  curved = true,
-  valueFormatter,
-  ...props
-}: LineChartProps) {
+export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(
+  function LineChart(
+    { className, data, series, yAxisLabel, showLegend = true, area = false, curved = true, valueFormatter, ...props },
+    ref,
+  ) {
   if (!data.length || !series.length) {
     return (
-      <div className={cx('pf-chart', className)} {...props}>
+      <div ref={ref} className={cx('pf-chart', className)} {...props}>
         <div className="pf-chart__empty">No data</div>
       </div>
     );
@@ -215,7 +210,7 @@ export function LineChart({
   }));
 
   return (
-    <div className={cx('pf-chart', className)} {...props}>
+    <div ref={ref} className={cx('pf-chart', className)} {...props}>
       <svg
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
         className="pf-chart__svg"
@@ -285,7 +280,7 @@ export function LineChart({
       ) : null}
     </div>
   );
-}
+});
 
 LineChart.displayName = 'LineChart';
 
@@ -300,19 +295,14 @@ export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   valueFormatter?: (value: number) => string;
 }
 
-export function BarChart({
-  className,
-  data,
-  series,
-  yAxisLabel,
-  showLegend = true,
-  stacked = false,
-  valueFormatter,
-  ...props
-}: BarChartProps) {
+export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(
+  function BarChart(
+    { className, data, series, yAxisLabel, showLegend = true, stacked = false, valueFormatter, ...props },
+    ref,
+  ) {
   if (!data.length || !series.length) {
     return (
-      <div className={cx('pf-chart', className)} {...props}>
+      <div ref={ref} className={cx('pf-chart', className)} {...props}>
         <div className="pf-chart__empty">No data</div>
       </div>
     );
@@ -339,7 +329,7 @@ export function BarChart({
   }));
 
   return (
-    <div className={cx('pf-chart', className)} {...props}>
+    <div ref={ref} className={cx('pf-chart', className)} {...props}>
       <svg
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
         className="pf-chart__svg"
@@ -398,6 +388,6 @@ export function BarChart({
       ) : null}
     </div>
   );
-}
+});
 
 BarChart.displayName = 'BarChart';

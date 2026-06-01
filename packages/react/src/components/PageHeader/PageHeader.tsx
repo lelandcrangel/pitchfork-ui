@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import { Breadcrumbs, type BreadcrumbsProps } from '../Breadcrumbs';
 import './PageHeader.css';
@@ -13,25 +14,20 @@ export interface PageHeaderProps extends React.HTMLAttributes<HTMLElement> {
 
 export type PageHeaderMetaProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function PageHeaderMeta({ className, ...props }: PageHeaderMetaProps) {
-  return <div className={cx('pf-page-header__meta', className)} {...props} />;
-}
-
+export const PageHeaderMeta = forwardRef<HTMLDivElement, PageHeaderMetaProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-page-header__meta', className)} {...props} />
+  ),
+);
 PageHeaderMeta.displayName = 'PageHeaderMeta';
 
-export function PageHeader({
-  className,
-  eyebrow,
-  heading,
-  description,
-  breadcrumbs,
-  metadata,
-  actions,
-  children,
-  ...props
-}: PageHeaderProps) {
+export const PageHeader = forwardRef<HTMLElement, PageHeaderProps>(
+  function PageHeader(
+    { className, eyebrow, heading, description, breadcrumbs, metadata, actions, children, ...props },
+    ref,
+  ) {
   return (
-    <header className={cx('pf-page-header', className)} {...props}>
+    <header ref={ref} className={cx('pf-page-header', className)} {...props}>
       {breadcrumbs?.length ? (
         <Breadcrumbs
           items={breadcrumbs}
@@ -58,6 +54,6 @@ export function PageHeader({
       </div>
     </header>
   );
-}
+});
 
 PageHeader.displayName = 'PageHeader';

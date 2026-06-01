@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './HeaderNavigation.css';
 
@@ -14,16 +15,20 @@ export interface HeaderNavigationProps extends React.HTMLAttributes<HTMLElement>
   actions?: React.ReactNode;
 }
 
-export function HeaderNavigation({
-  className,
-  brand,
-  items,
-  actions,
-  'aria-label': ariaLabel = 'Header navigation',
-  ...props
-}: HeaderNavigationProps) {
+export const HeaderNavigation = forwardRef<HTMLElement, HeaderNavigationProps>(
+  function HeaderNavigation(
+    {
+      className,
+      brand,
+      items,
+      actions,
+      'aria-label': ariaLabel = 'Header navigation',
+      ...props
+    },
+    ref,
+  ) {
   return (
-    <header className={cx('pf-header-navigation', className)} {...props}>
+    <header ref={ref} className={cx('pf-header-navigation', className)} {...props}>
       <nav className="pf-header-navigation__nav" aria-label={ariaLabel}>
         {brand ? (
           <div className="pf-header-navigation__brand">{brand}</div>
@@ -97,4 +102,6 @@ export function HeaderNavigation({
       </nav>
     </header>
   );
-}
+});
+
+HeaderNavigation.displayName = 'HeaderNavigation';

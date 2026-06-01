@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { forwardRef, type CSSProperties } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Rating.css';
@@ -27,19 +27,13 @@ export interface RatingStarsProps extends React.HTMLAttributes<HTMLDivElement> {
   ariaLabel?: string;
 }
 
-export function RatingStars({
-  value,
-  max = 5,
-  size = 18,
-  showValue = false,
-  ariaLabel,
-  className,
-  ...props
-}: RatingStarsProps) {
+export const RatingStars = forwardRef<HTMLDivElement, RatingStarsProps>(
+  function RatingStars({ value, max = 5, size = 18, showValue = false, ariaLabel, className, ...props }, ref) {
   const clampedValue = clampRating(value, max);
 
   return (
     <div
+      ref={ref}
       className={cx('pf-rating-stars', className)}
       role="img"
       aria-label={ariaLabel ?? `Rating ${clampedValue} out of ${max}`}
@@ -82,7 +76,8 @@ export function RatingStars({
       ) : null}
     </div>
   );
-}
+});
+RatingStars.displayName = 'RatingStars';
 
 export interface RatingBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   value: number;
@@ -91,18 +86,13 @@ export interface RatingBadgeProps extends React.HTMLAttributes<HTMLSpanElement> 
   size?: 'sm' | 'md';
 }
 
-export function RatingBadge({
-  value,
-  max = 5,
-  reviews,
-  size = 'md',
-  className,
-  ...props
-}: RatingBadgeProps) {
+export const RatingBadge = forwardRef<HTMLSpanElement, RatingBadgeProps>(
+  function RatingBadge({ value, max = 5, reviews, size = 'md', className, ...props }, ref) {
   const clampedValue = clampRating(value, max);
 
   return (
     <span
+      ref={ref}
       className={cx('pf-rating-badge', `pf-rating-badge--${size}`, className)}
       {...props}
     >
@@ -119,4 +109,5 @@ export function RatingBadge({
       ) : null}
     </span>
   );
-}
+});
+RatingBadge.displayName = 'RatingBadge';

@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './ProgressSteps.css';
 
@@ -36,14 +37,11 @@ function inferStatus(
   return index === firstCurrent ? 'current' : 'upcoming';
 }
 
-export function ProgressSteps({
-  className,
-  steps,
-  orientation = 'horizontal',
-  ...props
-}: ProgressStepsProps) {
+export const ProgressSteps = forwardRef<HTMLOListElement, ProgressStepsProps>(
+  function ProgressSteps({ className, steps, orientation = 'horizontal', ...props }, ref) {
   return (
     <ol
+      ref={ref}
       className={cx(
         'pf-progress-steps',
         `pf-progress-steps--${orientation}`,
@@ -82,6 +80,6 @@ export function ProgressSteps({
       })}
     </ol>
   );
-}
+});
 
 ProgressSteps.displayName = 'ProgressSteps';

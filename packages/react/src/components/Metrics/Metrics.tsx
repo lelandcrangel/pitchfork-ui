@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon, type IconName } from '../Icon';
 import './Metrics.css';
@@ -26,28 +27,23 @@ const trendSymbol: Record<MetricTrend, string> = {
   neutral: '=',
 };
 
-export function MetricGrid({ className, ...props }: MetricGridProps) {
-  return <div className={cx('pf-metric-grid', className)} {...props} />;
-}
+export const MetricGrid = forwardRef<HTMLDivElement, MetricGridProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-metric-grid', className)} {...props} />
+  ),
+);
+MetricGrid.displayName = 'MetricGrid';
 
-export function MetricCard({
-  className,
-  heading,
-  value,
-  description,
-  trend = 'neutral',
-  trendLabel,
-  icon,
-  iconName,
-  action,
-  children,
-  ...props
-}: MetricCardProps) {
+export const MetricCard = forwardRef<HTMLDivElement, MetricCardProps>(
+  function MetricCard(
+    { className, heading, value, description, trend = 'neutral', trendLabel, icon, iconName, action, children, ...props },
+    ref,
+  ) {
   const resolvedIcon =
     icon ?? (iconName ? <Icon name={iconName} aria-hidden /> : null);
 
   return (
-    <div className={cx('pf-metric-card', className)} {...props}>
+    <div ref={ref} className={cx('pf-metric-card', className)} {...props}>
       <div className="pf-metric-card__header">
         <div className="pf-metric-card__heading-wrap">
           <p className="pf-metric-card__heading">{heading}</p>
@@ -83,4 +79,5 @@ export function MetricCard({
       {children}
     </div>
   );
-}
+});
+MetricCard.displayName = 'MetricCard';

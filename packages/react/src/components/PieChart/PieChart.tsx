@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './PieChart.css';
 
@@ -67,16 +68,11 @@ function toConicGradient(segments: PreparedSegment[]): string {
   return `conic-gradient(${stops.join(', ')})`;
 }
 
-export function PieChart({
-  className,
-  data,
-  size = 192,
-  cutout = 0.58,
-  showLegend = true,
-  centerLabel,
-  emptyLabel = 'No data',
-  ...props
-}: PieChartProps) {
+export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(
+  function PieChart(
+    { className, data, size = 192, cutout = 0.58, showLegend = true, centerLabel, emptyLabel = 'No data', ...props },
+    ref,
+  ) {
   const segments = prepareSegments(data);
   const hasData = segments.length > 0;
   const chartSize = Math.max(size, 120);
@@ -87,7 +83,7 @@ export function PieChart({
     : 'conic-gradient(var(--color-semantic-background-subtle) 0% 100%)';
 
   return (
-    <div className={cx('pf-pie-chart', className)} {...props}>
+    <div ref={ref} className={cx('pf-pie-chart', className)} {...props}>
       <div
         className={cx(
           'pf-pie-chart__visual',
@@ -133,6 +129,6 @@ export function PieChart({
       ) : null}
     </div>
   );
-}
+});
 
 PieChart.displayName = 'PieChart';

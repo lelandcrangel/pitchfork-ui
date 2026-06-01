@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react';
+import { forwardRef, useEffect, useId, useState } from 'react';
 import { Highlight, Language, themes } from 'prism-react-renderer';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
@@ -18,18 +18,22 @@ export interface CodeSnippetProps extends Omit<
   onCodeCopy?: (code: string) => void;
 }
 
-export function CodeSnippet({
-  className,
-  code,
-  language,
-  title,
-  showLineNumbers = false,
-  maxHeight,
-  copyLabel = 'Copy',
-  copiedLabel = 'Copied',
-  onCodeCopy,
-  ...props
-}: CodeSnippetProps) {
+export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(
+  function CodeSnippet(
+    {
+      className,
+      code,
+      language,
+      title,
+      showLineNumbers = false,
+      maxHeight,
+      copyLabel = 'Copy',
+      copiedLabel = 'Copied',
+      onCodeCopy,
+      ...props
+    },
+    ref,
+  ) {
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const liveRegionId = useId();
@@ -63,7 +67,7 @@ export function CodeSnippet({
   };
 
   return (
-    <figure className={cx('pf-code-snippet', className)} {...props}>
+    <figure ref={ref} className={cx('pf-code-snippet', className)} {...props}>
       {(title || language) && (
         <figcaption className="pf-code-snippet__header">
           <div className="pf-code-snippet__meta">
@@ -172,4 +176,6 @@ export function CodeSnippet({
       </span>
     </figure>
   );
-}
+});
+
+CodeSnippet.displayName = 'CodeSnippet';
