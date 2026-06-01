@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react';
+import { forwardRef, useEffect, useId, useImperativeHandle, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useFocusTrap } from '../../hooks';
 import { cx } from '../../utils/cx';
@@ -23,34 +23,48 @@ export interface ModalProps extends Omit<
 
 export type ModalSectionProps = React.HTMLAttributes<HTMLDivElement>;
 
-export function ModalHeader({ className, ...props }: ModalSectionProps) {
-  return <div className={cx('pf-modal__header', className)} {...props} />;
-}
+export const ModalHeader = forwardRef<HTMLDivElement, ModalSectionProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-modal__header', className)} {...props} />
+  ),
+);
+ModalHeader.displayName = 'ModalHeader';
 
-export function ModalBody({ className, ...props }: ModalSectionProps) {
-  return <div className={cx('pf-modal__body', className)} {...props} />;
-}
+export const ModalBody = forwardRef<HTMLDivElement, ModalSectionProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-modal__body', className)} {...props} />
+  ),
+);
+ModalBody.displayName = 'ModalBody';
 
-export function ModalFooter({ className, ...props }: ModalSectionProps) {
-  return <div className={cx('pf-modal__footer', className)} {...props} />;
-}
+export const ModalFooter = forwardRef<HTMLDivElement, ModalSectionProps>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cx('pf-modal__footer', className)} {...props} />
+  ),
+);
+ModalFooter.displayName = 'ModalFooter';
 
-export function Modal({
-  className,
-  open,
-  onOpenChange,
-  title,
-  description,
-  footer,
-  size = 'md',
-  closeOnOverlayClick = true,
-  showCloseButton = true,
-  children,
-  ...props
-}: ModalProps) {
+export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
+  {
+    className,
+    open,
+    onOpenChange,
+    title,
+    description,
+    footer,
+    size = 'md',
+    closeOnOverlayClick = true,
+    showCloseButton = true,
+    children,
+    ...props
+  },
+  ref,
+) {
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
+
+  useImperativeHandle(ref, () => dialogRef.current as HTMLDivElement, []);
 
   useEffect(() => {
     if (!open || typeof document === 'undefined') {
@@ -131,4 +145,6 @@ export function Modal({
     </div>,
     document.body,
   );
-}
+});
+
+Modal.displayName = 'Modal';
