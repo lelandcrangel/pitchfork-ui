@@ -70,37 +70,37 @@ Priority order for adding tests:
 - [x] `Rating` — RatingStars fill percent, clamping, RatingBadge value display
 - [x] `LoadingIndicators` — LoadingSpinner role=status, LoadingSkeleton, LoadingDots
 - [x] `ProgressIndicators` — value/max, aria-valuenow/min/max, label
-- [ ] `ProgressSteps` — active/completed/upcoming step states, step count
+- [x] `ProgressSteps` — active/completed/upcoming step states, step count
 
 **Display — simple components**
-- [ ] `Badge` — variant class, content renders
-- [ ] `BadgeGroup` — renders multiple badges
-- [ ] `Tag` — variant, dismissible, onDismiss callback
-- [ ] `Card` — Card, CardHeader, CardContent, CardFooter render and accept children
-- [ ] `Avatar` — image render, initials fallback, size
-- [ ] `ContentDivider` — horizontal/vertical orientation, label, role=separator
-- [ ] `Breadcrumbs` — link vs span per item, aria-current on last item, custom separator
-- [ ] `Icon` — known names render, unknown name returns null + dev warning, custom icons
-- [ ] `Metrics` — value, label, change indicator renders
+- [x] `Badge` — variant class, content renders
+- [x] `BadgeGroup` — renders multiple badges
+- [x] `Tag` — variant, dismissible, onDismiss callback
+- [x] `Card` — Card, CardHeader, CardContent, CardFooter render and accept children
+- [x] `Avatar` — image render, initials fallback, size
+- [x] `ContentDivider` — horizontal/vertical orientation, label, role=separator
+- [x] `Breadcrumbs` — link vs span per item, aria-current on last item, custom separator
+- [x] `Icon` — known names render, unknown name returns null + dev warning, custom icons
+- [x] `Metrics` — value, label, change indicator renders
 
 **Display — content**
-- [ ] `CodeSnippet` — renders code content, copy button
-- [ ] `VideoPlayer` — renders video element, label association
-- [ ] `CreditCard` — card number masking, card type, expiry
-- [ ] `InlineCTA` — title, description, action slot renders
+- [x] `CodeSnippet` — renders code content, copy button
+- [x] `VideoPlayer` — renders video element, label association
+- [x] `CreditCard` — card number masking, card type, expiry
+- [x] `InlineCTA` — title, description, action slot renders
 
 **Display — page structure**
-- [ ] `PageHeader` — title, subtitle, breadcrumb slot, actions slot
-- [ ] `SectionHeader` — title, description, action slot
-- [ ] `SectionFooter` — renders children
-- [ ] `HeaderNavigation` — logo, nav links, active state
-- [ ] `SidebarNavigation` — links, active state, nested items
+- [x] `PageHeader` — title, subtitle, breadcrumb slot, actions slot
+- [x] `SectionHeader` — title, description, action slot
+- [x] `SectionFooter` — renders children
+- [x] `HeaderNavigation` — logo, nav links, active state
+- [x] `SidebarNavigation` — links, active state, nested items
 
 **Data visualisation**
-- [ ] `PieChart` — segment rendering, legend, empty state, conic gradient
-- [ ] `RadarChart` — axes, value polygon, empty/insufficient data state
-- [ ] `LineBarCharts` — LineChart series rendering, BarChart grouped/stacked, empty state
+- [x] `PieChart` — segment rendering, legend, empty state, conic gradient
+- [x] `RadarChart` — axes, value polygon, empty/insufficient data state
+- [x] `LineBarCharts` — LineChart series rendering, BarChart grouped/stacked, empty state
 
 **Groups & utilities**
-- [ ] `ButtonGroup` — renders grouped buttons, passes className
-- [ ] `UtilityButton` — variants, sizes, disabled
+- [x] `ButtonGroup` — renders grouped buttons, passes className
+- [x] `UtilityButton` — variants, sizes, disabled
