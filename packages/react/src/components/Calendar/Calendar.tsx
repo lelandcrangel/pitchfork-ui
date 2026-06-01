@@ -1,5 +1,5 @@
 import { Dropdown } from '../Dropdown';
-import { useEffect, useId, useMemo, useState } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Calendar.css';
@@ -77,22 +77,26 @@ export interface CalendarProps extends Omit<
   endYear?: number;
 }
 
-export function Calendar({
-  className,
-  value,
-  defaultValue,
-  onValueChange,
-  autoSelectToday = true,
-  label,
-  description,
-  error,
-  disabledDates,
-  showOutsideDays = true,
-  startYear,
-  endYear,
-  'aria-describedby': ariaDescribedBy,
-  ...props
-}: CalendarProps) {
+export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
+  function Calendar(
+    {
+      className,
+      value,
+      defaultValue,
+      onValueChange,
+      autoSelectToday = true,
+      label,
+      description,
+      error,
+      disabledDates,
+      showOutsideDays = true,
+      startYear,
+      endYear,
+      'aria-describedby': ariaDescribedBy,
+      ...props
+    },
+    ref,
+  ) {
   const generatedId = useId();
   const calendarId = props.id ?? generatedId;
   const descriptionId = description ? `${calendarId}-description` : undefined;
@@ -201,6 +205,7 @@ export function Calendar({
       ) : null}
 
       <div
+        ref={ref}
         {...props}
         id={calendarId}
         className={cx(
@@ -340,4 +345,6 @@ export function Calendar({
       ) : null}
     </div>
   );
-}
+});
+
+Calendar.displayName = 'Calendar';
