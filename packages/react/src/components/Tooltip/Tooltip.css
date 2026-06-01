@@ -1,5 +1,11 @@
 .pf-tooltip__trigger {
+  border-radius: var(--radius-sm);
   display: inline-flex;
+}
+
+.pf-tooltip__trigger:focus-within {
+  outline: var(--pf-focus-ring);
+  outline-offset: 2px;
 }
 
 .pf-tooltip {
