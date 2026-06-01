@@ -35,7 +35,7 @@ Findings from post-audit review. Ordered by priority within each section.
 These are the cases where consumers are likely to need a ref for focus management, measurement, or animation. Add `forwardRef` and update `.displayName`.
 
 - [x] **Modal** — consumers need to focus the dialog or measure it [`Modal.tsx`](packages/react/src/components/Modal/Modal.tsx)
-- [ ] **Tabs** — scroll-into-view, imperative focus [`Tabs.tsx`](packages/react/src/components/Tabs/Tabs.tsx)
+- [x] **Tabs** — scroll-into-view, imperative focus [`Tabs.tsx`](packages/react/src/components/Tabs/Tabs.tsx)
 - [ ] **DatePicker** — programmatic focus on the trigger [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
 - [ ] **Tooltip** — measure trigger for external positioning overrides [`Tooltip.tsx`](packages/react/src/components/Tooltip/Tooltip.tsx)
 - [ ] **Carousel** — measure slide dimensions [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)

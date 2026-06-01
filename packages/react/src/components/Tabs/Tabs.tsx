@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState } from 'react';
+import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './Tabs.css';
 
@@ -29,17 +29,20 @@ function getFirstEnabledValue(items: TabsItem[]): string | undefined {
   return items.find((item) => !item.disabled)?.value;
 }
 
-export function Tabs({
-  className,
-  items,
-  value,
-  defaultValue,
-  onValueChange,
-  variant = 'underline',
-  size = 'md',
-  fullWidth = false,
-  ...props
-}: TabsProps) {
+export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
+  {
+    className,
+    items,
+    value,
+    defaultValue,
+    onValueChange,
+    variant = 'underline',
+    size = 'md',
+    fullWidth = false,
+    ...props
+  },
+  ref,
+) {
   const baseId = useId();
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<string | undefined>(
@@ -105,7 +108,7 @@ export function Tabs({
   };
 
   return (
-    <div className={cx('pf-tabs', className)} {...props}>
+    <div ref={ref} className={cx('pf-tabs', className)} {...props}>
       <div
         className={cx(
           'pf-tabs__list',
@@ -185,6 +188,6 @@ export function Tabs({
       ) : null}
     </div>
   );
-}
+});
 
 Tabs.displayName = 'Tabs';
