@@ -61,12 +61,12 @@ Priority order for adding tests:
 - [x] `Table` — column rendering, sort state, sortable click, empty state, striped/dense classes (18 tests)
 - [x] `FileUploader` — file selection, maxFiles, maxFileSize validation, remove file, required (15 tests)
 - [x] `Calendar` — month navigation (prev/next), date selection, disabled dates, selected state (16 tests)
-- [ ] `RichTextEditor` — typing, toolbar bold/italic/underline, characterMax limit, disabled
-- [ ] `TreeView` — expand/collapse nodes, nested structure, keyboard nav
-- [ ] `Carousel` — next/prev navigation, wrapping, slide count
+- [x] `RichTextEditor` — typing, toolbar bold/italic/underline, characterMax limit, disabled
+- [x] `TreeView` — expand/collapse nodes, nested structure, keyboard nav
+- [x] `Carousel` — next/prev navigation, wrapping, slide count
 
 **Display — feedback & status**
-- [ ] `Notification` — role per variant (status), dismiss callback, icon, action slot
+- [x] `Notification` — role per variant (status), dismiss callback, icon, action slot
 - [ ] `Rating` — RatingStars fill percent, clamping, RatingBadge value display
 - [ ] `LoadingIndicators` — LoadingSpinner role=status, LoadingSkeleton, LoadingDots
 - [ ] `ProgressIndicators` — value/max, aria-valuenow/min/max, label
