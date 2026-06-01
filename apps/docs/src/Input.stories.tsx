@@ -34,10 +34,4 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Disabled: Story = {
-  args: {
-    label: 'Disabled input',
-    description: 'This input is disabled.',
-    disabled: true,
-  },
-};
+export const Interactive: Story = {};
