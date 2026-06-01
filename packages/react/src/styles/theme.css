@@ -117,6 +117,9 @@
   /* Pagination geometry aliases */
   --pf-pagination-page-size: 32px;
 
+  /* Tooltip geometry aliases */
+  --pf-tooltip-padding-x: 10px;
+
   /* Utility color aliases */
   --pf-tooltip-bg: var(--color-gray-900);
   --pf-tooltip-text: var(--color-base-white);
