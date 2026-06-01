@@ -10,43 +10,45 @@ All notable changes to this project are documented below, grouped by date and fe
 
 ### Bundle
 
-- **Icon:** replaced `import { far }` (the full ~1,000-icon FontAwesome regular pack) with 9 individual named imports. Only icons actually used across the library are bundled: `calendar`, `circle-check`, `circle-question`, `circle-xmark`, `copy`, `square-caret-left`, `square-caret-right`, `square-check`, `star`. Expected reduction in icon payload of ~90%.
+- **Icon:** replaced full FontAwesome regular pack import (`far`) with 9 individual named imports — only icons actually used across the library. Expected ~90% reduction in icon payload.
 - **Icon:** added `file-arrow-up` as a custom inline SVG — it was never in the free-regular set and was silently rendering nothing in `FileUploader`.
 
 ### Accessibility
 
-- **Reduced motion:** added `@media (prefers-reduced-motion: reduce)` guards to 13 CSS files that had unguarded transitions or animations: `Button`, `Switch`, `Carousel`, `Select`, `MultiSelect`, `Dropdown`, `Input`, `Tabs`, `ProgressIndicators`, `Pagination`, `ButtonGroup`, `UtilityButton`, `LineBarChart`.
-- **Carousel:** `ArrowLeft` / `ArrowRight` keyboard navigation now works when any control button (prev, next, or indicator) has focus.
-- **Tooltip:** trigger wrapper now shows a focus ring via `:has(:focus-visible)` when a keyboard-focused descendant does not have its own focus indicator.
+- Added `@media (prefers-reduced-motion: reduce)` guards to 13 CSS files that had unguarded transitions/animations: `Button`, `Switch`, `Carousel`, `Select`, `MultiSelect`, `Dropdown`, `Input`, `Tabs`, `ProgressIndicators`, `Pagination`, `ButtonGroup`, `UtilityButton`, `LineBarChart`.
+- **Carousel:** `ArrowLeft` / `ArrowRight` keyboard navigation now works when any control button has focus.
+- **Tooltip:** trigger wrapper now shows a focus ring via `:has(:focus-visible)` for keyboard-focused children that lack their own indicator.
 
 ### API
 
-- **`forwardRef` — interactive components:** `Modal`, `Tabs`, `DatePicker`, `Tooltip`, `Carousel`, `Pagination`, `FileUploader`, `Calendar` now accept a `ref`. `Modal` exposes the dialog div; `Tooltip` exposes the trigger span via `useImperativeHandle`.
-- **`forwardRef` — display components:** all remaining named-function exports converted: `CodeSnippet`, `HeaderNavigation`, `InlineCTA`, `LoadingSpinner`, `LoadingDots`, `LoadingSkeleton`, `MetricCard`, `MetricGrid`, `PageHeader`, `PageHeaderMeta`, `ProgressBar`, `ProgressCircle`, `ProgressSteps`, `RatingStars`, `RatingBadge`, `SectionHeader`, `SectionFooter`, `SidebarNavigation`, `PieChart`, `RadarChart`, `LineChart`, `BarChart`.
-- **`displayName`** added to all of the above, plus `Icon`, `Calendar`, `Carousel`, `DatePicker`, `FileUploader`.
+- Added `forwardRef` to interactive components: `Modal`, `Tabs`, `DatePicker`, `Tooltip`, `Carousel`, `Pagination`, `FileUploader`, `Calendar`.
+- Added `forwardRef` and `displayName` to 22 display components: `CodeSnippet`, `HeaderNavigation`, `InlineCTA`, `LoadingSpinner`, `LoadingDots`, `LoadingSkeleton`, `MetricCard`, `MetricGrid`, `PageHeader`, `PageHeaderMeta`, `ProgressBar`, `ProgressCircle`, `ProgressSteps`, `RatingStars`, `RatingBadge`, `SectionHeader`, `SectionFooter`, `SidebarNavigation`, `PieChart`, `RadarChart`, `LineChart`, `BarChart`.
 
 ### CSS / Tokens
 
-- Converted 6 consumer-controlled inline `style` props to CSS custom properties, keeping values out of rendered HTML: `--pf-rte-min-height` (RichTextEditor), `--pf-spinner-size` (LoadingSpinner), `--pf-skeleton-width` / `--pf-skeleton-height` (LoadingSkeleton), `--pf-progress-fill` (ProgressBar), `--pf-progress-circle-size` (ProgressCircle), `--pf-col-width` (Table column width).
-- Replaced hardcoded `px` / `rem` values in component CSS with token vars or named aliases in `theme.css`:
-  - `Modal` / `SlideoutMenu`: `gap: 4px` → `var(--space-1)`, `font-size: 1.125rem` / `18px` → `var(--font-size-lg)`, close button `32px` → `var(--size-8, 32px)`.
-  - `Slider`: `border-radius: 999px` → `var(--radius-full)`, track `height: 8px` → `var(--pf-slider-track-height)`, thumb `18px` → `var(--pf-slider-thumb-size)`, `margin-top: -5px` → `calc(...)`.
-  - `Tabs`: pills `gap: 4px` / `padding: 4px` → `var(--space-1)`, sm tab `padding: 8px 12px` → `var(--space-2) var(--space-3)`, md tab padding and underline width → component aliases.
-  - `Dropdown`: chevron and icon `16px` → `var(--pf-dropdown-icon-size)`, menu `gap: 2px` → `var(--pf-dropdown-menu-gap)`, shortcut `font-size: 12px` → `var(--font-size-xs)`.
-  - `Pagination`: page button `32px` → `var(--pf-pagination-page-size)`, nav button `36px` → `var(--pf-control-height-sm)`.
-  - `Tooltip`: `padding: 8px 10px` → `var(--space-2) var(--pf-tooltip-padding-x)`.
+- Converted 6 inline `style` props to CSS custom properties: `--pf-rte-min-height`, `--pf-spinner-size`, `--pf-skeleton-width/height`, `--pf-progress-fill`, `--pf-progress-circle-size`, `--pf-col-width`.
+- Replaced hardcoded `px`/`rem` values with token vars or named aliases in `theme.css` across: `Modal`, `SlideoutMenu`, `Slider`, `Tabs`, `Dropdown`, `Pagination`, `Tooltip`.
 
 ### Tests
 
-- Test coverage expanded from ~4% to **52 / 54 components** (all except `EmptyState` and `LineBarCharts` placeholder directories). 725 tests total.
-- New test files added: `RichTextEditor`, `TreeView`, `Carousel`, `Notification`, `Rating`, `LoadingIndicators`, `ProgressIndicators`, `ProgressSteps`, `Badge`, `BadgeGroup`, `Tag`, `Card`, `Avatar`, `ContentDivider`, `Breadcrumbs`, `Metrics`, `CodeSnippet`, `VideoPlayer`, `CreditCard`, `InlineCTA`, `PageHeader`, `SectionHeader`, `SectionFooter`, `HeaderNavigation`, `SidebarNavigation`, `PieChart`, `RadarChart`, `LineBarCharts`, `ButtonGroup`, `UtilityButton`, `Icon`.
-- Earlier additions: `Select`, `MultiSelect`, `Modal`, `DatePicker`, `Slider`, `Checkbox`, `RadioGroup`, `Alert`, `Tooltip`, `Input`, `Textarea`, `Switch`, `RadioButton`, `Dropdown`, `Tabs`, `SlideoutMenu`, `Pagination`, `Table`, `FileUploader`, `Calendar`.
+- Test coverage expanded from ~4% to **52 / 54 components**, 725 tests total.
+- New test files: `RichTextEditor`, `TreeView`, `Carousel`, `Notification`, `Rating`, `LoadingIndicators`, `ProgressIndicators`, `ProgressSteps`, `Badge`, `BadgeGroup`, `Tag`, `Card`, `Avatar`, `ContentDivider`, `Breadcrumbs`, `Metrics`, `CodeSnippet`, `VideoPlayer`, `CreditCard`, `InlineCTA`, `PageHeader`, `SectionHeader`, `SectionFooter`, `HeaderNavigation`, `SidebarNavigation`, `PieChart`, `RadarChart`, `LineBarCharts`, `ButtonGroup`, `UtilityButton`, `Icon`.
 
 ### Stories
 
-- Fixed broken icon names in 6 story files following the Icon bundle change (`calendar-days` → `calendar`, `pen-to-square` → `copy`, `trash-can` → `circle-xmark`, `rectangle-list` → `copy`, `square-plus` → `square-check`, `magnifying-glass` → `circle-question`, `user` → `circle-check`, `circle-dot` → `copy`).
-- Added `KeyboardFocus` story to Tooltip demonstrating the trigger focus ring on a plain `<span tabIndex={0}>` child.
-- Added keyboard navigation documentation to Carousel `Interactive` story.
+- Fixed broken icon names in 6 story files following Icon bundle change.
+- Added `KeyboardFocus` story to Tooltip; added keyboard navigation docs to Carousel.
+
+## [2026-05-31]
+
+### Tests
+
+- Added test files for 21 components: `Select`, `MultiSelect`, `Modal`, `DatePicker`, `Slider`, `Checkbox`, `RadioGroup`, `Alert`, `Tooltip`, `Input`, `Textarea`, `Switch`, `RadioButton`, `Dropdown`, `Tabs`, `SlideoutMenu`, `Pagination`, `Table`, `FileUploader`, `Calendar`.
+- Each file includes at minimum one accessibility-focused test per contributing guidelines.
+
+### Fixes
+
+- Resolved inline style issues flagged during audit — groundwork for subsequent CSS variable migration.
 
 ## [2026-05-24]
 
@@ -76,17 +78,6 @@ All notable changes to this project are documented below, grouped by date and fe
 - Removed the "What buyers receive" section from the Introduction page.
 - Ensured all PF-prefixed variables and controls are present for all key components.
 - General updates to component CSS and color variables.
-
-## [2026-05-31]
-
-### Tests
-
-- Began systematic test coverage expansion. Added test files for: `Select`, `MultiSelect`, `Modal`, `DatePicker`, `Slider`, `Checkbox`, `RadioGroup`, `Alert`, `Tooltip`, `Input`, `Textarea`, `Switch`, `RadioButton`, `Dropdown`, `Tabs`, `SlideoutMenu`, `Pagination`, `Table`, `FileUploader`, `Calendar`.
-- Each file includes at minimum one accessibility-focused test (role presence, keyboard interaction, or ARIA attribute wiring) per the project's contributing guidelines.
-
-### Fixes
-
-- Resolved inline style issues flagged during audit — groundwork for subsequent CSS variable migration.
 
 ## [2026-05-23]
 

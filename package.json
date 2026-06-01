@@ -16,6 +16,7 @@
     "dev": "npm run storybook -w @pitchfork-ui/docs",
     "storybook": "npm run storybook -w @pitchfork-ui/docs",
     "build": "npm run build -w @pitchfork-ui/tokens && npm run build -w @pitchfork-ui/react && npm run build -w @pitchfork-ui/docs",
+    "build:hostinger": "npm run build -w @pitchfork-ui/tokens && npm run build -w @pitchfork-ui/react && npm run build:hostinger -w @pitchfork-ui/docs",
     "build:tokens": "npm run build -w @pitchfork-ui/tokens",
     "build:react": "npm run build -w @pitchfork-ui/react",
     "test": "npm run test -w @pitchfork-ui/react",
