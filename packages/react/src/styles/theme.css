@@ -114,6 +114,9 @@
   --pf-dropdown-icon-size: 16px;
   --pf-dropdown-menu-gap: 2px;
 
+  /* Pagination geometry aliases */
+  --pf-pagination-page-size: 32px;
+
   /* Utility color aliases */
   --pf-tooltip-bg: var(--color-gray-900);
   --pf-tooltip-text: var(--color-base-white);

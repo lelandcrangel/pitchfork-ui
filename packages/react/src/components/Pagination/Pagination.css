@@ -34,15 +34,15 @@
 }
 
 .pf-pagination__page {
-  height: 32px;
-  min-width: 32px;
+  height: var(--pf-pagination-page-size);
+  min-width: var(--pf-pagination-page-size);
   padding: 0 var(--space-2);
   transition: none;
 }
 
 .pf-pagination__nav {
-  height: 36px;
-  min-width: 36px;
+  height: var(--pf-control-height-sm);
+  min-width: var(--pf-control-height-sm);
   padding: 0 var(--space-3);
 }
 
