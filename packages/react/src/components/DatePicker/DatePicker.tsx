@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState } from 'react';
+import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
 import {
@@ -38,26 +38,30 @@ export interface DatePickerProps extends Omit<
   endYear?: number;
 }
 
-export function DatePicker({
-  id,
-  className,
-  value,
-  defaultValue,
-  onValueChange,
-  label,
-  description,
-  error,
-  placeholder = 'Select a date',
-  required = false,
-  disabled = false,
-  allowClear = false,
-  disabledDates,
-  showOutsideDays = true,
-  startYear,
-  endYear,
-  'aria-describedby': ariaDescribedBy,
-  ...props
-}: DatePickerProps) {
+export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
+  function DatePicker(
+    {
+      id,
+      className,
+      value,
+      defaultValue,
+      onValueChange,
+      label,
+      description,
+      error,
+      placeholder = 'Select a date',
+      required = false,
+      disabled = false,
+      allowClear = false,
+      disabledDates,
+      showOutsideDays = true,
+      startYear,
+      endYear,
+      'aria-describedby': ariaDescribedBy,
+      ...props
+    },
+    ref,
+  ) {
   const generatedId = useId();
   const pickerId = id ?? generatedId;
   const descriptionId = description ? `${pickerId}-description` : undefined;
@@ -141,6 +145,7 @@ export function DatePicker({
       required={required}
     >
       <div
+        ref={ref}
         {...props}
         id={pickerId}
         className={cx('pf-date-picker', className)}
@@ -227,4 +232,6 @@ export function DatePicker({
       </div>
     </FieldWrapper>
   );
-}
+});
+
+DatePicker.displayName = 'DatePicker';

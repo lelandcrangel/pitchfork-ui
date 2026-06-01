@@ -36,7 +36,7 @@ These are the cases where consumers are likely to need a ref for focus managemen
 
 - [x] **Modal** — consumers need to focus the dialog or measure it [`Modal.tsx`](packages/react/src/components/Modal/Modal.tsx)
 - [x] **Tabs** — scroll-into-view, imperative focus [`Tabs.tsx`](packages/react/src/components/Tabs/Tabs.tsx)
-- [ ] **DatePicker** — programmatic focus on the trigger [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
+- [x] **DatePicker** — programmatic focus on the trigger [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
 - [ ] **Tooltip** — measure trigger for external positioning overrides [`Tooltip.tsx`](packages/react/src/components/Tooltip/Tooltip.tsx)
 - [ ] **Carousel** — measure slide dimensions [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
 - [ ] **Pagination** — layout measurement [`Pagination.tsx`](packages/react/src/components/Pagination/Pagination.tsx)
@@ -70,7 +70,7 @@ Named function exports don't get stable display names in minified builds. Affect
 - [ ] **Calendar** [`Calendar.tsx`](packages/react/src/components/Calendar/Calendar.tsx)
 - [ ] **Carousel** [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
 - [ ] **CodeSnippet** [`CodeSnippet.tsx`](packages/react/src/components/CodeSnippet/CodeSnippet.tsx)
-- [ ] **DatePicker** [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
+- [x] **DatePicker** [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
 - [ ] **FileUploader** [`FileUploader.tsx`](packages/react/src/components/FileUploader/FileUploader.tsx)
 - [ ] **HeaderNavigation** [`HeaderNavigation.tsx`](packages/react/src/components/HeaderNavigation/HeaderNavigation.tsx)
 - [ ] **Icon** [`Icon.tsx`](packages/react/src/components/Icon/Icon.tsx)
