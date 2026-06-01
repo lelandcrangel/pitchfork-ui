@@ -102,9 +102,9 @@
   display: inline-flex;
   flex: 0 0 auto;
   font-size: var(--font-size-lg);
-  height: var(--size-8, 32px);
+  height: var(--space-8);
   justify-content: center;
-  width: var(--size-8, 32px);
+  width: var(--space-8);
 }
 
 .pf-modal__close:hover,

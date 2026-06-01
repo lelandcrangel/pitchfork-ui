@@ -65,7 +65,7 @@
   color: var(--pf-carousel-nav-text, var(--color-semantic-text-muted));
   cursor: pointer;
   display: inline-flex;
-  font-size: var(--pf-carousel-nav-font-size, 14px);
+  font-size: var(--pf-carousel-nav-font-size, var(--font-size-sm));
   height: var(--pf-carousel-nav-size, 28px);
   justify-content: center;
   padding: 0;

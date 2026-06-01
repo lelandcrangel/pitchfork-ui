@@ -13,12 +13,12 @@
 .pf-rating-stars__star {
   display: inline-flex;
   position: relative;
-  height: var(--pf-rating-size, 18px);
-  width: var(--pf-rating-size, 18px);
+  height: var(--pf-rating-size, var(--font-size-lg));
+  width: var(--pf-rating-size, var(--font-size-lg));
 }
 
 .pf-rating-stars__star-icon {
-  font-size: var(--pf-rating-size, 18px);
+  font-size: var(--pf-rating-size, var(--font-size-lg));
   height: 1em;
   width: 1em;
 }

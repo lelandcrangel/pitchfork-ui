@@ -102,23 +102,23 @@
     color-mix(in srgb, var(--color-base-black) 6%, transparent);
 
   /* Slider geometry aliases */
-  --pf-slider-track-height: 8px;
-  --pf-slider-thumb-size: 18px;
+  --pf-slider-track-height: 0.5rem;
+  --pf-slider-thumb-size: 1.125rem;
 
   /* Tabs geometry aliases */
-  --pf-tabs-tab-padding-y-md: 10px;
-  --pf-tabs-tab-padding-x-md: 14px;
+  --pf-tabs-tab-padding-y-md: 0.625rem;
+  --pf-tabs-tab-padding-x-md: 0.875rem;
   --pf-tabs-underline-width: 2px;
 
   /* Dropdown geometry aliases */
-  --pf-dropdown-icon-size: 16px;
+  --pf-dropdown-icon-size: 1rem;
   --pf-dropdown-menu-gap: 2px;
 
   /* Pagination geometry aliases */
-  --pf-pagination-page-size: 32px;
+  --pf-pagination-page-size: 2rem;
 
   /* Tooltip geometry aliases */
-  --pf-tooltip-padding-x: 10px;
+  --pf-tooltip-padding-x: 0.625rem;
 
   /* Utility color aliases */
   --pf-tooltip-bg: var(--color-gray-900);

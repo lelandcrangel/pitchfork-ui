@@ -29,7 +29,7 @@
   --pf-avatar-status-size: 9px;
   --pf-avatar-status-offset: -2px;
 
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   height: 24px;
   width: 24px;
 }
@@ -38,7 +38,7 @@
   --pf-avatar-status-size: 10px;
   --pf-avatar-status-offset: -2px;
 
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   height: 32px;
   width: 32px;
 }
@@ -47,7 +47,7 @@
   --pf-avatar-status-size: 12px;
   --pf-avatar-status-offset: -2px;
 
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   height: 40px;
   width: 40px;
 }
@@ -56,7 +56,7 @@
   --pf-avatar-status-size: 14px;
   --pf-avatar-status-offset: -1px;
 
-  font-size: 16px;
+  font-size: var(--font-size-md);
   height: 56px;
   width: 56px;
 }

@@ -76,6 +76,6 @@
     )
   );
   display: inline-flex;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   line-height: 1;
 }

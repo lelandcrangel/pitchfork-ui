@@ -110,13 +110,13 @@
 }
 
 .pf-credit-card .brand {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.08em;
 }
 
 .pf-credit-card .number {
-  font-size: clamp(18px, 2.6vw, 24px);
+  font-size: clamp(var(--font-size-lg), 2.6vw, var(--font-size-2xl));
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.08em;
   line-height: 1.25;
@@ -139,13 +139,13 @@
 }
 
 .pf-credit-card .label {
-  font-size: 10px;
+  font-size: var(--font-size-2xs);
   letter-spacing: 0.08em;
   opacity: 0.85;
   text-transform: uppercase;
 }
 
 .pf-credit-card .value {
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }

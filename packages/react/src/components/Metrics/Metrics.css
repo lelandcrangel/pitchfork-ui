@@ -37,7 +37,7 @@
   align-items: center;
   color: var(--pf-metrics-color-semantic-text-muted, var(--color-semantic-text-muted));
   display: inline-flex;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   justify-content: center;
 }
 
@@ -56,7 +56,7 @@
 
 .pf-metric-card__value {
   color: var(--pf-metrics-color-semantic-text-default, var(--color-semantic-text-default));
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-size: clamp(var(--font-size-3xl), 3vw, var(--font-size-4xl));
   font-weight: var(--font-weight-semibold);
   letter-spacing: -0.02em;
   line-height: 1.05;
@@ -67,14 +67,14 @@
   align-items: center;
   border-radius: var(--radius-full);
   display: inline-flex;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   gap: 4px;
   padding: 4px 8px;
 }
 
 .pf-metric-card__trend-symbol {
-  font-size: 11px;
+  font-size: var(--font-size-2xs);
   line-height: 1;
 }
 

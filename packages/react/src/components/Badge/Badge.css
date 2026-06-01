@@ -2,7 +2,7 @@
   align-items: center;
   border-radius: var(--radius-full);
   display: inline-flex;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   line-height: 1;
   min-height: 22px;

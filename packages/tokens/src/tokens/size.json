@@ -1,32 +1,38 @@
 {
   "space": {
-    "0": { "$value": "0px", "$type": "dimension" },
-    "1": { "$value": "4px", "$type": "dimension" },
-    "2": { "$value": "8px", "$type": "dimension" },
-    "3": { "$value": "12px", "$type": "dimension" },
-    "4": { "$value": "16px", "$type": "dimension" },
-    "5": { "$value": "20px", "$type": "dimension" },
-    "6": { "$value": "24px", "$type": "dimension" },
-    "8": { "$value": "32px", "$type": "dimension" },
-    "10": { "$value": "40px", "$type": "dimension" },
-    "12": { "$value": "48px", "$type": "dimension" }
+    "0":  { "$value": "0rem",     "$type": "dimension" },
+    "1":  { "$value": "0.25rem",  "$type": "dimension" },
+    "2":  { "$value": "0.5rem",   "$type": "dimension" },
+    "3":  { "$value": "0.75rem",  "$type": "dimension" },
+    "4":  { "$value": "1rem",     "$type": "dimension" },
+    "5":  { "$value": "1.25rem",  "$type": "dimension" },
+    "6":  { "$value": "1.5rem",   "$type": "dimension" },
+    "7":  { "$value": "1.75rem",  "$type": "dimension" },
+    "8":  { "$value": "2rem",     "$type": "dimension" },
+    "9":  { "$value": "2.25rem",  "$type": "dimension" },
+    "10": { "$value": "2.5rem",   "$type": "dimension" },
+    "11": { "$value": "2.75rem",  "$type": "dimension" },
+    "12": { "$value": "3rem",     "$type": "dimension" },
+    "13": { "$value": "3.25rem",  "$type": "dimension" },
+    "14": { "$value": "3.5rem",   "$type": "dimension" },
+    "16": { "$value": "4rem",     "$type": "dimension" }
   },
   "radius": {
-    "sm": { "$value": "6px", "$type": "dimension" },
-    "md": { "$value": "8px", "$type": "dimension" },
-    "lg": { "$value": "12px", "$type": "dimension" },
-    "full": { "$value": "9999px", "$type": "dimension" }
+    "sm":   { "$value": "0.375rem", "$type": "dimension" },
+    "md":   { "$value": "0.5rem",   "$type": "dimension" },
+    "lg":   { "$value": "0.75rem",  "$type": "dimension" },
+    "full": { "$value": "9999px",   "$type": "dimension" }
   },
   "size": {
     "control": {
-      "sm": { "$value": "36px", "$type": "dimension" },
-      "md": { "$value": "40px", "$type": "dimension" },
-      "lg": { "$value": "48px", "$type": "dimension" }
+      "sm": { "$value": "2.25rem", "$type": "dimension" },
+      "md": { "$value": "2.5rem",  "$type": "dimension" },
+      "lg": { "$value": "3rem",    "$type": "dimension" }
     },
     "icon": {
-      "sm": { "$value": "16px", "$type": "dimension" },
-      "md": { "$value": "20px", "$type": "dimension" },
-      "lg": { "$value": "24px", "$type": "dimension" }
+      "sm": { "$value": "1rem",    "$type": "dimension" },
+      "md": { "$value": "1.25rem", "$type": "dimension" },
+      "lg": { "$value": "1.5rem",  "$type": "dimension" }
     }
   }
 }

@@ -49,7 +49,7 @@
 .pf-chart__tick {
   fill: var(--color-semantic-text-muted);
   font-family: inherit;
-  font-size: 11px;
+  font-size: var(--font-size-2xs);
 }
 
 .pf-chart__tick--y {
@@ -65,7 +65,7 @@
 .pf-chart__axis-label {
   fill: var(--color-semantic-text-muted);
   font-family: inherit;
-  font-size: 11px;
+  font-size: var(--font-size-2xs);
   text-anchor: middle;
 }
 

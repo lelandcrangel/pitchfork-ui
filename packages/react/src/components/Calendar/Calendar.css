@@ -85,7 +85,7 @@
       var(--color-semantic-text-default)
     )
   );
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   height: 28px;
   min-width: 0;
@@ -111,7 +111,7 @@
   );
   cursor: pointer;
   display: inline-flex;
-  font-size: 14px;
+  font-size: var(--font-size-sm);
   height: 28px;
   justify-content: center;
   padding: 0;
@@ -154,7 +154,7 @@
       var(--color-semantic-text-muted)
     )
   );
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   text-align: center;
 }
@@ -171,7 +171,7 @@
   aspect-ratio: 1 / 1;
   border-radius: var(--radius-sm);
   display: inline-flex;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   justify-content: center;
 }
 

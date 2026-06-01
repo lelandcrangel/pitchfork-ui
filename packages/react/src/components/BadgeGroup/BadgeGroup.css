@@ -1,7 +1,7 @@
 .pf-badge-group {
   align-items: center;
   display: inline-flex;
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   line-height: 1;
 }

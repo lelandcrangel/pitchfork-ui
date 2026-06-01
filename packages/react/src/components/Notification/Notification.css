@@ -84,7 +84,7 @@
 .pf-notification__icon {
   align-items: center;
   display: inline-flex;
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   height: 1em;
   justify-content: center;
   line-height: 1;
@@ -166,7 +166,7 @@
   color: var(--pf-notification-color-semantic-text-muted, var(--color-semantic-text-muted));
   cursor: pointer;
   display: inline-flex;
-  font-size: 16px;
+  font-size: var(--font-size-md);
   height: 28px;
   justify-content: center;
   width: 28px;

@@ -60,7 +60,7 @@
 
 .pf-progress-circle__value {
   color: var(--pf-progressindicators-color-semantic-text-default, var(--color-semantic-text-default));
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   left: 50%;
   position: absolute;
