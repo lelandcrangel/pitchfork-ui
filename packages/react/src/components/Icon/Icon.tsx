@@ -9,7 +9,7 @@ import {
   faSquareCaretRight,
   faSquareCheck,
   faStar,
-  faChartBar,
+  faBarChart,
 } from '@fortawesome/free-regular-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
@@ -146,7 +146,7 @@ const customIcons: Record<string, React.ReactNode> = {
 
 const regularIcons: Record<string, IconDefinition> = {
   calendar: faCalendar,
-  'chart-bar': faChartBar,
+  'chart-bar': faBarChart,
   'circle-check': faCircleCheck,
   'circle-question': faCircleQuestion,
   'circle-xmark': faCircleXmark,
