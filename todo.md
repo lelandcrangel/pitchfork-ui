@@ -67,7 +67,7 @@ Priority order for adding tests:
 
 **Display — feedback & status**
 - [x] `Notification` — role per variant (status), dismiss callback, icon, action slot
-- [ ] `Rating` — RatingStars fill percent, clamping, RatingBadge value display
+- [x] `Rating` — RatingStars fill percent, clamping, RatingBadge value display
 - [ ] `LoadingIndicators` — LoadingSpinner role=status, LoadingSkeleton, LoadingDots
 - [ ] `ProgressIndicators` — value/max, aria-valuenow/min/max, label
 - [ ] `ProgressSteps` — active/completed/upcoming step states, step count
