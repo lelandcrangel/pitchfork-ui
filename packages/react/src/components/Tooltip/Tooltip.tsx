@@ -1,6 +1,8 @@
 import {
+  forwardRef,
   useEffect,
   useId,
+  useImperativeHandle,
   useLayoutEffect,
   useRef,
   useState,
@@ -133,17 +135,23 @@ const getTooltipPosition = (
   };
 };
 
-export function Tooltip({
-  content,
-  children,
-  open,
-  placement = 'top',
-  delay = 120,
-  disabled = false,
-  className,
-}: TooltipProps) {
+export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(
+  function Tooltip(
+    {
+      content,
+      children,
+      open,
+      placement = 'top',
+      delay = 120,
+      disabled = false,
+      className,
+    },
+    ref,
+  ) {
   const tooltipId = useId();
   const triggerRef = useRef<HTMLSpanElement>(null);
+
+  useImperativeHandle(ref, () => triggerRef.current as HTMLSpanElement, []);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const showTimerRef = useRef<number | undefined>(undefined);
 
@@ -261,4 +269,6 @@ export function Tooltip({
         : null}
     </>
   );
-}
+});
+
+Tooltip.displayName = 'Tooltip';
