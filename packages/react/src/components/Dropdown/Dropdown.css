@@ -56,14 +56,14 @@
     var(--color-semantic-text-muted)
   );
   display: inline-flex;
-  height: 16px;
+  height: var(--pf-dropdown-icon-size);
   transition: transform 140ms ease;
-  width: 16px;
+  width: var(--pf-dropdown-icon-size);
 }
 
 .pf-dropdown__chevron svg {
-  height: 16px;
-  width: 16px;
+  height: var(--pf-dropdown-icon-size);
+  width: var(--pf-dropdown-icon-size);
 }
 
 .pf-dropdown__chevron--open {
@@ -77,7 +77,7 @@
   box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--pf-dropdown-menu-gap);
   padding: var(--space-1);
   position: fixed;
   z-index: 1000;
@@ -114,13 +114,13 @@
     var(--color-semantic-text-muted)
   );
   display: inline-flex;
-  height: 16px;
-  width: 16px;
+  height: var(--pf-dropdown-icon-size);
+  width: var(--pf-dropdown-icon-size);
 }
 
 .pf-dropdown__item-icon svg {
-  height: 16px;
-  width: 16px;
+  height: var(--pf-dropdown-icon-size);
+  width: var(--pf-dropdown-icon-size);
 }
 
 .pf-dropdown__item-shortcut {
@@ -128,7 +128,7 @@
     --pf-dropdown-color-semantic-text-muted,
     var(--color-semantic-text-muted)
   );
-  font-size: 12px;
+  font-size: var(--font-size-xs);
 }
 
 .pf-dropdown__item:hover:not(:disabled),

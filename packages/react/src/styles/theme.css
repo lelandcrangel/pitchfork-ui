@@ -110,6 +110,10 @@
   --pf-tabs-tab-padding-x-md: 14px;
   --pf-tabs-underline-width: 2px;
 
+  /* Dropdown geometry aliases */
+  --pf-dropdown-icon-size: 16px;
+  --pf-dropdown-menu-gap: 2px;
+
   /* Utility color aliases */
   --pf-tooltip-bg: var(--color-gray-900);
   --pf-tooltip-text: var(--color-base-white);
