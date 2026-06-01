@@ -197,7 +197,6 @@ export const getAvailableIconNames = () => {
   return [
     ...new Set([
       ...Object.keys(regularIcons),
-      ...Object.keys(regularAliases),
       ...Object.keys(customIcons),
     ]),
   ].sort();
