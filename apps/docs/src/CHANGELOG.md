@@ -2,6 +2,50 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [2026-06-01]
+
+### Bundle
+
+- **Icon:** replaced full FontAwesome regular pack import (`far`) with 9 individual named imports — only icons actually used across the library. Expected ~90% reduction in icon payload.
+- **Icon:** added `file-arrow-up` as a custom inline SVG — it was never in the free-regular set and was silently rendering nothing in `FileUploader`.
+
+### Accessibility
+
+- Added `@media (prefers-reduced-motion: reduce)` guards to 13 CSS files that had unguarded transitions/animations: `Button`, `Switch`, `Carousel`, `Select`, `MultiSelect`, `Dropdown`, `Input`, `Tabs`, `ProgressIndicators`, `Pagination`, `ButtonGroup`, `UtilityButton`, `LineBarChart`.
+- **Carousel:** `ArrowLeft` / `ArrowRight` keyboard navigation now works when any control button has focus.
+- **Tooltip:** trigger wrapper now shows a focus ring via `:has(:focus-visible)` for keyboard-focused children that lack their own indicator.
+
+### API
+
+- Added `forwardRef` to interactive components: `Modal`, `Tabs`, `DatePicker`, `Tooltip`, `Carousel`, `Pagination`, `FileUploader`, `Calendar`.
+- Added `forwardRef` and `displayName` to 22 display components: `CodeSnippet`, `HeaderNavigation`, `InlineCTA`, `LoadingSpinner`, `LoadingDots`, `LoadingSkeleton`, `MetricCard`, `MetricGrid`, `PageHeader`, `PageHeaderMeta`, `ProgressBar`, `ProgressCircle`, `ProgressSteps`, `RatingStars`, `RatingBadge`, `SectionHeader`, `SectionFooter`, `SidebarNavigation`, `PieChart`, `RadarChart`, `LineChart`, `BarChart`.
+
+### CSS / Tokens
+
+- Converted 6 inline `style` props to CSS custom properties: `--pf-rte-min-height`, `--pf-spinner-size`, `--pf-skeleton-width/height`, `--pf-progress-fill`, `--pf-progress-circle-size`, `--pf-col-width`.
+- Replaced hardcoded `px`/`rem` values with token vars or named aliases in `theme.css` across: `Modal`, `SlideoutMenu`, `Slider`, `Tabs`, `Dropdown`, `Pagination`, `Tooltip`.
+
+### Tests
+
+- Test coverage expanded from ~4% to **52 / 54 components**, 725 tests total.
+- New test files: `RichTextEditor`, `TreeView`, `Carousel`, `Notification`, `Rating`, `LoadingIndicators`, `ProgressIndicators`, `ProgressSteps`, `Badge`, `BadgeGroup`, `Tag`, `Card`, `Avatar`, `ContentDivider`, `Breadcrumbs`, `Metrics`, `CodeSnippet`, `VideoPlayer`, `CreditCard`, `InlineCTA`, `PageHeader`, `SectionHeader`, `SectionFooter`, `HeaderNavigation`, `SidebarNavigation`, `PieChart`, `RadarChart`, `LineBarCharts`, `ButtonGroup`, `UtilityButton`, `Icon`.
+
+### Stories
+
+- Fixed broken icon names in 6 story files following Icon bundle change.
+- Added `KeyboardFocus` story to Tooltip; added keyboard navigation docs to Carousel.
+
+## [2026-05-31]
+
+### Tests
+
+- Added test files for 21 components: `Select`, `MultiSelect`, `Modal`, `DatePicker`, `Slider`, `Checkbox`, `RadioGroup`, `Alert`, `Tooltip`, `Input`, `Textarea`, `Switch`, `RadioButton`, `Dropdown`, `Tabs`, `SlideoutMenu`, `Pagination`, `Table`, `FileUploader`, `Calendar`.
+- Each file includes at minimum one accessibility-focused test per contributing guidelines.
+
+### Fixes
+
+- Resolved inline style issues flagged during audit — groundwork for subsequent CSS variable migration.
+
 ## [2026-05-24]
 
 - Added CSS Variables button and controls for ContentDivider Interactive story in Storybook (text and border color).
