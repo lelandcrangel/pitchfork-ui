@@ -1,9 +1,16 @@
 /// <reference types="vite/client" />
-import { far } from '@fortawesome/free-regular-svg-icons';
-import type {
-  IconDefinition,
-  IconPack,
-} from '@fortawesome/fontawesome-svg-core';
+import {
+  faCalendar,
+  faCircleCheck,
+  faCircleQuestion,
+  faCircleXmark,
+  faCopy,
+  faSquareCaretLeft,
+  faSquareCaretRight,
+  faSquareCheck,
+  faStar,
+} from '@fortawesome/free-regular-svg-icons';
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   FontAwesomeIcon,
   type FontAwesomeIconProps,
@@ -115,22 +122,38 @@ const customIcons: Record<string, React.ReactNode> = {
       <path d="M12 17h.01" />
     </svg>
   ),
+  'file-arrow-up': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+      <path d="M12 12v6" />
+      <path d="m15 15-3-3-3 3" />
+    </svg>
+  ),
 };
 
-const toLookup = (pack: IconPack) => {
-  const lookup: Record<string, IconDefinition> = {};
-
-  Object.values(pack).forEach((item) => {
-    if (item && typeof item === 'object' && 'iconName' in item) {
-      const icon = item as IconDefinition;
-      lookup[icon.iconName] = icon;
-    }
-  });
-
-  return lookup;
+const regularIcons: Record<string, IconDefinition> = {
+  'calendar': faCalendar,
+  'circle-check': faCircleCheck,
+  'circle-question': faCircleQuestion,
+  'circle-xmark': faCircleXmark,
+  'copy': faCopy,
+  'square-caret-left': faSquareCaretLeft,
+  'square-caret-right': faSquareCaretRight,
+  'square-check': faSquareCheck,
+  'star': faStar,
 };
-
-const regularIcons = toLookup(far);
 
 const toAliasLookup = (icons: Record<string, IconDefinition>) => {
   const lookup: Record<string, IconDefinition> = {};
