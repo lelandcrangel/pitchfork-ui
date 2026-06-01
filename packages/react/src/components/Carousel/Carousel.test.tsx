@@ -57,6 +57,24 @@ describe('Carousel', () => {
 
   // ─── Navigation ──────────────────────────────────────────────────────────
 
+  // ─── Keyboard navigation ─────────────────────────────────────────────────
+
+  it('ArrowRight advances to the next slide when a control has focus', async () => {
+    const user = userEvent.setup();
+    render(<Carousel slides={slides} />);
+    screen.getByRole('button', { name: 'Next slide' }).focus();
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('region', { name: 'Slide 2 of 3' })).toBeInTheDocument();
+  });
+
+  it('ArrowLeft goes to the previous slide when a control has focus', async () => {
+    const user = userEvent.setup();
+    render(<Carousel slides={slides} initialIndex={1} />);
+    screen.getByRole('button', { name: 'Previous slide' }).focus();
+    await user.keyboard('{ArrowLeft}');
+    expect(screen.getByRole('region', { name: 'Slide 1 of 3' })).toBeInTheDocument();
+  });
+
   it('advances to the next slide when Next is clicked', async () => {
     const user = userEvent.setup();
     render(<Carousel slides={slides} />);

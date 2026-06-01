@@ -128,7 +128,18 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(
         )}
       </div>
 
-      <div className="pf-carousel__controls">
+      <div
+        className="pf-carousel__controls"
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            goToIndex(resolvedActiveIndex - 1);
+          } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            goToIndex(resolvedActiveIndex + 1);
+          }
+        }}
+      >
         <button
           type="button"
           className="pf-carousel__nav"
