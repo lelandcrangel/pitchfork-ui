@@ -7,39 +7,11 @@ import {
 } from 'react';
 import { Icon } from '@pitchfork-ui/react';
 import { createPortal } from 'react-dom';
+import colorTokens from '../../../packages/tokens/src/tokens/color.json';
+import sizeTokens from '../../../packages/tokens/src/tokens/size.json';
+import shadowTokens from '../../../packages/tokens/src/tokens/shadow.json';
 
-type CssVariableScope =
-  | 'alert'
-  | 'avatar'
-  | 'badge'
-  | 'badgegroup'
-  | 'breadcrumbs'
-  | 'button'
-  | 'buttongroup'
-  | 'calendar'
-  | 'card'
-  | 'carousel'
-  | 'checkbox'
-  | 'codesnippet'
-  | 'contentdivider'
-  | 'creditcard'
-  | 'datepicker'
-  | 'dropdown'
-  | 'fileuploader'
-  | 'inlinecta'
-  | 'input'
-  | 'notification'
-  | 'radio'
-  | 'select'
-  | 'switch'
-  | 'tag'
-  | 'utility'
-  | 'headernavigation'
-  | 'icon'
-  | 'inlinecta'
-  | 'loadingindicators'
-  | 'metrics'
-  | 'modal';
+type CssVariableScope = string;
 
 interface CssVariableControl {
   name: string;
@@ -61,205 +33,143 @@ interface TokenOption {
   value: string;
 }
 
-const COLOR_OPTIONS: ColorOption[] = [
-  {
-    label: 'Base White',
-    value: 'var(--color-base-white)',
-    swatch: 'var(--color-base-white)',
-  },
-  {
-    label: 'Base Black',
-    value: 'var(--color-base-black)',
-    swatch: 'var(--color-base-black)',
-  },
-  {
-    label: 'Gray 100',
-    value: 'var(--color-gray-100)',
-    swatch: 'var(--color-gray-100)',
-  },
-  {
-    label: 'Gray 300',
-    value: 'var(--color-gray-300)',
-    swatch: 'var(--color-gray-300)',
-  },
-  {
-    label: 'Gray 500',
-    value: 'var(--color-gray-500)',
-    swatch: 'var(--color-gray-500)',
-  },
-  {
-    label: 'Gray 700',
-    value: 'var(--color-gray-700)',
-    swatch: 'var(--color-gray-700)',
-  },
-  {
-    label: 'Gray 900',
-    value: 'var(--color-gray-900)',
-    swatch: 'var(--color-gray-900)',
-  },
-  {
-    label: 'Brand 400',
-    value: 'var(--color-brand-400)',
-    swatch: 'var(--color-brand-400)',
-  },
-  {
-    label: 'Brand 500',
-    value: 'var(--color-brand-500)',
-    swatch: 'var(--color-brand-500)',
-  },
-  {
-    label: 'Brand 600',
-    value: 'var(--color-brand-600)',
-    swatch: 'var(--color-brand-600)',
-  },
-  {
-    label: 'Brand 50',
-    value: 'var(--color-brand-50)',
-    swatch: 'var(--color-brand-50)',
-  },
-  {
-    label: 'Brand 100',
-    value: 'var(--color-brand-100)',
-    swatch: 'var(--color-brand-100)',
-  },
-  {
-    label: 'Brand 200',
-    value: 'var(--color-brand-200)',
-    swatch: 'var(--color-brand-200)',
-  },
-  {
-    label: 'Brand 300',
-    value: 'var(--color-brand-300)',
-    swatch: 'var(--color-brand-300)',
-  },
-  {
-    label: 'Brand 700',
-    value: 'var(--color-brand-700)',
-    swatch: 'var(--color-brand-700)',
-  },
-  {
-    label: 'Brand 800',
-    value: 'var(--color-brand-800)',
-    swatch: 'var(--color-brand-800)',
-  },
-  {
-    label: 'Danger 100',
-    value: 'var(--color-danger-100)',
-    swatch: 'var(--color-danger-100)',
-  },
-  {
-    label: 'Success 400',
-    value: 'var(--color-success-400)',
-    swatch: 'var(--color-success-400)',
-  },
-  {
-    label: 'Success 500',
-    value: 'var(--color-success-500)',
-    swatch: 'var(--color-success-500)',
-  },
-  {
-    label: 'Success 600',
-    value: 'var(--color-success-600)',
-    swatch: 'var(--color-success-600)',
-  },
-  {
-    label: 'Warning 400',
-    value: 'var(--color-warning-400)',
-    swatch: 'var(--color-warning-400)',
-  },
-  {
-    label: 'Warning 500',
-    value: 'var(--color-warning-500)',
-    swatch: 'var(--color-warning-500)',
-  },
-  {
-    label: 'Warning 600',
-    value: 'var(--color-warning-600)',
-    swatch: 'var(--color-warning-600)',
-  },
-  {
-    label: 'Danger 400',
-    value: 'var(--color-danger-400)',
-    swatch: 'var(--color-danger-400)',
-  },
-  {
-    label: 'Danger 500',
-    value: 'var(--color-danger-500)',
-    swatch: 'var(--color-danger-500)',
-  },
-  {
-    label: 'Danger 600',
-    value: 'var(--color-danger-600)',
-    swatch: 'var(--color-danger-600)',
-  },
-  {
-    label: 'Semantic Action Primary',
-    value: 'var(--color-semantic-action-primary)',
-    swatch: 'var(--color-semantic-action-primary)',
-  },
-  {
-    label: 'Semantic Action Primary Hover',
-    value: 'var(--color-semantic-action-primary-hover)',
-    swatch: 'var(--color-semantic-action-primary-hover)',
-  },
-  {
-    label: 'Semantic Action Primary Text',
-    value: 'var(--color-semantic-action-primary-text)',
-    swatch: 'var(--color-semantic-action-primary-text)',
-  },
-  {
-    label: 'Semantic Text Default',
-    value: 'var(--color-semantic-text-default)',
-    swatch: 'var(--color-semantic-text-default)',
-  },
-  {
-    label: 'Semantic Text Muted',
-    value: 'var(--color-semantic-text-muted)',
-    swatch: 'var(--color-semantic-text-muted)',
-  },
-  {
-    label: 'Semantic Border Default',
-    value: 'var(--color-semantic-border-default)',
-    swatch: 'var(--color-semantic-border-default)',
-  },
-  {
-    label: 'Semantic Border Strong',
-    value: 'var(--color-semantic-border-strong)',
-    swatch: 'var(--color-semantic-border-strong)',
-  },
-  {
-    label: 'Semantic Background Default',
-    value: 'var(--color-semantic-background-default)',
-    swatch: 'var(--color-semantic-background-default)',
-  },
-  {
-    label: 'Semantic Background Subtle',
-    value: 'var(--color-semantic-background-subtle)',
-    swatch: 'var(--color-semantic-background-subtle)',
-  },
-];
+// ─── Token-driven options (auto-generated from token JSON) ──────────────────
+
+function flattenColorTokens(
+  node: Record<string, unknown>,
+  path: string[] = [],
+): ColorOption[] {
+  if (!node || typeof node !== 'object') return [];
+  if ('$value' in node) {
+    // path is e.g. ['color', 'base', 'white'] → cssVar = var(--color-base-white)
+    const cssVar = `var(--${path.join('-')})`;
+    const label = path
+      .slice(1) // drop the leading 'color' segment
+      .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+      .join(' ');
+    return [{ label, value: cssVar, swatch: cssVar }];
+  }
+  return Object.entries(node).flatMap(([key, value]) =>
+    flattenColorTokens(value as Record<string, unknown>, [...path, key]),
+  );
+}
+
+const COLOR_OPTIONS: ColorOption[] = flattenColorTokens(
+  colorTokens as unknown as Record<string, unknown>,
+);
 
 const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
-  radius: [
-    { label: 'Radius sm (6px)', value: 'var(--radius-sm)' },
-    { label: 'Radius md (8px)', value: 'var(--radius-md)' },
-    { label: 'Radius lg (12px)', value: 'var(--radius-lg)' },
-    { label: 'Radius full (9999px)', value: 'var(--radius-full)' },
-  ],
-  shadow: [
-    { label: 'Shadow sm', value: 'var(--shadow-sm)' },
-    { label: 'Shadow md', value: 'var(--shadow-md)' },
-  ],
-  space: [
-    { label: 'Space 0 (0px)', value: 'var(--space-0)' },
-    { label: 'Space 1 (4px)', value: 'var(--space-1)' },
-    { label: 'Space 2 (8px)', value: 'var(--space-2)' },
-    { label: 'Space 3 (12px)', value: 'var(--space-3)' },
-    { label: 'Space 4 (16px)', value: 'var(--space-4)' },
-    { label: 'Space 5 (20px)', value: 'var(--space-5)' },
-    { label: 'Space 6 (24px)', value: 'var(--space-6)' },
-  ],
+  radius: Object.entries(
+    (sizeTokens as { radius: Record<string, { $value: string }> }).radius,
+  ).map(([key, token]) => ({
+    label: `radius-${key} (${token.$value})`,
+    value: `var(--radius-${key})`,
+  })),
+  shadow: Object.entries(
+    (shadowTokens as { shadow: Record<string, { $value: string }> }).shadow,
+  ).map(([key]) => ({
+    label: `shadow-${key}`,
+    value: `var(--shadow-${key})`,
+  })),
+  space: Object.entries(
+    (sizeTokens as { space: Record<string, { $value: string }> }).space,
+  ).map(([key, token]) => ({
+    label: `space-${key} (${token.$value})`,
+    value: `var(--space-${key})`,
+  })),
 };
+
+// ─── Auto-extract controls from component CSS ────────────────────────────────
+
+const cssFiles = import.meta.glob<string>(
+  '../../../packages/react/src/components/**/*.css',
+  { query: '?raw', import: 'default', eager: true },
+);
+
+function getVarType(
+  varName: string,
+): 'color' | 'radius' | 'shadow' | 'space' {
+  if (
+    varName.includes('-shadow') ||
+    varName.includes('-elevation-')
+  )
+    return 'shadow';
+  if (varName.includes('-radius'))
+    return 'radius';
+  if (
+    varName.includes('-height') ||
+    varName.includes('-width') ||
+    varName.includes('-size') ||
+    varName.includes('-space') ||
+    varName.includes('-gap') ||
+    varName.includes('-padding')
+  )
+    return 'space';
+  return 'color';
+}
+
+function generateVarLabel(varName: string, scope: string): string {
+  const prefix = `--pf-${scope}-`;
+  const rest = varName.startsWith(prefix) ? varName.slice(prefix.length) : varName;
+  return rest
+    .replace(/^color-semantic-/, '')
+    .replace(/^color-/, '')
+    .split('-')
+    .map((s) => s.charAt(0).toUpperCase() + s.slice(1))
+    .join(' ');
+}
+
+function extractControlsFromCss(
+  cssContent: string,
+  scope: string,
+): CssVariableControl[] {
+  const seen = new Set<string>();
+  const controls: CssVariableControl[] = [];
+  const re = /var\((--pf-[a-z][a-z0-9-]*),\s*([^,)][^)]*(?:\([^)]*\)[^)]*)?)\)/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(cssContent)) !== null) {
+    const [, varName, rawFallback] = match;
+    if (seen.has(varName)) continue;
+    const varScope = varName.replace('--pf-', '').split('-')[0];
+    if (varScope !== scope) continue;
+    seen.add(varName);
+    controls.push({
+      name: varName,
+      label: generateVarLabel(varName, scope),
+      defaultValue: rawFallback.trim(),
+      type: getVarType(varName),
+      scopes: [scope],
+    });
+  }
+  return controls;
+}
+
+function scopeFromPath(path: string): string {
+  const match = path.match(/components\/([^/]+)\//);
+  return match ? match[1].toLowerCase() : '';
+}
+
+function buildGeneratedControls(
+  existingScopes: Set<string>,
+): CssVariableControl[] {
+  const byScope: Record<string, CssVariableControl[]> = {};
+  for (const [path, content] of Object.entries(cssFiles)) {
+    const scope = scopeFromPath(path);
+    if (!scope || existingScopes.has(scope)) continue;
+    byScope[scope] ??= [];
+    byScope[scope].push(...extractControlsFromCss(content, scope));
+  }
+  // De-duplicate within each scope
+  return Object.entries(byScope).flatMap(([, controls]) => {
+    const seen = new Set<string>();
+    return controls.filter((c) => {
+      if (seen.has(c.name)) return false;
+      seen.add(c.name);
+      return true;
+    });
+  });
+}
+
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   // Modal variables
@@ -507,13 +417,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     type: 'color',
     scopes: ['headernavigation'],
   },
-  {
-    name: '--pf-headernavigation-focus-ring',
-    label: 'Focus ring',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
-    scopes: ['headernavigation'],
-  },
   // FileUploader variables
   {
     name: '--pf-fileuploader-color-semantic-background-default',
@@ -555,13 +458,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Active border',
     defaultValue: 'var(--color-semantic-action-primary)',
     type: 'color',
-    scopes: ['fileuploader'],
-  },
-  {
-    name: '--pf-fileuploader-focus-ring',
-    label: 'Focus ring',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
     scopes: ['fileuploader'],
   },
   // CreditCard variables
@@ -614,13 +510,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Text color (muted/placeholder)',
     defaultValue: 'var(--color-semantic-text-muted)',
     type: 'color',
-    scopes: ['datepicker'],
-  },
-  {
-    name: '--pf-datepicker-focus-ring',
-    label: 'Focus ring',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
     scopes: ['datepicker'],
   },
   {
@@ -740,13 +629,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Trigger text color',
     defaultValue: 'var(--pf-button-secondary-text)',
     type: 'color',
-    scopes: ['dropdown'],
-  },
-  {
-    name: '--pf-dropdown-focus-ring',
-    label: 'Focus ring',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
     scopes: ['dropdown'],
   },
   {
@@ -1060,13 +942,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['carousel'],
   },
   {
-    name: '--pf-carousel-focus-ring',
-    label: 'Carousel focus ring',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
-    scopes: ['carousel'],
-  },
-  {
     name: '--pf-carousel-indicator-background',
     label: 'Carousel indicator background',
     defaultValue: 'var(--color-semantic-border-default)',
@@ -1149,13 +1024,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Calendar text muted',
     defaultValue: 'var(--color-semantic-text-muted)',
     type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-focus-ring',
-    label: 'Calendar focus ring',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
     scopes: ['calendar'],
   },
   {
@@ -1279,13 +1147,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['checkbox'],
   },
   {
-    name: '--pf-checkbox-focus-ring',
-    label: 'Checkbox focus ring shadow',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
-    scopes: ['checkbox'],
-  },
-  {
     name: '--pf-code-snippet-bg',
     label: 'CodeSnippet background',
     defaultValue: 'var(--color-gray-900)',
@@ -1376,13 +1237,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['codesnippet'],
   },
   {
-    name: '--pf-code-snippet-focus-ring',
-    label: 'CodeSnippet focus ring',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
-    scopes: ['codesnippet'],
-  },
-  {
     name: '--pf-radio-checked-color',
     label: 'Radio checked color',
     defaultValue: 'var(--color-semantic-action-primary)',
@@ -1394,13 +1248,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Radio label text',
     defaultValue: 'var(--color-semantic-text-default)',
     type: 'color',
-    scopes: ['radio'],
-  },
-  {
-    name: '--pf-radio-focus-ring',
-    label: 'Radio focus ring shadow',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
     scopes: ['radio'],
   },
   {
@@ -1429,13 +1276,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     label: 'Switch label text',
     defaultValue: 'var(--color-semantic-text-default)',
     type: 'color',
-    scopes: ['switch'],
-  },
-  {
-    name: '--pf-switch-focus-ring',
-    label: 'Switch focus ring shadow',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
     scopes: ['switch'],
   },
   {
@@ -1517,13 +1357,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['buttongroup'],
   },
   {
-    name: '--pf-buttongroup-focus-ring',
-    label: 'ButtonGroup focus ring',
-    defaultValue: 'var(--pf-focus-ring)',
-    type: 'text',
-    scopes: ['buttongroup'],
-  },
-  {
     name: '--pf-buttongroup-action-primary',
     label: 'ButtonGroup selected background',
     defaultValue: 'var(--color-semantic-action-primary)',
@@ -1592,29 +1425,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     defaultValue: 'var(--color-semantic-action-primary-text)',
     type: 'color',
     scopes: ['select'],
-  },
-  {
-    name: '--pf-focus-ring',
-    label: 'Focus ring shadow',
-    defaultValue: '0 0 0 3px rgb(59 130 246 / 0.35)',
-    type: 'text',
-    scopes: [
-      'button',
-      'breadcrumbs',
-      'input',
-      'select',
-      'checkbox',
-      'radio',
-      'switch',
-      'avatar',
-      'alert',
-      'notification',
-      'inlinecta',
-      'badge',
-      'badgegroup',
-      'tag',
-      'utility',
-    ],
   },
   {
     name: '--pf-breadcrumbs-link-color',
@@ -2751,7 +2561,8 @@ function ColorSelect({
 }
 
 const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
-    'Components/Modals': ['modal'],
+  // existing curated scopes
+  'Components/Modals': ['modal'],
   'Components/Metrics': ['metrics'],
   'Components/Loading Indicators': ['loadingindicators'],
   'Components/Credit Card': ['creditcard'],
@@ -2771,18 +2582,49 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Switch': ['switch'],
   'Components/Avatar': ['avatar'],
   'Components/Alert': ['alert'],
-  'Components/Notification': ['notification'],
+  'Components/Notifications': ['notification'],
   'Components/InlineCTA': ['inlinecta'],
   'Components/Badge': ['badge'],
   'Components/BadgeGroup': ['badgegroup'],
   'Components/Badge Group': ['badgegroup'],
   'Components/Tag': ['tag'],
-  'Components/UtilityButton': ['utility'],
+  'Components/Utility Button': ['utilitybutton'],
   'Components/Calendar': ['calendar'],
   'Components/DatePicker': ['datepicker'],
   'Components/Icon': ['icon'],
   'Components/HeaderNavigation': ['headernavigation'],
+  // auto-extracted scopes for remaining components
+  'Components/Multi Select': ['multiselect'],
+  'Components/Page Headers': ['pageheader'],
+  'Components/Paginations': ['pagination'],
+  'Components/Pie Charts': ['piechart'],
+  'Components/Progress Indicators': ['progressindicators'],
+  'Components/Progress Steps': ['progresssteps'],
+  'Components/Radar Charts': ['radarchart'],
+  'Components/Radio Buttons': ['radiobutton'],
+  'Components/Radio Groups': ['radiogroup'],
+  'Components/Rich Text Editor': ['richtexteditor'],
+  'Components/Section Footers': ['sectionfooter'],
+  'Components/Section Headers': ['sectionheader'],
+  'Components/Sidebar Navigations': ['sidebarnavigation'],
+  'Components/Slideout Menus': ['slideoutmenu'],
+  'Components/Slider': ['slider'],
+  'Components/Tables': ['table'],
+  'Components/Tabs': ['tabs'],
+  'Components/Textarea': ['textarea'],
+  'Components/Tooltip': ['tooltip'],
+  'Components/Tree Views': ['treeview'],
+  'Components/Video Player': ['videoplayer'],
+  'Components/LineChart': ['chart'],
+  'Components/Rating': ['rating'],
 };
+
+// Build generated controls for scopes not covered by hand-crafted CSS_VARIABLE_CONTROLS
+const handCraftedScopes = new Set(
+  CSS_VARIABLE_CONTROLS.flatMap((c) => c.scopes),
+);
+const GENERATED_CONTROLS = buildGeneratedControls(handCraftedScopes);
+const ALL_CONTROLS = [...CSS_VARIABLE_CONTROLS, ...GENERATED_CONTROLS];
 
 export function withCssVariableControls(
   Story: () => ReactNode,
@@ -2815,7 +2657,7 @@ export function withCssVariableControls(
     context.args?.appearance,
   ].filter((value): value is string => typeof value === 'string');
 
-  const controls = CSS_VARIABLE_CONTROLS.filter(
+  const controls = ALL_CONTROLS.filter(
     (control) =>
       control.scopes.some((scope) => activeScopes.includes(scope)) &&
       (!control.variants ||
