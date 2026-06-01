@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Carousel.css';
@@ -17,18 +17,22 @@ export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   onIndexChange?: (index: number) => void;
 }
 
-export function Carousel({
-  className,
-  slides,
-  initialIndex = 0,
-  loop = true,
-  showIndicators = true,
-  autoPlay = false,
-  autoPlayInterval = 5000,
-  onIndexChange,
-  'aria-label': ariaLabel = 'Carousel',
-  ...props
-}: CarouselProps) {
+export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(
+  function Carousel(
+    {
+      className,
+      slides,
+      initialIndex = 0,
+      loop = true,
+      showIndicators = true,
+      autoPlay = false,
+      autoPlayInterval = 5000,
+      onIndexChange,
+      'aria-label': ariaLabel = 'Carousel',
+      ...props
+    },
+    ref,
+  ) {
   const totalSlides = slides.length;
   const boundedInitialIndex = clamp(
     initialIndex,
@@ -88,6 +92,7 @@ export function Carousel({
 
   return (
     <div
+      ref={ref}
       className={cx('pf-carousel', className)}
       aria-label={ariaLabel}
       {...props}
@@ -179,4 +184,6 @@ export function Carousel({
       </div>
     </div>
   );
-}
+});
+
+Carousel.displayName = 'Carousel';

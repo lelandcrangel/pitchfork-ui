@@ -38,7 +38,7 @@ These are the cases where consumers are likely to need a ref for focus managemen
 - [x] **Tabs** — scroll-into-view, imperative focus [`Tabs.tsx`](packages/react/src/components/Tabs/Tabs.tsx)
 - [x] **DatePicker** — programmatic focus on the trigger [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
 - [x] **Tooltip** — measure trigger for external positioning overrides [`Tooltip.tsx`](packages/react/src/components/Tooltip/Tooltip.tsx)
-- [ ] **Carousel** — measure slide dimensions [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
+- [x] **Carousel** — measure slide dimensions [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
 - [ ] **Pagination** — layout measurement [`Pagination.tsx`](packages/react/src/components/Pagination/Pagination.tsx)
 - [ ] **FileUploader** — focus the drop zone [`FileUploader.tsx`](packages/react/src/components/FileUploader/FileUploader.tsx)
 - [ ] **Calendar** — embedded use needs ref [`Calendar.tsx`](packages/react/src/components/Calendar/Calendar.tsx)
@@ -68,7 +68,7 @@ Less likely to need refs but consistent with the rest of the library.
 Named function exports don't get stable display names in minified builds. Affects React DevTools and error stack traces.
 
 - [ ] **Calendar** [`Calendar.tsx`](packages/react/src/components/Calendar/Calendar.tsx)
-- [ ] **Carousel** [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
+- [x] **Carousel** [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
 - [ ] **CodeSnippet** [`CodeSnippet.tsx`](packages/react/src/components/CodeSnippet/CodeSnippet.tsx)
 - [x] **DatePicker** [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
 - [ ] **FileUploader** [`FileUploader.tsx`](packages/react/src/components/FileUploader/FileUploader.tsx)
