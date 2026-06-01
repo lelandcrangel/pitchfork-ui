@@ -74,12 +74,12 @@
 
 .pf-modal__heading-group {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
   min-width: 0;
 }
 
 .pf-modal__title {
-  font-size: 1.125rem;
+  font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   line-height: 1.2;
   margin: 0;
@@ -101,10 +101,10 @@
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
-  font-size: 18px;
-  height: 32px;
+  font-size: var(--font-size-lg);
+  height: var(--size-8, 32px);
   justify-content: center;
-  width: 32px;
+  width: var(--size-8, 32px);
 }
 
 .pf-modal__close:hover,
