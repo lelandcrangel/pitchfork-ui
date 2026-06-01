@@ -40,7 +40,7 @@ These are the cases where consumers are likely to need a ref for focus managemen
 - [x] **Tooltip** — measure trigger for external positioning overrides [`Tooltip.tsx`](packages/react/src/components/Tooltip/Tooltip.tsx)
 - [x] **Carousel** — measure slide dimensions [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
 - [x] **Pagination** — layout measurement [`Pagination.tsx`](packages/react/src/components/Pagination/Pagination.tsx)
-- [ ] **FileUploader** — focus the drop zone [`FileUploader.tsx`](packages/react/src/components/FileUploader/FileUploader.tsx)
+- [x] **FileUploader** — focus the drop zone [`FileUploader.tsx`](packages/react/src/components/FileUploader/FileUploader.tsx)
 - [ ] **Calendar** — embedded use needs ref [`Calendar.tsx`](packages/react/src/components/Calendar/Calendar.tsx)
 
 ### `forwardRef` — display components (lower urgency)
@@ -71,7 +71,7 @@ Named function exports don't get stable display names in minified builds. Affect
 - [x] **Carousel** [`Carousel.tsx`](packages/react/src/components/Carousel/Carousel.tsx)
 - [ ] **CodeSnippet** [`CodeSnippet.tsx`](packages/react/src/components/CodeSnippet/CodeSnippet.tsx)
 - [x] **DatePicker** [`DatePicker.tsx`](packages/react/src/components/DatePicker/DatePicker.tsx)
-- [ ] **FileUploader** [`FileUploader.tsx`](packages/react/src/components/FileUploader/FileUploader.tsx)
+- [x] **FileUploader** [`FileUploader.tsx`](packages/react/src/components/FileUploader/FileUploader.tsx)
 - [ ] **HeaderNavigation** [`HeaderNavigation.tsx`](packages/react/src/components/HeaderNavigation/HeaderNavigation.tsx)
 - [ ] **Icon** [`Icon.tsx`](packages/react/src/components/Icon/Icon.tsx)
 - [ ] **InlineCTA** [`InlineCTA.tsx`](packages/react/src/components/InlineCTA/InlineCTA.tsx)

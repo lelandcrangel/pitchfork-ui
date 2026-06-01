@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState } from 'react';
+import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
@@ -34,24 +34,28 @@ export interface FileUploaderProps extends Omit<
   onFilesChange?: (files: File[]) => void;
 }
 
-export function FileUploader({
-  id,
-  className,
-  label,
-  description,
-  error,
-  accept,
-  multiple = true,
-  maxFiles,
-  maxFileSize,
-  required,
-  disabled = false,
-  value,
-  defaultValue = [],
-  onFilesChange,
-  'aria-describedby': ariaDescribedBy,
-  ...props
-}: FileUploaderProps) {
+export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
+  function FileUploader(
+    {
+      id,
+      className,
+      label,
+      description,
+      error,
+      accept,
+      multiple = true,
+      maxFiles,
+      maxFileSize,
+      required,
+      disabled = false,
+      value,
+      defaultValue = [],
+      onFilesChange,
+      'aria-describedby': ariaDescribedBy,
+      ...props
+    },
+    ref,
+  ) {
   const generatedId = useId();
   const uploaderId = id ?? generatedId;
   const inputId = `${uploaderId}-input`;
@@ -172,6 +176,7 @@ export function FileUploader({
     >
 
       <div
+        ref={ref}
         {...props}
         id={uploaderId}
         className={cx('pf-file-uploader', className)}
@@ -267,4 +272,6 @@ export function FileUploader({
       </div>
     </FieldWrapper>
   );
-}
+});
+
+FileUploader.displayName = 'FileUploader';
