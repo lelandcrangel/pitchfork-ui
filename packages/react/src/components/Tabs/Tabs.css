@@ -20,8 +20,8 @@
 .pf-tabs__list--pills {
   background: var(--pf-tabs-color-semantic-background-subtle, var(--color-semantic-background-subtle));
   border-radius: var(--radius-md);
-  gap: 4px;
-  padding: 4px;
+  gap: var(--space-1);
+  padding: var(--space-1);
 }
 
 .pf-tabs__tab {
@@ -45,12 +45,12 @@
 
 .pf-tabs__tab--sm {
   font-size: var(--font-size-sm);
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
 }
 
 .pf-tabs__tab--md {
   font-size: var(--font-size-sm);
-  padding: 10px 14px;
+  padding: var(--pf-tabs-tab-padding-y-md) var(--pf-tabs-tab-padding-x-md);
 }
 
 .pf-tabs__list--full-width .pf-tabs__tab {
@@ -59,7 +59,7 @@
 }
 
 .pf-tabs__tab--underline {
-  border-bottom: 2px solid transparent;
+  border-bottom: var(--pf-tabs-underline-width) solid transparent;
   margin-bottom: -1px;
 }
 
