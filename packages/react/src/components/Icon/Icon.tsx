@@ -9,6 +9,7 @@ import {
   faSquareCaretRight,
   faSquareCheck,
   faStar,
+  faChartBar,
 } from '@fortawesome/free-regular-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
@@ -144,15 +145,16 @@ const customIcons: Record<string, React.ReactNode> = {
 };
 
 const regularIcons: Record<string, IconDefinition> = {
-  'calendar': faCalendar,
+  calendar: faCalendar,
+  'chart-bar': faChartBar,
   'circle-check': faCircleCheck,
   'circle-question': faCircleQuestion,
   'circle-xmark': faCircleXmark,
-  'copy': faCopy,
+  copy: faCopy,
   'square-caret-left': faSquareCaretLeft,
   'square-caret-right': faSquareCaretRight,
   'square-check': faSquareCheck,
-  'star': faStar,
+  star: faStar,
 };
 
 const toAliasLookup = (icons: Record<string, IconDefinition>) => {
@@ -208,7 +210,14 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   label?: string;
 }
 
-export function Icon({ name, label, className, style, ref: _ref, ...props }: IconProps) {
+export function Icon({
+  name,
+  label,
+  className,
+  style,
+  ref: _ref,
+  ...props
+}: IconProps) {
   const customIcon = customIcons[name];
   if (customIcon !== undefined) {
     return (
@@ -229,7 +238,9 @@ export function Icon({ name, label, className, style, ref: _ref, ...props }: Ico
 
   if (!faIcon) {
     if (import.meta.env.DEV) {
-      console.warn(`[Icon] Unknown icon name: "${name}". Check getAvailableIconNames() for valid options.`);
+      console.warn(
+        `[Icon] Unknown icon name: "${name}". Check getAvailableIconNames() for valid options.`,
+      );
     }
     return null;
   }
