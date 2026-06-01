@@ -69,8 +69,8 @@
   display: inline-flex;
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  gap: 4px;
-  padding: 4px 8px;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
 }
 
 .pf-metric-card__trend-symbol {

@@ -142,7 +142,7 @@
 
 .pf-calendar__weekday-row {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
@@ -161,7 +161,7 @@
 
 .pf-calendar__grid {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
