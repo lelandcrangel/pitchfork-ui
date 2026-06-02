@@ -27,7 +27,7 @@ const CHART_COLORS = [
   'var(--pf-chart-color-6)',
 ];
 
-const PAD = { top: 16, right: 16, bottom: 40, left: 56 };
+const PAD = { top: 24, right: 16, bottom: 40, left: 56 };
 const VIEW_W = 560;
 const VIEW_H = 240;
 const PLOT_W = VIEW_W - PAD.left - PAD.right;

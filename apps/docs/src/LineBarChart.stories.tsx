@@ -1,29 +1,41 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { LineChart } from '@pitchfork-ui/react';
+import React from 'react';
+import { LineChart, BarChart } from '@pitchfork-ui/react';
 
-const meta = {
-  title: 'Components/LineChart',
+const chartData = [
+  { label: 'Jan', sessions: 420, users: 280 },
+  { label: 'Feb', sessions: 380, users: 240 },
+  { label: 'Mar', sessions: 510, users: 330 },
+  { label: 'Apr', sessions: 470, users: 310 },
+  { label: 'May', sessions: 620, users: 400 },
+  { label: 'Jun', sessions: 580, users: 370 },
+  { label: 'Jul', sessions: 700, users: 450 },
+  { label: 'Aug', sessions: 660, users: 420 },
+  { label: 'Sep', sessions: 530, users: 340 },
+  { label: 'Oct', sessions: 490, users: 300 },
+  { label: 'Nov', sessions: 410, users: 260 },
+  { label: 'Dec', sessions: 440, users: 290 },
+];
+
+const chartSeries = [
+  { key: 'sessions', label: 'Sessions' },
+  { key: 'users', label: 'Users' },
+];
+
+const storyDecorator = (Story: React.ComponentType) => (
+  <div style={{ maxWidth: 700, width: '100%' }}>
+    <Story />
+  </div>
+);
+
+const lineMeta = {
+  title: 'Components/Line & Bar Charts',
   component: LineChart,
   tags: ['test'],
+  decorators: [storyDecorator],
   args: {
-    data: [
-      { label: 'Jan', sessions: 420, users: 280 },
-      { label: 'Feb', sessions: 380, users: 240 },
-      { label: 'Mar', sessions: 510, users: 330 },
-      { label: 'Apr', sessions: 470, users: 310 },
-      { label: 'May', sessions: 620, users: 400 },
-      { label: 'Jun', sessions: 580, users: 370 },
-      { label: 'Jul', sessions: 700, users: 450 },
-      { label: 'Aug', sessions: 660, users: 420 },
-      { label: 'Sep', sessions: 530, users: 340 },
-      { label: 'Oct', sessions: 490, users: 300 },
-      { label: 'Nov', sessions: 410, users: 260 },
-      { label: 'Dec', sessions: 440, users: 290 },
-    ],
-    series: [
-      { key: 'sessions', label: 'Sessions' },
-      { key: 'users', label: 'Users' },
-    ],
+    data: chartData,
+    series: chartSeries,
     yAxisLabel: 'Count',
     showLegend: true,
     area: false,
@@ -37,7 +49,34 @@ const meta = {
   },
 } satisfies Meta<typeof LineChart>;
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default lineMeta;
+type LineStory = StoryObj<typeof lineMeta>;
 
-export const Interactive: Story = {};
+export const InteractiveLine: LineStory = {
+  name: 'Interactive Line',
+};
+
+export const InteractiveBar: StoryObj = {
+  name: 'Interactive Bar',
+  args: {
+    data: chartData,
+    series: chartSeries,
+    yAxisLabel: 'Count',
+    showLegend: true,
+    stacked: false,
+  },
+  argTypes: {
+    yAxisLabel: { control: 'text' },
+    showLegend: { control: 'boolean' },
+    stacked: { control: 'boolean' },
+  },
+  render: (args) => (
+    <BarChart
+      data={args.data ?? chartData}
+      series={args.series ?? chartSeries}
+      yAxisLabel={args.yAxisLabel}
+      showLegend={args.showLegend}
+      stacked={args.stacked}
+    />
+  ),
+};
