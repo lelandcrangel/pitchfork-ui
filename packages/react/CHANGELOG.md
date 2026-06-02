@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.1.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.0...react-v0.1.1) (2026-06-02)
+
+
+### Features
+
+* update changelog with accessibility improvements and add todo for dark mode implementation ([b8ab13f](https://github.com/lelandcrangel/pitchfork-ui/commit/b8ab13f4cfea0e275466dcb293ffce875a816a3e))
+
+
+### Bug Fixes
+
+* update progress indicators to use accent color for fill and stroke ([d55ee7e](https://github.com/lelandcrangel/pitchfork-ui/commit/d55ee7e1e5b25ae6265f37b44780d2d391f1f16c))
+
 ## [2026-06-02]
 
 ### Accessibility
