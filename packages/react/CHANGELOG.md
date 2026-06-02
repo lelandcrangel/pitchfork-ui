@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.1.2](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.1...react-v0.1.2) (2026-06-02)
+
+
+### Features
+
+* enhance Line & Bar Chart stories with interactive examples and improve padding in LineBarChart component ([3717589](https://github.com/lelandcrangel/pitchfork-ui/commit/3717589fd33880de6087a9644c7826eca9754748))
+
 ## [0.1.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.0...react-v0.1.1) (2026-06-02)
 
 
