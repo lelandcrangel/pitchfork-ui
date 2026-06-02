@@ -1,0 +1,42 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-sans, 'Inter', system-ui, sans-serif);
+  background: var(--color-semantic-background-default);
+  color: var(--color-semantic-text-default);
+}
+
+/* Two-column grid utility used across pages */
+.demo-grid-2 {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 900px) {
+  .demo-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card wrapper with consistent padding */
+.demo-card {
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+/* Page section spacing */
+.demo-section {
+  display: grid;
+  gap: var(--space-4);
+}

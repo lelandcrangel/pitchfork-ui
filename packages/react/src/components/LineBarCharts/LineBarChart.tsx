@@ -27,7 +27,7 @@ const CHART_COLORS = [
   'var(--pf-chart-color-6)',
 ];
 
-const PAD = { top: 24, right: 16, bottom: 40, left: 56 };
+const PAD = { top: 24, right: 32, bottom: 40, left: 56 };
 const VIEW_W = 560;
 const VIEW_H = 240;
 const PLOT_W = VIEW_W - PAD.left - PAD.right;
@@ -46,6 +46,7 @@ function niceYTicks(maxVal: number, count = 5): number[] {
   const step = ([1, 2, 2.5, 5, 10].find((s) => s * mag >= rough) ?? 10) * mag;
   const ticks: number[] = [];
   for (let v = 0; v <= maxVal * 1.001; v += step) ticks.push(v);
+  if (ticks[ticks.length - 1] < maxVal) ticks.push(ticks[ticks.length - 1] + step);
   return ticks;
 }
 

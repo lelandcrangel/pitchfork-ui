@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(curl -s \"http://localhost:5201/@fs/$\\(pwd\\)/../../packages/react/src/index.ts\")",
+      "Bash(curl -s \"http://localhost:5201/@fs/$\\(pwd\\)/../../packages/react/src/components/Card/index.ts\")"
     ]
   }
 }

@@ -1,15 +1,17 @@
 /// <reference types="vite/client" />
 import {
+  faBarChart,
   faCalendar,
   faCircleCheck,
   faCircleQuestion,
   faCircleXmark,
   faCopy,
+  faCreditCard,
   faSquareCaretLeft,
   faSquareCaretRight,
   faSquareCheck,
   faStar,
-  faBarChart,
+  faUser,
 } from '@fortawesome/free-regular-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
@@ -151,10 +153,12 @@ const regularIcons: Record<string, IconDefinition> = {
   'circle-question': faCircleQuestion,
   'circle-xmark': faCircleXmark,
   copy: faCopy,
+  'credit-card': faCreditCard,
   'square-caret-left': faSquareCaretLeft,
   'square-caret-right': faSquareCaretRight,
   'square-check': faSquareCheck,
   star: faStar,
+  user: faUser,
 };
 
 const toAliasLookup = (icons: Record<string, IconDefinition>) => {
