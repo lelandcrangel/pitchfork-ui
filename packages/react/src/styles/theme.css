@@ -404,9 +404,9 @@
   /* Avatar aliases */
   --pf-avatar-text: var(--color-semantic-text-default);
   --pf-avatar-status-border: var(--pf-surface-bg);
-  --pf-avatar-status-online: var(--color-semantic-status-success-foreground);
-  --pf-avatar-status-away: var(--color-semantic-status-warning-foreground);
-  --pf-avatar-status-busy: var(--color-semantic-status-danger-foreground);
+  --pf-avatar-status-online: var(--color-semantic-status-success-bright);
+  --pf-avatar-status-away: var(--color-semantic-status-warning-bright);
+  --pf-avatar-status-busy: var(--color-semantic-status-danger-bright);
   --pf-avatar-status-offline: var(--color-semantic-text-muted);
 
   /* Switch aliases */

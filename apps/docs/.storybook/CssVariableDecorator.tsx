@@ -908,7 +908,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-avatar-status-online',
     label: 'Avatar status online',
-    defaultValue: 'var(--color-semantic-status-success-foreground)',
+    defaultValue: 'var(--color-semantic-status-success-bright)',
     type: 'color',
     scopes: ['avatar'],
   },
@@ -965,14 +965,14 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-avatar-status-away',
     label: 'Avatar status away',
-    defaultValue: 'var(--color-semantic-status-warning-foreground)',
+    defaultValue: 'var(--color-semantic-status-warning-bright)',
     type: 'color',
     scopes: ['avatar'],
   },
   {
     name: '--pf-avatar-status-busy',
     label: 'Avatar status busy',
-    defaultValue: 'var(--color-semantic-status-danger-foreground)',
+    defaultValue: 'var(--color-semantic-status-danger-bright)',
     type: 'color',
     scopes: ['avatar'],
   },
