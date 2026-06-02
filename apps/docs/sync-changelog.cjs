@@ -1,10 +1,11 @@
 // sync-changelog.cjs
-// Script to sync CHANGELOG.md into CHANGELOG.mdx for Storybook (CommonJS)
+// Syncs packages/react/CHANGELOG.md (written by release-please) into
+// src/CHANGELOG.mdx for Storybook display.
 
 const fs = require('fs');
 const path = require('path');
 
-const mdPath = path.resolve(__dirname, 'src/CHANGELOG.md');
+const mdPath = path.resolve(__dirname, '../../packages/react/CHANGELOG.md');
 const mdxPath = path.resolve(__dirname, 'src/CHANGELOG.mdx');
 
 // Read the MDX file to preserve the Storybook frontmatter
