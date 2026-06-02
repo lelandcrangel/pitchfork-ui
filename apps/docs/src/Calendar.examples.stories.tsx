@@ -22,10 +22,17 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+const randomDayThisMonth = (() => {
+  const now = new Date();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const day = Math.floor(Math.random() * daysInMonth) + 1;
+  return new Date(now.getFullYear(), now.getMonth(), day);
+})();
+
 export const PreselectedDay: Story = {
   args: {
     description: 'A date is preselected by default.',
-    defaultValue: new Date(2026, 4, 22),
+    defaultValue: randomDayThisMonth,
   },
 };
 
