@@ -15,7 +15,7 @@
 }
 
 .pf-progress-bar__fill {
-  background: var(--pf-progress-fill);
+  background: var(--pf-progress-accent);
   border-radius: inherit;
   height: 100%;
   transition: width 200ms ease;
@@ -54,7 +54,7 @@
 }
 
 .pf-progress-circle__fill {
-  stroke: var(--pf-progress-fill);
+  stroke: var(--pf-progress-accent);
   stroke-linecap: round;
   transition: stroke-dashoffset 200ms ease;
 }

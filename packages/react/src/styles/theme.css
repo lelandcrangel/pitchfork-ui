@@ -131,7 +131,7 @@
 
   /* ProgressIndicators aliases */
   --pf-progress-track-bg: var(--pf-surface-subtle);
-  --pf-progress-fill: var(--color-semantic-action-primary);
+  --pf-progress-accent: var(--color-semantic-action-primary);
   --pf-progress-text: var(--color-semantic-text-default);
   --pf-progress-text-muted: var(--color-semantic-text-muted);
 
