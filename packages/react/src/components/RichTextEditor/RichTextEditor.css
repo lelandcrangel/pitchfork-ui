@@ -1,17 +1,17 @@
 .pf-rte {
-  background: var(--pf-richtexteditor-color-semantic-background-default, var(--color-semantic-background-default));
-  border: 1px solid var(--pf-richtexteditor-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-rte-bg);
+  border: 1px solid var(--pf-rte-border);
   border-radius: var(--radius-md);
   overflow: hidden;
 }
 
 .pf-rte:focus-within {
-  border-color: var(--pf-richtexteditor-color-semantic-action-primary, var(--color-semantic-action-primary));
+  border-color: var(--pf-rte-focus-border);
   box-shadow: var(--pf-richtexteditor-focus-ring, var(--pf-focus-ring));
 }
 
 .pf-rte--invalid {
-  border-color: var(--pf-richtexteditor-color-danger-600, var(--color-danger-600));
+  border-color: var(--pf-rte-invalid-border);
 }
 
 .pf-rte--disabled {
@@ -20,8 +20,8 @@
 
 .pf-rte__toolbar {
   align-items: center;
-  background: var(--pf-richtexteditor-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  border-bottom: 1px solid var(--pf-richtexteditor-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-rte-bg-subtle);
+  border-bottom: 1px solid var(--pf-rte-border);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);
@@ -32,7 +32,7 @@
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  color: var(--pf-richtexteditor-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-rte-text);
   cursor: pointer;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
@@ -41,8 +41,8 @@
 }
 
 .pf-rte__tool:hover:not(:disabled) {
-  background: var(--pf-richtexteditor-color-semantic-background-default, var(--color-semantic-background-default));
-  border-color: var(--pf-richtexteditor-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-rte-bg);
+  border-color: var(--pf-rte-border);
 }
 
 .pf-rte__tool:focus-visible {
@@ -56,14 +56,14 @@
 }
 
 .pf-rte__divider {
-  background: var(--pf-richtexteditor-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-rte-border);
   height: 18px;
   margin: 0 var(--space-1);
   width: 1px;
 }
 
 .pf-rte__editor {
-  color: var(--pf-richtexteditor-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-rte-text);
   font: inherit;
   line-height: 1.5;
   min-height: var(--pf-rte-min-height, 140px);
@@ -81,13 +81,13 @@
 }
 
 .pf-rte__editor:empty::before {
-  color: var(--pf-richtexteditor-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-rte-text-muted);
   content: attr(data-placeholder);
   pointer-events: none;
 }
 
 .pf-rte__count {
-  color: var(--pf-richtexteditor-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-rte-text-muted);
   font-size: var(--font-size-sm);
   margin: var(--space-2) 0 0;
   text-align: right;

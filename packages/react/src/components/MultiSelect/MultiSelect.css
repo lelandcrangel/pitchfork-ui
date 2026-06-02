@@ -4,20 +4,10 @@
 
 .pf-multi-select__trigger {
   align-items: center;
-  background: var(
-    --pf-multiselect-color-semantic-background-default,
-    var(--color-semantic-background-default)
-  );
-  border: 1px solid
-    var(
-      --pf-multiselect-color-semantic-text-muted,
-      var(--color-semantic-text-muted)
-    );
+  background: var(--pf-multiselect-bg);
+  border: 1px solid var(--pf-multiselect-border);
   border-radius: var(--radius-md);
-  color: var(
-    --pf-multiselect-color-semantic-text-default,
-    var(--color-semantic-text-default)
-  );
+  color: var(--pf-multiselect-text);
   cursor: pointer;
   display: flex;
   font: inherit;
@@ -36,9 +26,9 @@
 
 .pf-multi-select__trigger:disabled,
 .pf-multi-select__trigger[aria-disabled='true'] {
-  background: var(--pf-multiselect-color-semantic-background-disabled, #f5f5f5);
-  border-color: var(--pf-multiselect-color-semantic-border-disabled, #e0e0e0);
-  color: var(--pf-multiselect-color-semantic-text-disabled, #b0b0b0);
+  background: var(--pf-control-bg-disabled);
+  border-color: var(--pf-control-border-disabled);
+  color: var(--pf-control-text-disabled);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -48,29 +38,20 @@
 }
 
 .pf-multi-select__trigger:focus-visible {
-  border-color: var(
-    --pf-multiselect-color-semantic-action-primary,
-    var(--color-semantic-action-primary)
-  );
+  border-color: var(--pf-multiselect-focus-border);
   box-shadow: var(--pf-multiselect-focus-ring, var(--pf-focus-ring));
 }
 
 .pf-multi-select__trigger--open {
-  border-color: var(
-    --pf-multiselect-color-semantic-action-primary,
-    var(--color-semantic-action-primary)
-  );
+  border-color: var(--pf-multiselect-focus-border);
 }
 
 .pf-multi-select__trigger--invalid {
-  border-color: var(--pf-multiselect-color-danger-600, var(--color-danger-600));
+  border-color: var(--pf-multiselect-invalid-border);
 }
 
 .pf-multi-select__placeholder {
-  color: var(
-    --pf-multiselect-color-semantic-text-muted,
-    var(--color-semantic-text-muted)
-  );
+  color: var(--pf-multiselect-text-muted);
 }
 
 .pf-multi-select__chips {
@@ -80,15 +61,9 @@
 }
 
 .pf-multi-select__chip {
-  background: var(
-    --pf-multiselect-color-semantic-background-subtle,
-    var(--color-semantic-background-subtle)
-  );
+  background: var(--pf-multiselect-bg-subtle);
   border-radius: var(--radius-full);
-  color: var(
-    --pf-multiselect-color-semantic-text-default,
-    var(--color-semantic-text-default)
-  );
+  color: var(--pf-multiselect-text);
   font-size: var(--font-size-sm);
   line-height: 1;
   padding: 7px var(--space-2);
@@ -96,10 +71,7 @@
 
 .pf-multi-select__icon {
   align-items: center;
-  color: var(
-    --pf-multiselect-color-semantic-text-default,
-    var(--color-semantic-text-default)
-  );
+  color: var(--pf-multiselect-text);
   display: inline-flex;
   flex-shrink: 0;
   height: 20px;
@@ -120,20 +92,10 @@
 }
 
 .pf-multi-select__menu {
-  background: var(
-    --pf-multiselect-color-semantic-background-default,
-    var(--color-semantic-background-default)
-  );
-  border: 1px solid
-    var(
-      --pf-multiselect-color-semantic-text-muted,
-      var(--color-semantic-text-muted)
-    );
+  background: var(--pf-multiselect-bg);
+  border: 1px solid var(--pf-multiselect-border);
   border-radius: var(--radius-md);
-  box-shadow: var(
-    --pf-multiselect-elevation-popover-shadow,
-    var(--pf-elevation-popover-shadow)
-  );
+  box-shadow: var(--pf-multiselect-elevation-popover-shadow, var(--pf-elevation-popover-shadow));
   list-style: none;
   margin: 0;
   max-height: 240px;
@@ -146,10 +108,7 @@
 .pf-multi-select__option {
   align-items: center;
   border-radius: var(--radius-sm);
-  color: var(
-    --pf-multiselect-color-semantic-text-default,
-    var(--color-semantic-text-default)
-  );
+  color: var(--pf-multiselect-text);
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -159,14 +118,8 @@
 
 .pf-multi-select__option:hover,
 .pf-multi-select__option--active {
-  background: var(
-    --pf-multiselect-color-semantic-action-primary,
-    var(--color-semantic-action-primary)
-  );
-  color: var(
-    --pf-multiselect-color-semantic-action-primary-text,
-    var(--color-semantic-action-primary-text)
-  );
+  background: var(--pf-multiselect-active-bg);
+  color: var(--pf-multiselect-active-text);
 }
 
 .pf-multi-select__option--selected {
@@ -175,19 +128,13 @@
 
 .pf-multi-select__option--disabled {
   background: transparent;
-  color: var(
-    --pf-multiselect-color-semantic-text-muted,
-    var(--color-semantic-text-muted)
-  );
+  color: var(--pf-multiselect-text-muted);
   cursor: not-allowed;
 }
 
 .pf-multi-select__option--disabled:hover {
   background: transparent;
-  color: var(
-    --pf-multiselect-color-semantic-text-muted,
-    var(--color-semantic-text-muted)
-  );
+  color: var(--pf-multiselect-text-muted);
 }
 
 .pf-multi-select__check {

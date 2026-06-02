@@ -6,7 +6,7 @@
 }
 
 .pf-progress-bar__track {
-  background: var(--pf-progressindicators-surface-subtle, var(--pf-surface-subtle));
+  background: var(--pf-progress-track-bg);
   border-radius: var(--radius-full);
   flex: 1;
   height: 8px;
@@ -14,7 +14,7 @@
 }
 
 .pf-progress-bar__fill {
-  background: var(--pf-progressindicators-color-semantic-action-primary, var(--color-semantic-action-primary));
+  background: var(--pf-progress-fill);
   border-radius: inherit;
   height: 100%;
   transition: width 200ms ease;
@@ -22,7 +22,7 @@
 }
 
 .pf-progress-bar__value {
-  color: var(--pf-progressindicators-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-progress-text-muted);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
@@ -49,17 +49,17 @@
 }
 
 .pf-progress-circle__track {
-  stroke: var(--pf-progressindicators-surface-subtle, var(--pf-surface-subtle));
+  stroke: var(--pf-progress-track-bg);
 }
 
 .pf-progress-circle__fill {
-  stroke: var(--pf-progressindicators-color-semantic-action-primary, var(--color-semantic-action-primary));
+  stroke: var(--pf-progress-fill);
   stroke-linecap: round;
   transition: stroke-dashoffset 200ms ease;
 }
 
 .pf-progress-circle__value {
-  color: var(--pf-progressindicators-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-progress-text);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   left: 50%;

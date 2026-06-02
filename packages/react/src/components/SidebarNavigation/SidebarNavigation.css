@@ -1,6 +1,6 @@
 .pf-sidebar-navigation {
-  background: var(--pf-sidebarnavigation-color-semantic-background-default, var(--color-semantic-background-default));
-  border: 1px solid var(--pf-sidebarnavigation-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-sidebar-nav-bg);
+  border: 1px solid var(--pf-sidebar-nav-border);
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
@@ -10,16 +10,16 @@
 
 .pf-sidebar-navigation__header,
 .pf-sidebar-navigation__footer {
-  border-color: var(--pf-sidebarnavigation-color-semantic-border-default, var(--color-semantic-border-default));
+  border-color: var(--pf-sidebar-nav-border);
   padding: var(--space-3) var(--space-3);
 }
 
 .pf-sidebar-navigation__header {
-  border-bottom: 1px solid var(--pf-sidebarnavigation-color-semantic-border-default, var(--color-semantic-border-default));
+  border-bottom: 1px solid var(--pf-sidebar-nav-border);
 }
 
 .pf-sidebar-navigation__footer {
-  border-top: 1px solid var(--pf-sidebarnavigation-color-semantic-border-default, var(--color-semantic-border-default));
+  border-top: 1px solid var(--pf-sidebar-nav-border);
   margin-top: auto;
 }
 
@@ -35,7 +35,7 @@
 }
 
 .pf-sidebar-navigation__section-title {
-  color: var(--pf-sidebarnavigation-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-sidebar-nav-text-muted);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.04em;
@@ -61,7 +61,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--pf-sidebarnavigation-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-sidebar-nav-text-muted);
   cursor: pointer;
   display: grid;
   font: inherit;
@@ -75,8 +75,8 @@
 }
 
 .pf-sidebar-navigation__link:hover {
-  background: var(--pf-sidebarnavigation-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  color: var(--pf-sidebarnavigation-color-semantic-text-default, var(--color-semantic-text-default));
+  background: var(--pf-sidebar-nav-bg-subtle);
+  color: var(--pf-sidebar-nav-text);
 }
 
 .pf-sidebar-navigation__link:focus-visible {
@@ -85,8 +85,8 @@
 }
 
 .pf-sidebar-navigation__link--active {
-  background: var(--pf-sidebarnavigation-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  color: var(--pf-sidebarnavigation-color-semantic-text-default, var(--color-semantic-text-default));
+  background: var(--pf-sidebar-nav-bg-subtle);
+  color: var(--pf-sidebar-nav-text);
   font-weight: var(--font-weight-semibold);
 }
 

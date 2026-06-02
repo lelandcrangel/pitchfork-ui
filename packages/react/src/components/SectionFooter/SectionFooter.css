@@ -7,7 +7,7 @@
 }
 
 .pf-section-footer--divider {
-  border-top: 1px solid var(--pf-sectionfooter-color-semantic-border-default, var(--color-semantic-border-default));
+  border-top: 1px solid var(--pf-section-footer-border);
 }
 
 .pf-section-footer--start {
@@ -23,14 +23,14 @@
 }
 
 .pf-section-footer__heading {
-  color: var(--pf-sectionfooter-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-section-footer-text);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .pf-section-footer__description {
-  color: var(--pf-sectionfooter-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-section-footer-text-muted);
   font-size: var(--font-size-sm);
   line-height: 1.4;
   margin: var(--space-1) 0 0;

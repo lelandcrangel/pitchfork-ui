@@ -39,34 +39,34 @@
 }
 
 .pf-utility-button--neutral {
-  background: var(--pf-utilitybutton-color-semantic-background-default, var(--color-semantic-background-default));
-  border-color: var(--pf-utilitybutton-color-semantic-border-default, var(--color-semantic-border-default));
-  color: var(--pf-utilitybutton-color-semantic-text-default, var(--color-semantic-text-default));
+  background: var(--pf-utility-btn-neutral-bg);
+  border-color: var(--pf-utility-btn-neutral-border);
+  color: var(--pf-utility-btn-neutral-text);
 }
 
 .pf-utility-button--neutral:hover:not(:disabled) {
-  background: var(--pf-utilitybutton-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  border-color: var(--pf-utilitybutton-color-semantic-border-strong, var(--color-semantic-border-strong));
+  background: var(--pf-utility-btn-neutral-bg-hover);
+  border-color: var(--pf-utility-btn-neutral-border-hover);
 }
 
 .pf-utility-button--brand {
-  background: var(--pf-utilitybutton-color-brand-100, var(--color-brand-100));
-  border-color: var(--pf-utilitybutton-color-brand-300, var(--color-brand-300));
-  color: var(--pf-utilitybutton-color-brand-700, var(--color-brand-700));
+  background: var(--pf-utility-btn-brand-bg);
+  border-color: var(--pf-utility-btn-brand-border);
+  color: var(--pf-utility-btn-brand-text);
 }
 
 .pf-utility-button--brand:hover:not(:disabled) {
-  background: var(--pf-utilitybutton-color-brand-200, var(--color-brand-200));
+  background: var(--pf-utility-btn-brand-bg-hover);
 }
 
 .pf-utility-button--danger {
-  background: var(--pf-utilitybutton-color-semantic-status-danger-background, var(--color-semantic-status-danger-background));
-  border-color: var(--pf-utilitybutton-color-semantic-status-danger-border, var(--color-semantic-status-danger-border));
-  color: var(--pf-utilitybutton-color-semantic-status-danger-foreground, var(--color-semantic-status-danger-foreground));
+  background: var(--pf-utility-btn-danger-bg);
+  border-color: var(--pf-utility-btn-danger-border);
+  color: var(--pf-utility-btn-danger-text);
 }
 
 .pf-utility-button--danger:hover:not(:disabled) {
-  background: var(--pf-utilitybutton-color-danger-100, var(--color-danger-100));
+  background: var(--pf-utility-btn-danger-bg-hover);
 }
 
 .pf-utility-button__icon {

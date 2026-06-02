@@ -26,9 +26,9 @@
 
 .pf-select__trigger:disabled,
 .pf-select__trigger[aria-disabled='true'] {
-  background: var(--pf-select-input-bg-disabled, #f5f5f5);
-  border-color: var(--pf-select-input-border-disabled, #e0e0e0);
-  color: var(--pf-select-input-text-disabled, #b0b0b0);
+  background: var(--pf-control-bg-disabled);
+  border-color: var(--pf-control-border-disabled);
+  color: var(--pf-control-text-disabled);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -38,22 +38,16 @@
 }
 
 .pf-select__trigger:focus-visible {
-  border-color: var(
-    --pf-select-color-semantic-action-primary,
-    var(--color-semantic-action-primary)
-  );
+  border-color: var(--pf-select-focus-border);
   box-shadow: var(--pf-select-focus-ring, var(--pf-focus-ring));
 }
 
 .pf-select__trigger--open {
-  border-color: var(
-    --pf-select-color-semantic-action-primary,
-    var(--color-semantic-action-primary)
-  );
+  border-color: var(--pf-select-focus-border);
 }
 
 .pf-select__trigger--invalid {
-  border-color: var(--pf-select-color-danger-600, var(--color-danger-600));
+  border-color: var(--pf-select-invalid-border);
 }
 
 .pf-select__value {
@@ -92,10 +86,7 @@
   background: var(--pf-select-menu-bg);
   border: 1px solid var(--pf-select-menu-border);
   border-radius: var(--radius-md);
-  box-shadow: var(
-    --pf-select-elevation-popover-shadow,
-    var(--pf-elevation-popover-shadow)
-  );
+  box-shadow: var(--pf-select-elevation-popover-shadow, var(--pf-elevation-popover-shadow));
   list-style: none;
   margin: 0;
   max-height: 220px;

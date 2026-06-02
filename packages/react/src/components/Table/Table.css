@@ -1,6 +1,6 @@
 .pf-table {
-  background: var(--pf-table-color-semantic-background-default, var(--color-semantic-background-default));
-  border: 1px solid var(--pf-table-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-table-bg);
+  border: 1px solid var(--pf-table-border);
   border-radius: var(--radius-md);
   overflow: auto;
 }
@@ -14,8 +14,8 @@
 
 .pf-table__caption {
   align-items: center;
-  border-bottom: 1px solid var(--pf-table-color-semantic-border-default, var(--color-semantic-border-default));
-  color: var(--pf-table-color-semantic-text-muted, var(--color-semantic-text-muted));
+  border-bottom: 1px solid var(--pf-table-border);
+  color: var(--pf-table-text-muted);
   display: flex;
   font-size: var(--font-size-sm);
   min-height: 56px;
@@ -28,7 +28,7 @@
 .pf-table__head-cell,
 .pf-table__body-cell,
 .pf-table__empty {
-  border-bottom: 1px solid var(--pf-table-color-semantic-border-default, var(--color-semantic-border-default));
+  border-bottom: 1px solid var(--pf-table-border);
   font-size: var(--font-size-sm);
   line-height: 1.4;
   padding: 14px var(--space-4);
@@ -36,8 +36,8 @@
 }
 
 .pf-table__head-cell {
-  background: var(--pf-table-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  color: var(--pf-table-color-semantic-text-muted, var(--color-semantic-text-muted));
+  background: var(--pf-table-bg-subtle);
+  color: var(--pf-table-text-muted);
   font-weight: var(--font-weight-semibold);
   position: relative;
   text-transform: none;
@@ -60,7 +60,7 @@
 
 .pf-table__sort-button:hover,
 .pf-table__sort-button:focus-visible {
-  color: var(--pf-table-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-table-text);
   outline: none;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .pf-table__body-cell {
-  color: var(--pf-table-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-table-text);
 }
 
 .pf-table__native tbody tr:last-child .pf-table__body-cell,
@@ -85,19 +85,11 @@
   tbody
   tr:nth-child(even)
   .pf-table__body-cell {
-  background: color-mix(
-    in srgb,
-    var(--pf-table-color-semantic-background-subtle, var(--color-semantic-background-subtle)) 55%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--pf-table-bg-subtle) 55%, transparent);
 }
 
 .pf-table--hoverable .pf-table__native tbody tr:hover .pf-table__body-cell {
-  background: color-mix(
-    in srgb,
-    var(--pf-table-color-semantic-background-subtle, var(--color-semantic-background-subtle)) 70%,
-    transparent
-  );
+  background: color-mix(in srgb, var(--pf-table-bg-subtle) 70%, transparent);
 }
 
 .pf-table--sticky-header .pf-table__head-cell {
@@ -119,7 +111,7 @@
 }
 
 .pf-table__empty {
-  color: var(--pf-table-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-table-text-muted);
   text-align: center;
 }
 

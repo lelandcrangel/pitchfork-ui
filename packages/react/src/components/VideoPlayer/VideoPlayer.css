@@ -1,6 +1,6 @@
 .pf-video-player {
-  background: var(--pf-videoplayer-color-base-black, var(--color-base-black));
-  border: 1px solid var(--pf-videoplayer-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-videoplayer-bg);
+  border: 1px solid var(--pf-videoplayer-border);
   border-radius: var(--radius-md);
   overflow: hidden;
   width: 100%;
@@ -19,7 +19,7 @@
 }
 
 .pf-video-player--invalid {
-  border-color: var(--pf-videoplayer-color-danger-600, var(--color-danger-600));
+  border-color: var(--pf-videoplayer-invalid-border);
 }
 
 .pf-video-player__video {
@@ -31,7 +31,7 @@
 
 .pf-video-player__empty {
   align-items: center;
-  color: var(--pf-videoplayer-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-videoplayer-text-muted);
   display: flex;
   font-size: var(--font-size-sm);
   height: 100%;

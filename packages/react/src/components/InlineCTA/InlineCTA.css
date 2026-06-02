@@ -1,7 +1,7 @@
 .pf-inline-cta {
   align-items: center;
-  background: var(--pf-inlinecta-color-semantic-background-default, var(--color-semantic-background-default));
-  border: 1px solid var(--pf-inlinecta-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-inline-cta-bg);
+  border: 1px solid var(--pf-inline-cta-border);
   border-radius: var(--radius-md);
   display: grid;
   gap: var(--space-3);
@@ -11,7 +11,7 @@
 
 .pf-inline-cta__icon {
   align-items: center;
-  color: var(--pf-inlinecta-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-inline-cta-text-muted);
   display: inline-flex;
   font-size: var(--font-size-md);
   justify-content: center;
@@ -24,14 +24,14 @@
 }
 
 .pf-inline-cta__heading {
-  color: var(--pf-inlinecta-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-inline-cta-text);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .pf-inline-cta__description {
-  color: var(--pf-inlinecta-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-inline-cta-text-muted);
   font-size: var(--font-size-sm);
   margin: 0;
 }
@@ -43,42 +43,30 @@
 }
 
 .pf-inline-cta--info {
-  background: color-mix(
-    in srgb,
-    var(--pf-inlinecta-color-brand-50, var(--color-brand-50)) 70%,
-    var(--color-base-white)
-  );
-  border-color: var(--pf-inlinecta-color-brand-300, var(--color-brand-300));
+  background: color-mix(in srgb, var(--pf-inline-cta-info-bg) 70%, var(--color-base-white));
+  border-color: var(--pf-inline-cta-info-border);
 }
 
 .pf-inline-cta--info .pf-inline-cta__icon {
-  color: var(--pf-inlinecta-color-brand-700, var(--color-brand-700));
+  color: var(--pf-inline-cta-info-icon);
 }
 
 .pf-inline-cta--info .pf-inline-cta__heading {
-  color: var(--pf-inlinecta-color-brand-800, var(--color-brand-800));
+  color: var(--pf-inline-cta-info-heading);
 }
 
 .pf-inline-cta--info .pf-inline-cta__description {
-  color: var(--pf-inlinecta-color-brand-700, var(--color-brand-700));
+  color: var(--pf-inline-cta-info-description);
 }
 
 .pf-inline-cta--success {
-  background: color-mix(
-    in srgb,
-    var(--pf-inlinecta-color-semantic-status-success-background, var(--color-semantic-status-success-background)) 55%,
-    var(--color-base-white)
-  );
-  border-color: var(--pf-inlinecta-color-semantic-status-success-border, var(--color-semantic-status-success-border));
+  background: color-mix(in srgb, var(--pf-inline-cta-success-bg) 55%, var(--color-base-white));
+  border-color: var(--pf-inline-cta-success-border);
 }
 
 .pf-inline-cta--warning {
-  background: color-mix(
-    in srgb,
-    var(--pf-inlinecta-color-semantic-status-warning-background, var(--color-semantic-status-warning-background)) 60%,
-    var(--color-base-white)
-  );
-  border-color: var(--pf-inlinecta-color-semantic-status-warning-border, var(--color-semantic-status-warning-border));
+  background: color-mix(in srgb, var(--pf-inline-cta-warning-bg) 60%, var(--color-base-white));
+  border-color: var(--pf-inline-cta-warning-border);
 }
 
 @media (max-width: 720px) {

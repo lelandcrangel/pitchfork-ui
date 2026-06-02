@@ -7,6 +7,7 @@
   --pf-chart-color-5: #0ea5e9;
   --pf-chart-color-6: #22c55e;
   --pf-chart-grid: var(--color-semantic-border-default);
+  --pf-chart-text-muted: var(--color-semantic-text-muted);
 }
 
 [data-theme='dark'] {
@@ -33,7 +34,7 @@
 
 .pf-chart__empty {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-chart-text-muted);
   display: flex;
   font-size: var(--font-size-sm);
   height: 120px;
@@ -47,7 +48,7 @@
 }
 
 .pf-chart__tick {
-  fill: var(--color-semantic-text-muted);
+  fill: var(--pf-chart-text-muted);
   font-family: inherit;
   font-size: var(--font-size-2xs);
 }
@@ -63,7 +64,7 @@
 }
 
 .pf-chart__axis-label {
-  fill: var(--color-semantic-text-muted);
+  fill: var(--pf-chart-text-muted);
   font-family: inherit;
   font-size: var(--font-size-2xs);
   text-anchor: middle;
@@ -100,7 +101,7 @@
 
 .pf-chart-legend__item {
   align-items: center;
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-chart-text-muted);
   display: flex;
   font-size: var(--font-size-sm);
   gap: var(--space-2);

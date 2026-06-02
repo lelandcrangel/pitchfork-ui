@@ -4,20 +4,10 @@
 
 .pf-dropdown__trigger {
   align-items: center;
-  background: var(
-    --pf-dropdown-button-secondary-bg,
-    var(--pf-button-secondary-bg)
-  );
-  border: 1px solid
-    var(
-      --pf-dropdown-button-secondary-border,
-      var(--pf-button-secondary-border)
-    );
+  background: var(--pf-dropdown-button-secondary-bg, var(--pf-button-secondary-bg));
+  border: 1px solid var(--pf-dropdown-button-secondary-border, var(--pf-button-secondary-border));
   border-radius: var(--radius-md);
-  color: var(
-    --pf-dropdown-button-secondary-text,
-    var(--pf-button-secondary-text)
-  );
+  color: var(--pf-dropdown-button-secondary-text, var(--pf-button-secondary-text));
   cursor: pointer;
   display: inline-flex;
   gap: var(--space-2);
@@ -26,14 +16,8 @@
 }
 
 .pf-dropdown__trigger:hover:not(:disabled) {
-  background: var(
-    --pf-dropdown-button-secondary-bg-hover,
-    var(--pf-button-secondary-bg-hover)
-  );
-  border-color: var(
-    --pf-dropdown-button-secondary-border-hover,
-    var(--pf-button-secondary-border-hover)
-  );
+  background: var(--pf-dropdown-button-secondary-bg-hover, var(--pf-button-secondary-bg-hover));
+  border-color: var(--pf-dropdown-button-secondary-border-hover, var(--pf-button-secondary-border-hover));
 }
 
 .pf-dropdown__trigger:focus-visible {
@@ -51,10 +35,7 @@
 }
 
 .pf-dropdown__chevron {
-  color: var(
-    --pf-dropdown-color-semantic-text-muted,
-    var(--color-semantic-text-muted)
-  );
+  color: var(--pf-dropdown-text-muted);
   display: inline-flex;
   height: var(--pf-dropdown-icon-size);
   transition: transform 140ms ease;
@@ -88,10 +69,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(
-    --pf-dropdown-color-semantic-text-default,
-    var(--color-semantic-text-default)
-  );
+  color: var(--pf-dropdown-text);
   cursor: pointer;
   display: inline-flex;
   font: inherit;
@@ -109,10 +87,7 @@
 }
 
 .pf-dropdown__item-icon {
-  color: var(
-    --pf-dropdown-color-semantic-text-muted,
-    var(--color-semantic-text-muted)
-  );
+  color: var(--pf-dropdown-text-muted);
   display: inline-flex;
   height: var(--pf-dropdown-icon-size);
   width: var(--pf-dropdown-icon-size);
@@ -124,10 +99,7 @@
 }
 
 .pf-dropdown__item-shortcut {
-  color: var(
-    --pf-dropdown-color-semantic-text-muted,
-    var(--color-semantic-text-muted)
-  );
+  color: var(--pf-dropdown-text-muted);
   font-size: var(--font-size-xs);
 }
 
@@ -137,21 +109,15 @@
 }
 
 .pf-dropdown__item--destructive {
-  color: var(
-    --pf-dropdown-color-semantic-status-danger-foreground,
-    var(--color-semantic-status-danger-foreground)
-  );
+  color: var(--pf-dropdown-text-danger);
 }
 
 .pf-dropdown__item--destructive .pf-dropdown__item-icon {
-  color: var(--pf-dropdown-color-danger-500, var(--color-danger-500));
+  color: var(--pf-dropdown-icon-danger);
 }
 
 .pf-dropdown__item:disabled {
-  color: var(
-    --pf-dropdown-color-semantic-text-muted,
-    var(--color-semantic-text-muted)
-  );
+  color: var(--pf-dropdown-text-muted);
   cursor: not-allowed;
   opacity: 0.7;
 }

@@ -6,37 +6,9 @@
 
 .pf-button-group__button {
   align-items: center;
-  background: var(
-    --pf-buttongroup-background-default,
-    var(
-      --pf-buttongroup-semantic-background-default,
-      var(
-        --pf-buttongroup-color-semantic-background-default,
-        var(--color-semantic-background-default)
-      )
-    )
-  );
-  border: 1px solid
-    var(
-      --pf-buttongroup-border-default,
-      var(
-        --pf-buttongroup-semantic-border-default,
-        var(
-          --pf-buttongroup-color-semantic-border-default,
-          var(--color-semantic-border-default)
-        )
-      )
-    );
-  color: var(
-    --pf-buttongroup-text-default,
-    var(
-      --pf-buttongroup-semantic-text-default,
-      var(
-        --pf-buttongroup-color-semantic-text-default,
-        var(--color-semantic-text-default)
-      )
-    )
-  );
+  background: var(--pf-buttongroup-bg);
+  border: 1px solid var(--pf-buttongroup-border);
+  color: var(--pf-buttongroup-text);
   cursor: pointer;
   display: inline-flex;
   gap: var(--space-2);
@@ -70,76 +42,20 @@
   z-index: 2;
 }
 
-.pf-button-group__button:hover:not(:disabled):not(
-    .pf-button-group__button--selected
-  ) {
-  background: var(
-    --pf-buttongroup-background-subtle,
-    var(
-      --pf-buttongroup-semantic-background-subtle,
-      var(
-        --pf-buttongroup-color-semantic-background-subtle,
-        var(--color-semantic-background-subtle)
-      )
-    )
-  );
+.pf-button-group__button:hover:not(:disabled):not(.pf-button-group__button--selected) {
+  background: var(--pf-buttongroup-bg-subtle);
 }
 
 .pf-button-group__button--selected {
-  background: var(
-    --pf-buttongroup-action-primary,
-    var(
-      --pf-buttongroup-semantic-action-primary,
-      var(
-        --pf-buttongroup-color-semantic-action-primary,
-        var(--color-semantic-action-primary)
-      )
-    )
-  );
-  border-color: var(
-    --pf-buttongroup-action-primary,
-    var(
-      --pf-buttongroup-semantic-action-primary,
-      var(
-        --pf-buttongroup-color-semantic-action-primary,
-        var(--color-semantic-action-primary)
-      )
-    )
-  );
-  color: var(
-    --pf-buttongroup-action-primary-text,
-    var(
-      --pf-buttongroup-semantic-action-primary-text,
-      var(
-        --pf-buttongroup-color-semantic-action-primary-text,
-        var(--color-semantic-action-primary-text)
-      )
-    )
-  );
+  background: var(--pf-buttongroup-action-primary);
+  border-color: var(--pf-buttongroup-action-primary);
+  color: var(--pf-buttongroup-action-primary-text);
   z-index: 1;
 }
 
 .pf-button-group__button--selected:hover:not(:disabled) {
-  background: var(
-    --pf-buttongroup-action-primary-hover,
-    var(
-      --pf-buttongroup-semantic-action-primary-hover,
-      var(
-        --pf-buttongroup-color-semantic-action-primary-hover,
-        var(--color-semantic-action-primary-hover)
-      )
-    )
-  );
-  border-color: var(
-    --pf-buttongroup-action-primary-hover,
-    var(
-      --pf-buttongroup-semantic-action-primary-hover,
-      var(
-        --pf-buttongroup-color-semantic-action-primary-hover,
-        var(--color-semantic-action-primary-hover)
-      )
-    )
-  );
+  background: var(--pf-buttongroup-action-primary-hover);
+  border-color: var(--pf-buttongroup-action-primary-hover);
 }
 
 .pf-button-group__button:disabled {
@@ -148,39 +64,12 @@
 }
 
 .pf-button-group__button:disabled:hover {
-  background: var(
-    --pf-buttongroup-background-default,
-    var(
-      --pf-buttongroup-semantic-background-default,
-      var(
-        --pf-buttongroup-color-semantic-background-default,
-        var(--color-semantic-background-default)
-      )
-    )
-  );
+  background: var(--pf-buttongroup-bg);
 }
 
 .pf-button-group__button--selected:disabled:hover {
-  background: var(
-    --pf-buttongroup-action-primary,
-    var(
-      --pf-buttongroup-semantic-action-primary,
-      var(
-        --pf-buttongroup-color-semantic-action-primary,
-        var(--color-semantic-action-primary)
-      )
-    )
-  );
-  border-color: var(
-    --pf-buttongroup-action-primary,
-    var(
-      --pf-buttongroup-semantic-action-primary,
-      var(
-        --pf-buttongroup-color-semantic-action-primary,
-        var(--color-semantic-action-primary)
-      )
-    )
-  );
+  background: var(--pf-buttongroup-action-primary);
+  border-color: var(--pf-buttongroup-action-primary);
 }
 
 .pf-button-group__icon {
@@ -195,16 +84,7 @@
 }
 
 .pf-button-group__dot {
-  background: var(
-    --pf-buttongroup-action-primary,
-    var(
-      --pf-buttongroup-semantic-action-primary,
-      var(
-        --pf-buttongroup-color-semantic-action-primary,
-        var(--color-semantic-action-primary)
-      )
-    )
-  );
+  background: var(--pf-buttongroup-action-primary);
   border-radius: 999px;
   flex-shrink: 0;
   height: 8px;
@@ -212,13 +92,7 @@
 }
 
 .pf-button-group__button--selected .pf-button-group__dot {
-  background: var(
-    --pf-buttongroup-dot-selected,
-    var(
-      --pf-buttongroup-base-white,
-      var(--pf-buttongroup-color-base-white, var(--color-base-white))
-    )
-  );
+  background: var(--pf-buttongroup-dot-selected);
 }
 
 .pf-button-group__label {

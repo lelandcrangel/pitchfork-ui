@@ -52,105 +52,33 @@
 }
 
 .pf-badge-group__badge--gray {
-  background: var(
-    --pf-badgegroup-gray-100,
-    var(--pf-badgegroup-color-gray-100, var(--color-gray-100))
-  );
-  border-color: var(
-    --pf-badgegroup-gray-200,
-    var(--pf-badgegroup-color-gray-200, var(--color-gray-200))
-  );
-  color: var(
-    --pf-badgegroup-gray-700,
-    var(--pf-badgegroup-color-gray-700, var(--color-gray-700))
-  );
+  background: var(--pf-badgegroup-gray-100);
+  border-color: var(--pf-badgegroup-gray-200);
+  color: var(--pf-badgegroup-gray-700);
 }
 
 .pf-badge-group__badge--brand {
-  background: var(
-    --pf-badgegroup-brand-100,
-    var(--pf-badgegroup-color-brand-100, var(--color-brand-100))
-  );
-  border-color: var(
-    --pf-badgegroup-brand-300,
-    var(--pf-badgegroup-color-brand-300, var(--color-brand-300))
-  );
-  color: var(
-    --pf-badgegroup-brand-700,
-    var(--pf-badgegroup-color-brand-700, var(--color-brand-700))
-  );
+  background: var(--pf-badgegroup-brand-100);
+  border-color: var(--pf-badgegroup-brand-300);
+  color: var(--pf-badgegroup-brand-700);
 }
 
 .pf-badge-group__badge--error {
-  background: var(
-    --pf-badgegroup-semantic-status-danger-background,
-    var(
-      --pf-badgegroup-color-semantic-status-danger-background,
-      var(--color-semantic-status-danger-background)
-    )
-  );
-  border-color: var(
-    --pf-badgegroup-semantic-status-danger-border,
-    var(
-      --pf-badgegroup-color-semantic-status-danger-border,
-      var(--color-semantic-status-danger-border)
-    )
-  );
-  color: var(
-    --pf-badgegroup-semantic-status-danger-foreground,
-    var(
-      --pf-badgegroup-color-semantic-status-danger-foreground,
-      var(--color-semantic-status-danger-foreground)
-    )
-  );
+  background: var(--pf-badgegroup-danger-bg);
+  border-color: var(--pf-badgegroup-danger-border);
+  color: var(--pf-badgegroup-danger-text);
 }
 
 .pf-badge-group__badge--warning {
-  background: var(
-    --pf-badgegroup-semantic-status-warning-background,
-    var(
-      --pf-badgegroup-color-semantic-status-warning-background,
-      var(--color-semantic-status-warning-background)
-    )
-  );
-  border-color: var(
-    --pf-badgegroup-semantic-status-warning-border,
-    var(
-      --pf-badgegroup-color-semantic-status-warning-border,
-      var(--color-semantic-status-warning-border)
-    )
-  );
-  color: var(
-    --pf-badgegroup-semantic-status-warning-foreground,
-    var(
-      --pf-badgegroup-color-semantic-status-warning-foreground,
-      var(--color-semantic-status-warning-foreground)
-    )
-  );
+  background: var(--pf-badgegroup-warning-bg);
+  border-color: var(--pf-badgegroup-warning-border);
+  color: var(--pf-badgegroup-warning-text);
 }
 
 .pf-badge-group__badge--success {
-  background: var(
-    --pf-badgegroup-semantic-status-success-background,
-    var(
-      --pf-badgegroup-color-semantic-status-success-background,
-      var(--color-semantic-status-success-background)
-    )
-  );
-  border-color: var(
-    --pf-badgegroup-semantic-status-success-border,
-    var(
-      --pf-badgegroup-color-semantic-status-success-border,
-      var(--color-semantic-status-success-border)
-    )
-  );
-  color: var(
-    --pf-badgegroup-semantic-status-success-foreground,
-    var(
-      --pf-badgegroup-color-semantic-status-success-foreground,
-      var(--color-semantic-status-success-foreground)
-    )
-  );
+  background: var(--pf-badgegroup-success-bg);
+  border-color: var(--pf-badgegroup-success-border);
+  color: var(--pf-badgegroup-success-text);
 }
 
 .pf-badge-group__text--pill {
@@ -162,74 +90,26 @@
 }
 
 .pf-badge-group__text--gray {
-  border-color: var(
-    --pf-badgegroup-gray-200,
-    var(--pf-badgegroup-color-gray-200, var(--color-gray-200))
-  );
-  color: var(
-    --pf-badgegroup-gray-700,
-    var(--pf-badgegroup-color-gray-700, var(--color-gray-700))
-  );
+  border-color: var(--pf-badgegroup-gray-200);
+  color: var(--pf-badgegroup-gray-700);
 }
 
 .pf-badge-group__text--brand {
-  border-color: var(
-    --pf-badgegroup-brand-300,
-    var(--pf-badgegroup-color-brand-300, var(--color-brand-300))
-  );
-  color: var(
-    --pf-badgegroup-brand-700,
-    var(--pf-badgegroup-color-brand-700, var(--color-brand-700))
-  );
+  border-color: var(--pf-badgegroup-brand-300);
+  color: var(--pf-badgegroup-brand-700);
 }
 
 .pf-badge-group__text--error {
-  border-color: var(
-    --pf-badgegroup-semantic-status-danger-border,
-    var(
-      --pf-badgegroup-color-semantic-status-danger-border,
-      var(--color-semantic-status-danger-border)
-    )
-  );
-  color: var(
-    --pf-badgegroup-semantic-status-danger-foreground,
-    var(
-      --pf-badgegroup-color-semantic-status-danger-foreground,
-      var(--color-semantic-status-danger-foreground)
-    )
-  );
+  border-color: var(--pf-badgegroup-danger-border);
+  color: var(--pf-badgegroup-danger-text);
 }
 
 .pf-badge-group__text--warning {
-  border-color: var(
-    --pf-badgegroup-semantic-status-warning-border,
-    var(
-      --pf-badgegroup-color-semantic-status-warning-border,
-      var(--color-semantic-status-warning-border)
-    )
-  );
-  color: var(
-    --pf-badgegroup-semantic-status-warning-foreground,
-    var(
-      --pf-badgegroup-color-semantic-status-warning-foreground,
-      var(--color-semantic-status-warning-foreground)
-    )
-  );
+  border-color: var(--pf-badgegroup-warning-border);
+  color: var(--pf-badgegroup-warning-text);
 }
 
 .pf-badge-group__text--success {
-  border-color: var(
-    --pf-badgegroup-semantic-status-success-border,
-    var(
-      --pf-badgegroup-color-semantic-status-success-border,
-      var(--color-semantic-status-success-border)
-    )
-  );
-  color: var(
-    --pf-badgegroup-semantic-status-success-foreground,
-    var(
-      --pf-badgegroup-color-semantic-status-success-foreground,
-      var(--color-semantic-status-success-foreground)
-    )
-  );
+  border-color: var(--pf-badgegroup-success-border);
+  color: var(--pf-badgegroup-success-text);
 }

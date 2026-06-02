@@ -14,23 +14,23 @@
 }
 
 .pf-tag--neutral {
-  background: var(--pf-tag-color-gray-100, var(--color-gray-100));
-  color: var(--pf-tag-color-gray-700, var(--color-gray-700));
+  background: var(--pf-tag-neutral-bg);
+  color: var(--pf-tag-neutral-text);
 }
 
 .pf-tag--brand {
-  background: var(--pf-tag-color-brand-100, var(--color-brand-100));
-  color: var(--pf-tag-color-brand-700, var(--color-brand-700));
+  background: var(--pf-tag-brand-bg);
+  color: var(--pf-tag-brand-text);
 }
 
 .pf-tag--success {
-  background: var(--pf-tag-color-semantic-status-success-background, var(--color-semantic-status-success-background));
-  color: var(--pf-tag-color-semantic-status-success-foreground, var(--color-semantic-status-success-foreground));
+  background: var(--pf-tag-success-bg);
+  color: var(--pf-tag-success-text);
 }
 
 .pf-tag--warning {
-  background: var(--pf-tag-color-semantic-status-warning-background, var(--color-semantic-status-warning-background));
-  color: var(--pf-tag-color-semantic-status-warning-foreground, var(--color-semantic-status-warning-foreground));
+  background: var(--pf-tag-warning-bg);
+  color: var(--pf-tag-warning-text);
 }
 
 .pf-tag__dismiss {

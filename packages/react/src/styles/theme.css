@@ -110,6 +110,396 @@
   --pf-tabs-tab-padding-x-md: 0.875rem;
   --pf-tabs-underline-width: 2px;
 
+  /* Calendar aliases */
+  --pf-calendar-bg: var(--color-semantic-background-default);
+  --pf-calendar-border: var(--color-semantic-border-default);
+  --pf-calendar-text: var(--color-semantic-text-default);
+  --pf-calendar-text-muted: var(--color-semantic-text-muted);
+  --pf-calendar-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-calendar-today-bg: var(--color-semantic-status-warning-background);
+  --pf-calendar-today-border: var(--color-semantic-status-warning-border);
+  --pf-calendar-selected-bg: var(--color-semantic-action-primary);
+  --pf-calendar-selected-text: var(--color-semantic-action-primary-text);
+  --pf-calendar-selected-bg-hover: var(--color-semantic-action-primary-hover);
+  --pf-calendar-invalid-border: var(--color-semantic-status-danger-border);
+
+  /* Breadcrumbs aliases */
+  --pf-breadcrumbs-link-color: var(--color-semantic-text-muted);
+  --pf-breadcrumbs-link-hover-color: var(--color-semantic-text-default);
+  --pf-breadcrumbs-link-current-color: var(--color-semantic-text-default);
+  --pf-breadcrumbs-separator-color: var(--color-semantic-text-muted);
+
+  /* ProgressIndicators aliases */
+  --pf-progress-track-bg: var(--pf-surface-subtle);
+  --pf-progress-fill: var(--color-semantic-action-primary);
+  --pf-progress-text: var(--color-semantic-text-default);
+  --pf-progress-text-muted: var(--color-semantic-text-muted);
+
+  /* RadioGroup aliases */
+  --pf-radiogroup-text: var(--color-semantic-text-default);
+  --pf-radiogroup-text-muted: var(--color-semantic-text-muted);
+  --pf-radiogroup-accent: var(--color-semantic-action-primary);
+
+  /* SidebarNavigation aliases */
+  --pf-sidebar-nav-bg: var(--color-semantic-background-default);
+  --pf-sidebar-nav-border: var(--color-semantic-border-default);
+  --pf-sidebar-nav-text: var(--color-semantic-text-default);
+  --pf-sidebar-nav-text-muted: var(--color-semantic-text-muted);
+  --pf-sidebar-nav-bg-subtle: var(--color-semantic-background-subtle);
+
+  /* Tabs aliases */
+  --pf-tabs-border: var(--color-semantic-border-default);
+  --pf-tabs-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-tabs-bg: var(--color-semantic-background-default);
+  --pf-tabs-text: var(--color-semantic-text-default);
+  --pf-tabs-text-muted: var(--color-semantic-text-muted);
+
+  /* SlideoutMenu aliases */
+  --pf-slideout-bg: var(--color-semantic-background-default);
+  --pf-slideout-border: var(--color-semantic-border-default);
+  --pf-slideout-text: var(--color-semantic-text-default);
+  --pf-slideout-text-muted: var(--color-semantic-text-muted);
+  --pf-slideout-bg-subtle: var(--color-semantic-background-subtle);
+
+  /* Metrics aliases */
+  --pf-metric-bg: var(--color-semantic-background-default);
+  --pf-metric-border: var(--color-semantic-border-default);
+  --pf-metric-text: var(--color-semantic-text-default);
+  --pf-metric-text-muted: var(--color-semantic-text-muted);
+  --pf-metric-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-metric-success-bg: var(--color-semantic-status-success-background);
+  --pf-metric-success-text: var(--color-semantic-status-success-foreground);
+  --pf-metric-danger-bg: var(--color-semantic-status-danger-background);
+  --pf-metric-danger-text: var(--color-semantic-status-danger-foreground);
+
+  /* Dropdown additions */
+  --pf-dropdown-text: var(--color-semantic-text-default);
+  --pf-dropdown-text-muted: var(--color-semantic-text-muted);
+  --pf-dropdown-text-danger: var(--color-semantic-status-danger-foreground);
+  --pf-dropdown-icon-danger: var(--color-danger-500);
+
+  /* Pagination aliases */
+  --pf-pagination-bg: var(--color-semantic-background-default);
+  --pf-pagination-border: var(--color-semantic-border-muted);
+  --pf-pagination-text: var(--color-semantic-text-default);
+  --pf-pagination-text-muted: var(--color-semantic-text-muted);
+  --pf-pagination-active-bg: var(--color-semantic-action-primary);
+  --pf-pagination-active-text: var(--color-semantic-action-primary-text);
+  --pf-pagination-active-hover-bg: var(--color-semantic-action-primary-hover);
+  --pf-pagination-active-border: var(--color-semantic-action-primary);
+
+  /* Rating aliases */
+  --pf-rating-text: var(--color-semantic-text-default);
+  --pf-rating-text-muted: var(--color-semantic-text-muted);
+  --pf-rating-star-empty: var(--color-gray-300);
+  --pf-rating-star-fill: var(--color-warning-500);
+  --pf-rating-badge-bg: var(--color-warning-50);
+  --pf-rating-badge-border: var(--color-warning-200);
+  --pf-rating-badge-text: var(--color-warning-700);
+  --pf-rating-badge-reviews: var(--color-warning-800);
+
+  /* SectionHeader aliases */
+  --pf-section-header-border: var(--color-semantic-border-default);
+  --pf-section-header-text: var(--color-semantic-text-default);
+  --pf-section-header-text-muted: var(--color-semantic-text-muted);
+
+  /* Card aliases */
+  --pf-card-background: var(--color-semantic-background-default);
+  --pf-card-border: var(--color-semantic-border-default);
+
+  /* ButtonGroup aliases */
+  --pf-buttongroup-bg: var(--color-semantic-background-default);
+  --pf-buttongroup-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-buttongroup-border: var(--color-semantic-border-default);
+  --pf-buttongroup-text: var(--color-semantic-text-default);
+  --pf-buttongroup-action-primary: var(--color-semantic-action-primary);
+  --pf-buttongroup-action-primary-hover: var(--color-semantic-action-primary-hover);
+  --pf-buttongroup-action-primary-text: var(--color-semantic-action-primary-text);
+  --pf-buttongroup-dot-selected: var(--color-base-white);
+
+  /* RadioButton aliases */
+  --pf-radio-checked-color: var(--color-semantic-action-primary);
+  --pf-radio-label-text: var(--color-semantic-text-default);
+
+  /* UtilityButton aliases */
+  --pf-utility-btn-neutral-bg: var(--color-semantic-background-default);
+  --pf-utility-btn-neutral-border: var(--color-semantic-border-default);
+  --pf-utility-btn-neutral-text: var(--color-semantic-text-default);
+  --pf-utility-btn-neutral-bg-hover: var(--color-semantic-background-subtle);
+  --pf-utility-btn-neutral-border-hover: var(--color-semantic-border-strong);
+  --pf-utility-btn-brand-bg: var(--color-brand-100);
+  --pf-utility-btn-brand-border: var(--color-brand-300);
+  --pf-utility-btn-brand-text: var(--color-brand-700);
+  --pf-utility-btn-brand-bg-hover: var(--color-brand-200);
+  --pf-utility-btn-danger-bg: var(--color-semantic-status-danger-background);
+  --pf-utility-btn-danger-border: var(--color-semantic-status-danger-border);
+  --pf-utility-btn-danger-text: var(--color-semantic-status-danger-foreground);
+  --pf-utility-btn-danger-bg-hover: var(--color-danger-100);
+
+  /* TreeView aliases */
+  --pf-treeview-bg: var(--color-semantic-background-default);
+  --pf-treeview-border: var(--color-semantic-border-default);
+  --pf-treeview-text: var(--color-semantic-text-default);
+  --pf-treeview-text-muted: var(--color-semantic-text-muted);
+  --pf-treeview-bg-subtle: var(--color-semantic-background-subtle);
+
+  /* Input additions */
+  --pf-field-required: var(--color-semantic-status-danger-foreground);
+  --pf-input-focus-border: var(--color-semantic-action-primary);
+  --pf-input-invalid-border: var(--color-semantic-status-danger-border);
+  --pf-control-border-disabled: var(--color-gray-200);
+
+  /* RichTextEditor aliases */
+  --pf-rte-bg: var(--color-semantic-background-default);
+  --pf-rte-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-rte-border: var(--color-semantic-border-default);
+  --pf-rte-text: var(--color-semantic-text-default);
+  --pf-rte-text-muted: var(--color-semantic-text-muted);
+  --pf-rte-focus-border: var(--color-semantic-action-primary);
+  --pf-rte-invalid-border: var(--color-semantic-status-danger-border);
+
+  /* Notification aliases */
+  --pf-notification-bg: var(--color-semantic-background-default);
+  --pf-notification-border: var(--color-semantic-border-default);
+  --pf-notification-text: var(--color-semantic-text-default);
+  --pf-notification-text-muted: var(--color-semantic-text-muted);
+  --pf-notification-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-notification-info-bg: var(--color-brand-50);
+  --pf-notification-info-border: var(--color-brand-300);
+  --pf-notification-info-icon: var(--color-brand-700);
+  --pf-notification-info-title: var(--color-brand-800);
+  --pf-notification-info-hover-bg: var(--color-brand-100);
+  --pf-notification-info-hover-icon: var(--color-brand-800);
+  --pf-notification-success-bg: var(--color-semantic-status-success-background);
+  --pf-notification-success-border: var(--color-semantic-status-success-border);
+  --pf-notification-success-icon: var(--color-semantic-status-success-foreground);
+  --pf-notification-warning-bg: var(--color-semantic-status-warning-background);
+  --pf-notification-warning-border: var(--color-semantic-status-warning-border);
+  --pf-notification-warning-icon: var(--color-semantic-status-warning-foreground);
+  --pf-notification-danger-bg: var(--color-semantic-status-danger-background);
+  --pf-notification-danger-border: var(--color-semantic-status-danger-border);
+  --pf-notification-danger-icon: var(--color-semantic-status-danger-foreground);
+
+  /* Alert aliases */
+  --pf-alert-border: var(--color-semantic-border-default);
+  --pf-alert-info-background: var(--color-brand-50);
+  --pf-alert-info-border: var(--color-brand-300);
+  --pf-alert-info-foreground: var(--color-brand-800);
+  --pf-alert-success-background: var(--color-semantic-status-success-background);
+  --pf-alert-success-border: var(--color-semantic-status-success-border);
+  --pf-alert-success-foreground: var(--color-semantic-status-success-foreground);
+  --pf-alert-warning-background: var(--color-semantic-status-warning-background);
+  --pf-alert-warning-border: var(--color-semantic-status-warning-border);
+  --pf-alert-warning-foreground: var(--color-semantic-status-warning-foreground);
+  --pf-alert-danger-background: var(--color-semantic-status-danger-background);
+  --pf-alert-danger-border: var(--color-semantic-status-danger-border);
+  --pf-alert-danger-foreground: var(--color-semantic-status-danger-foreground);
+
+  /* VideoPlayer aliases */
+  --pf-videoplayer-bg: var(--color-base-black);
+  --pf-videoplayer-border: var(--color-semantic-border-default);
+  --pf-videoplayer-text-muted: var(--color-semantic-text-muted);
+  --pf-videoplayer-invalid-border: var(--color-semantic-status-danger-border);
+
+  /* RadarChart aliases */
+  --pf-radar-grid-stroke: var(--color-semantic-border-default);
+  --pf-radar-axis-stroke: var(--color-semantic-border-muted);
+  --pf-radar-point-stroke: var(--color-semantic-background-default);
+  --pf-radar-label: var(--color-semantic-text-muted);
+  --pf-radar-legend-text: var(--color-semantic-text-default);
+  --pf-radar-legend-value: var(--color-semantic-text-muted);
+  --pf-radar-empty-border: var(--color-semantic-border-default);
+  --pf-radar-empty-text: var(--color-semantic-text-muted);
+
+  /* DatePicker aliases */
+  --pf-datepicker-bg: var(--color-semantic-background-default);
+  --pf-datepicker-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-datepicker-border: var(--color-semantic-border-default);
+  --pf-datepicker-border-strong: var(--color-semantic-border-strong);
+  --pf-datepicker-text: var(--color-semantic-text-default);
+  --pf-datepicker-text-muted: var(--color-semantic-text-muted);
+  --pf-datepicker-focus-border: var(--color-semantic-action-primary);
+  --pf-datepicker-invalid-border: var(--color-semantic-status-danger-border);
+
+  /* BadgeGroup aliases */
+  --pf-badgegroup-gray-100: var(--color-gray-100);
+  --pf-badgegroup-gray-200: var(--color-gray-200);
+  --pf-badgegroup-gray-700: var(--color-gray-700);
+  --pf-badgegroup-brand-100: var(--color-brand-100);
+  --pf-badgegroup-brand-300: var(--color-brand-300);
+  --pf-badgegroup-brand-700: var(--color-brand-700);
+  --pf-badgegroup-danger-bg: var(--color-semantic-status-danger-background);
+  --pf-badgegroup-danger-border: var(--color-semantic-status-danger-border);
+  --pf-badgegroup-danger-text: var(--color-semantic-status-danger-foreground);
+  --pf-badgegroup-warning-bg: var(--color-semantic-status-warning-background);
+  --pf-badgegroup-warning-border: var(--color-semantic-status-warning-border);
+  --pf-badgegroup-warning-text: var(--color-semantic-status-warning-foreground);
+  --pf-badgegroup-success-bg: var(--color-semantic-status-success-background);
+  --pf-badgegroup-success-border: var(--color-semantic-status-success-border);
+  --pf-badgegroup-success-text: var(--color-semantic-status-success-foreground);
+
+  /* Checkbox aliases */
+  --pf-checkbox-bg: var(--color-semantic-background-default);
+  --pf-checkbox-border: var(--color-semantic-border-default);
+  --pf-checkbox-checked-bg: var(--color-semantic-action-primary);
+  --pf-checkbox-check-color: var(--color-semantic-action-primary-text);
+  --pf-checkbox-label-text: var(--color-semantic-text-default);
+
+  /* Slider aliases */
+  --pf-slider-text: var(--color-semantic-text-default);
+  --pf-slider-text-muted: var(--color-semantic-text-muted);
+  --pf-slider-error-text: var(--color-semantic-status-danger-foreground);
+  --pf-slider-action: var(--color-semantic-action-primary);
+  --pf-slider-border: var(--color-semantic-border-default);
+  --pf-slider-bg: var(--color-semantic-background-default);
+  --pf-slider-danger-fill: var(--color-danger-500);
+
+  /* PageHeader aliases */
+  --pf-page-header-eyebrow: var(--color-semantic-action-primary);
+  --pf-page-header-text: var(--color-semantic-text-default);
+  --pf-page-header-text-muted: var(--color-semantic-text-muted);
+
+  /* Carousel aliases */
+  --pf-carousel-bg: var(--color-semantic-background-default);
+  --pf-carousel-border: var(--color-semantic-border-default);
+  --pf-carousel-viewport-bg: var(--color-semantic-background-subtle);
+  --pf-carousel-slide-text: var(--color-semantic-text-default);
+  --pf-carousel-empty-text: var(--color-semantic-text-muted);
+  --pf-carousel-nav-text: var(--color-semantic-text-muted);
+  --pf-carousel-nav-hover-bg: var(--color-semantic-background-subtle);
+  --pf-carousel-nav-hover-text: var(--color-semantic-text-default);
+  --pf-carousel-indicator-bg: var(--color-semantic-border-default);
+  --pf-carousel-indicator-active-bg: var(--color-semantic-action-primary);
+
+  /* PieChart aliases */
+  --pf-piechart-border-muted: var(--color-semantic-border-muted);
+  --pf-piechart-bg: var(--color-semantic-background-default);
+  --pf-piechart-text: var(--color-semantic-text-default);
+  --pf-piechart-text-muted: var(--color-semantic-text-muted);
+
+  /* ContentDivider aliases */
+  --pf-content-divider-text: var(--color-semantic-text-muted);
+  --pf-content-divider-line: var(--color-semantic-border-default);
+
+  /* Textarea aliases */
+  --pf-textarea-bg: var(--color-semantic-background-default);
+  --pf-textarea-border: var(--color-semantic-border-default);
+  --pf-textarea-text: var(--color-semantic-text-default);
+  --pf-textarea-text-muted: var(--color-semantic-text-muted);
+  --pf-textarea-focus-border: var(--color-semantic-action-primary);
+  --pf-textarea-invalid-border: var(--color-semantic-status-danger-border);
+
+  /* Table aliases */
+  --pf-table-bg: var(--color-semantic-background-default);
+  --pf-table-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-table-border: var(--color-semantic-border-default);
+  --pf-table-text: var(--color-semantic-text-default);
+  --pf-table-text-muted: var(--color-semantic-text-muted);
+
+  /* LoadingIndicators aliases */
+  --pf-loading-border: var(--color-semantic-border-default);
+  --pf-loading-accent: var(--color-semantic-action-primary);
+  --pf-loading-bg-subtle: var(--color-semantic-background-subtle);
+
+  /* Avatar aliases */
+  --pf-avatar-text: var(--color-semantic-text-default);
+  --pf-avatar-status-border: var(--pf-surface-bg);
+  --pf-avatar-status-online: var(--color-semantic-status-success-foreground);
+  --pf-avatar-status-away: var(--color-semantic-status-warning-foreground);
+  --pf-avatar-status-busy: var(--color-semantic-status-danger-foreground);
+  --pf-avatar-status-offline: var(--color-semantic-text-muted);
+
+  /* Switch aliases */
+  --pf-switch-track-bg: var(--color-gray-300);
+  --pf-switch-thumb-bg: var(--color-base-white);
+  --pf-switch-track-checked-bg: var(--color-semantic-action-primary);
+  --pf-switch-label-text: var(--color-semantic-text-default);
+
+  /* LineBarChart additions */
+  --pf-chart-text-muted: var(--color-semantic-text-muted);
+
+  /* InlineCTA aliases */
+  --pf-inline-cta-bg: var(--color-semantic-background-default);
+  --pf-inline-cta-border: var(--color-semantic-border-default);
+  --pf-inline-cta-text: var(--color-semantic-text-default);
+  --pf-inline-cta-text-muted: var(--color-semantic-text-muted);
+  --pf-inline-cta-info-bg: var(--color-brand-50);
+  --pf-inline-cta-info-border: var(--color-brand-300);
+  --pf-inline-cta-info-icon: var(--color-brand-700);
+  --pf-inline-cta-info-heading: var(--color-brand-800);
+  --pf-inline-cta-info-description: var(--color-brand-700);
+  --pf-inline-cta-success-bg: var(--color-semantic-status-success-background);
+  --pf-inline-cta-success-border: var(--color-semantic-status-success-border);
+  --pf-inline-cta-warning-bg: var(--color-semantic-status-warning-background);
+  --pf-inline-cta-warning-border: var(--color-semantic-status-warning-border);
+
+  /* Select additions */
+  --pf-select-focus-border: var(--color-semantic-action-primary);
+  --pf-select-invalid-border: var(--color-semantic-status-danger-border);
+
+  /* FileUploader aliases */
+  --pf-file-uploader-bg: var(--color-semantic-background-default);
+  --pf-file-uploader-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-file-uploader-border: var(--color-semantic-border-default);
+  --pf-file-uploader-border-strong: var(--color-semantic-border-strong);
+  --pf-file-uploader-text: var(--color-semantic-text-default);
+  --pf-file-uploader-text-muted: var(--color-semantic-text-muted);
+  --pf-file-uploader-active-border: var(--color-semantic-action-primary);
+  --pf-file-uploader-invalid-border: var(--color-semantic-status-danger-border);
+
+  /* ProgressSteps aliases */
+  --pf-progress-steps-bg: var(--color-semantic-background-default);
+  --pf-progress-steps-border: var(--color-semantic-border-default);
+  --pf-progress-steps-text: var(--color-semantic-text-default);
+  --pf-progress-steps-text-muted: var(--color-semantic-text-muted);
+  --pf-progress-steps-complete-bg: var(--color-semantic-status-success-border);
+  --pf-progress-steps-complete-border: var(--color-semantic-status-success-border);
+  --pf-progress-steps-complete-text: var(--color-success-900);
+  --pf-progress-steps-current-bg: var(--color-semantic-status-success-foreground);
+  --pf-progress-steps-current-border: var(--color-semantic-status-success-foreground);
+  --pf-progress-steps-current-text: var(--color-base-white);
+  --pf-progress-steps-current-title: var(--color-semantic-status-success-foreground);
+
+  /* SectionFooter aliases */
+  --pf-section-footer-border: var(--color-semantic-border-default);
+  --pf-section-footer-text: var(--color-semantic-text-default);
+  --pf-section-footer-text-muted: var(--color-semantic-text-muted);
+
+  /* Modal aliases */
+  --pf-modal-bg: var(--color-semantic-background-default);
+  --pf-modal-border: var(--color-semantic-border-default);
+  --pf-modal-text: var(--color-semantic-text-default);
+  --pf-modal-text-muted: var(--color-semantic-text-muted);
+  --pf-modal-bg-subtle: var(--color-semantic-background-subtle);
+
+  /* MultiSelect aliases */
+  --pf-multiselect-bg: var(--color-semantic-background-default);
+  --pf-multiselect-bg-subtle: var(--color-semantic-background-subtle);
+  --pf-multiselect-border: var(--color-semantic-text-muted);
+  --pf-multiselect-text: var(--color-semantic-text-default);
+  --pf-multiselect-text-muted: var(--color-semantic-text-muted);
+  --pf-multiselect-focus-border: var(--color-semantic-action-primary);
+  --pf-multiselect-active-bg: var(--color-semantic-action-primary);
+  --pf-multiselect-active-text: var(--color-semantic-action-primary-text);
+  --pf-multiselect-invalid-border: var(--color-semantic-status-danger-border);
+
+  /* Tag aliases */
+  --pf-tag-neutral-bg: var(--color-gray-100);
+  --pf-tag-neutral-text: var(--color-gray-700);
+  --pf-tag-brand-bg: var(--color-brand-100);
+  --pf-tag-brand-text: var(--color-brand-700);
+  --pf-tag-success-bg: var(--color-semantic-status-success-background);
+  --pf-tag-success-text: var(--color-semantic-status-success-foreground);
+  --pf-tag-warning-bg: var(--color-semantic-status-warning-background);
+  --pf-tag-warning-text: var(--color-semantic-status-warning-foreground);
+
+  /* HeaderNavigation aliases */
+  --pf-header-nav-bg: var(--color-semantic-background-default);
+  --pf-header-nav-border: var(--color-semantic-border-default);
+  --pf-header-nav-text: var(--color-semantic-text-default);
+  --pf-header-nav-text-muted: var(--color-semantic-text-muted);
+  --pf-header-nav-bg-subtle: var(--color-semantic-background-subtle);
+
   /* Dropdown geometry aliases */
   --pf-dropdown-icon-size: 1rem;
   --pf-dropdown-menu-gap: 2px;

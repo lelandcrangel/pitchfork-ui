@@ -1,6 +1,6 @@
 .pf-header-navigation {
-  background: var(--pf-headernavigation-color-semantic-background-default, var(--color-semantic-background-default));
-  border: 1px solid var(--pf-headernavigation-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-header-nav-bg);
+  border: 1px solid var(--pf-header-nav-border);
   border-radius: var(--radius-md);
   width: 100%;
 }
@@ -15,7 +15,7 @@
 }
 
 .pf-header-navigation__brand {
-  color: var(--pf-headernavigation-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-header-nav-text);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   white-space: nowrap;
@@ -40,7 +40,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--pf-headernavigation-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-header-nav-text-muted);
   cursor: pointer;
   display: inline-flex;
   font: inherit;
@@ -51,8 +51,8 @@
 }
 
 .pf-header-navigation__link:hover {
-  background: var(--pf-headernavigation-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  color: var(--pf-headernavigation-color-semantic-text-default, var(--color-semantic-text-default));
+  background: var(--pf-header-nav-bg-subtle);
+  color: var(--pf-header-nav-text);
 }
 
 .pf-header-navigation__link:focus-visible {
@@ -61,8 +61,8 @@
 }
 
 .pf-header-navigation__link--active {
-  background: var(--pf-headernavigation-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  color: var(--pf-headernavigation-color-semantic-text-default, var(--color-semantic-text-default));
+  background: var(--pf-header-nav-bg-subtle);
+  color: var(--pf-header-nav-text);
   font-weight: var(--font-weight-semibold);
 }
 

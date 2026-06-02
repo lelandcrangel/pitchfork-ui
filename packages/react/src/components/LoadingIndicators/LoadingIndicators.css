@@ -30,10 +30,9 @@
 
 .pf-loading-spinner {
   animation: pf-spin 0.8s linear infinite;
-  border: 3px solid
-    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-border-default, var(--color-semantic-border-default)) 75%, transparent);
+  border: 3px solid color-mix(in srgb, var(--pf-loading-border) 75%, transparent);
   border-radius: 50%;
-  border-top-color: var(--pf-loadingindicators-color-semantic-action-primary, var(--color-semantic-action-primary));
+  border-top-color: var(--pf-loading-accent);
   display: inline-block;
   flex: 0 0 auto;
   height: var(--pf-spinner-size, 24px);
@@ -50,7 +49,7 @@
 
 .pf-loading-dots__dot {
   animation: pf-pulse-dots 1s ease-in-out infinite;
-  background: var(--pf-loadingindicators-color-semantic-action-primary, var(--color-semantic-action-primary));
+  background: var(--pf-loading-accent);
   border-radius: 50%;
   display: inline-block;
 }
@@ -84,11 +83,9 @@
   width: var(--pf-skeleton-width, 100%);
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-background-subtle, var(--color-semantic-background-subtle)) 92%, var(--color-base-white) 8%)
-      25%,
-    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-border-default, var(--color-semantic-border-default)) 72%, var(--color-base-white) 28%) 37%,
-    color-mix(in srgb, var(--pf-loadingindicators-color-semantic-background-subtle, var(--color-semantic-background-subtle)) 92%, var(--color-base-white) 8%)
-      63%
+    color-mix(in srgb, var(--pf-loading-bg-subtle) 92%, var(--color-base-white) 8%) 25%,
+    color-mix(in srgb, var(--pf-loading-border) 72%, var(--color-base-white) 28%) 37%,
+    color-mix(in srgb, var(--pf-loading-bg-subtle) 92%, var(--color-base-white) 8%) 63%
   );
   background-size: 200% 100%;
   border-radius: var(--radius-sm);

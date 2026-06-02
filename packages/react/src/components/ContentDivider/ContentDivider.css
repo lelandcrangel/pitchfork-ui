@@ -1,6 +1,6 @@
 .pf-content-divider {
   align-items: center;
-  color: var(--pf-contentdivider-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-content-divider-text);
   display: flex;
   gap: var(--space-3);
   width: 100%;
@@ -12,14 +12,14 @@
 }
 
 .pf-content-divider__line {
-  background: var(--pf-contentdivider-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-content-divider-line);
   display: block;
   flex: 1;
   height: 1px;
 }
 
 .pf-content-divider__label {
-  color: var(--pf-contentdivider-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-content-divider-text);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   line-height: 1;
@@ -29,7 +29,7 @@
 
 .pf-content-divider--vertical {
   align-self: stretch;
-  background: var(--pf-contentdivider-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-content-divider-line);
   display: inline-block;
   flex: 0 0 auto;
   height: auto;

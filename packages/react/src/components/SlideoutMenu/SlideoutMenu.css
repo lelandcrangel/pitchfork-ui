@@ -28,11 +28,11 @@
 }
 
 .pf-slideout {
-  background: var(--pf-slideoutmenu-color-semantic-background-default, var(--color-semantic-background-default));
-  border-color: var(--pf-slideoutmenu-color-semantic-border-default, var(--color-semantic-border-default));
+  background: var(--pf-slideout-bg);
+  border-color: var(--pf-slideout-border);
   border-style: solid;
   box-shadow: var(--pf-slideoutmenu-elevation-overlay-shadow, var(--pf-elevation-overlay-shadow));
-  color: var(--pf-slideoutmenu-color-semantic-text-default, var(--color-semantic-text-default));
+  color: var(--pf-slideout-text);
   display: grid;
   grid-template-rows: auto 1fr auto;
   height: 100%;
@@ -101,11 +101,11 @@
 }
 
 .pf-slideout__header {
-  border-bottom: 1px solid var(--pf-slideoutmenu-color-semantic-border-default, var(--color-semantic-border-default));
+  border-bottom: 1px solid var(--pf-slideout-border);
 }
 
 .pf-slideout__footer {
-  border-top: 1px solid var(--pf-slideoutmenu-color-semantic-border-default, var(--color-semantic-border-default));
+  border-top: 1px solid var(--pf-slideout-border);
   justify-content: flex-end;
 }
 
@@ -128,7 +128,7 @@
 }
 
 .pf-slideout__description {
-  color: var(--pf-slideoutmenu-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-slideout-text-muted);
   font-size: var(--font-size-sm);
   line-height: 1.45;
   margin: 0;
@@ -139,7 +139,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--pf-slideoutmenu-color-semantic-text-muted, var(--color-semantic-text-muted));
+  color: var(--pf-slideout-text-muted);
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
@@ -151,8 +151,8 @@
 
 .pf-slideout__close:hover,
 .pf-slideout__close:focus-visible {
-  background: var(--pf-slideoutmenu-color-semantic-background-subtle, var(--color-semantic-background-subtle));
-  color: var(--pf-slideoutmenu-color-semantic-text-default, var(--color-semantic-text-default));
+  background: var(--pf-slideout-bg-subtle);
+  color: var(--pf-slideout-text);
   outline: none;
 }
 
