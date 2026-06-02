@@ -29,3 +29,7 @@ export const WithError: Story = {
     await expect(input).toHaveAttribute('aria-invalid', 'true');
   },
 };
+
+export const Disabled: Story = {
+  args: { disabled: true },
+};
