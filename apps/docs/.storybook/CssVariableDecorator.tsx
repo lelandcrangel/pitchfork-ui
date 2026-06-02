@@ -125,18 +125,17 @@ function extractControlsFromCss(
 ): CssVariableControl[] {
   const seen = new Set<string>();
   const controls: CssVariableControl[] = [];
-  const re = /var\((--pf-[a-z][a-z0-9-]*),\s*([^,)][^)]*(?:\([^)]*\)[^)]*)?)\)/g;
+  // Match var(--pf-X) with or without a fallback value
+  const re = /var\((--pf-[a-z][a-z0-9-]*)(?:,\s*([^,)][^)]*(?:\([^)]*\)[^)]*)?))?\)/g;
   let match: RegExpExecArray | null;
   while ((match = re.exec(cssContent)) !== null) {
     const [, varName, rawFallback] = match;
     if (seen.has(varName)) continue;
-    const varScope = varName.replace('--pf-', '').split('-')[0];
-    if (varScope !== scope) continue;
     seen.add(varName);
     controls.push({
       name: varName,
       label: generateVarLabel(varName, scope),
-      defaultValue: rawFallback.trim(),
+      defaultValue: rawFallback?.trim() ?? '',
       type: getVarType(varName),
       scopes: [scope],
     });
@@ -172,206 +171,6 @@ function buildGeneratedControls(
 
 
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
-  // Modal variables
-  {
-    name: '--pf-modal-overlay-backdrop',
-    label: 'Overlay backdrop',
-    defaultValue: 'rgba(16, 30, 54, 0.48)',
-    type: 'color',
-    scopes: ['modal'],
-  },
-  {
-    name: '--pf-modal-color-semantic-background-default',
-    label: 'Modal background',
-    defaultValue: 'var(--color-semantic-background-default)',
-    type: 'color',
-    scopes: ['modal'],
-  },
-  {
-    name: '--pf-modal-color-semantic-border-default',
-    label: 'Modal border',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['modal'],
-  },
-  {
-    name: '--pf-modal-elevation-overlay-shadow',
-    label: 'Modal shadow',
-    defaultValue: '0 8px 32px 0 rgb(16 30 54 / 24%)',
-    type: 'shadow',
-    scopes: ['modal'],
-  },
-  {
-    name: '--pf-modal-color-semantic-text-default',
-    label: 'Text color',
-    defaultValue: 'var(--color-semantic-text-default)',
-    type: 'color',
-    scopes: ['modal'],
-  },
-  {
-    name: '--pf-modal-color-semantic-text-muted',
-    label: 'Muted/description color',
-    defaultValue: 'var(--color-semantic-text-muted)',
-    type: 'color',
-    scopes: ['modal'],
-  },
-  {
-    name: '--pf-modal-color-semantic-background-subtle',
-    label: 'Close hover/active background',
-    defaultValue: 'var(--color-semantic-background-subtle)',
-    type: 'color',
-    scopes: ['modal'],
-  },
-  {
-    name: '--radius-lg',
-    label: 'Modal border radius',
-    defaultValue: 'var(--radius-lg)',
-    type: 'radius',
-    scopes: ['modal'],
-  },
-  {
-    name: '--radius-sm',
-    label: 'Close button radius',
-    defaultValue: 'var(--radius-sm)',
-    type: 'radius',
-    scopes: ['modal'],
-  },
-  {
-    name: '--space-4',
-    label: 'Modal padding',
-    defaultValue: 'var(--space-4)',
-    type: 'space',
-    scopes: ['modal'],
-  },
-  // Metrics variables
-  {
-    name: '--pf-metrics-color-semantic-background-default',
-    label: 'Card background',
-    defaultValue: 'var(--color-semantic-background-default)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  {
-    name: '--pf-metrics-color-semantic-border-default',
-    label: 'Card border',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  {
-    name: '--pf-metrics-color-semantic-text-default',
-    label: 'Value text color',
-    defaultValue: 'var(--color-semantic-text-default)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  {
-    name: '--pf-metrics-color-semantic-text-muted',
-    label: 'Muted/label text color',
-    defaultValue: 'var(--color-semantic-text-muted)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  {
-    name: '--pf-metrics-color-semantic-status-success-background',
-    label: 'Trend positive background',
-    defaultValue: 'var(--color-semantic-status-success-background)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  {
-    name: '--pf-metrics-color-semantic-status-success-foreground',
-    label: 'Trend positive text',
-    defaultValue: 'var(--color-semantic-status-success-foreground)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  {
-    name: '--pf-metrics-color-semantic-status-danger-background',
-    label: 'Trend negative background',
-    defaultValue: 'var(--color-semantic-status-danger-background)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  {
-    name: '--pf-metrics-color-semantic-status-danger-foreground',
-    label: 'Trend negative text',
-    defaultValue: 'var(--color-semantic-status-danger-foreground)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  {
-    name: '--pf-metrics-color-semantic-background-subtle',
-    label: 'Trend neutral background',
-    defaultValue: 'var(--color-semantic-background-subtle)',
-    type: 'color',
-    scopes: ['metrics'],
-  },
-  // LoadingIndicators variables
-  {
-    name: '--pf-loadingindicators-color-semantic-border-default',
-    label: 'Spinner/Border color',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['loadingindicators'],
-  },
-  {
-    name: '--pf-loadingindicators-color-semantic-action-primary',
-    label: 'Spinner/Dots color',
-    defaultValue: 'var(--color-semantic-action-primary)',
-    type: 'color',
-    scopes: ['loadingindicators'],
-  },
-  {
-    name: '--pf-loadingindicators-color-semantic-background-subtle',
-    label: 'Skeleton background',
-    defaultValue: 'var(--color-semantic-background-subtle)',
-    type: 'color',
-    scopes: ['loadingindicators'],
-  },
-  // InlineCTA base variables
-  {
-    name: '--pf-inlinecta-color-semantic-background-default',
-    label: 'Background',
-    defaultValue: 'var(--color-semantic-background-default)',
-    type: 'color',
-    scopes: ['inlinecta'],
-  },
-  {
-    name: '--pf-inlinecta-color-semantic-border-default',
-    label: 'Border',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['inlinecta'],
-  },
-  {
-    name: '--pf-inlinecta-color-semantic-text-default',
-    label: 'Heading color',
-    defaultValue: 'var(--color-semantic-text-default)',
-    type: 'color',
-    scopes: ['inlinecta'],
-  },
-  {
-    name: '--pf-inlinecta-color-semantic-text-muted',
-    label: 'Description/icon color',
-    defaultValue: 'var(--color-semantic-text-muted)',
-    type: 'color',
-    scopes: ['inlinecta'],
-  },
-  {
-    name: '--radius-md',
-    label: 'Border radius',
-    defaultValue: 'var(--radius-md)',
-    type: 'radius',
-    scopes: ['inlinecta'],
-  },
-  {
-    name: '--space-3',
-    label: 'Padding/gap',
-    defaultValue: 'var(--space-3)',
-    type: 'space',
-    scopes: ['inlinecta'],
-  },
   // Icon color variable
   {
     name: '--pf-icon-color',
@@ -381,85 +180,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['icon'],
   },
 
-  // HeaderNavigation variables
-  {
-    name: '--pf-headernavigation-color-semantic-background-default',
-    label: 'Background',
-    defaultValue: 'var(--color-semantic-background-default)',
-    type: 'color',
-    scopes: ['headernavigation'],
-  },
-  {
-    name: '--pf-headernavigation-color-semantic-border-default',
-    label: 'Border',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['headernavigation'],
-  },
-  {
-    name: '--pf-headernavigation-color-semantic-background-subtle',
-    label: 'Background subtle (hover/active)',
-    defaultValue: 'var(--color-semantic-background-subtle)',
-    type: 'color',
-    scopes: ['headernavigation'],
-  },
-  {
-    name: '--pf-headernavigation-color-semantic-text-default',
-    label: 'Text color',
-    defaultValue: 'var(--color-semantic-text-default)',
-    type: 'color',
-    scopes: ['headernavigation'],
-  },
-  {
-    name: '--pf-headernavigation-color-semantic-text-muted',
-    label: 'Text color (muted)',
-    defaultValue: 'var(--color-semantic-text-muted)',
-    type: 'color',
-    scopes: ['headernavigation'],
-  },
-  // FileUploader variables
-  {
-    name: '--pf-fileuploader-color-semantic-background-default',
-    label: 'Background',
-    defaultValue: 'var(--color-semantic-background-default)',
-    type: 'color',
-    scopes: ['fileuploader'],
-  },
-  {
-    name: '--pf-fileuploader-color-semantic-background-subtle',
-    label: 'Background subtle (hover)',
-    defaultValue: 'var(--color-semantic-background-subtle)',
-    type: 'color',
-    scopes: ['fileuploader'],
-  },
-  {
-    name: '--pf-fileuploader-color-semantic-border-default',
-    label: 'Border',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['fileuploader'],
-  },
-  {
-    name: '--pf-fileuploader-color-semantic-border-strong',
-    label: 'Border (hover)',
-    defaultValue: 'var(--color-semantic-border-strong)',
-    type: 'color',
-    scopes: ['fileuploader'],
-  },
-  {
-    name: '--pf-fileuploader-color-semantic-text-default',
-    label: 'Text color',
-    defaultValue: 'var(--color-semantic-text-default)',
-    type: 'color',
-    scopes: ['fileuploader'],
-  },
-  {
-    name: '--pf-fileuploader-color-semantic-action-primary',
-    label: 'Active border',
-    defaultValue: 'var(--color-semantic-action-primary)',
-    type: 'color',
-    scopes: ['fileuploader'],
-  },
   // CreditCard variables
   {
     name: '--pf-credit-card-border',
@@ -468,56 +188,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
       'color-mix(in srgb, var(--color-base-white) 25%, transparent)',
     type: 'color',
     scopes: ['creditcard'],
-  },
-  // DatePicker variables
-  {
-    name: '--pf-datepicker-color-semantic-background-default',
-    label: 'Background',
-    defaultValue: 'var(--color-semantic-background-default)',
-    type: 'color',
-    scopes: ['datepicker'],
-  },
-  {
-    name: '--pf-datepicker-color-semantic-background-subtle',
-    label: 'Background subtle (disabled)',
-    defaultValue: 'var(--color-semantic-background-subtle)',
-    type: 'color',
-    scopes: ['datepicker'],
-  },
-  {
-    name: '--pf-datepicker-color-semantic-border-default',
-    label: 'Border',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['datepicker'],
-  },
-  {
-    name: '--pf-datepicker-color-semantic-border-strong',
-    label: 'Border (hover)',
-    defaultValue: 'var(--color-semantic-border-strong)',
-    type: 'color',
-    scopes: ['datepicker'],
-  },
-  {
-    name: '--pf-datepicker-color-semantic-text-default',
-    label: 'Text color',
-    defaultValue: 'var(--color-semantic-text-default)',
-    type: 'color',
-    scopes: ['datepicker'],
-  },
-  {
-    name: '--pf-datepicker-color-semantic-text-muted',
-    label: 'Text color (muted/placeholder)',
-    defaultValue: 'var(--color-semantic-text-muted)',
-    type: 'color',
-    scopes: ['datepicker'],
-  },
-  {
-    name: '--pf-datepicker-color-danger-600',
-    label: 'Border (invalid)',
-    defaultValue: 'var(--color-danger-600)',
-    type: 'color',
-    scopes: ['datepicker'],
   },
   {
     name: '--pf-credit-card-glare',
@@ -653,28 +323,28 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['dropdown'],
   },
   {
-    name: '--pf-dropdown-color-semantic-text-default',
+    name: '--pf-dropdown-text',
     label: 'Menu text color',
     defaultValue: 'var(--color-semantic-text-default)',
     type: 'color',
     scopes: ['dropdown'],
   },
   {
-    name: '--pf-dropdown-color-semantic-text-muted',
+    name: '--pf-dropdown-text-muted',
     label: 'Menu text color (muted)',
     defaultValue: 'var(--color-semantic-text-muted)',
     type: 'color',
     scopes: ['dropdown'],
   },
   {
-    name: '--pf-dropdown-color-semantic-status-danger-foreground',
+    name: '--pf-dropdown-text-danger',
     label: 'Destructive item color',
     defaultValue: 'var(--color-semantic-status-danger-foreground)',
     type: 'color',
     scopes: ['dropdown'],
   },
   {
-    name: '--pf-dropdown-color-danger-500',
+    name: '--pf-dropdown-icon-danger',
     label: 'Destructive icon color',
     defaultValue: 'var(--color-danger-500)',
     type: 'color',
@@ -700,20 +370,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     defaultValue: 'var(--shadow-md)',
     type: 'shadow',
     scopes: ['dropdown'],
-  },
-  {
-    name: '--pf-contentdivider-color-semantic-text-muted',
-    label: 'Divider text color',
-    defaultValue: 'var(--color-semantic-text-muted)',
-    type: 'color',
-    scopes: ['contentdivider'],
-  },
-  {
-    name: '--pf-contentdivider-color-semantic-border-default',
-    label: 'Divider border color',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['contentdivider'],
   },
   // Card variables
   {
@@ -767,7 +423,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   },
   // Carousel variables
   {
-    name: '--pf-carousel-background',
+    name: '--pf-carousel-bg',
     label: 'Carousel background',
     defaultValue: 'var(--color-semantic-background-default)',
     type: 'color',
@@ -802,7 +458,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['carousel'],
   },
   {
-    name: '--pf-carousel-viewport-background',
+    name: '--pf-carousel-viewport-bg',
     label: 'Carousel viewport background',
     defaultValue: 'var(--color-semantic-background-subtle)',
     type: 'color',
@@ -900,7 +556,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['carousel'],
   },
   {
-    name: '--pf-carousel-nav-hover-background',
+    name: '--pf-carousel-nav-hover-bg',
     label: 'Carousel nav hover background',
     defaultValue: 'var(--color-semantic-background-subtle)',
     type: 'color',
@@ -942,14 +598,14 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['carousel'],
   },
   {
-    name: '--pf-carousel-indicator-background',
+    name: '--pf-carousel-indicator-bg',
     label: 'Carousel indicator background',
     defaultValue: 'var(--color-semantic-border-default)',
     type: 'color',
     scopes: ['carousel'],
   },
   {
-    name: '--pf-carousel-indicator-active-background',
+    name: '--pf-carousel-indicator-active-bg',
     label: 'Carousel active indicator',
     defaultValue: 'var(--color-semantic-action-primary)',
     type: 'color',
@@ -989,70 +645,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     defaultValue: '120ms',
     type: 'text',
     scopes: ['carousel'],
-  },
-  // Calendar variables
-  {
-    name: '--pf-calendar-semantic-background-default',
-    label: 'Calendar background',
-    defaultValue: 'var(--color-semantic-background-default)',
-    type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-semantic-border-default',
-    label: 'Calendar border',
-    defaultValue: 'var(--color-semantic-border-default)',
-    type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-semantic-text-default',
-    label: 'Calendar text',
-    defaultValue: 'var(--color-semantic-text-default)',
-    type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-semantic-background-subtle',
-    label: 'Calendar background subtle',
-    defaultValue: 'var(--color-semantic-background-subtle)',
-    type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-semantic-text-muted',
-    label: 'Calendar text muted',
-    defaultValue: 'var(--color-semantic-text-muted)',
-    type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-danger-600',
-    label: 'Calendar danger border',
-    defaultValue: 'var(--color-danger-600)',
-    type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-semantic-action-primary',
-    label: 'Calendar selected background',
-    defaultValue: 'var(--color-semantic-action-primary)',
-    type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-semantic-action-primary-hover',
-    label: 'Calendar selected hover background',
-    defaultValue: 'var(--color-semantic-action-primary-hover)',
-    type: 'color',
-    scopes: ['calendar'],
-  },
-  {
-    name: '--pf-calendar-semantic-action-primary-text',
-    label: 'Calendar selected text',
-    defaultValue: 'var(--color-semantic-action-primary-text)',
-    type: 'color',
-    scopes: ['calendar'],
   },
   {
     name: '--pf-button-primary-bg',
@@ -1122,13 +714,6 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     name: '--pf-checkbox-checked-bg',
     label: 'Checkbox checked background',
     defaultValue: 'var(--color-semantic-action-primary)',
-    type: 'color',
-    scopes: ['checkbox'],
-  },
-  {
-    name: '--pf-checkbox-checked-border',
-    label: 'Checkbox checked border',
-    defaultValue: 'var(--color-semantic-border-default)',
     type: 'color',
     scopes: ['checkbox'],
   },
@@ -1293,7 +878,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['avatar'],
   },
   {
-    name: '--pf-avatar-color-semantic-text-default',
+    name: '--pf-avatar-text',
     label: 'Avatar text',
     defaultValue: 'var(--color-semantic-text-default)',
     type: 'color',
@@ -1321,36 +906,36 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['avatar'],
   },
   {
-    name: '--pf-avatar-status-online-color',
+    name: '--pf-avatar-status-online',
     label: 'Avatar status online',
-    defaultValue: '#16a34a',
+    defaultValue: 'var(--color-semantic-status-success-foreground)',
     type: 'color',
     scopes: ['avatar'],
   },
   // ButtonGroup variables
   {
-    name: '--pf-buttongroup-background-default',
+    name: '--pf-buttongroup-bg',
     label: 'ButtonGroup background',
     defaultValue: 'var(--color-semantic-background-default)',
     type: 'color',
     scopes: ['buttongroup'],
   },
   {
-    name: '--pf-buttongroup-background-subtle',
+    name: '--pf-buttongroup-bg-subtle',
     label: 'ButtonGroup background subtle',
     defaultValue: 'var(--color-semantic-background-subtle)',
     type: 'color',
     scopes: ['buttongroup'],
   },
   {
-    name: '--pf-buttongroup-border-default',
+    name: '--pf-buttongroup-border',
     label: 'ButtonGroup border',
     defaultValue: 'var(--color-semantic-border-default)',
     type: 'color',
     scopes: ['buttongroup'],
   },
   {
-    name: '--pf-buttongroup-text-default',
+    name: '--pf-buttongroup-text',
     label: 'ButtonGroup text',
     defaultValue: 'var(--color-semantic-text-default)',
     type: 'color',
@@ -1378,21 +963,21 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['buttongroup'],
   },
   {
-    name: '--pf-avatar-color-semantic-status-warning-foreground',
+    name: '--pf-avatar-status-away',
     label: 'Avatar status away',
     defaultValue: 'var(--color-semantic-status-warning-foreground)',
     type: 'color',
     scopes: ['avatar'],
   },
   {
-    name: '--pf-avatar-color-semantic-status-danger-foreground',
+    name: '--pf-avatar-status-busy',
     label: 'Avatar status busy',
     defaultValue: 'var(--color-semantic-status-danger-foreground)',
     type: 'color',
     scopes: ['avatar'],
   },
   {
-    name: '--pf-avatar-color-semantic-text-muted',
+    name: '--pf-avatar-status-offline',
     label: 'Avatar status offline',
     defaultValue: 'var(--color-semantic-text-muted)',
     type: 'color',
@@ -1751,7 +1336,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['danger'],
   },
   {
-    name: '--pf-notification-color-brand-50',
+    name: '--pf-notification-info-bg',
     label: 'Notification info background',
     defaultValue: 'var(--color-brand-50)',
     type: 'color',
@@ -1759,7 +1344,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['info'],
   },
   {
-    name: '--pf-notification-color-brand-300',
+    name: '--pf-notification-info-border',
     label: 'Notification info border',
     defaultValue: 'var(--color-brand-300)',
     type: 'color',
@@ -1767,7 +1352,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['info'],
   },
   {
-    name: '--pf-notification-color-brand-800',
+    name: '--pf-notification-info-title',
     label: 'Notification info foreground',
     defaultValue: 'var(--color-brand-800)',
     type: 'color',
@@ -1775,7 +1360,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['info'],
   },
   {
-    name: '--pf-notification-color-semantic-status-success-background',
+    name: '--pf-notification-success-bg',
     label: 'Notification success background',
     defaultValue: 'var(--color-semantic-status-success-background)',
     type: 'color',
@@ -1783,7 +1368,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['success'],
   },
   {
-    name: '--pf-notification-color-semantic-status-success-border',
+    name: '--pf-notification-success-border',
     label: 'Notification success border',
     defaultValue: 'var(--color-semantic-status-success-border)',
     type: 'color',
@@ -1791,15 +1376,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['success'],
   },
   {
-    name: '--pf-notification-color-semantic-status-success-foreground',
-    label: 'Notification success foreground',
-    defaultValue: 'var(--color-semantic-status-success-foreground)',
-    type: 'color',
-    scopes: ['notification'],
-    variants: ['success'],
-  },
-  {
-    name: '--pf-notification-color-semantic-status-warning-background',
+    name: '--pf-notification-warning-bg',
     label: 'Notification warning background',
     defaultValue: 'var(--color-semantic-status-warning-background)',
     type: 'color',
@@ -1807,7 +1384,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['warning'],
   },
   {
-    name: '--pf-notification-color-semantic-status-warning-border',
+    name: '--pf-notification-warning-border',
     label: 'Notification warning border',
     defaultValue: 'var(--color-semantic-status-warning-border)',
     type: 'color',
@@ -1815,15 +1392,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['warning'],
   },
   {
-    name: '--pf-notification-color-semantic-status-warning-foreground',
-    label: 'Notification warning foreground',
-    defaultValue: 'var(--color-semantic-status-warning-foreground)',
-    type: 'color',
-    scopes: ['notification'],
-    variants: ['warning'],
-  },
-  {
-    name: '--pf-notification-color-semantic-status-danger-background',
+    name: '--pf-notification-danger-bg',
     label: 'Notification danger background',
     defaultValue: 'var(--color-semantic-status-danger-background)',
     type: 'color',
@@ -1831,7 +1400,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['danger'],
   },
   {
-    name: '--pf-notification-color-semantic-status-danger-border',
+    name: '--pf-notification-danger-border',
     label: 'Notification danger border',
     defaultValue: 'var(--color-semantic-status-danger-border)',
     type: 'color',
@@ -1839,15 +1408,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['danger'],
   },
   {
-    name: '--pf-notification-color-semantic-status-danger-foreground',
-    label: 'Notification danger foreground',
-    defaultValue: 'var(--color-semantic-status-danger-foreground)',
-    type: 'color',
-    scopes: ['notification'],
-    variants: ['danger'],
-  },
-  {
-    name: '--pf-inlinecta-color-brand-50',
+    name: '--pf-inline-cta-info-bg',
     label: 'InlineCTA info background',
     defaultValue: 'var(--color-brand-50)',
     type: 'color',
@@ -1855,7 +1416,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['info'],
   },
   {
-    name: '--pf-inlinecta-color-brand-300',
+    name: '--pf-inline-cta-info-border',
     label: 'InlineCTA info border',
     defaultValue: 'var(--color-brand-300)',
     type: 'color',
@@ -1863,15 +1424,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['info'],
   },
   {
-    name: '--pf-inlinecta-color-brand-700',
-    label: 'InlineCTA info foreground',
-    defaultValue: 'var(--color-brand-700)',
-    type: 'color',
-    scopes: ['inlinecta'],
-    variants: ['info'],
-  },
-  {
-    name: '--pf-inlinecta-color-semantic-status-success-background',
+    name: '--pf-inline-cta-success-bg',
     label: 'InlineCTA success background',
     defaultValue: 'var(--color-semantic-status-success-background)',
     type: 'color',
@@ -1879,7 +1432,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['success'],
   },
   {
-    name: '--pf-inlinecta-color-semantic-status-success-border',
+    name: '--pf-inline-cta-success-border',
     label: 'InlineCTA success border',
     defaultValue: 'var(--color-semantic-status-success-border)',
     type: 'color',
@@ -1887,7 +1440,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['success'],
   },
   {
-    name: '--pf-inlinecta-color-semantic-status-warning-background',
+    name: '--pf-inline-cta-warning-bg',
     label: 'InlineCTA warning background',
     defaultValue: 'var(--color-semantic-status-warning-background)',
     type: 'color',
@@ -1895,7 +1448,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['warning'],
   },
   {
-    name: '--pf-inlinecta-color-semantic-status-warning-border',
+    name: '--pf-inline-cta-warning-border',
     label: 'InlineCTA warning border',
     defaultValue: 'var(--color-semantic-status-warning-border)',
     type: 'color',
