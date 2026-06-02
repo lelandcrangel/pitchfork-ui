@@ -179,10 +179,6 @@ Each component should have at minimum one accessibility-focused test (role prese
 
 ---
 
-## Known gaps (see todo.md)
+## Known gaps
 
-- Test coverage is very low (~4% of components have tests).
-- `EmptyState` and `LineBarCharts` component directories exist but are empty.
-- `Button` has no loading/pending state.
-- Form components don't surface a `required` visual indicator.
-- Many display components are missing `forwardRef`.
+See `todo.md` at the repo root.

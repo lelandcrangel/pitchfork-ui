@@ -2,6 +2,35 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [2026-06-02]
+
+### Accessibility
+
+- **Avatar:** added `role="img"` when a `name` prop is set so `aria-label` is valid on the element.
+- **Calendar:** restructured day grid to use proper `role="grid"` / `role="row"` / `role="gridcell"` ARIA hierarchy; added full-date `aria-label` and `aria-current="date"` to day buttons.
+- **DatePicker:** moved the clear button outside the trigger `<button>` to eliminate nested interactive elements.
+- **ProgressIndicators:** added `label` prop forwarded as `aria-label` on both `ProgressBar` and `ProgressCircle`; moved `role="progressbar"` to the outer element so `...props` reaches it.
+- **RichTextEditor:** wired `aria-labelledby` on the editor div; `FieldWrapper` now stamps an `id` on the `<label>` element for non-native form elements.
+
+### CSS / Tokens
+
+- **Calendar:** fixed missing today border — `--color-semantic-today-border` (undefined) replaced with `--pf-calendar-today-border` mapping to the correct `warning-border` token.
+- **All components:** flattened CSS variable fallback chains across 45 component CSS files. All `var(--pf-component-color-semantic-*, var(...))` multi-level chains replaced with single flat `var(--pf-component-role)` references backed by named aliases in `theme.css`.
+- **Avatar:** restored presence status dot colors to `--color-semantic-status-*-bright` (vivid 500-level palette) from the incorrect `*-foreground` tokens.
+
+### Storybook
+
+- **CSS Variables Controls:** fixed broken control names following the CSS variable refactor; updated auto-extractor regex to match vars without fallbacks.
+- **Tokens page:** removed redundant Component Alias Variables section (covered by the CSS Variables Controls panel on each Interactive story).
+- **Input docs:** fixed broken `Disabled` story reference; added `Disabled` example to the examples stories.
+- **Calendar:** `PreselectedDay` example now always shows the current month with a randomly selected day.
+
+### Release automation
+
+- Added `release-please` configuration for automated semantic versioning of `@pitchfork-ui/react` and `@pitchfork-ui/tokens`.
+- Changelog sync (`sync-changelog.cjs`) now reads from `packages/react/CHANGELOG.md` rather than a separate hand-maintained copy.
+- Added Conventional Commits guidance to `CONTRIBUTING.md`.
+
 ## [2026-06-01]
 
 ### Bundle
