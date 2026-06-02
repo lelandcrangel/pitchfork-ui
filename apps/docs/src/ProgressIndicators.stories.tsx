@@ -9,6 +9,7 @@ const meta = {
     value: 62,
     max: 100,
     showValue: true,
+    label: 'Upload progress',
   },
 } satisfies Meta<typeof ProgressBar>;
 

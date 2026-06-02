@@ -240,6 +240,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
             contentEditable={!disabled}
             role="textbox"
             aria-multiline="true"
+            aria-labelledby={label ? `${editorId}-label` : undefined}
             aria-required={required || undefined}
             aria-invalid={error ? true : undefined}
             aria-describedby={describedBy}

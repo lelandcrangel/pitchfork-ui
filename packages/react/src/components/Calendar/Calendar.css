@@ -81,12 +81,6 @@
   outline: none;
 }
 
-.pf-calendar__weekday-row {
-  display: grid;
-  gap: var(--space-1);
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-}
-
 .pf-calendar__weekday {
   color: var(--pf-calendar-text-muted);
   font-size: var(--font-size-xs);

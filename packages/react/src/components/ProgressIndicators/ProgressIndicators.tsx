@@ -6,6 +6,7 @@ export interface ProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
   max?: number;
   showValue?: boolean;
+  label?: string;
 }
 
 export interface ProgressCircleProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -14,6 +15,7 @@ export interface ProgressCircleProps extends React.HTMLAttributes<HTMLDivElement
   size?: number;
   strokeWidth?: number;
   showValue?: boolean;
+  label?: string;
 }
 
 const clampPercent = (value: number, max: number) => {
@@ -25,18 +27,21 @@ const clampPercent = (value: number, max: number) => {
 };
 
 export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
-  function ProgressBar({ value, max = 100, showValue = true, className, ...props }, ref) {
+  function ProgressBar({ value, max = 100, showValue = true, label, className, ...props }, ref) {
     const percent = clampPercent(value, max);
 
     return (
-      <div ref={ref} className={cx('pf-progress-bar', className)} {...props}>
-        <div
-          className="pf-progress-bar__track"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={max}
-          aria-valuenow={Math.round((percent / 100) * max)}
-        >
+      <div
+        ref={ref}
+        className={cx('pf-progress-bar', className)}
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-valuenow={Math.round((percent / 100) * max)}
+        {...props}
+      >
+        <div className="pf-progress-bar__track">
           <div
             className="pf-progress-bar__fill"
             style={{ '--pf-progress-fill': `${percent}%` } as React.CSSProperties}
@@ -53,7 +58,7 @@ ProgressBar.displayName = 'ProgressBar';
 
 export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
   function ProgressCircle(
-    { value, max = 100, size = 64, strokeWidth = 6, showValue = true, className, ...props },
+    { value, max = 100, size = 64, strokeWidth = 6, showValue = true, label, className, ...props },
     ref,
   ) {
     const percent = clampPercent(value, max);
@@ -67,6 +72,7 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
         className={cx('pf-progress-circle', className)}
         style={{ '--pf-progress-circle-size': `${size}px` } as React.CSSProperties}
         role="progressbar"
+        aria-label={label}
         aria-valuemin={0}
         aria-valuemax={max}
         aria-valuenow={Math.round((percent / 100) * max)}

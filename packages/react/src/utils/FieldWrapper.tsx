@@ -33,7 +33,7 @@ export const FieldWrapper = forwardRef<HTMLDivElement, FieldWrapperProps>(
   ) => (
     <div ref={ref} className={cx('pf-field', className)}>
       {label ? (
-        <label className="pf-field__label" htmlFor={labelFor}>
+        <label className="pf-field__label" id={`${labelFor}-label`} htmlFor={labelFor}>
           {label}
           {required && (
             <span className="pf-field__required" aria-hidden="true">

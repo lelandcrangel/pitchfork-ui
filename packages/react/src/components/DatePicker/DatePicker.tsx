@@ -151,62 +151,52 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
         className={cx('pf-date-picker', className)}
         aria-describedby={describedBy}
       >
-        <button
-          ref={triggerRef}
-          id={`${pickerId}-trigger`}
-          type="button"
-          className={cx(
-            'pf-date-picker__trigger',
-            error && 'pf-date-picker__trigger--invalid',
-          )}
-          disabled={disabled}
-          aria-invalid={error ? true : undefined}
-          aria-haspopup="dialog"
-          aria-expanded={isOpen}
-          aria-required={required || undefined}
-          onClick={() => {
-            disclosure.toggle();
-          }}
-          onKeyDown={(event) => {
-            if (event.key === Keys.Escape) {
-              disclosure.close();
-            }
-          }}
-        >
-          <span
+        <div className="pf-date-picker__control-row">
+          <button
+            ref={triggerRef}
+            id={`${pickerId}-trigger`}
+            type="button"
             className={cx(
-              'pf-date-picker__value',
-              !selectedDate && 'pf-date-picker__value--placeholder',
+              'pf-date-picker__trigger',
+              error && 'pf-date-picker__trigger--invalid',
             )}
+            disabled={disabled}
+            aria-invalid={error ? true : undefined}
+            aria-haspopup="dialog"
+            aria-expanded={isOpen}
+            aria-required={required || undefined}
+            onClick={() => {
+              disclosure.toggle();
+            }}
+            onKeyDown={(event) => {
+              if (event.key === Keys.Escape) {
+                disclosure.close();
+              }
+            }}
           >
-            {formattedDate || placeholder}
-          </span>
-
-          <span className="pf-date-picker__icons">
-            {allowClear && selectedDate ? (
-              <span
-                className="pf-date-picker__icon-button"
-                role="button"
-                aria-label="Clear selected date"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  clearDate();
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    clearDate();
-                  }
-                }}
-                tabIndex={0}
-              >
-                <Icon name="circle-xmark" aria-hidden />
-              </span>
-            ) : null}
+            <span
+              className={cx(
+                'pf-date-picker__value',
+                !selectedDate && 'pf-date-picker__value--placeholder',
+              )}
+            >
+              {formattedDate || placeholder}
+            </span>
             <Icon name="calendar" aria-hidden />
-          </span>
-        </button>
+          </button>
+
+          {allowClear && selectedDate ? (
+            <button
+              type="button"
+              className="pf-date-picker__icon-button"
+              aria-label="Clear selected date"
+              disabled={disabled}
+              onClick={clearDate}
+            >
+              <Icon name="circle-xmark" aria-hidden />
+            </button>
+          ) : null}
+        </div>
 
         {isOpen && typeof document !== 'undefined'
           ? createPortal(

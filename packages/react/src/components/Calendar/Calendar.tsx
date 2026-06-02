@@ -283,53 +283,61 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
           </button>
         </div>
 
-        <div className="pf-calendar__weekday-row" aria-hidden>
-          {WEEKDAY_LABELS.map((day) => (
-            <span key={day} className="pf-calendar__weekday">
-              {day}
-            </span>
-          ))}
-        </div>
-
         <div className="pf-calendar__grid" role="grid" aria-label={monthLabel}>
-          {dayItems.map(({ date, inCurrentMonth }) => {
-            const isSelected = selectedDate
-              ? isSameDay(selectedDate, date)
-              : false;
-            const isToday = isSameDay(today, date);
-            const isDisabled = Boolean(disabledDates?.(date));
+          {/* Column headers — display:contents keeps the CSS grid layout intact */}
+          <div role="row" style={{ display: 'contents' }} aria-hidden>
+            {WEEKDAY_LABELS.map((day) => (
+              <span key={day} role="columnheader" className="pf-calendar__weekday">
+                {day}
+              </span>
+            ))}
+          </div>
 
-            if (!showOutsideDays && !inCurrentMonth) {
-              return (
-                <span
-                  key={date.toISOString()}
-                  className="pf-calendar__day-empty"
-                  aria-hidden
-                />
-              );
-            }
+          {/* Week rows — 6 rows of 7 days */}
+          {Array.from({ length: 6 }, (_, week) => (
+            <div key={week} role="row" style={{ display: 'contents' }}>
+              {dayItems.slice(week * 7, (week + 1) * 7).map(({ date, inCurrentMonth }) => {
+                const isSelected = selectedDate
+                  ? isSameDay(selectedDate, date)
+                  : false;
+                const isToday = isSameDay(today, date);
+                const isDisabled = Boolean(disabledDates?.(date));
 
-            return (
-              <button
-                key={date.toISOString()}
-                type="button"
-                role="gridcell"
-                className={cx(
-                  'pf-calendar__day',
-                  !inCurrentMonth && 'pf-calendar__day--outside',
-                  isToday && 'pf-calendar__day--today',
-                  isSelected && 'pf-calendar__day--selected',
-                )}
-                aria-selected={isSelected}
-                disabled={isDisabled}
-                onClick={() => {
-                  selectDate(date);
-                }}
-              >
-                {date.getDate()}
-              </button>
-            );
-          })}
+                if (!showOutsideDays && !inCurrentMonth) {
+                  return (
+                    <span
+                      key={date.toISOString()}
+                      className="pf-calendar__day-empty"
+                      aria-hidden
+                    />
+                  );
+                }
+
+                return (
+                  <button
+                    key={date.toISOString()}
+                    type="button"
+                    role="gridcell"
+                    className={cx(
+                      'pf-calendar__day',
+                      !inCurrentMonth && 'pf-calendar__day--outside',
+                      isToday && 'pf-calendar__day--today',
+                      isSelected && 'pf-calendar__day--selected',
+                    )}
+                    aria-label={new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(date)}
+                    aria-selected={isSelected}
+                    aria-current={isToday ? 'date' : undefined}
+                    disabled={isDisabled}
+                    onClick={() => {
+                      selectDate(date);
+                    }}
+                  >
+                    {date.getDate()}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </div>
       </div>
 

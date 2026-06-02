@@ -11,6 +11,7 @@
   flex: 1;
   height: 8px;
   overflow: hidden;
+  pointer-events: none;
 }
 
 .pf-progress-bar__fill {
