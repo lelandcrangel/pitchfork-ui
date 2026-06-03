@@ -7,6 +7,7 @@
 .pf-radar-chart__svg {
   display: block;
   height: auto;
+  overflow: visible;
   width: min(100%, 320px);
 }
 
