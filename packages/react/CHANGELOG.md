@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.1.3](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.2...react-v0.1.3) (2026-06-03)
+
+
+### Features
+
+* **demo:** initialize demo app with basic structure and components ([f036b95](https://github.com/lelandcrangel/pitchfork-ui/commit/f036b959f8cb4dd9d02289109d6cdd2d246c272e))
+
+
+### Bug Fixes
+
+* **RadarChart:** ensure SVG overflow is visible ([260d5bd](https://github.com/lelandcrangel/pitchfork-ui/commit/260d5bde5d9a610b2f6098252a695b3fab77b23e))
+
 ## [0.1.2](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.1...react-v0.1.2) (2026-06-02)
 
 
