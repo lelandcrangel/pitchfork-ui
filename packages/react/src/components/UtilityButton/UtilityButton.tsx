@@ -9,13 +9,31 @@ export interface UtilityButtonProps extends React.ButtonHTMLAttributes<HTMLButto
   variant?: UtilityButtonVariant;
   size?: UtilityButtonSize;
   icon?: React.ReactNode;
+  tooltip?: string;
 }
 
 export const UtilityButton = forwardRef<HTMLButtonElement, UtilityButtonProps>(
   (
-    { className, variant = 'neutral', size = 'md', type = 'button', icon, children, ...props },
+    {
+      className,
+      variant = 'neutral',
+      size = 'md',
+      type = 'button',
+      icon,
+      children,
+      tooltip,
+      ...props
+    },
     ref,
   ) => {
+    if (process.env.NODE_ENV !== 'production') {
+      if (!children && !props['aria-label'] && !props['aria-labelledby'] && !tooltip) {
+        console.warn(
+          '[UtilityButton] Provide an `aria-label`, `aria-labelledby`, or `tooltip` prop — this button has no visible text.',
+        );
+      }
+    }
+
     return (
       <button
         ref={ref}
@@ -26,6 +44,7 @@ export const UtilityButton = forwardRef<HTMLButtonElement, UtilityButtonProps>(
           `pf-utility-button--${size}`,
           className,
         )}
+        title={tooltip}
         {...props}
       >
         {icon ? <span className="pf-utility-button__icon">{icon}</span> : null}

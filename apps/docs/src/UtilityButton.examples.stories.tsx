@@ -38,9 +38,16 @@ export const Danger: Story = {
 
 export const IconOnly: Story = {
   args: {
-    'aria-label': 'More options',
+    tooltip: 'More options',
     children: undefined,
     icon: <Icon name="copy" aria-hidden />,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `<UtilityButton icon={<Icon name="copy" aria-hidden />} tooltip="More options" />`,
+      },
+    },
   },
 };
 

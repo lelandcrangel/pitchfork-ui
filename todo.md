@@ -16,7 +16,7 @@
 
 ## Accessibility
 
-- [ ] Add `aria-label` prop enforcement / warning for `UtilityButton` — it renders a `<button>` with no visible text and no mechanism to warn when neither `aria-label` nor `aria-labelledby` is provided
+- [x] Add `aria-label` prop enforcement / warning for `UtilityButton` — it renders a `<button>` with no visible text and no mechanism to warn when neither `aria-label` nor `aria-labelledby` is provided
 
 ## Code quality
 

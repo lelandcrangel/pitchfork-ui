@@ -14,6 +14,7 @@ const meta = {
   argTypes: {
     variant: { control: 'select', options: ['neutral', 'brand', 'danger'] },
     size: { control: 'inline-radio', options: ['sm', 'md'] },
+    tooltip: { control: 'text' },
   },
 } satisfies Meta<typeof UtilityButton>;
 

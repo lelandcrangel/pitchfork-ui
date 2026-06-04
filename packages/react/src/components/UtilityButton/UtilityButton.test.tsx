@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { createRef } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { UtilityButton } from './UtilityButton';
 
 describe('UtilityButton', () => {
@@ -48,5 +48,41 @@ describe('UtilityButton', () => {
     const ref = createRef<HTMLButtonElement>();
     render(<UtilityButton ref={ref}>Save</UtilityButton>);
     expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+  });
+
+  it('warns when rendered with no visible text and no accessible label', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<UtilityButton icon={<span />} />);
+    expect(spy).toHaveBeenCalledWith(expect.stringContaining('aria-label'));
+    spy.mockRestore();
+  });
+
+  it('does not warn when aria-label is provided', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<UtilityButton icon={<span />} aria-label="Close" />);
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('does not warn when tooltip is provided', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<UtilityButton icon={<span />} tooltip="Close" />);
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('does not warn when children are provided', () => {
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<UtilityButton>Save</UtilityButton>);
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it('sets title attribute from tooltip prop', () => {
+    render(<UtilityButton icon={<span />} tooltip="Close dialog" />);
+    expect(screen.getByRole('button', { name: 'Close dialog' })).toHaveAttribute(
+      'title',
+      'Close dialog',
+    );
   });
 });
