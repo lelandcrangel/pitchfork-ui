@@ -34,15 +34,7 @@ export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
   (
-    {
-      label = 'Actions',
-      items,
-      align = 'start',
-      disabled,
-      className,
-      maxVisibleItems,
-      ...props
-    },
+    { label = 'Actions', items, align = 'start', disabled, className, maxVisibleItems, ...props },
     ref,
   ) => {
     const menuId = useId();
@@ -51,11 +43,10 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     const menuRef = useRef<HTMLDivElement>(null);
     const disclosure = useDisclosure({ disabled });
     const { isOpen } = disclosure;
-    const { activeIndex, firstEnabledIndex, move, setActiveIndex } =
-      useListNavigation({
-        items,
-        isDisabled: (item) => Boolean(item.disabled),
-      });
+    const { activeIndex, firstEnabledIndex, move, setActiveIndex } = useListNavigation({
+      items,
+      isDisabled: (item) => Boolean(item.disabled),
+    });
     const menuStyle = useAnchoredPosition({
       anchorRef: triggerRef,
       align,
@@ -93,9 +84,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       };
     }, [disclosure]);
 
-    const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
-      event,
-    ) => {
+    const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (event) => {
       if (disabled) {
         return;
       }
@@ -149,10 +138,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         >
           <span>{label}</span>
           <span
-            className={cx(
-              'pf-dropdown__chevron',
-              isOpen && 'pf-dropdown__chevron--open',
-            )}
+            className={cx('pf-dropdown__chevron', isOpen && 'pf-dropdown__chevron--open')}
             aria-hidden
           >
             <Icon name="chevron-down" aria-hidden />
@@ -168,9 +154,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                 role="menu"
                 style={{
                   ...menuStyle,
-                  ...(menuMaxHeight
-                    ? { maxHeight: menuMaxHeight, overflowY: 'auto' }
-                    : {}),
+                  ...(menuMaxHeight ? { maxHeight: menuMaxHeight, overflowY: 'auto' } : {}),
                 }}
               >
                 {items.map((item, index) => {
@@ -210,9 +194,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                         <span>{item.label}</span>
                       </span>
                       {item.shortcut ? (
-                        <span className="pf-dropdown__item-shortcut">
-                          {item.shortcut}
-                        </span>
+                        <span className="pf-dropdown__item-shortcut">{item.shortcut}</span>
                       ) : null}
                     </button>
                   );

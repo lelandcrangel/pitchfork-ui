@@ -169,13 +169,7 @@ export const LineEmpty: LineStory = {
 
 export const BarGrouped: StoryObj = {
   name: 'Bar — grouped',
-  render: () => (
-    <BarChart
-      data={monthly}
-      series={twoSeries}
-      yAxisLabel="Active users"
-    />
-  ),
+  render: () => <BarChart data={monthly} series={twoSeries} yAxisLabel="Active users" />,
   parameters: {
     docs: {
       source: {
@@ -194,14 +188,7 @@ export const BarGrouped: StoryObj = {
 
 export const BarStacked: StoryObj = {
   name: 'Bar — stacked',
-  render: () => (
-    <BarChart
-      data={monthly}
-      series={threeSeries}
-      yAxisLabel="Active users"
-      stacked
-    />
-  ),
+  render: () => <BarChart data={monthly} series={threeSeries} yAxisLabel="Active users" stacked />,
   parameters: {
     docs: {
       source: {
@@ -223,11 +210,7 @@ export const BarStacked: StoryObj = {
 export const BarSingle: StoryObj = {
   name: 'Bar — single series',
   render: () => (
-    <BarChart
-      data={monthly}
-      series={[{ key: 'A', label: 'Sessions' }]}
-      yAxisLabel="Sessions"
-    />
+    <BarChart data={monthly} series={[{ key: 'A', label: 'Sessions' }]} yAxisLabel="Sessions" />
   ),
   parameters: {
     docs: {
@@ -244,9 +227,7 @@ export const BarSingle: StoryObj = {
 
 export const BarEmpty: StoryObj = {
   name: 'Bar — empty state',
-  render: () => (
-    <BarChart data={[]} series={twoSeries} />
-  ),
+  render: () => <BarChart data={[]} series={twoSeries} />,
   parameters: {
     docs: {
       source: {

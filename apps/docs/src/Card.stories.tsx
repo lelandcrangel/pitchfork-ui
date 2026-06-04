@@ -1,11 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@pitchfork-ui/react';
+import { Button, Card, CardContent, CardFooter, CardHeader } from '@pitchfork-ui/react';
 
 interface CardStoryArgs {
   id?: string;

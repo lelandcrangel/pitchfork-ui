@@ -40,10 +40,7 @@ export const WithError: Story = {
   args: { error: 'Please select a plan before continuing.' },
   play: async ({ canvas }) => {
     const trigger = canvas.getByRole('button', { name: /pricing tier/i });
-    await expect(trigger).toHaveAttribute(
-      'aria-describedby',
-      expect.stringContaining('error'),
-    );
+    await expect(trigger).toHaveAttribute('aria-describedby', expect.stringContaining('error'));
   },
 };
 

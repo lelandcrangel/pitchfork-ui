@@ -22,10 +22,7 @@ function NotificationPreview({
 }) {
   return (
     <div style={{ minHeight, position: 'relative', width: '100%' }}>
-      <NotificationStack
-        placement={placement}
-        style={notificationStackConstrainedStyle}
-      >
+      <NotificationStack placement={placement} style={notificationStackConstrainedStyle}>
         {children}
       </NotificationStack>
     </div>

@@ -13,15 +13,7 @@ export interface UtilityButtonProps extends React.ButtonHTMLAttributes<HTMLButto
 
 export const UtilityButton = forwardRef<HTMLButtonElement, UtilityButtonProps>(
   (
-    {
-      className,
-      variant = 'neutral',
-      size = 'md',
-      type = 'button',
-      icon,
-      children,
-      ...props
-    },
+    { className, variant = 'neutral', size = 'md', type = 'button', icon, children, ...props },
     ref,
   ) => {
     return (
@@ -37,9 +29,7 @@ export const UtilityButton = forwardRef<HTMLButtonElement, UtilityButtonProps>(
         {...props}
       >
         {icon ? <span className="pf-utility-button__icon">{icon}</span> : null}
-        {children ? (
-          <span className="pf-utility-button__label">{children}</span>
-        ) : null}
+        {children ? <span className="pf-utility-button__label">{children}</span> : null}
       </button>
     );
   },

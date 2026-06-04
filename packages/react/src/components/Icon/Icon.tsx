@@ -14,10 +14,7 @@ import {
   faUser,
 } from '@fortawesome/free-regular-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import {
-  FontAwesomeIcon,
-  type FontAwesomeIconProps,
-} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon, type FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
@@ -198,12 +195,7 @@ const normalizeName = (name: IconName) => {
 };
 
 export const getAvailableIconNames = () => {
-  return [
-    ...new Set([
-      ...Object.keys(regularIcons),
-      ...Object.keys(customIcons),
-    ]),
-  ].sort();
+  return [...new Set([...Object.keys(regularIcons), ...Object.keys(customIcons)])].sort();
 };
 
 export const getCustomIconNames = () => Object.keys(customIcons).sort();
@@ -213,14 +205,7 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   label?: string;
 }
 
-export function Icon({
-  name,
-  label,
-  className,
-  style,
-  ref: _ref,
-  ...props
-}: IconProps) {
+export function Icon({ name, label, className, style, ref: _ref, ...props }: IconProps) {
   const customIcon = customIcons[name];
   if (customIcon !== undefined) {
     return (

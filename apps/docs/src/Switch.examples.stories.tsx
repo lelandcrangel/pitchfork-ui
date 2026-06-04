@@ -22,9 +22,7 @@ export const On: Story = {
     label: 'Notify me',
   },
   play: async ({ canvas }) => {
-    await expect(
-      canvas.getByRole('switch', { name: /notify me/i }),
-    ).toBeChecked();
+    await expect(canvas.getByRole('switch', { name: /notify me/i })).toBeChecked();
   },
 };
 

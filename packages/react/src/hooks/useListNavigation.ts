@@ -24,9 +24,7 @@ export function useListNavigation<T>({
 
   const firstEnabledIndex = enabledIndexes[0] ?? -1;
   const lastEnabledIndex = enabledIndexes[enabledIndexes.length - 1] ?? -1;
-  const [activeIndex, setActiveIndex] = useState(
-    initialIndex ?? firstEnabledIndex,
-  );
+  const [activeIndex, setActiveIndex] = useState(initialIndex ?? firstEnabledIndex);
 
   const getNextEnabledIndex = useCallback(
     (startIndex: number, direction: 1 | -1) => {
@@ -37,12 +35,9 @@ export function useListNavigation<T>({
       const currentEnabledPosition = enabledIndexes.indexOf(startIndex);
       const fallbackPosition = direction === 1 ? -1 : 0;
       const safePosition =
-        currentEnabledPosition === -1
-          ? fallbackPosition
-          : currentEnabledPosition;
+        currentEnabledPosition === -1 ? fallbackPosition : currentEnabledPosition;
       const nextPosition =
-        (safePosition + direction + enabledIndexes.length) %
-        enabledIndexes.length;
+        (safePosition + direction + enabledIndexes.length) % enabledIndexes.length;
 
       return enabledIndexes[nextPosition] ?? -1;
     },

@@ -1,10 +1,4 @@
-import {
-  type CSSProperties,
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { type CSSProperties, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Icon } from '@pitchfork-ui/react';
 import { createPortal } from 'react-dom';
 import colorTokens from '../../../packages/tokens/src/tokens/color.json';
@@ -35,10 +29,7 @@ interface TokenOption {
 
 // ─── Token-driven options (auto-generated from token JSON) ──────────────────
 
-function flattenColorTokens(
-  node: Record<string, unknown>,
-  path: string[] = [],
-): ColorOption[] {
+function flattenColorTokens(node: Record<string, unknown>, path: string[] = []): ColorOption[] {
   if (!node || typeof node !== 'object') return [];
   if ('$value' in node) {
     // path is e.g. ['color', 'base', 'white'] → cssVar = var(--color-base-white)
@@ -59,43 +50,37 @@ const COLOR_OPTIONS: ColorOption[] = flattenColorTokens(
 );
 
 const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
-  radius: Object.entries(
-    (sizeTokens as { radius: Record<string, { $value: string }> }).radius,
-  ).map(([key, token]) => ({
-    label: `radius-${key} (${token.$value})`,
-    value: `var(--radius-${key})`,
-  })),
+  radius: Object.entries((sizeTokens as { radius: Record<string, { $value: string }> }).radius).map(
+    ([key, token]) => ({
+      label: `radius-${key} (${token.$value})`,
+      value: `var(--radius-${key})`,
+    }),
+  ),
   shadow: Object.entries(
     (shadowTokens as { shadow: Record<string, { $value: string }> }).shadow,
   ).map(([key]) => ({
     label: `shadow-${key}`,
     value: `var(--shadow-${key})`,
   })),
-  space: Object.entries(
-    (sizeTokens as { space: Record<string, { $value: string }> }).space,
-  ).map(([key, token]) => ({
-    label: `space-${key} (${token.$value})`,
-    value: `var(--space-${key})`,
-  })),
+  space: Object.entries((sizeTokens as { space: Record<string, { $value: string }> }).space).map(
+    ([key, token]) => ({
+      label: `space-${key} (${token.$value})`,
+      value: `var(--space-${key})`,
+    }),
+  ),
 };
 
 // ─── Auto-extract controls from component CSS ────────────────────────────────
 
-const cssFiles = import.meta.glob<string>(
-  '../../../packages/react/src/components/**/*.css',
-  { query: '?raw', import: 'default', eager: true },
-);
+const cssFiles = import.meta.glob<string>('../../../packages/react/src/components/**/*.css', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
-function getVarType(
-  varName: string,
-): 'color' | 'radius' | 'shadow' | 'space' {
-  if (
-    varName.includes('-shadow') ||
-    varName.includes('-elevation-')
-  )
-    return 'shadow';
-  if (varName.includes('-radius'))
-    return 'radius';
+function getVarType(varName: string): 'color' | 'radius' | 'shadow' | 'space' {
+  if (varName.includes('-shadow') || varName.includes('-elevation-')) return 'shadow';
+  if (varName.includes('-radius')) return 'radius';
   if (
     varName.includes('-height') ||
     varName.includes('-width') ||
@@ -119,10 +104,7 @@ function generateVarLabel(varName: string, scope: string): string {
     .join(' ');
 }
 
-function extractControlsFromCss(
-  cssContent: string,
-  scope: string,
-): CssVariableControl[] {
+function extractControlsFromCss(cssContent: string, scope: string): CssVariableControl[] {
   const seen = new Set<string>();
   const controls: CssVariableControl[] = [];
   // Match var(--pf-X) with or without a fallback value
@@ -148,9 +130,7 @@ function scopeFromPath(path: string): string {
   return match ? match[1].toLowerCase() : '';
 }
 
-function buildGeneratedControls(
-  existingScopes: Set<string>,
-): CssVariableControl[] {
+function buildGeneratedControls(existingScopes: Set<string>): CssVariableControl[] {
   const byScope: Record<string, CssVariableControl[]> = {};
   for (const [path, content] of Object.entries(cssFiles)) {
     const scope = scopeFromPath(path);
@@ -169,7 +149,6 @@ function buildGeneratedControls(
   });
 }
 
-
 const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   // Icon color variable
   {
@@ -184,16 +163,14 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-credit-card-border',
     label: 'Card border',
-    defaultValue:
-      'color-mix(in srgb, var(--color-base-white) 25%, transparent)',
+    defaultValue: 'color-mix(in srgb, var(--color-base-white) 25%, transparent)',
     type: 'color',
     scopes: ['creditcard'],
   },
   {
     name: '--pf-credit-card-glare',
     label: 'Card glare highlight',
-    defaultValue:
-      'color-mix(in srgb, var(--color-base-white) 22%, transparent)',
+    defaultValue: 'color-mix(in srgb, var(--color-base-white) 22%, transparent)',
     type: 'color',
     scopes: ['creditcard'],
   },
@@ -232,8 +209,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-credit-card-chip-gradient',
     label: 'Chip background',
-    defaultValue:
-      'linear-gradient(135deg, var(--color-gray-50), var(--color-gray-300))',
+    defaultValue: 'linear-gradient(135deg, var(--color-gray-50), var(--color-gray-300))',
     type: 'color',
     scopes: ['creditcard'],
   },
@@ -748,24 +724,21 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-code-snippet-border',
     label: 'CodeSnippet border',
-    defaultValue:
-      'color-mix(in srgb, var(--pf-code-snippet-bg) 82%, var(--color-base-white))',
+    defaultValue: 'color-mix(in srgb, var(--pf-code-snippet-bg) 82%, var(--color-base-white))',
     type: 'color',
     scopes: ['codesnippet'],
   },
   {
     name: '--pf-code-snippet-header-bg',
     label: 'CodeSnippet header background',
-    defaultValue:
-      'color-mix(in srgb, var(--pf-code-snippet-bg) 78%, var(--color-base-white))',
+    defaultValue: 'color-mix(in srgb, var(--pf-code-snippet-bg) 78%, var(--color-base-white))',
     type: 'color',
     scopes: ['codesnippet'],
   },
   {
     name: '--pf-code-snippet-header-border',
     label: 'CodeSnippet header border',
-    defaultValue:
-      'color-mix(in srgb, var(--pf-code-snippet-bg) 65%, var(--color-base-white))',
+    defaultValue: 'color-mix(in srgb, var(--pf-code-snippet-bg) 65%, var(--color-base-white))',
     type: 'color',
     scopes: ['codesnippet'],
   },
@@ -786,16 +759,14 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-code-snippet-copy-bg',
     label: 'CodeSnippet copy background',
-    defaultValue:
-      'color-mix(in srgb, var(--pf-code-snippet-bg) 70%, var(--color-base-white))',
+    defaultValue: 'color-mix(in srgb, var(--pf-code-snippet-bg) 70%, var(--color-base-white))',
     type: 'color',
     scopes: ['codesnippet'],
   },
   {
     name: '--pf-code-snippet-copy-border',
     label: 'CodeSnippet copy border',
-    defaultValue:
-      'color-mix(in srgb, var(--pf-code-snippet-bg) 55%, var(--color-base-white))',
+    defaultValue: 'color-mix(in srgb, var(--pf-code-snippet-bg) 55%, var(--color-base-white))',
     type: 'color',
     scopes: ['codesnippet'],
   },
@@ -809,8 +780,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-code-snippet-copy-hover-bg',
     label: 'CodeSnippet copy hover background',
-    defaultValue:
-      'color-mix(in srgb, var(--pf-code-snippet-bg) 58%, var(--color-base-white))',
+    defaultValue: 'color-mix(in srgb, var(--pf-code-snippet-bg) 58%, var(--color-base-white))',
     type: 'color',
     scopes: ['codesnippet'],
   },
@@ -1604,15 +1574,9 @@ function CssVariableController({
   const [values, setValues] = useState<Record<string, string>>({});
   const controlNames = controls.map((control) => control.name);
   const scopedVars = Object.fromEntries(
-    Object.entries(values).filter(
-      ([, value]) => value && value.trim().length > 0,
-    ),
+    Object.entries(values).filter(([, value]) => value && value.trim().length > 0),
   );
-  const updateControlValue = (
-    name: string,
-    defaultValue: string,
-    nextValue: string,
-  ) => {
+  const updateControlValue = (name: string, defaultValue: string, nextValue: string) => {
     setValues((current) => {
       if (nextValue === defaultValue) {
         const next = { ...current };
@@ -1687,9 +1651,7 @@ function CssVariableController({
                       marginBottom: '10px',
                     }}
                   >
-                    <strong style={{ fontSize: '13px' }}>
-                      CSS Variable Controls
-                    </strong>
+                    <strong style={{ fontSize: '13px' }}>CSS Variable Controls</strong>
                     <button
                       type="button"
                       onClick={() => {
@@ -1708,9 +1670,7 @@ function CssVariableController({
                   </div>
 
                   <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-                    <legend className="pf-sr-only">
-                      Global CSS variable controls
-                    </legend>
+                    <legend className="pf-sr-only">Global CSS variable controls</legend>
                     {controls.map((control) => {
                       const inputId = `global-css-var-${control.name.replace(/[^a-z0-9-]/gi, '-')}`;
                       return (
@@ -1736,15 +1696,9 @@ function CssVariableController({
                           {control.type === 'color' ? (
                             <ColorSelect
                               id={inputId}
-                              value={
-                                values[control.name] ?? control.defaultValue
-                              }
+                              value={values[control.name] ?? control.defaultValue}
                               onChange={(nextValue) => {
-                                updateControlValue(
-                                  control.name,
-                                  control.defaultValue,
-                                  nextValue,
-                                );
+                                updateControlValue(control.name, control.defaultValue, nextValue);
                               }}
                             />
                           ) : control.type === 'radius' ||
@@ -1753,43 +1707,29 @@ function CssVariableController({
                             <TokenSelect
                               id={inputId}
                               options={TOKEN_OPTIONS[control.type]}
-                              value={
-                                values[control.name] ?? control.defaultValue
-                              }
+                              value={values[control.name] ?? control.defaultValue}
                               onChange={(nextValue) => {
-                                updateControlValue(
-                                  control.name,
-                                  control.defaultValue,
-                                  nextValue,
-                                );
+                                updateControlValue(control.name, control.defaultValue, nextValue);
                               }}
                             />
                           ) : (
                             <input
                               id={inputId}
                               type="text"
-                              value={
-                                values[control.name] ?? control.defaultValue
-                              }
+                              value={values[control.name] ?? control.defaultValue}
                               onChange={(event) => {
                                 const nextValue = event.target.value;
-                                updateControlValue(
-                                  control.name,
-                                  control.defaultValue,
-                                  nextValue,
-                                );
+                                updateControlValue(control.name, control.defaultValue, nextValue);
                               }}
                               style={{
                                 minHeight: '32px',
-                                border:
-                                  '1px solid var(--color-semantic-border-default)',
+                                border: '1px solid var(--color-semantic-border-default)',
                                 borderRadius: '6px',
                                 padding: '0 8px',
                                 fontFamily: 'var(--font-family-mono)',
                                 fontSize: '12px',
                                 color: 'var(--color-semantic-text-default)',
-                                background:
-                                  'var(--color-semantic-background-default)',
+                                background: 'var(--color-semantic-background-default)',
                               }}
                             />
                           )}
@@ -1979,9 +1919,7 @@ function ColorSelect({
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedOption = COLOR_OPTIONS.find(
-    (option) => option.value === value,
-  ) ?? {
+  const selectedOption = COLOR_OPTIONS.find((option) => option.value === value) ?? {
     label: value,
     value,
     swatch: value,
@@ -2174,9 +2112,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
 };
 
 // Build generated controls for scopes not covered by hand-crafted CSS_VARIABLE_CONTROLS
-const handCraftedScopes = new Set(
-  CSS_VARIABLE_CONTROLS.flatMap((c) => c.scopes),
-);
+const handCraftedScopes = new Set(CSS_VARIABLE_CONTROLS.flatMap((c) => c.scopes));
 const GENERATED_CONTROLS = buildGeneratedControls(handCraftedScopes);
 const ALL_CONTROLS = [...CSS_VARIABLE_CONTROLS, ...GENERATED_CONTROLS];
 
@@ -2196,14 +2132,10 @@ export function withCssVariableControls(
 ) {
   const isInteractiveStory =
     context.viewMode === 'story' &&
-    ((typeof context.name === 'string' &&
-      context.name.toLowerCase().startsWith('interactive')) ||
-      (typeof context.id === 'string' &&
-        context.id.toLowerCase().includes('--interactive')));
+    ((typeof context.name === 'string' && context.name.toLowerCase().startsWith('interactive')) ||
+      (typeof context.id === 'string' && context.id.toLowerCase().includes('--interactive')));
   const isComponentStory = Boolean(context.title?.startsWith('Components/'));
-  const mappedScopes = context.title
-    ? (scopeByStoryTitle[context.title] ?? [])
-    : [];
+  const mappedScopes = context.title ? (scopeByStoryTitle[context.title] ?? []) : [];
   const activeScopes: CssVariableScope[] = mappedScopes;
   const activeVariants = [
     context.args?.variant,
@@ -2215,9 +2147,7 @@ export function withCssVariableControls(
     (control) =>
       control.scopes.some((scope) => activeScopes.includes(scope)) &&
       (!control.variants ||
-        activeVariants.some((activeVariant) =>
-          control.variants?.includes(activeVariant),
-        )),
+        activeVariants.some((activeVariant) => control.variants?.includes(activeVariant))),
   );
 
   if (!isInteractiveStory || !isComponentStory || controls.length === 0) {

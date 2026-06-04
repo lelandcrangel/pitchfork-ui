@@ -71,9 +71,15 @@ describe('Table', () => {
   it('renders sort buttons on sortable columns', () => {
     render(<Table columns={columns} rows={rows} />);
     // Name and Age have sortable=true, Role does not
-    expect(within(screen.getByRole('columnheader', { name: /Name/ })).getByRole('button')).toBeInTheDocument();
-    expect(within(screen.getByRole('columnheader', { name: /Age/ })).getByRole('button')).toBeInTheDocument();
-    expect(within(screen.getByRole('columnheader', { name: 'Role' })).queryByRole('button')).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole('columnheader', { name: /Name/ })).getByRole('button'),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('columnheader', { name: /Age/ })).getByRole('button'),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('columnheader', { name: 'Role' })).queryByRole('button'),
+    ).not.toBeInTheDocument();
   });
 
   it('sets aria-sort=none on unsorted sortable columns', () => {
@@ -84,8 +90,13 @@ describe('Table', () => {
   it('sorts ascending on first click and sets aria-sort=ascending', async () => {
     const user = userEvent.setup();
     render(<Table columns={columns} rows={rows} />);
-    await user.click(within(screen.getByRole('columnheader', { name: /Name/ })).getByRole('button'));
-    expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveAttribute('aria-sort', 'ascending');
+    await user.click(
+      within(screen.getByRole('columnheader', { name: /Name/ })).getByRole('button'),
+    );
+    expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveAttribute(
+      'aria-sort',
+      'ascending',
+    );
     const cells = screen.getAllByRole('cell', { name: /Alice|Bob|Carol/ });
     expect(cells[0]).toHaveTextContent('Alice');
     expect(cells[1]).toHaveTextContent('Bob');
@@ -98,7 +109,10 @@ describe('Table', () => {
     const sortBtn = within(screen.getByRole('columnheader', { name: /Name/ })).getByRole('button');
     await user.click(sortBtn);
     await user.click(sortBtn);
-    expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveAttribute('aria-sort', 'descending');
+    expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveAttribute(
+      'aria-sort',
+      'descending',
+    );
     const cells = screen.getAllByRole('cell', { name: /Alice|Bob|Carol/ });
     expect(cells[0]).toHaveTextContent('Carol');
     expect(cells[2]).toHaveTextContent('Alice');
@@ -108,7 +122,9 @@ describe('Table', () => {
     const user = userEvent.setup();
     const onSortStateChange = vi.fn();
     render(<Table columns={columns} rows={rows} onSortStateChange={onSortStateChange} />);
-    await user.click(within(screen.getByRole('columnheader', { name: /Name/ })).getByRole('button'));
+    await user.click(
+      within(screen.getByRole('columnheader', { name: /Name/ })).getByRole('button'),
+    );
     expect(onSortStateChange).toHaveBeenCalledWith({ key: 'name', direction: 'asc' });
   });
 
@@ -121,18 +137,20 @@ describe('Table', () => {
         onSortStateChange={vi.fn()}
       />,
     );
-    expect(screen.getByRole('columnheader', { name: /Age/ })).toHaveAttribute('aria-sort', 'descending');
+    expect(screen.getByRole('columnheader', { name: /Age/ })).toHaveAttribute(
+      'aria-sort',
+      'descending',
+    );
   });
 
   it('applies a defaultSortState on first render', () => {
     render(
-      <Table
-        columns={columns}
-        rows={rows}
-        defaultSortState={{ key: 'name', direction: 'asc' }}
-      />,
+      <Table columns={columns} rows={rows} defaultSortState={{ key: 'name', direction: 'asc' }} />,
     );
-    expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveAttribute('aria-sort', 'ascending');
+    expect(screen.getByRole('columnheader', { name: /Name/ })).toHaveAttribute(
+      'aria-sort',
+      'ascending',
+    );
   });
 
   // ─── Modifier classes ────────────────────────────────────────────────────

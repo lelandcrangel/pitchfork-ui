@@ -6,11 +6,7 @@ const meta = {
   component: Breadcrumbs,
   tags: ['ai-generated', 'test'],
   args: {
-    items: [
-      { label: 'Home', href: '#' },
-      { label: 'Settings', href: '#' },
-      { label: 'Billing' },
-    ],
+    items: [{ label: 'Home', href: '#' }, { label: 'Settings', href: '#' }, { label: 'Billing' }],
     separator: '/',
   },
   argTypes: {

@@ -19,15 +19,27 @@ export function AppShell({ activePage, onNavigate, children }: AppShellProps) {
     {
       title: 'Analytics',
       items: [
-        { label: 'Overview', onClick: () => onNavigate('overview'), active: activePage === 'overview' },
-        { label: 'Audience', onClick: () => onNavigate('audience'), active: activePage === 'audience' },
+        {
+          label: 'Overview',
+          onClick: () => onNavigate('overview'),
+          active: activePage === 'overview',
+        },
+        {
+          label: 'Audience',
+          onClick: () => onNavigate('audience'),
+          active: activePage === 'audience',
+        },
         { label: 'Real-time', disabled: true },
       ],
     },
     {
       title: 'Configuration',
       items: [
-        { label: 'Settings', onClick: () => onNavigate('settings'), active: activePage === 'settings' },
+        {
+          label: 'Settings',
+          onClick: () => onNavigate('settings'),
+          active: activePage === 'settings',
+        },
         { label: 'Integrations', disabled: true },
         { label: 'API Keys', disabled: true },
       ],
@@ -43,11 +55,18 @@ export function AppShell({ activePage, onNavigate, children }: AppShellProps) {
       />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <div style={{ flexShrink: 0 }}>
-          <SidebarNavigation sections={sidebarSections} style={{ height: '100%', borderRadius: 0, borderTop: 0, borderBottom: 0, borderLeft: 0 }} />
+          <SidebarNavigation
+            sections={sidebarSections}
+            style={{
+              height: '100%',
+              borderRadius: 0,
+              borderTop: 0,
+              borderBottom: 0,
+              borderLeft: 0,
+            }}
+          />
         </div>
-        <main style={{ flex: 1, padding: 'var(--space-6)', overflowY: 'auto' }}>
-          {children}
-        </main>
+        <main style={{ flex: 1, padding: 'var(--space-6)', overflowY: 'auto' }}>{children}</main>
       </div>
     </div>
   );

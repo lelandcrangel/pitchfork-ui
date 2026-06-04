@@ -27,9 +27,7 @@ const tooltipFrameStyle: React.CSSProperties = {
 };
 
 const TooltipStoryFrame = ({ children }: { children: ReactNode }) => (
-  <div style={tooltipFrameStyle}>
-    {children}
-  </div>
+  <div style={tooltipFrameStyle}>{children}</div>
 );
 
 export const Top: Story = {

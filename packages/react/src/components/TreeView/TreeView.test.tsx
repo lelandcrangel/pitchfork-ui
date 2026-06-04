@@ -73,9 +73,10 @@ describe('TreeView', () => {
 
   it('sets aria-expanded=false on collapsed parent', () => {
     render(<TreeView nodes={nestedNodes} />);
-    expect(
-      screen.getByRole('treeitem', { name: 'Parent' }),
-    ).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.getByRole('treeitem', { name: 'Parent' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
   });
 
   it('does not set aria-expanded on leaf nodes', () => {
@@ -114,12 +115,7 @@ describe('TreeView', () => {
   it('calls onExpandedValuesChange when a node is toggled', async () => {
     const user = userEvent.setup();
     const onExpandedValuesChange = vi.fn();
-    render(
-      <TreeView
-        nodes={nestedNodes}
-        onExpandedValuesChange={onExpandedValuesChange}
-      />,
-    );
+    render(<TreeView nodes={nestedNodes} onExpandedValuesChange={onExpandedValuesChange} />);
     screen.getByRole('treeitem', { name: 'Parent' }).focus();
     await user.keyboard('{Enter}');
     expect(onExpandedValuesChange).toHaveBeenCalledWith(['parent']);
@@ -129,27 +125,21 @@ describe('TreeView', () => {
 
   it('marks the selected node with aria-selected=true', () => {
     render(<TreeView nodes={simpleNodes} selectedValue="b" />);
-    expect(
-      screen.getByRole('treeitem', { name: 'Beta' }),
-    ).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('treeitem', { name: 'Beta' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('marks non-selected nodes with aria-selected=false', () => {
     render(<TreeView nodes={simpleNodes} selectedValue="b" />);
-    expect(
-      screen.getByRole('treeitem', { name: 'Alpha' }),
-    ).toHaveAttribute('aria-selected', 'false');
+    expect(screen.getByRole('treeitem', { name: 'Alpha' })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
   });
 
   it('calls onSelectedValueChange when a node is clicked', async () => {
     const user = userEvent.setup();
     const onSelectedValueChange = vi.fn();
-    render(
-      <TreeView
-        nodes={simpleNodes}
-        onSelectedValueChange={onSelectedValueChange}
-      />,
-    );
+    render(<TreeView nodes={simpleNodes} onSelectedValueChange={onSelectedValueChange} />);
     await user.click(screen.getByRole('treeitem', { name: 'Beta' }));
     expect(onSelectedValueChange).toHaveBeenCalledWith('b');
   });
@@ -219,12 +209,7 @@ describe('TreeView', () => {
   it('Enter selects a node', async () => {
     const user = userEvent.setup();
     const onSelectedValueChange = vi.fn();
-    render(
-      <TreeView
-        nodes={simpleNodes}
-        onSelectedValueChange={onSelectedValueChange}
-      />,
-    );
+    render(<TreeView nodes={simpleNodes} onSelectedValueChange={onSelectedValueChange} />);
     screen.getByRole('treeitem', { name: 'Gamma' }).focus();
     await user.keyboard('{Enter}');
     expect(onSelectedValueChange).toHaveBeenCalledWith('c');
@@ -241,13 +226,7 @@ describe('TreeView', () => {
 
   it('collapseAll hides all nested nodes', () => {
     const ref = createRef<TreeViewHandle>();
-    render(
-      <TreeView
-        ref={ref}
-        nodes={deepNodes}
-        defaultExpandedValues={['root', 'mid']}
-      />,
-    );
+    render(<TreeView ref={ref} nodes={deepNodes} defaultExpandedValues={['root', 'mid']} />);
     act(() => ref.current!.collapseAll());
     expect(screen.queryByText('Mid')).not.toBeInTheDocument();
     expect(screen.queryByText('Leaf')).not.toBeInTheDocument();

@@ -37,9 +37,7 @@ describe('VideoPlayer', () => {
   });
 
   it('wires aria-describedby to description and error elements', () => {
-    render(
-      <VideoPlayer src="/v.mp4" description="Hint" error="Bad" />,
-    );
+    render(<VideoPlayer src="/v.mp4" description="Hint" error="Bad" />);
     const video = document.querySelector('video')!;
     const describedBy = video.getAttribute('aria-describedby') ?? '';
     const ids = describedBy.split(' ').filter(Boolean);

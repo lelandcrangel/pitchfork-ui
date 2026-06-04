@@ -1,11 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@pitchfork-ui/react';
+import { Button, Card, CardContent, CardFooter, CardHeader } from '@pitchfork-ui/react';
 
 const meta = {
   title: 'Examples/Card',
@@ -22,9 +16,7 @@ export const Basic: Story = {
       <CardHeader>
         <strong>Project summary</strong>
       </CardHeader>
-      <CardContent>
-        This card composes header, content, and footer slots.
-      </CardContent>
+      <CardContent>This card composes header, content, and footer slots.</CardContent>
       <CardFooter>
         <Button>Save</Button>
         <Button variant="secondary">Cancel</Button>
@@ -58,8 +50,7 @@ export const WithLongContent: Story = {
         <strong>Release notes</strong>
       </CardHeader>
       <CardContent>
-        A longer body demonstrates spacing and section borders while preserving
-        readable rhythm.
+        A longer body demonstrates spacing and section borders while preserving readable rhythm.
       </CardContent>
       <CardFooter>
         <Button variant="ghost">Dismiss</Button>

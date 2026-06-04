@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Button, MetricCard, MetricGrid } from '@pitchfork-ui/react';
 
-const twoColumnGridStyle: React.CSSProperties = { gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' };
+const twoColumnGridStyle: React.CSSProperties = {
+  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+};
 
 const meta = {
   title: 'Examples/Metrics',
@@ -127,18 +129,8 @@ export const CompactGrid: Story = {
   },
   render: () => (
     <MetricGrid style={twoColumnGridStyle}>
-      <MetricCard
-        heading="Conversion rate"
-        value="6.8%"
-        trend="positive"
-        trendLabel="1.2%"
-      />
-      <MetricCard
-        heading="Avg. response time"
-        value="184ms"
-        trend="negative"
-        trendLabel="11ms"
-      />
+      <MetricCard heading="Conversion rate" value="6.8%" trend="positive" trendLabel="1.2%" />
+      <MetricCard heading="Avg. response time" value="184ms" trend="negative" trendLabel="11ms" />
     </MetricGrid>
   ),
   parameters: {

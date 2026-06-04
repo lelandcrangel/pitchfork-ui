@@ -34,14 +34,23 @@ function ProfileTab() {
   const [bio, setBio] = useState('');
 
   const handleSave = () => {
-    push({ variant: 'success', heading: 'Profile saved', description: 'Your changes have been applied.' });
+    push({
+      variant: 'success',
+      heading: 'Profile saved',
+      description: 'Your changes have been applied.',
+    });
   };
 
   return (
     <div style={{ display: 'grid', gap: 'var(--space-5)', maxWidth: 560 }}>
       <div className="demo-grid-2">
         <Input label="Full name" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </div>
       <Input label="Company" value={company} onChange={(e) => setCompany(e.target.value)} />
       <Select
@@ -60,7 +69,9 @@ function ProfileTab() {
       />
       <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
         <Button onClick={handleSave}>Save changes</Button>
-        <Button variant="secondary" onClick={() => {}}>Cancel</Button>
+        <Button variant="secondary" onClick={() => {}}>
+          Cancel
+        </Button>
       </div>
     </div>
   );
@@ -77,20 +88,47 @@ function NotificationsTab() {
     marketingEmails: false,
   });
 
-  const toggle = (key: keyof typeof prefs) =>
-    setPrefs((p) => ({ ...p, [key]: !p[key] }));
+  const toggle = (key: keyof typeof prefs) => setPrefs((p) => ({ ...p, [key]: !p[key] }));
 
   const handleSave = () => {
-    push({ variant: 'success', heading: 'Preferences saved', description: 'Notification settings updated.' });
+    push({
+      variant: 'success',
+      heading: 'Preferences saved',
+      description: 'Notification settings updated.',
+    });
   };
 
   const items: { key: keyof typeof prefs; label: string; description: string }[] = [
-    { key: 'weeklyDigest', label: 'Weekly digest', description: 'A summary of your key metrics every Monday.' },
-    { key: 'productUpdates', label: 'Product updates', description: 'New features, improvements, and changelog entries.' },
-    { key: 'newSignups', label: 'New signups', description: 'Notify me whenever a new user creates an account.' },
-    { key: 'goalAlerts', label: 'Goal alerts', description: 'Alert me when a goal reaches its threshold.' },
-    { key: 'securityAlerts', label: 'Security alerts', description: 'Unusual login activity or API key usage.' },
-    { key: 'marketingEmails', label: 'Marketing emails', description: 'Tips, case studies, and promotional content.' },
+    {
+      key: 'weeklyDigest',
+      label: 'Weekly digest',
+      description: 'A summary of your key metrics every Monday.',
+    },
+    {
+      key: 'productUpdates',
+      label: 'Product updates',
+      description: 'New features, improvements, and changelog entries.',
+    },
+    {
+      key: 'newSignups',
+      label: 'New signups',
+      description: 'Notify me whenever a new user creates an account.',
+    },
+    {
+      key: 'goalAlerts',
+      label: 'Goal alerts',
+      description: 'Alert me when a goal reaches its threshold.',
+    },
+    {
+      key: 'securityAlerts',
+      label: 'Security alerts',
+      description: 'Unusual login activity or API key usage.',
+    },
+    {
+      key: 'marketingEmails',
+      label: 'Marketing emails',
+      description: 'Tips, case studies, and promotional content.',
+    },
   ];
 
   return (
@@ -101,12 +139,39 @@ function NotificationsTab() {
             {items.map((item, i) => (
               <div key={item.key}>
                 {i > 0 && (
-                  <div style={{ borderTop: '1px solid var(--color-semantic-border-default)', marginBottom: 'var(--space-4)' }} />
+                  <div
+                    style={{
+                      borderTop: '1px solid var(--color-semantic-border-default)',
+                      marginBottom: 'var(--space-4)',
+                    }}
+                  />
                 )}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 'var(--space-4)' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: 'var(--space-4)',
+                  }}
+                >
                   <div>
-                    <div style={{ fontWeight: 'var(--font-weight-medium)', fontSize: 'var(--font-size-sm)' }}>{item.label}</div>
-                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-semantic-text-muted)', marginTop: 'var(--space-1)' }}>{item.description}</div>
+                    <div
+                      style={{
+                        fontWeight: 'var(--font-weight-medium)',
+                        fontSize: 'var(--font-size-sm)',
+                      }}
+                    >
+                      {item.label}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 'var(--font-size-sm)',
+                        color: 'var(--color-semantic-text-muted)',
+                        marginTop: 'var(--space-1)',
+                      }}
+                    >
+                      {item.description}
+                    </div>
                   </div>
                   <Switch
                     checked={prefs[item.key]}
@@ -130,7 +195,11 @@ function BillingTab() {
   const { push } = useNotifications();
 
   const handleUpgrade = () => {
-    push({ variant: 'info', heading: 'Coming soon', description: 'Plan management will be available shortly.' });
+    push({
+      variant: 'info',
+      heading: 'Coming soon',
+      description: 'Plan management will be available shortly.',
+    });
   };
 
   return (
@@ -139,18 +208,64 @@ function BillingTab() {
         <CardHeader>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-semantic-text-muted)', marginBottom: 'var(--space-1)' }}>Current plan</div>
-              <span style={{ fontSize: 'var(--font-size-lg)', fontWeight: 'var(--font-weight-semibold)' }}>Pro</span>
-              <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-semantic-text-muted)', marginLeft: 'var(--space-2)' }}>$49 / month</span>
+              <div
+                style={{
+                  fontSize: 'var(--font-size-xs)',
+                  color: 'var(--color-semantic-text-muted)',
+                  marginBottom: 'var(--space-1)',
+                }}
+              >
+                Current plan
+              </div>
+              <span
+                style={{
+                  fontSize: 'var(--font-size-lg)',
+                  fontWeight: 'var(--font-weight-semibold)',
+                }}
+              >
+                Pro
+              </span>
+              <span
+                style={{
+                  fontSize: 'var(--font-size-sm)',
+                  color: 'var(--color-semantic-text-muted)',
+                  marginLeft: 'var(--space-2)',
+                }}
+              >
+                $49 / month
+              </span>
             </div>
-            <Button variant="secondary" size="sm" onClick={handleUpgrade}>Upgrade to Enterprise</Button>
+            <Button variant="secondary" size="sm" onClick={handleUpgrade}>
+              Upgrade to Enterprise
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-semantic-text-muted)', marginBottom: 'var(--space-3)' }}>Included in your plan</div>
+          <div
+            style={{
+              fontSize: 'var(--font-size-xs)',
+              color: 'var(--color-semantic-text-muted)',
+              marginBottom: 'var(--space-3)',
+            }}
+          >
+            Included in your plan
+          </div>
           <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
-            {['Up to 5 team members', '100k sessions / month', '12-month data retention', 'Email support'].map((feat) => (
-              <div key={feat} style={{ fontSize: 'var(--font-size-sm)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            {[
+              'Up to 5 team members',
+              '100k sessions / month',
+              '12-month data retention',
+              'Email support',
+            ].map((feat) => (
+              <div
+                key={feat}
+                style={{
+                  fontSize: 'var(--font-size-sm)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-2)',
+                }}
+              >
                 <span style={{ color: 'var(--color-semantic-text-success)' }}>✓</span>
                 {feat}
               </div>
@@ -158,17 +273,37 @@ function BillingTab() {
           </div>
         </CardContent>
         <CardFooter style={{ display: 'flex', gap: 'var(--space-2)' }}>
-          <Button variant="secondary" onClick={() => push({ variant: 'info', heading: 'Coming soon', description: 'Billing portal launching soon.' })}>
+          <Button
+            variant="secondary"
+            onClick={() =>
+              push({
+                variant: 'info',
+                heading: 'Coming soon',
+                description: 'Billing portal launching soon.',
+              })
+            }
+          >
             Manage billing
           </Button>
-          <Button variant="ghost" onClick={() => push({ variant: 'info', heading: 'Coming soon', description: 'Invoice download coming soon.' })}>
+          <Button
+            variant="ghost"
+            onClick={() =>
+              push({
+                variant: 'info',
+                heading: 'Coming soon',
+                description: 'Invoice download coming soon.',
+              })
+            }
+          >
             Download invoices
           </Button>
         </CardFooter>
       </Card>
 
       <Card>
-        <CardHeader><SectionHeader heading="Payment method" /></CardHeader>
+        <CardHeader>
+          <SectionHeader heading="Payment method" />
+        </CardHeader>
         <CardContent>
           <CreditCard
             brand="visa"
@@ -179,7 +314,6 @@ function BillingTab() {
           />
         </CardContent>
       </Card>
-
     </div>
   );
 }
@@ -193,10 +327,7 @@ export function SettingsPage() {
 
   return (
     <div className="demo-section" style={{ gap: 'var(--space-6)' }}>
-      <PageHeader
-        heading="Settings"
-        description="Manage your account, preferences, and billing."
-      />
+      <PageHeader heading="Settings" description="Manage your account, preferences, and billing." />
       <Tabs items={tabItems} defaultValue="profile" />
     </div>
   );

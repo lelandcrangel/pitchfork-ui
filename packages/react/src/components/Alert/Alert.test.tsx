@@ -44,12 +44,20 @@ describe('Alert', () => {
   });
 
   it('renders children as the body when provided', () => {
-    render(<Alert><p>Custom body</p></Alert>);
+    render(
+      <Alert>
+        <p>Custom body</p>
+      </Alert>,
+    );
     expect(screen.getByText('Custom body')).toBeInTheDocument();
   });
 
   it('prefers children over description when both are provided', () => {
-    render(<Alert description="desc prop"><p>children body</p></Alert>);
+    render(
+      <Alert description="desc prop">
+        <p>children body</p>
+      </Alert>,
+    );
     expect(screen.getByText('children body')).toBeInTheDocument();
     expect(screen.queryByText('desc prop')).not.toBeInTheDocument();
   });

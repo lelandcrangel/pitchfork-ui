@@ -73,37 +73,31 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   nextLabel?: React.ReactNode;
 }
 
-export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
-  function Pagination(
-    {
-      className,
-      page,
-      defaultPage = 1,
-      totalPages,
-      siblingCount = 1,
-      boundaryCount = 1,
-      showPrevNext = true,
-      disabled = false,
-      onPageChange,
-      prevLabel = 'Previous',
-      nextLabel = 'Next',
-      'aria-label': ariaLabel = 'Pagination',
-      ...props
-    },
-    ref,
-  ) {
+export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(function Pagination(
+  {
+    className,
+    page,
+    defaultPage = 1,
+    totalPages,
+    siblingCount = 1,
+    boundaryCount = 1,
+    showPrevNext = true,
+    disabled = false,
+    onPageChange,
+    prevLabel = 'Previous',
+    nextLabel = 'Next',
+    'aria-label': ariaLabel = 'Pagination',
+    ...props
+  },
+  ref,
+) {
   const safeTotalPages = Math.max(totalPages, 1);
   const [internalPage, setInternalPage] = React.useState(() =>
     clampPage(defaultPage, safeTotalPages),
   );
 
   const currentPage = clampPage(page ?? internalPage, safeTotalPages);
-  const items = getPaginationItems(
-    currentPage,
-    safeTotalPages,
-    siblingCount,
-    boundaryCount,
-  );
+  const items = getPaginationItems(currentPage, safeTotalPages, siblingCount, boundaryCount);
 
   const canGoPrev = currentPage > 1;
   const canGoNext = currentPage < safeTotalPages;
@@ -124,11 +118,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
   return (
     <nav
       ref={ref}
-      className={cx(
-        'pf-pagination',
-        disabled && 'pf-pagination--disabled',
-        className,
-      )}
+      className={cx('pf-pagination', disabled && 'pf-pagination--disabled', className)}
       aria-label={ariaLabel}
       {...props}
     >
@@ -147,11 +137,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
         {items.map((item, index) => {
           if (typeof item !== 'number') {
             return (
-              <li
-                key={`${item}-${index}`}
-                className="pf-pagination__ellipsis"
-                aria-hidden
-              >
+              <li key={`${item}-${index}`} className="pf-pagination__ellipsis" aria-hidden>
                 ...
               </li>
             );
@@ -163,10 +149,7 @@ export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
             <li key={item}>
               <button
                 type="button"
-                className={cx(
-                  'pf-pagination__page',
-                  isCurrent && 'pf-pagination__page--active',
-                )}
+                className={cx('pf-pagination__page', isCurrent && 'pf-pagination__page--active')}
                 onClick={() => setPage(item)}
                 disabled={disabled}
                 aria-current={isCurrent ? 'page' : undefined}

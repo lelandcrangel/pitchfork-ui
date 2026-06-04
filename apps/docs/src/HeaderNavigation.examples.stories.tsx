@@ -1,10 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import {
-  Button,
-  HeaderNavigation,
-  Icon,
-  UtilityButton,
-} from '@pitchfork-ui/react';
+import { Button, HeaderNavigation, Icon, UtilityButton } from '@pitchfork-ui/react';
 
 const meta = {
   title: 'Examples/HeaderNavigation',

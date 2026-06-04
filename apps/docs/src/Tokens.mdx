@@ -31,9 +31,7 @@ export const dimensionRows = [...spacingRows, ...radiusRows];
 export const typographyRows = flattenTokens(typographyTokens);
 export const shadowRows = flattenTokens(shadowTokens);
 
-export const colorValueByName = Object.fromEntries(
-  colorRows.map((row) => [row.name, row.value]),
-);
+export const colorValueByName = Object.fromEntries(colorRows.map((row) => [row.name, row.value]));
 
 export const resolveReference = (value, lookup, depth = 0) => {
 	if (typeof value !== 'string') return value;
@@ -73,15 +71,10 @@ export const cssVariableRows = [
 
 export const resolvedCssVariableRows = cssVariableRows.map((row) => ({
   ...row,
-  resolvedValue:
-    row.type === 'color'
-      ? resolveReference(row.value, colorValueByName)
-      : row.value,
+  resolvedValue: row.type === 'color' ? resolveReference(row.value, colorValueByName) : row.value,
 }));
 
-export const cssColorVariableRows = resolvedCssVariableRows.filter(
-  (row) => row.type === 'color',
-);
+export const cssColorVariableRows = resolvedCssVariableRows.filter((row) => row.type === 'color');
 
 export const cssColorVariableGroups = [
   { key: 'base', title: 'Base Colors' },
@@ -94,9 +87,7 @@ export const cssColorVariableGroups = [
 ]
   .map((group) => ({
     ...group,
-    rows: cssColorVariableRows.filter((row) =>
-      row.cssVar.startsWith(`--color-${group.key}-`),
-    ),
+    rows: cssColorVariableRows.filter((row) => row.cssVar.startsWith(`--color-${group.key}-`)),
   }))
   .filter((group) => group.rows.length > 0);
 
@@ -116,9 +107,7 @@ export const cssFontVariableRows = resolvedCssVariableRows.filter((row) =>
   row.cssVar.startsWith('--font-'),
 );
 
-export const cssShadowVariableRows = resolvedCssVariableRows.filter(
-  (row) => row.type === 'shadow',
-);
+export const cssShadowVariableRows = resolvedCssVariableRows.filter((row) => row.type === 'shadow');
 
 export const isRenderableColor = (value) =>
   typeof value === 'string' && /^(#|rgb\(|hsl\()/i.test(value.trim());
@@ -620,4 +609,3 @@ To activate dark mode on any subtree:
 ```html
 <div data-theme="dark">...</div>
 ```
-

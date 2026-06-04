@@ -14,9 +14,7 @@ describe('InlineCTA', () => {
   });
 
   it('renders the action slot', () => {
-    render(
-      <InlineCTA action={<button type="button">Get started</button>} />,
-    );
+    render(<InlineCTA action={<button type="button">Get started</button>} />);
     expect(screen.getByRole('button', { name: 'Get started' })).toBeInTheDocument();
   });
 

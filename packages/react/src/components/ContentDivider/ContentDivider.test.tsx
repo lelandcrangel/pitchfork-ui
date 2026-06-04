@@ -11,25 +11,17 @@ describe('ContentDivider', () => {
 
   it('defaults to horizontal orientation', () => {
     render(<ContentDivider />);
-    expect(screen.getByRole('separator')).toHaveAttribute(
-      'aria-orientation',
-      'horizontal',
-    );
+    expect(screen.getByRole('separator')).toHaveAttribute('aria-orientation', 'horizontal');
   });
 
   it('sets aria-orientation to vertical when orientation="vertical"', () => {
     render(<ContentDivider orientation="vertical" />);
-    expect(screen.getByRole('separator')).toHaveAttribute(
-      'aria-orientation',
-      'vertical',
-    );
+    expect(screen.getByRole('separator')).toHaveAttribute('aria-orientation', 'vertical');
   });
 
   it('applies vertical CSS class when orientation="vertical"', () => {
     render(<ContentDivider orientation="vertical" />);
-    expect(screen.getByRole('separator')).toHaveClass(
-      'pf-content-divider--vertical',
-    );
+    expect(screen.getByRole('separator')).toHaveClass('pf-content-divider--vertical');
   });
 
   it('renders the label text when label is provided', () => {
@@ -44,9 +36,7 @@ describe('ContentDivider', () => {
 
   it('applies inset class when inset=true', () => {
     render(<ContentDivider inset />);
-    expect(screen.getByRole('separator')).toHaveClass(
-      'pf-content-divider--inset',
-    );
+    expect(screen.getByRole('separator')).toHaveClass('pf-content-divider--inset');
   });
 
   it('forwards ref', () => {

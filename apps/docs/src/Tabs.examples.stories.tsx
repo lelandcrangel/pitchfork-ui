@@ -8,28 +8,20 @@ const projectItems = [
     value: 'roadmap',
     label: 'Roadmap',
     content: (
-      <p style={pStyle}>
-        Prioritize milestones by customer impact and engineering confidence.
-      </p>
+      <p style={pStyle}>Prioritize milestones by customer impact and engineering confidence.</p>
     ),
   },
   {
     value: 'delivery',
     label: 'Delivery',
     content: (
-      <p style={pStyle}>
-        Sprint completion is at 92% with two carry-over tickets this cycle.
-      </p>
+      <p style={pStyle}>Sprint completion is at 92% with two carry-over tickets this cycle.</p>
     ),
   },
   {
     value: 'risks',
     label: 'Risks',
-    content: (
-      <p style={pStyle}>
-        Primary risk is API response latency in peak traffic windows.
-      </p>
-    ),
+    content: <p style={pStyle}>Primary risk is API response latency in peak traffic windows.</p>,
   },
 ];
 

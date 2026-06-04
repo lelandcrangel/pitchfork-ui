@@ -1,11 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useRef } from 'react';
-import {
-  Button,
-  TreeView,
-  type TreeViewHandle,
-  type TreeViewProps,
-} from '@pitchfork-ui/react';
+import { Button, TreeView, type TreeViewHandle, type TreeViewProps } from '@pitchfork-ui/react';
 
 const nodes = [
   {
@@ -64,11 +59,7 @@ function InteractiveWithControls(args: TreeViewProps) {
         <Button size="sm" onClick={() => treeRef.current?.expandAll()}>
           Expand all
         </Button>
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => treeRef.current?.collapseAll()}
-        >
+        <Button size="sm" variant="secondary" onClick={() => treeRef.current?.collapseAll()}>
           Collapse all
         </Button>
       </div>

@@ -37,13 +37,7 @@ const regularNames = getAvailableIconNames().filter(
   (n) => !customIconNames.includes(n as IconName),
 ) as readonly IconName[];
 
-const IconGrid = ({
-  names,
-  size,
-}: {
-  names: readonly IconName[];
-  size: 'lg' | '2x' | 'sm';
-}) => {
+const IconGrid = ({ names, size }: { names: readonly IconName[]; size: 'lg' | '2x' | 'sm' }) => {
   return (
     <div style={rowStyle}>
       {names.map((name) => (

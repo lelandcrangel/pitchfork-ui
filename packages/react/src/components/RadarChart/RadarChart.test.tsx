@@ -16,7 +16,14 @@ describe('RadarChart', () => {
   });
 
   it('shows error message when fewer than 3 data points are provided', () => {
-    render(<RadarChart data={[{ label: 'A', value: 1 }, { label: 'B', value: 2 }]} />);
+    render(
+      <RadarChart
+        data={[
+          { label: 'A', value: 1 },
+          { label: 'B', value: 2 },
+        ]}
+      />,
+    );
     expect(screen.getByText('RadarChart needs at least 3 data points.')).toBeInTheDocument();
   });
 

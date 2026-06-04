@@ -23,11 +23,7 @@ describe('ProgressSteps', () => {
   });
 
   it('renders step descriptions when provided', () => {
-    render(
-      <ProgressSteps
-        steps={[{ title: 'Step', description: 'Fill in your details.' }]}
-      />,
-    );
+    render(<ProgressSteps steps={[{ title: 'Step', description: 'Fill in your details.' }]} />);
     expect(screen.getByText('Fill in your details.')).toBeInTheDocument();
   });
 
@@ -80,9 +76,7 @@ describe('ProgressSteps', () => {
   });
 
   it('applies vertical orientation class', () => {
-    const { container } = render(
-      <ProgressSteps steps={steps} orientation="vertical" />,
-    );
+    const { container } = render(<ProgressSteps steps={steps} orientation="vertical" />);
     expect(container.firstChild).toHaveClass('pf-progress-steps--vertical');
   });
 });

@@ -21,36 +21,26 @@ export const PageHeaderMeta = forwardRef<HTMLDivElement, PageHeaderMetaProps>(
 );
 PageHeaderMeta.displayName = 'PageHeaderMeta';
 
-export const PageHeader = forwardRef<HTMLElement, PageHeaderProps>(
-  function PageHeader(
-    { className, eyebrow, heading, description, breadcrumbs, metadata, actions, children, ...props },
-    ref,
-  ) {
+export const PageHeader = forwardRef<HTMLElement, PageHeaderProps>(function PageHeader(
+  { className, eyebrow, heading, description, breadcrumbs, metadata, actions, children, ...props },
+  ref,
+) {
   return (
     <header ref={ref} className={cx('pf-page-header', className)} {...props}>
       {breadcrumbs?.length ? (
-        <Breadcrumbs
-          items={breadcrumbs}
-          className="pf-page-header__breadcrumbs"
-        />
+        <Breadcrumbs items={breadcrumbs} className="pf-page-header__breadcrumbs" />
       ) : null}
 
       <div className="pf-page-header__row">
         <div className="pf-page-header__content">
-          {eyebrow ? (
-            <p className="pf-page-header__eyebrow">{eyebrow}</p>
-          ) : null}
+          {eyebrow ? <p className="pf-page-header__eyebrow">{eyebrow}</p> : null}
           <h1 className="pf-page-header__heading">{heading}</h1>
-          {description ? (
-            <p className="pf-page-header__description">{description}</p>
-          ) : null}
+          {description ? <p className="pf-page-header__description">{description}</p> : null}
           {metadata ? <PageHeaderMeta>{metadata}</PageHeaderMeta> : null}
           {children}
         </div>
 
-        {actions ? (
-          <div className="pf-page-header__actions">{actions}</div>
-        ) : null}
+        {actions ? <div className="pf-page-header__actions">{actions}</div> : null}
       </div>
     </header>
   );

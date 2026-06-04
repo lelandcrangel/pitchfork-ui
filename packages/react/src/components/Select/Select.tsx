@@ -67,11 +67,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
     const descriptionId = description ? `${selectId}-description` : undefined;
     const errorId = error ? `${selectId}-error` : undefined;
     const listboxId = `${selectId}-listbox`;
-    const describedBy = composeDescribedBy(
-      ariaDescribedBy,
-      descriptionId,
-      errorId,
-    );
+    const describedBy = composeDescribedBy(ariaDescribedBy, descriptionId, errorId);
 
     const [selectedValue, setSelectedValue] = useControllableState({
       value,
@@ -82,24 +78,16 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
       () => options.findIndex((option) => option.value === selectedValue),
       [options, selectedValue],
     );
-    const selectedOption =
-      selectedIndex >= 0 ? options[selectedIndex] : undefined;
+    const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : undefined;
 
     const disclosure = useDisclosure({ disabled });
-    const {
-      activeIndex,
-      firstEnabledIndex,
-      lastEnabledIndex,
-      move,
-      setActiveIndex,
-    } = useListNavigation({
-      items: options,
-      isDisabled: (option) => Boolean(option.disabled),
-      initialIndex:
-        selectedIndex >= 0 && !options[selectedIndex]?.disabled
-          ? selectedIndex
-          : undefined,
-    });
+    const { activeIndex, firstEnabledIndex, lastEnabledIndex, move, setActiveIndex } =
+      useListNavigation({
+        items: options,
+        isDisabled: (option) => Boolean(option.disabled),
+        initialIndex:
+          selectedIndex >= 0 && !options[selectedIndex]?.disabled ? selectedIndex : undefined,
+      });
 
     const { isOpen } = disclosure;
 
@@ -125,9 +113,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
       }
 
       const nextIndex =
-        selectedIndex >= 0 && !options[selectedIndex]?.disabled
-          ? selectedIndex
-          : firstEnabledIndex;
+        selectedIndex >= 0 && !options[selectedIndex]?.disabled ? selectedIndex : firstEnabledIndex;
       setActiveIndex(nextIndex);
     }, [firstEnabledIndex, isOpen, options, selectedIndex, setActiveIndex]);
 
@@ -135,9 +121,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
       setSelectedValue(nextValue);
     };
 
-    const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
-      event,
-    ) => {
+    const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (event) => {
       if (disabled) {
         return;
       }
@@ -225,32 +209,15 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
             }}
             onKeyDown={onTriggerKeyDown}
           >
-            <span
-              className={cx(
-                'pf-select__value',
-                !selectedOption && 'pf-select__placeholder',
-              )}
-            >
+            <span className={cx('pf-select__value', !selectedOption && 'pf-select__placeholder')}>
               {selectedOption?.label ?? placeholder}
             </span>
-            <span
-              aria-hidden
-              className={cx(
-                'pf-select__icon',
-                isOpen && 'pf-select__icon--open',
-              )}
-            >
+            <span aria-hidden className={cx('pf-select__icon', isOpen && 'pf-select__icon--open')}>
               <Icon name="chevron-down" aria-hidden />
             </span>
           </button>
 
-          {name ? (
-            <input
-              type="hidden"
-              name={name}
-              value={selectedOption?.value ?? ''}
-            />
-          ) : null}
+          {name ? <input type="hidden" name={name} value={selectedOption?.value ?? ''} /> : null}
 
           {isOpen && typeof document !== 'undefined'
             ? createPortal(

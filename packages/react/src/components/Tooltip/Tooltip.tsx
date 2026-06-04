@@ -76,23 +76,14 @@ const getTooltipCoordinates = (
   };
 };
 
-const getOverflow = (
-  coordinates: { left: number; top: number },
-  tooltipRect: DOMRect,
-) => {
+const getOverflow = (coordinates: { left: number; top: number }, tooltipRect: DOMRect) => {
   const viewport = getViewportSize();
 
   return (
     Math.max(VIEWPORT_MARGIN - coordinates.left, 0) +
     Math.max(VIEWPORT_MARGIN - coordinates.top, 0) +
-    Math.max(
-      coordinates.left + tooltipRect.width - viewport.width + VIEWPORT_MARGIN,
-      0,
-    ) +
-    Math.max(
-      coordinates.top + tooltipRect.height - viewport.height + VIEWPORT_MARGIN,
-      0,
-    )
+    Math.max(coordinates.left + tooltipRect.width - viewport.width + VIEWPORT_MARGIN, 0) +
+    Math.max(coordinates.top + tooltipRect.height - viewport.height + VIEWPORT_MARGIN, 0)
   );
 };
 
@@ -103,15 +94,10 @@ const getTooltipPosition = (
 ): { placement: TooltipPlacement; style: React.CSSProperties } => {
   const candidates = placementFallbacks[placement].map((candidatePlacement) => ({
     placement: candidatePlacement,
-    coordinates: getTooltipCoordinates(
-      triggerRect,
-      tooltipRect,
-      candidatePlacement,
-    ),
+    coordinates: getTooltipCoordinates(triggerRect, tooltipRect, candidatePlacement),
   }));
   const bestPlacement = candidates.reduce((best, candidate) =>
-    getOverflow(candidate.coordinates, tooltipRect) <
-    getOverflow(best.coordinates, tooltipRect)
+    getOverflow(candidate.coordinates, tooltipRect) < getOverflow(best.coordinates, tooltipRect)
       ? candidate
       : best,
   );
@@ -135,19 +121,10 @@ const getTooltipPosition = (
   };
 };
 
-export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(
-  function Tooltip(
-    {
-      content,
-      children,
-      open,
-      placement = 'top',
-      delay = 120,
-      disabled = false,
-      className,
-    },
-    ref,
-  ) {
+export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip(
+  { content, children, open, placement = 'top', delay = 120, disabled = false, className },
+  ref,
+) {
   const tooltipId = useId();
   const triggerRef = useRef<HTMLSpanElement>(null);
 
@@ -159,8 +136,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(
   const [style, setStyle] = useState<React.CSSProperties>({
     visibility: 'hidden',
   });
-  const [resolvedPlacement, setResolvedPlacement] =
-    useState<TooltipPlacement>(placement);
+  const [resolvedPlacement, setResolvedPlacement] = useState<TooltipPlacement>(placement);
   const isControlled = open !== undefined;
   const isVisible = !disabled && (isControlled ? open : isOpen);
 
@@ -255,11 +231,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(
               id={tooltipId}
               ref={tooltipRef}
               role="tooltip"
-              className={cx(
-                'pf-tooltip',
-                `pf-tooltip--${resolvedPlacement}`,
-                className,
-              )}
+              className={cx('pf-tooltip', `pf-tooltip--${resolvedPlacement}`, className)}
               style={style}
             >
               {content}

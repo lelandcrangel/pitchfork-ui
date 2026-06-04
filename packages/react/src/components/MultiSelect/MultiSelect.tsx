@@ -62,27 +62,19 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
     const descriptionId = description ? `${selectId}-description` : undefined;
     const errorId = error ? `${selectId}-error` : undefined;
     const listboxId = `${selectId}-listbox`;
-    const describedBy = composeDescribedBy(
-      ariaDescribedBy,
-      descriptionId,
-      errorId,
-    );
+    const describedBy = composeDescribedBy(ariaDescribedBy, descriptionId, errorId);
 
-    const [controllableSelectedValues, setSelectedValues] =
-      useControllableState({
-        value,
-        defaultValue: defaultValue ?? [],
-        onChange: onValueChange,
-      });
+    const [controllableSelectedValues, setSelectedValues] = useControllableState({
+      value,
+      defaultValue: defaultValue ?? [],
+      onChange: onValueChange,
+    });
     const selectedValues = useMemo(
       () => controllableSelectedValues ?? [],
       [controllableSelectedValues],
     );
 
-    const selectedSet = useMemo(
-      () => new Set(selectedValues),
-      [selectedValues],
-    );
+    const selectedSet = useMemo(() => new Set(selectedValues), [selectedValues]);
     const selectedOptions = useMemo(
       () => options.filter((option) => selectedSet.has(option.value)),
       [options, selectedSet],
@@ -93,17 +85,12 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
     );
     const disclosure = useDisclosure({ disabled });
     const { isOpen } = disclosure;
-    const {
-      activeIndex,
-      firstEnabledIndex,
-      lastEnabledIndex,
-      move,
-      setActiveIndex,
-    } = useListNavigation({
-      items: options,
-      isDisabled: (option) => Boolean(option.disabled),
-      initialIndex: selectedIndex >= 0 ? selectedIndex : undefined,
-    });
+    const { activeIndex, firstEnabledIndex, lastEnabledIndex, move, setActiveIndex } =
+      useListNavigation({
+        items: options,
+        isDisabled: (option) => Boolean(option.disabled),
+        initialIndex: selectedIndex >= 0 ? selectedIndex : undefined,
+      });
     const rootRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
     const menuRef = useRef<HTMLUListElement>(null);
@@ -135,18 +122,14 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
 
     const toggleValue = (nextValue: string) => {
       if (selectedSet.has(nextValue)) {
-        updateValue(
-          selectedValues.filter((valueItem) => valueItem !== nextValue),
-        );
+        updateValue(selectedValues.filter((valueItem) => valueItem !== nextValue));
         return;
       }
 
       updateValue([...selectedValues, nextValue]);
     };
 
-    const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
-      event,
-    ) => {
+    const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (event) => {
       if (disabled) {
         return;
       }
@@ -242,17 +225,12 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
                 ))}
               </span>
             ) : (
-              <span className="pf-multi-select__placeholder">
-                {placeholder}
-              </span>
+              <span className="pf-multi-select__placeholder">{placeholder}</span>
             )}
 
             <span
               aria-hidden
-              className={cx(
-                'pf-multi-select__icon',
-                isOpen && 'pf-multi-select__icon--open',
-              )}
+              className={cx('pf-multi-select__icon', isOpen && 'pf-multi-select__icon--open')}
             >
               <Icon name="chevron-down" aria-hidden />
             </span>
@@ -260,12 +238,7 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
 
           {name
             ? selectedValues.map((selectedValue) => (
-                <input
-                  key={selectedValue}
-                  type="hidden"
-                  name={name}
-                  value={selectedValue}
-                />
+                <input key={selectedValue} type="hidden" name={name} value={selectedValue} />
               ))
             : null}
 
@@ -295,8 +268,7 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
                           'pf-multi-select__option',
                           isSelected && 'pf-multi-select__option--selected',
                           isActive && 'pf-multi-select__option--active',
-                          option.disabled &&
-                            'pf-multi-select__option--disabled',
+                          option.disabled && 'pf-multi-select__option--disabled',
                         )}
                         onMouseEnter={() => {
                           if (!option.disabled) {

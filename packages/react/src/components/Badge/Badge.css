@@ -17,22 +17,10 @@
   color: var(--pf-badge-brand-foreground, var(--color-brand-700));
 }
 .pf-badge--success {
-  background: var(
-    --pf-badge-success-background,
-    var(--color-semantic-status-success-background)
-  );
-  color: var(
-    --pf-badge-success-foreground,
-    var(--color-semantic-status-success-foreground)
-  );
+  background: var(--pf-badge-success-background, var(--color-semantic-status-success-background));
+  color: var(--pf-badge-success-foreground, var(--color-semantic-status-success-foreground));
 }
 .pf-badge--warning {
-  background: var(
-    --pf-badge-warning-background,
-    var(--color-semantic-status-warning-background)
-  );
-  color: var(
-    --pf-badge-warning-foreground,
-    var(--color-semantic-status-warning-foreground)
-  );
+  background: var(--pf-badge-warning-background, var(--color-semantic-status-warning-background));
+  color: var(--pf-badge-warning-foreground, var(--color-semantic-status-warning-foreground));
 }

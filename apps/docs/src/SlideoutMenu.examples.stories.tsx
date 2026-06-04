@@ -74,12 +74,9 @@ function LargePanelStory() {
           </>
         }
       >
+        <p>This example uses the large size variant to provide more room.</p>
         <p>
-          This example uses the large size variant to provide more room.
-        </p>
-        <p>
-          Keep critical tasks concise and consider progressive disclosure for
-          complex workflows.
+          Keep critical tasks concise and consider progressive disclosure for complex workflows.
         </p>
       </SlideoutMenu>
     </>

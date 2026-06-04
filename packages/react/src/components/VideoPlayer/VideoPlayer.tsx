@@ -51,8 +51,7 @@ export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(
     const descriptionId = description ? `${videoId}-description` : undefined;
     const errorId = error ? `${videoId}-error` : undefined;
     const describedBy =
-      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') ||
-      undefined;
+      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') || undefined;
 
     const hasSource = Boolean(src) || Boolean(sources?.length);
 

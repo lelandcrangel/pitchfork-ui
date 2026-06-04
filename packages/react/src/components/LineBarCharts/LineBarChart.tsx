@@ -70,8 +70,7 @@ function toX(index: number, count: number): number {
 function smoothPath(points: Array<{ x: number; y: number }>): string {
   if (points.length === 0) return '';
   if (points.length === 1) return `M ${points[0].x},${points[0].y}`;
-  if (points.length === 2)
-    return `M ${points[0].x},${points[0].y} L ${points[1].x},${points[1].y}`;
+  if (points.length === 2) return `M ${points[0].x},${points[0].y} L ${points[1].x},${points[1].y}`;
 
   let d = `M ${points[0].x},${points[0].y}`;
   for (let i = 0; i < points.length - 1; i++) {
@@ -128,18 +127,8 @@ function Axes({ yTicks, xLabels, xPositions, maxTick, yAxisLabel, valueFormatter
         const y = toY(tick, maxTick);
         return (
           <g key={tick}>
-            <line
-              x1={PAD.left}
-              y1={y}
-              x2={PAD.left + PLOT_W}
-              y2={y}
-              className="pf-chart__grid"
-            />
-            <text
-              x={PAD.left - 8}
-              y={y}
-              className="pf-chart__tick pf-chart__tick--y"
-            >
+            <line x1={PAD.left} y1={y} x2={PAD.left + PLOT_W} y2={y} className="pf-chart__grid" />
+            <text x={PAD.left - 8} y={y} className="pf-chart__tick pf-chart__tick--y">
               {formatTick(tick, valueFormatter)}
             </text>
           </g>
@@ -185,11 +174,20 @@ export interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   valueFormatter?: (value: number) => string;
 }
 
-export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(
-  function LineChart(
-    { className, data, series, yAxisLabel, showLegend = true, area = false, curved = true, valueFormatter, ...props },
-    ref,
-  ) {
+export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(function LineChart(
+  {
+    className,
+    data,
+    series,
+    yAxisLabel,
+    showLegend = true,
+    area = false,
+    curved = true,
+    valueFormatter,
+    ...props
+  },
+  ref,
+) {
   if (!data.length || !series.length) {
     return (
       <div ref={ref} className={cx('pf-chart', className)} {...props}>
@@ -198,9 +196,7 @@ export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(
     );
   }
 
-  const allValues = series.flatMap((s) =>
-    data.map((d) => Number(d[s.key] ?? 0)),
-  );
+  const allValues = series.flatMap((s) => data.map((d) => Number(d[s.key] ?? 0)));
   const maxVal = Math.max(...allValues, 0);
   const yTicks = niceYTicks(maxVal);
   const maxTick = yTicks[yTicks.length - 1];
@@ -244,12 +240,7 @@ export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(
           return (
             <g key={s.key}>
               {areaPath ? (
-                <path
-                  d={areaPath}
-                  fill={s.color}
-                  fillOpacity={0.12}
-                  stroke="none"
-                />
+                <path d={areaPath} fill={s.color} fillOpacity={0.12} stroke="none" />
               ) : null}
               <path
                 d={linePath}
@@ -277,9 +268,7 @@ export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(
         })}
       </svg>
 
-      {showLegend && resolvedSeries.length > 1 ? (
-        <ChartLegend series={resolvedSeries} />
-      ) : null}
+      {showLegend && resolvedSeries.length > 1 ? <ChartLegend series={resolvedSeries} /> : null}
     </div>
   );
 });
@@ -297,11 +286,19 @@ export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   valueFormatter?: (value: number) => string;
 }
 
-export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(
-  function BarChart(
-    { className, data, series, yAxisLabel, showLegend = true, stacked = false, valueFormatter, ...props },
-    ref,
-  ) {
+export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(function BarChart(
+  {
+    className,
+    data,
+    series,
+    yAxisLabel,
+    showLegend = true,
+    stacked = false,
+    valueFormatter,
+    ...props
+  },
+  ref,
+) {
   if (!data.length || !series.length) {
     return (
       <div ref={ref} className={cx('pf-chart', className)} {...props}>
@@ -350,8 +347,7 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(
         />
 
         {data.map((d, di) => {
-          const groupLeft =
-            PAD.left + (di + 0.5) * groupWidth - totalBarW / 2;
+          const groupLeft = PAD.left + (di + 0.5) * groupWidth - totalBarW / 2;
           let stackBase = 0;
 
           return (
@@ -359,12 +355,8 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(
               {resolvedSeries.map((s, si) => {
                 const value = Math.max(0, Number(d[s.key] ?? 0));
                 const barH = (value / maxTick) * PLOT_H;
-                const barX = stacked
-                  ? groupLeft
-                  : groupLeft + si * (barW + gap);
-                const barY = stacked
-                  ? toY(stackBase + value, maxTick)
-                  : PAD.top + PLOT_H - barH;
+                const barX = stacked ? groupLeft : groupLeft + si * (barW + gap);
+                const barY = stacked ? toY(stackBase + value, maxTick) : PAD.top + PLOT_H - barH;
 
                 if (stacked) stackBase += value;
 
@@ -388,9 +380,7 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(
         })}
       </svg>
 
-      {showLegend && resolvedSeries.length > 1 ? (
-        <ChartLegend series={resolvedSeries} />
-      ) : null}
+      {showLegend && resolvedSeries.length > 1 ? <ChartLegend series={resolvedSeries} /> : null}
     </div>
   );
 });

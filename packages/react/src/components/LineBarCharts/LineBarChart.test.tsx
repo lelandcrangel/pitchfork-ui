@@ -49,9 +49,7 @@ describe('LineChart', () => {
   });
 
   it('hides the legend when showLegend=false', () => {
-    const { container } = render(
-      <LineChart data={data} series={series} showLegend={false} />,
-    );
+    const { container } = render(<LineChart data={data} series={series} showLegend={false} />);
     expect(container.querySelector('.pf-chart-legend')).not.toBeInTheDocument();
   });
 
@@ -74,9 +72,7 @@ describe('BarChart', () => {
 
   it('renders bar elements', () => {
     const { container } = render(<BarChart data={data} series={series} />);
-    expect(container.querySelectorAll('.pf-chart__bar').length).toBe(
-      data.length * series.length,
-    );
+    expect(container.querySelectorAll('.pf-chart__bar').length).toBe(data.length * series.length);
   });
 
   it('renders bar tooltips with label and series info', () => {
@@ -93,9 +89,7 @@ describe('BarChart', () => {
   });
 
   it('renders stacked bars (same x per group)', () => {
-    const { container } = render(
-      <BarChart data={data} series={series} stacked />,
-    );
+    const { container } = render(<BarChart data={data} series={series} stacked />);
     const bars = container.querySelectorAll('.pf-chart__bar');
     expect(bars.length).toBe(data.length * series.length);
   });

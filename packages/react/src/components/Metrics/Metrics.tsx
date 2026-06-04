@@ -7,10 +7,7 @@ export type MetricTrend = 'positive' | 'negative' | 'neutral';
 
 export type MetricGridProps = React.HTMLAttributes<HTMLDivElement>;
 
-export interface MetricCardProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'title'
-> {
+export interface MetricCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   heading: React.ReactNode;
   value: React.ReactNode;
   description?: React.ReactNode;
@@ -34,13 +31,23 @@ export const MetricGrid = forwardRef<HTMLDivElement, MetricGridProps>(
 );
 MetricGrid.displayName = 'MetricGrid';
 
-export const MetricCard = forwardRef<HTMLDivElement, MetricCardProps>(
-  function MetricCard(
-    { className, heading, value, description, trend = 'neutral', trendLabel, icon, iconName, action, children, ...props },
-    ref,
-  ) {
-  const resolvedIcon =
-    icon ?? (iconName ? <Icon name={iconName} aria-hidden /> : null);
+export const MetricCard = forwardRef<HTMLDivElement, MetricCardProps>(function MetricCard(
+  {
+    className,
+    heading,
+    value,
+    description,
+    trend = 'neutral',
+    trendLabel,
+    icon,
+    iconName,
+    action,
+    children,
+    ...props
+  },
+  ref,
+) {
+  const resolvedIcon = icon ?? (iconName ? <Icon name={iconName} aria-hidden /> : null);
 
   return (
     <div ref={ref} className={cx('pf-metric-card', className)} {...props}>
@@ -59,12 +66,7 @@ export const MetricCard = forwardRef<HTMLDivElement, MetricCardProps>(
       <div className="pf-metric-card__body">
         <p className="pf-metric-card__value">{value}</p>
         {trendLabel ? (
-          <span
-            className={cx(
-              'pf-metric-card__trend',
-              `pf-metric-card__trend--${trend}`,
-            )}
-          >
+          <span className={cx('pf-metric-card__trend', `pf-metric-card__trend--${trend}`)}>
             <span className="pf-metric-card__trend-symbol" aria-hidden>
               {trendSymbol[trend]}
             </span>
@@ -73,9 +75,7 @@ export const MetricCard = forwardRef<HTMLDivElement, MetricCardProps>(
         ) : null}
       </div>
 
-      {description ? (
-        <p className="pf-metric-card__description">{description}</p>
-      ) : null}
+      {description ? <p className="pf-metric-card__description">{description}</p> : null}
       {children}
     </div>
   );

@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { VideoPlayer } from '@pitchfork-ui/react';
 
-const DEMO_VIDEO =
-  'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
+const DEMO_VIDEO = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
 
 const meta = {
   title: 'Components/Video Player',

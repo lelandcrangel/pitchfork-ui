@@ -11,9 +11,7 @@ const items: HeaderNavigationItem[] = [
 describe('HeaderNavigation', () => {
   it('renders a nav landmark', () => {
     render(<HeaderNavigation items={items} />);
-    expect(
-      screen.getByRole('navigation', { name: 'Header navigation' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Header navigation' })).toBeInTheDocument();
   });
 
   it('renders all nav link labels', () => {
@@ -40,11 +38,7 @@ describe('HeaderNavigation', () => {
 
   it('renders a button for items with onClick but no href', () => {
     const onClick = vi.fn();
-    render(
-      <HeaderNavigation
-        items={[{ label: 'Action', onClick }]}
-      />,
-    );
+    render(<HeaderNavigation items={[{ label: 'Action', onClick }]} />);
     expect(screen.getByRole('button', { name: 'Action' })).toBeInTheDocument();
   });
 
@@ -54,22 +48,12 @@ describe('HeaderNavigation', () => {
   });
 
   it('renders the brand slot', () => {
-    render(
-      <HeaderNavigation
-        items={[]}
-        brand={<span data-testid="logo" />}
-      />,
-    );
+    render(<HeaderNavigation items={[]} brand={<span data-testid="logo" />} />);
     expect(screen.getByTestId('logo')).toBeInTheDocument();
   });
 
   it('renders the actions slot', () => {
-    render(
-      <HeaderNavigation
-        items={[]}
-        actions={<button type="button">Sign in</button>}
-      />,
-    );
+    render(<HeaderNavigation items={[]} actions={<button type="button">Sign in</button>} />);
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
   });
 });

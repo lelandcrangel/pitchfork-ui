@@ -32,9 +32,7 @@ describe('CodeSnippet', () => {
       clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
     });
     const onCodeCopy = vi.fn();
-    render(
-      <CodeSnippet code="const y = 2;" title="file.ts" onCodeCopy={onCodeCopy} />,
-    );
+    render(<CodeSnippet code="const y = 2;" title="file.ts" onCodeCopy={onCodeCopy} />);
     await user.click(screen.getByRole('button', { name: /copy/i }));
     expect(onCodeCopy).toHaveBeenCalledWith('const y = 2;');
     vi.unstubAllGlobals();

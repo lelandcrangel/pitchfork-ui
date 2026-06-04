@@ -21,9 +21,7 @@ export function useFocusTrap({
 
     const container = containerRef.current;
     const previousActiveElement = document.activeElement as HTMLElement | null;
-    const initialFocusable = container
-      ? getFocusableElements(container)[0]
-      : undefined;
+    const initialFocusable = container ? getFocusableElements(container)[0] : undefined;
 
     if (initialFocusable) {
       initialFocusable.focus();
@@ -52,9 +50,7 @@ export function useFocusTrap({
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
       const activeElement = document.activeElement as HTMLElement | null;
-      const isInsideDialog = activeElement
-        ? containerRef.current.contains(activeElement)
-        : false;
+      const isInsideDialog = activeElement ? containerRef.current.contains(activeElement) : false;
 
       if (!isInsideDialog) {
         event.preventDefault();

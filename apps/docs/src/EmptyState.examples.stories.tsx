@@ -65,8 +65,12 @@ export const SearchNoResults: Story = {
       description="Try a different search term or clear your filters."
       action={
         <>
-          <Button size="sm" variant="secondary">Clear filters</Button>
-          <Button size="sm" variant="ghost">Browse all</Button>
+          <Button size="sm" variant="secondary">
+            Clear filters
+          </Button>
+          <Button size="sm" variant="ghost">
+            Browse all
+          </Button>
         </>
       }
     />
@@ -96,7 +100,11 @@ export const NoPermission: Story = {
       iconName="circle-xmark"
       heading="Access restricted"
       description="You don't have permission to view this content. Contact your administrator to request access."
-      action={<Button size="sm" variant="secondary">Request access</Button>}
+      action={
+        <Button size="sm" variant="secondary">
+          Request access
+        </Button>
+      }
     />
   ),
   parameters: {
@@ -115,7 +123,13 @@ export const NoPermission: Story = {
 
 export const SmallInPanel: Story = {
   render: () => (
-    <div style={{ border: '1px solid var(--color-semantic-border-default)', borderRadius: 'var(--radius-md)', maxWidth: 400 }}>
+    <div
+      style={{
+        border: '1px solid var(--color-semantic-border-default)',
+        borderRadius: 'var(--radius-md)',
+        maxWidth: 400,
+      }}
+    >
       <EmptyState
         size="sm"
         iconName="bell"

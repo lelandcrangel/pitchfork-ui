@@ -43,8 +43,7 @@ function InteractiveModalStory(args: React.ComponentProps<typeof Modal>) {
         }
       >
         <p style={{ margin: 0 }}>
-          This modal demonstrates overlay dismissal, escape handling, and a
-          footer action row.
+          This modal demonstrates overlay dismissal, escape handling, and a footer action row.
         </p>
       </Modal>
     </>

@@ -18,12 +18,7 @@ export interface RadarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   fillColor?: string;
 }
 
-function polarToCartesian(
-  cx: number,
-  cy: number,
-  radius: number,
-  angle: number,
-) {
+function polarToCartesian(cx: number, cy: number, radius: number, angle: number) {
   return {
     x: cx + radius * Math.cos(angle),
     y: cy + radius * Math.sin(angle),
@@ -31,27 +26,24 @@ function polarToCartesian(
 }
 
 function toPointsString(points: Array<{ x: number; y: number }>): string {
-  return points
-    .map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`)
-    .join(' ');
+  return points.map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(' ');
 }
 
-export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(
-  function RadarChart(
-    {
-      className,
-      data,
-      size = 280,
-      max,
-      levels = 4,
-      showAxes = true,
-      showLegend = true,
-      strokeColor = 'var(--color-semantic-action-primary)',
-      fillColor = 'rgb(249 115 22 / 0.18)',
-      ...props
-    },
-    ref,
-  ) {
+export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function RadarChart(
+  {
+    className,
+    data,
+    size = 280,
+    max,
+    levels = 4,
+    showAxes = true,
+    showLegend = true,
+    strokeColor = 'var(--color-semantic-action-primary)',
+    fillColor = 'rgb(249 115 22 / 0.18)',
+    ...props
+  },
+  ref,
+) {
   const safeData = data.filter((item) => item.value >= 0);
   const count = safeData.length;
   const safeSize = Math.max(size, 180);
@@ -60,9 +52,7 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(
   if (count < 3) {
     return (
       <div ref={ref} className={cx('pf-radar-chart', className)} {...props}>
-        <div className="pf-radar-chart__empty">
-          RadarChart needs at least 3 data points.
-        </div>
+        <div className="pf-radar-chart__empty">RadarChart needs at least 3 data points.</div>
       </div>
     );
   }
@@ -113,11 +103,7 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(
         aria-label="Radar chart"
       >
         {gridPolygons.map((points, index) => (
-          <polygon
-            key={`grid-${index}`}
-            className="pf-radar-chart__grid"
-            points={points}
-          />
+          <polygon key={`grid-${index}`} className="pf-radar-chart__grid" points={points} />
         ))}
 
         {showAxes
@@ -151,12 +137,7 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(
         ))}
 
         {axes.map((axis, index) => {
-          const labelPoint = polarToCartesian(
-            center,
-            center,
-            outerRadius + 18,
-            axis.angle,
-          );
+          const labelPoint = polarToCartesian(center, center, outerRadius + 18, axis.angle);
 
           return (
             <text
@@ -176,10 +157,7 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(
       {showLegend ? (
         <ul className="pf-radar-chart__legend">
           {safeData.map((item, index) => (
-            <li
-              className="pf-radar-chart__legend-item"
-              key={`${index}-${item.value}`}
-            >
+            <li className="pf-radar-chart__legend-item" key={`${index}-${item.value}`}>
               <span className="pf-radar-chart__legend-label">{item.label}</span>
               <span className="pf-radar-chart__legend-value">{item.value}</span>
             </li>

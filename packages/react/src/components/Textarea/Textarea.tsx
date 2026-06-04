@@ -28,8 +28,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const descriptionId = description ? `${textareaId}-description` : undefined;
     const errorId = error ? `${textareaId}-error` : undefined;
     const describedBy =
-      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') ||
-      undefined;
+      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') || undefined;
 
     return (
       <FieldWrapper
@@ -45,11 +44,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={textareaId}
           rows={rows}
-          className={cx(
-            'pf-textarea',
-            error && 'pf-textarea--invalid',
-            className,
-          )}
+          className={cx('pf-textarea', error && 'pf-textarea--invalid', className)}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           {...props}

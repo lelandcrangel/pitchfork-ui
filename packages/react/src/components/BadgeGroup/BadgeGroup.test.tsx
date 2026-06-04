@@ -21,9 +21,7 @@ describe('BadgeGroup', () => {
   });
 
   it('applies the appearance class', () => {
-    const { container } = render(
-      <BadgeGroup label="Tag" message="Info" appearance="modern" />,
-    );
+    const { container } = render(<BadgeGroup label="Tag" message="Info" appearance="modern" />);
     expect(container.firstChild).toHaveClass('pf-badge-group--modern');
   });
 
@@ -38,9 +36,7 @@ describe('BadgeGroup', () => {
   });
 
   it('applies trailing badge position class', () => {
-    const { container } = render(
-      <BadgeGroup label="X" message="Y" badgePosition="trailing" />,
-    );
+    const { container } = render(<BadgeGroup label="X" message="Y" badgePosition="trailing" />);
     expect(container.firstChild).toHaveClass('pf-badge-group--trailing');
   });
 });

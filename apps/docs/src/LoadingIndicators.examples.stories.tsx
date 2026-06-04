@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import {
-  Card,
-  LoadingDots,
-  LoadingSkeleton,
-  LoadingSpinner,
-} from '@pitchfork-ui/react';
+import { Card, LoadingDots, LoadingSkeleton, LoadingSpinner } from '@pitchfork-ui/react';
 
 const indicatorRowStyle: React.CSSProperties = { alignItems: 'center', display: 'flex', gap: 16 };
-const skeletonCardStyle: React.CSSProperties = { display: 'grid', gap: 12, maxWidth: 380, padding: 16 };
+const skeletonCardStyle: React.CSSProperties = {
+  display: 'grid',
+  gap: 12,
+  maxWidth: 380,
+  padding: 16,
+};
 
 const meta = {
   title: 'Examples/Loading Indicators',

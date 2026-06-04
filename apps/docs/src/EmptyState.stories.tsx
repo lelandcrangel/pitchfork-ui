@@ -24,10 +24,5 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Interactive: Story = {
-  render: (args) => (
-    <EmptyState
-      {...args}
-      action={<Button size="sm">Get started</Button>}
-    />
-  ),
+  render: (args) => <EmptyState {...args} action={<Button size="sm">Get started</Button>} />,
 };

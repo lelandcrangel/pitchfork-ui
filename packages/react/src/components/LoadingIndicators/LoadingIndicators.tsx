@@ -10,10 +10,7 @@ export interface LoadingSpinnerProps extends Omit<
   label?: string;
 }
 
-export interface LoadingDotsProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'children'
-> {
+export interface LoadingDotsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   size?: 'sm' | 'md' | 'lg';
   label?: string;
 }
@@ -46,29 +43,37 @@ export const LoadingSpinner = forwardRef<HTMLDivElement, LoadingSpinnerProps>(
 );
 LoadingSpinner.displayName = 'LoadingSpinner';
 
-export const LoadingDots = forwardRef<HTMLDivElement, LoadingDotsProps>(
-  function LoadingDots({ className, size = 'md', label = 'Loading', ...props }, ref) {
-    return (
-      <div
-        ref={ref}
-        className={cx('pf-loading-dots', `pf-loading-dots--${size}`, className)}
-        role="status"
-        aria-label={label}
-        {...props}
-      >
-        <span className="pf-loading-dots__dot" aria-hidden />
-        <span className="pf-loading-dots__dot" aria-hidden />
-        <span className="pf-loading-dots__dot" aria-hidden />
-        <span className="pf-sr-only">{label}</span>
-      </div>
-    );
-  },
-);
+export const LoadingDots = forwardRef<HTMLDivElement, LoadingDotsProps>(function LoadingDots(
+  { className, size = 'md', label = 'Loading', ...props },
+  ref,
+) {
+  return (
+    <div
+      ref={ref}
+      className={cx('pf-loading-dots', `pf-loading-dots--${size}`, className)}
+      role="status"
+      aria-label={label}
+      {...props}
+    >
+      <span className="pf-loading-dots__dot" aria-hidden />
+      <span className="pf-loading-dots__dot" aria-hidden />
+      <span className="pf-loading-dots__dot" aria-hidden />
+      <span className="pf-sr-only">{label}</span>
+    </div>
+  );
+});
 LoadingDots.displayName = 'LoadingDots';
 
 export const LoadingSkeleton = forwardRef<HTMLDivElement, LoadingSkeletonProps>(
   function LoadingSkeleton(
-    { className, width = '100%', height = 16, rounded = false, label = 'Loading content', ...props },
+    {
+      className,
+      width = '100%',
+      height = 16,
+      rounded = false,
+      label = 'Loading content',
+      ...props
+    },
     ref,
   ) {
     return (
@@ -79,10 +84,12 @@ export const LoadingSkeleton = forwardRef<HTMLDivElement, LoadingSkeletonProps>(
           rounded ? 'pf-loading-skeleton--rounded' : undefined,
           className,
         )}
-        style={{
-          '--pf-skeleton-width': typeof width === 'number' ? `${width}px` : width,
-          '--pf-skeleton-height': typeof height === 'number' ? `${height}px` : height,
-        } as React.CSSProperties}
+        style={
+          {
+            '--pf-skeleton-width': typeof width === 'number' ? `${width}px` : width,
+            '--pf-skeleton-height': typeof height === 'number' ? `${height}px` : height,
+          } as React.CSSProperties
+        }
         role="status"
         aria-label={label}
         {...props}

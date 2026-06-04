@@ -37,9 +37,7 @@ describe('Icon', () => {
   it('logs a dev warning for unknown icon names', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Icon name="totally-fake-icon" aria-hidden />);
-    expect(warn).toHaveBeenCalledWith(
-      expect.stringContaining('totally-fake-icon'),
-    );
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('totally-fake-icon'));
     warn.mockRestore();
   });
 

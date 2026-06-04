@@ -10,10 +10,7 @@ const FOCUSABLE_SELECTOR =
 export type SlideoutMenuPlacement = 'left' | 'right';
 export type SlideoutMenuSize = 'sm' | 'md' | 'lg';
 
-export interface SlideoutMenuProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'title'
-> {
+export interface SlideoutMenuProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   open: boolean;
   onOpenChange?: (open: boolean) => void;
   title?: React.ReactNode;
@@ -93,9 +90,7 @@ export function SlideoutMenu({
         return [] as HTMLElement[];
       }
 
-      return Array.from(
-        panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-      );
+      return Array.from(panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
     };
 
     const focusFirstElement = () => {
@@ -158,10 +153,7 @@ export function SlideoutMenu({
       const lastElement = focusableElements[focusableElements.length - 1];
 
       if (event.shiftKey) {
-        if (
-          activeElement === firstElement ||
-          activeElement === panelRef.current
-        ) {
+        if (activeElement === firstElement || activeElement === panelRef.current) {
           event.preventDefault();
           focusLastElement();
         }
@@ -203,10 +195,7 @@ export function SlideoutMenu({
   }
 
   return createPortal(
-    <div
-      className="pf-slideout__portal"
-      data-state={visible ? 'open' : 'closed'}
-    >
+    <div className="pf-slideout__portal" data-state={visible ? 'open' : 'closed'}>
       <div
         className="pf-slideout__overlay"
         onClick={() => {
@@ -216,12 +205,7 @@ export function SlideoutMenu({
         }}
       />
 
-      <div
-        className={cx(
-          'pf-slideout__viewport',
-          `pf-slideout__viewport--${placement}`,
-        )}
-      >
+      <div className={cx('pf-slideout__viewport', `pf-slideout__viewport--${placement}`)}>
         <div
           ref={panelRef}
           className={cx('pf-slideout', `pf-slideout--${size}`, className)}
@@ -262,9 +246,7 @@ export function SlideoutMenu({
 
           <div className="pf-slideout__body">{children}</div>
 
-          {footer ? (
-            <footer className="pf-slideout__footer">{footer}</footer>
-          ) : null}
+          {footer ? <footer className="pf-slideout__footer">{footer}</footer> : null}
         </div>
       </div>
     </div>,

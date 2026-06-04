@@ -11,9 +11,7 @@ export function useControllableState<T>({
   defaultValue,
   onChange,
 }: UseControllableStateOptions<T>) {
-  const [internalValue, setInternalValue] = useState<T | undefined>(
-    defaultValue,
-  );
+  const [internalValue, setInternalValue] = useState<T | undefined>(defaultValue);
   const isControlled = value !== undefined;
   const currentValue = isControlled ? value : internalValue;
 

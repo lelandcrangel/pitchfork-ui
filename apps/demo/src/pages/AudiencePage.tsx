@@ -41,7 +41,12 @@ export function AudiencePage() {
     views: <span style={{ fontSize: 'var(--font-size-sm)' }}>{p.views.toLocaleString()}</span>,
     unique: <span style={{ fontSize: 'var(--font-size-sm)' }}>{p.unique.toLocaleString()}</span>,
     bounce: (
-      <span style={{ fontSize: 'var(--font-size-sm)', color: p.bounce > 50 ? 'var(--color-semantic-text-danger)' : 'inherit' }}>
+      <span
+        style={{
+          fontSize: 'var(--font-size-sm)',
+          color: p.bounce > 50 ? 'var(--color-semantic-text-danger)' : 'inherit',
+        }}
+      >
         {p.bounce}%
       </span>
     ),
@@ -54,30 +59,30 @@ export function AudiencePage() {
         heading="Audience"
         description="Understand who your visitors are and how they engage."
         actions={
-          <Select
-            options={dateRangeOptions}
-            value={dateRange}
-            onValueChange={setDateRange}
-          />
+          <Select options={dateRangeOptions} value={dateRange} onValueChange={setDateRange} />
         }
       />
 
       <div className="demo-grid-2">
         <Card>
-          <CardHeader><SectionHeader heading="Session Depth" /></CardHeader>
+          <CardHeader>
+            <SectionHeader heading="Session Depth" />
+          </CardHeader>
           <CardContent>
             <BarChart
               data={sessionDepthData}
               series={[{ key: 'depth', label: 'Sessions' }]}
               yAxisLabel="Sessions"
               showLegend={false}
-              valueFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v)}
+              valueFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v))}
             />
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><SectionHeader heading="Content Interest" /></CardHeader>
+          <CardHeader>
+            <SectionHeader heading="Content Interest" />
+          </CardHeader>
           <CardContent style={{ display: 'flex', justifyContent: 'center' }}>
             <RadarChart data={radarSingleSeries} size={240} />
           </CardContent>

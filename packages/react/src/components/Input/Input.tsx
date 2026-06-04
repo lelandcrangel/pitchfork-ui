@@ -11,15 +11,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
-    {
-      id,
-      label,
-      description,
-      error,
-      className,
-      'aria-describedby': ariaDescribedBy,
-      ...props
-    },
+    { id, label, description, error, className, 'aria-describedby': ariaDescribedBy, ...props },
     ref,
   ) => {
     const generatedId = useId();
@@ -27,8 +19,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const descriptionId = description ? `${inputId}-description` : undefined;
     const errorId = error ? `${inputId}-error` : undefined;
     const describedBy =
-      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') ||
-      undefined;
+      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') || undefined;
 
     return (
       <FieldWrapper

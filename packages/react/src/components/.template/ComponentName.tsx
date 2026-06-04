@@ -6,13 +6,7 @@ export type ComponentNameProps = React.HTMLAttributes<HTMLDivElement>;
 
 export const ComponentName = forwardRef<HTMLDivElement, ComponentNameProps>(
   ({ className, ...props }, ref) => {
-    return (
-      <div
-        ref={ref}
-        className={cx('pf-component-name', className)}
-        {...props}
-      />
-    );
+    return <div ref={ref} className={cx('pf-component-name', className)} {...props} />;
   },
 );
 

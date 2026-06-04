@@ -21,10 +21,7 @@ export interface TableColumn {
   sortValue?: (row: TableRow) => string | number | Date | null | undefined;
 }
 
-export interface TableProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'children'
-> {
+export interface TableProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   columns: TableColumn[];
   rows: TableRow[];
   caption?: React.ReactNode;
@@ -55,9 +52,9 @@ export function Table({
   getRowKey,
   ...props
 }: TableProps) {
-  const [internalSortState, setInternalSortState] = useState<
-    TableSortState | undefined
-  >(defaultSortState);
+  const [internalSortState, setInternalSortState] = useState<TableSortState | undefined>(
+    defaultSortState,
+  );
   const resolvedSortState = sortState ?? internalSortState;
 
   const sortedRows = useMemo(() => {
@@ -65,17 +62,13 @@ export function Table({
       return rows;
     }
 
-    const sortColumn = columns.find(
-      (column) => column.key === resolvedSortState.key,
-    );
+    const sortColumn = columns.find((column) => column.key === resolvedSortState.key);
     if (!sortColumn || !sortColumn.sortable) {
       return rows;
     }
 
     const getValue = (row: TableRow) => {
-      const value = sortColumn.sortValue
-        ? sortColumn.sortValue(row)
-        : row[sortColumn.key];
+      const value = sortColumn.sortValue ? sortColumn.sortValue(row) : row[sortColumn.key];
       if (value instanceof Date) {
         return value.getTime();
       }
@@ -163,9 +156,7 @@ export function Table({
                   column.width !== undefined
                     ? ({
                         '--pf-col-width':
-                          typeof column.width === 'number'
-                            ? `${column.width}px`
-                            : column.width,
+                          typeof column.width === 'number' ? `${column.width}px` : column.width,
                       } as React.CSSProperties)
                     : undefined
                 }
@@ -196,10 +187,7 @@ export function Table({
         <tbody>
           {sortedRows.length === 0 ? (
             <tr>
-              <td
-                className="pf-table__empty"
-                colSpan={Math.max(columns.length, 1)}
-              >
+              <td className="pf-table__empty" colSpan={Math.max(columns.length, 1)}>
                 {emptyState}
               </td>
             </tr>

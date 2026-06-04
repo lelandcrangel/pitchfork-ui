@@ -9,16 +9,12 @@
   color-scheme: light;
 
   /* Interaction aliases */
-  --pf-focus-ring-color: var(
-    --color-semantic-border-focus,
-    var(--color-brand-500)
-  );
+  --pf-focus-ring-color: var(--color-semantic-border-focus, var(--color-brand-500));
   --pf-focus-ring-width: 3px;
   --pf-focus-ring-offset: 2px;
   --pf-focus-ring: 0 0 0 var(--pf-focus-ring-width)
     color-mix(in srgb, var(--pf-focus-ring-color) 35%, transparent);
-  --pf-focus-outline: var(--pf-focus-ring-width) solid
-    var(--pf-focus-ring-color);
+  --pf-focus-outline: var(--pf-focus-ring-width) solid var(--pf-focus-ring-color);
   --pf-transition-fast: 120ms ease;
   --pf-transition-medium: 180ms ease;
 
@@ -37,16 +33,10 @@
     var(--color-semantic-action-primary)
   );
   --pf-control-bg: var(--color-semantic-background-default);
-  --pf-control-bg-disabled: var(
-    --color-semantic-background-disabled,
-    var(--color-gray-100)
-  );
+  --pf-control-bg-disabled: var(--color-semantic-background-disabled, var(--color-gray-100));
   --pf-control-text: var(--color-semantic-text-default);
   --pf-control-text-muted: var(--color-semantic-text-muted);
-  --pf-control-text-disabled: var(
-    --color-semantic-text-disabled,
-    var(--color-gray-400)
-  );
+  --pf-control-text-disabled: var(--color-semantic-text-disabled, var(--color-gray-400));
 
   /* Overlay aliases */
   --pf-z-index-dropdown: 1000;
@@ -88,11 +78,7 @@
   --pf-select-option-active-text: var(--color-semantic-action-primary-text);
 
   /* Overlay and elevation color aliases */
-  --pf-overlay-backdrop: color-mix(
-    in srgb,
-    var(--color-gray-900) 48%,
-    transparent
-  );
+  --pf-overlay-backdrop: color-mix(in srgb, var(--color-gray-900) 48%, transparent);
   --pf-elevation-overlay-shadow: 0 24px 60px
     color-mix(in srgb, var(--color-gray-900) 18%, transparent);
   --pf-elevation-popover-shadow: 0 14px 30px
@@ -524,11 +510,7 @@
   /* Utility color aliases */
   --pf-tooltip-bg: var(--color-gray-900);
   --pf-tooltip-text: var(--color-base-white);
-  --pf-subtle-hover-overlay: color-mix(
-    in srgb,
-    var(--color-base-black) 8%,
-    transparent
-  );
+  --pf-subtle-hover-overlay: color-mix(in srgb, var(--color-base-black) 8%, transparent);
 }
 
 [data-theme='dark'] {

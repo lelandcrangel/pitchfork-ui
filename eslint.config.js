@@ -28,10 +28,7 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
   {
@@ -48,10 +45,7 @@ export default tseslint.config(
     },
   },
   {
-    files: [
-      'apps/docs/.storybook/**/*.{ts,tsx}',
-      'packages/react/src/components/Icon/Icon.tsx',
-    ],
+    files: ['apps/docs/.storybook/**/*.{ts,tsx}', 'packages/react/src/components/Icon/Icon.tsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },

@@ -12,10 +12,7 @@ export interface TabsItem {
 export type TabsVariant = 'underline' | 'pills';
 export type TabsSize = 'sm' | 'md';
 
-export interface TabsProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'onChange'
-> {
+export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   items: TabsItem[];
   value?: string;
   defaultValue?: string;
@@ -83,18 +80,13 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
         : direction === 'last'
           ? (enabledIndexes[enabledIndexes.length - 1] ?? currentIndex)
           : (() => {
-              const currentEnabledPosition =
-                enabledIndexes.indexOf(currentIndex);
-              const fallbackPosition =
-                direction === 'next' ? 0 : enabledIndexes.length - 1;
+              const currentEnabledPosition = enabledIndexes.indexOf(currentIndex);
+              const fallbackPosition = direction === 'next' ? 0 : enabledIndexes.length - 1;
               const safePosition =
-                currentEnabledPosition === -1
-                  ? fallbackPosition
-                  : currentEnabledPosition;
+                currentEnabledPosition === -1 ? fallbackPosition : currentEnabledPosition;
               const offset = direction === 'next' ? 1 : -1;
               const wrappedPosition =
-                (safePosition + offset + enabledIndexes.length) %
-                enabledIndexes.length;
+                (safePosition + offset + enabledIndexes.length) % enabledIndexes.length;
               return enabledIndexes[wrappedPosition] ?? currentIndex;
             })();
 

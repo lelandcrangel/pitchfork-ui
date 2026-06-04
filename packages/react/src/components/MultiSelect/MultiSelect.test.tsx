@@ -38,7 +38,10 @@ describe('MultiSelect', () => {
     render(<MultiSelect options={options} label="Fruits" />);
     await user.click(screen.getByRole('button', { name: /Fruits/i }));
     expect(screen.getByRole('listbox')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Fruits/i })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: /Fruits/i })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
   });
 
   it('opens the listbox on Enter key', async () => {
@@ -123,7 +126,10 @@ describe('MultiSelect', () => {
     render(<MultiSelect options={options} value={['apple']} label="Fruits" />);
     await user.click(screen.getByRole('button', { name: /Fruits/i }));
     expect(screen.getByRole('option', { name: 'Apple' })).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByRole('option', { name: 'Banana' })).toHaveAttribute('aria-selected', 'false');
+    expect(screen.getByRole('option', { name: 'Banana' })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
   });
 
   it('selects an option via Enter after keyboard navigation', async () => {
@@ -133,7 +139,7 @@ describe('MultiSelect', () => {
     screen.getByRole('button', { name: /Fruits/i }).focus();
     await user.keyboard('{ArrowDown}'); // open
     await user.keyboard('{ArrowDown}'); // move to Banana
-    await user.keyboard('{Enter}');     // toggle Banana
+    await user.keyboard('{Enter}'); // toggle Banana
     expect(onValueChange).toHaveBeenCalledWith(['banana']);
   });
 
@@ -154,9 +160,9 @@ describe('MultiSelect', () => {
     screen.getByRole('button', { name: /Fruits/i }).focus();
     await user.keyboard('{ArrowDown}'); // open, active = Apple
     await user.keyboard('{ArrowDown}'); // active = Banana
-    expect(
-      within(screen.getByRole('listbox')).getByRole('option', { name: 'Banana' }),
-    ).toHaveClass('pf-multi-select__option--active');
+    expect(within(screen.getByRole('listbox')).getByRole('option', { name: 'Banana' })).toHaveClass(
+      'pf-multi-select__option--active',
+    );
   });
 
   it('jumps to last enabled option on End key', async () => {
@@ -165,9 +171,9 @@ describe('MultiSelect', () => {
     await user.click(screen.getByRole('button', { name: /Fruits/i }));
     await user.keyboard('{End}');
     // Cherry is disabled so last enabled is Banana
-    expect(
-      within(screen.getByRole('listbox')).getByRole('option', { name: 'Banana' }),
-    ).toHaveClass('pf-multi-select__option--active');
+    expect(within(screen.getByRole('listbox')).getByRole('option', { name: 'Banana' })).toHaveClass(
+      'pf-multi-select__option--active',
+    );
   });
 
   it('jumps to first enabled option on Home key', async () => {
@@ -176,9 +182,9 @@ describe('MultiSelect', () => {
     await user.click(screen.getByRole('button', { name: /Fruits/i }));
     await user.keyboard('{End}');
     await user.keyboard('{Home}');
-    expect(
-      within(screen.getByRole('listbox')).getByRole('option', { name: 'Apple' }),
-    ).toHaveClass('pf-multi-select__option--active');
+    expect(within(screen.getByRole('listbox')).getByRole('option', { name: 'Apple' })).toHaveClass(
+      'pf-multi-select__option--active',
+    );
   });
 
   // ─── Disabled states ─────────────────────────────────────────────────────
@@ -219,14 +225,19 @@ describe('MultiSelect', () => {
   });
 
   it('shows an error message', () => {
-    render(<MultiSelect options={options} label="Fruits" error="At least one selection required" />);
+    render(
+      <MultiSelect options={options} label="Fruits" error="At least one selection required" />,
+    );
     expect(screen.getByText('At least one selection required')).toBeInTheDocument();
   });
 
   it('shows the required asterisk and sets aria-required on the trigger', () => {
     render(<MultiSelect options={options} label="Fruits" required />);
     expect(screen.getByText('*')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Fruits/i })).toHaveAttribute('aria-required', 'true');
+    expect(screen.getByRole('button', { name: /Fruits/i })).toHaveAttribute(
+      'aria-required',
+      'true',
+    );
   });
 
   // ─── Form integration ────────────────────────────────────────────────────

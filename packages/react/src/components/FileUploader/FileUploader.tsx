@@ -34,28 +34,27 @@ export interface FileUploaderProps extends Omit<
   onFilesChange?: (files: File[]) => void;
 }
 
-export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
-  function FileUploader(
-    {
-      id,
-      className,
-      label,
-      description,
-      error,
-      accept,
-      multiple = true,
-      maxFiles,
-      maxFileSize,
-      required,
-      disabled = false,
-      value,
-      defaultValue = [],
-      onFilesChange,
-      'aria-describedby': ariaDescribedBy,
-      ...props
-    },
-    ref,
-  ) {
+export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(function FileUploader(
+  {
+    id,
+    className,
+    label,
+    description,
+    error,
+    accept,
+    multiple = true,
+    maxFiles,
+    maxFileSize,
+    required,
+    disabled = false,
+    value,
+    defaultValue = [],
+    onFilesChange,
+    'aria-describedby': ariaDescribedBy,
+    ...props
+  },
+  ref,
+) {
   const generatedId = useId();
   const uploaderId = id ?? generatedId;
   const inputId = `${uploaderId}-input`;
@@ -63,16 +62,13 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
   const errorId = error ? `${uploaderId}-error` : undefined;
   const internalErrorId = `${uploaderId}-internal-error`;
   const describedBy =
-    [ariaDescribedBy, descriptionId, errorId, internalErrorId]
-      .filter(Boolean)
-      .join(' ') || undefined;
+    [ariaDescribedBy, descriptionId, errorId, internalErrorId].filter(Boolean).join(' ') ||
+    undefined;
 
   const isControlled = value !== undefined;
   const [internalFiles, setInternalFiles] = useState<File[]>(defaultValue);
   const [dragActive, setDragActive] = useState(false);
-  const [internalError, setInternalError] = useState<string | undefined>(
-    undefined,
-  );
+  const [internalError, setInternalError] = useState<string | undefined>(undefined);
   const files = isControlled ? (value ?? []) : internalFiles;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -110,10 +106,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
     const merged = multiple ? [...files, ...incoming] : incoming.slice(0, 1);
     const deduped = Array.from(
       new Map(
-        merged.map((file) => [
-          `${file.name}-${file.size}-${file.lastModified}`,
-          file,
-        ]),
+        merged.map((file) => [`${file.name}-${file.size}-${file.lastModified}`, file]),
       ).values(),
     );
 
@@ -174,13 +167,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
         ) : null
       }
     >
-
-      <div
-        ref={ref}
-        {...props}
-        id={uploaderId}
-        className={cx('pf-file-uploader', className)}
-      >
+      <div ref={ref} {...props} id={uploaderId} className={cx('pf-file-uploader', className)}>
         <input
           ref={inputRef}
           id={inputId}
@@ -234,9 +221,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
           <span className="pf-file-uploader__subtitle">
             Drag and drop files here, or click to browse.
           </span>
-          {hintText ? (
-            <span className="pf-file-uploader__hint">{hintText}</span>
-          ) : null}
+          {hintText ? <span className="pf-file-uploader__hint">{hintText}</span> : null}
         </button>
 
         {files.length > 0 ? (
@@ -247,12 +232,8 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
                 className="pf-file-uploader__list-item"
               >
                 <span className="pf-file-uploader__file-meta">
-                  <span className="pf-file-uploader__file-name">
-                    {file.name}
-                  </span>
-                  <span className="pf-file-uploader__file-size">
-                    {bytesToSize(file.size)}
-                  </span>
+                  <span className="pf-file-uploader__file-name">{file.name}</span>
+                  <span className="pf-file-uploader__file-size">{bytesToSize(file.size)}</span>
                 </span>
                 <button
                   type="button"

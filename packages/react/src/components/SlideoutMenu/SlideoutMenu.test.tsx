@@ -25,7 +25,11 @@ describe('SlideoutMenu', () => {
   // ─── Rendering ──────────────────────────────────────────────────────────
 
   it('renders nothing when open is false', () => {
-    render(<SlideoutMenu open={false} onOpenChange={vi.fn()}>Content</SlideoutMenu>);
+    render(
+      <SlideoutMenu open={false} onOpenChange={vi.fn()}>
+        Content
+      </SlideoutMenu>,
+    );
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -125,7 +129,11 @@ describe('SlideoutMenu', () => {
   it('restores body overflow when closed', () => {
     const { rerender } = renderOpen();
     expect(document.body.style.overflow).toBe('hidden');
-    rerender(<SlideoutMenu open={false} onOpenChange={vi.fn()}>Content</SlideoutMenu>);
+    rerender(
+      <SlideoutMenu open={false} onOpenChange={vi.fn()}>
+        Content
+      </SlideoutMenu>,
+    );
     act(() => vi.runAllTimers());
     expect(document.body.style.overflow).toBe('');
   });
@@ -142,7 +150,9 @@ describe('SlideoutMenu', () => {
     const { rerender } = render(
       <div>
         <button id="trigger">Open</button>
-        <SlideoutMenu open={false} onOpenChange={vi.fn()} title="Panel">Content</SlideoutMenu>
+        <SlideoutMenu open={false} onOpenChange={vi.fn()} title="Panel">
+          Content
+        </SlideoutMenu>
       </div>,
     );
     const trigger = document.getElementById('trigger') as HTMLElement;
@@ -151,7 +161,9 @@ describe('SlideoutMenu', () => {
     rerender(
       <div>
         <button id="trigger">Open</button>
-        <SlideoutMenu open title="Panel" onOpenChange={vi.fn()}>Content</SlideoutMenu>
+        <SlideoutMenu open title="Panel" onOpenChange={vi.fn()}>
+          Content
+        </SlideoutMenu>
       </div>,
     );
     act(() => vi.runAllTimers());
@@ -160,7 +172,9 @@ describe('SlideoutMenu', () => {
     rerender(
       <div>
         <button id="trigger">Open</button>
-        <SlideoutMenu open={false} title="Panel" onOpenChange={vi.fn()}>Content</SlideoutMenu>
+        <SlideoutMenu open={false} title="Panel" onOpenChange={vi.fn()}>
+          Content
+        </SlideoutMenu>
       </div>,
     );
     act(() => vi.runAllTimers());

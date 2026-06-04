@@ -17,7 +17,10 @@
 
 .pf-dropdown__trigger:hover:not(:disabled) {
   background: var(--pf-dropdown-button-secondary-bg-hover, var(--pf-button-secondary-bg-hover));
-  border-color: var(--pf-dropdown-button-secondary-border-hover, var(--pf-button-secondary-border-hover));
+  border-color: var(
+    --pf-dropdown-button-secondary-border-hover,
+    var(--pf-button-secondary-border-hover)
+  );
 }
 
 .pf-dropdown__trigger:focus-visible {

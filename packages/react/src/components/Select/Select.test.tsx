@@ -98,7 +98,7 @@ describe('Select', () => {
     screen.getByRole('button', { name: /Fruit/i }).focus();
     await user.keyboard('{ArrowDown}'); // open
     await user.keyboard('{ArrowDown}'); // move to Banana
-    await user.keyboard('{Enter}');     // confirm
+    await user.keyboard('{Enter}'); // confirm
     expect(onValueChange).toHaveBeenCalledWith('banana');
   });
 
@@ -113,19 +113,10 @@ describe('Select', () => {
   it('respects a controlled value', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    render(
-      <Select
-        options={options}
-        value="apple"
-        onValueChange={onValueChange}
-        label="Fruit"
-      />,
-    );
+    render(<Select options={options} value="apple" onValueChange={onValueChange} label="Fruit" />);
     expect(screen.getByRole('button', { name: /Fruit/i })).toHaveTextContent('Apple');
     await user.click(screen.getByRole('button', { name: /Fruit/i }));
-    expect(
-      screen.getByRole('option', { name: 'Apple' }),
-    ).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('option', { name: 'Apple' })).toHaveAttribute('aria-selected', 'true');
   });
 
   // ─── Keyboard navigation ─────────────────────────────────────────────────
@@ -137,9 +128,9 @@ describe('Select', () => {
     await user.keyboard('{ArrowDown}'); // open, active = Apple (firstEnabled)
     await user.keyboard('{ArrowDown}'); // active = Banana
     const listbox = screen.getByRole('listbox');
-    expect(
-      within(listbox).getByRole('option', { name: 'Banana' }),
-    ).toHaveClass('pf-select__option--active');
+    expect(within(listbox).getByRole('option', { name: 'Banana' })).toHaveClass(
+      'pf-select__option--active',
+    );
   });
 
   it('jumps to the last enabled option on End key', async () => {
@@ -149,9 +140,9 @@ describe('Select', () => {
     await user.keyboard('{End}');
     // Cherry is disabled so last enabled is Banana
     const listbox = screen.getByRole('listbox');
-    expect(
-      within(listbox).getByRole('option', { name: 'Banana' }),
-    ).toHaveClass('pf-select__option--active');
+    expect(within(listbox).getByRole('option', { name: 'Banana' })).toHaveClass(
+      'pf-select__option--active',
+    );
   });
 
   it('jumps to the first enabled option on Home key', async () => {
@@ -161,9 +152,9 @@ describe('Select', () => {
     await user.keyboard('{End}');
     await user.keyboard('{Home}');
     const listbox = screen.getByRole('listbox');
-    expect(
-      within(listbox).getByRole('option', { name: 'Apple' }),
-    ).toHaveClass('pf-select__option--active');
+    expect(within(listbox).getByRole('option', { name: 'Apple' })).toHaveClass(
+      'pf-select__option--active',
+    );
   });
 
   // ─── Disabled states ─────────────────────────────────────────────────────
@@ -184,9 +175,7 @@ describe('Select', () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
     await user.click(screen.getByRole('button', { name: /Fruit/i }));
-    expect(
-      screen.getByRole('option', { name: 'Cherry' }),
-    ).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('option', { name: 'Cherry' })).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('does not select a disabled option on click', async () => {
@@ -228,9 +217,7 @@ describe('Select', () => {
   // ─── Form integration ────────────────────────────────────────────────────
 
   it('renders a hidden input when name is provided', () => {
-    const { container } = render(
-      <Select options={options} name="fruit" value="banana" />,
-    );
+    const { container } = render(<Select options={options} name="fruit" value="banana" />);
     const hidden = container.querySelector('input[type="hidden"]');
     expect(hidden).toHaveAttribute('name', 'fruit');
     expect(hidden).toHaveAttribute('value', 'banana');

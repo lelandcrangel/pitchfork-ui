@@ -16,10 +16,7 @@ export interface ProgressStepsProps extends React.HTMLAttributes<HTMLOListElemen
   orientation?: 'horizontal' | 'vertical';
 }
 
-function inferStatus(
-  index: number,
-  steps: ProgressStepItem[],
-): ProgressStepStatus {
+function inferStatus(index: number, steps: ProgressStepItem[]): ProgressStepStatus {
   const firstCurrent = steps.findIndex((step) => step.status === 'current');
 
   if (steps[index]?.status) {
@@ -39,47 +36,39 @@ function inferStatus(
 
 export const ProgressSteps = forwardRef<HTMLOListElement, ProgressStepsProps>(
   function ProgressSteps({ className, steps, orientation = 'horizontal', ...props }, ref) {
-  return (
-    <ol
-      ref={ref}
-      className={cx(
-        'pf-progress-steps',
-        `pf-progress-steps--${orientation}`,
-        className,
-      )}
-      {...props}
-    >
-      {steps.map((step, index) => {
-        const status = inferStatus(index, steps);
+    return (
+      <ol
+        ref={ref}
+        className={cx('pf-progress-steps', `pf-progress-steps--${orientation}`, className)}
+        {...props}
+      >
+        {steps.map((step, index) => {
+          const status = inferStatus(index, steps);
 
-        return (
-          <li
-            key={step.id ?? `step-${index}`}
-            className={cx(
-              'pf-progress-steps__item',
-              `pf-progress-steps__item--${status}`,
-            )}
-          >
-            <div className="pf-progress-steps__marker-wrap" aria-hidden>
-              <span className="pf-progress-steps__marker">{index + 1}</span>
-              {index < steps.length - 1 ? (
-                <span className="pf-progress-steps__connector" />
-              ) : null}
-            </div>
+          return (
+            <li
+              key={step.id ?? `step-${index}`}
+              className={cx('pf-progress-steps__item', `pf-progress-steps__item--${status}`)}
+            >
+              <div className="pf-progress-steps__marker-wrap" aria-hidden>
+                <span className="pf-progress-steps__marker">{index + 1}</span>
+                {index < steps.length - 1 ? (
+                  <span className="pf-progress-steps__connector" />
+                ) : null}
+              </div>
 
-            <div className="pf-progress-steps__content">
-              <p className="pf-progress-steps__title">{step.title}</p>
-              {step.description ? (
-                <p className="pf-progress-steps__description">
-                  {step.description}
-                </p>
-              ) : null}
-            </div>
-          </li>
-        );
-      })}
-    </ol>
-  );
-});
+              <div className="pf-progress-steps__content">
+                <p className="pf-progress-steps__title">{step.title}</p>
+                {step.description ? (
+                  <p className="pf-progress-steps__description">{step.description}</p>
+                ) : null}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    );
+  },
+);
 
 ProgressSteps.displayName = 'ProgressSteps';

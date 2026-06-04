@@ -22,16 +22,12 @@ describe('Tag', () => {
 
   it('does not render dismiss button by default', () => {
     render(<Tag>Label</Tag>);
-    expect(
-      screen.queryByRole('button', { name: 'Remove tag' }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Remove tag' })).not.toBeInTheDocument();
   });
 
   it('renders dismiss button when dismissible=true', () => {
     render(<Tag dismissible>Label</Tag>);
-    expect(
-      screen.getByRole('button', { name: 'Remove tag' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Remove tag' })).toBeInTheDocument();
   });
 
   it('calls onDismiss when dismiss button is clicked', async () => {

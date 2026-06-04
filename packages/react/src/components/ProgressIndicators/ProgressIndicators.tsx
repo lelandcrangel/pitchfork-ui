@@ -26,34 +26,33 @@ const clampPercent = (value: number, max: number) => {
   return Math.max(0, Math.min(100, (value / max) * 100));
 };
 
-export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
-  function ProgressBar({ value, max = 100, showValue = true, label, className, ...props }, ref) {
-    const percent = clampPercent(value, max);
+export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(function ProgressBar(
+  { value, max = 100, showValue = true, label, className, ...props },
+  ref,
+) {
+  const percent = clampPercent(value, max);
 
-    return (
-      <div
-        ref={ref}
-        className={cx('pf-progress-bar', className)}
-        role="progressbar"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={max}
-        aria-valuenow={Math.round((percent / 100) * max)}
-        {...props}
-      >
-        <div className="pf-progress-bar__track">
-          <div
-            className="pf-progress-bar__fill"
-            style={{ '--pf-progress-fill': `${percent}%` } as React.CSSProperties}
-          />
-        </div>
-        {showValue ? (
-          <span className="pf-progress-bar__value">{Math.round(percent)}%</span>
-        ) : null}
+  return (
+    <div
+      ref={ref}
+      className={cx('pf-progress-bar', className)}
+      role="progressbar"
+      aria-label={label}
+      aria-valuemin={0}
+      aria-valuemax={max}
+      aria-valuenow={Math.round((percent / 100) * max)}
+      {...props}
+    >
+      <div className="pf-progress-bar__track">
+        <div
+          className="pf-progress-bar__fill"
+          style={{ '--pf-progress-fill': `${percent}%` } as React.CSSProperties}
+        />
       </div>
-    );
-  },
-);
+      {showValue ? <span className="pf-progress-bar__value">{Math.round(percent)}%</span> : null}
+    </div>
+  );
+});
 ProgressBar.displayName = 'ProgressBar';
 
 export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
@@ -78,11 +77,7 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
         aria-valuenow={Math.round((percent / 100) * max)}
         {...props}
       >
-        <svg
-          viewBox={`0 0 ${size} ${size}`}
-          className="pf-progress-circle__svg"
-          aria-hidden
-        >
+        <svg viewBox={`0 0 ${size} ${size}`} className="pf-progress-circle__svg" aria-hidden>
           <circle
             className="pf-progress-circle__track"
             cx={size / 2}
@@ -101,9 +96,7 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
           />
         </svg>
         {showValue ? (
-          <span className="pf-progress-circle__value">
-            {Math.round(percent)}%
-          </span>
+          <span className="pf-progress-circle__value">{Math.round(percent)}%</span>
         ) : null}
       </div>
     );

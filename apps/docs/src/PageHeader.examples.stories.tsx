@@ -13,8 +13,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     heading: 'Projects',
-    description:
-      'Track delivery, ownership, and recent activity across your organization.',
+    description: 'Track delivery, ownership, and recent activity across your organization.',
     actions: <Button size="sm">Create project</Button>,
   },
 };

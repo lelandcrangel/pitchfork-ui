@@ -6,9 +6,7 @@ const items = [
     value: 'overview',
     label: 'Overview',
     content: (
-      <p style={{ margin: 0 }}>
-        Track team health, delivery status, and KPIs from one place.
-      </p>
+      <p style={{ margin: 0 }}>Track team health, delivery status, and KPIs from one place.</p>
     ),
   },
   {
@@ -24,18 +22,14 @@ const items = [
     value: 'settings',
     label: 'Settings',
     content: (
-      <p style={{ margin: 0 }}>
-        Configure alerts, notification channels, and role permissions.
-      </p>
+      <p style={{ margin: 0 }}>Configure alerts, notification channels, and role permissions.</p>
     ),
   },
   {
     value: 'billing',
     label: 'Billing',
     disabled: true,
-    content: (
-      <p style={{ margin: 0 }}>Billing details are currently unavailable.</p>
-    ),
+    content: <p style={{ margin: 0 }}>Billing details are currently unavailable.</p>,
   },
 ];
 

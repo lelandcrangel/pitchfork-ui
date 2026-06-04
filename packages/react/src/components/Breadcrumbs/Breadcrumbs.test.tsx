@@ -61,9 +61,7 @@ describe('Breadcrumbs', () => {
   });
 
   it('renders a custom separator', () => {
-    const { container } = render(
-      <Breadcrumbs items={items} separator=">" />,
-    );
+    const { container } = render(<Breadcrumbs items={items} separator=">" />);
     const separators = container.querySelectorAll('.pf-breadcrumbs__separator');
     expect(separators[0]).toHaveTextContent('>');
   });

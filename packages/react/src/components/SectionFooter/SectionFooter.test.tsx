@@ -24,9 +24,7 @@ describe('SectionFooter', () => {
   });
 
   it('renders the actions slot', () => {
-    render(
-      <SectionFooter actions={<button type="button">Save</button>} />,
-    );
+    render(<SectionFooter actions={<button type="button">Save</button>} />);
     expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
   });
 

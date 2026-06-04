@@ -285,11 +285,7 @@ function ExpandCollapseAllDemo(args: TreeViewProps) {
         <Button size="sm" onClick={() => treeRef.current?.expandAll()}>
           Expand all
         </Button>
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => treeRef.current?.collapseAll()}
-        >
+        <Button size="sm" variant="secondary" onClick={() => treeRef.current?.collapseAll()}>
           Collapse all
         </Button>
       </div>

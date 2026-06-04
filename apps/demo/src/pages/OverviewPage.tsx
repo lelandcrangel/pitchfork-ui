@@ -57,7 +57,11 @@ export function OverviewPage() {
         <span style={{ fontWeight: 'var(--font-weight-medium)' }}>{s.name}</span>
       </div>
     ),
-    email: <span style={{ color: 'var(--color-semantic-text-muted)', fontSize: 'var(--font-size-sm)' }}>{s.email}</span>,
+    email: (
+      <span style={{ color: 'var(--color-semantic-text-muted)', fontSize: 'var(--font-size-sm)' }}>
+        {s.email}
+      </span>
+    ),
     plan: <Badge variant={planColors[s.plan]}>{s.plan}</Badge>,
     status: <Tag variant={statusColors[s.status]}>{s.status}</Tag>,
     date: <span style={{ fontSize: 'var(--font-size-sm)' }}>{s.date}</span>,
@@ -86,11 +90,7 @@ export function OverviewPage() {
         description="Track your key metrics and performance at a glance."
         actions={
           <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
-            <Select
-              options={dateRangeOptions}
-              value={dateRange}
-              onValueChange={setDateRange}
-            />
+            <Select options={dateRangeOptions} value={dateRange} onValueChange={setDateRange} />
             <Button variant="secondary">
               <Icon name="file-arrow-down" aria-hidden />
               Export
@@ -115,7 +115,9 @@ export function OverviewPage() {
 
       <div className="demo-grid-2">
         <Card>
-          <CardHeader><SectionHeader heading="Sessions & Users" /></CardHeader>
+          <CardHeader>
+            <SectionHeader heading="Sessions & Users" />
+          </CardHeader>
           <CardContent>
             <LineChart
               data={monthlyData}
@@ -126,32 +128,45 @@ export function OverviewPage() {
               yAxisLabel="Count"
               area
               curved
-              valueFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
+              valueFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v))}
             />
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><SectionHeader heading="Traffic by Channel" /></CardHeader>
+          <CardHeader>
+            <SectionHeader heading="Traffic by Channel" />
+          </CardHeader>
           <CardContent>
             <BarChart
               data={channelData}
               series={[{ key: 'visits', label: 'Visits' }]}
               yAxisLabel="Visits"
               showLegend={false}
-              valueFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v)}
+              valueFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v))}
             />
           </CardContent>
         </Card>
       </div>
 
       <Card>
-        <CardHeader><SectionHeader heading="Device Breakdown" /></CardHeader>
+        <CardHeader>
+          <SectionHeader heading="Device Breakdown" />
+        </CardHeader>
         <CardContent style={{ display: 'flex', justifyContent: 'center' }}>
           <PieChart
             data={deviceData}
             size={200}
-            centerLabel={<span style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)' }}>Devices</span>}
+            centerLabel={
+              <span
+                style={{
+                  fontSize: 'var(--font-size-sm)',
+                  fontWeight: 'var(--font-weight-semibold)',
+                }}
+              >
+                Devices
+              </span>
+            }
           />
         </CardContent>
       </Card>
@@ -174,31 +189,71 @@ export function OverviewPage() {
 
       <Modal
         open={selectedUser !== null}
-        onOpenChange={(open) => { if (!open) setSelectedUser(null); }}
+        onOpenChange={(open) => {
+          if (!open) setSelectedUser(null);
+        }}
         title={selectedUser?.name}
         description={selectedUser?.email}
         size="sm"
         footer={
-          <Button variant="secondary" onClick={() => setSelectedUser(null)}>Close</Button>
+          <Button variant="secondary" onClick={() => setSelectedUser(null)}>
+            Close
+          </Button>
         }
       >
         {selectedUser && (
           <div style={{ display: 'grid', gap: 'var(--space-3)' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
               <div>
-                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-semantic-text-muted)', marginBottom: 'var(--space-1)' }}>Plan</div>
+                <div
+                  style={{
+                    fontSize: 'var(--font-size-xs)',
+                    color: 'var(--color-semantic-text-muted)',
+                    marginBottom: 'var(--space-1)',
+                  }}
+                >
+                  Plan
+                </div>
                 <Badge variant={planColors[selectedUser.plan]}>{selectedUser.plan}</Badge>
               </div>
               <div>
-                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-semantic-text-muted)', marginBottom: 'var(--space-1)' }}>Status</div>
-                <Tag variant={statusColors[selectedUser.status] as 'success' | 'warning' | 'neutral'}>{selectedUser.status}</Tag>
+                <div
+                  style={{
+                    fontSize: 'var(--font-size-xs)',
+                    color: 'var(--color-semantic-text-muted)',
+                    marginBottom: 'var(--space-1)',
+                  }}
+                >
+                  Status
+                </div>
+                <Tag
+                  variant={statusColors[selectedUser.status] as 'success' | 'warning' | 'neutral'}
+                >
+                  {selectedUser.status}
+                </Tag>
               </div>
               <div>
-                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-semantic-text-muted)', marginBottom: 'var(--space-1)' }}>Signed Up</div>
+                <div
+                  style={{
+                    fontSize: 'var(--font-size-xs)',
+                    color: 'var(--color-semantic-text-muted)',
+                    marginBottom: 'var(--space-1)',
+                  }}
+                >
+                  Signed Up
+                </div>
                 <span style={{ fontSize: 'var(--font-size-sm)' }}>{selectedUser.date}</span>
               </div>
               <div>
-                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-semantic-text-muted)', marginBottom: 'var(--space-1)' }}>Country</div>
+                <div
+                  style={{
+                    fontSize: 'var(--font-size-xs)',
+                    color: 'var(--color-semantic-text-muted)',
+                    marginBottom: 'var(--space-1)',
+                  }}
+                >
+                  Country
+                </div>
                 <span style={{ fontSize: 'var(--font-size-sm)' }}>{selectedUser.country}</span>
               </div>
             </div>

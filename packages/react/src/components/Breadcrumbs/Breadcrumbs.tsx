@@ -15,13 +15,11 @@ export interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
-  ({ className, items, separator = '/', 'aria-label': ariaLabel = 'Breadcrumb', ...props }, ref) => (
-    <nav
-      ref={ref}
-      className={cx('pf-breadcrumbs', className)}
-      aria-label={ariaLabel}
-      {...props}
-    >
+  (
+    { className, items, separator = '/', 'aria-label': ariaLabel = 'Breadcrumb', ...props },
+    ref,
+  ) => (
+    <nav ref={ref} className={cx('pf-breadcrumbs', className)} aria-label={ariaLabel} {...props}>
       <ol className="pf-breadcrumbs__list">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
@@ -35,11 +33,7 @@ export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
               {item.href ? (
                 <a
                   href={item.href}
-                  onClick={
-                    item.onClick as
-                      | React.MouseEventHandler<HTMLAnchorElement>
-                      | undefined
-                  }
+                  onClick={item.onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined}
                   className={cx(
                     'pf-breadcrumbs__link',
                     isCurrent && 'pf-breadcrumbs__link--current',

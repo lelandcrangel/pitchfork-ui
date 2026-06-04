@@ -40,8 +40,7 @@ const meta = {
   tags: ['ai-generated', 'test'],
   args: {
     heading: 'New export is ready',
-    description:
-      'Your analytics export finished processing and is ready to download.',
+    description: 'Your analytics export finished processing and is ready to download.',
     variant: 'info',
     placement: 'top-right',
     dismissible: true,

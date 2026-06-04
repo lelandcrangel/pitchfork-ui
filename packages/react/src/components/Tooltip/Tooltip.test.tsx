@@ -27,7 +27,9 @@ describe('Tooltip', () => {
       </Tooltip>,
     );
     fireEvent.mouseEnter(getTrigger('Trigger'));
-    act(() => { vi.advanceTimersByTime(199); });
+    act(() => {
+      vi.advanceTimersByTime(199);
+    });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
@@ -38,7 +40,9 @@ describe('Tooltip', () => {
       </Tooltip>,
     );
     fireEvent.mouseEnter(getTrigger('Trigger'));
-    act(() => { vi.advanceTimersByTime(200); });
+    act(() => {
+      vi.advanceTimersByTime(200);
+    });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
   });
 
@@ -49,7 +53,9 @@ describe('Tooltip', () => {
       </Tooltip>,
     );
     fireEvent.mouseEnter(getTrigger('Trigger'));
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
   });
 
@@ -61,7 +67,9 @@ describe('Tooltip', () => {
     );
     const trigger = getTrigger('Trigger');
     fireEvent.mouseEnter(trigger);
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     fireEvent.mouseLeave(trigger);
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
@@ -74,7 +82,9 @@ describe('Tooltip', () => {
       </Tooltip>,
     );
     fireEvent.focus(getTrigger('Trigger'));
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
   });
 
@@ -86,7 +96,9 @@ describe('Tooltip', () => {
     );
     const trigger = getTrigger('Trigger');
     fireEvent.focus(trigger);
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     fireEvent.blur(trigger);
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
@@ -100,7 +112,9 @@ describe('Tooltip', () => {
     );
     const trigger = getTrigger('Trigger');
     fireEvent.mouseEnter(trigger);
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     fireEvent.keyDown(trigger, { key: 'Escape' });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
@@ -114,9 +128,13 @@ describe('Tooltip', () => {
     );
     const trigger = getTrigger('Trigger');
     fireEvent.mouseEnter(trigger);
-    act(() => { vi.advanceTimersByTime(150); });
+    act(() => {
+      vi.advanceTimersByTime(150);
+    });
     fireEvent.mouseLeave(trigger);
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
@@ -129,7 +147,9 @@ describe('Tooltip', () => {
       </Tooltip>,
     );
     fireEvent.mouseEnter(getTrigger('Trigger'));
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.getByRole('tooltip')).toHaveTextContent('Helpful text');
   });
 
@@ -142,7 +162,9 @@ describe('Tooltip', () => {
     const trigger = getTrigger('Trigger');
     expect(trigger).not.toHaveAttribute('aria-describedby');
     fireEvent.mouseEnter(trigger);
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     const tooltipId = screen.getByRole('tooltip').id;
     expect(trigger).toHaveAttribute('aria-describedby', tooltipId);
   });
@@ -155,7 +177,9 @@ describe('Tooltip', () => {
     );
     const trigger = getTrigger('Trigger');
     fireEvent.mouseEnter(trigger);
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     fireEvent.mouseLeave(trigger);
     expect(trigger).not.toHaveAttribute('aria-describedby');
   });
@@ -187,7 +211,9 @@ describe('Tooltip', () => {
       </Tooltip>,
     );
     fireEvent.mouseEnter(getTrigger('Trigger'));
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
@@ -200,7 +226,9 @@ describe('Tooltip', () => {
       </Tooltip>,
     );
     fireEvent.mouseEnter(getTrigger('Trigger'));
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
@@ -226,12 +254,12 @@ describe('Tooltip', () => {
     );
 
     const trigger = getTrigger('Edge trigger');
-    vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue(
-      new DOMRect(4, 80, 80, 32),
-    );
+    vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue(new DOMRect(4, 80, 80, 32));
 
     fireEvent.mouseEnter(trigger);
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
 
     const tooltip = screen.getByRole('tooltip');
     expect(tooltip).toHaveClass('pf-tooltip--right');

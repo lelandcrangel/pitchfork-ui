@@ -19,12 +19,7 @@ describe('SectionHeader', () => {
   });
 
   it('renders the actions slot', () => {
-    render(
-      <SectionHeader
-        heading="Team"
-        actions={<button type="button">Add member</button>}
-      />,
-    );
+    render(<SectionHeader heading="Team" actions={<button type="button">Add member</button>} />);
     expect(screen.getByRole('button', { name: 'Add member' })).toBeInTheDocument();
   });
 

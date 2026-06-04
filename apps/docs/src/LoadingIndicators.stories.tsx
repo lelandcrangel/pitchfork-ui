@@ -1,9 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import {
-  LoadingDots,
-  LoadingSkeleton,
-  LoadingSpinner,
-} from '@pitchfork-ui/react';
+import { LoadingDots, LoadingSkeleton, LoadingSpinner } from '@pitchfork-ui/react';
 
 const meta = {
   title: 'Components/Loading Indicators',
@@ -32,12 +28,5 @@ export const InteractiveDots: Story = {
 };
 
 export const InteractiveSkeleton: Story = {
-  render: (args) => (
-    <LoadingSkeleton
-      width={220}
-      height={16}
-      rounded={false}
-      label={args.label}
-    />
-  ),
+  render: (args) => <LoadingSkeleton width={220} height={16} rounded={false} label={args.label} />,
 };

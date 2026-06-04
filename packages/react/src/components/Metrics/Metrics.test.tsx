@@ -14,9 +14,7 @@ describe('MetricCard', () => {
   });
 
   it('renders the description when provided', () => {
-    render(
-      <MetricCard heading="Revenue" value="$12k" description="Last 30 days" />,
-    );
+    render(<MetricCard heading="Revenue" value="$12k" description="Last 30 days" />);
     expect(screen.getByText('Last 30 days')).toBeInTheDocument();
   });
 
@@ -26,25 +24,13 @@ describe('MetricCard', () => {
   });
 
   it('renders the trend label', () => {
-    render(
-      <MetricCard
-        heading="Sales"
-        value="200"
-        trend="positive"
-        trendLabel="12% up"
-      />,
-    );
+    render(<MetricCard heading="Sales" value="200" trend="positive" trendLabel="12% up" />);
     expect(screen.getByText('12% up')).toBeInTheDocument();
   });
 
   it('renders the trend symbol', () => {
     const { container } = render(
-      <MetricCard
-        heading="Sales"
-        value="200"
-        trend="negative"
-        trendLabel="5% down"
-      />,
+      <MetricCard heading="Sales" value="200" trend="negative" trendLabel="5% down" />,
     );
     expect(container.querySelector('.pf-metric-card__trend-symbol')).toHaveTextContent('-');
   });
@@ -59,23 +45,13 @@ describe('MetricCard', () => {
   });
 
   it('renders a custom icon node', () => {
-    render(
-      <MetricCard
-        heading="Users"
-        value="500"
-        icon={<span data-testid="custom-icon" />}
-      />,
-    );
+    render(<MetricCard heading="Users" value="500" icon={<span data-testid="custom-icon" />} />);
     expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
   });
 
   it('renders the action slot', () => {
     render(
-      <MetricCard
-        heading="Orders"
-        value="42"
-        action={<button type="button">View all</button>}
-      />,
+      <MetricCard heading="Orders" value="42" action={<button type="button">View all</button>} />,
     );
     expect(screen.getByRole('button', { name: 'View all' })).toBeInTheDocument();
   });

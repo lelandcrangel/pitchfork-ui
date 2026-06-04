@@ -45,8 +45,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     const descriptionId = description ? `${sliderId}-description` : undefined;
     const errorId = error ? `${sliderId}-error` : undefined;
     const describedBy =
-      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') ||
-      undefined;
+      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') || undefined;
 
     const minNumber = Number(min);
     const maxNumber = Number(max);
@@ -54,8 +53,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     const safeMin = Number.isFinite(minNumber) ? minNumber : 0;
     const safeMax = Number.isFinite(maxNumber) ? maxNumber : safeMin + 100;
     const normalizedMax = safeMax >= safeMin ? safeMax : safeMin;
-    const normalizedStep =
-      Number.isFinite(stepNumber) && stepNumber > 0 ? stepNumber : 1;
+    const normalizedStep = Number.isFinite(stepNumber) && stepNumber > 0 ? stepNumber : 1;
 
     const isControlled = value !== undefined;
     const initialValue = clamp(defaultValue ?? safeMin, safeMin, normalizedMax);
@@ -74,9 +72,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
       return ((currentValue - safeMin) / range) * 100;
     }, [currentValue, normalizedMax, safeMin]);
 
-    const handleChange: React.ChangeEventHandler<HTMLInputElement> = (
-      event,
-    ) => {
+    const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
       const nextValue = Number(event.target.value);
       if (!isControlled) {
         setInternalValue(nextValue);
@@ -91,7 +87,11 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
             {label ? (
               <label className="pf-field__label" htmlFor={sliderId}>
                 {label}
-                {props.required && <span className="pf-field__required" aria-hidden="true">*</span>}
+                {props.required && (
+                  <span className="pf-field__required" aria-hidden="true">
+                    *
+                  </span>
+                )}
               </label>
             ) : (
               <span />

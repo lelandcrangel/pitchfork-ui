@@ -4,41 +4,35 @@ All notable changes to this project are documented below, grouped by date and fe
 
 ## [0.1.4](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.3...react-v0.1.4) (2026-06-04)
 
-
 ### Features
 
-* update documentation and examples for Storybook stories; enhance Card component styling ([4cf3bb2](https://github.com/lelandcrangel/pitchfork-ui/commit/4cf3bb244d9ca846c0d8aaea4b28f035627d7f66))
+- update documentation and examples for Storybook stories; enhance Card component styling ([4cf3bb2](https://github.com/lelandcrangel/pitchfork-ui/commit/4cf3bb244d9ca846c0d8aaea4b28f035627d7f66))
 
 ## [0.1.3](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.2...react-v0.1.3) (2026-06-03)
 
-
 ### Features
 
-* **demo:** initialize demo app with basic structure and components ([f036b95](https://github.com/lelandcrangel/pitchfork-ui/commit/f036b959f8cb4dd9d02289109d6cdd2d246c272e))
-
+- **demo:** initialize demo app with basic structure and components ([f036b95](https://github.com/lelandcrangel/pitchfork-ui/commit/f036b959f8cb4dd9d02289109d6cdd2d246c272e))
 
 ### Bug Fixes
 
-* **RadarChart:** ensure SVG overflow is visible ([260d5bd](https://github.com/lelandcrangel/pitchfork-ui/commit/260d5bde5d9a610b2f6098252a695b3fab77b23e))
+- **RadarChart:** ensure SVG overflow is visible ([260d5bd](https://github.com/lelandcrangel/pitchfork-ui/commit/260d5bde5d9a610b2f6098252a695b3fab77b23e))
 
 ## [0.1.2](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.1...react-v0.1.2) (2026-06-02)
 
-
 ### Features
 
-* enhance Line & Bar Chart stories with interactive examples and improve padding in LineBarChart component ([3717589](https://github.com/lelandcrangel/pitchfork-ui/commit/3717589fd33880de6087a9644c7826eca9754748))
+- enhance Line & Bar Chart stories with interactive examples and improve padding in LineBarChart component ([3717589](https://github.com/lelandcrangel/pitchfork-ui/commit/3717589fd33880de6087a9644c7826eca9754748))
 
 ## [0.1.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.0...react-v0.1.1) (2026-06-02)
 
-
 ### Features
 
-* update changelog with accessibility improvements and add todo for dark mode implementation ([b8ab13f](https://github.com/lelandcrangel/pitchfork-ui/commit/b8ab13f4cfea0e275466dcb293ffce875a816a3e))
-
+- update changelog with accessibility improvements and add todo for dark mode implementation ([b8ab13f](https://github.com/lelandcrangel/pitchfork-ui/commit/b8ab13f4cfea0e275466dcb293ffce875a816a3e))
 
 ### Bug Fixes
 
-* update progress indicators to use accent color for fill and stroke ([d55ee7e](https://github.com/lelandcrangel/pitchfork-ui/commit/d55ee7e1e5b25ae6265f37b44780d2d391f1f16c))
+- update progress indicators to use accent color for fill and stroke ([d55ee7e](https://github.com/lelandcrangel/pitchfork-ui/commit/d55ee7e1e5b25ae6265f37b44780d2d391f1f16c))
 
 ## [2026-06-02]
 

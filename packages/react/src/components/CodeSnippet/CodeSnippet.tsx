@@ -4,10 +4,7 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './CodeSnippet.css';
 
-export interface CodeSnippetProps extends Omit<
-  React.HTMLAttributes<HTMLElement>,
-  'title'
-> {
+export interface CodeSnippetProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
   code: string;
   language?: string;
   title?: React.ReactNode;
@@ -18,22 +15,21 @@ export interface CodeSnippetProps extends Omit<
   onCodeCopy?: (code: string) => void;
 }
 
-export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(
-  function CodeSnippet(
-    {
-      className,
-      code,
-      language,
-      title,
-      showLineNumbers = false,
-      maxHeight,
-      copyLabel = 'Copy',
-      copiedLabel = 'Copied',
-      onCodeCopy,
-      ...props
-    },
-    ref,
-  ) {
+export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(function CodeSnippet(
+  {
+    className,
+    code,
+    language,
+    title,
+    showLineNumbers = false,
+    maxHeight,
+    copyLabel = 'Copy',
+    copiedLabel = 'Copied',
+    onCodeCopy,
+    ...props
+  },
+  ref,
+) {
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const liveRegionId = useId();
@@ -71,12 +67,8 @@ export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(
       {(title || language) && (
         <figcaption className="pf-code-snippet__header">
           <div className="pf-code-snippet__meta">
-            {title ? (
-              <span className="pf-code-snippet__title">{title}</span>
-            ) : null}
-            {language ? (
-              <span className="pf-code-snippet__language">{language}</span>
-            ) : null}
+            {title ? <span className="pf-code-snippet__title">{title}</span> : null}
+            {language ? <span className="pf-code-snippet__language">{language}</span> : null}
           </div>
           <button
             type="button"
@@ -108,18 +100,8 @@ export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(
         </div>
       ) : null}
 
-      <Highlight
-        code={code}
-        language={(language as Language) || 'tsx'}
-        theme={themes.vsDark}
-      >
-        {({
-          className: prismClass,
-          style,
-          tokens,
-          getLineProps,
-          getTokenProps,
-        }) => (
+      <Highlight code={code} language={(language as Language) || 'tsx'} theme={themes.vsDark}>
+        {({ className: prismClass, style, tokens, getLineProps, getTokenProps }) => (
           <pre
             className={cx('pf-code-snippet__pre', prismClass)}
             style={{
@@ -133,10 +115,7 @@ export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(
                   <tbody>
                     {tokens.map((line, i) => (
                       <tr key={i}>
-                        <td
-                          className="pf-code-snippet__line-number"
-                          aria-hidden
-                        >
+                        <td className="pf-code-snippet__line-number" aria-hidden>
                           {i + 1}
                         </td>
                         <td className="pf-code-snippet__line-content">
@@ -167,11 +146,7 @@ export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(
         )}
       </Highlight>
 
-      <span
-        id={liveRegionId}
-        className="pf-code-snippet__sr-only"
-        aria-live="polite"
-      >
+      <span id={liveRegionId} className="pf-code-snippet__sr-only" aria-live="polite">
         {copyError ? 'Copy failed' : copied ? copiedLabel : ''}
       </span>
     </figure>

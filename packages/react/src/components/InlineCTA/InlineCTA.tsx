@@ -14,38 +14,31 @@ export interface InlineCTAProps extends React.HTMLAttributes<HTMLDivElement> {
   tone?: InlineCTATone;
 }
 
-export const InlineCTA = forwardRef<HTMLDivElement, InlineCTAProps>(
-  function InlineCTA(
-    {
-      className,
-      heading,
-      description,
-      action,
-      icon,
-      iconName = 'circle-question',
-      tone = 'default',
-      children,
-      ...props
-    },
-    ref,
-  ) {
+export const InlineCTA = forwardRef<HTMLDivElement, InlineCTAProps>(function InlineCTA(
+  {
+    className,
+    heading,
+    description,
+    action,
+    icon,
+    iconName = 'circle-question',
+    tone = 'default',
+    children,
+    ...props
+  },
+  ref,
+) {
   const resolvedIcon = icon ?? <Icon name={iconName} aria-hidden />;
 
   return (
-    <div
-      ref={ref}
-      className={cx('pf-inline-cta', `pf-inline-cta--${tone}`, className)}
-      {...props}
-    >
+    <div ref={ref} className={cx('pf-inline-cta', `pf-inline-cta--${tone}`, className)} {...props}>
       <span className="pf-inline-cta__icon" aria-hidden>
         {resolvedIcon}
       </span>
 
       <div className="pf-inline-cta__content">
         {heading ? <p className="pf-inline-cta__heading">{heading}</p> : null}
-        {description ? (
-          <p className="pf-inline-cta__description">{description}</p>
-        ) : null}
+        {description ? <p className="pf-inline-cta__description">{description}</p> : null}
         {children}
       </div>
 

@@ -11,8 +11,7 @@ const meta = {
     placeholder: 'Write product details...',
     minHeight: 160,
     characterMax: 220,
-    defaultValue:
-      '<p><strong>Pitchfork UI</strong> helps teams ship faster.</p>',
+    defaultValue: '<p><strong>Pitchfork UI</strong> helps teams ship faster.</p>',
     disabled: false,
   },
   argTypes: {

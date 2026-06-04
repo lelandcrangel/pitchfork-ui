@@ -8,8 +8,7 @@ const meta = {
   args: {
     eyebrow: 'Overview',
     heading: 'Team activity',
-    description:
-      'Review status, ownership, and delivery metrics for this section.',
+    description: 'Review status, ownership, and delivery metrics for this section.',
     divider: true,
     align: 'between',
     metadata: <Badge variant="brand">Live</Badge>,

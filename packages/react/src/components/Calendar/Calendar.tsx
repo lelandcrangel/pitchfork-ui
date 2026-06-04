@@ -7,9 +7,7 @@ import './Calendar.css';
 const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const;
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, month) => {
   const date = new Date(2024, month, 1);
-  const label = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(
-    date,
-  );
+  const label = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
   return { value: month, label };
 });
 
@@ -60,10 +58,7 @@ const buildCalendarDays = (monthDate: Date) => {
   });
 };
 
-export interface CalendarProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'defaultValue'
-> {
+export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
   value?: Date;
   defaultValue?: Date;
   onValueChange?: (value: Date) => void;
@@ -77,41 +72,35 @@ export interface CalendarProps extends Omit<
   endYear?: number;
 }
 
-export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
-  function Calendar(
-    {
-      className,
-      value,
-      defaultValue,
-      onValueChange,
-      autoSelectToday = true,
-      label,
-      description,
-      error,
-      disabledDates,
-      showOutsideDays = true,
-      startYear,
-      endYear,
-      'aria-describedby': ariaDescribedBy,
-      ...props
-    },
-    ref,
-  ) {
+export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calendar(
+  {
+    className,
+    value,
+    defaultValue,
+    onValueChange,
+    autoSelectToday = true,
+    label,
+    description,
+    error,
+    disabledDates,
+    showOutsideDays = true,
+    startYear,
+    endYear,
+    'aria-describedby': ariaDescribedBy,
+    ...props
+  },
+  ref,
+) {
   const generatedId = useId();
   const calendarId = props.id ?? generatedId;
   const descriptionId = description ? `${calendarId}-description` : undefined;
   const errorId = error ? `${calendarId}-error` : undefined;
   const describedBy =
-    [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') ||
-    undefined;
+    [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') || undefined;
 
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<Date | undefined>(
-    defaultValue
-      ? toMidday(defaultValue)
-      : autoSelectToday
-        ? toMidday(new Date())
-        : undefined,
+    defaultValue ? toMidday(defaultValue) : autoSelectToday ? toMidday(new Date()) : undefined,
   );
   const selectedDate = isControlled ? value : internalValue;
 
@@ -171,11 +160,9 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
   }, [yearRange.end, yearRange.start]);
 
   const isPrevMonthDisabled =
-    displayMonth.getFullYear() === yearRange.start &&
-    displayMonth.getMonth() === 0;
+    displayMonth.getFullYear() === yearRange.start && displayMonth.getMonth() === 0;
   const isNextMonthDisabled =
-    displayMonth.getFullYear() === yearRange.end &&
-    displayMonth.getMonth() === 11;
+    displayMonth.getFullYear() === yearRange.end && displayMonth.getMonth() === 11;
 
   const dayItems = useMemo(() => {
     return buildCalendarDays(displayMonth);
@@ -208,11 +195,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
         ref={ref}
         {...props}
         id={calendarId}
-        className={cx(
-          'pf-calendar',
-          error && 'pf-calendar--invalid',
-          className,
-        )}
+        className={cx('pf-calendar', error && 'pf-calendar--invalid', className)}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
       >
@@ -223,9 +206,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
             aria-label="Previous month"
             disabled={isPrevMonthDisabled}
             onClick={() => {
-              setDisplayMonth((current) =>
-                clampToYearRange(addMonths(current, -1)),
-              );
+              setDisplayMonth((current) => clampToYearRange(addMonths(current, -1)));
             }}
           >
             <Icon name="square-caret-left" aria-hidden />
@@ -240,9 +221,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                 label: month.label,
                 onSelect: () => {
                   setDisplayMonth((current) =>
-                    clampToYearRange(
-                      new Date(current.getFullYear(), month.value, 1, 12),
-                    ),
+                    clampToYearRange(new Date(current.getFullYear(), month.value, 1, 12)),
                   );
                 },
                 disabled: false,
@@ -274,9 +253,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
             aria-label="Next month"
             disabled={isNextMonthDisabled}
             onClick={() => {
-              setDisplayMonth((current) =>
-                clampToYearRange(addMonths(current, 1)),
-              );
+              setDisplayMonth((current) => clampToYearRange(addMonths(current, 1)));
             }}
           >
             <Icon name="square-caret-right" aria-hidden />
@@ -297,19 +274,13 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
           {Array.from({ length: 6 }, (_, week) => (
             <div key={week} role="row" style={{ display: 'contents' }}>
               {dayItems.slice(week * 7, (week + 1) * 7).map(({ date, inCurrentMonth }) => {
-                const isSelected = selectedDate
-                  ? isSameDay(selectedDate, date)
-                  : false;
+                const isSelected = selectedDate ? isSameDay(selectedDate, date) : false;
                 const isToday = isSameDay(today, date);
                 const isDisabled = Boolean(disabledDates?.(date));
 
                 if (!showOutsideDays && !inCurrentMonth) {
                   return (
-                    <span
-                      key={date.toISOString()}
-                      className="pf-calendar__day-empty"
-                      aria-hidden
-                    />
+                    <span key={date.toISOString()} className="pf-calendar__day-empty" aria-hidden />
                   );
                 }
 
@@ -324,7 +295,11 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
                       isToday && 'pf-calendar__day--today',
                       isSelected && 'pf-calendar__day--selected',
                     )}
-                    aria-label={new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(date)}
+                    aria-label={new Intl.DateTimeFormat('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    }).format(date)}
                     aria-selected={isSelected}
                     aria-current={isToday ? 'date' : undefined}
                     disabled={isDisabled}

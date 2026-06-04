@@ -8,8 +8,7 @@ const meta = {
   args: {
     eyebrow: 'Overview',
     heading: 'Analytics workspace',
-    description:
-      'Monitor team activity, exports, and performance from a single view.',
+    description: 'Monitor team activity, exports, and performance from a single view.',
     breadcrumbs: [
       { label: 'Home', href: '#' },
       { label: 'Workspace', href: '#' },

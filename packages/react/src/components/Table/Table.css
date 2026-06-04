@@ -88,11 +88,7 @@
   border-bottom: 0;
 }
 
-.pf-table--striped
-  .pf-table__native
-  tbody
-  tr:nth-child(even)
-  .pf-table__body-cell {
+.pf-table--striped .pf-table__native tbody tr:nth-child(even) .pf-table__body-cell {
   background: color-mix(in srgb, var(--pf-table-bg-subtle) 55%, transparent);
 }
 
@@ -128,4 +124,3 @@
 .pf-table--dense .pf-table__empty {
   padding-block: var(--space-3);
 }
-

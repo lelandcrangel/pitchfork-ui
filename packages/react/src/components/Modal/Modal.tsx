@@ -7,10 +7,7 @@ import './Modal.css';
 
 export type ModalSize = 'sm' | 'md' | 'lg';
 
-export interface ModalProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  'title'
-> {
+export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   open: boolean;
   onOpenChange?: (open: boolean) => void;
   title?: React.ReactNode;

@@ -26,24 +26,18 @@ describe('Tabs', () => {
 
   it('selects the first enabled tab by default', () => {
     render(<Tabs items={items} />);
-    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
-      'aria-selected', 'true',
-    );
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('selects the defaultValue tab in uncontrolled mode', () => {
     render(<Tabs items={items} defaultValue="details" />);
-    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute(
-      'aria-selected', 'true',
-    );
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText('Details content')).toBeInTheDocument();
   });
 
   it('reflects the controlled value', () => {
     render(<Tabs items={items} value="details" onValueChange={vi.fn()} />);
-    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute(
-      'aria-selected', 'true',
-    );
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText('Details content')).toBeInTheDocument();
   });
 
@@ -59,9 +53,7 @@ describe('Tabs', () => {
 
   it('marks non-selected tabs with aria-selected=false', () => {
     render(<Tabs items={items} />);
-    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute(
-      'aria-selected', 'false',
-    );
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'false');
   });
 
   // ─── Tab switching ───────────────────────────────────────────────────────
@@ -70,9 +62,7 @@ describe('Tabs', () => {
     const user = userEvent.setup();
     render(<Tabs items={items} />);
     await user.click(screen.getByRole('tab', { name: 'Details' }));
-    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute(
-      'aria-selected', 'true',
-    );
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText('Details content')).toBeInTheDocument();
     expect(screen.queryByText('Overview content')).not.toBeInTheDocument();
   });
@@ -93,9 +83,7 @@ describe('Tabs', () => {
     screen.getByRole('tab', { name: 'Overview' }).focus();
     await user.keyboard('{ArrowRight}');
     expect(screen.getByRole('tab', { name: 'Details' })).toHaveFocus();
-    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute(
-      'aria-selected', 'true',
-    );
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('moves to the previous tab on ArrowLeft', async () => {
@@ -104,9 +92,7 @@ describe('Tabs', () => {
     screen.getByRole('tab', { name: 'Details' }).focus();
     await user.keyboard('{ArrowLeft}');
     expect(screen.getByRole('tab', { name: 'Overview' })).toHaveFocus();
-    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
-      'aria-selected', 'true',
-    );
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('wraps ArrowRight from last enabled tab to first', async () => {

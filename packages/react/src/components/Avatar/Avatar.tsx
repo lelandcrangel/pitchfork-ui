@@ -28,10 +28,7 @@ const getInitials = (name?: string) => {
 };
 
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
-  (
-    { src, alt, name, size = 'md', status, className, children, ...props },
-    ref,
-  ) => {
+  ({ src, alt, name, size = 'md', status, className, children, ...props }, ref) => {
     const initials = children ?? getInitials(name);
 
     return (
@@ -43,11 +40,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
         {...props}
       >
         {src ? (
-          <img
-            className="pf-avatar__image"
-            src={src}
-            alt={alt ?? name ?? 'Avatar'}
-          />
+          <img className="pf-avatar__image" src={src} alt={alt ?? name ?? 'Avatar'} />
         ) : (
           <span className="pf-avatar__fallback" aria-hidden>
             {initials}
@@ -55,10 +48,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
         )}
 
         {status ? (
-          <span
-            className={cx('pf-avatar__status', `pf-avatar__status--${status}`)}
-            aria-hidden
-          />
+          <span className={cx('pf-avatar__status', `pf-avatar__status--${status}`)} aria-hidden />
         ) : null}
       </span>
     );

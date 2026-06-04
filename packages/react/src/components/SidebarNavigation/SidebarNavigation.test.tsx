@@ -11,18 +11,14 @@ const sections: SidebarNavigationSection[] = [
     ],
   },
   {
-    items: [
-      { label: 'Help', href: '/help' },
-    ],
+    items: [{ label: 'Help', href: '/help' }],
   },
 ];
 
 describe('SidebarNavigation', () => {
   it('renders a nav landmark', () => {
     render(<SidebarNavigation sections={sections} />);
-    expect(
-      screen.getByRole('navigation', { name: 'Sidebar navigation' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Sidebar navigation' })).toBeInTheDocument();
   });
 
   it('renders all item labels', () => {
@@ -54,42 +50,26 @@ describe('SidebarNavigation', () => {
 
   it('renders a button for items with onClick but no href', () => {
     const onClick = vi.fn();
-    render(
-      <SidebarNavigation
-        sections={[{ items: [{ label: 'Action', onClick }] }]}
-      />,
-    );
+    render(<SidebarNavigation sections={[{ items: [{ label: 'Action', onClick }] }]} />);
     expect(screen.getByRole('button', { name: /Action/ })).toBeInTheDocument();
   });
 
   it('disables a button item when disabled=true', () => {
     render(
       <SidebarNavigation
-        sections={[
-          { items: [{ label: 'Locked', onClick: vi.fn(), disabled: true }] },
-        ]}
+        sections={[{ items: [{ label: 'Locked', onClick: vi.fn(), disabled: true }] }]}
       />,
     );
     expect(screen.getByRole('button', { name: /Locked/ })).toBeDisabled();
   });
 
   it('renders the header slot', () => {
-    render(
-      <SidebarNavigation
-        sections={[]}
-        header={<span data-testid="sidebar-header" />}
-      />,
-    );
+    render(<SidebarNavigation sections={[]} header={<span data-testid="sidebar-header" />} />);
     expect(screen.getByTestId('sidebar-header')).toBeInTheDocument();
   });
 
   it('renders the footer slot', () => {
-    render(
-      <SidebarNavigation
-        sections={[]}
-        footer={<span data-testid="sidebar-footer" />}
-      />,
-    );
+    render(<SidebarNavigation sections={[]} footer={<span data-testid="sidebar-footer" />} />);
     expect(screen.getByTestId('sidebar-footer')).toBeInTheDocument();
   });
 });

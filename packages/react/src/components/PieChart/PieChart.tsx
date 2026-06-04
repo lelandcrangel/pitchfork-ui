@@ -68,11 +68,19 @@ function toConicGradient(segments: PreparedSegment[]): string {
   return `conic-gradient(${stops.join(', ')})`;
 }
 
-export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(
-  function PieChart(
-    { className, data, size = 192, cutout = 0.58, showLegend = true, centerLabel, emptyLabel = 'No data', ...props },
-    ref,
-  ) {
+export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(function PieChart(
+  {
+    className,
+    data,
+    size = 192,
+    cutout = 0.58,
+    showLegend = true,
+    centerLabel,
+    emptyLabel = 'No data',
+    ...props
+  },
+  ref,
+) {
   const segments = prepareSegments(data);
   const hasData = segments.length > 0;
   const chartSize = Math.max(size, 120);
@@ -85,10 +93,7 @@ export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(
   return (
     <div ref={ref} className={cx('pf-pie-chart', className)} {...props}>
       <div
-        className={cx(
-          'pf-pie-chart__visual',
-          !hasData && 'pf-pie-chart__visual--empty',
-        )}
+        className={cx('pf-pie-chart__visual', !hasData && 'pf-pie-chart__visual--empty')}
         style={{
           width: chartSize,
           height: chartSize,
@@ -97,10 +102,7 @@ export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(
         role="img"
         aria-label="Pie chart"
       >
-        <div
-          className="pf-pie-chart__center"
-          style={{ width: centerSize, height: centerSize }}
-        >
+        <div className="pf-pie-chart__center" style={{ width: centerSize, height: centerSize }}>
           {hasData ? centerLabel : emptyLabel}
         </div>
       </div>
@@ -108,21 +110,14 @@ export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(
       {showLegend && hasData ? (
         <ul className="pf-pie-chart__legend">
           {segments.map((segment, index) => (
-            <li
-              className="pf-pie-chart__legend-item"
-              key={`${index}-${segment.value}`}
-            >
+            <li className="pf-pie-chart__legend-item" key={`${index}-${segment.value}`}>
               <span
                 className="pf-pie-chart__legend-dot"
                 style={{ background: segment.color }}
                 aria-hidden
               />
-              <span className="pf-pie-chart__legend-label">
-                {segment.label}
-              </span>
-              <span className="pf-pie-chart__legend-value">
-                {Math.round(segment.percentage)}%
-              </span>
+              <span className="pf-pie-chart__legend-label">{segment.label}</span>
+              <span className="pf-pie-chart__legend-value">{Math.round(segment.percentage)}%</span>
             </li>
           ))}
         </ul>

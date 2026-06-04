@@ -26,13 +26,9 @@ export interface SidebarNavigationProps extends React.HTMLAttributes<HTMLElement
 function renderItem(item: SidebarNavigationItem, key: string) {
   const content = (
     <>
-      {item.icon ? (
-        <span className="pf-sidebar-navigation__icon">{item.icon}</span>
-      ) : null}
+      {item.icon ? <span className="pf-sidebar-navigation__icon">{item.icon}</span> : null}
       <span className="pf-sidebar-navigation__label">{item.label}</span>
-      {item.badge ? (
-        <span className="pf-sidebar-navigation__badge">{item.badge}</span>
-      ) : null}
+      {item.badge ? <span className="pf-sidebar-navigation__badge">{item.badge}</span> : null}
     </>
   );
 
@@ -47,11 +43,7 @@ function renderItem(item: SidebarNavigationItem, key: string) {
       <li className="pf-sidebar-navigation__item" key={key}>
         <a
           href={item.href}
-          onClick={
-            item.onClick as
-              | React.MouseEventHandler<HTMLAnchorElement>
-              | undefined
-          }
+          onClick={item.onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined}
           className={className}
           aria-current={item.active ? 'page' : undefined}
         >
@@ -79,10 +71,7 @@ function renderItem(item: SidebarNavigationItem, key: string) {
 
   return (
     <li className="pf-sidebar-navigation__item" key={key}>
-      <span
-        className={className}
-        aria-current={item.active ? 'page' : undefined}
-      >
+      <span className={className} aria-current={item.active ? 'page' : undefined}>
         {content}
       </span>
     </li>
@@ -91,42 +80,41 @@ function renderItem(item: SidebarNavigationItem, key: string) {
 
 export const SidebarNavigation = forwardRef<HTMLElement, SidebarNavigationProps>(
   function SidebarNavigation(
-    { className, sections, header, footer, 'aria-label': ariaLabel = 'Sidebar navigation', ...props },
+    {
+      className,
+      sections,
+      header,
+      footer,
+      'aria-label': ariaLabel = 'Sidebar navigation',
+      ...props
+    },
     ref,
   ) {
-  return (
-    <aside ref={ref} className={cx('pf-sidebar-navigation', className)} {...props}>
-      {header ? (
-        <div className="pf-sidebar-navigation__header">{header}</div>
-      ) : null}
+    return (
+      <aside ref={ref} className={cx('pf-sidebar-navigation', className)} {...props}>
+        {header ? <div className="pf-sidebar-navigation__header">{header}</div> : null}
 
-      <nav className="pf-sidebar-navigation__nav" aria-label={ariaLabel}>
-        {sections.map((section, sectionIndex) => (
-          <div
-            className="pf-sidebar-navigation__section"
-            key={`section-${sectionIndex}`}
-          >
-            {section.title ? (
-              <p className="pf-sidebar-navigation__section-title">
-                {section.title}
-              </p>
-            ) : null}
+        <nav className="pf-sidebar-navigation__nav" aria-label={ariaLabel}>
+          {sections.map((section, sectionIndex) => (
+            <div className="pf-sidebar-navigation__section" key={`section-${sectionIndex}`}>
+              {section.title ? (
+                <p className="pf-sidebar-navigation__section-title">{section.title}</p>
+              ) : null}
 
-            <ul className="pf-sidebar-navigation__list">
-              {section.items.map((item, itemIndex) => {
-                const key = `${sectionIndex}-${itemIndex}-${typeof item.label === 'string' ? item.label : 'item'}`;
-                return renderItem(item, key);
-              })}
-            </ul>
-          </div>
-        ))}
-      </nav>
+              <ul className="pf-sidebar-navigation__list">
+                {section.items.map((item, itemIndex) => {
+                  const key = `${sectionIndex}-${itemIndex}-${typeof item.label === 'string' ? item.label : 'item'}`;
+                  return renderItem(item, key);
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
 
-      {footer ? (
-        <div className="pf-sidebar-navigation__footer">{footer}</div>
-      ) : null}
-    </aside>
-  );
-});
+        {footer ? <div className="pf-sidebar-navigation__footer">{footer}</div> : null}
+      </aside>
+    );
+  },
+);
 
 SidebarNavigation.displayName = 'SidebarNavigation';

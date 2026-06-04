@@ -1,11 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useId,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { forwardRef, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 import { composeDescribedBy } from '../../a11y';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
@@ -52,10 +45,8 @@ const stripOuterPTags = (html: string): string => {
   return html;
 };
 
-const normalizeHtml = (value: string | undefined) =>
-  stripOuterPTags(value ?? '');
-const getTextLength = (element: HTMLDivElement) =>
-  element.textContent?.length ?? 0;
+const normalizeHtml = (value: string | undefined) => stripOuterPTags(value ?? '');
+const getTextLength = (element: HTMLDivElement) => element.textContent?.length ?? 0;
 
 export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
   (
@@ -82,14 +73,8 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
     const editorId = id ?? generatedId;
     const descriptionId = description ? `${editorId}-description` : undefined;
     const errorId = error ? `${editorId}-error` : undefined;
-    const countId =
-      typeof characterMax === 'number' ? `${editorId}-count` : undefined;
-    const describedBy = composeDescribedBy(
-      ariaDescribedBy,
-      descriptionId,
-      errorId,
-      countId,
-    );
+    const countId = typeof characterMax === 'number' ? `${editorId}-count` : undefined;
+    const describedBy = composeDescribedBy(ariaDescribedBy, descriptionId, errorId, countId);
     const editorRef = useRef<HTMLDivElement>(null);
     const lastValidHtmlRef = useRef('');
     const [characterCount, setCharacterCount] = useState(0);
@@ -156,7 +141,6 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
         errorId={errorId}
         required={required}
       >
-
         <div
           className={cx(
             'pf-rte',
@@ -165,11 +149,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
             className,
           )}
         >
-          <div
-            className="pf-rte__toolbar"
-            role="toolbar"
-            aria-label="Formatting options"
-          >
+          <div className="pf-rte__toolbar" role="toolbar" aria-label="Formatting options">
             <button
               type="button"
               className="pf-rte__tool"
@@ -258,7 +238,6 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
             {characterCount}/{characterMax}
           </p>
         ) : null}
-
       </FieldWrapper>
     );
   },

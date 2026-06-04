@@ -3,8 +3,7 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Rating.css';
 
-const clampRating = (value: number, max: number) =>
-  Math.min(Math.max(value, 0), max);
+const clampRating = (value: number, max: number) => Math.min(Math.max(value, 0), max);
 
 const getStarFillPercent = (value: number, index: number) => {
   const position = index + 1;
@@ -27,8 +26,10 @@ export interface RatingStarsProps extends React.HTMLAttributes<HTMLDivElement> {
   ariaLabel?: string;
 }
 
-export const RatingStars = forwardRef<HTMLDivElement, RatingStarsProps>(
-  function RatingStars({ value, max = 5, size = 18, showValue = false, ariaLabel, className, ...props }, ref) {
+export const RatingStars = forwardRef<HTMLDivElement, RatingStarsProps>(function RatingStars(
+  { value, max = 5, size = 18, showValue = false, ariaLabel, className, ...props },
+  ref,
+) {
   const clampedValue = clampRating(value, max);
 
   return (
@@ -69,11 +70,7 @@ export const RatingStars = forwardRef<HTMLDivElement, RatingStarsProps>(
           );
         })}
       </div>
-      {showValue ? (
-        <span className="pf-rating-stars__value">
-          {clampedValue.toFixed(1)}
-        </span>
-      ) : null}
+      {showValue ? <span className="pf-rating-stars__value">{clampedValue.toFixed(1)}</span> : null}
     </div>
   );
 });
@@ -86,8 +83,10 @@ export interface RatingBadgeProps extends React.HTMLAttributes<HTMLSpanElement> 
   size?: 'sm' | 'md';
 }
 
-export const RatingBadge = forwardRef<HTMLSpanElement, RatingBadgeProps>(
-  function RatingBadge({ value, max = 5, reviews, size = 'md', className, ...props }, ref) {
+export const RatingBadge = forwardRef<HTMLSpanElement, RatingBadgeProps>(function RatingBadge(
+  { value, max = 5, reviews, size = 'md', className, ...props },
+  ref,
+) {
   const clampedValue = clampRating(value, max);
 
   return (
@@ -103,9 +102,7 @@ export const RatingBadge = forwardRef<HTMLSpanElement, RatingBadgeProps>(
         {max.toFixed(1)}
       </span>
       {typeof reviews === 'number' ? (
-        <span className="pf-rating-badge__reviews">
-          ({reviews.toLocaleString()})
-        </span>
+        <span className="pf-rating-badge__reviews">({reviews.toLocaleString()})</span>
       ) : null}
     </span>
   );

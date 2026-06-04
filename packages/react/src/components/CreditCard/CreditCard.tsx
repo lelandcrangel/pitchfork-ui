@@ -44,16 +44,10 @@ export const CreditCard = forwardRef<HTMLDivElement, CreditCardProps>(
     },
     ref,
   ) => {
-    const displayNumber = masked
-      ? maskCardNumber(cardNumber)
-      : formatCardNumber(cardNumber);
+    const displayNumber = masked ? maskCardNumber(cardNumber) : formatCardNumber(cardNumber);
 
     return (
-      <div
-        ref={ref}
-        className={cx('pf-credit-card', `is-${brand}`, className)}
-        {...props}
-      >
+      <div ref={ref} className={cx('pf-credit-card', `is-${brand}`, className)} {...props}>
         <div className="top-row">
           <span className="chip" aria-hidden />
           <span className="brand">{brand.toUpperCase()}</span>

@@ -19,12 +19,7 @@ describe('PageHeader', () => {
   });
 
   it('renders the actions slot', () => {
-    render(
-      <PageHeader
-        heading="Dashboard"
-        actions={<button type="button">Export</button>}
-      />,
-    );
+    render(<PageHeader heading="Dashboard" actions={<button type="button">Export</button>} />);
     expect(screen.getByRole('button', { name: 'Export' })).toBeInTheDocument();
   });
 
@@ -32,10 +27,7 @@ describe('PageHeader', () => {
     render(
       <PageHeader
         heading="Dashboard"
-        breadcrumbs={[
-          { label: 'Home', href: '/' },
-          { label: 'Dashboard' },
-        ]}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Dashboard' }]}
       />,
     );
     expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();

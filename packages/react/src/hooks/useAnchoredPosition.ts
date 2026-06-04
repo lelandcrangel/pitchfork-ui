@@ -44,8 +44,7 @@ export function useAnchoredPosition({
         floatingRect?.width ?? 0,
       );
       const maxLeft = window.innerWidth - viewportPadding - width;
-      const alignedLeft =
-        align === 'end' ? anchorRect.right - width : anchorRect.left;
+      const alignedLeft = align === 'end' ? anchorRect.right - width : anchorRect.left;
       const left =
         maxLeft >= viewportPadding
           ? Math.min(Math.max(alignedLeft, viewportPadding), maxLeft)
@@ -57,8 +56,7 @@ export function useAnchoredPosition({
       const canFlip =
         flip &&
         floatingHeight > 0 &&
-        window.innerHeight - anchorRect.bottom <
-          floatingHeight + offset + viewportPadding;
+        window.innerHeight - anchorRect.bottom < floatingHeight + offset + viewportPadding;
       const rawTop = canFlip ? aboveTop : belowTop;
       const maxTop = window.innerHeight - viewportPadding - floatingHeight;
       const top =

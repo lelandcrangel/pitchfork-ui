@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import {
-  Button,
-  Input,
-  Modal,
-  ModalBody,
-  ModalFooter,
-} from '@pitchfork-ui/react';
+import { Button, Input, Modal, ModalBody, ModalFooter } from '@pitchfork-ui/react';
 
 const meta = {
   title: 'Examples/Modals',
@@ -101,16 +95,15 @@ function LargeContentStory() {
       >
         <div>
           <p>
-            This release improves search relevance, upload reliability, and
-            dashboard performance.
+            This release improves search relevance, upload reliability, and dashboard performance.
           </p>
           <p>
-            Teams can now manage permissions more granularly and review audit
-            activity from one place.
+            Teams can now manage permissions more granularly and review audit activity from one
+            place.
           </p>
           <p>
-            Use a larger modal when the content requires more reading space but
-            should stay in context.
+            Use a larger modal when the content requires more reading space but should stay in
+            context.
           </p>
         </div>
       </Modal>

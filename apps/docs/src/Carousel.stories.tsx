@@ -49,8 +49,7 @@ const slides = demoSlides.map((slide) => (
     <h4 style={{ fontSize: '16px', margin: 0 }}>{slide.title}</h4>
     <p
       style={{
-        color:
-          'var(--pf-carousel-slide-muted-text, var(--color-semantic-text-muted))',
+        color: 'var(--pf-carousel-slide-muted-text, var(--color-semantic-text-muted))',
         margin: 0,
         maxWidth: '32ch',
       }}

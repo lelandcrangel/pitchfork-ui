@@ -32,7 +32,10 @@ describe('Dropdown', () => {
     render(<Dropdown items={items} label="Actions" />);
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     expect(screen.getByRole('menu')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Actions' })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: 'Actions' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
   });
 
   it('opens the menu on Enter key', async () => {
@@ -142,9 +145,7 @@ describe('Dropdown', () => {
   it('does not call onSelect when a disabled item is clicked', async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
-    render(
-      <Dropdown items={[{ label: 'Delete', onSelect, disabled: true }]} label="Actions" />,
-    );
+    render(<Dropdown items={[{ label: 'Delete', onSelect, disabled: true }]} label="Actions" />);
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(screen.getByRole('menuitem', { name: 'Delete' }));
     expect(onSelect).not.toHaveBeenCalled();
@@ -156,9 +157,7 @@ describe('Dropdown', () => {
     const user = userEvent.setup();
     render(<Dropdown items={items} label="Actions" />);
     await user.click(screen.getByRole('button', { name: 'Actions' }));
-    expect(screen.getByRole('menuitem', { name: 'Edit' })).toHaveClass(
-      'pf-dropdown__item--active',
-    );
+    expect(screen.getByRole('menuitem', { name: 'Edit' })).toHaveClass('pf-dropdown__item--active');
   });
 
   it('moves the active item on ArrowDown', async () => {

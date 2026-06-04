@@ -12,32 +12,22 @@ describe('RatingStars', () => {
 
   it('generates a default aria-label from value and max', () => {
     render(<RatingStars value={3} max={5} />);
-    expect(screen.getByRole('img')).toHaveAttribute(
-      'aria-label',
-      'Rating 3 out of 5',
-    );
+    expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'Rating 3 out of 5');
   });
 
   it('uses a custom aria-label when provided', () => {
     render(<RatingStars value={4} ariaLabel="Product rating: 4 stars" />);
-    expect(screen.getByRole('img')).toHaveAttribute(
-      'aria-label',
-      'Product rating: 4 stars',
-    );
+    expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'Product rating: 4 stars');
   });
 
   it('renders max number of stars', () => {
     const { container } = render(<RatingStars value={3} max={5} />);
-    expect(
-      container.querySelectorAll('.pf-rating-stars__star'),
-    ).toHaveLength(5);
+    expect(container.querySelectorAll('.pf-rating-stars__star')).toHaveLength(5);
   });
 
   it('renders a custom max', () => {
     const { container } = render(<RatingStars value={2} max={10} />);
-    expect(
-      container.querySelectorAll('.pf-rating-stars__star'),
-    ).toHaveLength(10);
+    expect(container.querySelectorAll('.pf-rating-stars__star')).toHaveLength(10);
   });
 
   // ─── Fill percent ────────────────────────────────────────────────────────
@@ -67,18 +57,12 @@ describe('RatingStars', () => {
 
   it('clamps value below 0 to 0', () => {
     render(<RatingStars value={-2} max={5} />);
-    expect(screen.getByRole('img')).toHaveAttribute(
-      'aria-label',
-      'Rating 0 out of 5',
-    );
+    expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'Rating 0 out of 5');
   });
 
   it('clamps value above max to max', () => {
     render(<RatingStars value={10} max={5} />);
-    expect(screen.getByRole('img')).toHaveAttribute(
-      'aria-label',
-      'Rating 5 out of 5',
-    );
+    expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'Rating 5 out of 5');
   });
 
   it('clamps value to max and sets all stars to 100% fill', () => {

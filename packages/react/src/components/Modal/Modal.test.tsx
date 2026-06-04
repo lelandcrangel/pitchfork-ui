@@ -7,9 +7,7 @@ import { Modal } from './Modal';
 beforeEach(() => {
   // getFocusableElements filters on offsetParent !== null, which is always null
   // in jsdom because it has no layout engine. Mock it so focus trap works.
-  vi.spyOn(HTMLElement.prototype, 'offsetParent', 'get').mockReturnValue(
-    document.body,
-  );
+  vi.spyOn(HTMLElement.prototype, 'offsetParent', 'get').mockReturnValue(document.body);
 });
 
 afterEach(() => {
@@ -42,12 +40,20 @@ describe('Modal', () => {
   // ─── Rendering ──────────────────────────────────────────────────────────
 
   it('renders nothing when open is false', () => {
-    render(<Modal open={false} onOpenChange={vi.fn()}>Content</Modal>);
+    render(
+      <Modal open={false} onOpenChange={vi.fn()}>
+        Content
+      </Modal>,
+    );
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('renders a dialog when open is true', () => {
-    render(<Modal open title="My modal" onOpenChange={vi.fn()}>Content</Modal>);
+    render(
+      <Modal open title="My modal" onOpenChange={vi.fn()}>
+        Content
+      </Modal>,
+    );
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByRole('dialog')).toHaveAttribute('aria-modal', 'true');
   });
@@ -63,7 +69,11 @@ describe('Modal', () => {
   });
 
   it('sets aria-labelledby pointing to the title element', () => {
-    render(<Modal open title="Labelled modal" onOpenChange={vi.fn()}>Content</Modal>);
+    render(
+      <Modal open title="Labelled modal" onOpenChange={vi.fn()}>
+        Content
+      </Modal>,
+    );
     const dialog = screen.getByRole('dialog');
     const titleId = screen.getByText('Labelled modal').id;
     expect(dialog).toHaveAttribute('aria-labelledby', titleId);
@@ -99,7 +109,11 @@ describe('Modal', () => {
   });
 
   it('shows the close button by default', () => {
-    render(<Modal open title="T" onOpenChange={vi.fn()}>Content</Modal>);
+    render(
+      <Modal open title="T" onOpenChange={vi.fn()}>
+        Content
+      </Modal>,
+    );
     expect(screen.getByRole('button', { name: 'Close modal' })).toBeInTheDocument();
   });
 
@@ -113,7 +127,11 @@ describe('Modal', () => {
   });
 
   it('applies the size modifier class', () => {
-    render(<Modal open title="T" onOpenChange={vi.fn()} size="lg">Content</Modal>);
+    render(
+      <Modal open title="T" onOpenChange={vi.fn()} size="lg">
+        Content
+      </Modal>,
+    );
     expect(screen.getByRole('dialog')).toHaveClass('pf-modal--lg');
   });
 
@@ -122,7 +140,11 @@ describe('Modal', () => {
   it('calls onOpenChange(false) when the close button is clicked', async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();
-    render(<Modal open title="T" onOpenChange={onOpenChange}>Content</Modal>);
+    render(
+      <Modal open title="T" onOpenChange={onOpenChange}>
+        Content
+      </Modal>,
+    );
     await user.click(screen.getByRole('button', { name: 'Close modal' }));
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
@@ -130,7 +152,11 @@ describe('Modal', () => {
   it('calls onOpenChange(false) on Escape key', async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();
-    render(<Modal open title="T" onOpenChange={onOpenChange}>Content</Modal>);
+    render(
+      <Modal open title="T" onOpenChange={onOpenChange}>
+        Content
+      </Modal>,
+    );
     await user.keyboard('{Escape}');
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
@@ -138,7 +164,11 @@ describe('Modal', () => {
   it('calls onOpenChange(false) when the overlay is clicked', async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn();
-    render(<Modal open title="T" onOpenChange={onOpenChange} closeOnOverlayClick>Content</Modal>);
+    render(
+      <Modal open title="T" onOpenChange={onOpenChange} closeOnOverlayClick>
+        Content
+      </Modal>,
+    );
     const overlay = document.querySelector('.pf-modal__overlay') as HTMLElement;
     await user.click(overlay);
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -160,18 +190,26 @@ describe('Modal', () => {
   // ─── Scroll lock ─────────────────────────────────────────────────────────
 
   it('sets body overflow to hidden when open', () => {
-    render(<Modal open title="T" onOpenChange={vi.fn()}>Content</Modal>);
+    render(
+      <Modal open title="T" onOpenChange={vi.fn()}>
+        Content
+      </Modal>,
+    );
     expect(document.body.style.overflow).toBe('hidden');
   });
 
   it('restores body overflow when modal is closed', () => {
     const { rerender } = render(
-      <Modal open title="T" onOpenChange={vi.fn()}>Content</Modal>,
+      <Modal open title="T" onOpenChange={vi.fn()}>
+        Content
+      </Modal>,
     );
     expect(document.body.style.overflow).toBe('hidden');
 
     rerender(
-      <Modal open={false} title="T" onOpenChange={vi.fn()}>Content</Modal>,
+      <Modal open={false} title="T" onOpenChange={vi.fn()}>
+        Content
+      </Modal>,
     );
     expect(document.body.style.overflow).toBe('');
   });

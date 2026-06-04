@@ -76,9 +76,7 @@ describe('Checkbox', () => {
   });
 
   it('is accessible with indeterminate state via aria-checked', () => {
-    render(
-      <Checkbox label="Select all" aria-checked="mixed" readOnly />,
-    );
+    render(<Checkbox label="Select all" aria-checked="mixed" readOnly />);
     expect(screen.getByRole('checkbox')).toHaveAttribute('aria-checked', 'mixed');
   });
 

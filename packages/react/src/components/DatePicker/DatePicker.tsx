@@ -1,11 +1,7 @@
 import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
-import {
-  useAnchoredPosition,
-  useDisclosure,
-  useOutsideInteraction,
-} from '../../hooks';
+import { useAnchoredPosition, useDisclosure, useOutsideInteraction } from '../../hooks';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import { Calendar } from '../Calendar';
@@ -38,49 +34,40 @@ export interface DatePickerProps extends Omit<
   endYear?: number;
 }
 
-export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
-  function DatePicker(
-    {
-      id,
-      className,
-      value,
-      defaultValue,
-      onValueChange,
-      label,
-      description,
-      error,
-      placeholder = 'Select a date',
-      required = false,
-      disabled = false,
-      allowClear = false,
-      disabledDates,
-      showOutsideDays = true,
-      startYear,
-      endYear,
-      'aria-describedby': ariaDescribedBy,
-      ...props
-    },
-    ref,
-  ) {
+export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function DatePicker(
+  {
+    id,
+    className,
+    value,
+    defaultValue,
+    onValueChange,
+    label,
+    description,
+    error,
+    placeholder = 'Select a date',
+    required = false,
+    disabled = false,
+    allowClear = false,
+    disabledDates,
+    showOutsideDays = true,
+    startYear,
+    endYear,
+    'aria-describedby': ariaDescribedBy,
+    ...props
+  },
+  ref,
+) {
   const generatedId = useId();
   const pickerId = id ?? generatedId;
   const descriptionId = description ? `${pickerId}-description` : undefined;
   const errorId = error ? `${pickerId}-error` : undefined;
-  const describedBy = composeDescribedBy(
-    ariaDescribedBy,
-    descriptionId,
-    errorId,
-  );
+  const describedBy = composeDescribedBy(ariaDescribedBy, descriptionId, errorId);
 
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<Date | undefined>(
     defaultValue ? toMidday(defaultValue) : undefined,
   );
-  const selectedDate = isControlled
-    ? value
-      ? toMidday(value)
-      : undefined
-    : internalValue;
+  const selectedDate = isControlled ? (value ? toMidday(value) : undefined) : internalValue;
 
   const disclosure = useDisclosure({ disabled });
   const { isOpen } = disclosure;
@@ -156,10 +143,7 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(
             ref={triggerRef}
             id={`${pickerId}-trigger`}
             type="button"
-            className={cx(
-              'pf-date-picker__trigger',
-              error && 'pf-date-picker__trigger--invalid',
-            )}
+            className={cx('pf-date-picker__trigger', error && 'pf-date-picker__trigger--invalid')}
             disabled={disabled}
             aria-invalid={error ? true : undefined}
             aria-haspopup="dialog"

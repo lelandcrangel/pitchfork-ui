@@ -13,8 +13,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     heading: 'Finalize this section',
-    description:
-      'Changes are autosaved, but publishing makes them visible to users.',
+    description: 'Changes are autosaved, but publishing makes them visible to users.',
     actions: (
       <>
         <Button size="sm" variant="secondary">

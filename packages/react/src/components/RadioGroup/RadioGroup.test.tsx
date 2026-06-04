@@ -38,9 +38,7 @@ describe('RadioGroup', () => {
   });
 
   it('renders option descriptions when provided', () => {
-    const withDesc = [
-      { value: 'a', label: 'Option A', description: 'Good choice' },
-    ];
+    const withDesc = [{ value: 'a', label: 'Option A', description: 'Good choice' }];
     render(<RadioGroup options={withDesc} />);
     expect(screen.getByText('Good choice')).toBeInTheDocument();
   });
@@ -118,16 +116,12 @@ describe('RadioGroup', () => {
 
   it('applies the horizontal modifier class when orientation is horizontal', () => {
     render(<RadioGroup options={options} orientation="horizontal" />);
-    expect(document.querySelector('.pf-radio-group')).toHaveClass(
-      'pf-radio-group--horizontal',
-    );
+    expect(document.querySelector('.pf-radio-group')).toHaveClass('pf-radio-group--horizontal');
   });
 
   it('does not apply the horizontal class for vertical orientation (default)', () => {
     render(<RadioGroup options={options} />);
-    expect(document.querySelector('.pf-radio-group')).not.toHaveClass(
-      'pf-radio-group--horizontal',
-    );
+    expect(document.querySelector('.pf-radio-group')).not.toHaveClass('pf-radio-group--horizontal');
   });
 
   // ─── Fieldset group association ──────────────────────────────────────────

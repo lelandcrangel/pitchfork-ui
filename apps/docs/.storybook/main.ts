@@ -5,15 +5,10 @@ import { fileURLToPath } from 'node:url';
 import customMedia from 'postcss-custom-media';
 
 const storybookDir = dirname(fileURLToPath(import.meta.url));
-const reactSourceEntry = resolve(
-  storybookDir,
-  '../../../packages/react/src/index.ts',
-);
+const reactSourceEntry = resolve(storybookDir, '../../../packages/react/src/index.ts');
 
 const rawBasePath = process.env.STORYBOOK_BASE_PATH ?? '/';
-const withLeadingSlash = rawBasePath.startsWith('/')
-  ? rawBasePath
-  : `/${rawBasePath}`;
+const withLeadingSlash = rawBasePath.startsWith('/') ? rawBasePath : `/${rawBasePath}`;
 const storybookBasePath = withLeadingSlash.endsWith('/')
   ? withLeadingSlash
   : `${withLeadingSlash}/`;

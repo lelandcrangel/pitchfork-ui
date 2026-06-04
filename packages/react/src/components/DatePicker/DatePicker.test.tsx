@@ -23,23 +23,17 @@ describe('DatePicker', () => {
 
   it('renders a trigger button with the placeholder', () => {
     render(<DatePicker placeholder="Pick a date" label="Date" />);
-    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent(
-      'Pick a date',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Pick a date');
   });
 
   it('shows a formatted date when a controlled value is set', () => {
     render(<DatePicker value={JUNE_15} label="Date" />);
-    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent(
-      'Jun 15, 2024',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Jun 15, 2024');
   });
 
   it('shows a formatted date from defaultValue (uncontrolled)', () => {
     render(<DatePicker defaultValue={JUNE_15} label="Date" />);
-    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent(
-      'Jun 15, 2024',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Jun 15, 2024');
   });
 
   it('has aria-haspopup=dialog on the trigger', () => {
@@ -57,10 +51,7 @@ describe('DatePicker', () => {
     render(<DatePicker label="Date" value={JUNE_1} />);
     await user.click(screen.getByRole('button', { name: /Date/i }));
     expect(screen.getByRole('dialog', { name: /calendar/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute('aria-expanded', 'true');
   });
 
   it('opens the calendar on Enter key', async () => {
@@ -93,9 +84,7 @@ describe('DatePicker', () => {
   it('calls onValueChange with the selected Date when a day is clicked', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    render(
-      <DatePicker label="Date" value={JUNE_1} onValueChange={onValueChange} />,
-    );
+    render(<DatePicker label="Date" value={JUNE_1} onValueChange={onValueChange} />);
     await user.click(screen.getByRole('button', { name: /Date/i }));
     await user.click(getDayCell(20));
     expect(onValueChange).toHaveBeenCalledOnce();
@@ -109,9 +98,7 @@ describe('DatePicker', () => {
     render(<DatePicker label="Date" defaultValue={JUNE_1} />);
     await user.click(screen.getByRole('button', { name: /Date/i }));
     await user.click(getDayCell(20));
-    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent(
-      'Jun 20, 2024',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Jun 20, 2024');
   });
 
   it('marks the selected date in the calendar grid', async () => {
@@ -137,9 +124,7 @@ describe('DatePicker', () => {
   it('calls onValueChange with undefined when clear is clicked', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
-    render(
-      <DatePicker label="Date" value={JUNE_15} allowClear onValueChange={onValueChange} />,
-    );
+    render(<DatePicker label="Date" value={JUNE_15} allowClear onValueChange={onValueChange} />);
     await user.click(screen.getByRole('button', { name: /Clear selected date/i }));
     expect(onValueChange).toHaveBeenCalledWith(undefined);
   });
@@ -148,9 +133,7 @@ describe('DatePicker', () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" defaultValue={JUNE_15} allowClear />);
     await user.click(screen.getByRole('button', { name: /Clear selected date/i }));
-    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent(
-      'Select a date',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Select a date');
   });
 
   // ─── Disabled ────────────────────────────────────────────────────────────
@@ -184,18 +167,12 @@ describe('DatePicker', () => {
   it('shows an error message and marks the trigger as aria-invalid', () => {
     render(<DatePicker label="Date" error="Date is required" />);
     expect(screen.getByText('Date is required')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute(
-      'aria-invalid',
-      'true',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('shows the required asterisk and sets aria-required on the trigger', () => {
     render(<DatePicker label="Date" required />);
     expect(screen.getByText('*')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute(
-      'aria-required',
-      'true',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute('aria-required', 'true');
   });
 });

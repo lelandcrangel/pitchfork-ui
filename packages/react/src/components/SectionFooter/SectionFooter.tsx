@@ -10,20 +10,19 @@ export interface SectionFooterProps extends React.HTMLAttributes<HTMLElement> {
   align?: 'start' | 'between' | 'end';
 }
 
-export const SectionFooter = forwardRef<HTMLElement, SectionFooterProps>(
-  function SectionFooter(
-    {
-      className,
-      heading,
-      description,
-      actions,
-      divider = true,
-      align = 'between',
-      children,
-      ...props
-    },
-    ref,
-  ) {
+export const SectionFooter = forwardRef<HTMLElement, SectionFooterProps>(function SectionFooter(
+  {
+    className,
+    heading,
+    description,
+    actions,
+    divider = true,
+    align = 'between',
+    children,
+    ...props
+  },
+  ref,
+) {
   return (
     <footer
       ref={ref}
@@ -36,18 +35,12 @@ export const SectionFooter = forwardRef<HTMLElement, SectionFooterProps>(
       {...props}
     >
       <div className="pf-section-footer__content">
-        {heading ? (
-          <h3 className="pf-section-footer__heading">{heading}</h3>
-        ) : null}
-        {description ? (
-          <p className="pf-section-footer__description">{description}</p>
-        ) : null}
+        {heading ? <h3 className="pf-section-footer__heading">{heading}</h3> : null}
+        {description ? <p className="pf-section-footer__description">{description}</p> : null}
         {children}
       </div>
 
-      {actions ? (
-        <div className="pf-section-footer__actions">{actions}</div>
-      ) : null}
+      {actions ? <div className="pf-section-footer__actions">{actions}</div> : null}
     </footer>
   );
 });

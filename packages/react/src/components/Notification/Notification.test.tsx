@@ -75,10 +75,7 @@ describe('Notification', () => {
 
   it('renders the action slot', () => {
     render(
-      <Notification
-        heading="Update available"
-        action={<button type="button">Refresh</button>}
-      />,
+      <Notification heading="Update available" action={<button type="button">Refresh</button>} />,
     );
     expect(screen.getByRole('button', { name: 'Refresh' })).toBeInTheDocument();
   });
@@ -92,16 +89,12 @@ describe('Notification', () => {
 
   it('does not render dismiss button by default', () => {
     render(<Notification heading="Note" />);
-    expect(
-      screen.queryByRole('button', { name: 'Dismiss notification' }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Dismiss notification' })).not.toBeInTheDocument();
   });
 
   it('renders dismiss button when dismissible=true', () => {
     render(<Notification heading="Note" dismissible />);
-    expect(
-      screen.getByRole('button', { name: 'Dismiss notification' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Dismiss notification' })).toBeInTheDocument();
   });
 
   it('calls onDismiss when the dismiss button is clicked', async () => {
@@ -135,9 +128,7 @@ describe('NotificationStack', () => {
   });
 
   it('applies the placement class', () => {
-    const { container } = render(
-      <NotificationStack placement="bottom-left" />,
-    );
+    const { container } = render(<NotificationStack placement="bottom-left" />);
     expect(container.firstChild).toHaveClass('pf-notification-stack--bottom-left');
   });
 

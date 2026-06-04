@@ -28,11 +28,7 @@ export const Default: Story = {
         },
         {
           title: 'Management',
-          items: [
-            { label: 'Members' },
-            { label: 'Teams' },
-            { label: 'Permissions' },
-          ],
+          items: [{ label: 'Members' }, { label: 'Teams' }, { label: 'Permissions' }],
         },
       ]}
       footer="Plan: Growth"
@@ -110,11 +106,7 @@ export const Minimal: Story = {
     <SidebarNavigation
       sections={[
         {
-          items: [
-            { label: 'Overview', active: true },
-            { label: 'Updates' },
-            { label: 'Help' },
-          ],
+          items: [{ label: 'Overview', active: true }, { label: 'Updates' }, { label: 'Help' }],
         },
       ]}
     />

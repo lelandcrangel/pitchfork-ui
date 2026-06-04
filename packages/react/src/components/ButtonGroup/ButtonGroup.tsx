@@ -25,9 +25,7 @@ const isSelected = (
   multiple: boolean,
 ) => {
   if (multiple) {
-    return Array.isArray(currentValue)
-      ? currentValue.includes(itemValue)
-      : false;
+    return Array.isArray(currentValue) ? currentValue.includes(itemValue) : false;
   }
 
   return currentValue === itemValue;
@@ -48,16 +46,12 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
     ref,
   ) => {
     const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState<
-      string | string[] | undefined
-    >(defaultValue);
+    const [internalValue, setInternalValue] = useState<string | string[] | undefined>(defaultValue);
     const selectedValue = isControlled ? value : internalValue;
 
     const selectedSet = useMemo(() => {
       if (!multiple) {
-        return new Set(
-          typeof selectedValue === 'string' ? [selectedValue] : [],
-        );
+        return new Set(typeof selectedValue === 'string' ? [selectedValue] : []);
       }
 
       return new Set(Array.isArray(selectedValue) ? selectedValue : []);
@@ -87,12 +81,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
     };
 
     return (
-      <div
-        ref={ref}
-        className={cx('pf-button-group', className)}
-        role="group"
-        {...props}
-      >
+      <div ref={ref} className={cx('pf-button-group', className)} role="group" {...props}>
         {items.map((item) => {
           const selected = isSelected(selectedValue, item.value, multiple);
           const isDisabled = disabled || item.disabled;
@@ -114,9 +103,7 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
                   {item.icon}
                 </span>
               ) : null}
-              {item.dot ? (
-                <span aria-hidden className="pf-button-group__dot" />
-              ) : null}
+              {item.dot ? <span aria-hidden className="pf-button-group__dot" /> : null}
               <span className="pf-button-group__label">{item.label}</span>
             </button>
           );

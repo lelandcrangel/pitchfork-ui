@@ -5,16 +5,8 @@
 }
 /* ...existing code... */
 .pf-credit-card {
-  --pf-credit-card-border: color-mix(
-    in srgb,
-    var(--color-base-white) 25%,
-    transparent
-  );
-  --pf-credit-card-glare: color-mix(
-    in srgb,
-    var(--color-base-white) 22%,
-    transparent
-  );
+  --pf-credit-card-border: color-mix(in srgb, var(--color-base-white) 25%, transparent);
+  --pf-credit-card-glare: color-mix(in srgb, var(--color-base-white) 22%, transparent);
   --pf-credit-card-generic-gradient: linear-gradient(
     135deg,
     var(--color-gray-800),
@@ -61,11 +53,7 @@
 }
 
 .pf-credit-card::before {
-  background: radial-gradient(
-    circle at 20% 20%,
-    var(--pf-credit-card-glare),
-    transparent 40%
-  );
+  background: radial-gradient(circle at 20% 20%, var(--pf-credit-card-glare), transparent 40%);
   border-radius: inherit;
   content: '';
   inset: 0;

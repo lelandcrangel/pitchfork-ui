@@ -2,12 +2,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './BadgeGroup.css';
 
-export type BadgeGroupColor =
-  | 'gray'
-  | 'brand'
-  | 'error'
-  | 'warning'
-  | 'success';
+export type BadgeGroupColor = 'gray' | 'brand' | 'error' | 'warning' | 'success';
 export type BadgeGroupAppearance = 'pill' | 'modern';
 export type BadgeGroupBadgePosition = 'leading' | 'trailing';
 
@@ -33,12 +28,7 @@ export const BadgeGroup = forwardRef<HTMLDivElement, BadgeGroupProps>(
     ref,
   ) => {
     const badge = (
-      <span
-        className={cx(
-          'pf-badge-group__badge',
-          `pf-badge-group__badge--${color}`,
-        )}
-      >
+      <span className={cx('pf-badge-group__badge', `pf-badge-group__badge--${color}`)}>
         {label}
       </span>
     );

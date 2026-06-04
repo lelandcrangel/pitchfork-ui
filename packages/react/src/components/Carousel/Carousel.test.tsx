@@ -3,11 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { Carousel } from './Carousel';
 
-const slides = [
-  <div key="1">Slide A</div>,
-  <div key="2">Slide B</div>,
-  <div key="3">Slide C</div>,
-];
+const slides = [<div key="1">Slide A</div>, <div key="2">Slide B</div>, <div key="3">Slide C</div>];
 
 describe('Carousel', () => {
   // ─── Rendering ──────────────────────────────────────────────────────────
@@ -39,8 +35,13 @@ describe('Carousel', () => {
 
   it('marks the first indicator as aria-current', () => {
     render(<Carousel slides={slides} />);
-    expect(screen.getByRole('button', { name: 'Go to slide 1' })).toHaveAttribute('aria-current', 'true');
-    expect(screen.getByRole('button', { name: 'Go to slide 2' })).not.toHaveAttribute('aria-current');
+    expect(screen.getByRole('button', { name: 'Go to slide 1' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Go to slide 2' })).not.toHaveAttribute(
+      'aria-current',
+    );
   });
 
   it('hides non-active slides with aria-hidden', () => {

@@ -35,9 +35,7 @@ describe('UtilityButton', () => {
   });
 
   it('renders the icon slot', () => {
-    render(
-      <UtilityButton icon={<span data-testid="icon" />}>Edit</UtilityButton>,
-    );
+    render(<UtilityButton icon={<span data-testid="icon" />}>Edit</UtilityButton>);
     expect(screen.getByTestId('icon')).toBeInTheDocument();
   });
 

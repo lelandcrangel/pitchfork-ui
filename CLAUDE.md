@@ -57,6 +57,7 @@ ComponentName/
 ### 2. Export from the package
 
 Add to `packages/react/src/index.ts`:
+
 ```ts
 export * from './components/ComponentName';
 ```
@@ -64,6 +65,7 @@ export * from './components/ComponentName';
 ### 3. Storybook docs (`apps/docs/src/`)
 
 Three files per component:
+
 ```
 ComponentName.stories.tsx          # Controls/args stories
 ComponentName.examples.stories.tsx # Example compositions
@@ -74,9 +76,7 @@ Every story in `*.examples.stories.tsx` **must** include `parameters.docs.source
 
 ```tsx
 export const Basic: Story = {
-  render: () => (
-    <MyComponent>...</MyComponent>
-  ),
+  render: () => <MyComponent>...</MyComponent>,
   parameters: {
     docs: {
       source: {
@@ -106,7 +106,11 @@ export interface MyComponentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const MyComponent = forwardRef<HTMLDivElement, MyComponentProps>(
   ({ className, variant = 'a', ...props }, ref) => (
-    <div ref={ref} className={cx('pf-mycomponent', `pf-mycomponent--${variant}`, className)} {...props} />
+    <div
+      ref={ref}
+      className={cx('pf-mycomponent', `pf-mycomponent--${variant}`, className)}
+      {...props}
+    />
   ),
 );
 
@@ -132,11 +136,13 @@ component-specific var → theme alias → token
 ```
 
 Example from `theme.css`:
+
 ```css
 --pf-button-primary-bg: var(--color-semantic-action-primary);
 ```
 
 Example from a component CSS file:
+
 ```css
 .pf-button--primary {
   background: var(--pf-button-primary-bg);
@@ -151,11 +157,11 @@ Dark mode is handled via `[data-theme='dark']` in `theme.css` — component CSS 
 
 This project uses **mobile-first** responsive CSS. Base styles target mobile; `@media (--breakpoint)` queries add wider-screen overrides.
 
-| Token | Min-width | Typical use |
-|---|---|---|
-| `--sm` | 640px | Stacked → inline layouts |
-| `--md` | 768px | Single-col nav → multi-col, sheet → centered modal |
-| `--lg` | 1024px | Large/desktop layouts |
+| Token  | Min-width | Typical use                                        |
+| ------ | --------- | -------------------------------------------------- |
+| `--sm` | 640px     | Stacked → inline layouts                           |
+| `--md` | 768px     | Single-col nav → multi-col, sheet → centered modal |
+| `--lg` | 1024px    | Large/desktop layouts                              |
 
 ```css
 /* base = mobile */

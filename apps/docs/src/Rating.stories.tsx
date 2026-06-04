@@ -32,11 +32,6 @@ export const InteractiveStars: Story = {
 
 export const InteractiveBadge: Story = {
   render: (args) => (
-    <RatingBadge
-      value={args.value ?? 4.2}
-      max={args.max ?? 5}
-      reviews={1284}
-      size="md"
-    />
+    <RatingBadge value={args.value ?? 4.2} max={args.max ?? 5} reviews={1284} size="md" />
   ),
 };

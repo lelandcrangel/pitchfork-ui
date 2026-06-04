@@ -32,9 +32,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-function InteractiveSlideoutStory(
-  args: React.ComponentProps<typeof SlideoutMenu>,
-) {
+function InteractiveSlideoutStory(args: React.ComponentProps<typeof SlideoutMenu>) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -54,12 +52,12 @@ function InteractiveSlideoutStory(
         }
       >
         <p style={{ marginTop: 0 }}>
-          Slideout menus are useful for editing flows that should keep page
-          context visible in the background.
+          Slideout menus are useful for editing flows that should keep page context visible in the
+          background.
         </p>
         <p style={{ marginBottom: 0 }}>
-          You can control placement, size, overlay behavior, and footer actions
-          from this interactive story.
+          You can control placement, size, overlay behavior, and footer actions from this
+          interactive story.
         </p>
       </SlideoutMenu>
     </>

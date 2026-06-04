@@ -16,12 +16,12 @@ Every commit message must follow this structure:
 
 ### Types and version impact
 
-| Type | Description | Version bump |
-|---|---|---|
-| `fix` | Bug fix | patch (`0.0.x`) |
-| `feat` | New feature | minor (`0.x.0`) |
-| `feat!` or `BREAKING CHANGE:` footer | Breaking API change | major (`x.0.0`) |
-| `chore`, `docs`, `style`, `refactor`, `test`, `build`, `ci` | Non-user-facing change | none |
+| Type                                                        | Description            | Version bump    |
+| ----------------------------------------------------------- | ---------------------- | --------------- |
+| `fix`                                                       | Bug fix                | patch (`0.0.x`) |
+| `feat`                                                      | New feature            | minor (`0.x.0`) |
+| `feat!` or `BREAKING CHANGE:` footer                        | Breaking API change    | major (`x.0.0`) |
+| `chore`, `docs`, `style`, `refactor`, `test`, `build`, `ci` | Non-user-facing change | none            |
 
 ### Examples
 
@@ -90,11 +90,11 @@ This project uses a **mobile-first** approach: base styles target mobile, and `@
 
 ### Breakpoints
 
-| Name | Min-width | Use for |
-|---|---|---|
-| `--sm` | 640px | Small layout shifts (stacked → inline) |
-| `--md` | 768px | Medium layout changes (single-col → multi-col nav, sheet → dialog modal) |
-| `--lg` | 1024px | Large/desktop layouts |
+| Name   | Min-width | Use for                                                                  |
+| ------ | --------- | ------------------------------------------------------------------------ |
+| `--sm` | 640px     | Small layout shifts (stacked → inline)                                   |
+| `--md` | 768px     | Medium layout changes (single-col → multi-col nav, sheet → dialog modal) |
+| `--lg` | 1024px    | Large/desktop layouts                                                    |
 
 ### Usage
 
@@ -153,9 +153,9 @@ The scope string must match the lowercase component folder name (e.g. `EmptyStat
 
 ### Two files per component
 
-| File | Purpose |
-|---|---|
-| `ComponentName.stories.tsx` | Controls/args stories — used with the Storybook controls panel |
+| File                                 | Purpose                                                          |
+| ------------------------------------ | ---------------------------------------------------------------- |
+| `ComponentName.stories.tsx`          | Controls/args stories — used with the Storybook controls panel   |
 | `ComponentName.examples.stories.tsx` | Composition examples — what the component looks like in real use |
 
 ### Example stories: always set `parameters.docs.source.code`
@@ -166,7 +166,9 @@ Example stories use a `render` function, but Storybook's code panel would otherw
 export const Basic: Story = {
   render: () => (
     <Card style={{ maxWidth: 480 }}>
-      <CardHeader><strong>Project summary</strong></CardHeader>
+      <CardHeader>
+        <strong>Project summary</strong>
+      </CardHeader>
       <CardContent>This card composes header, content, and footer slots.</CardContent>
       <CardFooter style={{ display: 'flex', gap: 8 }}>
         <Button>Save</Button>
@@ -205,7 +207,7 @@ Never pass inline object literals `={{ }}`, array literals `={[]}`, or anonymous
     { id: 'plan', label: 'Choose plan' },
     { id: 'confirm', label: 'Confirm' },
   ]}
-/>
+/>;
 
 // ✓ prefer
 const steps = [
@@ -214,7 +216,7 @@ const steps = [
   { id: 'confirm', label: 'Confirm' },
 ];
 
-<ProgressSteps steps={steps} />
+<ProgressSteps steps={steps} />;
 ```
 
 The same rule applies to functions passed as props. Define them as named consts and show the definition in `source.code` so readers understand how to write the predicate:
@@ -225,5 +227,5 @@ const disableWeekends = (date: Date) => {
   return day === 0 || day === 6;
 };
 
-<Calendar disabledDates={disableWeekends} />
+<Calendar disabledDates={disableWeekends} />;
 ```
