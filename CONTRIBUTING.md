@@ -84,6 +84,40 @@ Keep APIs small and predictable. Prefer native platform behavior before custom a
 
 ---
 
+## Responsive Design
+
+This project uses a **mobile-first** approach: base styles target mobile, and `@media (--breakpoint)` queries layer in wider-screen overrides.
+
+### Breakpoints
+
+| Name | Min-width | Use for |
+|---|---|---|
+| `--sm` | 640px | Small layout shifts (stacked → inline) |
+| `--md` | 768px | Medium layout changes (single-col → multi-col nav, sheet → dialog modal) |
+| `--lg` | 1024px | Large/desktop layouts |
+
+### Usage
+
+```css
+/* base = mobile */
+.pf-my-component {
+  flex-direction: column;
+}
+
+/* override for sm and up */
+@media (--sm) {
+  .pf-my-component {
+    flex-direction: row;
+  }
+}
+```
+
+Breakpoints are resolved at build time by `postcss-custom-media`. The canonical definitions live in `packages/react/src/styles/theme.css` and are provided to PostCSS via `vite.config.ts` and `apps/docs/.storybook/main.ts`.
+
+Do not use raw `min-width` or `max-width` pixel values in component CSS — always use the named breakpoints above.
+
+---
+
 ## No Inline Styles
 
 Do not use the `style` attribute in component source or story files. Inline styles cannot be overridden by consumers and are harder to debug in browser devtools.

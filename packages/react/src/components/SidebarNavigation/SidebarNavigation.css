@@ -4,8 +4,15 @@
   border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
-  min-height: 360px;
-  width: min(100%, 280px);
+  min-height: 0;
+  width: 100%;
+}
+
+@media (--md) {
+  .pf-sidebar-navigation {
+    min-height: 360px;
+    width: min(100%, 280px);
+  }
 }
 
 .pf-sidebar-navigation__header,
@@ -108,9 +115,3 @@
   white-space: nowrap;
 }
 
-@media (max-width: 720px) {
-  .pf-sidebar-navigation {
-    min-height: 0;
-    width: 100%;
-  }
-}

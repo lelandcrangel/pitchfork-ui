@@ -147,6 +147,31 @@ Token names (`--color-*`, `--space-*`, `--size-*`, `--font-*`, `--radius-*`, `--
 
 Dark mode is handled via `[data-theme='dark']` in `theme.css` — component CSS needs no dark mode selectors.
 
+### Responsive breakpoints
+
+This project uses **mobile-first** responsive CSS. Base styles target mobile; `@media (--breakpoint)` queries add wider-screen overrides.
+
+| Token | Min-width | Typical use |
+|---|---|---|
+| `--sm` | 640px | Stacked → inline layouts |
+| `--md` | 768px | Single-col nav → multi-col, sheet → centered modal |
+| `--lg` | 1024px | Large/desktop layouts |
+
+```css
+/* base = mobile */
+.pf-mycomponent {
+  flex-direction: column;
+}
+
+@media (--md) {
+  .pf-mycomponent {
+    flex-direction: row;
+  }
+}
+```
+
+Breakpoints are defined in `packages/react/src/styles/theme.css` and resolved at build time by `postcss-custom-media`. Never use raw `min-width`/`max-width` pixel values in component CSS.
+
 ---
 
 ## Icon system

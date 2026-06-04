@@ -1,6 +1,12 @@
 .pf-tabs {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-3);
+}
+
+@media (--md) {
+  .pf-tabs {
+    gap: var(--space-4);
+  }
 }
 
 .pf-tabs__list {
@@ -97,12 +103,6 @@
   color: var(--pf-tabs-text);
   line-height: 1.5;
   min-width: 0;
-}
-
-@media (max-width: 720px) {
-  .pf-tabs {
-    gap: var(--space-3);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

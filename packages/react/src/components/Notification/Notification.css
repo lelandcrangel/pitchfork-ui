@@ -1,34 +1,50 @@
 .pf-notification-stack {
   display: grid;
   gap: var(--space-3);
+  left: var(--space-2);
   position: fixed;
-  width: min(420px, calc(100vw - (var(--space-4) * 2)));
+  right: var(--space-2);
+  width: auto;
   z-index: 1000;
 }
 
 .pf-notification-stack--top-right,
 .pf-notification-stack--top-left {
-  top: var(--space-4);
+  top: var(--space-2);
 }
 
 .pf-notification-stack--bottom-right,
 .pf-notification-stack--bottom-left {
-  bottom: var(--space-4);
+  bottom: var(--space-2);
 }
 
-.pf-notification-stack--top-right,
-.pf-notification-stack--bottom-right {
-  right: var(--space-4);
-}
+@media (--md) {
+  .pf-notification-stack {
+    left: auto;
+    right: auto;
+    width: min(420px, calc(100vw - (var(--space-4) * 2)));
+  }
 
-.pf-notification-stack--top-right,
-.pf-notification-stack--bottom-right {
-  justify-items: end;
-}
+  .pf-notification-stack--top-right,
+  .pf-notification-stack--top-left {
+    top: var(--space-4);
+  }
 
-.pf-notification-stack--top-left,
-.pf-notification-stack--bottom-left {
-  left: var(--space-4);
+  .pf-notification-stack--bottom-right,
+  .pf-notification-stack--bottom-left {
+    bottom: var(--space-4);
+  }
+
+  .pf-notification-stack--top-right,
+  .pf-notification-stack--bottom-right {
+    justify-items: end;
+    right: var(--space-4);
+  }
+
+  .pf-notification-stack--top-left,
+  .pf-notification-stack--bottom-left {
+    left: var(--space-4);
+  }
 }
 
 .pf-notification {
@@ -40,9 +56,16 @@
   display: grid;
   gap: var(--space-3);
   grid-template-columns: auto minmax(0, 1fr) auto;
-  max-width: 420px;
-  padding: var(--space-4);
+  max-width: none;
+  padding: var(--space-3);
   width: 100%;
+}
+
+@media (--md) {
+  .pf-notification {
+    max-width: 420px;
+    padding: var(--space-4);
+  }
 }
 
 .pf-notification--info {
@@ -163,26 +186,3 @@
   outline: none;
 }
 
-@media (max-width: 720px) {
-  .pf-notification-stack {
-    left: var(--space-2);
-    right: var(--space-2);
-    top: auto;
-    width: auto;
-  }
-
-  .pf-notification-stack--top-right,
-  .pf-notification-stack--top-left {
-    top: var(--space-2);
-  }
-
-  .pf-notification-stack--bottom-right,
-  .pf-notification-stack--bottom-left {
-    bottom: var(--space-2);
-  }
-
-  .pf-notification {
-    max-width: none;
-    padding: var(--space-3);
-  }
-}

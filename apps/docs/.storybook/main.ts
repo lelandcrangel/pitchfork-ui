@@ -1,6 +1,8 @@
+import globalData from '@csstools/postcss-global-data';
 import type { StorybookConfig } from '@storybook/react-vite';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import customMedia from 'postcss-custom-media';
 
 const storybookDir = dirname(fileURLToPath(import.meta.url));
 const reactSourceEntry = resolve(
@@ -38,6 +40,17 @@ const config: StorybookConfig = {
       minify: false,
     };
     config.base = storybookBasePath;
+    config.css = {
+      ...(config.css ?? {}),
+      postcss: {
+        plugins: [
+          globalData({
+            files: [resolve(storybookDir, '../../../packages/react/src/styles/theme.css')],
+          }),
+          customMedia(),
+        ],
+      },
+    };
     config.resolve = {
       ...(config.resolve ?? {}),
       alias: [

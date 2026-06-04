@@ -10,8 +10,8 @@
     "build:hostinger": "npm run sync-changelog && STORYBOOK_BASE_PATH=/pitchfork-ui/ storybook build"
   },
   "dependencies": {
-    "@pitchfork-ui/react": "0.1.2",
-    "@pitchfork-ui/tokens": "0.1.0",
+    "@pitchfork-ui/react": "*",
+    "@pitchfork-ui/tokens": "*",
     "@storybook/addon-a11y": "latest",
     "@storybook/addon-docs": "latest",
     "@storybook/react-vite": "latest",

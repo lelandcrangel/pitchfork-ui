@@ -97,7 +97,15 @@
   display: flex;
   gap: var(--space-3);
   justify-content: space-between;
-  padding: var(--space-4);
+  padding: var(--space-3);
+}
+
+@media (--md) {
+  .pf-slideout__header,
+  .pf-slideout__body,
+  .pf-slideout__footer {
+    padding: var(--space-4);
+  }
 }
 
 .pf-slideout__header {
@@ -111,7 +119,7 @@
 
 .pf-slideout__body {
   overflow-y: auto;
-  padding: var(--space-4);
+  padding: var(--space-3);
 }
 
 .pf-slideout__heading-group {
@@ -156,10 +164,3 @@
   outline: none;
 }
 
-@media (max-width: 720px) {
-  .pf-slideout__header,
-  .pf-slideout__body,
-  .pf-slideout__footer {
-    padding: var(--space-3);
-  }
-}

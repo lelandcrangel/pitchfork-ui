@@ -10,7 +10,13 @@
   border-radius: var(--radius-md);
   display: grid;
   gap: var(--space-3);
-  padding: var(--space-4);
+  padding: var(--space-3);
+}
+
+@media (--md) {
+  .pf-metric-card {
+    padding: var(--space-4);
+  }
 }
 
 .pf-metric-card__header {
@@ -99,8 +105,3 @@
   margin: 0;
 }
 
-@media (max-width: 720px) {
-  .pf-metric-card {
-    padding: var(--space-3);
-  }
-}

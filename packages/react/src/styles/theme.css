@@ -1,5 +1,10 @@
 @import '@pitchfork-ui/tokens/css';
 
+/* Breakpoints — mobile-first min-width. Resolved at build time by postcss-custom-media. */
+@custom-media --sm (min-width: 640px);
+@custom-media --md (min-width: 768px);
+@custom-media --lg (min-width: 1024px);
+
 :root {
   color-scheme: light;
 

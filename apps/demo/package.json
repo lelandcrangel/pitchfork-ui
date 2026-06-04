@@ -9,8 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pitchfork-ui/react": "0.1.2",
-    "@pitchfork-ui/tokens": "0.1.0",
+    "@pitchfork-ui/react": "*",
+    "@pitchfork-ui/tokens": "*",
     "react": "latest",
     "react-dom": "latest"
   },

@@ -1,7 +1,13 @@
 .pf-pagination {
   align-items: center;
   display: inline-flex;
-  gap: var(--space-3);
+  gap: var(--space-2);
+}
+
+@media (--sm) {
+  .pf-pagination {
+    gap: var(--space-3);
+  }
 }
 
 .pf-pagination--disabled {
@@ -43,7 +49,13 @@
 .pf-pagination__nav {
   height: var(--pf-control-height-sm);
   min-width: var(--pf-control-height-sm);
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-2);
+}
+
+@media (--sm) {
+  .pf-pagination__nav {
+    padding: 0 var(--space-3);
+  }
 }
 
 .pf-pagination__page:hover,
@@ -79,16 +91,6 @@
   font-size: var(--font-size-sm);
   justify-content: center;
   min-width: 20px;
-}
-
-@media (max-width: 640px) {
-  .pf-pagination {
-    gap: var(--space-2);
-  }
-
-  .pf-pagination__nav {
-    padding: 0 var(--space-2);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

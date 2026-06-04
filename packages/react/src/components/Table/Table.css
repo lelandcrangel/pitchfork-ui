@@ -31,8 +31,16 @@
   border-bottom: 1px solid var(--pf-table-border);
   font-size: var(--font-size-sm);
   line-height: 1.4;
-  padding: 14px var(--space-4);
+  padding: 14px var(--space-3);
   vertical-align: middle;
+}
+
+@media (--md) {
+  .pf-table__head-cell,
+  .pf-table__body-cell,
+  .pf-table__empty {
+    padding-inline: var(--space-4);
+  }
 }
 
 .pf-table__head-cell {
@@ -121,10 +129,3 @@
   padding-block: var(--space-3);
 }
 
-@media (max-width: 720px) {
-  .pf-table__head-cell,
-  .pf-table__body-cell,
-  .pf-table__empty {
-    padding-inline: var(--space-3);
-  }
-}

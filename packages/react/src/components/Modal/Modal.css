@@ -11,25 +11,39 @@
 }
 
 .pf-modal__viewport {
-  align-items: center;
+  align-items: end;
   display: flex;
   inset: 0;
   justify-content: center;
   overflow-y: auto;
-  padding: var(--space-4);
+  padding: var(--space-2);
   position: relative;
+}
+
+@media (--md) {
+  .pf-modal__viewport {
+    align-items: center;
+    padding: var(--space-4);
+  }
 }
 
 .pf-modal {
   background: var(--pf-modal-bg);
   border: 1px solid color-mix(in srgb, var(--pf-modal-border) 85%, transparent);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   box-shadow: var(--pf-modal-elevation-overlay-shadow, var(--pf-elevation-overlay-shadow));
   color: var(--pf-modal-text);
   display: grid;
-  max-height: min(90vh, 720px);
+  max-height: 92vh;
   overflow: hidden;
   width: 100%;
+}
+
+@media (--md) {
+  .pf-modal {
+    border-radius: var(--radius-lg);
+    max-height: min(90vh, 720px);
+  }
 }
 
 .pf-modal:focus-visible {
@@ -54,7 +68,15 @@
   display: flex;
   gap: var(--space-3);
   justify-content: space-between;
-  padding: var(--space-4);
+  padding: var(--space-3);
+}
+
+@media (--md) {
+  .pf-modal__header,
+  .pf-modal__body,
+  .pf-modal__footer {
+    padding: var(--space-4);
+  }
 }
 
 .pf-modal__header {
@@ -68,7 +90,7 @@
 
 .pf-modal__body {
   overflow-y: auto;
-  padding: var(--space-4);
+  padding: var(--space-3);
 }
 
 .pf-modal__heading-group {
@@ -113,20 +135,3 @@
   outline: none;
 }
 
-@media (max-width: 720px) {
-  .pf-modal__viewport {
-    align-items: end;
-    padding: var(--space-2);
-  }
-
-  .pf-modal {
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    max-height: 92vh;
-  }
-
-  .pf-modal__header,
-  .pf-modal__body,
-  .pf-modal__footer {
-    padding: var(--space-3);
-  }
-}
