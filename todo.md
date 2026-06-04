@@ -9,7 +9,7 @@
 
 ## Components
 
-- [ ] `EmptyState` — component directory does not exist; implement component
+- [x] `EmptyState` — component directory does not exist; implement component
 
 ## Storybook examples cleanup
 
