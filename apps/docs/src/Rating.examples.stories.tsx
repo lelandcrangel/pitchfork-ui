@@ -35,8 +35,22 @@ export const StarsLarge: Story = {
 
 export const BadgeDefault: Story = {
   render: () => <RatingBadge value={4.8} reviews={2048} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<RatingBadge value={4.8} reviews={2048} />`,
+      },
+    },
+  },
 };
 
 export const BadgeSmall: Story = {
   render: () => <RatingBadge value={4.2} reviews={324} size="sm" />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<RatingBadge value={4.2} reviews={324} size="sm" />`,
+      },
+    },
+  },
 };

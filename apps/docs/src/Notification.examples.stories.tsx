@@ -6,6 +6,11 @@ import {
   type NotificationPlacement,
 } from '@pitchfork-ui/react';
 
+const notificationStackConstrainedStyle: React.CSSProperties = {
+  position: 'absolute',
+  width: 'min(420px, calc(100% - 32px))',
+};
+
 function NotificationPreview({
   children,
   minHeight = 160,
@@ -19,10 +24,7 @@ function NotificationPreview({
     <div style={{ minHeight, position: 'relative', width: '100%' }}>
       <NotificationStack
         placement={placement}
-        style={{
-          position: 'absolute',
-          width: 'min(420px, calc(100% - 32px))',
-        }}
+        style={notificationStackConstrainedStyle}
       >
         {children}
       </NotificationStack>
@@ -64,6 +66,31 @@ export const StackedToasts: Story = {
       />
     </NotificationPreview>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<NotificationStack placement="top-right">
+  <Notification
+    variant="success"
+    heading="Changes published"
+    description="Your homepage updates are now live."
+    dismissible
+  />
+  <Notification
+    variant="info"
+    heading="Background sync in progress"
+    description="We are refreshing the latest analytics for your dashboard."
+  />
+  <Notification
+    variant="warning"
+    heading="Storage nearing limit"
+    description="You have 12% of your storage remaining."
+    action={<Button size="sm">Upgrade plan</Button>}
+  />
+</NotificationStack>`,
+      },
+    },
+  },
 };
 
 export const DestructiveNotice: Story = {
@@ -81,9 +108,25 @@ export const DestructiveNotice: Story = {
         </Button>
       }
       dismissible
-      style={{ maxWidth: 420 }}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<Notification
+  variant="danger"
+  heading="Project archived"
+  description="The project was archived and can be restored from settings within 30 days."
+  action={
+    <Button size="sm" variant="secondary">
+      View details
+    </Button>
+  }
+  dismissible
+/>`,
+      },
+    },
+  },
 };
 
 export const BottomLeftPlacement: Story = {
@@ -98,4 +141,16 @@ export const BottomLeftPlacement: Story = {
       />
     </NotificationPreview>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<NotificationStack placement="bottom-left">
+  <Notification
+    heading="Invite sent"
+    description="Jordan will receive an invitation email shortly."
+  />
+</NotificationStack>`,
+      },
+    },
+  },
 };

@@ -19,18 +19,25 @@ const contentSlides = [
   },
 ];
 
+const slideContentStyle: React.CSSProperties = {
+  color: '#fff',
+  minHeight: 180,
+  padding: 16,
+};
+
+const slideTitleStyle: React.CSSProperties = { margin: 0 };
+const slideTextStyle: React.CSSProperties = { marginBottom: 0, marginTop: 8 };
+
 const slides = contentSlides.map((slide) => (
   <section
     key={slide.title}
     style={{
+      ...slideContentStyle,
       background: `linear-gradient(135deg, ${slide.background} 0%, color-mix(in srgb, ${slide.background} 72%, white) 100%)`,
-      color: '#fff',
-      minHeight: 180,
-      padding: 16,
     }}
   >
-    <h4 style={{ margin: 0 }}>{slide.title}</h4>
-    <p style={{ marginBottom: 0, marginTop: 8 }}>{slide.text}</p>
+    <h4 style={slideTitleStyle}>{slide.title}</h4>
+    <p style={slideTextStyle}>{slide.text}</p>
   </section>
 ));
 

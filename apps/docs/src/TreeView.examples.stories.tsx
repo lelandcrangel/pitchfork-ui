@@ -273,12 +273,15 @@ export const DeepHierarchy: Story = {
   },
 };
 
+const expandCollapseWrapStyle: React.CSSProperties = { display: 'grid', gap: 12 };
+const expandCollapseButtonRowStyle: React.CSSProperties = { display: 'flex', gap: 8 };
+
 function ExpandCollapseAllDemo(args: TreeViewProps) {
   const treeRef = useRef<TreeViewHandle>(null);
 
   return (
-    <div style={{ display: 'grid', gap: 12 }}>
-      <div style={{ display: 'flex', gap: 8 }}>
+    <div style={expandCollapseWrapStyle}>
+      <div style={expandCollapseButtonRowStyle}>
         <Button size="sm" onClick={() => treeRef.current?.expandAll()}>
           Expand all
         </Button>
@@ -300,5 +303,35 @@ export const ExpandCollapseAll: Story = {
   args: {
     defaultExpandedValues: ['root'],
     defaultSelectedValue: 'docs',
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: `function ExpandCollapseAllExample() {
+  const treeRef = useRef(null);
+
+  return (
+    <>
+      <Button size="sm" onClick={() => treeRef.current?.expandAll()}>
+        Expand all
+      </Button>
+      <Button
+        size="sm"
+        variant="secondary"
+        onClick={() => treeRef.current?.collapseAll()}
+      >
+        Collapse all
+      </Button>
+      <TreeView
+        ref={treeRef}
+        nodes={nodes}
+        defaultExpandedValues={['root']}
+        defaultSelectedValue="docs"
+      />
+    </>
+  );
+}`,
+      },
+    },
   },
 };

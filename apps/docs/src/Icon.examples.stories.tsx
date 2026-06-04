@@ -71,10 +71,24 @@ type Story = StoryObj<typeof meta>;
 
 export const RegularSet: Story = {
   render: () => <IconGrid names={regularNames} size="lg" />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<Icon name="circle-check" />`,
+      },
+    },
+  },
 };
 
 export const CustomIcons: Story = {
   render: () => <IconGrid names={customIconNames} size="lg" />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<Icon name="triangle-exclamation" />`,
+      },
+    },
+  },
 };
 
 export const Sizes: Story = {
@@ -89,4 +103,15 @@ export const Sizes: Story = {
       </div>
     </div>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<Icon name="circle-check" size="xs" />
+<Icon name="circle-check" size="sm" />
+<Icon name="circle-check" size="lg" />
+<Icon name="circle-check" size="xl" />
+<Icon name="circle-check" size="2x" />`,
+      },
+    },
+  },
 };

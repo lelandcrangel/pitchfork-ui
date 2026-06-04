@@ -15,6 +15,13 @@ export const LinearDefault: Story = {
     value: 32,
   },
   render: () => <ProgressBar value={32} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<ProgressBar value={32} />`,
+      },
+    },
+  },
 };
 
 export const LinearComplete: Story = {
@@ -22,6 +29,13 @@ export const LinearComplete: Story = {
     value: 100,
   },
   render: () => <ProgressBar value={100} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<ProgressBar value={100} />`,
+      },
+    },
+  },
 };
 
 export const CircularDefault: Story = {
@@ -29,6 +43,13 @@ export const CircularDefault: Story = {
     value: 68,
   },
   render: () => <ProgressCircle value={68} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<ProgressCircle value={68} />`,
+      },
+    },
+  },
 };
 
 export const CircularLarge: Story = {
@@ -36,4 +57,11 @@ export const CircularLarge: Story = {
     value: 84,
   },
   render: () => <ProgressCircle value={84} size={88} strokeWidth={8} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<ProgressCircle value={84} size={88} strokeWidth={8} />`,
+      },
+    },
+  },
 };

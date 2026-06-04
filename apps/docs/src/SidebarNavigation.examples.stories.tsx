@@ -38,6 +38,34 @@ export const Default: Story = {
       footer="Plan: Growth"
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<SidebarNavigation
+  header="Acme Inc"
+  sections={[
+    {
+      title: 'General',
+      items: [
+        { label: 'Dashboard', active: true },
+        { label: 'Notifications', badge: <Badge>4</Badge> },
+        { label: 'Analytics' },
+      ],
+    },
+    {
+      title: 'Management',
+      items: [
+        { label: 'Members' },
+        { label: 'Teams' },
+        { label: 'Permissions' },
+      ],
+    },
+  ]}
+  footer="Plan: Growth"
+/>`,
+      },
+    },
+  },
 };
 
 export const WithDisabledItems: Story = {
@@ -56,6 +84,25 @@ export const WithDisabledItems: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<SidebarNavigation
+  sections={[
+    {
+      title: 'Navigation',
+      items: [
+        { label: 'Home', active: true },
+        { label: 'Reports' },
+        { label: 'Audit log', disabled: true },
+        { label: 'Security', disabled: true },
+      ],
+    },
+  ]}
+/>`,
+      },
+    },
+  },
 };
 
 export const Minimal: Story = {
@@ -72,4 +119,21 @@ export const Minimal: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<SidebarNavigation
+  sections={[
+    {
+      items: [
+        { label: 'Overview', active: true },
+        { label: 'Updates' },
+        { label: 'Help' },
+      ],
+    },
+  ]}
+/>`,
+      },
+    },
+  },
 };

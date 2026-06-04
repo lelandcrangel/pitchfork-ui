@@ -24,6 +24,20 @@ export const RevenueMix: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<PieChart
+  centerLabel="$420k"
+  data={[
+    { label: 'Subscriptions', value: 58 },
+    { label: 'One-time', value: 24 },
+    { label: 'Support', value: 18 },
+  ]}
+/>`,
+      },
+    },
+  },
 };
 
 export const ChannelSplit: Story = {
@@ -38,6 +52,21 @@ export const ChannelSplit: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<PieChart
+  centerLabel="Q2"
+  data={[
+    { label: 'Organic', value: 39, color: '#3b82f6' },
+    { label: 'Paid', value: 27, color: '#06b6d4' },
+    { label: 'Referral', value: 21, color: '#22c55e' },
+    { label: 'Partnerships', value: 13, color: '#f97316' },
+  ]}
+/>`,
+      },
+    },
+  },
 };
 
 export const CompactNoLegend: Story = {
@@ -53,6 +82,22 @@ export const CompactNoLegend: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<PieChart
+  size={144}
+  cutout={0.66}
+  showLegend={false}
+  centerLabel="67%"
+  data={[
+    { label: 'Completed', value: 67, color: '#22c55e' },
+    { label: 'Remaining', value: 33, color: '#e5e7eb' },
+  ]}
+/>`,
+      },
+    },
+  },
 };
 
 export const EmptyState: Story = {
@@ -66,4 +111,18 @@ export const EmptyState: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<PieChart
+  centerLabel="0"
+  emptyLabel="No data"
+  data={[
+    { label: 'A', value: 0 },
+    { label: 'B', value: 0 },
+  ]}
+/>`,
+      },
+    },
+  },
 };

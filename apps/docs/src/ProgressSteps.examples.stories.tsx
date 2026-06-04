@@ -36,6 +36,20 @@ export const CheckoutFlow: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<ProgressSteps
+  steps={[
+    { title: 'Cart', description: 'Review items', status: 'complete' },
+    { title: 'Shipping', description: 'Delivery address', status: 'complete' },
+    { title: 'Payment', description: 'Choose payment method', status: 'current' },
+    { title: 'Confirm', description: 'Place your order', status: 'upcoming' },
+  ]}
+/>`,
+      },
+    },
+  },
 };
 
 export const VerticalOnboarding: Story = {
@@ -66,6 +80,21 @@ export const VerticalOnboarding: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<ProgressSteps
+  orientation="vertical"
+  steps={[
+    { title: 'Workspace details', description: 'Name and region', status: 'complete' },
+    { title: 'Security settings', description: 'Enable MFA', status: 'current' },
+    { title: 'Team permissions', description: 'Set access levels', status: 'upcoming' },
+    { title: 'Integrations', description: 'Connect third-party apps', status: 'upcoming' },
+  ]}
+/>`,
+      },
+    },
+  },
 };
 
 export const AutoStatusFromCurrent: Story = {
@@ -79,4 +108,18 @@ export const AutoStatusFromCurrent: Story = {
       ]}
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<ProgressSteps
+  steps={[
+    { title: 'Draft' },
+    { title: 'Review', status: 'current' },
+    { title: 'Approve' },
+    { title: 'Publish' },
+  ]}
+/>`,
+      },
+    },
+  },
 };

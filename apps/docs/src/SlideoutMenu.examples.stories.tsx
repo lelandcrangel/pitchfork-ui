@@ -27,7 +27,7 @@ function RightPlacementStory() {
         description="Default placement for supporting side tasks."
         footer={<Button onClick={() => setOpen(false)}>Done</Button>}
       >
-        <p style={{ margin: 0 }}>This drawer slides in from the right.</p>
+        <p>This drawer slides in from the right.</p>
       </SlideoutMenu>
     </>
   );
@@ -47,7 +47,7 @@ function LeftPlacementStory() {
         description="Useful for navigation or secondary controls."
         footer={<Button onClick={() => setOpen(false)}>Close</Button>}
       >
-        <p style={{ margin: 0 }}>This drawer slides in from the left.</p>
+        <p>This drawer slides in from the left.</p>
       </SlideoutMenu>
     </>
   );
@@ -74,10 +74,10 @@ function LargePanelStory() {
           </>
         }
       >
-        <p style={{ marginTop: 0 }}>
+        <p>
           This example uses the large size variant to provide more room.
         </p>
-        <p style={{ marginBottom: 0 }}>
+        <p>
           Keep critical tasks concise and consider progressive disclosure for
           complex workflows.
         </p>
@@ -88,12 +88,99 @@ function LargePanelStory() {
 
 export const RightPlacement: Story = {
   render: () => <RightPlacementStory />,
+  parameters: {
+    docs: {
+      source: {
+        code: `function RightPlacementExample() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open right slideout</Button>
+      <SlideoutMenu
+        open={open}
+        onOpenChange={setOpen}
+        title="Right placement"
+        description="Default placement for supporting side tasks."
+        footer={<Button onClick={() => setOpen(false)}>Done</Button>}
+      >
+        <p>This drawer slides in from the right.</p>
+      </SlideoutMenu>
+    </>
+  );
+}`,
+      },
+    },
+  },
 };
 
 export const LeftPlacement: Story = {
   render: () => <LeftPlacementStory />,
+  parameters: {
+    docs: {
+      source: {
+        code: `function LeftPlacementExample() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open left slideout</Button>
+      <SlideoutMenu
+        open={open}
+        onOpenChange={setOpen}
+        placement="left"
+        title="Left placement"
+        description="Useful for navigation or secondary controls."
+        footer={<Button onClick={() => setOpen(false)}>Close</Button>}
+      >
+        <p>This drawer slides in from the left.</p>
+      </SlideoutMenu>
+    </>
+  );
+}`,
+      },
+    },
+  },
 };
 
 export const LargePanel: Story = {
   render: () => <LargePanelStory />,
+  parameters: {
+    docs: {
+      source: {
+        code: `function LargePanelExample() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open large slideout</Button>
+      <SlideoutMenu
+        open={open}
+        onOpenChange={setOpen}
+        size="lg"
+        title="Large panel"
+        description="Use large size for longer forms or richer detail layouts."
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => setOpen(false)}>Save</Button>
+          </>
+        }
+      >
+        <p>
+          This example uses the large size variant to provide more room.
+        </p>
+        <p>
+          Keep critical tasks concise and consider progressive disclosure for
+          complex workflows.
+        </p>
+      </SlideoutMenu>
+    </>
+  );
+}`,
+      },
+    },
+  },
 };

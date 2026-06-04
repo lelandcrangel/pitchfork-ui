@@ -16,18 +16,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const tooltipFrameStyle: React.CSSProperties = {
+  alignItems: 'center',
+  boxSizing: 'border-box',
+  display: 'flex',
+  justifyContent: 'center',
+  minHeight: 180,
+  padding: '72px 160px',
+  width: '100%',
+};
+
 const TooltipStoryFrame = ({ children }: { children: ReactNode }) => (
-  <div
-    style={{
-      alignItems: 'center',
-      boxSizing: 'border-box',
-      display: 'flex',
-      justifyContent: 'center',
-      minHeight: 180,
-      padding: '72px 160px',
-      width: '100%',
-    }}
-  >
+  <div style={tooltipFrameStyle}>
     {children}
   </div>
 );
@@ -40,6 +40,15 @@ export const Top: Story = {
       </Tooltip>
     </TooltipStoryFrame>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<Tooltip content="This action saves your current workspace." placement="top">
+  <Button>Top tooltip</Button>
+</Tooltip>`,
+      },
+    },
+  },
 };
 
 export const Bottom: Story = {
@@ -54,6 +63,15 @@ export const Bottom: Story = {
       </Tooltip>
     </TooltipStoryFrame>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<Tooltip content="Available after payment is confirmed." placement="bottom">
+  <Button>Bottom tooltip</Button>
+</Tooltip>`,
+      },
+    },
+  },
 };
 
 export const Left: Story = {
@@ -68,6 +86,15 @@ export const Left: Story = {
       </Tooltip>
     </TooltipStoryFrame>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<Tooltip content="This field is synced across all projects." placement="left">
+  <Button>Left tooltip</Button>
+</Tooltip>`,
+      },
+    },
+  },
 };
 
 export const Right: Story = {
@@ -82,6 +109,15 @@ export const Right: Story = {
       </Tooltip>
     </TooltipStoryFrame>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<Tooltip content="Use this to open advanced settings." placement="right">
+  <Button>Right tooltip</Button>
+</Tooltip>`,
+      },
+    },
+  },
 };
 
 export const Disabled: Story = {
@@ -96,4 +132,13 @@ export const Disabled: Story = {
       </Tooltip>
     </TooltipStoryFrame>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<Tooltip content="This should not appear while disabled." disabled>
+  <Button>Disabled tooltip</Button>
+</Tooltip>`,
+      },
+    },
+  },
 };

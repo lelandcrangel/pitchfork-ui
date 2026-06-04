@@ -109,8 +109,21 @@ export const StickyHeader: Story = {
   args: {
     stickyHeader: true,
     striped: true,
+    style: { maxHeight: 260 },
   },
-  render: (args) => <Table {...args} style={{ maxHeight: 260 }} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<Table
+  columns={columns}
+  rows={rows}
+  stickyHeader
+  striped
+  style={{ maxHeight: 260 }}
+/>`,
+      },
+    },
+  },
 };
 
 export const EmptyState: Story = {

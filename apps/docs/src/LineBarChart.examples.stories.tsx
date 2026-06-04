@@ -39,11 +39,43 @@ const lineMeta = {
 export default lineMeta;
 type LineStory = StoryObj<typeof lineMeta>;
 
-export const Line: LineStory = {};
+export const Line: LineStory = {
+  render: (args) => <LineChart {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<LineChart
+  data={monthly}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B' },
+  ]}
+  yAxisLabel="Active users"
+/>`,
+      },
+    },
+  },
+};
 
 export const LineArea: LineStory = {
   name: 'Area fill',
   args: { area: true },
+  render: (args) => <LineChart {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<LineChart
+  data={monthly}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B' },
+  ]}
+  yAxisLabel="Active users"
+  area
+/>`,
+      },
+    },
+  },
 };
 
 export const LineDashed: LineStory = {
@@ -54,21 +86,83 @@ export const LineDashed: LineStory = {
       { key: 'B', label: 'Series B', dashed: true },
     ],
   },
+  render: (args) => <LineChart {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<LineChart
+  data={monthly}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B', dashed: true },
+  ]}
+  yAxisLabel="Active users"
+/>`,
+      },
+    },
+  },
 };
 
 export const LineThreeSeries: LineStory = {
   name: 'Three series',
   args: { series: threeSeries },
+  render: (args) => <LineChart {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<LineChart
+  data={monthly}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B' },
+    { key: 'C', label: 'Series C' },
+  ]}
+  yAxisLabel="Active users"
+/>`,
+      },
+    },
+  },
 };
 
 export const LineStraight: LineStory = {
   name: 'Straight lines',
   args: { curved: false },
+  render: (args) => <LineChart {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<LineChart
+  data={monthly}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B' },
+  ]}
+  yAxisLabel="Active users"
+  curved={false}
+/>`,
+      },
+    },
+  },
 };
 
 export const LineEmpty: LineStory = {
   name: 'Empty state',
   args: { data: [] },
+  render: (args) => <LineChart {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `<LineChart
+  data={[]}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B' },
+  ]}
+  yAxisLabel="Active users"
+/>`,
+      },
+    },
+  },
 };
 
 // ─── BarChart stories (second meta via storybook CSF named export pattern) ─
@@ -82,6 +176,20 @@ export const BarGrouped: StoryObj = {
       yAxisLabel="Active users"
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<BarChart
+  data={monthly}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B' },
+  ]}
+  yAxisLabel="Active users"
+/>`,
+      },
+    },
+  },
 };
 
 export const BarStacked: StoryObj = {
@@ -94,6 +202,22 @@ export const BarStacked: StoryObj = {
       stacked
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<BarChart
+  data={monthly}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B' },
+    { key: 'C', label: 'Series C' },
+  ]}
+  yAxisLabel="Active users"
+  stacked
+/>`,
+      },
+    },
+  },
 };
 
 export const BarSingle: StoryObj = {
@@ -105,6 +229,17 @@ export const BarSingle: StoryObj = {
       yAxisLabel="Sessions"
     />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<BarChart
+  data={monthly}
+  series={[{ key: 'A', label: 'Sessions' }]}
+  yAxisLabel="Sessions"
+/>`,
+      },
+    },
+  },
 };
 
 export const BarEmpty: StoryObj = {
@@ -112,4 +247,17 @@ export const BarEmpty: StoryObj = {
   render: () => (
     <BarChart data={[]} series={twoSeries} />
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<BarChart
+  data={[]}
+  series={[
+    { key: 'A', label: 'Series A' },
+    { key: 'B', label: 'Series B' },
+  ]}
+/>`,
+      },
+    },
+  },
 };

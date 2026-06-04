@@ -2,6 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 import { RadioButton } from '@pitchfork-ui/react';
 
+const radioGroupStyle: React.CSSProperties = { display: 'grid', gap: 8 };
+
 const meta = {
   title: 'Examples/Radio Buttons',
   component: RadioButton,
@@ -38,9 +40,17 @@ export const Disabled: Story = {
 
 export const Pair: Story = {
   render: () => (
-    <div style={{ display: 'grid', gap: 8 }}>
+    <div style={radioGroupStyle}>
       <RadioButton label="Starter" name="plan" defaultChecked />
       <RadioButton label="Pro" name="plan" />
     </div>
   ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<RadioButton label="Starter" name="plan" defaultChecked />
+<RadioButton label="Pro" name="plan" />`,
+      },
+    },
+  },
 };
