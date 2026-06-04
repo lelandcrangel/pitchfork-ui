@@ -1,1 +1,8 @@
-npx lint-staged
+#!/bin/sh
+echo "Running pre-commit lint checks..."
+npx lint-staged || {
+  echo ""
+  echo "Pre-commit checks failed. Fix the errors above and try again."
+  echo "To skip hooks in an emergency: git commit --no-verify"
+  exit 1
+}
