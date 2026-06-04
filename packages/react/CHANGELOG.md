@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.1.6](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.5...react-v0.1.6) (2026-06-04)
+
+
+### Features
+
+* externalize FontAwesome dependencies and update Rollup output configuration ([f363a56](https://github.com/lelandcrangel/pitchfork-ui/commit/f363a567ea128a9e221235dfa48118b7cac6e8ff))
+* **tests:** add tests for EmptyState component ([353b230](https://github.com/lelandcrangel/pitchfork-ui/commit/353b230561521061c42d1d91ebc103a11809f20d))
+
+
+### Bug Fixes
+
+* **Avatar:** correct alt attribute fallback for image ([491e67b](https://github.com/lelandcrangel/pitchfork-ui/commit/491e67b504b60ba0c763e035c5fecbd06c1945a4))
+
 ## [0.1.5](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.4...react-v0.1.5) (2026-06-04)
 
 
