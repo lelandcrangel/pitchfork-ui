@@ -17,5 +17,7 @@
 }
 
 .pf-card__footer {
+  display: flex;
+  gap: var(--pf-card-footer-gap);
   border-top: 1px solid var(--pf-card-border);
 }

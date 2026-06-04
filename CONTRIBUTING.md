@@ -81,3 +81,59 @@ ComponentName/
 ## API Guidance
 
 Keep APIs small and predictable. Prefer native platform behavior before custom abstractions.
+
+---
+
+## No Inline Styles
+
+Do not use the `style` attribute in component source or story files. Inline styles cannot be overridden by consumers and are harder to debug in browser devtools.
+
+- Put layout and visual rules in CSS using the token variable chain.
+- For values that must be dynamic (e.g. a Storybook range control arg), prefer a CSS custom property on the element (`style={{ '--pf-foo': value }}`) and reference it in the component's CSS — this keeps the override surface in CSS where it belongs.
+- In example stories, size constraints belong in the story canvas layout, not on the rendered component. A card sized by its container is a more honest example than one with a hardcoded `maxWidth`.
+
+---
+
+## Storybook Stories
+
+### Two files per component
+
+| File | Purpose |
+|---|---|
+| `ComponentName.stories.tsx` | Controls/args stories — used with the Storybook controls panel |
+| `ComponentName.examples.stories.tsx` | Composition examples — what the component looks like in real use |
+
+### Example stories: always set `parameters.docs.source.code`
+
+Example stories use a `render` function, but Storybook's code panel would otherwise show the entire `render: () => (...)` wrapper instead of clean JSX. Always override it with `parameters.docs.source.code` so the displayed snippet looks like application code:
+
+```tsx
+export const Basic: Story = {
+  render: () => (
+    <Card style={{ maxWidth: 480 }}>
+      <CardHeader><strong>Project summary</strong></CardHeader>
+      <CardContent>This card composes header, content, and footer slots.</CardContent>
+      <CardFooter style={{ display: 'flex', gap: 8 }}>
+        <Button>Save</Button>
+        <Button variant="secondary">Cancel</Button>
+      </CardFooter>
+    </Card>
+  ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<Card style={{ maxWidth: 480 }}>
+  <CardHeader><strong>Project summary</strong></CardHeader>
+  <CardContent>This card composes header, content, and footer slots.</CardContent>
+  <CardFooter style={{ display: 'flex', gap: 8 }}>
+    <Button>Save</Button>
+    <Button variant="secondary">Cancel</Button>
+  </CardFooter>
+</Card>`,
+      },
+    },
+  },
+};
+```
+
+The `code` string should be plain JSX as it would appear in a real application — no imports, no wrappers, no story boilerplate. Keep the indentation to 2 spaces.

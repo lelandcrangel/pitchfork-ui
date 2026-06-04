@@ -112,12 +112,13 @@ function ChartLegend({ series }: { series: ResolvedSeries[] }) {
 interface AxesProps {
   yTicks: number[];
   xLabels: string[];
+  xPositions?: number[];
   maxTick: number;
   yAxisLabel?: string;
   valueFormatter?: (v: number) => string;
 }
 
-function Axes({ yTicks, xLabels, maxTick, yAxisLabel, valueFormatter }: AxesProps) {
+function Axes({ yTicks, xLabels, xPositions, maxTick, yAxisLabel, valueFormatter }: AxesProps) {
   const n = xLabels.length;
   const labelStep = Math.max(1, Math.ceil(n / 12));
 
@@ -149,7 +150,7 @@ function Axes({ yTicks, xLabels, maxTick, yAxisLabel, valueFormatter }: AxesProp
         i % labelStep !== 0 ? null : (
           <text
             key={i}
-            x={toX(i, n)}
+            x={xPositions ? xPositions[i] : toX(i, n)}
             y={PAD.top + PLOT_H + 20}
             className="pf-chart__tick pf-chart__tick--x"
           >
@@ -324,6 +325,8 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(
   const gap = Math.max(2, groupWidth * 0.06);
   const barW = stacked ? totalBarW : (totalBarW - gap * (m - 1)) / m;
 
+  const barXPositions = data.map((_, i) => PAD.left + (i + 0.5) * groupWidth);
+
   const resolvedSeries: ResolvedSeries[] = series.map((s, i) => ({
     ...s,
     color: resolveColor(s, i),
@@ -340,6 +343,7 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(
         <Axes
           yTicks={yTicks}
           xLabels={data.map((d) => d.label)}
+          xPositions={barXPositions}
           maxTick={maxTick}
           yAxisLabel={yAxisLabel}
           valueFormatter={valueFormatter}

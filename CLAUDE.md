@@ -70,6 +70,23 @@ ComponentName.examples.stories.tsx # Example compositions
 ComponentName.mdx                  # Documentation page
 ```
 
+Every story in `*.examples.stories.tsx` **must** include `parameters.docs.source.code` with a plain JSX string — no imports, no `render:` wrapper, no story boilerplate. This is what appears in the "Show code" panel and should look like application code:
+
+```tsx
+export const Basic: Story = {
+  render: () => (
+    <MyComponent>...</MyComponent>
+  ),
+  parameters: {
+    docs: {
+      source: {
+        code: `<MyComponent>...</MyComponent>`,
+      },
+    },
+  },
+};
+```
+
 ---
 
 ## Component conventions

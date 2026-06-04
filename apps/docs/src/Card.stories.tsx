@@ -83,7 +83,7 @@ const meta = {
       ) : null}
       <CardContent>{bodyText}</CardContent>
       {showFooter ? (
-        <CardFooter style={{ display: 'flex', gap: 8 }}>
+        <CardFooter>
           <Button>{primaryAction}</Button>
           <Button variant="secondary">{secondaryAction}</Button>
         </CardFooter>
