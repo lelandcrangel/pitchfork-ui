@@ -130,6 +130,27 @@ Do not use the `style` attribute in component source or story files. Inline styl
 
 ## Storybook Stories
 
+### CSS Variable Decorator
+
+Every `ComponentName.stories.tsx` controls file must have a story named exactly **`Interactive`** — this is what activates the CSS Variable Decorator panel.
+
+The decorator (`withCssVariableControls`) is applied globally and auto-activates when three conditions are met:
+
+1. The story name is `Interactive` (or the story id contains `--interactive`)
+2. The story title starts with `Components/`
+3. The title has an entry in the `scopeByStoryTitle` map in `apps/docs/.storybook/CssVariableDecorator.tsx`
+
+When adding a new component, add its title → scope mapping to that map:
+
+```ts
+// CssVariableDecorator.tsx → scopeByStoryTitle
+'Components/MyComponent': ['mycomponent'],
+```
+
+The scope string must match the lowercase component folder name (e.g. `EmptyState/` → `'emptystate'`). The decorator will auto-extract all `--pf-*` CSS variables from that component's CSS file and expose them as live controls in the story panel.
+
+---
+
 ### Two files per component
 
 | File | Purpose |
