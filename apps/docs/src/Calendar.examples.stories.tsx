@@ -47,6 +47,22 @@ export const DisabledWeekends: Story = {
     description: 'Weekends are unavailable for scheduling.',
     disabledDates: disableWeekends,
   },
+  parameters: {
+    docs: {
+      source: {
+        code: `const disableWeekends = (date: Date) => {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+};
+
+<Calendar
+  label="Event date"
+  description="Weekends are unavailable for scheduling."
+  disabledDates={disableWeekends}
+/>`,
+      },
+    },
+  },
 };
 
 export const BoundedYearRange: Story = {
