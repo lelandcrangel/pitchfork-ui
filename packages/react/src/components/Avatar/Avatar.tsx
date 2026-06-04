@@ -40,7 +40,7 @@ export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
         {...props}
       >
         {src ? (
-          <img className="pf-avatar__image" src={src} alt={alt ?? name ?? 'Avatar'} />
+          <img className="pf-avatar__image" src={src} alt={alt ?? (name ? '' : 'Avatar')} />
         ) : (
           <span className="pf-avatar__fallback" aria-hidden>
             {initials}
