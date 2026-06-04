@@ -7,8 +7,8 @@
 
 ## CI / Developer experience
 
-- [ ] Add a `ci.yml` GitHub Actions workflow that runs `typecheck → lint → test` on every PR
-- [ ] Add `lint-staged` + `husky` pre-commit hooks to enforce Prettier and ESLint on changed files before every commit
+- [x] Add a `ci.yml` GitHub Actions workflow that runs `typecheck → lint → test` on every PR
+- [x] Add `lint-staged` + `husky` pre-commit hooks to enforce Prettier and ESLint on changed files before every commit
 
 ## Testing
 

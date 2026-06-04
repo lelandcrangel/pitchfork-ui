@@ -24,7 +24,8 @@
     "test": "npm run test -w @pitchfork-ui/react",
     "lint": "eslint .",
     "typecheck": "tsc -b",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",
@@ -41,7 +42,9 @@
     "eslint-plugin-react-hooks": "latest",
     "eslint-plugin-react-refresh": "latest",
     "globals": "latest",
+    "husky": "^9.1.7",
     "jsdom": "latest",
+    "lint-staged": "^16.4.0",
     "playwright": "^1.60.0",
     "postcss-custom-media": "latest",
     "prettier": "latest",
@@ -53,5 +56,12 @@
   },
   "dependencies": {
     "prism-react-renderer": "^2.4.1"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,json,md,mdx}": "prettier --write"
   }
 }
