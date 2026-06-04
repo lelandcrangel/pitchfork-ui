@@ -25,14 +25,23 @@ export default defineConfig({
     lib: {
       entry: 'src/index.ts',
       name: 'PitchforkUI',
-      formats: ['es', 'cjs'],
-      fileName: (format) => (format === 'es' ? 'index.js' : 'index.cjs'),
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
-      output: {
-        assetFileNames: 'styles.css',
-      },
+      external: ['react', 'react-dom', 'react/jsx-runtime', /^@fortawesome\//],
+      output: [
+        {
+          format: 'es',
+          entryFileNames: 'index.js',
+          preserveModules: true,
+          preserveModulesRoot: 'src',
+          assetFileNames: 'styles.css',
+        },
+        {
+          format: 'cjs',
+          entryFileNames: 'index.cjs',
+          assetFileNames: 'styles.css',
+        },
+      ],
     },
   },
 });
