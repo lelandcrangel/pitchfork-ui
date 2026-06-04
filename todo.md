@@ -12,7 +12,7 @@
 
 ## Testing
 
-- [ ] Add tests for `EmptyState` component (only component currently missing a test)
+- [x] Add tests for `EmptyState` component (only component currently missing a test)
 
 ## Accessibility
 
