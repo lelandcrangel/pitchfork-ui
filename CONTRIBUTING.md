@@ -137,3 +137,38 @@ export const Basic: Story = {
 ```
 
 The `code` string should be plain JSX as it would appear in a real application — no imports, no wrappers, no story boilerplate. Keep the indentation to 2 spaces.
+
+### Extract objects, arrays, and functions to named consts
+
+Never pass inline object literals `={{ }}`, array literals `={[]}`, or anonymous functions `={() => {}}` directly as JSX props in example stories or their `source.code` strings. Extract them to named `const` variables above the component and reference them by name. This mirrors real application code — nobody defines their data inline in JSX — and keeps the rendered markup readable.
+
+```tsx
+// ❌ avoid
+<ProgressSteps
+  steps={[
+    { id: 'account', label: 'Create account' },
+    { id: 'plan', label: 'Choose plan' },
+    { id: 'confirm', label: 'Confirm' },
+  ]}
+/>
+
+// ✓ prefer
+const steps = [
+  { id: 'account', label: 'Create account' },
+  { id: 'plan', label: 'Choose plan' },
+  { id: 'confirm', label: 'Confirm' },
+];
+
+<ProgressSteps steps={steps} />
+```
+
+The same rule applies to functions passed as props. Define them as named consts and show the definition in `source.code` so readers understand how to write the predicate:
+
+```tsx
+const disableWeekends = (date: Date) => {
+  const day = date.getDay();
+  return day === 0 || day === 6;
+};
+
+<Calendar disabledDates={disableWeekends} />
+```

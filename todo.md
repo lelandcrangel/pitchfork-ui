@@ -10,3 +10,13 @@
 ## Components
 
 - [ ] `EmptyState` — component directory does not exist; implement component
+
+## Storybook examples cleanup
+
+Extract inline object/array props to named consts per the contributing guidelines (no inline `={[]}` or `={{}}` in JSX props):
+
+- [ ] `LineBarChart.examples.stories.tsx` — `series={[]}` and `data={[]}` inline on multiple stories
+- [ ] `PieChart.examples.stories.tsx` — `data={[]}` inline across all stories
+- [ ] `ProgressSteps.examples.stories.tsx` — `steps={[]}` inline
+- [ ] `RadarChart.examples.stories.tsx` — `data={[]}` inline
+- [ ] `SidebarNavigation.examples.stories.tsx` — `sections={[]}` inline
