@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.1.7](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.6...react-v0.1.7) (2026-06-04)
+
+
+### Features
+
+* **UtilityButton:** add title prop and enforce accessibility warnings ([1e21c19](https://github.com/lelandcrangel/pitchfork-ui/commit/1e21c19d0a649d980f99e88a9e92d80f401e6591))
+
 ## [0.1.6](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.5...react-v0.1.6) (2026-06-04)
 
 
