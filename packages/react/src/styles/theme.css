@@ -539,12 +539,15 @@
   --color-semantic-status-success-background: var(--color-success-900);
   --color-semantic-status-success-border: var(--color-success-700);
   --color-semantic-status-success-foreground: var(--color-success-300);
+  --color-semantic-status-success-bright: var(--color-success-400);
   --color-semantic-status-warning-background: var(--color-warning-900);
   --color-semantic-status-warning-border: var(--color-warning-700);
   --color-semantic-status-warning-foreground: var(--color-warning-300);
+  --color-semantic-status-warning-bright: var(--color-warning-400);
   --color-semantic-status-danger-background: var(--color-danger-900);
   --color-semantic-status-danger-border: var(--color-danger-700);
   --color-semantic-status-danger-foreground: var(--color-danger-300);
+  --color-semantic-status-danger-bright: var(--color-danger-400);
 
   --pf-focus-ring: 0 0 0 var(--pf-focus-ring-width)
     color-mix(in srgb, var(--pf-focus-ring-color) 45%, transparent);
