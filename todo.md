@@ -20,7 +20,7 @@
 
 ## Code quality
 
-- [ ] Add `displayName` to `Icon` component (only component missing it — hurts React DevTools and error stack traces)
+- [x] Add `displayName` to `Icon` component (only component missing it — hurts React DevTools and error stack traces)
 
 ## Dark mode
 

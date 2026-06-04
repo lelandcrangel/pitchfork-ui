@@ -205,7 +205,7 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   label?: string;
 }
 
-export function Icon({ name, label, className, style, ref: _ref, ...props }: IconProps) {
+export function Icon({ name, label, className, style, ...props }: IconProps) {
   const customIcon = customIcons[name];
   if (customIcon !== undefined) {
     return (
@@ -244,3 +244,5 @@ export function Icon({ name, label, className, style, ref: _ref, ...props }: Ico
     />
   );
 }
+
+Icon.displayName = 'Icon';
