@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.1.5](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.4...react-v0.1.5) (2026-06-04)
+
+
+### Features
+
+* add EmptyState component with examples and styles ([8638fff](https://github.com/lelandcrangel/pitchfork-ui/commit/8638fff0db2cb8acf2a401722bba5a96517bc286))
+* update CSS styles for responsive design and improve layout ([1b62d73](https://github.com/lelandcrangel/pitchfork-ui/commit/1b62d7317bc7975fda58726354b083fbdb0dc435))
+
 ## [0.1.4](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.3...react-v0.1.4) (2026-06-04)
 
 ### Features
