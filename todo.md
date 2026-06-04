@@ -24,8 +24,9 @@
 
 ## Dark mode
 
-- [ ] Add a Storybook toolbar toggle that applies `data-theme="dark"` to the preview iframe root so all stories can be previewed in dark mode
+- [x] Add a Storybook toolbar toggle that applies `data-theme="dark"` to the preview iframe root so all stories can be previewed in dark mode
 - [ ] Audit all components in dark mode — verify colors, contrast, and legibility using the accessibility tab
+- [ ] Run the Storybook a11y addon on every component in dark mode (switch toolbar to Dark, open the Accessibility panel, confirm no violations)
 - [ ] Add a `Dark` story variant (or a `globals`-driven background switch) to each component's examples stories so dark mode renders are documented
 - [ ] Verify the dark mode layer in `theme.css` covers the `--color-semantic-status-*-bright` tokens used by Avatar presence indicators
 

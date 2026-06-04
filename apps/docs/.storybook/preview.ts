@@ -3,6 +3,7 @@ import '@pitchfork-ui/react/styles.css';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { mswHandlers } from './msw-handlers';
 import { withCssVariableControls } from './CssVariableDecorator';
+import { withTheme } from './ThemeDecorator';
 
 const pitchforkViewports = {
   mobile: {
@@ -41,7 +42,24 @@ initialize({
 });
 
 const preview: Preview = {
-  decorators: [withCssVariableControls],
+  globalTypes: {
+    theme: {
+      description: 'Color theme',
+      toolbar: {
+        title: 'Theme',
+        icon: 'circlehollow',
+        items: [
+          { value: 'light', title: 'Light', icon: 'sun' },
+          { value: 'dark', title: 'Dark', icon: 'moon' },
+        ],
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: {
+    theme: 'light',
+  },
+  decorators: [withTheme, withCssVariableControls],
   loaders: [mswLoader],
   parameters: {
     msw: {
