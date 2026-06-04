@@ -4,6 +4,34 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import { mswHandlers } from './msw-handlers';
 import { withCssVariableControls } from './CssVariableDecorator';
 
+const pitchforkViewports = {
+  mobile: {
+    name: 'Mobile (< 640px)',
+    styles: { width: '390px', height: '844px' },
+    type: 'mobile' as const,
+  },
+  sm: {
+    name: 'sm — 640px',
+    styles: { width: '640px', height: '900px' },
+    type: 'tablet' as const,
+  },
+  md: {
+    name: 'md — 768px',
+    styles: { width: '768px', height: '1024px' },
+    type: 'tablet' as const,
+  },
+  lg: {
+    name: 'lg — 1024px',
+    styles: { width: '1024px', height: '768px' },
+    type: 'desktop' as const,
+  },
+  xl: {
+    name: 'xl — 1280px',
+    styles: { width: '1280px', height: '800px' },
+    type: 'desktop' as const,
+  },
+};
+
 initialize({
   onUnhandledRequest: 'bypass',
   quiet: true,
@@ -21,6 +49,10 @@ const preview: Preview = {
     },
     a11y: {
       test: 'todo',
+    },
+    viewport: {
+      viewports: pitchforkViewports,
+      defaultViewport: 'responsive',
     },
     controls: {
       matchers: {
