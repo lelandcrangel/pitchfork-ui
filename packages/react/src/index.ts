@@ -18,6 +18,7 @@ export * from './components/CodeSnippet';
 export * from './components/ContentDivider';
 export * from './components/DatePicker';
 export * from './components/Dropdown';
+export * from './components/EmptyState';
 export * from './components/FileUploader';
 export * from './components/HeaderNavigation';
 export * from './components/Icon';

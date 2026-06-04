@@ -516,6 +516,11 @@
   /* Tooltip geometry aliases */
   --pf-tooltip-padding-x: 0.625rem;
 
+  /* EmptyState aliases */
+  --pf-empty-state-icon: var(--color-semantic-text-muted);
+  --pf-empty-state-text: var(--color-semantic-text-default);
+  --pf-empty-state-text-muted: var(--color-semantic-text-muted);
+
   /* Utility color aliases */
   --pf-tooltip-bg: var(--color-gray-900);
   --pf-tooltip-text: var(--color-base-white);
