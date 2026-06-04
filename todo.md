@@ -1,5 +1,27 @@
 # Todo
 
+## Performance
+
+- [ ] Externalize `@fortawesome/*`, `prism-react-renderer`, and `clsx` as `peerDependencies` — prerequisite for enabling `preserveModules`. Without externalizing these, `preserveModules` pollutes `dist/` with a `node_modules/` directory. Note: `sideEffects: ["**/*.css"]` in `package.json` already enables JS tree-shaking from the single bundle for modern bundlers (webpack 5+, Vite, Rollup).
+- [ ] Once deps are externalized: enable `preserveModules: true` on the ESM Rollup output for per-component module files
+
+## CI / Developer experience
+
+- [ ] Add a `ci.yml` GitHub Actions workflow that runs `typecheck → lint → test` on every PR
+- [ ] Add `lint-staged` + `husky` pre-commit hooks to enforce Prettier and ESLint on changed files before every commit
+
+## Testing
+
+- [ ] Add tests for `EmptyState` component (only component currently missing a test)
+
+## Accessibility
+
+- [ ] Add `aria-label` prop enforcement / warning for `UtilityButton` — it renders a `<button>` with no visible text and no mechanism to warn when neither `aria-label` nor `aria-labelledby` is provided
+
+## Code quality
+
+- [ ] Add `displayName` to `Icon` component (only component missing it — hurts React DevTools and error stack traces)
+
 ## Dark mode
 
 - [ ] Add a Storybook toolbar toggle that applies `data-theme="dark"` to the preview iframe root so all stories can be previewed in dark mode
