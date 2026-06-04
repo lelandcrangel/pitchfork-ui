@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.1.8](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.7...react-v0.1.8) (2026-06-04)
+
+
+### Features
+
+* **Icon:** add displayName for improved React DevTools support ([2bba454](https://github.com/lelandcrangel/pitchfork-ui/commit/2bba45472d63e144ae18f873afed22d2f9930f68))
+
 ## [0.1.7](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.6...react-v0.1.7) (2026-06-04)
 
 
