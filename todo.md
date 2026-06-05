@@ -34,6 +34,11 @@
 
 - [x] `EmptyState` — component directory does not exist; implement component
 
+## Pre-release blockers
+
+- [x] Fix `UtilityButton.tsx` — replace `process.env.NODE_ENV` with `import.meta.env.DEV` to clear the TS2591 error in `packages/react`
+- [x] Loosen `@pitchfork-ui/tokens` dependency from exact `"0.1.0"` to `"^0.1.0"` in `packages/react/package.json`
+
 ## Storybook examples cleanup
 
 Extract inline object/array props to named consts per the contributing guidelines (no inline `={[]}` or `={{}}` in JSX props):

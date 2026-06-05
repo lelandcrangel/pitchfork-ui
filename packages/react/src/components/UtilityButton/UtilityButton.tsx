@@ -26,7 +26,7 @@ export const UtilityButton = forwardRef<HTMLButtonElement, UtilityButtonProps>(
     },
     ref,
   ) => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (import.meta.env.DEV) {
       if (!children && !props['aria-label'] && !props['aria-labelledby'] && !tooltip) {
         console.warn(
           '[UtilityButton] Provide an `aria-label`, `aria-labelledby`, or `tooltip` prop — this button has no visible text.',
