@@ -1,5 +1,43 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, HeaderNavigation, Icon, UtilityButton } from '@pitchfork-ui/react';
+import {
+  Button,
+  HeaderNavigation,
+  Icon,
+  UtilityButton,
+  type HeaderNavigationItem,
+} from '@pitchfork-ui/react';
+
+const defaultItems: HeaderNavigationItem[] = [
+  { label: 'Overview', href: '#', active: true },
+  { label: 'Projects', href: '#' },
+  { label: 'Team', href: '#' },
+  { label: 'Settings', href: '#' },
+];
+
+const workspaceItems: HeaderNavigationItem[] = [
+  { label: 'Home', href: '#', active: true },
+  { label: 'Activity', href: '#' },
+  { label: 'Files', href: '#' },
+];
+
+const dashboardItems: HeaderNavigationItem[] = [
+  { label: 'Overview', href: '#', active: true },
+  { label: 'Analytics', href: '#' },
+  { label: 'Billing', href: '#' },
+];
+
+const defaultActions = <Button size="sm">New</Button>;
+
+const actionGroupActions = (
+  <>
+    <UtilityButton aria-label="Search">
+      <Icon name="circle-question" aria-hidden />
+    </UtilityButton>
+    <Button size="sm" variant="secondary">
+      Invite
+    </Button>
+  </>
+);
 
 const meta = {
   title: 'Examples/HeaderNavigation',
@@ -11,46 +49,72 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    brand: 'Pitchfork UI',
-    items: [
-      { label: 'Overview', href: '#', active: true },
-      { label: 'Projects', href: '#' },
-      { label: 'Team', href: '#' },
-      { label: 'Settings', href: '#' },
-    ],
-    actions: <Button size="sm">New</Button>,
+  render: () => (
+    <HeaderNavigation brand="Pitchfork UI" items={defaultItems} actions={defaultActions} />
+  ),
+  parameters: {
+    docs: {
+      source: {
+        code: `const items = [
+  { label: 'Overview', href: '#', active: true },
+  { label: 'Projects', href: '#' },
+  { label: 'Team', href: '#' },
+  { label: 'Settings', href: '#' },
+];
+
+<HeaderNavigation
+  brand="Pitchfork UI"
+  items={items}
+  actions={<Button size="sm">New</Button>}
+/>`,
+      },
+    },
   },
 };
 
 export const NoActions: Story = {
-  args: {
-    brand: 'Workspace',
-    items: [
-      { label: 'Home', href: '#', active: true },
-      { label: 'Activity', href: '#' },
-      { label: 'Files', href: '#' },
-    ],
+  render: () => <HeaderNavigation brand="Workspace" items={workspaceItems} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `const items = [
+  { label: 'Home', href: '#', active: true },
+  { label: 'Activity', href: '#' },
+  { label: 'Files', href: '#' },
+];
+
+<HeaderNavigation brand="Workspace" items={items} />`,
+      },
+    },
   },
 };
 
 export const ActionGroup: Story = {
-  args: {
-    brand: 'Dashboard',
-    items: [
-      { label: 'Overview', href: '#', active: true },
-      { label: 'Analytics', href: '#' },
-      { label: 'Billing', href: '#' },
-    ],
-    actions: (
-      <>
-        <UtilityButton aria-label="Search">
-          <Icon name="circle-question" aria-hidden />
-        </UtilityButton>
-        <Button size="sm" variant="secondary">
-          Invite
-        </Button>
-      </>
-    ),
+  render: () => (
+    <HeaderNavigation brand="Dashboard" items={dashboardItems} actions={actionGroupActions} />
+  ),
+  parameters: {
+    docs: {
+      source: {
+        code: `const items = [
+  { label: 'Overview', href: '#', active: true },
+  { label: 'Analytics', href: '#' },
+  { label: 'Billing', href: '#' },
+];
+
+<HeaderNavigation
+  brand="Dashboard"
+  items={items}
+  actions={
+    <>
+      <UtilityButton aria-label="Search">
+        <Icon name="circle-question" aria-hidden />
+      </UtilityButton>
+      <Button size="sm" variant="secondary">Invite</Button>
+    </>
+  }
+/>`,
+      },
+    },
   },
 };

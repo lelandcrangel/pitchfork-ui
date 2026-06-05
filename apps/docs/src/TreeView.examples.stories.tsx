@@ -32,244 +32,476 @@ const baseNodes = [
           { value: 'web', label: 'Web' },
         ],
       },
+      { value: 'archive', label: 'Archive', disabled: true },
+    ],
+  },
+];
+
+const compactNodes = [
+  {
+    value: 'project',
+    label: 'Project files',
+    children: [
+      { value: 'readme', label: 'README.md' },
+      { value: 'changelog', label: 'CHANGELOG.md' },
+      { value: 'contrib', label: 'CONTRIBUTING.md' },
+    ],
+  },
+];
+
+const deepHierarchyNodes = [
+  {
+    value: 'program',
+    label: 'Program',
+    children: [
       {
-        value: 'archive',
-        label: 'Archive',
-        disabled: true,
+        value: 'phase-1',
+        label: 'Phase 1',
+        children: [
+          {
+            value: 'phase-1-workstream-a',
+            label: 'Workstream A',
+            children: [
+              {
+                value: 'phase-1-epic-platform',
+                label: 'Epic: Platform',
+                children: [
+                  {
+                    value: 'phase-1-feature-observability',
+                    label: 'Feature: Observability',
+                    children: [
+                      { value: 'phase-1-task-tracing', label: 'Task: Add distributed tracing' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            value: 'phase-1-workstream-b',
+            label: 'Workstream B',
+            children: [
+              {
+                value: 'phase-1-epic-growth',
+                label: 'Epic: Growth',
+                children: [
+                  {
+                    value: 'phase-1-feature-segments',
+                    label: 'Feature: Segment builder',
+                    children: [
+                      { value: 'phase-1-task-rollout', label: 'Task: Launch cohort rollout' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        value: 'phase-2',
+        label: 'Phase 2',
+        children: [
+          {
+            value: 'phase-2-workstream-a',
+            label: 'Workstream A',
+            children: [
+              {
+                value: 'phase-2-epic-security',
+                label: 'Epic: Security',
+                children: [
+                  {
+                    value: 'phase-2-feature-secrets',
+                    label: 'Feature: Secrets rotation',
+                    children: [
+                      { value: 'phase-2-task-kms', label: 'Task: Integrate KMS provider' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            value: 'phase-2-workstream-b',
+            label: 'Workstream B',
+            children: [
+              {
+                value: 'phase-2-epic-reliability',
+                label: 'Epic: Reliability',
+                children: [
+                  {
+                    value: 'phase-2-feature-failover',
+                    label: 'Feature: Region failover',
+                    children: [
+                      { value: 'phase-2-task-drills', label: 'Task: Run disaster drills' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        value: 'phase-3',
+        label: 'Phase 3',
+        children: [
+          {
+            value: 'phase-3-workstream-a',
+            label: 'Workstream A',
+            children: [
+              {
+                value: 'phase-3-epic-experience',
+                label: 'Epic: Experience',
+                children: [
+                  {
+                    value: 'phase-3-feature-personalization',
+                    label: 'Feature: Personalization',
+                    children: [
+                      {
+                        value: 'phase-3-task-recommendations',
+                        label: 'Task: Add recommendations rail',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            value: 'phase-3-workstream-b',
+            label: 'Workstream B',
+            children: [
+              {
+                value: 'phase-3-epic-operations',
+                label: 'Epic: Operations',
+                children: [
+                  {
+                    value: 'phase-3-feature-automation',
+                    label: 'Feature: Workflow automation',
+                    children: [
+                      {
+                        value: 'phase-3-task-runbooks',
+                        label: 'Task: Generate runbooks from playbooks',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   },
 ];
 
+const defaultExpanded = ['root', 'docs'];
+const withBadgesExpanded = ['root'];
+const compactExpanded = ['project'];
+const expandCollapseExpanded = ['root'];
+const deepHierarchyExpanded = [
+  'program',
+  'phase-1',
+  'phase-1-workstream-a',
+  'phase-1-epic-platform',
+  'phase-1-feature-observability',
+  'phase-1-workstream-b',
+  'phase-1-epic-growth',
+  'phase-1-feature-segments',
+  'phase-2',
+  'phase-2-workstream-a',
+  'phase-2-epic-security',
+  'phase-2-feature-secrets',
+  'phase-2-workstream-b',
+  'phase-2-epic-reliability',
+  'phase-2-feature-failover',
+  'phase-3',
+  'phase-3-workstream-a',
+  'phase-3-epic-experience',
+  'phase-3-feature-personalization',
+  'phase-3-workstream-b',
+  'phase-3-epic-operations',
+  'phase-3-feature-automation',
+];
+
+const baseNodesCode = `const nodes = [
+  {
+    value: 'root',
+    label: 'Product',
+    children: [
+      {
+        value: 'docs',
+        label: 'Docs',
+        badge: <Badge>3</Badge>,
+        children: [
+          { value: 'guides', label: 'Guides' },
+          { value: 'api', label: 'API reference' },
+          { value: 'release', label: 'Release notes' },
+        ],
+      },
+      {
+        value: 'apps',
+        label: 'Apps',
+        children: [
+          { value: 'ios', label: 'iOS' },
+          { value: 'android', label: 'Android' },
+          { value: 'web', label: 'Web' },
+        ],
+      },
+      { value: 'archive', label: 'Archive', disabled: true },
+    ],
+  },
+];`;
+
+const compactNodesCode = `const nodes = [
+  {
+    value: 'project',
+    label: 'Project files',
+    children: [
+      { value: 'readme', label: 'README.md' },
+      { value: 'changelog', label: 'CHANGELOG.md' },
+      { value: 'contrib', label: 'CONTRIBUTING.md' },
+    ],
+  },
+];`;
+
+const deepHierarchyNodesCode = `const nodes = [
+  {
+    value: 'program',
+    label: 'Program',
+    children: [
+      {
+        value: 'phase-1',
+        label: 'Phase 1',
+        children: [
+          {
+            value: 'phase-1-workstream-a',
+            label: 'Workstream A',
+            children: [
+              {
+                value: 'phase-1-epic-platform',
+                label: 'Epic: Platform',
+                children: [
+                  {
+                    value: 'phase-1-feature-observability',
+                    label: 'Feature: Observability',
+                    children: [
+                      { value: 'phase-1-task-tracing', label: 'Task: Add distributed tracing' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            value: 'phase-1-workstream-b',
+            label: 'Workstream B',
+            children: [
+              {
+                value: 'phase-1-epic-growth',
+                label: 'Epic: Growth',
+                children: [
+                  {
+                    value: 'phase-1-feature-segments',
+                    label: 'Feature: Segment builder',
+                    children: [
+                      { value: 'phase-1-task-rollout', label: 'Task: Launch cohort rollout' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        value: 'phase-2',
+        label: 'Phase 2',
+        children: [
+          {
+            value: 'phase-2-workstream-a',
+            label: 'Workstream A',
+            children: [
+              {
+                value: 'phase-2-epic-security',
+                label: 'Epic: Security',
+                children: [
+                  {
+                    value: 'phase-2-feature-secrets',
+                    label: 'Feature: Secrets rotation',
+                    children: [
+                      { value: 'phase-2-task-kms', label: 'Task: Integrate KMS provider' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            value: 'phase-2-workstream-b',
+            label: 'Workstream B',
+            children: [
+              {
+                value: 'phase-2-epic-reliability',
+                label: 'Epic: Reliability',
+                children: [
+                  {
+                    value: 'phase-2-feature-failover',
+                    label: 'Feature: Region failover',
+                    children: [
+                      { value: 'phase-2-task-drills', label: 'Task: Run disaster drills' },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      {
+        value: 'phase-3',
+        label: 'Phase 3',
+        children: [
+          {
+            value: 'phase-3-workstream-a',
+            label: 'Workstream A',
+            children: [
+              {
+                value: 'phase-3-epic-experience',
+                label: 'Epic: Experience',
+                children: [
+                  {
+                    value: 'phase-3-feature-personalization',
+                    label: 'Feature: Personalization',
+                    children: [
+                      {
+                        value: 'phase-3-task-recommendations',
+                        label: 'Task: Add recommendations rail',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            value: 'phase-3-workstream-b',
+            label: 'Workstream B',
+            children: [
+              {
+                value: 'phase-3-epic-operations',
+                label: 'Epic: Operations',
+                children: [
+                  {
+                    value: 'phase-3-feature-automation',
+                    label: 'Feature: Workflow automation',
+                    children: [
+                      {
+                        value: 'phase-3-task-runbooks',
+                        label: 'Task: Generate runbooks from playbooks',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];`;
+
+const deepHierarchyExpandedCode = `const defaultExpandedValues = [
+  'program',
+  'phase-1', 'phase-1-workstream-a', 'phase-1-epic-platform', 'phase-1-feature-observability',
+  'phase-1-workstream-b', 'phase-1-epic-growth', 'phase-1-feature-segments',
+  'phase-2', 'phase-2-workstream-a', 'phase-2-epic-security', 'phase-2-feature-secrets',
+  'phase-2-workstream-b', 'phase-2-epic-reliability', 'phase-2-feature-failover',
+  'phase-3', 'phase-3-workstream-a', 'phase-3-epic-experience', 'phase-3-feature-personalization',
+  'phase-3-workstream-b', 'phase-3-epic-operations', 'phase-3-feature-automation',
+];`;
+
 const meta = {
   title: 'Examples/Tree View',
   component: TreeView,
   tags: ['ai-generated', 'test', 'examplesHidden'],
-  args: {
-    nodes: baseNodes,
-  },
+  args: { nodes: baseNodes },
 } satisfies Meta<typeof TreeView>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    defaultExpandedValues: ['root', 'docs'],
-    defaultSelectedValue: 'api',
+  args: { defaultExpandedValues: defaultExpanded, defaultSelectedValue: 'api' },
+  render: (args) => <TreeView {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `${baseNodesCode}
+
+const defaultExpandedValues = ['root', 'docs'];
+
+<TreeView nodes={nodes} defaultExpandedValues={defaultExpandedValues} defaultSelectedValue="api" />`,
+      },
+    },
   },
 };
 
 export const WithBadges: Story = {
-  args: {
-    defaultExpandedValues: ['root'],
-    defaultSelectedValue: 'docs',
+  args: { defaultExpandedValues: withBadgesExpanded, defaultSelectedValue: 'docs' },
+  render: (args) => <TreeView {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `${baseNodesCode}
+
+const defaultExpandedValues = ['root'];
+
+<TreeView nodes={nodes} defaultExpandedValues={defaultExpandedValues} defaultSelectedValue="docs" />`,
+      },
+    },
   },
 };
 
 export const CompactRoot: Story = {
   args: {
-    nodes: [
-      {
-        value: 'project',
-        label: 'Project files',
-        children: [
-          { value: 'readme', label: 'README.md' },
-          { value: 'changelog', label: 'CHANGELOG.md' },
-          { value: 'contrib', label: 'CONTRIBUTING.md' },
-        ],
-      },
-    ],
-    defaultExpandedValues: ['project'],
+    nodes: compactNodes,
+    defaultExpandedValues: compactExpanded,
     defaultSelectedValue: 'readme',
+  },
+  render: (args) => <TreeView {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `${compactNodesCode}
+
+const defaultExpandedValues = ['project'];
+
+<TreeView nodes={nodes} defaultExpandedValues={defaultExpandedValues} defaultSelectedValue="readme" />`,
+      },
+    },
   },
 };
 
 export const DeepHierarchy: Story = {
   args: {
-    nodes: [
-      {
-        value: 'program',
-        label: 'Program',
-        children: [
-          {
-            value: 'phase-1',
-            label: 'Phase 1',
-            children: [
-              {
-                value: 'phase-1-workstream-a',
-                label: 'Workstream A',
-                children: [
-                  {
-                    value: 'phase-1-epic-platform',
-                    label: 'Epic: Platform',
-                    children: [
-                      {
-                        value: 'phase-1-feature-observability',
-                        label: 'Feature: Observability',
-                        children: [
-                          {
-                            value: 'phase-1-task-tracing',
-                            label: 'Task: Add distributed tracing',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                value: 'phase-1-workstream-b',
-                label: 'Workstream B',
-                children: [
-                  {
-                    value: 'phase-1-epic-growth',
-                    label: 'Epic: Growth',
-                    children: [
-                      {
-                        value: 'phase-1-feature-segments',
-                        label: 'Feature: Segment builder',
-                        children: [
-                          {
-                            value: 'phase-1-task-rollout',
-                            label: 'Task: Launch cohort rollout',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            value: 'phase-2',
-            label: 'Phase 2',
-            children: [
-              {
-                value: 'phase-2-workstream-a',
-                label: 'Workstream A',
-                children: [
-                  {
-                    value: 'phase-2-epic-security',
-                    label: 'Epic: Security',
-                    children: [
-                      {
-                        value: 'phase-2-feature-secrets',
-                        label: 'Feature: Secrets rotation',
-                        children: [
-                          {
-                            value: 'phase-2-task-kms',
-                            label: 'Task: Integrate KMS provider',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                value: 'phase-2-workstream-b',
-                label: 'Workstream B',
-                children: [
-                  {
-                    value: 'phase-2-epic-reliability',
-                    label: 'Epic: Reliability',
-                    children: [
-                      {
-                        value: 'phase-2-feature-failover',
-                        label: 'Feature: Region failover',
-                        children: [
-                          {
-                            value: 'phase-2-task-drills',
-                            label: 'Task: Run disaster drills',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            value: 'phase-3',
-            label: 'Phase 3',
-            children: [
-              {
-                value: 'phase-3-workstream-a',
-                label: 'Workstream A',
-                children: [
-                  {
-                    value: 'phase-3-epic-experience',
-                    label: 'Epic: Experience',
-                    children: [
-                      {
-                        value: 'phase-3-feature-personalization',
-                        label: 'Feature: Personalization',
-                        children: [
-                          {
-                            value: 'phase-3-task-recommendations',
-                            label: 'Task: Add recommendations rail',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                value: 'phase-3-workstream-b',
-                label: 'Workstream B',
-                children: [
-                  {
-                    value: 'phase-3-epic-operations',
-                    label: 'Epic: Operations',
-                    children: [
-                      {
-                        value: 'phase-3-feature-automation',
-                        label: 'Feature: Workflow automation',
-                        children: [
-                          {
-                            value: 'phase-3-task-runbooks',
-                            label: 'Task: Generate runbooks from playbooks',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-    defaultExpandedValues: [
-      'program',
-      'phase-1',
-      'phase-1-workstream-a',
-      'phase-1-epic-platform',
-      'phase-1-feature-observability',
-      'phase-1-workstream-b',
-      'phase-1-epic-growth',
-      'phase-1-feature-segments',
-      'phase-2',
-      'phase-2-workstream-a',
-      'phase-2-epic-security',
-      'phase-2-feature-secrets',
-      'phase-2-workstream-b',
-      'phase-2-epic-reliability',
-      'phase-2-feature-failover',
-      'phase-3',
-      'phase-3-workstream-a',
-      'phase-3-epic-experience',
-      'phase-3-feature-personalization',
-      'phase-3-workstream-b',
-      'phase-3-epic-operations',
-      'phase-3-feature-automation',
-    ],
+    nodes: deepHierarchyNodes,
+    defaultExpandedValues: deepHierarchyExpanded,
     defaultSelectedValue: 'phase-2-task-drills',
+  },
+  render: (args) => <TreeView {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `${deepHierarchyNodesCode}
+
+${deepHierarchyExpandedCode}
+
+<TreeView nodes={nodes} defaultExpandedValues={defaultExpandedValues} defaultSelectedValue="phase-2-task-drills" />`,
+      },
+    },
   },
 };
 
@@ -296,14 +528,15 @@ function ExpandCollapseAllDemo(args: TreeViewProps) {
 
 export const ExpandCollapseAll: Story = {
   render: (args) => <ExpandCollapseAllDemo {...args} />,
-  args: {
-    defaultExpandedValues: ['root'],
-    defaultSelectedValue: 'docs',
-  },
+  args: { defaultExpandedValues: expandCollapseExpanded, defaultSelectedValue: 'docs' },
   parameters: {
     docs: {
       source: {
-        code: `function ExpandCollapseAllExample() {
+        code: `${baseNodesCode}
+
+const defaultExpandedValues = ['root'];
+
+function ExpandCollapseAllExample() {
   const treeRef = useRef(null);
 
   return (
@@ -321,7 +554,7 @@ export const ExpandCollapseAll: Story = {
       <TreeView
         ref={treeRef}
         nodes={nodes}
-        defaultExpandedValues={['root']}
+        defaultExpandedValues={defaultExpandedValues}
         defaultSelectedValue="docs"
       />
     </>

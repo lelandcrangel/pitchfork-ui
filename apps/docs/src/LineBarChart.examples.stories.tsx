@@ -27,6 +27,46 @@ const threeSeries = [
   { key: 'C', label: 'Series C' },
 ];
 
+const dashedSeries = [
+  { key: 'A', label: 'Series A' },
+  { key: 'B', label: 'Series B', dashed: true },
+];
+
+const sessionsSeries = [{ key: 'A', label: 'Sessions' }];
+
+const monthlyCode = `const monthly = [
+  { label: 'Jan', A: 420, B: 280, C: 160 },
+  { label: 'Feb', A: 380, B: 240, C: 140 },
+  { label: 'Mar', A: 510, B: 330, C: 195 },
+  { label: 'Apr', A: 470, B: 310, C: 180 },
+  { label: 'May', A: 620, B: 400, C: 230 },
+  { label: 'Jun', A: 580, B: 370, C: 215 },
+  { label: 'Jul', A: 700, B: 450, C: 260 },
+  { label: 'Aug', A: 660, B: 420, C: 245 },
+  { label: 'Sep', A: 530, B: 340, C: 200 },
+  { label: 'Oct', A: 490, B: 300, C: 175 },
+  { label: 'Nov', A: 410, B: 260, C: 150 },
+  { label: 'Dec', A: 440, B: 290, C: 165 },
+];`;
+
+const twoSeriesCode = `const twoSeries = [
+  { key: 'A', label: 'Series A' },
+  { key: 'B', label: 'Series B' },
+];`;
+
+const threeSeriesCode = `const threeSeries = [
+  { key: 'A', label: 'Series A' },
+  { key: 'B', label: 'Series B' },
+  { key: 'C', label: 'Series C' },
+];`;
+
+const dashedSeriesCode = `const dashedSeries = [
+  { key: 'A', label: 'Series A' },
+  { key: 'B', label: 'Series B', dashed: true },
+];`;
+
+const sessionsSeriesCode = `const sessionsSeries = [{ key: 'A', label: 'Sessions' }];`;
+
 // ─── LineChart meta ───────────────────────────────────────────────────────
 
 const lineMeta = {
@@ -44,12 +84,12 @@ export const Line: LineStory = {
   parameters: {
     docs: {
       source: {
-        code: `<LineChart
+        code: `${monthlyCode}
+${twoSeriesCode}
+
+<LineChart
   data={monthly}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B' },
-  ]}
+  series={twoSeries}
   yAxisLabel="Active users"
 />`,
       },
@@ -64,12 +104,12 @@ export const LineArea: LineStory = {
   parameters: {
     docs: {
       source: {
-        code: `<LineChart
+        code: `${monthlyCode}
+${twoSeriesCode}
+
+<LineChart
   data={monthly}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B' },
-  ]}
+  series={twoSeries}
   yAxisLabel="Active users"
   area
 />`,
@@ -80,22 +120,17 @@ export const LineArea: LineStory = {
 
 export const LineDashed: LineStory = {
   name: 'Dashed secondary',
-  args: {
-    series: [
-      { key: 'A', label: 'Series A' },
-      { key: 'B', label: 'Series B', dashed: true },
-    ],
-  },
+  args: { series: dashedSeries },
   render: (args) => <LineChart {...args} />,
   parameters: {
     docs: {
       source: {
-        code: `<LineChart
+        code: `${monthlyCode}
+${dashedSeriesCode}
+
+<LineChart
   data={monthly}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B', dashed: true },
-  ]}
+  series={dashedSeries}
   yAxisLabel="Active users"
 />`,
       },
@@ -110,13 +145,12 @@ export const LineThreeSeries: LineStory = {
   parameters: {
     docs: {
       source: {
-        code: `<LineChart
+        code: `${monthlyCode}
+${threeSeriesCode}
+
+<LineChart
   data={monthly}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B' },
-    { key: 'C', label: 'Series C' },
-  ]}
+  series={threeSeries}
   yAxisLabel="Active users"
 />`,
       },
@@ -131,12 +165,12 @@ export const LineStraight: LineStory = {
   parameters: {
     docs: {
       source: {
-        code: `<LineChart
+        code: `${monthlyCode}
+${twoSeriesCode}
+
+<LineChart
   data={monthly}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B' },
-  ]}
+  series={twoSeries}
   yAxisLabel="Active users"
   curved={false}
 />`,
@@ -152,12 +186,11 @@ export const LineEmpty: LineStory = {
   parameters: {
     docs: {
       source: {
-        code: `<LineChart
+        code: `${twoSeriesCode}
+
+<LineChart
   data={[]}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B' },
-  ]}
+  series={twoSeries}
   yAxisLabel="Active users"
 />`,
       },
@@ -173,12 +206,12 @@ export const BarGrouped: StoryObj = {
   parameters: {
     docs: {
       source: {
-        code: `<BarChart
+        code: `${monthlyCode}
+${twoSeriesCode}
+
+<BarChart
   data={monthly}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B' },
-  ]}
+  series={twoSeries}
   yAxisLabel="Active users"
 />`,
       },
@@ -192,13 +225,12 @@ export const BarStacked: StoryObj = {
   parameters: {
     docs: {
       source: {
-        code: `<BarChart
+        code: `${monthlyCode}
+${threeSeriesCode}
+
+<BarChart
   data={monthly}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B' },
-    { key: 'C', label: 'Series C' },
-  ]}
+  series={threeSeries}
   yAxisLabel="Active users"
   stacked
 />`,
@@ -209,15 +241,16 @@ export const BarStacked: StoryObj = {
 
 export const BarSingle: StoryObj = {
   name: 'Bar — single series',
-  render: () => (
-    <BarChart data={monthly} series={[{ key: 'A', label: 'Sessions' }]} yAxisLabel="Sessions" />
-  ),
+  render: () => <BarChart data={monthly} series={sessionsSeries} yAxisLabel="Sessions" />,
   parameters: {
     docs: {
       source: {
-        code: `<BarChart
+        code: `${monthlyCode}
+${sessionsSeriesCode}
+
+<BarChart
   data={monthly}
-  series={[{ key: 'A', label: 'Sessions' }]}
+  series={sessionsSeries}
   yAxisLabel="Sessions"
 />`,
       },
@@ -231,13 +264,9 @@ export const BarEmpty: StoryObj = {
   parameters: {
     docs: {
       source: {
-        code: `<BarChart
-  data={[]}
-  series={[
-    { key: 'A', label: 'Series A' },
-    { key: 'B', label: 'Series B' },
-  ]}
-/>`,
+        code: `${twoSeriesCode}
+
+<BarChart data={[]} series={twoSeries} />`,
       },
     },
   },

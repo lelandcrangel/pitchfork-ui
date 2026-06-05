@@ -219,6 +219,27 @@ const steps = [
 <ProgressSteps steps={steps} />;
 ```
 
+The const definition must also appear verbatim at the top of the `source.code` string so the snippet is fully self-contained and matches what the component actually renders:
+
+```tsx
+export const CheckoutFlow: Story = {
+  render: () => <ProgressSteps steps={checkoutSteps} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `const checkoutSteps = [
+  { title: 'Cart', status: 'complete' },
+  { title: 'Payment', status: 'current' },
+  { title: 'Confirm', status: 'upcoming' },
+];
+
+<ProgressSteps steps={checkoutSteps} />`,
+      },
+    },
+  },
+};
+```
+
 The same rule applies to functions passed as props. Define them as named consts and show the definition in `source.code` so readers understand how to write the predicate:
 
 ```tsx

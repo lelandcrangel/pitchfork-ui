@@ -121,15 +121,15 @@ export const NoPermission: Story = {
   },
 };
 
+const panelWrapStyle: React.CSSProperties = {
+  border: '1px solid var(--color-semantic-border-default)',
+  borderRadius: 'var(--radius-md)',
+  maxWidth: 400,
+};
+
 export const SmallInPanel: Story = {
   render: () => (
-    <div
-      style={{
-        border: '1px solid var(--color-semantic-border-default)',
-        borderRadius: 'var(--radius-md)',
-        maxWidth: 400,
-      }}
-    >
+    <div style={panelWrapStyle}>
       <EmptyState
         size="sm"
         iconName="bell"
