@@ -27,7 +27,13 @@ export default defineConfig({
       name: 'PitchforkUI',
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'react/jsx-runtime', /^@fortawesome\//],
+      external: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        /^@fortawesome\//,
+        'prism-react-renderer',
+      ],
       output: [
         {
           format: 'es',

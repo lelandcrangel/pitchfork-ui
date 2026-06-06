@@ -12,10 +12,20 @@ Accessible, token-driven React components for [lelandrangel.com](https://lelandr
 npm install @pitchfork-ui/react
 ```
 
-> **Peer dependencies** — install these if not already in your project:
+> **Required peer dependencies** — install these if not already in your project:
 >
 > ```bash
 > npm install @fortawesome/fontawesome-svg-core @fortawesome/free-regular-svg-icons @fortawesome/react-fontawesome
+> ```
+>
+> **Optional peer dependencies** — only needed if you use specific components:
+>
+> | Package                | Component     |
+> | ---------------------- | ------------- |
+> | `prism-react-renderer` | `CodeSnippet` |
+>
+> ```bash
+> npm install prism-react-renderer
 > ```
 
 ## Setup
