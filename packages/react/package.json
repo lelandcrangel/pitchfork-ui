@@ -29,6 +29,9 @@
     "@vitejs/plugin-react": "latest",
     "vite-plugin-dts": "latest"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "types": "./dist/src/index.d.ts",
