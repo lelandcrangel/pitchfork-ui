@@ -529,9 +529,11 @@
   --color-semantic-border-default: var(--color-gray-700);
   --color-semantic-border-strong: var(--color-gray-500);
   --color-semantic-border-focus: var(--color-brand-400);
-  --color-semantic-action-primary: var(--color-brand-500);
-  --color-semantic-action-primary-hover: var(--color-brand-600);
-  --color-semantic-action-primary-active: var(--color-brand-700);
+
+  /* brand-600 (#2563eb) on white = ~5:1 — passes WCAG AA for normal text */
+  --color-semantic-action-primary: var(--color-brand-600);
+  --color-semantic-action-primary-hover: var(--color-brand-700);
+  --color-semantic-action-primary-active: var(--color-brand-800);
   --color-semantic-action-primary-text: var(--color-base-white);
   --color-semantic-action-secondary: var(--color-gray-800);
   --color-semantic-action-secondary-hover: var(--color-gray-700);
@@ -548,6 +550,46 @@
   --color-semantic-status-danger-border: var(--color-danger-700);
   --color-semantic-status-danger-foreground: var(--color-danger-300);
   --color-semantic-status-danger-bright: var(--color-danger-400);
+
+  /* Info state overrides — light brand colors (brand-50/100/300) are invisible on dark surfaces */
+  --pf-notification-info-bg: var(--color-brand-900);
+  --pf-notification-info-border: var(--color-brand-700);
+  --pf-notification-info-icon: var(--color-brand-300);
+  --pf-notification-info-title: var(--color-brand-200);
+  --pf-notification-info-hover-bg: var(--color-brand-800);
+  --pf-notification-info-hover-icon: var(--color-brand-200);
+
+  --pf-alert-info-background: var(--color-brand-900);
+  --pf-alert-info-border: var(--color-brand-700);
+  --pf-alert-info-foreground: var(--color-brand-200);
+
+  --pf-inline-cta-info-bg: var(--color-brand-900);
+  --pf-inline-cta-info-border: var(--color-brand-700);
+  --pf-inline-cta-info-icon: var(--color-brand-300);
+  --pf-inline-cta-info-heading: var(--color-brand-200);
+  --pf-inline-cta-info-description: var(--color-brand-300);
+
+  --pf-badge-brand-background: var(--color-brand-900);
+  --pf-badge-brand-foreground: var(--color-brand-300);
+
+  --pf-badgegroup-brand-100: var(--color-brand-900);
+  --pf-badgegroup-brand-300: var(--color-brand-700);
+  --pf-badgegroup-brand-700: var(--color-brand-300);
+
+  --pf-tag-brand-bg: var(--color-brand-900);
+  --pf-tag-brand-text: var(--color-brand-300);
+
+  --pf-utility-btn-brand-bg: var(--color-brand-900);
+  --pf-utility-btn-brand-border: var(--color-brand-700);
+  --pf-utility-btn-brand-text: var(--color-brand-300);
+  --pf-utility-btn-brand-bg-hover: var(--color-brand-800);
+
+  /* Calendar — same border-default contrast issue as TreeView */
+  --pf-calendar-border: var(--color-semantic-border-strong);
+
+  /* TreeView — border-default (gray-700) is 1.73:1 against gray-900, fails WCAG non-text contrast.
+     border-strong (gray-500) gives 3.75:1. */
+  --pf-treeview-border: var(--color-semantic-border-strong);
 
   --pf-focus-ring: 0 0 0 var(--pf-focus-ring-width)
     color-mix(in srgb, var(--pf-focus-ring-color) 45%, transparent);

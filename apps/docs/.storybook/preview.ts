@@ -42,23 +42,6 @@ initialize({
 });
 
 const preview: Preview = {
-  globalTypes: {
-    theme: {
-      description: 'Color theme',
-      toolbar: {
-        title: 'Theme',
-        icon: 'circlehollow',
-        items: [
-          { value: 'light', title: 'Light', icon: 'sun' },
-          { value: 'dark', title: 'Dark', icon: 'moon' },
-        ],
-        dynamicTitle: true,
-      },
-    },
-  },
-  initialGlobals: {
-    theme: 'light',
-  },
   decorators: [withTheme, withCssVariableControls],
   loaders: [mswLoader],
   parameters: {

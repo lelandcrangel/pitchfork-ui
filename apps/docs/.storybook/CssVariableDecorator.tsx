@@ -1630,15 +1630,19 @@ function CssVariableController({
                 position: 'fixed',
                 right: '16px',
                 bottom: '16px',
-                zIndex: 9999,
+                zIndex: 200,
                 width: isOpen ? '320px' : 'auto',
-                maxHeight: '60vh',
-                overflow: 'auto',
-                borderRadius: '10px',
-                border: '1px solid var(--color-semantic-border-default)',
-                background: 'var(--color-semantic-background-default)',
-                boxShadow: 'var(--pf-elevation-popover-shadow)',
-                padding: isOpen ? '12px' : '0',
+                ...(isOpen
+                  ? {
+                      maxHeight: '60vh',
+                      overflow: 'auto',
+                      borderRadius: '10px',
+                      border: '1px solid var(--color-semantic-border-default)',
+                      background: 'var(--color-semantic-background-default)',
+                      boxShadow: 'var(--pf-elevation-popover-shadow)',
+                      padding: '12px',
+                    }
+                  : {}),
               }}
             >
               {isOpen ? (
@@ -1772,6 +1776,7 @@ function CssVariableController({
                     padding: '0 12px',
                     fontSize: '12px',
                     fontWeight: 600,
+                    boxShadow: 'var(--pf-elevation-popover-shadow)',
                   }}
                 >
                   CSS Variables
