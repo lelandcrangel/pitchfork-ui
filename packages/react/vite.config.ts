@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import customMedia from 'postcss-custom-media';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -19,9 +20,10 @@ export default defineConfig({
       ],
     },
   },
-  plugins: [react(), dts()],
+  plugins: [react(), libInjectCss(), dts()],
   build: {
     minify: false,
+    cssCodeSplit: true,
     lib: {
       entry: 'src/index.ts',
       name: 'PitchforkUI',
@@ -37,10 +39,9 @@ export default defineConfig({
       output: [
         {
           format: 'es',
-          entryFileNames: 'index.js',
+          entryFileNames: '[name].js',
           preserveModules: true,
           preserveModulesRoot: 'src',
-          assetFileNames: 'styles.css',
         },
         {
           format: 'cjs',

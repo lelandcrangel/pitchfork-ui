@@ -28,7 +28,8 @@
   "devDependencies": {
     "@pitchfork-ui/tokens": "^0.1.0",
     "@vitejs/plugin-react": "latest",
-    "vite-plugin-dts": "latest"
+    "vite-plugin-dts": "latest",
+    "vite-plugin-lib-inject-css": "^2.2.2"
   },
   "publishConfig": {
     "access": "public"

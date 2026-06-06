@@ -30,13 +30,18 @@ npm install @pitchfork-ui/react
 
 ## Setup
 
-Import the stylesheet once at your app's entry point:
+No stylesheet import needed. Component CSS and design token variables are injected automatically when components are imported.
 
-```ts
-import '@pitchfork-ui/react/styles.css';
+```tsx
+// CSS loads automatically — nothing else required
+import { Button } from '@pitchfork-ui/react';
 ```
 
-This single file includes all component styles and design token variables. No separate token package required.
+> **CJS / SSR environments** — if your bundler does not support CSS-in-JS injection, import the full stylesheet manually:
+>
+> ```ts
+> import '@pitchfork-ui/react/styles.css';
+> ```
 
 ## Usage
 
