@@ -78,7 +78,7 @@
   justify-content: center;
   width: 20px;
   transform-origin: center;
-  transition: transform 140ms ease;
+  transition: transform var(--pf-transition-fast);
 }
 
 .pf-multi-select__icon svg {
@@ -103,6 +103,19 @@
   padding: var(--space-1);
   position: fixed;
   z-index: 1000;
+  transform-origin: top center;
+  animation: pf-multi-select-menu-in var(--duration-fast) var(--easing-decelerate);
+}
+
+@keyframes pf-multi-select-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scaleY(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
 }
 
 .pf-multi-select__option {
@@ -153,5 +166,9 @@
   .pf-multi-select__trigger,
   .pf-multi-select__icon {
     transition: none;
+  }
+
+  .pf-multi-select__menu {
+    animation: none;
   }
 }

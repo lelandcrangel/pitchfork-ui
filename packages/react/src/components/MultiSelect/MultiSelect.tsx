@@ -209,7 +209,6 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
             aria-haspopup="listbox"
             aria-expanded={isOpen}
             aria-required={required || undefined}
-            aria-controls={isOpen ? listboxId : undefined}
             aria-describedby={describedBy}
             onClick={() => {
               disclosure.toggle();
