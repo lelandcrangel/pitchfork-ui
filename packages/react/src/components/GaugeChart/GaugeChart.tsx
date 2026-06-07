@@ -40,7 +40,7 @@ export const GaugeChart = forwardRef<HTMLDivElement, GaugeChartProps>(function G
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const filled = progress * circumference;
-  const gap = circumference - filled;
+  const offset = circumference - filled;
 
   const center = size / 2;
   const pct = Math.round(progress * 100);
@@ -86,8 +86,15 @@ export const GaugeChart = forwardRef<HTMLDivElement, GaugeChartProps>(function G
           stroke={colorVar}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          strokeDasharray={`${filled} ${gap}`}
-          style={{ transform: 'rotate(-90deg)', transformOrigin: `${center}px ${center}px` }}
+          strokeDasharray={circumference}
+          style={
+            {
+              transform: 'rotate(-90deg)',
+              transformOrigin: `${center}px ${center}px`,
+              '--pf-gauge-circumference': circumference,
+              '--pf-gauge-offset': offset,
+            } as React.CSSProperties
+          }
           className="pf-gauge__fill"
         />
       </svg>

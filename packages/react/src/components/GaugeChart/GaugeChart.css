@@ -15,7 +15,24 @@
 }
 
 .pf-gauge__fill {
-  transition: stroke-dasharray var(--pf-transition-medium, 180ms ease);
+  stroke-dashoffset: var(--pf-gauge-offset);
+  /* Animate the arc filling from empty to its value on mount, and smoothly
+     when the value changes afterward. */
+  animation: pf-gauge-fill var(--duration-slow) var(--easing-decelerate);
+  transition: stroke-dashoffset var(--pf-transition-medium);
+}
+
+@keyframes pf-gauge-fill {
+  from {
+    stroke-dashoffset: var(--pf-gauge-circumference);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-gauge__fill {
+    animation: none;
+    transition: none;
+  }
 }
 
 .pf-gauge__center {
