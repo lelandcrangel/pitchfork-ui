@@ -1,0 +1,31 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SparklineStories from './Sparkline.stories';
+import * as SparklineExamples from './Sparkline.examples.stories';
+
+<Meta of={SparklineStories} />
+
+# Sparkline
+
+A compact inline chart for showing trends at a glance. Designed to live inside table cells, metric cards, and dashboards alongside a number — no axes, no labels, just the shape of the data.
+
+## Examples
+
+### Line
+
+<Canvas of={SparklineExamples.Line} meta={SparklineExamples} />
+
+### Area fill
+
+<Canvas of={SparklineExamples.Area} meta={SparklineExamples} />
+
+### Custom colors
+
+<Canvas of={SparklineExamples.CustomColor} meta={SparklineExamples} />
+
+### In a table cell
+
+<Canvas of={SparklineExamples.InTableCell} meta={SparklineExamples} />
+
+### Flatline
+
+<Canvas of={SparklineExamples.Flatline} meta={SparklineExamples} />

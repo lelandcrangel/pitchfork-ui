@@ -42,6 +42,7 @@ export * from './components/RichTextEditor';
 export * from './components/SectionFooter';
 export * from './components/SectionHeader';
 export * from './components/SidebarNavigation';
+export * from './components/Sparkline';
 export * from './components/SlideoutMenu';
 export * from './components/Switch';
 export * from './components/Select';

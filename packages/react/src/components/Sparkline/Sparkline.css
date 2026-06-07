@@ -1,0 +1,17 @@
+.pf-sparkline {
+  display: block;
+  overflow: visible;
+}
+
+.pf-sparkline__line {
+  stroke: var(--pf-sparkline-color-override, var(--pf-sparkline-color));
+}
+
+.pf-sparkline__area {
+  fill: var(--pf-sparkline-color-override, var(--pf-sparkline-color));
+  opacity: var(--pf-sparkline-area-opacity, 0.15);
+}
+
+.pf-sparkline__dot {
+  fill: var(--pf-sparkline-color-override, var(--pf-sparkline-color));
+}

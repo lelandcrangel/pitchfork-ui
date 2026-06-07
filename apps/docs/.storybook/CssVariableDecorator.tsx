@@ -2114,6 +2114,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Line & Bar Charts': ['linebarcharts'],
   'Components/Rating': ['rating'],
   'Components/EmptyState': ['emptystate'],
+  'Components/Sparkline': ['sparkline'],
 };
 
 // Build generated controls for scopes not covered by hand-crafted CSS_VARIABLE_CONTROLS

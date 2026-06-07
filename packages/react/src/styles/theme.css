@@ -228,6 +228,9 @@
   --pf-utility-btn-danger-text: var(--color-semantic-status-danger-foreground);
   --pf-utility-btn-danger-bg-hover: var(--color-danger-100);
 
+  /* Sparkline aliases */
+  --pf-sparkline-color: var(--color-semantic-action-primary);
+
   /* TreeView aliases */
   --pf-treeview-bg: var(--color-semantic-background-default);
   --pf-treeview-border: var(--color-semantic-border-default);

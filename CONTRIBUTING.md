@@ -151,12 +151,27 @@ The scope string must match the lowercase component folder name (e.g. `EmptyStat
 
 ---
 
-### Two files per component
+### Checklist for every new component
+
+Every new component requires all of the following before it is considered complete:
+
+- [ ] `packages/react/src/components/ComponentName/ComponentName.tsx` — component implementation
+- [ ] `packages/react/src/components/ComponentName/ComponentName.css` — scoped styles using CSS variables
+- [ ] `packages/react/src/components/ComponentName/ComponentName.test.tsx` — Vitest + Testing Library tests (at minimum: renders, accessibility role/label, keyboard interaction if applicable, prop forwarding)
+- [ ] `packages/react/src/components/ComponentName/index.ts` — re-exports
+- [ ] `packages/react/src/index.ts` — add `export * from './components/ComponentName'`
+- [ ] `apps/docs/src/ComponentName.stories.tsx` — controls/args story with an `Interactive` export
+- [ ] `apps/docs/src/ComponentName.examples.stories.tsx` — composition examples
+- [ ] `apps/docs/src/ComponentName.mdx` — documentation page wiring in the examples
+- [ ] `apps/docs/.storybook/CssVariableDecorator.tsx` — add `'Components/ComponentName': ['componentname']` to `scopeByStoryTitle` so the CSS Variables panel activates on the Interactive story
+
+### Three Storybook files per component
 
 | File                                 | Purpose                                                          |
 | ------------------------------------ | ---------------------------------------------------------------- |
 | `ComponentName.stories.tsx`          | Controls/args stories — used with the Storybook controls panel   |
 | `ComponentName.examples.stories.tsx` | Composition examples — what the component looks like in real use |
+| `ComponentName.mdx`                  | Documentation page — imports examples via `<Canvas>` blocks      |
 
 ### Example stories: always set `parameters.docs.source.code`
 
