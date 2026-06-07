@@ -228,6 +228,12 @@
   --pf-utility-btn-danger-text: var(--color-semantic-status-danger-foreground);
   --pf-utility-btn-danger-bg-hover: var(--color-danger-100);
 
+  /* Heatmap aliases */
+  --pf-heatmap-color: var(--color-semantic-action-primary);
+  --pf-heatmap-empty: var(--color-semantic-background-subtle);
+  --pf-heatmap-label-color: var(--color-semantic-text-muted);
+  --pf-heatmap-cell-radius: var(--radius-sm);
+
   /* GaugeChart aliases */
   --pf-gauge-color: var(--color-semantic-action-primary);
   --pf-gauge-track-color: var(--color-semantic-background-subtle);

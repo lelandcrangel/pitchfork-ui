@@ -24,6 +24,7 @@ export * from './components/HeaderNavigation';
 export * from './components/Icon';
 export * from './components/InlineCTA';
 export * from './components/GaugeChart';
+export * from './components/Heatmap';
 export * from './components/LineBarCharts'; // includes AreaChart, LineChart, BarChart
 export * from './components/LoadingIndicators';
 export * from './components/Metrics';

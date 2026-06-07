@@ -1,0 +1,33 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as HeatmapStories from './Heatmap.stories';
+import * as HeatmapExamples from './Heatmap.examples.stories';
+
+<Meta of={HeatmapStories} />
+
+# Heatmap
+
+A calendar heatmap for visualizing daily activity over time — the GitHub contribution graph pattern. Days are laid out as a grid of weeks (columns) and weekdays (rows), with cell color intensity scaled to each day's value.
+
+Pass an array of `{ date, value }` where `date` is an ISO `YYYY-MM-DD` string. The color ramp is derived from `--pf-heatmap-color` via `color-mix`, so it follows your theme and works in dark mode automatically.
+
+## Examples
+
+### Full year
+
+<Canvas of={HeatmapExamples.FullYear} meta={HeatmapExamples} />
+
+### Single quarter
+
+<Canvas of={HeatmapExamples.Quarter} meta={HeatmapExamples} />
+
+### Custom color
+
+<Canvas of={HeatmapExamples.CustomColor} meta={HeatmapExamples} />
+
+### Week starts Monday
+
+<Canvas of={HeatmapExamples.MondayStart} meta={HeatmapExamples} />
+
+### Empty state
+
+<Canvas of={HeatmapExamples.Empty} meta={HeatmapExamples} />
