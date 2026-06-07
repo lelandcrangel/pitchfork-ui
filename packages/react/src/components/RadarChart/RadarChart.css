@@ -95,3 +95,25 @@
   padding: var(--space-4);
   text-align: center;
 }
+
+/* Grow the value polygon out from the center on mount */
+.pf-radar-chart__value {
+  animation: pf-radar-grow var(--duration-slow) var(--easing-decelerate);
+}
+
+@keyframes pf-radar-grow {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-radar-chart__value {
+    animation: none;
+  }
+}

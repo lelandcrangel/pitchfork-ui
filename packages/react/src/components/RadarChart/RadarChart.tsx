@@ -119,22 +119,32 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
             ))
           : null}
 
-        <polygon
-          className="pf-radar-chart__area"
-          points={valuePolygon}
-          style={{ fill: fillColor, stroke: strokeColor }}
-        />
-
-        {valuePoints.map((point, index) => (
-          <circle
-            key={`point-${index}`}
-            className="pf-radar-chart__point"
-            cx={point.x}
-            cy={point.y}
-            r={3}
-            style={{ fill: strokeColor }}
+        <g
+          className="pf-radar-chart__value"
+          style={
+            {
+              transformBox: 'view-box',
+              transformOrigin: `${center}px ${center}px`,
+            } as React.CSSProperties
+          }
+        >
+          <polygon
+            className="pf-radar-chart__area"
+            points={valuePolygon}
+            style={{ fill: fillColor, stroke: strokeColor }}
           />
-        ))}
+
+          {valuePoints.map((point, index) => (
+            <circle
+              key={`point-${index}`}
+              className="pf-radar-chart__point"
+              cx={point.x}
+              cy={point.y}
+              r={3}
+              style={{ fill: strokeColor }}
+            />
+          ))}
+        </g>
 
         {axes.map((axis, index) => {
           const labelPoint = polarToCartesian(center, center, outerRadius + 18, axis.angle);
