@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.3.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.2.0...react-v0.3.0) (2026-06-07)
+
+
+### Features
+
+* add animation support to Sparkline component for line drawing and area fading ([acad8d2](https://github.com/lelandcrangel/pitchfork-ui/commit/acad8d291ddb0b8b840afdf9224503e3b4b7375f))
+* add animation to RadarChart value polygon with reduced motion support ([20233f3](https://github.com/lelandcrangel/pitchfork-ui/commit/20233f3ee5061a397bacddcdd36943d24e8027f9))
+* add motion tokens for transition durations and easings; update components for consistent animations ([3d64509](https://github.com/lelandcrangel/pitchfork-ui/commit/3d645098b494f70a7f9bfa39e722ca0166620542))
+* enhance GaugeChart animation and accessibility; update fill transition and keyframes ([2eff637](https://github.com/lelandcrangel/pitchfork-ui/commit/2eff637b71e0fbab6624f60930ae20ede97bd8e4))
+* enhance PieChart visual with conic-gradient animation and accessibility improvements ([a433b8a](https://github.com/lelandcrangel/pitchfork-ui/commit/a433b8a533fca2bd591317bd005fe5ad05114fe0))
+
 ## [0.2.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.9...react-v0.2.0) (2026-06-07)
 
 ### Features
