@@ -219,7 +219,7 @@ export const Heatmap = forwardRef<HTMLDivElement, HeatmapProps>(function Heatmap
                   <span
                     key={`${wi}-${di}`}
                     className="pf-heatmap__cell"
-                    style={{ background: cellColor(level) }}
+                    style={{ background: cellColor(level), animationDelay: `${wi * 8}ms` }}
                     title={title}
                     data-level={level}
                   />

@@ -75,3 +75,26 @@
 .pf-heatmap__cell--empty {
   background: transparent;
 }
+
+/* Staggered fade-in on mount — per-column animation-delay is set inline so
+   the grid wipes in left-to-right (oldest week → newest). */
+.pf-heatmap__cell {
+  animation: pf-heatmap-cell-in var(--duration-moderate) var(--easing-decelerate) both;
+}
+
+@keyframes pf-heatmap-cell-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-heatmap__cell {
+    animation: none;
+  }
+}
