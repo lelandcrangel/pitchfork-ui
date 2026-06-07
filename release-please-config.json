@@ -6,14 +6,14 @@
       "package-name": "@pitchfork-ui/react",
       "changelog-path": "CHANGELOG.md",
       "bump-minor-pre-major": true,
-      "bump-patch-for-minor-pre-major": true
+      "bump-patch-for-minor-pre-major": false
     },
     "packages/tokens": {
       "release-type": "node",
       "package-name": "@pitchfork-ui/tokens",
       "changelog-path": "CHANGELOG.md",
       "bump-minor-pre-major": true,
-      "bump-patch-for-minor-pre-major": true
+      "bump-patch-for-minor-pre-major": false
     }
   },
   "pull-request-title-pattern": "chore: release${component} ${version}",
