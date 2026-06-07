@@ -1,6 +1,16 @@
-import { forwardRef, useId, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './Tabs.css';
+
+// Avoid SSR warnings: useLayoutEffect on the client, useEffect on the server.
+const useIsomorphicLayoutEffect = typeof document !== 'undefined' ? useLayoutEffect : useEffect;
+
+interface IndicatorRect {
+  left: number;
+  width: number;
+  top: number;
+  height: number;
+}
 
 export interface TabsItem {
   value: string;
@@ -53,6 +63,37 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
     [items, selectedValue],
   );
   const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const listRef = useRef<HTMLDivElement>(null);
+  const [indicator, setIndicator] = useState<IndicatorRect | null>(null);
+
+  // Measure the active tab so a single shared indicator can slide between tabs.
+  useIsomorphicLayoutEffect(() => {
+    const list = listRef.current;
+    const activeIndex = items.findIndex((item) => item.value === selectedItem?.value);
+    const activeButton = buttonRefs.current[activeIndex];
+    if (!list || !activeButton) {
+      setIndicator(null);
+      return;
+    }
+    const measure = () => {
+      const listRect = list.getBoundingClientRect();
+      const tabRect = activeButton.getBoundingClientRect();
+      setIndicator({
+        left: tabRect.left - listRect.left + list.scrollLeft,
+        width: tabRect.width,
+        top: tabRect.top - listRect.top,
+        height: tabRect.height,
+      });
+    };
+    measure();
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+    const observer = new ResizeObserver(measure);
+    observer.observe(list);
+    observer.observe(activeButton);
+    return () => observer.disconnect();
+  }, [items, selectedItem?.value, variant, size, fullWidth]);
 
   const setSelectedValue = (nextValue: string) => {
     if (!isControlled) {
@@ -102,6 +143,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   return (
     <div ref={ref} className={cx('pf-tabs', className)} {...props}>
       <div
+        ref={listRef}
         className={cx(
           'pf-tabs__list',
           `pf-tabs__list--${variant}`,
@@ -111,6 +153,22 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
         role="tablist"
         aria-orientation="horizontal"
       >
+        {indicator ? (
+          <span
+            aria-hidden
+            className={cx('pf-tabs__indicator', `pf-tabs__indicator--${variant}`)}
+            style={
+              variant === 'pills'
+                ? {
+                    left: indicator.left,
+                    width: indicator.width,
+                    top: indicator.top,
+                    height: indicator.height,
+                  }
+                : { left: indicator.left, width: indicator.width }
+            }
+          />
+        ) : null}
         {items.map((item, index) => {
           const isSelected = item.value === selectedItem?.value;
           const tabId = `${baseId}-tab-${item.value}`;

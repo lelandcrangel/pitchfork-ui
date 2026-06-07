@@ -12,6 +12,31 @@
 .pf-tabs__list {
   display: flex;
   overflow-x: auto;
+  position: relative;
+}
+
+.pf-tabs__indicator {
+  position: absolute;
+  pointer-events: none;
+  transition:
+    left var(--pf-transition-medium),
+    width var(--pf-transition-medium),
+    top var(--pf-transition-medium),
+    height var(--pf-transition-medium);
+}
+
+.pf-tabs__indicator--underline {
+  bottom: 0;
+  height: var(--pf-tabs-underline-width);
+  background: var(--pf-tabs-text);
+  border-radius: var(--radius-full);
+}
+
+.pf-tabs__indicator--pills {
+  background: var(--pf-tabs-bg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--pf-tabs-elevation-tab-active-shadow, var(--pf-elevation-tab-active-shadow));
+  z-index: 0;
 }
 
 .pf-tabs__list--full-width {
@@ -40,7 +65,8 @@
   font-weight: var(--font-weight-medium);
   min-width: 0;
   position: relative;
-  transition: color 160ms ease;
+  z-index: 1;
+  transition: color var(--pf-transition-medium);
   white-space: nowrap;
 }
 
@@ -75,7 +101,7 @@
 }
 
 .pf-tabs__tab--underline.pf-tabs__tab--active {
-  border-bottom-color: var(--pf-tabs-text);
+  /* The sliding indicator draws the underline; keep the transparent border for spacing */
   color: var(--pf-tabs-text);
 }
 
@@ -89,8 +115,7 @@
 }
 
 .pf-tabs__tab--pills.pf-tabs__tab--active {
-  background: var(--pf-tabs-bg);
-  box-shadow: var(--pf-tabs-elevation-tab-active-shadow, var(--pf-elevation-tab-active-shadow));
+  /* The sliding indicator draws the pill background */
   color: var(--pf-tabs-text);
 }
 
@@ -106,7 +131,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pf-tabs__tab {
+  .pf-tabs__tab,
+  .pf-tabs__indicator {
     transition: none;
   }
 }
