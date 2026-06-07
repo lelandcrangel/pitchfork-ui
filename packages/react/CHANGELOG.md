@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.5.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.4.0...react-v0.5.0) (2026-06-07)
+
+
+### Features
+
+* add interactive Advancing demo to ProgressSteps and enhance styles with animations ([66a8633](https://github.com/lelandcrangel/pitchfork-ui/commit/66a863328c96d29a733224bf47daafd0028d7a05))
+* enhance ProgressIndicators with animation on fill and stroke changes ([ad39736](https://github.com/lelandcrangel/pitchfork-ui/commit/ad397369e2ce57199904c9f8436364bc1d9fa6ed))
+* enhance Select component with menu animation and transition improvements ([3fdd23b](https://github.com/lelandcrangel/pitchfork-ui/commit/3fdd23bc0838ac5cd7018539a7c2528f5ad39095))
+
 ## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.3.0...react-v0.4.0) (2026-06-07)
 
 
