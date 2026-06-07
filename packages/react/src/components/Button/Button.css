@@ -12,10 +12,10 @@
   min-height: 40px;
   text-decoration: none;
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--pf-transition-fast),
+    border-color var(--pf-transition-fast),
+    color var(--pf-transition-fast),
+    box-shadow var(--pf-transition-fast);
 }
 
 .pf-button:focus-visible {

@@ -15,8 +15,13 @@
   --pf-focus-ring: 0 0 0 var(--pf-focus-ring-width)
     color-mix(in srgb, var(--pf-focus-ring-color) 35%, transparent);
   --pf-focus-outline: var(--pf-focus-ring-width) solid var(--pf-focus-ring-color);
-  --pf-transition-fast: 120ms ease;
-  --pf-transition-medium: 180ms ease;
+  /* Motion — durations and easings come from Style Dictionary (--duration-*, --easing-*) */
+  --pf-transition-fast: var(--duration-fast) var(--easing-standard);
+  --pf-transition-medium: var(--duration-moderate) var(--easing-standard);
+  --pf-transition-slow: var(--duration-slow) var(--easing-standard);
+  /* Directional easings for enter/exit animations */
+  --pf-transition-enter: var(--duration-moderate) var(--easing-decelerate);
+  --pf-transition-exit: var(--duration-fast) var(--easing-accelerate);
 
   /* Control aliases */
   --pf-control-height-sm: var(--size-control-sm, 36px);

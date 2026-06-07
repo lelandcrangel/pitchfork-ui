@@ -41,7 +41,7 @@
   color: var(--pf-dropdown-text-muted);
   display: inline-flex;
   height: var(--pf-dropdown-icon-size);
-  transition: transform 140ms ease;
+  transition: transform var(--pf-transition-fast);
   width: var(--pf-dropdown-icon-size);
 }
 

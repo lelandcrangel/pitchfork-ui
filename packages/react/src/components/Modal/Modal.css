@@ -134,3 +134,39 @@
   color: var(--pf-modal-text);
   outline: none;
 }
+
+/* Entrance animation — uses motion tokens via theme aliases */
+@keyframes pf-modal-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pf-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pf-modal__overlay {
+  animation: pf-modal-overlay-in var(--pf-transition-fast);
+}
+
+.pf-modal {
+  animation: pf-modal-in var(--pf-transition-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-modal__overlay,
+  .pf-modal {
+    animation: none;
+  }
+}
