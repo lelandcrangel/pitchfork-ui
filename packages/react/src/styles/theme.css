@@ -547,7 +547,8 @@
   --color-semantic-status-warning-foreground: var(--color-warning-300);
   --color-semantic-status-warning-bright: var(--color-warning-400);
   --color-semantic-status-danger-background: var(--color-danger-900);
-  --color-semantic-status-danger-border: var(--color-danger-700);
+  /* danger-600 (#d92d20) on gray-900 = 3.71:1 — danger-700 only gives 2.72:1 */
+  --color-semantic-status-danger-border: var(--color-danger-600);
   --color-semantic-status-danger-foreground: var(--color-danger-300);
   --color-semantic-status-danger-bright: var(--color-danger-400);
 
