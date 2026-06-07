@@ -15,3 +15,51 @@
 .pf-sparkline__dot {
   fill: var(--pf-sparkline-color-override, var(--pf-sparkline-color));
 }
+
+/* Opt-in mount animation: draw the line, fade in the area and end dot.
+   The line path sets pathLength="1" so dash math is length-independent. */
+.pf-sparkline--animated .pf-sparkline__line {
+  stroke-dasharray: 1;
+  animation: pf-sparkline-draw var(--duration-slow) var(--easing-standard) both;
+}
+
+@keyframes pf-sparkline-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.pf-sparkline--animated .pf-sparkline__area {
+  animation: pf-sparkline-fade var(--duration-slow) var(--easing-standard) both;
+}
+
+@keyframes pf-sparkline-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.pf-sparkline--animated .pf-sparkline__dot {
+  animation: pf-sparkline-dot var(--duration-fast) var(--easing-decelerate) var(--duration-moderate)
+    both;
+}
+
+@keyframes pf-sparkline-dot {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-sparkline--animated .pf-sparkline__line,
+  .pf-sparkline--animated .pf-sparkline__area,
+  .pf-sparkline--animated .pf-sparkline__dot {
+    animation: none;
+  }
+}

@@ -14,6 +14,8 @@ export interface SparklineProps extends React.HTMLAttributes<SVGSVGElement> {
   color?: string;
   /** Show a dot at the last data point */
   endDot?: boolean;
+  /** Animate the line drawing in (and area fading in) on mount. Off by default. */
+  animate?: boolean;
   /** Accessible label for screen readers */
   label?: string;
 }
@@ -66,6 +68,7 @@ export const Sparkline = forwardRef<SVGSVGElement, SparklineProps>(function Spar
     strokeWidth = 1.5,
     color,
     endDot = false,
+    animate = false,
     label,
     style,
     ...props
@@ -106,7 +109,12 @@ export const Sparkline = forwardRef<SVGSVGElement, SparklineProps>(function Spar
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      className={cx('pf-sparkline', `pf-sparkline--${variant}`, className)}
+      className={cx(
+        'pf-sparkline',
+        `pf-sparkline--${variant}`,
+        animate && 'pf-sparkline--animated',
+        className,
+      )}
       aria-label={label}
       role={label ? 'img' : 'presentation'}
       style={{ '--pf-sparkline-color-override': color, ...style } as React.CSSProperties}
@@ -123,6 +131,7 @@ export const Sparkline = forwardRef<SVGSVGElement, SparklineProps>(function Spar
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
+          pathLength={animate ? 1 : undefined}
           className="pf-sparkline__line"
         />
       )}

@@ -12,6 +12,7 @@ const meta = {
     variant: 'line',
     strokeWidth: 1.5,
     endDot: false,
+    animate: true,
   },
   argTypes: {
     variant: { control: 'inline-radio', options: ['line', 'area'] },
@@ -19,6 +20,7 @@ const meta = {
     width: { control: { type: 'number', min: 40, max: 400, step: 8 } },
     height: { control: { type: 'number', min: 16, max: 80, step: 4 } },
     endDot: { control: 'boolean' },
+    animate: { control: 'boolean' },
     color: { control: 'text' },
     label: { control: 'text' },
   },
