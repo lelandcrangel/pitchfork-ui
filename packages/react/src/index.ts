@@ -23,7 +23,7 @@ export * from './components/FileUploader';
 export * from './components/HeaderNavigation';
 export * from './components/Icon';
 export * from './components/InlineCTA';
-export * from './components/LineBarCharts';
+export * from './components/LineBarCharts'; // includes AreaChart, LineChart, BarChart
 export * from './components/LoadingIndicators';
 export * from './components/Metrics';
 export * from './components/Modal';

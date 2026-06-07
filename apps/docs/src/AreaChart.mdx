@@ -1,0 +1,29 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as AreaChartStories from './AreaChart.stories';
+import * as AreaChartExamples from './AreaChart.examples.stories';
+
+<Meta of={AreaChartStories} />
+
+# Area Chart
+
+AreaChart is a LineChart with filled areas beneath each series. Use it to emphasise volume and cumulative trends rather than individual point-to-point movement.
+
+It accepts the same props as `LineChart`, minus `area` (which is always `true`).
+
+## Examples
+
+### Default
+
+<Canvas of={AreaChartExamples.Default} meta={AreaChartExamples} />
+
+### Three series
+
+<Canvas of={AreaChartExamples.ThreeSeries} meta={AreaChartExamples} />
+
+### Straight lines
+
+<Canvas of={AreaChartExamples.Straight} meta={AreaChartExamples} />
+
+### Empty state
+
+<Canvas of={AreaChartExamples.Empty} meta={AreaChartExamples} />

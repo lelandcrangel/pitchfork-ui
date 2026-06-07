@@ -275,6 +275,16 @@ export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(function Lin
 
 LineChart.displayName = 'LineChart';
 
+// ─── AreaChart ────────────────────────────────────────────────────────────
+
+export type AreaChartProps = Omit<LineChartProps, 'area'>;
+
+export const AreaChart = forwardRef<HTMLDivElement, AreaChartProps>(function AreaChart(props, ref) {
+  return <LineChart {...props} area ref={ref} />;
+});
+
+AreaChart.displayName = 'AreaChart';
+
 // ─── BarChart ─────────────────────────────────────────────────────────────
 
 export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {

@@ -1,6 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { BarChart, LineChart, type ChartDataPoint, type ChartSeries } from './LineBarChart';
+import {
+  AreaChart,
+  BarChart,
+  LineChart,
+  type ChartDataPoint,
+  type ChartSeries,
+} from './LineBarChart';
 
 const data: ChartDataPoint[] = [
   { label: 'Jan', revenue: 100, cost: 60 },
@@ -97,5 +103,28 @@ describe('BarChart', () => {
   it('uses yAxisLabel as aria-label when provided', () => {
     render(<BarChart data={data} series={series} yAxisLabel="Monthly cost" />);
     expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'Monthly cost');
+  });
+});
+
+describe('AreaChart', () => {
+  it('renders with role="img"', () => {
+    render(<AreaChart data={data} series={series} />);
+    expect(screen.getAllByRole('img')[0]).toBeInTheDocument();
+  });
+
+  it('renders area fill paths', () => {
+    const { container } = render(<AreaChart data={data} series={series} />);
+    const paths = container.querySelectorAll('path[fill]:not([fill="none"])');
+    expect(paths.length).toBeGreaterThan(0);
+  });
+
+  it('renders empty state when data is empty', () => {
+    render(<AreaChart data={[]} series={series} />);
+    expect(screen.getByText('No data')).toBeInTheDocument();
+  });
+
+  it('forwards extra props to the root element', () => {
+    render(<AreaChart data={data} series={series} data-testid="area-chart" />);
+    expect(screen.getByTestId('area-chart')).toBeInTheDocument();
   });
 });

@@ -2112,6 +2112,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Tree Views': ['treeview'],
   'Components/Video Player': ['videoplayer'],
   'Components/Line & Bar Charts': ['linebarcharts'],
+  'Components/Area Chart': ['linebarcharts'],
   'Components/Rating': ['rating'],
   'Components/EmptyState': ['emptystate'],
   'Components/Sparkline': ['sparkline'],
