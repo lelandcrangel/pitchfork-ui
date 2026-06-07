@@ -201,7 +201,6 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
             disabled={disabled}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
-            aria-controls={isOpen ? listboxId : undefined}
             aria-required={required || undefined}
             aria-describedby={describedBy}
             onClick={() => {

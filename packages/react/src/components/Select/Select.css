@@ -69,7 +69,7 @@
   justify-content: center;
   width: 20px;
   transform-origin: center;
-  transition: transform 140ms ease;
+  transition: transform var(--pf-transition-fast);
 }
 
 .pf-select__icon svg {
@@ -94,6 +94,25 @@
   padding: var(--space-1);
   position: fixed;
   z-index: 1000;
+  transform-origin: top center;
+  animation: pf-select-menu-in var(--duration-fast) var(--easing-decelerate);
+}
+
+@keyframes pf-select-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scaleY(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-select__menu {
+    animation: none;
+  }
 }
 
 .pf-select__option {
