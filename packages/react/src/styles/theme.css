@@ -613,6 +613,12 @@
   /* GaugeChart — track uses background-subtle (gray-700) which is 1.72:1 against gray-900 */
   --pf-gauge-track-color: var(--color-semantic-border-strong);
 
+  /* ProgressSteps — semantic success bg shades flip in dark mode, so the marker
+     numbers need opposite text colors to keep ≥4.5:1.
+     complete: white on success-700 = 5.4:1; current: success-900 on success-300 = 6.4:1 */
+  --pf-progress-steps-complete-text: var(--color-base-white);
+  --pf-progress-steps-current-text: var(--color-success-900);
+
   /* TreeView — border-default (gray-700) is 1.73:1 against gray-900, fails WCAG non-text contrast.
      border-strong (gray-500) gives 3.75:1. */
   --pf-treeview-border: var(--color-semantic-border-strong);

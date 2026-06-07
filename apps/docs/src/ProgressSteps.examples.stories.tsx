@@ -1,5 +1,46 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ProgressSteps, type ProgressStepItem } from '@pitchfork-ui/react';
+import { useState } from 'react';
+import { Button, ProgressSteps, type ProgressStepItem } from '@pitchfork-ui/react';
+
+const advancingSteps = ['Account', 'Profile', 'Billing', 'Done'];
+
+const advancingWrapStyle: React.CSSProperties = { display: 'grid', gap: 24 };
+const advancingButtonRowStyle: React.CSSProperties = { display: 'flex', gap: 8 };
+
+function AdvancingDemo() {
+  const [current, setCurrent] = useState(1);
+
+  const steps: ProgressStepItem[] = advancingSteps.map((title, index) => ({
+    title,
+    status: index < current ? 'complete' : index === current ? 'current' : 'upcoming',
+  }));
+
+  return (
+    <div style={advancingWrapStyle}>
+      <ProgressSteps steps={steps} />
+      <div style={advancingButtonRowStyle}>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => setCurrent((c) => Math.max(0, c - 1))}
+          disabled={current === 0}
+        >
+          Back
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => setCurrent((c) => Math.min(advancingSteps.length - 1, c + 1))}
+          disabled={current === advancingSteps.length - 1}
+        >
+          Next
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => setCurrent(0)}>
+          Reset
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 const checkoutSteps: ProgressStepItem[] = [
   { title: 'Cart', description: 'Review items', status: 'complete' },
@@ -83,6 +124,42 @@ export const AutoStatusFromCurrent: Story = {
 ];
 
 <ProgressSteps steps={autoStatusSteps} />`,
+      },
+    },
+  },
+};
+
+export const Advancing: Story = {
+  name: 'Advancing (interactive)',
+  render: () => <AdvancingDemo />,
+  parameters: {
+    docs: {
+      source: {
+        code: `const labels = ['Account', 'Profile', 'Billing', 'Done'];
+
+function AdvancingDemo() {
+  const [current, setCurrent] = useState(1);
+
+  const steps = labels.map((title, index) => ({
+    title,
+    status: index < current ? 'complete' : index === current ? 'current' : 'upcoming',
+  }));
+
+  return (
+    <>
+      <ProgressSteps steps={steps} />
+      <Button size="sm" variant="secondary" onClick={() => setCurrent((c) => Math.max(0, c - 1))}>
+        Back
+      </Button>
+      <Button size="sm" onClick={() => setCurrent((c) => Math.min(labels.length - 1, c + 1))}>
+        Next
+      </Button>
+      <Button size="sm" variant="ghost" onClick={() => setCurrent(0)}>
+        Reset
+      </Button>
+    </>
+  );
+}`,
       },
     },
   },

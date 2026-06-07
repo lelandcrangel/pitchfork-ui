@@ -62,6 +62,12 @@
   width: 28px;
   position: relative;
   z-index: 1;
+  /* Animate marker as its status changes when the current step advances */
+  transition:
+    background-color var(--pf-transition-medium),
+    border-color var(--pf-transition-medium),
+    color var(--pf-transition-medium),
+    box-shadow var(--pf-transition-medium);
 }
 
 .pf-progress-steps__connector {
@@ -69,6 +75,8 @@
   display: block;
   flex: 1;
   margin-left: var(--space-2);
+  /* Connector "activates" with a smooth fill as the step completes */
+  transition: background-color var(--pf-transition-slow);
 }
 
 .pf-progress-steps--horizontal .pf-progress-steps__connector {
@@ -127,6 +135,7 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   margin: var(--space-1) 0 0;
+  transition: color var(--pf-transition-medium);
 }
 
 .pf-progress-steps__description {
@@ -155,4 +164,12 @@
 
 .pf-progress-steps__item--current .pf-progress-steps__title {
   color: var(--pf-progress-steps-current-title);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-progress-steps__marker,
+  .pf-progress-steps__connector,
+  .pf-progress-steps__title {
+    transition: none;
+  }
 }
