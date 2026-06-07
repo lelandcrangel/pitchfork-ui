@@ -10,7 +10,8 @@
     "src/**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "theme.starter.css"
   ],
   "scripts": {
     "build": "vite build",
@@ -40,6 +41,7 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": "./dist/styles.css",
+    "./theme.starter.css": "./theme.starter.css"
   }
 }

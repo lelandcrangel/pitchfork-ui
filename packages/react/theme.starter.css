@@ -1,0 +1,57 @@
+/**
+ * PitchforkUI — theme starter
+ *
+ * Copy this file into your project and override only the variables you need.
+ * Import it AFTER @pitchfork-ui/react/styles.css.
+ *
+ *   import '@pitchfork-ui/react/styles.css';
+ *   import './my-theme.css';
+ *
+ * WCAG note: when choosing a primary color, ensure --color-semantic-action-primary-text
+ * achieves at least 4.5:1 contrast against --color-semantic-action-primary.
+ */
+
+:root {
+  /* ── Brand / primary action ──────────────────────────────────────────────
+     Drives buttons, calendar selections, checkboxes, sliders, pagination,
+     progress steps, focus rings, and all other primary interactive states.  */
+
+  --color-semantic-action-primary: #2563eb; /* your brand-600 equivalent */
+  --color-semantic-action-primary-hover: #1d4ed8; /* your brand-700 */
+  --color-semantic-action-primary-active: #1e40af; /* your brand-800 */
+  --color-semantic-action-primary-text: #ffffff; /* text ON the primary color */
+
+  /* ── Border radius ───────────────────────────────────────────────────────
+     Presets:
+       sharp  → 0 / 2px / 4px / 4px
+       default → 0.375rem / 0.5rem / 0.75rem / 9999px
+       soft   → 0.5rem / 0.75rem / 1rem / 9999px               */
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+
+  /* ── Typography ──────────────────────────────────────────────────────────
+     The library defaults to system-ui. Import your font, then override.   */
+
+  --font-family-sans: system-ui, -apple-system, sans-serif;
+  --font-family-mono: ui-monospace, 'Cascadia Code', monospace;
+
+  /* ── Focus ring ──────────────────────────────────────────────────────────
+     Defaults to a semi-transparent version of the primary color.
+     Override to match your brand or accessibility requirements.            */
+
+  /* --pf-focus-ring-color: var(--color-semantic-action-primary); */
+  /* --pf-focus-ring-width: 3px; */
+}
+
+/* ── Dark mode overrides ─────────────────────────────────────────────────────
+   If you change the brand color, add dark-mode variants here.
+   Use a lighter shade so white text keeps a 4.5:1 contrast ratio.           */
+
+[data-theme='dark'] {
+  --color-semantic-action-primary: #3b82f6; /* brand-500 equivalent */
+  --color-semantic-action-primary-hover: #2563eb; /* brand-600 */
+  --color-semantic-action-primary-active: #1d4ed8; /* brand-700 */
+}

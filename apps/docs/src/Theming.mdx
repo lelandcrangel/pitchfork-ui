@@ -1,0 +1,148 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Theming" />
+
+# Theming
+
+PitchforkUI is built on a three-tier CSS variable chain. Overriding a handful of variables on `:root` is all it takes to retheme every component at once — no build step, no configuration file, no wrapper components.
+
+```
+Token                             →  Semantic alias                    →  Component alias
+──────────────────────────────────────────────────────────────────────────────────────────
+var(--color-brand-600) #2563eb   →  --color-semantic-action-primary   →  --pf-button-primary-bg
+```
+
+Changing `--color-semantic-action-primary` updates buttons, pagination, calendar selections, checkboxes, sliders, progress indicators — every element that uses the primary brand color — in one declaration.
+
+---
+
+## Quick start
+
+Add a CSS file to your project **after** importing PitchforkUI's styles:
+
+```ts
+import '@pitchfork-ui/react/styles.css'; // base styles
+import './my-theme.css'; // your overrides
+```
+
+Then in `my-theme.css`, override only what you need:
+
+```css
+:root {
+  /* Brand color */
+  --color-semantic-action-primary: #7c3aed; /* violet-600 */
+  --color-semantic-action-primary-hover: #6d28d9; /* violet-700 */
+  --color-semantic-action-primary-active: #5b21b6; /* violet-800 */
+  --color-semantic-action-primary-text: #ffffff;
+
+  /* Border radius — set to 0 for sharp, 999px for pill */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+
+  /* Typography */
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+```
+
+That's it. No other changes required.
+
+---
+
+## Brand color
+
+The primary action color drives the most visual surface area. Override these four variables together to ensure buttons, focus rings, and interactive states all stay consistent:
+
+| Variable                                 | Role                                 | Default   |
+| ---------------------------------------- | ------------------------------------ | --------- |
+| `--color-semantic-action-primary`        | Button bg, selected states, accents  | `#2563eb` |
+| `--color-semantic-action-primary-hover`  | Hover state                          | `#1d4ed8` |
+| `--color-semantic-action-primary-active` | Active / pressed state               | `#1e40af` |
+| `--color-semantic-action-primary-text`   | Text color on the primary background | `#ffffff` |
+
+**WCAG contrast requirement:** `action-primary-text` must achieve at least **4.5:1** contrast against `action-primary`. For white text, your primary color needs a luminance below ~0.18 — roughly equivalent to a `600`-level shade in most design scales.
+
+---
+
+## Border radius
+
+Radius tokens affect every component uniformly. Three presets cover the most common product personalities:
+
+```css
+/* Sharp — enterprise, data-dense */
+:root {
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
+  --radius-full: 4px;
+}
+
+/* Rounded (default) — balanced, modern */
+:root {
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-full: 9999px;
+}
+
+/* Soft — consumer, friendly */
+:root {
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+}
+```
+
+---
+
+## Typography
+
+Set your preferred font families. The library uses `system-ui` by default — adding a custom font requires only importing it (Google Fonts, Fontsource, or self-hosted) and overriding these two variables:
+
+```css
+/* 1. Import the font (example: Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* 2. Override */
+:root {
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+}
+```
+
+---
+
+## Dark mode
+
+PitchforkUI applies dark mode via `[data-theme='dark']` on any ancestor element. If you override brand colors, add matching dark-mode values so contrast stays correct:
+
+```css
+:root {
+  --color-semantic-action-primary: #7c3aed;
+  --color-semantic-action-primary-hover: #6d28d9;
+  --color-semantic-action-primary-active: #5b21b6;
+  --color-semantic-action-primary-text: #ffffff;
+}
+
+[data-theme='dark'] {
+  /* Use a lighter shade so white text stays readable (~5:1 contrast) */
+  --color-semantic-action-primary: #8b5cf6; /* violet-500 */
+  --color-semantic-action-primary-hover: #7c3aed; /* violet-600 */
+  --color-semantic-action-primary-active: #6d28d9; /* violet-700 */
+}
+```
+
+---
+
+## Starter file
+
+A complete starter file is available in the package as a reference for all overridable tokens:
+
+```bash
+# View the file
+node_modules/@pitchfork-ui/react/theme.starter.css
+```
+
+Copy it into your project and delete what you don't need.
