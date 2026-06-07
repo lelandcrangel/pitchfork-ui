@@ -231,6 +231,7 @@
   /* GaugeChart aliases */
   --pf-gauge-color: var(--color-semantic-action-primary);
   --pf-gauge-track-color: var(--color-semantic-background-subtle);
+  --pf-gauge-center-bg: var(--color-semantic-background-default);
   --pf-gauge-label-color: var(--color-semantic-text-default);
   --pf-gauge-label-size: var(--font-size-2xl);
   --pf-gauge-sub-label-color: var(--color-semantic-text-muted);

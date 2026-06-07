@@ -26,6 +26,9 @@
   gap: var(--space-1);
   position: relative;
   z-index: 1;
+  padding: var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--pf-gauge-center-bg);
   text-align: center;
 }
 
