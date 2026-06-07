@@ -18,8 +18,16 @@
   background: var(--pf-progress-accent);
   border-radius: inherit;
   height: 100%;
-  transition: width 200ms ease;
   width: var(--pf-progress-fill, 0%);
+  /* Animate fill in from 0 on mount, and smoothly between values on change */
+  transition: width var(--pf-transition-slow);
+  animation: pf-progress-bar-in var(--duration-slow) var(--easing-decelerate);
+}
+
+@keyframes pf-progress-bar-in {
+  from {
+    width: 0;
+  }
 }
 
 .pf-progress-bar__value {
@@ -56,7 +64,16 @@
 .pf-progress-circle__fill {
   stroke: var(--pf-progress-accent);
   stroke-linecap: round;
-  transition: stroke-dashoffset 200ms ease;
+  stroke-dashoffset: var(--pf-progress-dashoffset);
+  /* Animate fill in from empty on mount, and smoothly between values on change */
+  transition: stroke-dashoffset var(--pf-transition-slow);
+  animation: pf-progress-circle-in var(--duration-slow) var(--easing-decelerate);
+}
+
+@keyframes pf-progress-circle-in {
+  from {
+    stroke-dashoffset: var(--pf-progress-circ);
+  }
 }
 
 .pf-progress-circle__value {
@@ -73,5 +90,6 @@
   .pf-progress-bar__fill,
   .pf-progress-circle__fill {
     transition: none;
+    animation: none;
   }
 }

@@ -92,7 +92,12 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
             r={radius}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
-            strokeDashoffset={dashOffset}
+            style={
+              {
+                '--pf-progress-dashoffset': dashOffset,
+                '--pf-progress-circ': circumference,
+              } as React.CSSProperties
+            }
           />
         </svg>
         {showValue ? (
