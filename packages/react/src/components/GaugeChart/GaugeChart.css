@@ -1,0 +1,43 @@
+.pf-gauge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pf-gauge__svg {
+  position: absolute;
+  inset: 0;
+}
+
+.pf-gauge__track {
+  stroke: var(--pf-gauge-track-color);
+}
+
+.pf-gauge__fill {
+  transition: stroke-dasharray var(--pf-transition-medium, 180ms ease);
+}
+
+.pf-gauge__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.pf-gauge__label {
+  color: var(--pf-gauge-label-color);
+  font-size: var(--pf-gauge-label-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+}
+
+.pf-gauge__sub-label {
+  color: var(--pf-gauge-sub-label-color);
+  font-size: var(--font-size-sm);
+  line-height: 1;
+}

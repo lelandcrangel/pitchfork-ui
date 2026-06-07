@@ -2115,6 +2115,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Area Chart': ['linebarcharts'],
   'Components/Rating': ['rating'],
   'Components/EmptyState': ['emptystate'],
+  'Components/Gauge Chart': ['gaugechart'],
   'Components/Sparkline': ['sparkline'],
 };
 

@@ -228,6 +228,13 @@
   --pf-utility-btn-danger-text: var(--color-semantic-status-danger-foreground);
   --pf-utility-btn-danger-bg-hover: var(--color-danger-100);
 
+  /* GaugeChart aliases */
+  --pf-gauge-color: var(--color-semantic-action-primary);
+  --pf-gauge-track-color: var(--color-semantic-background-subtle);
+  --pf-gauge-label-color: var(--color-semantic-text-default);
+  --pf-gauge-label-size: var(--font-size-2xl);
+  --pf-gauge-sub-label-color: var(--color-semantic-text-muted);
+
   /* Sparkline aliases */
   --pf-sparkline-color: var(--color-semantic-action-primary);
 
@@ -590,6 +597,9 @@
 
   /* Calendar — same border-default contrast issue as TreeView */
   --pf-calendar-border: var(--color-semantic-border-strong);
+
+  /* GaugeChart — track uses background-subtle (gray-700) which is 1.72:1 against gray-900 */
+  --pf-gauge-track-color: var(--color-semantic-border-strong);
 
   /* TreeView — border-default (gray-700) is 1.73:1 against gray-900, fails WCAG non-text contrast.
      border-strong (gray-500) gives 3.75:1. */
