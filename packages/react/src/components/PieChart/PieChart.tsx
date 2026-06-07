@@ -94,11 +94,13 @@ export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(function PieCh
     <div ref={ref} className={cx('pf-pie-chart', className)} {...props}>
       <div
         className={cx('pf-pie-chart__visual', !hasData && 'pf-pie-chart__visual--empty')}
-        style={{
-          width: chartSize,
-          height: chartSize,
-          backgroundImage: conicGradient,
-        }}
+        style={
+          {
+            width: chartSize,
+            height: chartSize,
+            '--pf-pie-gradient': conicGradient,
+          } as React.CSSProperties
+        }
         role="img"
         aria-label="Pie chart"
       >

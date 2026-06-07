@@ -21,6 +21,38 @@
   position: relative;
 }
 
+/* The conic-gradient lives on a masked layer so it can sweep ("build out")
+   clockwise on mount without clipping the center label. */
+@property --pf-pie-sweep {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+.pf-pie-chart__visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--pf-pie-gradient);
+  --pf-pie-sweep: 100%;
+  -webkit-mask: conic-gradient(#000 var(--pf-pie-sweep), #0000 0);
+  mask: conic-gradient(#000 var(--pf-pie-sweep), #0000 0);
+  animation: pf-pie-sweep var(--duration-slow) var(--easing-decelerate);
+}
+
+@keyframes pf-pie-sweep {
+  from {
+    --pf-pie-sweep: 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-pie-chart__visual::before {
+    animation: none;
+  }
+}
+
 .pf-pie-chart__visual--empty {
   outline: 1px solid var(--pf-piechart-border-muted);
 }
@@ -35,6 +67,8 @@
   font-weight: var(--font-weight-semibold);
   justify-content: center;
   line-height: 1.2;
+  position: relative;
+  z-index: 1;
   text-align: center;
 }
 
