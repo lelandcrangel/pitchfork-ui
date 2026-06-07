@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.3.0...react-v0.4.0) (2026-06-07)
+
+
+### Features
+
+* add staggered fade-in animation to Heatmap cells ([36d9c7d](https://github.com/lelandcrangel/pitchfork-ui/commit/36d9c7da4d0bffad3f1846757c869da2f206662b))
+
 ## [0.3.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.2.0...react-v0.3.0) (2026-06-07)
 
 
