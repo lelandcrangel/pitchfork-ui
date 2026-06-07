@@ -80,13 +80,15 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
   }, [resolvedActiveIndex, totalSlides]);
 
   return (
-    <div ref={ref} className={cx('pf-carousel', className)} aria-label={ariaLabel} {...props}>
-      <div
-        className="pf-carousel__viewport"
-        role="region"
-        aria-roledescription="carousel"
-        aria-label={slideLabel}
-      >
+    <div
+      ref={ref}
+      className={cx('pf-carousel', className)}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={ariaLabel}
+      {...props}
+    >
+      <div className="pf-carousel__viewport">
         {totalSlides === 0 ? (
           <div className="pf-carousel__empty" role="status">
             Add at least one slide.
@@ -96,20 +98,32 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
             className="pf-carousel__track"
             style={{ transform: `translateX(-${resolvedActiveIndex * 100}%)` }}
           >
-            {slides.map((slide, index) => (
-              <div
-                key={`slide-${index}`}
-                className="pf-carousel__slide"
-                role="group"
-                aria-roledescription="slide"
-                aria-label={`Slide ${index + 1} of ${totalSlides}`}
-                aria-hidden={index !== resolvedActiveIndex}
-              >
-                {slide}
-              </div>
-            ))}
+            {slides.map((slide, index) => {
+              const isInactive = index !== resolvedActiveIndex;
+
+              return (
+                <div
+                  key={`slide-${index}`}
+                  className="pf-carousel__slide"
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`Slide ${index + 1} of ${totalSlides}`}
+                  aria-hidden={isInactive}
+                  // `inert` removes off-screen slides from the tab order and a11y
+                  // tree, so focusable content inside them can't be reached.
+                  // Typed loosely for React 18/19 compatibility.
+                  {...(isInactive ? ({ inert: true } as Record<string, boolean>) : {})}
+                >
+                  {slide}
+                </div>
+              );
+            })}
           </div>
         )}
+      </div>
+
+      <div className="pf-sr-only" aria-live="polite" aria-atomic="true">
+        {totalSlides > 0 ? slideLabel : ''}
       </div>
 
       <div
@@ -137,7 +151,7 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
         </button>
 
         {showIndicators && totalSlides > 1 ? (
-          <div className="pf-carousel__indicators" aria-label="Slide indicators">
+          <div className="pf-carousel__indicators" role="group" aria-label="Slide indicators">
             {slides.map((_, index) => {
               const isActive = index === resolvedActiveIndex;
 

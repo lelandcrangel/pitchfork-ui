@@ -21,9 +21,13 @@ describe('Carousel', () => {
     expect(screen.getByRole('button', { name: 'Next slide' })).toBeInTheDocument();
   });
 
-  it('labels the viewport region with the slide count', () => {
+  it('exposes a carousel region and announces the active slide', () => {
     render(<Carousel slides={slides} />);
-    expect(screen.getByRole('region', { name: 'Slide 1 of 3' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Carousel' })).toHaveAttribute(
+      'aria-roledescription',
+      'carousel',
+    );
+    expect(screen.getByText('Slide 1 of 3')).toBeInTheDocument();
   });
 
   it('renders indicator buttons for each slide', () => {
@@ -51,6 +55,16 @@ describe('Carousel', () => {
     expect(hidden).toHaveLength(2);
   });
 
+  it('marks non-active slides inert so their content is unreachable', () => {
+    render(<Carousel slides={slides} />);
+    const groups = screen.getAllByRole('group', { hidden: true });
+    const slideGroups = groups.filter((g) => g.getAttribute('aria-roledescription') === 'slide');
+    const inert = slideGroups.filter((g) => g.hasAttribute('inert'));
+    expect(inert).toHaveLength(2);
+    // the active slide is not inert
+    expect(slideGroups.filter((g) => !g.hasAttribute('inert'))).toHaveLength(1);
+  });
+
   it('shows empty state when slides array is empty', () => {
     render(<Carousel slides={[]} />);
     expect(screen.getByText('Add at least one slide.')).toBeInTheDocument();
@@ -65,7 +79,7 @@ describe('Carousel', () => {
     render(<Carousel slides={slides} />);
     screen.getByRole('button', { name: 'Next slide' }).focus();
     await user.keyboard('{ArrowRight}');
-    expect(screen.getByRole('region', { name: 'Slide 2 of 3' })).toBeInTheDocument();
+    expect(screen.getByText('Slide 2 of 3')).toBeInTheDocument();
   });
 
   it('ArrowLeft goes to the previous slide when a control has focus', async () => {
@@ -73,28 +87,28 @@ describe('Carousel', () => {
     render(<Carousel slides={slides} initialIndex={1} />);
     screen.getByRole('button', { name: 'Previous slide' }).focus();
     await user.keyboard('{ArrowLeft}');
-    expect(screen.getByRole('region', { name: 'Slide 1 of 3' })).toBeInTheDocument();
+    expect(screen.getByText('Slide 1 of 3')).toBeInTheDocument();
   });
 
   it('advances to the next slide when Next is clicked', async () => {
     const user = userEvent.setup();
     render(<Carousel slides={slides} />);
     await user.click(screen.getByRole('button', { name: 'Next slide' }));
-    expect(screen.getByRole('region', { name: 'Slide 2 of 3' })).toBeInTheDocument();
+    expect(screen.getByText('Slide 2 of 3')).toBeInTheDocument();
   });
 
   it('goes back to the previous slide when Previous is clicked', async () => {
     const user = userEvent.setup();
     render(<Carousel slides={slides} initialIndex={1} />);
     await user.click(screen.getByRole('button', { name: 'Previous slide' }));
-    expect(screen.getByRole('region', { name: 'Slide 1 of 3' })).toBeInTheDocument();
+    expect(screen.getByText('Slide 1 of 3')).toBeInTheDocument();
   });
 
   it('jumps to a slide when its indicator is clicked', async () => {
     const user = userEvent.setup();
     render(<Carousel slides={slides} />);
     await user.click(screen.getByRole('button', { name: 'Go to slide 3' }));
-    expect(screen.getByRole('region', { name: 'Slide 3 of 3' })).toBeInTheDocument();
+    expect(screen.getByText('Slide 3 of 3')).toBeInTheDocument();
   });
 
   it('calls onIndexChange with the new index on navigation', async () => {
@@ -107,7 +121,7 @@ describe('Carousel', () => {
 
   it('respects initialIndex prop', () => {
     render(<Carousel slides={slides} initialIndex={2} />);
-    expect(screen.getByRole('region', { name: 'Slide 3 of 3' })).toBeInTheDocument();
+    expect(screen.getByText('Slide 3 of 3')).toBeInTheDocument();
   });
 
   // ─── Wrapping (loop) ─────────────────────────────────────────────────────
@@ -116,14 +130,14 @@ describe('Carousel', () => {
     const user = userEvent.setup();
     render(<Carousel slides={slides} initialIndex={2} loop />);
     await user.click(screen.getByRole('button', { name: 'Next slide' }));
-    expect(screen.getByRole('region', { name: 'Slide 1 of 3' })).toBeInTheDocument();
+    expect(screen.getByText('Slide 1 of 3')).toBeInTheDocument();
   });
 
   it('wraps from first to last when loop=true and Previous is clicked', async () => {
     const user = userEvent.setup();
     render(<Carousel slides={slides} initialIndex={0} loop />);
     await user.click(screen.getByRole('button', { name: 'Previous slide' }));
-    expect(screen.getByRole('region', { name: 'Slide 3 of 3' })).toBeInTheDocument();
+    expect(screen.getByText('Slide 3 of 3')).toBeInTheDocument();
   });
 
   it('disables Next at the last slide when loop=false', () => {
