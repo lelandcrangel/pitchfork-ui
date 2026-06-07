@@ -129,7 +129,6 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           className="pf-dropdown__trigger"
           aria-haspopup="menu"
           aria-expanded={isOpen}
-          aria-controls={isOpen ? menuId : undefined}
           onClick={() => {
             disclosure.toggle();
           }}

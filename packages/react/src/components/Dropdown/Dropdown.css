@@ -65,6 +65,19 @@
   padding: var(--space-1);
   position: fixed;
   z-index: 1000;
+  transform-origin: top center;
+  animation: pf-dropdown-menu-in var(--duration-fast) var(--easing-decelerate);
+}
+
+@keyframes pf-dropdown-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .pf-dropdown__item {
@@ -128,5 +141,9 @@
 @media (prefers-reduced-motion: reduce) {
   .pf-dropdown__chevron {
     transition: none;
+  }
+
+  .pf-dropdown__menu {
+    animation: none;
   }
 }

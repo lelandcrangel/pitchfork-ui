@@ -23,6 +23,7 @@ const meta = {
   title: 'Examples/Dropdown',
   component: Dropdown,
   tags: ['ai-generated', 'test', 'examplesHidden'],
+  args: { items: [] },
 } satisfies Meta<typeof Dropdown>;
 
 export default meta;
