@@ -2,6 +2,28 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.1.10](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.9...react-v0.1.10) (2026-06-07)
+
+
+### Features
+
+* add AreaChart component with examples and documentation ([7c295aa](https://github.com/lelandcrangel/pitchfork-ui/commit/7c295aaa1aa36338550bc65be92bc4810e694f94))
+* add Gauge Chart component with examples and documentation ([8ef63f3](https://github.com/lelandcrangel/pitchfork-ui/commit/8ef63f3dd3d0ad5b6d38ceefd706701296e82cb5))
+* add Heatmap component with styling, examples, and tests ([51d084b](https://github.com/lelandcrangel/pitchfork-ui/commit/51d084b05987afb67489ab5ad334a438074b053c))
+* add README for @pitchfork-ui/react with installation, usage, and dark mode instructions ([90e8061](https://github.com/lelandcrangel/pitchfork-ui/commit/90e8061afc55bcb8e2c1559543e68f410dcbfd40))
+* add Sparkline component with examples and documentation ([9b039d1](https://github.com/lelandcrangel/pitchfork-ui/commit/9b039d128874119e10cd0ce480a4baa4c63c0341))
+* add Theming documentation and theme starter CSS file for customization ([58b7ae7](https://github.com/lelandcrangel/pitchfork-ui/commit/58b7ae7c1c6764df7623825acd146991a8abbede))
+* add WCAG contrast ratio checker for dark mode token pairs ([c8316ba](https://github.com/lelandcrangel/pitchfork-ui/commit/c8316baf7ee60389a9c239cc4a520f331b19312d))
+* implement dark mode support with theme toggle and update CSS variables for accessibility ([111ec11](https://github.com/lelandcrangel/pitchfork-ui/commit/111ec11f7f0fc9740d8af0009316bc80202b4f20))
+* update README and package.json for automatic CSS injection; add new dependencies and update changelog ([3496628](https://github.com/lelandcrangel/pitchfork-ui/commit/3496628a5a84ad253f2c90ddfa7945b5edcb8bbd))
+* update README and package.json to include optional peer dependencies for CodeSnippet component ([f0257b3](https://github.com/lelandcrangel/pitchfork-ui/commit/f0257b30a0e6ada3fd8016f6b649ed8bdd235551))
+
+
+### Bug Fixes
+
+* **GaugeChart:** give center label an explicit background for a11y; release 0.2.0 ([eff4e3c](https://github.com/lelandcrangel/pitchfork-ui/commit/eff4e3c3b3d273d2de47a98cca0dcee7d1a991df))
+* update UtilityButton to use import.meta.env.DEV and loosen @pitchfork-ui/tokens dependency ([ac31f6a](https://github.com/lelandcrangel/pitchfork-ui/commit/ac31f6adc4bc620e81d69ba9352d183632c98163))
+
 ## [0.1.9](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.1.8...react-v0.1.9) (2026-06-05)
 
 
