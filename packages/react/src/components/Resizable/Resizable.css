@@ -1,0 +1,79 @@
+.pf-resizable {
+  display: flex;
+  overflow: hidden;
+}
+
+.pf-resizable--horizontal {
+  flex-direction: row;
+}
+
+.pf-resizable--vertical {
+  flex-direction: column;
+}
+
+.pf-resizable__panel {
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+}
+
+.pf-resizable__panel--fill {
+  flex: 1 1 0;
+}
+
+/* ── Handle ───────────────────────────────────────────────────────────────── */
+
+.pf-resizable__handle {
+  align-items: center;
+  background: var(--pf-resizable-handle-bg);
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  position: relative;
+  touch-action: none;
+  transition: background var(--pf-transition-fast);
+}
+
+.pf-resizable__handle:hover,
+.pf-resizable__handle:focus-visible {
+  background: var(--pf-resizable-handle-active-bg);
+}
+
+.pf-resizable__handle:focus-visible {
+  outline: none;
+  box-shadow: var(--pf-resizable-focus-ring, var(--pf-focus-ring));
+}
+
+.pf-resizable--horizontal .pf-resizable__handle {
+  cursor: col-resize;
+  width: var(--pf-resizable-handle-size, 6px);
+}
+
+.pf-resizable--vertical .pf-resizable__handle {
+  cursor: row-resize;
+  height: var(--pf-resizable-handle-size, 6px);
+}
+
+/* Grip affordance (dots/line) centered in the handle. */
+.pf-resizable__grip {
+  background: var(--pf-resizable-grip);
+  border-radius: var(--radius-full);
+}
+
+.pf-resizable--horizontal .pf-resizable__grip {
+  height: 24px;
+  width: 2px;
+}
+
+.pf-resizable--vertical .pf-resizable__grip {
+  height: 2px;
+  width: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-resizable__handle {
+    transition: none;
+  }
+}

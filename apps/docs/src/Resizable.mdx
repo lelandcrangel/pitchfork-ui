@@ -1,0 +1,33 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ResizableStories from './Resizable.stories';
+import * as ResizableExamples from './Resizable.examples.stories';
+
+<Meta of={ResizableStories} />
+
+# Resizable
+
+Resizable splits a region into two panels with a draggable handle between them —
+the kind of split layout you see in editors and dashboards (sidebar + content,
+editor + console). Drag the handle with a pointer, or focus it and use the arrow
+keys.
+
+Provide exactly **two children** (the panels); the handle is inserted between
+them. `orientation="horizontal"` places panels side by side (drag left/right);
+`vertical` stacks them (drag up/down). The first panel's size is a percentage
+controlled by `defaultSize`/`size`, clamped to `min`/`max`.
+
+The handle follows the ARIA **window splitter** pattern — `role="separator"`,
+`aria-orientation`, and `aria-valuenow`/`min`/`max` — and is keyboard operable:
+arrow keys nudge by `step`, `Home`/`End` jump to the bounds.
+
+Set the container's height via `style`/`className`.
+
+## Examples
+
+### Horizontal
+
+<Canvas of={ResizableExamples.Horizontal} meta={ResizableExamples} />
+
+### Vertical
+
+<Canvas of={ResizableExamples.Vertical} meta={ResizableExamples} />

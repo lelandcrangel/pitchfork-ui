@@ -342,6 +342,11 @@
   --pf-contextmenu-danger-active-bg: var(--color-danger-600);
   --pf-contextmenu-danger-active-text: var(--color-base-white);
 
+  /* Resizable aliases */
+  --pf-resizable-handle-bg: var(--color-semantic-border-default);
+  --pf-resizable-handle-active-bg: var(--color-semantic-action-primary);
+  --pf-resizable-grip: var(--color-semantic-text-muted);
+
   /* Toolbar aliases */
   --pf-toolbar-bg: var(--color-semantic-background-default);
   --pf-toolbar-border: var(--color-semantic-border-default);
