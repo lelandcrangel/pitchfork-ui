@@ -1,0 +1,41 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TimePickerStories from './TimePicker.stories';
+import * as TimePickerExamples from './TimePicker.examples.stories';
+
+<Meta of={TimePickerStories} />
+
+# TimePicker
+
+TimePicker selects a time of day from scrollable hour and minute columns (plus an
+AM/PM column in 12-hour mode). It pairs naturally with `DatePicker` to complete a
+date-and-time form.
+
+The value is always a canonical 24-hour string — `"HH:mm"` (e.g. `"14:30"`) — so
+it's easy to store and compare regardless of the display format. Pass
+`hourCycle={12}` to display 12-hour time with AM/PM, and `minuteStep` to coarsen
+the minutes column (e.g. `15` for quarter-hour increments).
+
+The panel is portaled and follows the ARIA `dialog` pattern; each column is a
+listbox, and arrow keys move through options within a focused column.
+
+## Examples
+
+### Default
+
+<Canvas of={TimePickerExamples.Default} meta={TimePickerExamples} />
+
+### 12-hour with AM/PM
+
+<Canvas of={TimePickerExamples.TwelveHour} meta={TimePickerExamples} />
+
+### 15-minute steps
+
+<Canvas of={TimePickerExamples.MinuteStep} meta={TimePickerExamples} />
+
+### With Error
+
+<Canvas of={TimePickerExamples.WithError} meta={TimePickerExamples} />
+
+### Disabled
+
+<Canvas of={TimePickerExamples.Disabled} meta={TimePickerExamples} />
