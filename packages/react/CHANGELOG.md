@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.9.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.8.0...react-v0.9.0) (2026-06-08)
+
+
+### Features
+
+* add React Server Components support ([7bbc598](https://github.com/lelandcrangel/pitchfork-ui/commit/7bbc598ee271d80f1355eb26b72b52708d05c150))
+
+
+### Bug Fixes
+
+* resolve ci npm workspace install failure ([71a1343](https://github.com/lelandcrangel/pitchfork-ui/commit/71a1343d3af0c12fcc0291e5e4a80679ea961023))
+
 ## [0.8.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.7.0...react-v0.8.0) (2026-06-08)
 
 
