@@ -1,0 +1,25 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as AccordionStories from './Accordion.stories';
+import * as AccordionExamples from './Accordion.examples.stories';
+
+<Meta of={AccordionStories} />
+
+# Accordion
+
+A collapsible disclosure component for grouping content into expandable sections. Supports a single open panel at a time (`type="single"`) or many (`type="multiple"`), controlled or uncontrolled, with per-item disabling.
+
+Each header is a real `<button>` with `aria-expanded` / `aria-controls`, panels are exposed as `role="region"` labelled by their header, and the panel height animates open/close using the motion tokens (respecting `prefers-reduced-motion`). Keyboard support: Up/Down move between headers, Home/End jump to the first/last, and Enter/Space toggle.
+
+## Examples
+
+### FAQ (single)
+
+<Canvas of={AccordionExamples.FAQ} meta={AccordionExamples} />
+
+### Multiple open
+
+<Canvas of={AccordionExamples.Multiple} meta={AccordionExamples} />
+
+### With a disabled item
+
+<Canvas of={AccordionExamples.WithDisabledItem} meta={AccordionExamples} />

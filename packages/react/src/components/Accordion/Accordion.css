@@ -1,0 +1,85 @@
+.pf-accordion {
+  border: 1px solid var(--pf-accordion-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.pf-accordion__item + .pf-accordion__item {
+  border-top: 1px solid var(--pf-accordion-border);
+}
+
+.pf-accordion__heading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.pf-accordion__trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--pf-accordion-trigger-text);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  gap: var(--space-3);
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  width: 100%;
+}
+
+.pf-accordion__trigger:hover:not(:disabled) {
+  background: var(--pf-accordion-trigger-bg-hover);
+}
+
+.pf-accordion__trigger:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.pf-accordion__trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pf-accordion__icon {
+  align-items: center;
+  color: var(--pf-accordion-icon);
+  display: inline-flex;
+  flex-shrink: 0;
+  transition: transform var(--pf-transition-fast);
+}
+
+.pf-accordion__item--open .pf-accordion__icon {
+  transform: rotate(180deg);
+}
+
+/* Animate open/close height with the grid-template-rows 0fr → 1fr technique */
+.pf-accordion__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--pf-transition-medium);
+}
+
+.pf-accordion__panel--open {
+  grid-template-rows: 1fr;
+}
+
+.pf-accordion__content {
+  min-height: 0;
+  overflow: hidden;
+  color: var(--pf-accordion-content-text);
+}
+
+.pf-accordion__content-inner {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-accordion__panel,
+  .pf-accordion__icon {
+    transition: none;
+  }
+}
