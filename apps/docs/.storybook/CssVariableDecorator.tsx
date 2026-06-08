@@ -2148,6 +2148,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Popover': ['popover'],
   'Components/Gauge Chart': ['gaugechart'],
   'Components/Heatmap': ['heatmap'],
+  'Components/Kbd': ['kbd'],
   'Components/Sparkline': ['sparkline'],
 };
 

@@ -1,0 +1,25 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as KbdStories from './Kbd.stories';
+import * as KbdExamples from './Kbd.examples.stories';
+
+<Meta of={KbdStories} />
+
+# Kbd
+
+Displays keyboard keys and shortcuts as styled key caps. Use a single key via children, or pass `keys` for a combination — each entry renders as its own cap with separators between.
+
+Renders semantic `<kbd>` elements, so screen readers and assistive tech recognize it as keyboard input. Comes in `sm` (inline with text) and `md` sizes.
+
+## Examples
+
+### Single keys
+
+<Canvas of={KbdExamples.SingleKeys} meta={KbdExamples} />
+
+### Combinations
+
+<Canvas of={KbdExamples.Combos} meta={KbdExamples} />
+
+### Inline in text
+
+<Canvas of={KbdExamples.Inline} meta={KbdExamples} />

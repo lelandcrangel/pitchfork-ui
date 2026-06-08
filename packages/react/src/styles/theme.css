@@ -233,6 +233,11 @@
   --pf-utility-btn-danger-text: var(--color-semantic-status-danger-foreground);
   --pf-utility-btn-danger-bg-hover: var(--color-danger-100);
 
+  /* Kbd aliases */
+  --pf-kbd-bg: var(--color-semantic-background-subtle);
+  --pf-kbd-border: var(--color-semantic-border-default);
+  --pf-kbd-text: var(--color-semantic-text-default);
+
   /* Popover aliases */
   --pf-popover-bg: var(--color-semantic-background-default);
   --pf-popover-border: var(--color-semantic-border-default);
@@ -241,7 +246,8 @@
   /* AvatarGroup aliases */
   --pf-avatar-group-ring: var(--color-semantic-background-default);
   --pf-avatar-group-overflow-bg: var(--color-semantic-background-subtle);
-  --pf-avatar-group-overflow-text: var(--color-semantic-text-muted);
+  /* default (not muted) text: muted on the subtle chip was only 4.34:1 in light */
+  --pf-avatar-group-overflow-text: var(--color-semantic-text-default);
 
   /* Accordion aliases */
   --pf-accordion-border: var(--color-semantic-border-default);

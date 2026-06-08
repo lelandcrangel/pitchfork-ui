@@ -1,0 +1,25 @@
+.pf-kbd {
+  align-items: center;
+  background: var(--pf-kbd-bg);
+  border: 1px solid var(--pf-kbd-border);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--pf-kbd-text);
+  display: inline-flex;
+  font-family: var(--font-family-mono, ui-monospace, monospace);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pf-kbd--md {
+  font-size: var(--font-size-xs);
+  min-width: 1.5em;
+  padding: 3px 6px;
+}
+
+.pf-kbd--sm {
+  font-size: var(--font-size-2xs);
+  min-width: 1.35em;
+  padding: 2px 5px;
+}
