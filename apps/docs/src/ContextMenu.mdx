@@ -1,0 +1,27 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ContextMenuStories from './ContextMenu.stories';
+import * as ContextMenuExamples from './ContextMenu.examples.stories';
+
+<Meta of={ContextMenuStories} />
+
+# ContextMenu
+
+ContextMenu shows a menu at the cursor when the user right-clicks (or
+long-presses on touch via the platform's contextmenu event) within its target
+area. It's distinct from `Dropdown`, which opens from a click on a visible
+trigger button — ContextMenu has no button; the target content itself is the
+trigger.
+
+Pass an `items` array of actions (with optional `icon`, `shortcut`, `disabled`,
+and `destructive` flags) and `{ separator: true }` entries to divide groups. The
+menu is portaled and clamped to the viewport, follows the ARIA `menu` pattern
+(`menu` / `menuitem`), and supports full keyboard navigation — arrow keys,
+`Home`/`End`, `Enter`/`Space` to activate, `Escape` to close.
+
+Set `disabled` to let the browser's native context menu through instead.
+
+## Examples
+
+### Default
+
+<Canvas of={ContextMenuExamples.Default} meta={ContextMenuExamples} />
