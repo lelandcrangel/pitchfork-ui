@@ -75,7 +75,7 @@
   top: var(--pf-avatar-status-offset);
   height: var(--pf-avatar-status-size, 10px);
   position: absolute;
-  right: var(--pf-avatar-status-offset);
+  inset-inline-end: var(--pf-avatar-status-offset);
   width: var(--pf-avatar-status-size, 10px);
   z-index: 1;
 }

@@ -73,7 +73,7 @@
   display: inline-flex;
   font-size: var(--font-size-md);
   justify-content: center;
-  margin-left: auto;
+  margin-inline-start: auto;
   padding: 0;
 }
 

@@ -43,7 +43,7 @@
   display: inline-flex;
   height: 18px;
   justify-content: center;
-  margin-right: -2px;
+  margin-inline-end: -2px;
   padding: 0;
   width: 18px;
 }

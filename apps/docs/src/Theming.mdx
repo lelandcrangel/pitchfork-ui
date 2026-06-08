@@ -136,6 +136,24 @@ PitchforkUI applies dark mode via `[data-theme='dark']` on any ancestor element.
 
 ---
 
+## Right-to-left (RTL)
+
+Component styles use CSS logical properties (`margin-inline-start`, `padding-inline-end`, `inset-inline-start`, `text-align: start`, etc.) rather than physical left/right. That means RTL works with no extra configuration — just set the document direction:
+
+```html
+<html dir="rtl"></html>
+```
+
+Or scope it to a subtree:
+
+```tsx
+<div dir="rtl">
+  <Breadcrumbs items={items} />
+</div>
+```
+
+Spacing, alignment, dismiss buttons, and presence indicators all mirror automatically. Components whose direction is explicitly physical by API — e.g. `SlideoutMenu` `placement="left" | "right"` and `NotificationStack` `placement="top-right"` — stay fixed to the side you specify, as intended.
+
 ## Starter file
 
 A complete starter file is available in the package as a reference for all overridable tokens:

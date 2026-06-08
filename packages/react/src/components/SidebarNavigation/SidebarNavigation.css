@@ -76,7 +76,7 @@
   grid-template-columns: auto 1fr auto;
   min-height: 36px;
   padding: 0 var(--space-2);
-  text-align: left;
+  text-align: start;
   text-decoration: none;
   width: 100%;
 }

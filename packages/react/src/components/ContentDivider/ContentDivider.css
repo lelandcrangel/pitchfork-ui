@@ -7,8 +7,8 @@
 }
 
 .pf-content-divider--inset {
-  padding-left: var(--space-2);
-  padding-right: var(--space-2);
+  padding-inline-start: var(--space-2);
+  padding-inline-end: var(--space-2);
 }
 
 .pf-content-divider__line {

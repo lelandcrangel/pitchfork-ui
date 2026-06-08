@@ -74,7 +74,7 @@
   background: var(--pf-progress-steps-border);
   display: block;
   flex: 1;
-  margin-left: var(--space-2);
+  margin-inline-start: var(--space-2);
   /* Connector "activates" with a smooth fill as the step completes */
   transition: background-color var(--pf-transition-slow);
 }
@@ -88,7 +88,7 @@
     display: block;
     height: 1px;
     left: 50%;
-    margin-left: 0;
+    margin-inline-start: 0;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -119,7 +119,7 @@
 
 .pf-progress-steps--vertical .pf-progress-steps__connector {
   bottom: calc(var(--space-3) * -1);
-  left: 14px;
+  inset-inline-start: 14px;
   margin: 0;
   position: absolute;
   top: 28px;

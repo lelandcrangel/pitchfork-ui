@@ -12,7 +12,7 @@
 
 /* Leave room for the centered dismiss button so content/action don't crowd it */
 .pf-inline-cta--dismissible {
-  padding-right: var(--space-12);
+  padding-inline-end: var(--space-12);
 }
 
 .pf-inline-cta__dismiss {
@@ -26,7 +26,7 @@
   height: 28px;
   justify-content: center;
   position: absolute;
-  right: var(--space-3);
+  inset-inline-end: var(--space-3);
   top: 50%;
   transform: translateY(-50%);
   width: 28px;

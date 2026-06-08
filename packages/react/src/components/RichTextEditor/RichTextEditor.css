@@ -90,5 +90,5 @@
   color: var(--pf-rte-text-muted);
   font-size: var(--font-size-sm);
   margin: var(--space-2) 0 0;
-  text-align: right;
+  text-align: end;
 }

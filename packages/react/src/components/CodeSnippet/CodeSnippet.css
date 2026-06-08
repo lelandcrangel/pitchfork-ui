@@ -132,8 +132,8 @@
 .pf-code-snippet__line-number {
   color: var(--pf-code-snippet-line-number, var(--color-gray-400));
   min-width: 2.5ch;
-  padding-right: var(--space-3);
-  text-align: right;
+  padding-inline-end: var(--space-3);
+  text-align: end;
   user-select: none;
   vertical-align: top;
 }

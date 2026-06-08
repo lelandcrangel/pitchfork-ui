@@ -14,7 +14,7 @@
   gap: var(--space-2);
   justify-content: center;
   line-height: 1;
-  margin-left: -1px;
+  margin-inline-start: -1px;
   min-height: 40px;
   padding: 0 var(--space-4);
   position: relative;
@@ -28,7 +28,7 @@
 .pf-button-group__button:first-child {
   border-bottom-left-radius: var(--radius-md);
   border-top-left-radius: var(--radius-md);
-  margin-left: 0;
+  margin-inline-start: 0;
 }
 
 .pf-button-group__button:last-child {

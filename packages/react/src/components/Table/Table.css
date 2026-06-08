@@ -20,9 +20,9 @@
   font-size: var(--font-size-sm);
   min-height: 56px;
   padding-top: var(--space-3);
-  padding-right: var(--space-4, 16px);
+  padding-inline-end: var(--space-4, 16px);
   padding-bottom: var(--space-3);
-  padding-left: var(--space-4, 16px);
+  padding-inline-start: var(--space-4, 16px);
 }
 
 .pf-table__head-cell,
@@ -103,7 +103,7 @@
 }
 
 .pf-table__cell--left {
-  text-align: left;
+  text-align: start;
 }
 
 .pf-table__cell--center {
@@ -111,7 +111,7 @@
 }
 
 .pf-table__cell--right {
-  text-align: right;
+  text-align: end;
 }
 
 .pf-table__empty {

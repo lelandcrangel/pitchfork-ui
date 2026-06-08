@@ -26,13 +26,13 @@
 }
 
 .pf-badge-group--leading .pf-badge-group__text {
-  margin-left: -1px;
-  padding-left: calc(var(--space-2) + 2px);
+  margin-inline-start: -1px;
+  padding-inline-start: calc(var(--space-2) + 2px);
 }
 
 .pf-badge-group--trailing .pf-badge-group__text {
-  margin-right: -1px;
-  padding-right: calc(var(--space-2) + 2px);
+  margin-inline-end: -1px;
+  padding-inline-end: calc(var(--space-2) + 2px);
 }
 
 .pf-badge-group--leading .pf-badge-group__badge {

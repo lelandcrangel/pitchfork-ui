@@ -20,7 +20,7 @@
   display: grid;
   grid-template-columns: auto 1fr;
   min-width: 0;
-  padding-left: calc(var(--pf-tree-level, 0) * var(--space-4));
+  padding-inline-start: calc(var(--pf-tree-level, 0) * var(--space-4));
 }
 
 .pf-tree-view__toggle-wrap {
@@ -69,7 +69,7 @@
   min-height: 34px;
   min-width: 0;
   padding: 0 var(--space-2);
-  text-align: left;
+  text-align: start;
   width: 100%;
 }
 

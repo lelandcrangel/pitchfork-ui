@@ -37,7 +37,7 @@
   display: flex;
   font-size: var(--font-size-xs);
   line-height: 1;
-  padding-right: var(--space-1);
+  padding-inline-end: var(--space-1);
 }
 
 .pf-heatmap__main {
