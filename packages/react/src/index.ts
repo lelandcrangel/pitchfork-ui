@@ -58,6 +58,7 @@ export * from './components/Switch';
 export * from './components/Select';
 export * from './components/Slider';
 export * from './components/Tag';
+export * from './components/TagInput';
 export * from './components/Table';
 export * from './components/Tabs';
 export * from './components/Textarea';

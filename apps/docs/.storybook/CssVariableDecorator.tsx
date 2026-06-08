@@ -1003,6 +1003,20 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['command'],
   },
   {
+    name: '--pf-taginput-border',
+    label: 'Tag input border',
+    defaultValue: 'var(--pf-input-border)',
+    type: 'color',
+    scopes: ['taginput'],
+  },
+  {
+    name: '--pf-taginput-focus-border',
+    label: 'Tag input focus border',
+    defaultValue: 'var(--color-semantic-action-primary)',
+    type: 'color',
+    scopes: ['taginput'],
+  },
+  {
     name: '--pf-timepicker-border',
     label: 'Time picker border',
     defaultValue: 'var(--pf-input-border)',
@@ -2248,6 +2262,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/FileUploader': ['fileuploader'],
   'Components/Select': ['select'],
   'Components/TimePicker': ['timepicker'],
+  'Components/TagInput': ['taginput'],
   'Components/CommandPalette': ['command'],
   'Components/Combobox': ['combobox'],
   'Components/NumberInput': ['numberinput'],

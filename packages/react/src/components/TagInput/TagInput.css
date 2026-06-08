@@ -1,0 +1,72 @@
+.pf-taginput {
+  background: var(--pf-taginput-bg);
+  border: 1px solid var(--pf-taginput-border);
+  border-radius: var(--radius-md);
+  cursor: text;
+  min-height: 40px;
+  padding: var(--space-1);
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
+}
+
+.pf-taginput:focus-within {
+  border-color: var(--pf-taginput-focus-border);
+  box-shadow: var(--pf-taginput-focus-ring, var(--pf-focus-ring));
+}
+
+.pf-taginput--invalid {
+  border-color: var(--pf-taginput-invalid-border);
+}
+
+.pf-taginput--disabled {
+  background: var(--pf-control-bg-disabled);
+  border-color: var(--pf-control-border-disabled);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pf-taginput__tags {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pf-taginput__tag {
+  display: inline-flex;
+}
+
+.pf-taginput__field {
+  display: inline-flex;
+  flex: 1;
+  min-width: 8ch;
+}
+
+.pf-taginput__input {
+  background: transparent;
+  border: none;
+  color: var(--pf-taginput-text);
+  flex: 1;
+  font: inherit;
+  min-width: 0;
+  outline: none;
+  padding: var(--space-1) var(--space-2);
+}
+
+.pf-taginput__input::placeholder {
+  color: var(--pf-taginput-placeholder);
+}
+
+.pf-taginput__input:disabled {
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-taginput {
+    transition: none;
+  }
+}

@@ -103,6 +103,14 @@
   --pf-command-item-active-bg: var(--color-semantic-action-primary);
   --pf-command-item-active-text: var(--color-semantic-action-primary-text);
 
+  /* Tag input aliases */
+  --pf-taginput-bg: var(--pf-input-bg);
+  --pf-taginput-border: var(--pf-input-border);
+  --pf-taginput-text: var(--pf-input-text);
+  --pf-taginput-placeholder: var(--pf-input-placeholder);
+  --pf-taginput-focus-border: var(--color-semantic-action-primary);
+  --pf-taginput-invalid-border: var(--color-semantic-status-danger-border);
+
   /* Time picker aliases */
   --pf-timepicker-bg: var(--pf-input-bg);
   --pf-timepicker-border: var(--pf-input-border);

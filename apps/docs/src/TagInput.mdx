@@ -1,0 +1,45 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TagInputStories from './TagInput.stories';
+import * as TagInputExamples from './TagInput.examples.stories';
+
+<Meta of={TagInputStories} />
+
+# TagInput
+
+TagInput lets users enter a free-form list of values as removable chips — for
+emails, labels, keywords, and the like. Press **Enter** or **comma** to commit
+the current text as a tag, **Backspace** on an empty field to remove the last
+tag, and click a tag's **×** to remove it. Pasting a comma/newline/tab-delimited
+list adds each value at once.
+
+It differs from related components:
+
+- **`MultiSelect`** chooses from a predefined option list — TagInput accepts
+  arbitrary free text.
+- **`Tag`** is display-only — TagInput manages a collection and its input.
+
+Duplicates are rejected case-insensitively by default (`allowDuplicates` to
+override), `max` caps the count, and `validate` can reject candidates (e.g. email
+format). The value is a `string[]`.
+
+## Examples
+
+### Default
+
+<Canvas of={TagInputExamples.Default} meta={TagInputExamples} />
+
+### Limited to 3 tags
+
+<Canvas of={TagInputExamples.WithMax} meta={TagInputExamples} />
+
+### With validation
+
+<Canvas of={TagInputExamples.EmailValidation} meta={TagInputExamples} />
+
+### With Error
+
+<Canvas of={TagInputExamples.WithError} meta={TagInputExamples} />
+
+### Disabled
+
+<Canvas of={TagInputExamples.Disabled} meta={TagInputExamples} />
