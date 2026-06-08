@@ -36,6 +36,7 @@ export * from './components/Notification';
 export * from './components/PageHeader';
 export * from './components/Pagination';
 export * from './components/PieChart';
+export * from './components/Popover';
 export * from './components/ProgressIndicators';
 export * from './components/ProgressSteps';
 export * from './components/RadarChart';

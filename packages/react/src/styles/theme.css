@@ -233,6 +233,11 @@
   --pf-utility-btn-danger-text: var(--color-semantic-status-danger-foreground);
   --pf-utility-btn-danger-bg-hover: var(--color-danger-100);
 
+  /* Popover aliases */
+  --pf-popover-bg: var(--color-semantic-background-default);
+  --pf-popover-border: var(--color-semantic-border-default);
+  --pf-popover-text: var(--color-semantic-text-default);
+
   /* AvatarGroup aliases */
   --pf-avatar-group-ring: var(--color-semantic-background-default);
   --pf-avatar-group-overflow-bg: var(--color-semantic-background-subtle);

@@ -1,0 +1,25 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as PopoverStories from './Popover.stories';
+import * as PopoverExamples from './Popover.examples.stories';
+
+<Meta of={PopoverStories} />
+
+# Popover
+
+A floating, anchored container for rich content — info panels, small forms, or option groups — toggled from a trigger element. Unlike `Tooltip` (text on hover) or `Dropdown` (a menu of actions), a Popover holds arbitrary interactive content.
+
+Pass any element as the `trigger`; the Popover augments it with `aria-haspopup="dialog"` / `aria-expanded` and anchors the panel to it (flipping above when there's no room below). The panel opens/closes with an animation, moves focus into itself on open and returns focus to the trigger on close, and dismisses on outside click or Escape. It's controllable via `open` / `onOpenChange`.
+
+## Examples
+
+### Info panel
+
+<Canvas of={PopoverExamples.Info} meta={PopoverExamples} />
+
+### Form panel
+
+<Canvas of={PopoverExamples.FormPanel} meta={PopoverExamples} />
+
+### Aligned to end
+
+<Canvas of={PopoverExamples.AlignEnd} meta={PopoverExamples} />
