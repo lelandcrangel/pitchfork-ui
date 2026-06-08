@@ -2,6 +2,7 @@
   "name": "pitchfork-ui-workspace",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "packageManager": "npm@11.6.2",
   "engines": {

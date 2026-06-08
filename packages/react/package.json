@@ -1,6 +1,30 @@
 {
   "name": "@pitchfork-ui/react",
   "version": "0.8.0",
+  "description": "Accessible, themeable React component library for lelandrangel.com — 65+ components backed by a Style Dictionary token system, with dark mode and bundled CSS.",
+  "license": "MIT",
+  "author": "Leland Rangel",
+  "homepage": "https://lelandrangel.com/pitchfork-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lelandcrangel/pitchfork-ui.git",
+    "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/lelandcrangel/pitchfork-ui/issues"
+  },
+  "keywords": [
+    "react",
+    "component-library",
+    "design-system",
+    "ui",
+    "components",
+    "accessible",
+    "a11y",
+    "dark-mode",
+    "design-tokens",
+    "typescript"
+  ],
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -11,7 +35,9 @@
   ],
   "files": [
     "dist",
-    "theme.starter.css"
+    "theme.starter.css",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "build": "vite build",
