@@ -30,10 +30,11 @@
 .pf-modal {
   background: var(--pf-modal-bg);
   border: 1px solid color-mix(in srgb, var(--pf-modal-border) 85%, transparent);
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: var(--radius-lg);
   box-shadow: var(--pf-modal-elevation-overlay-shadow, var(--pf-elevation-overlay-shadow));
   color: var(--pf-modal-text);
-  display: grid;
+  display: flex;
+  flex-direction: column;
   max-height: 92vh;
   overflow: hidden;
   width: 100%;
@@ -41,7 +42,6 @@
 
 @media (--md) {
   .pf-modal {
-    border-radius: var(--radius-lg);
     max-height: min(90vh, 720px);
   }
 }
@@ -66,6 +66,7 @@
 .pf-modal__footer {
   align-items: start;
   display: flex;
+  flex-shrink: 0;
   gap: var(--space-3);
   justify-content: space-between;
   padding: var(--space-3);
@@ -90,7 +91,9 @@
 
 .pf-modal__body {
   display: grid;
+  flex: 1 1 auto;
   gap: var(--space-4);
+  min-height: 0;
   overflow-y: auto;
   padding: var(--space-3);
 }
