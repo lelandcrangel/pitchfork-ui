@@ -1,0 +1,78 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ToastStories from './Toast.stories';
+import * as ToastExamples from './Toast.examples.stories';
+
+<Meta of={ToastStories} />
+
+# Toast / useToast
+
+An imperative toast API built on top of `Notification` and `NotificationStack`.
+Mount `<ToastProvider>` once at your app root, then fire toasts from anywhere
+via the `useToast()` hook or the standalone `toast()` helper.
+
+```tsx
+// app root
+<ToastProvider>
+  <App />
+</ToastProvider>;
+
+// anywhere inside the tree
+const { toast } = useToast();
+toast({ heading: 'Saved', variant: 'success' });
+
+// or outside React (event handlers, callbacks, etc.)
+import { toast } from '@pitchfork-ui/react';
+toast.success({ heading: 'Done' });
+```
+
+## API
+
+### `<ToastProvider>`
+
+| Prop              | Type                                                           | Default       | Description                               |
+| ----------------- | -------------------------------------------------------------- | ------------- | ----------------------------------------- |
+| `placement`       | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'` | Where toasts stack on screen              |
+| `defaultDuration` | `number \| false`                                              | `4000`        | Auto-dismiss delay in ms; `false` = never |
+
+### `useToast()`
+
+Returns `{ toast, dismiss, dismissAll }`.
+
+| Method       | Signature                           | Description                  |
+| ------------ | ----------------------------------- | ---------------------------- |
+| `toast`      | `(options: ToastOptions) => string` | Fire a toast, returns its id |
+| `dismiss`    | `(id: string) => void`              | Dismiss one toast by id      |
+| `dismissAll` | `() => void`                        | Dismiss all visible toasts   |
+
+### `ToastOptions`
+
+| Prop          | Type                                           | Default          |
+| ------------- | ---------------------------------------------- | ---------------- |
+| `variant`     | `'info' \| 'success' \| 'warning' \| 'danger'` | `'info'`         |
+| `heading`     | `ReactNode`                                    | —                |
+| `description` | `ReactNode`                                    | —                |
+| `action`      | `ReactNode`                                    | —                |
+| `duration`    | `number \| false`                              | provider default |
+| `dismissible` | `boolean`                                      | `true`           |
+
+## Examples
+
+### Basic
+
+<Canvas of={ToastExamples.Basic} meta={ToastExamples} />
+
+### Variants
+
+<Canvas of={ToastExamples.Variants} meta={ToastExamples} />
+
+### Persistent
+
+<Canvas of={ToastExamples.Persistent} meta={ToastExamples} />
+
+### Module-level helper
+
+<Canvas of={ToastExamples.ModuleLevel} meta={ToastExamples} />
+
+### Placement
+
+<Canvas of={ToastExamples.Placement} meta={ToastExamples} />
