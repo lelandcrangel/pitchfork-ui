@@ -56,7 +56,7 @@ export const InteractiveLine: LineStory = {
   name: 'Interactive Line',
 };
 
-export const InteractiveBar: StoryObj = {
+export const InteractiveBar: StoryObj<typeof BarChart> = {
   name: 'Interactive Bar',
   args: {
     data: chartData,

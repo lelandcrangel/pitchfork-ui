@@ -43,6 +43,7 @@ const meta = {
   title: 'Examples/HeaderNavigation',
   component: HeaderNavigation,
   tags: ['ai-generated', 'test', 'examplesHidden'],
+  args: { items: [] },
 } satisfies Meta<typeof HeaderNavigation>;
 
 export default meta;

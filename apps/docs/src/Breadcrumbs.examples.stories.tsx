@@ -21,6 +21,7 @@ const meta = {
   title: 'Examples/Breadcrumbs',
   component: Breadcrumbs,
   tags: ['ai-generated', 'test', 'examplesHidden'],
+  args: { items: [] },
 } satisfies Meta<typeof Breadcrumbs>;
 
 export default meta;
