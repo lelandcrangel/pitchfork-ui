@@ -33,10 +33,11 @@
   --radius-full: 9999px;
 
   /* ── Typography ──────────────────────────────────────────────────────────
-     The library defaults to system-ui. Import your font, then override.   */
+     Defaults to Geist (load it, or it falls back to Inter / system-ui).
+     Override to use your own typeface.
+     @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap'); */
 
-  --font-family-sans: system-ui, -apple-system, sans-serif;
-  --font-family-mono: ui-monospace, 'Cascadia Code', monospace;
+  --font-family-sans: Geist, Inter, system-ui, -apple-system, sans-serif;
 
   /* ── Focus ring ──────────────────────────────────────────────────────────
      Defaults to a semi-transparent version of the primary color.
