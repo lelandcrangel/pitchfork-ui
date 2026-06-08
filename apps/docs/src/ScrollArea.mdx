@@ -1,0 +1,33 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ScrollAreaStories from './ScrollArea.stories';
+import * as ScrollAreaExamples from './ScrollArea.examples.stories';
+
+<Meta of={ScrollAreaStories} />
+
+# ScrollArea
+
+ScrollArea is an overflow container with consistent, design-system-styled
+scrollbars across browsers — slim, themeable, and dark-mode aware. Use it for
+menus, sidebars, tables, code blocks, and any panel where the native scrollbar
+would look out of place.
+
+Set the scroll axis with `orientation` (`vertical` by default, `horizontal`, or
+`both`), and cap the size with `style`/`className` (e.g. `maxHeight`). The region
+is keyboard-focusable by default so users can scroll it with the arrow keys
+(WCAG 2.1.1); pass `focusable={false}` if a focusable child already provides
+keyboard access. Add an `aria-label` (with `role="region"`) when the content
+warrants a labelled landmark.
+
+## Examples
+
+### Vertical
+
+<Canvas of={ScrollAreaExamples.Vertical} meta={ScrollAreaExamples} />
+
+### Horizontal
+
+<Canvas of={ScrollAreaExamples.Horizontal} meta={ScrollAreaExamples} />
+
+### Both axes
+
+<Canvas of={ScrollAreaExamples.Both} meta={ScrollAreaExamples} />

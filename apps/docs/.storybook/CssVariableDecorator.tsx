@@ -1038,6 +1038,20 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     scopes: ['taginput'],
   },
   {
+    name: '--pf-scrollarea-thumb',
+    label: 'Scroll area thumb',
+    defaultValue: 'var(--color-semantic-border-strong)',
+    type: 'color',
+    scopes: ['scrollarea'],
+  },
+  {
+    name: '--pf-scrollarea-thumb-hover',
+    label: 'Scroll area thumb hover',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['scrollarea'],
+  },
+  {
     name: '--pf-timepicker-border',
     label: 'Time picker border',
     defaultValue: 'var(--pf-input-border)',
@@ -2302,6 +2316,7 @@ const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
   'Components/Input': ['input'],
   'Components/Dropdown': ['dropdown'],
   'Components/FileUploader': ['fileuploader'],
+  'Components/ScrollArea': ['scrollarea'],
   'Components/Select': ['select'],
   'Components/TimePicker': ['timepicker'],
   'Components/TagInput': ['taginput'],

@@ -329,6 +329,10 @@
   --pf-accordion-icon: var(--color-semantic-text-muted);
   --pf-accordion-content-text: var(--color-semantic-text-muted);
 
+  /* Scroll area aliases */
+  --pf-scrollarea-thumb: var(--color-semantic-border-strong);
+  --pf-scrollarea-thumb-hover: var(--color-semantic-text-muted);
+
   /* Collapsible aliases */
   --pf-collapsible-border: var(--color-semantic-border-default);
   --pf-collapsible-trigger-text: var(--color-semantic-text-default);

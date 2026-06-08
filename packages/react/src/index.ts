@@ -50,6 +50,7 @@ export * from './components/RadioButton';
 export * from './components/RadioGroup';
 export * from './components/Rating';
 export * from './components/RichTextEditor';
+export * from './components/ScrollArea';
 export * from './components/SectionFooter';
 export * from './components/SectionHeader';
 export * from './components/SidebarNavigation';
