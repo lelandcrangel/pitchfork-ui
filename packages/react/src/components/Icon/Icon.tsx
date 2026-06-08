@@ -158,6 +158,23 @@ const customIcons: Record<string, React.ReactNode> = {
       <path d="M5 12h14" />
     </svg>
   ),
+  'magnifying-glass': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.35-4.35" />
+    </svg>
+  ),
   minus: (
     <svg
       width="1em"

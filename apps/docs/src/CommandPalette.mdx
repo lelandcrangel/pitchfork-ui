@@ -1,0 +1,91 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CommandPaletteStories from './CommandPalette.stories';
+import * as CommandPaletteExamples from './CommandPalette.examples.stories';
+
+<Meta of={CommandPaletteStories} />
+
+# CommandPalette
+
+A keyboard-first searchable action menu — the `⌘K` pattern. Type to filter a flat
+or grouped list of commands, navigate with arrow keys, and confirm with Enter.
+
+Clicking the backdrop or pressing Escape closes the palette.
+
+## Examples
+
+### Default
+
+<Canvas of={CommandPaletteExamples.Default} meta={CommandPaletteExamples} />
+
+### Custom placeholder
+
+<Canvas of={CommandPaletteExamples.WithCustomPlaceholder} meta={CommandPaletteExamples} />
+
+---
+
+## Wiring up a keyboard shortcut
+
+The component has no built-in shortcut — you choose the trigger that makes sense
+for your app (common choices are `⌘K`, `⌘P`, or `/`). Add a global keydown
+listener wherever you initialise the app:
+
+```tsx
+useEffect(() => {
+  const handler = (e: KeyboardEvent) => {
+    // Use whatever key combination fits your app — avoid conflicts with the
+    // browser and any tools your team uses (e.g. ⌘K is reserved in some devtools).
+    if ((e.metaKey || e.ctrlKey) && e.key === '/') {
+      e.preventDefault();
+      setOpen((prev) => !prev);
+    }
+  };
+  window.addEventListener('keydown', handler);
+  return () => window.removeEventListener('keydown', handler);
+}, []);
+```
+
+---
+
+## API Reference
+
+### `CommandPalette`
+
+**`open`** — `boolean` · required
+Controls whether the palette is visible.
+
+**`onOpenChange`** — `(open: boolean) => void` · required
+Called when the palette should open or close.
+
+**`items`** — `CommandItem[]` · required
+The full list of commands. Filtering happens internally on `label`, `description`, and `group`.
+
+**`placeholder`** — `string` · default `'Search commands…'`
+Input placeholder text.
+
+**`emptyMessage`** — `string` · default `'No results found.'`
+Message shown when the query matches nothing.
+
+---
+
+### `CommandItem`
+
+**`id`** — `string` · required
+Unique identifier for the item.
+
+**`label`** — `string` · required
+Primary text shown in the list and matched against the search query.
+
+**`onSelect`** — `() => void` · required
+Called when the item is activated (click or Enter). The palette closes automatically.
+
+**`description`** — `string`
+Secondary line shown below the label; also matched by the search query.
+
+**`group`** — `string`
+Items sharing the same group name are rendered under a labelled section. Items without a group appear ungrouped at the top.
+
+**`icon`** — `ReactNode`
+Optional leading icon.
+
+**`disabled`** — `boolean`
+Prevents selection and dims the item visually.

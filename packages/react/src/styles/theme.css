@@ -94,6 +94,15 @@
   --pf-combobox-option-active-bg: var(--color-semantic-action-primary);
   --pf-combobox-option-active-text: var(--color-semantic-action-primary-text);
 
+  /* Command palette aliases */
+  --pf-command-bg: var(--pf-surface-bg);
+  --pf-command-border: var(--pf-surface-border-strong);
+  --pf-command-text: var(--color-semantic-text-default);
+  --pf-command-text-muted: var(--color-semantic-text-muted);
+  --pf-command-shortcut-bg: var(--color-semantic-background-subtle);
+  --pf-command-item-active-bg: var(--color-semantic-action-primary);
+  --pf-command-item-active-text: var(--color-semantic-action-primary-text);
+
   /* Number input aliases */
   --pf-numberinput-bg: var(--pf-input-bg);
   --pf-numberinput-border: var(--pf-input-border);
