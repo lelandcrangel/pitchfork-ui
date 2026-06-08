@@ -1,0 +1,30 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ComboboxStories from './Combobox.stories';
+import * as ComboboxExamples from './Combobox.examples.stories';
+
+<Meta of={ComboboxStories} />
+
+# Combobox
+
+Combobox pairs a text input with a filterable listbox so users can type to narrow
+a long list of options and select one. It follows the ARIA `combobox` pattern
+with list autocomplete — arrow keys move the active option, `Enter` selects, and
+`Escape` reverts to the current selection.
+
+## Examples
+
+### Default
+
+<Canvas of={ComboboxExamples.Default} meta={ComboboxExamples} />
+
+### With Default Value
+
+<Canvas of={ComboboxExamples.WithDefaultValue} meta={ComboboxExamples} />
+
+### With Error
+
+<Canvas of={ComboboxExamples.WithError} meta={ComboboxExamples} />
+
+### Disabled
+
+<Canvas of={ComboboxExamples.Disabled} meta={ComboboxExamples} />
