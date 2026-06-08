@@ -29,6 +29,7 @@ const headerStyle: React.CSSProperties = {
   alignItems: 'flex-start',
   justifyContent: 'space-between',
   gap: 12,
+  flexWrap: 'wrap',
 };
 const headingStyle: React.CSSProperties = { margin: 0, fontSize: '1.25rem' };
 const subheadingStyle: React.CSSProperties = {

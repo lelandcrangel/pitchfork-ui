@@ -26,7 +26,9 @@ function ThemeTogglePortal() {
   if (typeof document === 'undefined') return null;
 
   return createPortal(
-    <div style={{ position: 'fixed', right: '16px', bottom: '58px', zIndex: 200 }}>
+    // Bottom-left: the freest corner — content is top-aligned and the CSS
+    // Variables control sits bottom-right (incl. its expanded panel).
+    <div style={{ position: 'fixed', left: '16px', bottom: '16px', zIndex: 200 }}>
       <button
         type="button"
         style={buttonStyle}

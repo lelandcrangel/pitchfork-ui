@@ -56,8 +56,9 @@ const PAGE_SIZE = 4;
 
 const wrapStyle: React.CSSProperties = { maxWidth: 760, width: '100%' };
 const toolbarStyle: React.CSSProperties = {
+  // auto-fit stacks the search + filter into one column below ~360px
   display: 'grid',
-  gridTemplateColumns: '1fr 200px',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
   gap: 12,
   alignItems: 'end',
   marginBottom: 16,
@@ -66,6 +67,8 @@ const footerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  gap: 12,
+  flexWrap: 'wrap',
   marginTop: 16,
 };
 const mutedStyle: React.CSSProperties = {
@@ -176,7 +179,7 @@ function DataTableDemo() {
 
   return (
     <div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12 }}>
         <Input label="Search" value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} />
         <Select label="Status" options={statusOptions} value={status} onValueChange={(v) => { setStatus(v); setPage(1); }} />
       </div>

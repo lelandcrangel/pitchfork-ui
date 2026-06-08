@@ -1,5 +1,9 @@
 .pf-heatmap {
   display: inline-block;
+  max-width: 100%;
+  /* A full year is wider than small screens — scroll horizontally instead of
+     overflowing the page. */
+  overflow-x: auto;
   font-family: var(--font-family-sans);
 }
 

@@ -29,6 +29,8 @@ const rowStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  gap: 8,
 };
 const footerTextStyle: React.CSSProperties = {
   color: 'var(--color-semantic-text-muted)',
