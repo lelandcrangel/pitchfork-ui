@@ -1,0 +1,30 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as ToolbarStories from './Toolbar.stories';
+import * as ToolbarExamples from './Toolbar.examples.stories';
+
+<Meta of={ToolbarStories} />
+
+# Toolbar
+
+Toolbar groups a set of related controls (buttons, toggles, links) into a single
+`role="toolbar"` cluster with **roving-tabindex** keyboard navigation: the whole
+toolbar is one Tab stop, and the arrow keys move focus between controls inside it
+(`Home`/`End` jump to the ends).
+
+It differs from `ButtonGroup`, which is a purely visual grouping — Toolbar adds
+the ARIA toolbar semantics and keyboard model recommended by the WAI-ARIA
+Authoring Practices.
+
+Drop in any focusable controls as children; Toolbar manages the tab stops
+automatically. Use `ToolbarSeparator` to divide groups, set `orientation` to
+`vertical` to switch the arrow-key axis, and always provide an `aria-label`.
+
+## Examples
+
+### Default
+
+<Canvas of={ToolbarExamples.Default} meta={ToolbarExamples} />
+
+### Vertical
+
+<Canvas of={ToolbarExamples.Vertical} meta={ToolbarExamples} />

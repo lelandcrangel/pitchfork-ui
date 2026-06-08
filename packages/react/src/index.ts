@@ -67,6 +67,7 @@ export * from './components/Textarea';
 export * from './components/Timeline';
 export * from './components/TimePicker';
 export * from './components/Toast';
+export * from './components/Toolbar';
 export * from './components/Tooltip';
 export * from './components/TreeView';
 export * from './components/UtilityButton';

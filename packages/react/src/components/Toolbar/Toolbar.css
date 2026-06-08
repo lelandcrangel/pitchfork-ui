@@ -1,0 +1,37 @@
+.pf-toolbar {
+  align-items: center;
+  background: var(--pf-toolbar-bg);
+  border: 1px solid var(--pf-toolbar-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+}
+
+.pf-toolbar--horizontal {
+  flex-direction: row;
+}
+
+.pf-toolbar--vertical {
+  align-items: stretch;
+  flex-direction: column;
+  width: fit-content;
+}
+
+/* ── Separator ────────────────────────────────────────────────────────────── */
+
+.pf-toolbar__separator {
+  background: var(--pf-toolbar-separator);
+  flex-shrink: 0;
+}
+
+.pf-toolbar--horizontal .pf-toolbar__separator {
+  align-self: stretch;
+  margin: var(--space-1) var(--space-1);
+  width: 1px;
+}
+
+.pf-toolbar--vertical .pf-toolbar__separator {
+  height: 1px;
+  margin: var(--space-1) var(--space-1);
+}
