@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.10.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.9.0...react-v0.10.0) (2026-06-08)
+
+
+### Features
+
+* add Collapsible component with styles, tests, and documentation ([41ccaea](https://github.com/lelandcrangel/pitchfork-ui/commit/41ccaea27f6c5c0a848683a19e20184e90d2f01e))
+* add ContextMenu component with styles, tests, and documentation ([fb95ac0](https://github.com/lelandcrangel/pitchfork-ui/commit/fb95ac0f2e11610f105bea1c53ec3b18ad40f6f6))
+* add Resizable component with horizontal and vertical orientation support ([29cf367](https://github.com/lelandcrangel/pitchfork-ui/commit/29cf367e33c8ec5a910d04cfba47f1e916d6a413))
+* add ScrollArea component with customizable scroll behavior and themed scrollbars ([be80898](https://github.com/lelandcrangel/pitchfork-ui/commit/be8089873622f0dd976b7c17961345aab5213a2e))
+* add TagInput component with styling, documentation, and tests ([8094f89](https://github.com/lelandcrangel/pitchfork-ui/commit/8094f897de7b38b284e113b9446b37c890fc7549))
+* add Timeline component with styles, stories, and tests ([4540858](https://github.com/lelandcrangel/pitchfork-ui/commit/4540858761c626070b74aff0837ea2bfec425e16))
+* add TimePicker component with 12-hour and 24-hour formats ([04eefba](https://github.com/lelandcrangel/pitchfork-ui/commit/04eefbafabe86c6fba836f19d5fb7b089618f615))
+* add Toolbar component with keyboard navigation and styling ([8e8b3fb](https://github.com/lelandcrangel/pitchfork-ui/commit/8e8b3fb7954c6b0686d496f5fa371415ce4c1c08))
+* add VisuallyHidden component with styles, tests, and documentation ([45ab25f](https://github.com/lelandcrangel/pitchfork-ui/commit/45ab25f8392f9bf815e14fc689ecc4e1aad163be))
+
 ## [0.9.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.8.0...react-v0.9.0) (2026-06-08)
 
 
