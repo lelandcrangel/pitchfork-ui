@@ -1378,6 +1378,34 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['danger'],
   },
   {
+    name: '--pf-inline-cta-bg',
+    label: 'InlineCTA background',
+    defaultValue: 'var(--color-semantic-background-default)',
+    type: 'color',
+    scopes: ['inlinecta'],
+  },
+  {
+    name: '--pf-inline-cta-border',
+    label: 'InlineCTA border',
+    defaultValue: 'var(--color-semantic-border-default)',
+    type: 'color',
+    scopes: ['inlinecta'],
+  },
+  {
+    name: '--pf-inline-cta-text',
+    label: 'InlineCTA text',
+    defaultValue: 'var(--color-semantic-text-default)',
+    type: 'color',
+    scopes: ['inlinecta'],
+  },
+  {
+    name: '--pf-inline-cta-text-muted',
+    label: 'InlineCTA muted text',
+    defaultValue: 'var(--color-semantic-text-muted)',
+    type: 'color',
+    scopes: ['inlinecta'],
+  },
+  {
     name: '--pf-inline-cta-info-bg',
     label: 'InlineCTA info background',
     defaultValue: 'var(--color-brand-50)',
@@ -2136,6 +2164,7 @@ export function withCssVariableControls(
       variant?: string;
       color?: string;
       appearance?: string;
+      tone?: string;
     };
   },
 ) {
@@ -2150,6 +2179,7 @@ export function withCssVariableControls(
     context.args?.variant,
     context.args?.color,
     context.args?.appearance,
+    context.args?.tone,
   ].filter((value): value is string => typeof value === 'string');
 
   const controls = ALL_CONTROLS.filter(

@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { useExitAnimation } from '../../hooks';
 import { cx } from '../../utils/cx';
 import { Icon, type IconName } from '../Icon';
 import './Alert.css';
@@ -45,11 +46,17 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
   ) => {
     const resolvedIcon = icon ?? <Icon name={variantIcon[variant]} aria-hidden />;
     const body = children ?? description;
+    const { isExiting, startExit } = useExitAnimation({ onExited: onDismiss });
 
     return (
       <div
         ref={ref}
-        className={cx('pf-alert', `pf-alert--${variant}`, className)}
+        className={cx(
+          'pf-alert',
+          `pf-alert--${variant}`,
+          isExiting && 'pf-alert--exiting',
+          className,
+        )}
         role={variantRole[variant]}
         {...props}
       >
@@ -67,7 +74,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
             type="button"
             className="pf-alert__dismiss"
             aria-label="Dismiss alert"
-            onClick={() => onDismiss?.()}
+            onClick={startExit}
           >
             <Icon name="circle-xmark" aria-hidden />
           </button>

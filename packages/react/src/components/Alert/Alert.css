@@ -81,3 +81,31 @@
   box-shadow: var(--pf-alert-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
+
+/* Exit: fade and collapse so surrounding content reflows when dismissed. */
+.pf-alert--exiting {
+  animation: pf-alert-out var(--duration-moderate) var(--easing-accelerate) forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@keyframes pf-alert-out {
+  from {
+    opacity: 1;
+    max-height: 480px;
+  }
+  to {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-alert--exiting {
+    animation: none;
+  }
+}

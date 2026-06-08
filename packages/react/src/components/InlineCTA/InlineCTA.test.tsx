@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 import { InlineCTA } from './InlineCTA';
 
 describe('InlineCTA', () => {
@@ -41,5 +42,19 @@ describe('InlineCTA', () => {
   it('renders children as body content', () => {
     render(<InlineCTA>Custom content here</InlineCTA>);
     expect(screen.getByText('Custom content here')).toBeInTheDocument();
+  });
+
+  it('does not render a dismiss button by default', () => {
+    render(<InlineCTA heading="Note" />);
+    expect(screen.queryByRole('button', { name: 'Dismiss' })).not.toBeInTheDocument();
+  });
+
+  it('calls onDismiss after the exit animation when dismissed', async () => {
+    const user = userEvent.setup();
+    const onDismiss = vi.fn();
+    const { container } = render(<InlineCTA heading="Note" dismissible onDismiss={onDismiss} />);
+    await user.click(screen.getByRole('button', { name: 'Dismiss' }));
+    expect(container.firstChild).toHaveClass('pf-inline-cta--exiting');
+    await waitFor(() => expect(onDismiss).toHaveBeenCalledOnce());
   });
 });

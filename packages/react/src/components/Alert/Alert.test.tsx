@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { Alert } from './Alert';
@@ -79,12 +79,13 @@ describe('Alert', () => {
     expect(screen.getByRole('button', { name: 'Dismiss alert' })).toBeInTheDocument();
   });
 
-  it('calls onDismiss when the dismiss button is clicked', async () => {
+  it('calls onDismiss after the exit animation when the dismiss button is clicked', async () => {
     const user = userEvent.setup();
     const onDismiss = vi.fn();
     render(<Alert heading="Note" dismissible onDismiss={onDismiss} />);
     await user.click(screen.getByRole('button', { name: 'Dismiss alert' }));
-    expect(onDismiss).toHaveBeenCalledOnce();
+    expect(screen.getByRole('status').className).toContain('pf-alert--exiting');
+    await waitFor(() => expect(onDismiss).toHaveBeenCalledOnce());
   });
 
   it('does not throw when dismiss button clicked without onDismiss handler', async () => {

@@ -7,6 +7,64 @@
   gap: var(--space-3);
   grid-template-columns: auto 1fr;
   padding: var(--space-3);
+  position: relative;
+}
+
+/* Leave room for the centered dismiss button so content/action don't crowd it */
+.pf-inline-cta--dismissible {
+  padding-right: var(--space-12);
+}
+
+.pf-inline-cta__dismiss {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-semantic-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  position: absolute;
+  right: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+}
+
+.pf-inline-cta__dismiss:hover,
+.pf-inline-cta__dismiss:focus-visible {
+  background: var(--color-semantic-background-subtle);
+  color: var(--color-semantic-text-default);
+  outline: none;
+}
+
+/* Exit: fade and collapse so surrounding content reflows when dismissed. */
+.pf-inline-cta--exiting {
+  animation: pf-inline-cta-out var(--duration-moderate) var(--easing-accelerate) forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@keyframes pf-inline-cta-out {
+  from {
+    opacity: 1;
+    max-height: 480px;
+  }
+  to {
+    opacity: 0;
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-inline-cta--exiting {
+    animation: none;
+  }
 }
 
 @media (--md) {
