@@ -1,0 +1,25 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as AvatarGroupStories from './AvatarGroup.stories';
+import * as AvatarGroupExamples from './AvatarGroup.examples.stories';
+
+<Meta of={AvatarGroupStories} />
+
+# Avatar Group
+
+Displays a set of avatars as an overlapping stack, collapsing extras into a `+N` chip. Useful for showing team members, collaborators, or attendees in a compact space.
+
+Pass an array of avatar data plus a `max`; anything beyond `max` is summarized in the overflow chip. Use `total` when you only render a subset but want the count to reflect a larger group. The whole stack is exposed as a labelled `group` for assistive tech, and the overflow chip announces how many more there are.
+
+## Examples
+
+### Default
+
+<Canvas of={AvatarGroupExamples.Default} meta={AvatarGroupExamples} />
+
+### Sizes
+
+<Canvas of={AvatarGroupExamples.Sizes} meta={AvatarGroupExamples} />
+
+### Explicit total
+
+<Canvas of={AvatarGroupExamples.ExplicitTotal} meta={AvatarGroupExamples} />

@@ -233,6 +233,11 @@
   --pf-utility-btn-danger-text: var(--color-semantic-status-danger-foreground);
   --pf-utility-btn-danger-bg-hover: var(--color-danger-100);
 
+  /* AvatarGroup aliases */
+  --pf-avatar-group-ring: var(--color-semantic-background-default);
+  --pf-avatar-group-overflow-bg: var(--color-semantic-background-subtle);
+  --pf-avatar-group-overflow-text: var(--color-semantic-text-muted);
+
   /* Accordion aliases */
   --pf-accordion-border: var(--color-semantic-border-default);
   --pf-accordion-trigger-text: var(--color-semantic-text-default);

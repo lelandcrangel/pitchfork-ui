@@ -4,6 +4,7 @@ export * from './a11y';
 export * from './components/Accordion';
 export * from './components/Alert';
 export * from './components/Avatar';
+export * from './components/AvatarGroup';
 export * from './components/Button';
 export * from './components/BadgeGroup';
 export * from './components/ButtonGroup';

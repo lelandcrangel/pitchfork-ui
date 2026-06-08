@@ -1,0 +1,26 @@
+.pf-avatar-group {
+  display: inline-flex;
+  align-items: center;
+  /* Overlap amount between avatars */
+  --pf-avatar-group-overlap: 8px;
+}
+
+.pf-avatar-group--lg,
+.pf-avatar-group--xl {
+  --pf-avatar-group-overlap: 12px;
+}
+
+.pf-avatar-group__item {
+  position: relative;
+  /* Ring in the surface color so overlapping avatars stay visually separated */
+  box-shadow: 0 0 0 2px var(--pf-avatar-group-ring);
+}
+
+.pf-avatar-group__item + .pf-avatar-group__item {
+  margin-inline-start: calc(-1 * var(--pf-avatar-group-overlap));
+}
+
+.pf-avatar-group__overflow {
+  background: var(--pf-avatar-group-overflow-bg);
+  color: var(--pf-avatar-group-overflow-text);
+}
