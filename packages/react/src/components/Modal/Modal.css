@@ -15,7 +15,9 @@
   display: flex;
   inset: 0;
   justify-content: center;
-  overflow-y: auto;
+  /* visible so the modal's drop shadow isn't clipped; the modal self-caps its
+     height and scrolls internally, so the viewport never needs to scroll. */
+  overflow: visible;
   padding: var(--space-2);
   position: relative;
 }
@@ -35,7 +37,9 @@
   color: var(--pf-modal-text);
   display: flex;
   flex-direction: column;
+  /* dvh keeps the modal within the visible viewport on mobile (browser chrome). */
   max-height: 92vh;
+  max-height: 92dvh;
   overflow: hidden;
   width: 100%;
 }
@@ -43,6 +47,7 @@
 @media (--md) {
   .pf-modal {
     max-height: min(90vh, 720px);
+    max-height: min(90dvh, 720px);
   }
 }
 
