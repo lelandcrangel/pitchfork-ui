@@ -4,56 +4,58 @@ import * as ToastExamples from './Toast.examples.stories';
 
 <Meta of={ToastStories} />
 
-# Toast / useToast
+# Toast
 
-An imperative toast API built on top of `Notification` and `NotificationStack`.
-Mount `<ToastProvider>` once at your app root, then fire toasts from anywhere
-via the `useToast()` hook or the standalone `toast()` helper.
+An imperative toast API built on top of `Notification`. Mount `<ToastProvider>` once at your app root, then fire toasts from anywhere — inside a component via `useToast()`, or from outside React entirely via the standalone `toast()` helper.
+
+---
+
+## Setup
+
+Wrap your app root with `<ToastProvider>` once. This is all that's needed — it portals the notification stack to `document.body` automatically.
 
 ```tsx
-// app root
-<ToastProvider>
-  <App />
-</ToastProvider>;
+import { ToastProvider } from '@pitchfork-ui/react';
 
-// anywhere inside the tree
-const { toast } = useToast();
-toast({ heading: 'Saved', variant: 'success' });
-
-// or outside React (event handlers, callbacks, etc.)
-import { toast } from '@pitchfork-ui/react';
-toast.success({ heading: 'Done' });
+function App() {
+  return (
+    <ToastProvider>
+      <YourApp />
+    </ToastProvider>
+  );
+}
 ```
 
-## API
+---
 
-### `<ToastProvider>`
+## Usage
 
-| Prop              | Type                                                           | Default       | Description                               |
-| ----------------- | -------------------------------------------------------------- | ------------- | ----------------------------------------- |
-| `placement`       | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'` | Where toasts stack on screen              |
-| `defaultDuration` | `number \| false`                                              | `4000`        | Auto-dismiss delay in ms; `false` = never |
+### Inside a component — `useToast()`
 
-### `useToast()`
+```tsx
+import { useToast } from '@pitchfork-ui/react';
 
-Returns `{ toast, dismiss, dismissAll }`.
+function SaveButton() {
+  const { toast } = useToast();
 
-| Method       | Signature                           | Description                  |
-| ------------ | ----------------------------------- | ---------------------------- |
-| `toast`      | `(options: ToastOptions) => string` | Fire a toast, returns its id |
-| `dismiss`    | `(id: string) => void`              | Dismiss one toast by id      |
-| `dismissAll` | `() => void`                        | Dismiss all visible toasts   |
+  return <Button onClick={() => toast({ heading: 'Saved', variant: 'success' })}>Save</Button>;
+}
+```
 
-### `ToastOptions`
+### Outside a component — `toast()`
 
-| Prop          | Type                                           | Default          |
-| ------------- | ---------------------------------------------- | ---------------- |
-| `variant`     | `'info' \| 'success' \| 'warning' \| 'danger'` | `'info'`         |
-| `heading`     | `ReactNode`                                    | —                |
-| `description` | `ReactNode`                                    | —                |
-| `action`      | `ReactNode`                                    | —                |
-| `duration`    | `number \| false`                              | provider default |
-| `dismissible` | `boolean`                                      | `true`           |
+Works in event handlers, `async` callbacks, API response handlers, and anywhere else outside the React tree.
+
+```tsx
+import { toast } from '@pitchfork-ui/react';
+
+async function saveData() {
+  await api.save();
+  toast.success({ heading: 'Saved', description: 'Your changes were saved.' });
+}
+```
+
+---
 
 ## Examples
 
@@ -65,7 +67,7 @@ Returns `{ toast, dismiss, dismissAll }`.
 
 <Canvas of={ToastExamples.Variants} meta={ToastExamples} />
 
-### Persistent
+### Persistent (no auto-dismiss)
 
 <Canvas of={ToastExamples.Persistent} meta={ToastExamples} />
 
@@ -76,3 +78,46 @@ Returns `{ toast, dismiss, dismissAll }`.
 ### Placement
 
 <Canvas of={ToastExamples.Placement} meta={ToastExamples} />
+
+---
+
+## API Reference
+
+### `<ToastProvider>`
+
+| Prop              | Type                                                           | Default       | Description                                             |
+| ----------------- | -------------------------------------------------------------- | ------------- | ------------------------------------------------------- |
+| `placement`       | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'` | Screen position of the toast stack                      |
+| `defaultDuration` | `number \| false`                                              | `4000`        | Auto-dismiss delay in ms; `false` disables auto-dismiss |
+
+### `useToast()`
+
+Returns an object with three methods:
+
+| Method       | Signature                           | Description                            |
+| ------------ | ----------------------------------- | -------------------------------------- |
+| `toast`      | `(options: ToastOptions) => string` | Fire a toast; returns its `id`         |
+| `dismiss`    | `(id: string) => void`              | Immediately dismiss a specific toast   |
+| `dismissAll` | `() => void`                        | Immediately dismiss all visible toasts |
+
+### `toast()` convenience variants
+
+The standalone `toast()` helper also exposes shorthand methods that pre-set the variant:
+
+```ts
+toast.info({ heading: 'Heads up' });
+toast.success({ heading: 'Done' });
+toast.warning({ heading: 'Watch out' });
+toast.danger({ heading: 'Error' });
+```
+
+### `ToastOptions`
+
+| Prop          | Type                                           | Default          | Description                               |
+| ------------- | ---------------------------------------------- | ---------------- | ----------------------------------------- |
+| `variant`     | `'info' \| 'success' \| 'warning' \| 'danger'` | `'info'`         | Visual style and icon                     |
+| `heading`     | `ReactNode`                                    | —                | Bold title line                           |
+| `description` | `ReactNode`                                    | —                | Supporting detail below the heading       |
+| `action`      | `ReactNode`                                    | —                | Optional action (e.g. an undo button)     |
+| `duration`    | `number \| false`                              | provider default | Override auto-dismiss for this toast only |
+| `dismissible` | `boolean`                                      | `true`           | Show the × close button                   |
