@@ -86,8 +86,7 @@ describe('TreeView', () => {
     });
   });
 
-  it('shows children at aria-level=2 after expansion', async () => {
-    const user = userEvent.setup();
+  it('shows children at aria-level=2 after expansion', () => {
     render(<TreeView nodes={nestedNodes} defaultExpandedValues={['parent']} />);
     const child1 = screen.getByRole('treeitem', { name: 'Child 1' });
     expect(child1).toHaveAttribute('aria-level', '2');

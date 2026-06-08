@@ -117,7 +117,6 @@
 
 .pf-calendar__day--outside {
   color: var(--pf-calendar-text-muted);
-  opacity: 0.55;
 }
 
 .pf-calendar__day--today {

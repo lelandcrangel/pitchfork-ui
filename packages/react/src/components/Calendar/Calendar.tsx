@@ -141,7 +141,6 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
     }
 
     // Keep externally controlled values centered in the visible month.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDisplayMonth(clampToYearRange(startOfMonth(selectedDate)));
     // clampToYearRange is intentionally represented by the year bounds here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
