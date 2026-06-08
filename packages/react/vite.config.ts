@@ -42,11 +42,16 @@ export default defineConfig({
           entryFileNames: '[name].js',
           preserveModules: true,
           preserveModulesRoot: 'src',
+          // Mark every chunk as a client module so the library works when imported
+          // into React Server Components (e.g. Next.js App Router). The directive
+          // must precede all other code, which `banner` guarantees.
+          banner: "'use client';",
         },
         {
           format: 'cjs',
           entryFileNames: 'index.cjs',
           assetFileNames: 'styles.css',
+          banner: "'use client';",
         },
       ],
     },
