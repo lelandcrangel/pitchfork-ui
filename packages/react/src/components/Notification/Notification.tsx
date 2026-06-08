@@ -1,7 +1,16 @@
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon, type IconName } from '../Icon';
 import './Notification.css';
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' &&
+  typeof window.matchMedia === 'function' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Matches the exit animation duration (--duration-moderate, 180ms) plus a small
+// buffer so the slide-out finishes before the consumer unmounts the element.
+const EXIT_DURATION_MS = 220;
 
 export type NotificationVariant = 'info' | 'success' | 'warning' | 'danger';
 export type NotificationPlacement = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
@@ -56,11 +65,28 @@ export const Notification = forwardRef<HTMLDivElement, NotificationProps>(
   ) => {
     const resolvedIcon = icon ?? <Icon name={variantIcon[variant]} aria-hidden />;
     const body = children ?? description;
+    const [isExiting, setIsExiting] = useState(false);
+
+    const handleDismiss = () => {
+      // With reduced motion there's no exit animation — dismiss immediately.
+      // Otherwise play the slide-out, then notify once it has finished.
+      if (prefersReducedMotion()) {
+        onDismiss?.();
+        return;
+      }
+      setIsExiting(true);
+      window.setTimeout(() => onDismiss?.(), EXIT_DURATION_MS);
+    };
 
     return (
       <div
         ref={ref}
-        className={cx('pf-notification', `pf-notification--${variant}`, className)}
+        className={cx(
+          'pf-notification',
+          `pf-notification--${variant}`,
+          isExiting && 'pf-notification--exiting',
+          className,
+        )}
         role="status"
         {...props}
       >
@@ -79,7 +105,7 @@ export const Notification = forwardRef<HTMLDivElement, NotificationProps>(
             type="button"
             className="pf-notification__dismiss"
             aria-label="Dismiss notification"
-            onClick={() => onDismiss?.()}
+            onClick={handleDismiss}
           >
             <Icon name="circle-xmark" aria-hidden />
           </button>

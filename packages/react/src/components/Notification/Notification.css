@@ -59,6 +59,45 @@
   max-width: none;
   padding: var(--space-3);
   width: 100%;
+  animation: pf-notification-in var(--duration-moderate) var(--easing-decelerate);
+}
+
+@keyframes pf-notification-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+/* Exit: slide off to the right and collapse so stacked siblings reflow. */
+.pf-notification--exiting {
+  animation: pf-notification-out var(--duration-moderate) var(--easing-accelerate) forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@keyframes pf-notification-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    max-height: 480px;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-notification,
+  .pf-notification--exiting {
+    animation: none;
+  }
 }
 
 @media (--md) {
@@ -69,22 +108,38 @@
 }
 
 .pf-notification--info {
-  background: color-mix(in srgb, var(--pf-notification-info-bg) 45%, var(--color-base-white));
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-info-bg) 45%,
+    var(--pf-notification-mix-base)
+  );
   border-color: var(--pf-notification-info-border);
 }
 
 .pf-notification--success {
-  background: color-mix(in srgb, var(--pf-notification-success-bg) 45%, var(--color-base-white));
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-success-bg) 45%,
+    var(--pf-notification-mix-base)
+  );
   border-color: var(--pf-notification-success-border);
 }
 
 .pf-notification--warning {
-  background: color-mix(in srgb, var(--pf-notification-warning-bg) 45%, var(--color-base-white));
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-warning-bg) 45%,
+    var(--pf-notification-mix-base)
+  );
   border-color: var(--pf-notification-warning-border);
 }
 
 .pf-notification--danger {
-  background: color-mix(in srgb, var(--pf-notification-danger-bg) 45%, var(--color-base-white));
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-danger-bg) 45%,
+    var(--pf-notification-mix-base)
+  );
   border-color: var(--pf-notification-danger-border);
 }
 

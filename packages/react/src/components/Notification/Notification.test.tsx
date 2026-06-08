@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -97,12 +97,16 @@ describe('Notification', () => {
     expect(screen.getByRole('button', { name: 'Dismiss notification' })).toBeInTheDocument();
   });
 
-  it('calls onDismiss when the dismiss button is clicked', async () => {
+  it('calls onDismiss after the exit animation completes', async () => {
     const user = userEvent.setup();
     const onDismiss = vi.fn();
     render(<Notification heading="Note" dismissible onDismiss={onDismiss} />);
     await user.click(screen.getByRole('button', { name: 'Dismiss notification' }));
-    expect(onDismiss).toHaveBeenCalledTimes(1);
+    // The exit animation plays first (element gets the exiting class), then
+    // onDismiss fires once it finishes.
+    expect(screen.getByRole('status').className).toContain('pf-notification--exiting');
+    expect(onDismiss).not.toHaveBeenCalled();
+    await waitFor(() => expect(onDismiss).toHaveBeenCalledTimes(1));
   });
 
   // ─── Ref forwarding ──────────────────────────────────────────────────────

@@ -278,6 +278,9 @@
   --pf-notification-text: var(--color-semantic-text-default);
   --pf-notification-text-muted: var(--color-semantic-text-muted);
   --pf-notification-bg-subtle: var(--color-semantic-background-subtle);
+  /* Surface the variant tints blend toward; white in light, a dark raised
+     surface in dark so cards stay dark and text keeps contrast. */
+  --pf-notification-mix-base: var(--color-base-white);
   --pf-notification-info-bg: var(--color-brand-50);
   --pf-notification-info-border: var(--color-brand-300);
   --pf-notification-info-icon: var(--color-brand-700);
@@ -575,6 +578,7 @@
   --color-semantic-status-danger-bright: var(--color-danger-400);
 
   /* Info state overrides — light brand colors (brand-50/100/300) are invisible on dark surfaces */
+  --pf-notification-mix-base: var(--color-semantic-background-raised);
   --pf-notification-info-bg: var(--color-brand-900);
   --pf-notification-info-border: var(--color-brand-700);
   --pf-notification-info-icon: var(--color-brand-300);
