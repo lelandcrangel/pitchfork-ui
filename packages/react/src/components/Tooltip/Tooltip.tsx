@@ -8,6 +8,7 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { usePresence } from '../../hooks';
 import { cx } from '../../utils/cx';
 import './Tooltip.css';
 
@@ -139,6 +140,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
   const [resolvedPlacement, setResolvedPlacement] = useState<TooltipPlacement>(placement);
   const isControlled = open !== undefined;
   const isVisible = !disabled && (isControlled ? open : isOpen);
+  const { isMounted, isExiting } = usePresence(Boolean(isVisible), 160);
 
   const clearShowTimer = () => {
     if (showTimerRef.current !== undefined) {
@@ -169,8 +171,8 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
     }
 
     setIsOpen(false);
-    setStyle({ visibility: 'hidden' });
-    setResolvedPlacement(placement);
+    // Keep the last position/visibility so the tooltip can fade out; it is
+    // re-measured before paint on the next open.
   };
 
   useEffect(() => {
@@ -225,13 +227,18 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
         {children ?? <span />}
       </span>
 
-      {isVisible && typeof document !== 'undefined'
+      {isMounted && typeof document !== 'undefined'
         ? createPortal(
             <div
               id={tooltipId}
               ref={tooltipRef}
               role="tooltip"
-              className={cx('pf-tooltip', `pf-tooltip--${resolvedPlacement}`, className)}
+              className={cx(
+                'pf-tooltip',
+                `pf-tooltip--${resolvedPlacement}`,
+                isExiting && 'pf-tooltip--exiting',
+                className,
+              )}
               style={style}
             >
               {content}

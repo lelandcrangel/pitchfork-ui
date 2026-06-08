@@ -41,8 +41,21 @@
   animation: pf-tooltip-in var(--pf-transition-fast);
 }
 
+/* Exit fade — plays while the tooltip is dismissed (presence handling) */
+@keyframes pf-tooltip-out {
+  to {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+}
+
+.pf-tooltip--exiting {
+  animation: pf-tooltip-out var(--duration-fast) var(--easing-accelerate) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .pf-tooltip {
+  .pf-tooltip,
+  .pf-tooltip--exiting {
     animation: none;
   }
 }

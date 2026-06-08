@@ -72,6 +72,9 @@ describe('Tooltip', () => {
     });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     fireEvent.mouseLeave(trigger);
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
@@ -101,6 +104,9 @@ describe('Tooltip', () => {
     });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     fireEvent.blur(trigger);
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
@@ -117,6 +123,9 @@ describe('Tooltip', () => {
     });
     expect(screen.getByRole('tooltip')).toBeInTheDocument();
     fireEvent.keyDown(trigger, { key: 'Escape' });
+    act(() => {
+      vi.runAllTimers();
+    });
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
