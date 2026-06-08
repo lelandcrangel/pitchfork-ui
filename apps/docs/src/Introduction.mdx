@@ -1,187 +1,132 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { PageHeader } from '@pitchfork-ui/react';
 
 <Meta title="Foundations/Introduction" />
 
-<div
-	style={{
-		background:
-      'radial-gradient(circle at 8% 10%, #e0e7ff 0%, #c7d2fe 28%, #eef2ff 58%, #ffffff 100%)',
-    border: '1px solid #a5b4fc',
-		borderRadius: 20,
-		padding: '2rem',
-		marginBottom: '1.5rem',
-      boxShadow: '0 18px 44px rgba(37, 99, 235, 0.16)',
-	}}
->
-	<div
-		style={{
-			display: 'inline-block',
-			fontFamily: 'Space Grotesk, Avenir Next, Helvetica Neue, sans-serif',
-			fontWeight: 700,
-			letterSpacing: '0.06em',
-			fontSize: '0.75rem',
-			textTransform: 'uppercase',
-      color: '#3730a3',
-      background: '#c7d2fe',
-      border: '1px solid #818cf8',
-			borderRadius: 999,
-			padding: '0.25rem 0.75rem',
-			marginBottom: '1rem',
-		}}
-	>
-		Product UI System
-	</div>
+{/* ── Hero ─────────────────────────────────────────────────────────────── */}
 
-    <h1
-    	style={{
-    		margin: 0,
-    		fontFamily: 'Sora, Space Grotesk, Avenir Next, Helvetica Neue, sans-serif',
-    		fontSize: 'clamp(2rem, 4vw, 3rem)',
-    		lineHeight: 1.1,
-    		letterSpacing: '-0.02em',
-        color: '#312e81',
-    	}}
-    >
-    	PitchforkUI
-    </h1>
-
-    <div
-    	style={{
-    		marginTop: '1rem',
-    		marginBottom: '1.25rem',
-    		maxWidth: 760,
-    		fontFamily: 'Avenir Next, Nunito Sans, Helvetica Neue, sans-serif',
-    		fontSize: '1.1rem',
-    		lineHeight: 1.7,
-        color: '#4338ca',
-    	}}
-    >
-    	A premium component system designed to help product teams launch faster,
-    	maintain consistency at scale, and deliver interfaces that feel intentional
-    	from first click to final conversion.
+<div style={{ marginBottom: '2rem' }}>
+  <PageHeader
+    heading="Pitchfork UI"
+    description="An accessible, themeable component library for building product interfaces in React — 70+ components backed by a design-token system, with first-class dark mode, TypeScript types, and bundled styles."
+  >
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+      {['@pitchfork-ui/react', '70+ components', 'TypeScript', 'MIT licensed'].map((chip) => (
+        <span
+          key={chip}
+          style={{
+            fontSize: '0.8rem',
+            color: 'var(--color-semantic-text-muted)',
+            background: 'var(--color-semantic-background-subtle)',
+            border: '1px solid var(--color-semantic-border-default)',
+            borderRadius: 8,
+            padding: '0.3rem 0.6rem',
+          }}
+        >
+          {chip}
+        </span>
+      ))}
     </div>
-
-    <div
-    	style={{
-    		display: 'grid',
-    		gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-    		gap: '0.75rem',
-    		marginTop: '1rem',
-    	}}
-    >
-      <div style={{ background: '#e0e7ff', border: '1px solid #a5b4fc', borderRadius: 12, padding: '0.75rem 0.9rem' }}>
-        <strong style={{ color: '#3730a3' }}>Faster Releases</strong>
-        <div style={{ color: '#4338ca', fontSize: '0.92rem' }}>Reusable patterns that cut build time.</div>
-    	</div>
-      <div style={{ background: '#e0e7ff', border: '1px solid #a5b4fc', borderRadius: 12, padding: '0.75rem 0.9rem' }}>
-        <strong style={{ color: '#3730a3' }}>Higher Quality</strong>
-        <div style={{ color: '#4338ca', fontSize: '0.92rem' }}>Accessibility and UX consistency by default.</div>
-    	</div>
-      <div style={{ background: '#e0e7ff', border: '1px solid #a5b4fc', borderRadius: 12, padding: '0.75rem 0.9rem' }}>
-        <strong style={{ color: '#3730a3' }}>Lower Cost</strong>
-        <div style={{ color: '#4338ca', fontSize: '0.92rem' }}>Fewer rewrites and less UI drift over time.</div>
-    	</div>
-    </div>
-
+  </PageHeader>
 </div>
 
-## Why teams pick PitchforkUI
+## Get started
+
+Install the package:
+
+```bash
+npm install @pitchfork-ui/react
+```
+
+Import the stylesheet once at your app's entry point, then use components anywhere:
+
+```tsx
+import '@pitchfork-ui/react/styles.css';
+import { Button } from '@pitchfork-ui/react';
+
+export function Example() {
+  return <Button variant="primary">Get started</Button>;
+}
+```
+
+The stylesheet bundles the design tokens, so there's no separate theme package to
+install. Components are tree-shakeable and ship with `"use client"` directives,
+so they work in React Server Component frameworks like Next.js App Router.
+
+## What's inside
 
 <div
   style={{
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-    gap: '0.9rem',
-    marginBottom: '1.5rem',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '0.75rem',
+    margin: '1.25rem 0 2rem',
   }}
 >
-  <div
-    style={{
-      border: '1px solid #a5b4fc',
-      borderRadius: 14,
-      padding: '1rem',
-      background: '#eef2ff',
-    }}
-  >
-    <h3
+  {[
+    {
+      title: 'Accessible by default',
+      body: 'Semantic HTML and ARIA patterns, verified with automated axe checks across light and dark themes.',
+    },
+    {
+      title: 'Token-driven theming',
+      body: 'A three-tier CSS variable system lets you re-skin the whole library by overriding tokens.',
+    },
+    {
+      title: 'Dark mode built in',
+      body: 'Every component adapts via a single data-theme attribute — no per-component overrides.',
+    },
+    {
+      title: 'Typed end to end',
+      body: 'Written in TypeScript with exported prop types for every component.',
+    },
+    {
+      title: 'Responsive & mobile-first',
+      body: 'Layouts are designed from 320px up, using shared breakpoints.',
+    },
+    {
+      title: 'Composable patterns',
+      body: 'Ready-made compositions — forms, pricing, checkout, dashboards — built from the primitives.',
+    },
+  ].map((feature) => (
+    <div
+      key={feature.title}
       style={{
-        marginTop: 0,
-        marginBottom: '0.4rem',
-        fontFamily: 'Space Grotesk, Avenir Next, Helvetica Neue, sans-serif',
+        border: '1px solid var(--color-semantic-border-default)',
+        borderRadius: 12,
+        padding: '1rem',
+        background: 'var(--color-semantic-background-subtle)',
       }}
     >
-      Composable by design
-    </h3>
-    <div style={{ margin: 0, color: '#312e81', lineHeight: 1.6 }}>
-      Build new experiences quickly using production-ready components with predictable APIs.
+      <h3
+        style={{
+          margin: '0 0 0.35rem',
+          fontSize: '0.95rem',
+          color: 'var(--color-semantic-text-default)',
+        }}
+      >
+        {feature.title}
+      </h3>
+      <p
+        style={{
+          margin: 0,
+          fontSize: '0.9rem',
+          lineHeight: 1.55,
+          color: 'var(--color-semantic-text-muted)',
+        }}
+      >
+        {feature.body}
+      </p>
     </div>
-  </div>
-  <div
-    style={{
-      border: '1px solid #a5b4fc',
-      borderRadius: 14,
-      padding: '1rem',
-      background: '#eef2ff',
-    }}
-  >
-    <h3
-      style={{
-        marginTop: 0,
-        marginBottom: '0.4rem',
-        fontFamily: 'Space Grotesk, Avenir Next, Helvetica Neue, sans-serif',
-      }}
-    >
-      Consistency at scale
-    </h3>
-    <div style={{ margin: 0, color: '#312e81', lineHeight: 1.6 }}>
-      Token-driven styling keeps product surfaces aligned across teams, squads, and releases.
-    </div>
-  </div>
-  <div
-    style={{
-      border: '1px solid #a5b4fc',
-      borderRadius: 14,
-      padding: '1rem',
-      background: '#eef2ff',
-    }}
-  >
-    <h3
-      style={{
-        marginTop: 0,
-        marginBottom: '0.4rem',
-        fontFamily: 'Space Grotesk, Avenir Next, Helvetica Neue, sans-serif',
-      }}
-    >
-      Built-in trust signals
-    </h3>
-    <div style={{ margin: 0, color: '#312e81', lineHeight: 1.6 }}>
-      Accessible interaction patterns and documented behavior reduce quality risk before launch.
-    </div>
-  </div>
+  ))}
 </div>
 
-## Business impact
+## Explore the docs
 
-<div
-  style={{
-    border: '1px solid #818cf8',
-    borderRadius: 16,
-    padding: '1rem 1.1rem',
-    background: 'linear-gradient(140deg, #e0e7ff 0%, #ffffff 80%)',
-    marginBottom: '1.4rem',
-  }}
->
-  <ul
-    style={{
-      margin: 0,
-      paddingLeft: '1.1rem',
-      color: '#3730a3',
-      lineHeight: 1.8,
-    }}
-  >
-    <li>Reduce interface rework by standardizing components and behaviors.</li>
-    <li>Shorten delivery cycles with patterns teams can ship on day one.</li>
-    <li>Strengthen design-to-dev alignment with a shared visual language.</li>
-    <li>Scale product quality without scaling UI maintenance overhead.</li>
-  </ul>
-</div>
+- **Foundations** — design tokens, color, typography, theming, and dark mode.
+- **Components** — the full library, each with an interactive playground and a “Show code” panel.
+- **Patterns** — complete compositions like login, settings, pricing, and checkout.
+- **Changelog** — release history, generated from the published package.
+
+Use the **theme toggle** on interactive stories to preview any component in light or
+dark mode, and the **CSS Variables** panel to experiment with token overrides live.
