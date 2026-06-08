@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button, Input, Modal, ModalBody, ModalFooter } from '@pitchfork-ui/react';
+import { Button, Input, Modal } from '@pitchfork-ui/react';
 
 const meta = {
   title: 'Examples/Modals',
@@ -58,18 +58,16 @@ function FormModalStory() {
         title="Invite teammate"
         description="Add a collaborator and assign their starting role."
         footer={
-          <ModalFooter>
+          <>
             <Button variant="secondary" onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button onClick={() => setOpen(false)}>Send invite</Button>
-          </ModalFooter>
+          </>
         }
       >
-        <ModalBody>
-          <Input label="Email address" placeholder="teammate@company.com" />
-          <Input label="Role" placeholder="Designer" />
-        </ModalBody>
+        <Input label="Email address" placeholder="teammate@company.com" />
+        <Input label="Role" placeholder="Designer" />
       </Modal>
     </>
   );
@@ -164,18 +162,16 @@ export const FormModal: Story = {
         title="Invite teammate"
         description="Add a collaborator and assign their starting role."
         footer={
-          <ModalFooter>
+          <>
             <Button variant="secondary" onClick={() => setOpen(false)}>
               Cancel
             </Button>
             <Button onClick={() => setOpen(false)}>Send invite</Button>
-          </ModalFooter>
+          </>
         }
       >
-        <ModalBody>
-          <Input label="Email address" placeholder="teammate@company.com" />
-          <Input label="Role" placeholder="Designer" />
-        </ModalBody>
+        <Input label="Email address" placeholder="teammate@company.com" />
+        <Input label="Role" placeholder="Designer" />
       </Modal>
     </>
   );

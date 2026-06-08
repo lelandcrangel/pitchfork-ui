@@ -89,6 +89,8 @@
 }
 
 .pf-modal__body {
+  display: grid;
+  gap: var(--space-4);
   overflow-y: auto;
   padding: var(--space-3);
 }
@@ -164,9 +166,33 @@
   animation: pf-modal-in var(--pf-transition-enter);
 }
 
+/* Exit animation — plays while the dialog is being dismissed (presence handling) */
+@keyframes pf-modal-overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes pf-modal-out {
+  to {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+.pf-modal__overlay--exiting {
+  animation: pf-modal-overlay-out var(--pf-transition-fast) forwards;
+}
+
+.pf-modal--exiting {
+  animation: pf-modal-out var(--pf-transition-fast) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pf-modal__overlay,
-  .pf-modal {
+  .pf-modal,
+  .pf-modal__overlay--exiting,
+  .pf-modal--exiting {
     animation: none;
   }
 }

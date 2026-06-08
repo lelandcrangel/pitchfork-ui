@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -198,7 +198,7 @@ describe('Modal', () => {
     expect(document.body.style.overflow).toBe('hidden');
   });
 
-  it('restores body overflow when modal is closed', () => {
+  it('restores body overflow after the modal closes and finishes exiting', async () => {
     const { rerender } = render(
       <Modal open title="T" onOpenChange={vi.fn()}>
         Content
@@ -211,7 +211,8 @@ describe('Modal', () => {
         Content
       </Modal>,
     );
-    expect(document.body.style.overflow).toBe('');
+    // Scroll stays locked through the exit animation, then is restored on unmount.
+    await waitFor(() => expect(document.body.style.overflow).toBe(''));
   });
 
   // ─── Focus management ────────────────────────────────────────────────────

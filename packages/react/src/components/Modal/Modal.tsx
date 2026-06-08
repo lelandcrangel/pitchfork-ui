@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useId, useImperativeHandle, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { useFocusTrap } from '../../hooks';
+import { useFocusTrap, usePresence } from '../../hooks';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Modal.css';
@@ -60,11 +60,12 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
   const titleId = useId();
   const descriptionId = useId();
   const dialogRef = useRef<HTMLDivElement>(null);
+  const { isMounted, isExiting } = usePresence(open);
 
   useImperativeHandle(ref, () => dialogRef.current as HTMLDivElement, []);
 
   useEffect(() => {
-    if (!open || typeof document === 'undefined') {
+    if (!isMounted || typeof document === 'undefined') {
       return;
     }
 
@@ -74,7 +75,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
     return () => {
       document.body.style.overflow = originalOverflow;
     };
-  }, [open]);
+  }, [isMounted]);
 
   useFocusTrap({
     containerRef: dialogRef,
@@ -82,14 +83,14 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
     onEscape: () => onOpenChange?.(false),
   });
 
-  if (!open || typeof document === 'undefined') {
+  if (!isMounted || typeof document === 'undefined') {
     return null;
   }
 
   return createPortal(
     <div className="pf-modal__portal">
       <div
-        className="pf-modal__overlay"
+        className={cx('pf-modal__overlay', isExiting && 'pf-modal__overlay--exiting')}
         onClick={() => {
           if (closeOnOverlayClick) {
             onOpenChange?.(false);
@@ -99,7 +100,12 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
       <div className="pf-modal__viewport">
         <div
           ref={dialogRef}
-          className={cx('pf-modal', `pf-modal--${size}`, className)}
+          className={cx(
+            'pf-modal',
+            `pf-modal--${size}`,
+            isExiting && 'pf-modal--exiting',
+            className,
+          )}
           role="dialog"
           aria-modal="true"
           aria-labelledby={title ? titleId : undefined}

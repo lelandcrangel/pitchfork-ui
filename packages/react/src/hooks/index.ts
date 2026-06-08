@@ -6,3 +6,4 @@ export * from './useExitAnimation';
 export * from './useFocusTrap';
 export * from './useListNavigation';
 export * from './useOutsideInteraction';
+export * from './usePresence';
