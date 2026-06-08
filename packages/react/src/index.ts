@@ -35,6 +35,7 @@ export * from './components/Metrics';
 export * from './components/Modal';
 export * from './components/MultiSelect';
 export * from './components/Notification';
+export * from './components/NumberInput';
 export * from './components/PageHeader';
 export * from './components/Pagination';
 export * from './components/PieChart';

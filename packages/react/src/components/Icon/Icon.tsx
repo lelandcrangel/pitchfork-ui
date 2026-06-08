@@ -141,6 +141,39 @@ const customIcons: Record<string, React.ReactNode> = {
       <path d="m15 15-3-3-3 3" />
     </svg>
   ),
+  plus: (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <path d="M12 5v14" />
+      <path d="M5 12h14" />
+    </svg>
+  ),
+  minus: (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14" />
+    </svg>
+  ),
 };
 
 const regularIcons: Record<string, IconDefinition> = {

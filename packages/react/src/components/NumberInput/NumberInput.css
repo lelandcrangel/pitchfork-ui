@@ -1,0 +1,98 @@
+.pf-numberinput {
+  align-items: stretch;
+  background: var(--pf-numberinput-bg);
+  border: 1px solid var(--pf-numberinput-border);
+  border-radius: var(--radius-md);
+  display: inline-flex;
+  min-height: 40px;
+  overflow: hidden;
+  width: 100%;
+  transition:
+    border 0.2s,
+    box-shadow 0.2s;
+}
+
+.pf-numberinput:focus-within {
+  border-color: var(--pf-numberinput-focus-border);
+  box-shadow: var(--pf-numberinput-focus-ring, var(--pf-focus-ring));
+}
+
+.pf-numberinput--invalid {
+  border-color: var(--pf-numberinput-invalid-border);
+}
+
+.pf-numberinput__input {
+  background: transparent;
+  border: none;
+  color: var(--pf-numberinput-text);
+  flex: 1;
+  font: inherit;
+  min-width: 0;
+  outline: none;
+  padding: 0 var(--space-3);
+  text-align: center;
+  width: 100%;
+}
+
+.pf-numberinput__input::placeholder {
+  color: var(--pf-numberinput-placeholder);
+}
+
+.pf-numberinput__input:disabled {
+  cursor: not-allowed;
+}
+
+.pf-numberinput:has(.pf-numberinput__input:disabled) {
+  background: var(--pf-control-bg-disabled);
+  border-color: var(--pf-control-border-disabled);
+  color: var(--pf-control-text-disabled);
+  opacity: 0.6;
+}
+
+.pf-numberinput__step {
+  align-items: center;
+  align-self: stretch;
+  background: var(--pf-numberinput-step-bg);
+  border: none;
+  color: var(--pf-numberinput-step-text);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 0;
+  width: 40px;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.pf-numberinput__step:hover:not(:disabled) {
+  background: var(--pf-numberinput-step-hover-bg);
+  color: var(--pf-numberinput-step-hover-text);
+}
+
+.pf-numberinput__step:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.pf-numberinput__step--decrement {
+  border-inline-end: 1px solid var(--pf-numberinput-border);
+}
+
+.pf-numberinput__step--increment {
+  border-inline-start: 1px solid var(--pf-numberinput-border);
+}
+
+.pf-numberinput__step svg {
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-numberinput,
+  .pf-numberinput__step {
+    transition: none;
+  }
+}

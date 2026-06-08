@@ -94,6 +94,18 @@
   --pf-combobox-option-active-bg: var(--color-semantic-action-primary);
   --pf-combobox-option-active-text: var(--color-semantic-action-primary-text);
 
+  /* Number input aliases */
+  --pf-numberinput-bg: var(--pf-input-bg);
+  --pf-numberinput-border: var(--pf-input-border);
+  --pf-numberinput-text: var(--pf-input-text);
+  --pf-numberinput-placeholder: var(--pf-input-placeholder);
+  --pf-numberinput-focus-border: var(--color-semantic-action-primary);
+  --pf-numberinput-invalid-border: var(--color-semantic-status-danger-border);
+  --pf-numberinput-step-bg: var(--color-semantic-background-subtle);
+  --pf-numberinput-step-text: var(--color-semantic-text-default);
+  --pf-numberinput-step-hover-bg: var(--color-semantic-action-primary);
+  --pf-numberinput-step-hover-text: var(--color-semantic-action-primary-text);
+
   /* Overlay and elevation color aliases */
   --pf-overlay-backdrop: color-mix(in srgb, var(--color-gray-900) 48%, transparent);
   --pf-elevation-overlay-shadow: 0 24px 60px
