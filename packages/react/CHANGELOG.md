@@ -2,6 +2,24 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.6.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.5.0...react-v0.6.0) (2026-06-08)
+
+
+### Features
+
+* **accordion:** add Accordion component with examples and documentation ([2b8750b](https://github.com/lelandcrangel/pitchfork-ui/commit/2b8750b4962f36b7a643ef8d1e335b82b2ed46c4))
+* add animation to Dropdown menu and update args for examples ([dd06cd8](https://github.com/lelandcrangel/pitchfork-ui/commit/dd06cd82023d75ec1ec99568c69942043ca5ebfb))
+* add exit animation and dismiss functionality to Alert and InlineCTA components ([487240d](https://github.com/lelandcrangel/pitchfork-ui/commit/487240d794b236470c1e980e09e588008de09b12))
+* add exit animation and presence handling to Tooltip component ([3a7601a](https://github.com/lelandcrangel/pitchfork-ui/commit/3a7601a34da740391cb9066dcc9dc6d83865bc26))
+* add exit animations and presence handling to Modal component ([ffecf45](https://github.com/lelandcrangel/pitchfork-ui/commit/ffecf45c2ab9c095135f8309ea35f1d1cd5fd155))
+* enhance Carousel component with accessibility improvements and transition updates ([936e30e](https://github.com/lelandcrangel/pitchfork-ui/commit/936e30e324e535f96d47ef7aaae62ff61186cecd))
+* enhance MultiSelect component with menu animation and transition improvements ([a1bfaa2](https://github.com/lelandcrangel/pitchfork-ui/commit/a1bfaa224f1b122e236969f453742626941841fb))
+* enhance Notification component with exit animation and accessibility improvements ([a77ef0b](https://github.com/lelandcrangel/pitchfork-ui/commit/a77ef0ba5d88949a9e5b72ff9da08307c06e56cc))
+* implement exit animation for Notification component using custom hook ([a89a482](https://github.com/lelandcrangel/pitchfork-ui/commit/a89a482a8c6ae0947903e8f481f424f06d6ccb66))
+* implement sliding indicator for Tabs component with responsive behavior ([6ff3c17](https://github.com/lelandcrangel/pitchfork-ui/commit/6ff3c1788f58b203f26702e151b9117a37aca596))
+* update color palette and typography to incorporate Geist font and enhance UI consistency ([0c5f66c](https://github.com/lelandcrangel/pitchfork-ui/commit/0c5f66c624f3fd4e6a174278f089c6563d29a1fa))
+* update components to support right-to-left (RTL) layout with CSS logical properties ([ca9f5ac](https://github.com/lelandcrangel/pitchfork-ui/commit/ca9f5aca8c0af4c275e6a7174679bba384847492))
+
 ## [0.5.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.4.0...react-v0.5.0) (2026-06-07)
 
 
