@@ -1,0 +1,33 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as TimelineStories from './Timeline.stories';
+import * as TimelineExamples from './Timeline.examples.stories';
+
+<Meta of={TimelineStories} />
+
+# Timeline
+
+Timeline renders a vertical sequence of events with coloured markers and
+connecting lines — for activity feeds, audit logs, order tracking, and
+changelogs.
+
+It's distinct from `ProgressSteps`, which tracks linear progress through a fixed
+set of steps (complete / current / upcoming). Timeline is for an open-ended list
+of things that happened, each with its own `tone`, `timestamp`, optional
+`description`, and optional marker `icon`.
+
+Rendered as a semantic ordered list (`<ol>`). Markers are decorative; pass an
+`aria-label` to describe the timeline as a whole.
+
+## Examples
+
+### Default
+
+<Canvas of={TimelineExamples.Default} meta={TimelineExamples} />
+
+### With marker icons
+
+<Canvas of={TimelineExamples.WithIcons} meta={TimelineExamples} />
+
+### Titles only
+
+<Canvas of={TimelineExamples.Minimal} meta={TimelineExamples} />

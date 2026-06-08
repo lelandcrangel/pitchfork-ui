@@ -1,0 +1,128 @@
+.pf-timeline {
+  display: grid;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pf-timeline__item {
+  /* Shared line height for the title; markers center themselves on it. */
+  --pf-timeline-line: 1.375rem;
+  --pf-timeline-marker-size: 16px;
+  column-gap: var(--space-3);
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+/* ── Rail (marker + connector) ────────────────────────────────────────────── */
+
+.pf-timeline__rail {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.pf-timeline__marker {
+  align-items: center;
+  background: var(--pf-timeline-marker-bg);
+  border: 2px solid var(--pf-timeline-marker-border);
+  border-radius: var(--radius-full);
+  color: var(--pf-timeline-marker-icon);
+  display: inline-flex;
+  flex-shrink: 0;
+  height: var(--pf-timeline-marker-size);
+  justify-content: center;
+  /* Vertically center the marker on the title's first line. */
+  margin-top: calc((var(--pf-timeline-line) - var(--pf-timeline-marker-size)) / 2);
+  width: var(--pf-timeline-marker-size);
+}
+
+/* Markers carrying an icon are larger to fit it. */
+.pf-timeline__marker:has(.pf-timeline__marker-icon) {
+  --pf-timeline-marker-size: 28px;
+}
+
+.pf-timeline__marker-icon {
+  align-items: center;
+  display: inline-flex;
+  font-size: 0.8rem;
+  justify-content: center;
+}
+
+.pf-timeline__marker-icon svg {
+  display: block;
+  height: 14px;
+  width: 14px;
+}
+
+.pf-timeline__marker--default {
+  background: var(--pf-timeline-default-bg);
+  border-color: var(--pf-timeline-default-border);
+  color: var(--pf-timeline-default-icon);
+}
+
+.pf-timeline__marker--success {
+  background: var(--pf-timeline-success-bg);
+  border-color: var(--pf-timeline-success-border);
+  color: var(--pf-timeline-success-icon);
+}
+
+.pf-timeline__marker--warning {
+  background: var(--pf-timeline-warning-bg);
+  border-color: var(--pf-timeline-warning-border);
+  color: var(--pf-timeline-warning-icon);
+}
+
+.pf-timeline__marker--danger {
+  background: var(--pf-timeline-danger-bg);
+  border-color: var(--pf-timeline-danger-border);
+  color: var(--pf-timeline-danger-icon);
+}
+
+.pf-timeline__connector {
+  background: var(--pf-timeline-connector);
+  flex: 1;
+  margin: var(--space-1) 0;
+  min-height: var(--space-4);
+  width: 2px;
+}
+
+/* ── Content ──────────────────────────────────────────────────────────────── */
+
+.pf-timeline__content {
+  padding-bottom: var(--space-5);
+}
+
+.pf-timeline__item--last .pf-timeline__content {
+  padding-bottom: 0;
+}
+
+.pf-timeline__header {
+  align-items: baseline;
+  column-gap: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.pf-timeline__title {
+  color: var(--pf-timeline-title);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--pf-timeline-line);
+  margin: 0;
+}
+
+.pf-timeline__timestamp {
+  color: var(--pf-timeline-timestamp);
+  font-size: var(--font-size-xs);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.pf-timeline__description {
+  color: var(--pf-timeline-description);
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-1);
+}

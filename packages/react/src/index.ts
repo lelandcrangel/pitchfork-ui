@@ -62,6 +62,7 @@ export * from './components/TagInput';
 export * from './components/Table';
 export * from './components/Tabs';
 export * from './components/Textarea';
+export * from './components/Timeline';
 export * from './components/TimePicker';
 export * from './components/Toast';
 export * from './components/Tooltip';

@@ -103,6 +103,24 @@
   --pf-command-item-active-bg: var(--color-semantic-action-primary);
   --pf-command-item-active-text: var(--color-semantic-action-primary-text);
 
+  /* Timeline aliases */
+  --pf-timeline-connector: var(--color-semantic-border-default);
+  --pf-timeline-title: var(--color-semantic-text-default);
+  --pf-timeline-timestamp: var(--color-semantic-text-muted);
+  --pf-timeline-description: var(--color-semantic-text-muted);
+  --pf-timeline-default-bg: var(--color-brand-100);
+  --pf-timeline-default-border: var(--color-semantic-action-primary);
+  --pf-timeline-default-icon: var(--color-semantic-action-primary);
+  --pf-timeline-success-bg: var(--color-semantic-status-success-background);
+  --pf-timeline-success-border: var(--color-semantic-status-success-foreground);
+  --pf-timeline-success-icon: var(--color-semantic-status-success-foreground);
+  --pf-timeline-warning-bg: var(--color-semantic-status-warning-background);
+  --pf-timeline-warning-border: var(--color-semantic-status-warning-foreground);
+  --pf-timeline-warning-icon: var(--color-semantic-status-warning-foreground);
+  --pf-timeline-danger-bg: var(--color-semantic-status-danger-background);
+  --pf-timeline-danger-border: var(--color-semantic-status-danger-foreground);
+  --pf-timeline-danger-icon: var(--color-semantic-status-danger-foreground);
+
   /* Tag input aliases */
   --pf-taginput-bg: var(--pf-input-bg);
   --pf-taginput-border: var(--pf-input-border);
@@ -691,6 +709,9 @@
 
   --pf-badge-brand-background: var(--color-brand-900);
   --pf-badge-brand-foreground: var(--color-brand-300);
+
+  /* Timeline — brand-100 default marker fill is near-white; darken for dark mode */
+  --pf-timeline-default-bg: var(--color-brand-900);
 
   --pf-badgegroup-brand-100: var(--color-brand-900);
   --pf-badgegroup-brand-300: var(--color-brand-700);
