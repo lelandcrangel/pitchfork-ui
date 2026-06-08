@@ -85,39 +85,61 @@ async function saveData() {
 
 ### `<ToastProvider>`
 
-| Prop              | Type                                                           | Default       | Description                                             |
-| ----------------- | -------------------------------------------------------------- | ------------- | ------------------------------------------------------- |
-| `placement`       | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'` | Screen position of the toast stack                      |
-| `defaultDuration` | `number \| false`                                              | `4000`        | Auto-dismiss delay in ms; `false` disables auto-dismiss |
+Place this once at your app root. All props are optional.
+
+**`placement`** — `'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'` · default `'top-right'`
+Where the toast stack appears on screen.
+
+**`defaultDuration`** — `number | false` · default `4000`
+Auto-dismiss delay in milliseconds for all toasts. Pass `false` to keep toasts on screen until the user manually dismisses them.
+
+---
 
 ### `useToast()`
 
-Returns an object with three methods:
+```ts
+const { toast, dismiss, dismissAll } = useToast();
+```
 
-| Method       | Signature                           | Description                            |
-| ------------ | ----------------------------------- | -------------------------------------- |
-| `toast`      | `(options: ToastOptions) => string` | Fire a toast; returns its `id`         |
-| `dismiss`    | `(id: string) => void`              | Immediately dismiss a specific toast   |
-| `dismissAll` | `() => void`                        | Immediately dismiss all visible toasts |
+**`toast(options)`** — fires a toast and returns its `id` string.
 
-### `toast()` convenience variants
+**`dismiss(id)`** — immediately starts the exit animation for a specific toast.
 
-The standalone `toast()` helper also exposes shorthand methods that pre-set the variant:
+**`dismissAll()`** — immediately starts the exit animation for all visible toasts.
+
+---
+
+### `toast()` standalone helper
+
+The named export `toast` works identically to the hook's `toast` method but can be called anywhere — outside components, in `async` functions, route handlers, etc. It also exposes variant shorthands:
 
 ```ts
+toast({ heading: 'Custom', variant: 'info' });
+
 toast.info({ heading: 'Heads up' });
-toast.success({ heading: 'Done' });
+toast.success({ heading: 'Saved' });
 toast.warning({ heading: 'Watch out' });
-toast.danger({ heading: 'Error' });
+toast.danger({ heading: 'Error occurred' });
 ```
+
+---
 
 ### `ToastOptions`
 
-| Prop          | Type                                           | Default          | Description                               |
-| ------------- | ---------------------------------------------- | ---------------- | ----------------------------------------- |
-| `variant`     | `'info' \| 'success' \| 'warning' \| 'danger'` | `'info'`         | Visual style and icon                     |
-| `heading`     | `ReactNode`                                    | —                | Bold title line                           |
-| `description` | `ReactNode`                                    | —                | Supporting detail below the heading       |
-| `action`      | `ReactNode`                                    | —                | Optional action (e.g. an undo button)     |
-| `duration`    | `number \| false`                              | provider default | Override auto-dismiss for this toast only |
-| `dismissible` | `boolean`                                      | `true`           | Show the × close button                   |
+**`variant`** — `'info' | 'success' | 'warning' | 'danger'` · default `'info'`
+Controls the icon and colour.
+
+**`heading`** — `ReactNode`
+The bold primary line of the toast.
+
+**`description`** — `ReactNode`
+Supporting detail shown below the heading.
+
+**`action`** — `ReactNode`
+Optional inline action, e.g. an Undo button.
+
+**`duration`** — `number | false`
+Overrides `defaultDuration` for this toast only. Pass `false` to make it persistent.
+
+**`dismissible`** — `boolean` · default `true`
+Whether to show the × close button.
