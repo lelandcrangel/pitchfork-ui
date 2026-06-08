@@ -63,7 +63,12 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: ['Foundations', ['Introduction', 'Theming', 'Tokens', 'Changelog'], 'Components'],
+        order: [
+          'Foundations',
+          ['Introduction', 'Theming', 'Tokens', 'Changelog'],
+          'Patterns',
+          'Components',
+        ],
         method: 'alphabetical',
         locales: 'en-US',
       },
