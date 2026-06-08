@@ -329,6 +329,13 @@
   --pf-accordion-icon: var(--color-semantic-text-muted);
   --pf-accordion-content-text: var(--color-semantic-text-muted);
 
+  /* Collapsible aliases */
+  --pf-collapsible-border: var(--color-semantic-border-default);
+  --pf-collapsible-trigger-text: var(--color-semantic-text-default);
+  --pf-collapsible-trigger-hover-bg: var(--color-semantic-background-subtle);
+  --pf-collapsible-icon: var(--color-semantic-text-muted);
+  --pf-collapsible-content-text: var(--color-semantic-text-muted);
+
   /* Heatmap aliases */
   --pf-heatmap-color: var(--color-semantic-action-primary);
   --pf-heatmap-empty: var(--color-semantic-background-subtle);

@@ -18,6 +18,7 @@ export * from './components/Checkbox';
 export * from './components/Calendar';
 export * from './components/Carousel';
 export * from './components/CodeSnippet';
+export * from './components/Collapsible';
 export * from './components/Combobox';
 export * from './components/ContentDivider';
 export * from './components/DatePicker';

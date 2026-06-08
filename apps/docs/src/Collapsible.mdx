@@ -1,0 +1,33 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CollapsibleStories from './Collapsible.stories';
+import * as CollapsibleExamples from './Collapsible.examples.stories';
+
+<Meta of={CollapsibleStories} />
+
+# Collapsible
+
+Collapsible is a single show/hide region with an animated height transition — for
+"show more" toggles, filter panels, and FAQ items.
+
+It's the lightweight counterpart to `Accordion`: where Accordion manages a _group_
+of panels (with single/multiple open behaviour), Collapsible is one independent
+disclosure you can drop in anywhere. Stack several for an FAQ.
+
+It follows the ARIA disclosure pattern — the trigger is a `button` with
+`aria-expanded` and `aria-controls`, and the collapsed content is marked `inert`
+so it's removed from the tab order and accessibility tree. Controlled
+(`open` + `onOpenChange`) or uncontrolled (`defaultOpen`).
+
+## Examples
+
+### Default
+
+<Canvas of={CollapsibleExamples.Default} meta={CollapsibleExamples} />
+
+### Open by default
+
+<Canvas of={CollapsibleExamples.DefaultOpen} meta={CollapsibleExamples} />
+
+### Stacked (FAQ)
+
+<Canvas of={CollapsibleExamples.FaqList} meta={CollapsibleExamples} />

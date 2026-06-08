@@ -1,0 +1,86 @@
+.pf-collapsible {
+  border: 1px solid var(--pf-collapsible-border);
+  border-radius: var(--radius-md);
+}
+
+.pf-collapsible__trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--pf-collapsible-trigger-text);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  gap: var(--space-2);
+  justify-content: space-between;
+  padding: var(--space-3);
+  text-align: start;
+  width: 100%;
+}
+
+.pf-collapsible__trigger:hover:not(:disabled) {
+  background: var(--pf-collapsible-trigger-hover-bg);
+}
+
+.pf-collapsible__trigger:focus-visible {
+  box-shadow: var(--pf-collapsible-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.pf-collapsible__trigger:disabled {
+  color: var(--pf-control-text-disabled);
+  cursor: not-allowed;
+}
+
+.pf-collapsible__label {
+  min-width: 0;
+}
+
+.pf-collapsible__icon {
+  align-items: center;
+  color: var(--pf-collapsible-icon);
+  display: inline-flex;
+  flex-shrink: 0;
+  transition: transform var(--pf-transition-fast);
+}
+
+.pf-collapsible__icon svg {
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+.pf-collapsible--open .pf-collapsible__icon {
+  transform: rotate(180deg);
+}
+
+/* Height animation via the grid-template-rows 0fr → 1fr technique. */
+.pf-collapsible__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--pf-transition-medium);
+}
+
+.pf-collapsible__panel--open {
+  grid-template-rows: 1fr;
+}
+
+.pf-collapsible__content {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.pf-collapsible__content-inner {
+  border-top: 1px solid var(--pf-collapsible-border);
+  color: var(--pf-collapsible-content-text);
+  padding: var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-collapsible__panel,
+  .pf-collapsible__icon {
+    transition: none;
+  }
+}
