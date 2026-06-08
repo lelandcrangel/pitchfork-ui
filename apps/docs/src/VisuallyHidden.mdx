@@ -1,0 +1,40 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as VisuallyHiddenStories from './VisuallyHidden.stories';
+import * as VisuallyHiddenExamples from './VisuallyHidden.examples.stories';
+
+<Meta of={VisuallyHiddenStories} />
+
+# VisuallyHidden
+
+VisuallyHidden hides content from sight while keeping it available to screen
+readers and other assistive technology. Reach for it when meaning is conveyed
+visually (an icon, a layout, color) but a text equivalent still needs to be
+announced.
+
+Unlike `display: none` or the `hidden` attribute — which remove content from the
+accessibility tree entirely — VisuallyHidden uses the well-tested "sr-only"
+clipping technique so the text stays in the tree and is read aloud.
+
+Common uses:
+
+- A text label inside an icon-only button
+- A `role="status"`/`role="alert"` live region for screen-reader-only updates
+- Extra context for links ("Read more **about pricing**")
+- A "skip to content" link that appears on keyboard focus (`focusable`)
+
+Render any element with `as`, and pass `focusable` to reveal the content when it
+(or a descendant) receives keyboard focus.
+
+## Examples
+
+### Accessible icon button
+
+<Canvas of={VisuallyHiddenExamples.IconButtonLabel} meta={VisuallyHiddenExamples} />
+
+### Screen-reader status
+
+<Canvas of={VisuallyHiddenExamples.LiveStatus} meta={VisuallyHiddenExamples} />
+
+### Reveal on focus (skip link)
+
+<Canvas of={VisuallyHiddenExamples.SkipLink} meta={VisuallyHiddenExamples} />

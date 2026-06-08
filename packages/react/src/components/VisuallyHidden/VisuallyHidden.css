@@ -1,0 +1,26 @@
+.pf-visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* Reveal on keyboard focus (skip-link pattern). */
+.pf-visually-hidden--focusable:focus,
+.pf-visually-hidden--focusable:focus-within {
+  clip: auto;
+  clip-path: none;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  /* Flow back into layout so the revealed content doesn't overlap siblings. */
+  position: static;
+  white-space: normal;
+  width: auto;
+}

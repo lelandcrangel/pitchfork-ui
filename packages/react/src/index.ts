@@ -71,4 +71,5 @@ export * from './components/Tooltip';
 export * from './components/TreeView';
 export * from './components/UtilityButton';
 export * from './components/VideoPlayer';
+export * from './components/VisuallyHidden';
 export * from './hooks';
