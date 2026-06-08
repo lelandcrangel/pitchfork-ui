@@ -1,0 +1,258 @@
+.pf-daterange {
+  position: relative;
+}
+
+.pf-daterange__control-row {
+  align-items: center;
+  display: flex;
+  gap: var(--space-1);
+}
+
+/* ── Trigger button ───────────────────────────────────────────────────────── */
+
+.pf-daterange__trigger {
+  align-items: center;
+  background: var(--pf-daterange-bg);
+  border: 1px solid var(--pf-daterange-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-daterange-text);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 1;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+  justify-content: space-between;
+  min-height: 40px;
+  min-width: 0;
+  padding: 0 var(--space-3);
+  text-align: start;
+  transition: border 0.2s;
+}
+
+.pf-daterange__trigger:hover:not(:disabled) {
+  border-color: var(--pf-daterange-border-strong);
+}
+
+.pf-daterange__trigger:focus-visible {
+  box-shadow: var(--pf-daterange-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.pf-daterange__trigger:disabled {
+  background: var(--pf-daterange-bg-subtle);
+  color: var(--pf-daterange-text-muted);
+  cursor: not-allowed;
+}
+
+.pf-daterange__trigger--invalid {
+  border-color: var(--pf-daterange-invalid-border);
+}
+
+.pf-daterange__value {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.pf-daterange__value--placeholder {
+  color: var(--pf-daterange-text-muted);
+}
+
+.pf-daterange__separator {
+  color: var(--pf-daterange-text-muted);
+}
+
+/* ── Popover ──────────────────────────────────────────────────────────────── */
+
+.pf-daterange__popover {
+  background: var(--pf-daterange-menu-bg);
+  border: 1px solid var(--pf-daterange-menu-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--pf-elevation-popover-shadow);
+  color: var(--pf-calendar-text);
+  padding: var(--space-4);
+  position: fixed;
+  z-index: 999;
+}
+
+.pf-daterange__hint {
+  color: var(--pf-daterange-text-muted);
+  font-size: var(--font-size-xs);
+  margin: 0 0 var(--space-3);
+}
+
+/* ── Two-month layout ─────────────────────────────────────────────────────── */
+
+.pf-daterange__months {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (--sm) {
+  .pf-daterange__months {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Individual calendar panel ────────────────────────────────────────────── */
+
+.pf-daterange__calendar {
+  background: var(--pf-calendar-bg);
+  color: var(--pf-calendar-text);
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.pf-daterange__cal-header {
+  align-items: center;
+  display: grid;
+  grid-template-columns: 28px 1fr 28px;
+}
+
+.pf-daterange__cal-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+}
+
+/* Nav buttons — desktop right-panel hides its own nav (left panel drives both) */
+.pf-daterange__nav {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-calendar-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--font-size-sm);
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  width: 28px;
+}
+
+.pf-daterange__nav:hover:not(:disabled) {
+  background: var(--pf-calendar-bg-subtle);
+  color: var(--pf-calendar-text);
+}
+
+.pf-daterange__nav:focus-visible {
+  box-shadow: var(--pf-calendar-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.pf-daterange__nav svg {
+  display: block;
+  height: 14px;
+  width: 14px;
+}
+
+@media (--sm) {
+  .pf-daterange__cal-header--hide-nav-desktop .pf-daterange__nav {
+    pointer-events: none;
+    visibility: hidden;
+  }
+}
+
+/* ── Grid & weekday labels ────────────────────────────────────────────────── */
+
+.pf-daterange__grid {
+  display: grid;
+  gap: var(--space-1);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.pf-daterange__weekday {
+  color: var(--pf-calendar-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+}
+
+/* ── Day cells ────────────────────────────────────────────────────────────── */
+
+.pf-daterange__day,
+.pf-daterange__day-empty {
+  align-items: center;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  font-size: var(--font-size-xs);
+  justify-content: center;
+}
+
+.pf-daterange__day {
+  background: transparent;
+  border: 0;
+  color: var(--pf-calendar-text);
+  cursor: pointer;
+}
+
+.pf-daterange__day:hover:not(:disabled):not(.pf-daterange__day--selected):not(
+    .pf-daterange__day--in-range
+  ) {
+  background: var(--pf-calendar-bg-subtle);
+}
+
+.pf-daterange__day--outside {
+  color: var(--pf-calendar-text-muted);
+}
+
+.pf-daterange__day--today {
+  background: var(--pf-calendar-today-bg);
+  border: 1.5px solid var(--pf-calendar-today-border);
+}
+
+.pf-daterange__day--selected {
+  background: var(--pf-calendar-selected-bg);
+  color: var(--pf-calendar-selected-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+.pf-daterange__day--selected:hover:not(:disabled) {
+  background: var(--pf-calendar-selected-bg-hover);
+  color: var(--pf-calendar-selected-text);
+}
+
+.pf-daterange__day:disabled {
+  color: var(--pf-calendar-text-muted);
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+/* ── Range highlight ──────────────────────────────────────────────────────── */
+
+.pf-daterange__day--in-range {
+  background: var(--pf-daterange-range-bg);
+  border-radius: 0;
+  color: var(--pf-daterange-range-text);
+}
+
+/* In-range overrides today indicator bg (today border still shows through) */
+.pf-daterange__day--today.pf-daterange__day--in-range {
+  background: var(--pf-daterange-range-bg);
+  color: var(--pf-daterange-range-text);
+}
+
+/* Selected caps already have the right bg/color from --selected;
+   just shape the radius to connect flush with the range band. */
+.pf-daterange__day--range-start:not(.pf-daterange__day--range-end) {
+  border-end-end-radius: 0;
+  border-start-end-radius: 0;
+}
+
+.pf-daterange__day--range-end:not(.pf-daterange__day--range-start) {
+  border-end-start-radius: 0;
+  border-start-start-radius: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-daterange__trigger {
+    transition: none;
+  }
+}

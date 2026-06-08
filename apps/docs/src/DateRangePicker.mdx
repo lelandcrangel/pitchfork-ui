@@ -1,0 +1,42 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as DateRangePickerStories from './DateRangePicker.stories';
+import * as DateRangePickerExamples from './DateRangePicker.examples.stories';
+
+<Meta of={DateRangePickerStories} />
+
+# DateRangePicker
+
+DateRangePicker lets users select a continuous date range — a start date and an
+end date — from a two-month calendar view. On desktop the two months appear
+side-by-side; on mobile they stack with independent navigation.
+
+**Selection flow:** clicking once sets the start date; clicking again sets the
+end date and closes the popover. The in-between days are highlighted as the user
+hovers. Clicking the same day twice resets to a new start.
+
+The calendar portal avoids overflow clipping and follows the ARIA `dialog`
+pattern. The field supports `label`, `description`, and `error` through
+FieldWrapper, and emits `onValueChange(range)` where `range.start`/`range.end`
+are `Date | null`.
+
+## Examples
+
+### Default
+
+<Canvas of={DateRangePickerExamples.Default} meta={DateRangePickerExamples} />
+
+### With default value
+
+<Canvas of={DateRangePickerExamples.WithDefaultValue} meta={DateRangePickerExamples} />
+
+### Custom placeholders
+
+<Canvas of={DateRangePickerExamples.CustomPlaceholders} meta={DateRangePickerExamples} />
+
+### With Error
+
+<Canvas of={DateRangePickerExamples.WithError} meta={DateRangePickerExamples} />
+
+### Disabled
+
+<Canvas of={DateRangePickerExamples.Disabled} meta={DateRangePickerExamples} />

@@ -385,6 +385,21 @@
   --pf-datepicker-focus-border: var(--color-semantic-action-primary);
   --pf-datepicker-invalid-border: var(--color-semantic-status-danger-border);
 
+  /* Date range picker aliases */
+  --pf-daterange-bg: var(--pf-datepicker-bg);
+  --pf-daterange-bg-subtle: var(--pf-datepicker-bg-subtle);
+  --pf-daterange-border: var(--pf-datepicker-border);
+  --pf-daterange-border-strong: var(--pf-datepicker-border-strong);
+  --pf-daterange-text: var(--pf-datepicker-text);
+  --pf-daterange-text-muted: var(--pf-datepicker-text-muted);
+  --pf-daterange-focus-ring: var(--pf-focus-ring);
+  --pf-daterange-invalid-border: var(--color-semantic-status-danger-border);
+  --pf-daterange-menu-bg: var(--pf-surface-bg);
+  --pf-daterange-menu-border: var(--pf-surface-border-strong);
+  /* brand-600 vs white popover = 6.25:1 non-text; white text on brand-600 = 6.25:1 text */
+  --pf-daterange-range-bg: var(--color-brand-600);
+  --pf-daterange-range-text: var(--color-base-white);
+
   /* BadgeGroup aliases */
   --pf-badgegroup-gray-100: var(--color-gray-100);
   --pf-badgegroup-gray-200: var(--color-gray-200);
@@ -660,6 +675,10 @@
 
   /* Calendar — same border-default contrast issue as TreeView */
   --pf-calendar-border: var(--color-semantic-border-strong);
+
+  /* Dark mode: brand-400 vs gray-800 = 4.08:1 non-text; gray-900 text on brand-400 = 5.58:1 text */
+  --pf-daterange-range-bg: var(--color-brand-400);
+  --pf-daterange-range-text: var(--color-gray-900);
 
   /* GaugeChart — track uses background-subtle (gray-700) which is 1.72:1 against gray-900 */
   --pf-gauge-track-color: var(--color-semantic-border-strong);

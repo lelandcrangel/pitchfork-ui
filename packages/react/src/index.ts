@@ -20,6 +20,7 @@ export * from './components/CodeSnippet';
 export * from './components/Combobox';
 export * from './components/ContentDivider';
 export * from './components/DatePicker';
+export * from './components/DateRangePicker';
 export * from './components/Dropdown';
 export * from './components/EmptyState';
 export * from './components/FileUploader';
