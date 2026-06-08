@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation & live examples
+    url: https://lelandrangel.com/pitchfork-ui/
+    about: Browse component docs and interactive examples in Storybook before filing.
+  - name: Security vulnerability
+    url: https://github.com/lelandcrangel/pitchfork-ui/security/advisories/new
+    about: Please report security issues privately, not as a public issue.

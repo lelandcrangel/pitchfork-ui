@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a problem with a component or the library
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a bug! Please fill out the details below.
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Which version of `@pitchfork-ui/react` are you on?
+      placeholder: 0.8.0
+    validations:
+      required: true
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      description: Which component is affected?
+      placeholder: Button, Combobox, Modal…
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: A minimal code snippet or link (CodeSandbox/StackBlitz) is ideal.
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      description: Where does this occur?
+      multiple: true
+      options:
+        - React (Vite/CRA)
+        - Next.js App Router (RSC)
+        - Next.js Pages Router
+        - Other framework
+        - Light mode
+        - Dark mode
+  - type: input
+    id: react-version
+    attributes:
+      label: React version
+      placeholder: '19.0.0'
