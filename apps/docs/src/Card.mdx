@@ -8,6 +8,39 @@ import * as CardExamples from './Card.examples.stories';
 
 Cards group related content and actions into a clear, bordered surface.
 
+## Anatomy
+
+A `Card` is a bordered, rounded container (`overflow: hidden`, so the sections
+clip neatly to its corners). You compose it from three optional slot components.
+Render them in order — header, content, footer — and use only the ones you need.
+
+<Canvas of={CardExamples.Anatomy} meta={CardExamples} />
+
+**`CardHeader`** — the title, eyebrow, or summary at the top.
+Padded on all sides, with a **divider below** that separates it from the content.
+
+**`CardContent`** — the main body.
+Padded on all sides with no dividers; the neutral region for your primary content.
+
+**`CardFooter`** — actions or secondary info at the bottom.
+Padded, with a **divider above**, and arranges its children in a **flex row with a
+gap** — ideal for buttons.
+
+All three slots share the same padding (`--pf-card-section-padding`) so spacing
+stays consistent, and each is optional: a content-only card, or header + content
+with no footer, both work.
+
+```tsx
+<Card>
+  <CardHeader>Project summary</CardHeader>
+  <CardContent>The main body of the card.</CardContent>
+  <CardFooter>
+    <Button>Save</Button>
+    <Button variant="secondary">Cancel</Button>
+  </CardFooter>
+</Card>
+```
+
 ## Examples
 
 ### Basic

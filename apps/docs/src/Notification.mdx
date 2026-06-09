@@ -8,6 +8,31 @@ import * as NotificationExamples from './Notification.examples.stories';
 
 Notification and NotificationStack provide toast-style status messages with optional actions and dismiss controls.
 
+## Structure
+
+**`Notification`** — a single message: a variant icon, `heading`, `description`,
+optional `action`, and a dismiss button (`dismissible`). Render it inline on its
+own, or inside a stack.
+
+**`NotificationStack`** — a fixed-position container that pins notifications to a
+screen corner via `placement` (`top-right` by default) and stacks multiple
+messages.
+
+```tsx
+<NotificationStack placement="top-right">
+  <Notification
+    variant="success"
+    heading="Saved"
+    description="Your changes are live."
+    dismissible
+  />
+</NotificationStack>
+```
+
+For firing notifications imperatively from anywhere (without managing the list
+yourself), see the [`Toast`](?path=/docs/components-toast--docs) API, which builds
+on these primitives.
+
 ## Examples
 
 ### Stacked toasts

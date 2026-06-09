@@ -8,6 +8,21 @@ import * as MetricExamples from './Metrics.examples.stories';
 
 MetricCard and MetricGrid surface key numbers with optional trend context, supporting both standalone and dashboard-style layouts.
 
+## Structure
+
+**`MetricCard`** — a single stat: a `heading`, the `value`, and optional
+`description`, `trend`/`trendLabel`, `icon`, and `action`. Use it on its own anywhere.
+
+**`MetricGrid`** — a responsive container that arranges `MetricCard`s in an
+auto-fitting grid, so a row of KPIs reflows cleanly from desktop down to mobile.
+
+```tsx
+<MetricGrid>
+  <MetricCard heading="Revenue" value="$48.2k" trend="positive" trendLabel="+12%" />
+  <MetricCard heading="Active users" value="1,204" trend="positive" trendLabel="+3%" />
+</MetricGrid>
+```
+
 ## Examples
 
 ### Overview grid

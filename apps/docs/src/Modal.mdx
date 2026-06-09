@@ -8,6 +8,45 @@ import * as ModalExamples from './Modal.examples.stories';
 
 Modal provides an overlay dialog for focused tasks, confirmations, and longer in-context workflows.
 
+## Anatomy
+
+A Modal renders a dimmed overlay plus a centered dialog made of three stacked
+regions. Most of the time you drive them through props — but the section
+components (`ModalHeader`, `ModalBody`, `ModalFooter`) are exported for fully
+custom layouts.
+
+**Header** — built from the `title`, `description`, and close button.
+Fixed at the top with a **divider below**; it stays put while the body scrolls.
+
+**Body** — your `children`.
+The flexible middle region; it **scrolls internally** when content exceeds the
+modal's max height, so the header and footer stay visible.
+
+**Footer** — the `footer` prop.
+Pinned at the bottom with a **divider above**, laid out as a **flex row** for
+actions.
+
+The header and footer are optional — omit `title`/`footer` for a body-only modal.
+
+```tsx
+<Modal
+  open={open}
+  onOpenChange={setOpen}
+  title="Delete project?"
+  description="This action can't be undone."
+  footer={
+    <>
+      <Button variant="secondary" onClick={() => setOpen(false)}>
+        Cancel
+      </Button>
+      <Button onClick={confirm}>Delete</Button>
+    </>
+  }
+>
+  Everything in this project will be permanently removed.
+</Modal>
+```
+
 ## Examples
 
 ### Confirmation
