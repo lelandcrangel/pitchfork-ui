@@ -14,17 +14,27 @@ Alert surfaces contextual feedback with semantic variants and optional dismissal
 
 ### Info
 
+General, non-critical context or guidance. Announced politely (`role="status"`).
+
 <Canvas of={AlertExamples.Info} meta={AlertExamples} />
 
 ### Success
+
+Confirms an action completed successfully. Announced politely (`role="status"`).
 
 <Canvas of={AlertExamples.Success} meta={AlertExamples} />
 
 ### Warning
 
+Flags something that needs attention but isn't blocking. Announced assertively
+(`role="alert"`).
+
 <Canvas of={AlertExamples.Warning} meta={AlertExamples} />
 
 ### Danger
+
+Communicates an error or failure requiring immediate attention. Announced
+assertively (`role="alert"`).
 
 <Canvas of={AlertExamples.Danger} meta={AlertExamples} />
 

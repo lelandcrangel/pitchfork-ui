@@ -6,22 +6,32 @@ import * as InlineCTAExamples from './InlineCTA.examples.stories';
 
 # Inline CTA
 
-InlineCTA surfaces short, contextual prompts with optional actions.
+InlineCTA surfaces short, contextual prompts with optional actions. Set the
+emphasis with the `tone` prop.
 
 ## Examples
 
 ### Default
 
+The neutral tone for general prompts and nudges with no status meaning.
+
 <Canvas of={InlineCTAExamples.Default} meta={InlineCTAExamples} />
 
 ### Info
+
+`tone="info"` for helpful, informational prompts.
 
 <Canvas of={InlineCTAExamples.Info} meta={InlineCTAExamples} />
 
 ### Success
 
+`tone="success"` to confirm a positive outcome or encourage a next step after one.
+
 <Canvas of={InlineCTAExamples.Success} meta={InlineCTAExamples} />
 
 ### Warning with action group
+
+`tone="warning"` flags something needing attention; pair it with an action group
+for the response.
 
 <Canvas of={InlineCTAExamples.WarningWithActionGroup} meta={InlineCTAExamples} />

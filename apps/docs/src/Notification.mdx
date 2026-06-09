@@ -33,6 +33,20 @@ For firing notifications imperatively from anywhere (without managing the list
 yourself), see the [`Toast`](?path=/docs/components-toast--docs) API, which builds
 on these primitives.
 
+## Variants
+
+The `variant` prop sets the icon, color, and announcement urgency:
+
+**`info`** — neutral, non-critical updates. Announced politely (`role="status"`).
+
+**`success`** — confirms an action completed. Announced politely (`role="status"`).
+
+**`warning`** — something needs attention but isn't blocking. Announced assertively
+(`role="alert"`).
+
+**`danger`** — an error or failure requiring immediate attention. Announced
+assertively (`role="alert"`).
+
 ## Examples
 
 ### Stacked toasts

@@ -18,6 +18,18 @@ of things that happened, each with its own `tone`, `timestamp`, optional
 Rendered as a semantic ordered list (`<ol>`). Markers are decorative; pass an
 `aria-label` to describe the timeline as a whole.
 
+## Marker tones
+
+Each item's `tone` colors its marker to signal the nature of the event:
+
+**`default`** — neutral events with no status meaning (the default).
+
+**`success`** — positive milestones, like “Order delivered”.
+
+**`warning`** — events needing attention, like “Payment retrying”.
+
+**`danger`** — failures or errors, like “Delivery failed”.
+
 ## Examples
 
 ### Default

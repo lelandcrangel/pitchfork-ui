@@ -12,9 +12,15 @@ A compact inline chart for showing trends at a glance. Designed to live inside t
 
 ### Line
 
+The default `variant="line"` — a plain trend line. Best for dense, side-by-side
+comparisons like table rows where many sparklines sit together.
+
 <Canvas of={SparklineExamples.Line} meta={SparklineExamples} />
 
 ### Area fill
+
+`variant="area"` adds a soft fill beneath the line for more visual weight — best
+when a single trend is the focus, such as a metric card.
 
 <Canvas of={SparklineExamples.Area} meta={SparklineExamples} />
 
