@@ -38,6 +38,13 @@ export const Warning: Story = {
   },
 };
 
+export const Danger: Story = {
+  args: {
+    children: 'Blocked',
+    variant: 'danger',
+  },
+};
+
 export const Dismissible: Story = {
   args: {
     children: 'Removable',

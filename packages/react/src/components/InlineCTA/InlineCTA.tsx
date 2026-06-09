@@ -4,7 +4,7 @@ import { cx } from '../../utils/cx';
 import { Icon, type IconName } from '../Icon';
 import './InlineCTA.css';
 
-export type InlineCTATone = 'default' | 'info' | 'success' | 'warning';
+export type InlineCTATone = 'default' | 'info' | 'success' | 'warning' | 'danger';
 
 export interface InlineCTAProps extends React.HTMLAttributes<HTMLDivElement> {
   heading?: React.ReactNode;

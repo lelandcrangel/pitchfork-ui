@@ -59,14 +59,14 @@
   background: var(--pf-utility-btn-brand-bg-hover);
 }
 
-.pf-utility-button--danger {
-  background: var(--pf-utility-btn-danger-bg);
-  border-color: var(--pf-utility-btn-danger-border);
-  color: var(--pf-utility-btn-danger-text);
+.pf-utility-button--destructive {
+  background: var(--pf-utility-btn-destructive-bg);
+  border-color: var(--pf-utility-btn-destructive-border);
+  color: var(--pf-utility-btn-destructive-text);
 }
 
-.pf-utility-button--danger:hover:not(:disabled) {
-  background: var(--pf-utility-btn-danger-bg-hover);
+.pf-utility-button--destructive:hover:not(:disabled) {
+  background: var(--pf-utility-btn-destructive-bg-hover);
 }
 
 .pf-utility-button__icon {

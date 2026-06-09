@@ -12,7 +12,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['neutral', 'brand', 'success', 'warning'],
+      options: ['neutral', 'brand', 'success', 'warning', 'danger'],
     },
   },
 } satisfies Meta<typeof Badge>;
@@ -27,4 +27,7 @@ export const Success: Story = {
 };
 export const Warning: Story = {
   args: { variant: 'warning', children: 'Warning' },
+};
+export const Danger: Story = {
+  args: { variant: 'danger', children: 'Failed' },
 };

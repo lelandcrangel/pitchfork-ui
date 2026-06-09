@@ -15,8 +15,8 @@ describe('UtilityButton', () => {
   });
 
   it('applies the variant class', () => {
-    render(<UtilityButton variant="danger">Delete</UtilityButton>);
-    expect(screen.getByRole('button')).toHaveClass('pf-utility-button--danger');
+    render(<UtilityButton variant="destructive">Delete</UtilityButton>);
+    expect(screen.getByRole('button')).toHaveClass('pf-utility-button--destructive');
   });
 
   it('defaults to neutral variant', () => {

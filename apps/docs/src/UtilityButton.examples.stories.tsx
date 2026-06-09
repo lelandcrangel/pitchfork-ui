@@ -28,9 +28,9 @@ export const Brand: Story = {
   },
 };
 
-export const Danger: Story = {
+export const Destructive: Story = {
   args: {
-    variant: 'danger',
+    variant: 'destructive',
     children: 'Delete',
     icon: <Icon name="circle-xmark" aria-hidden />,
   },

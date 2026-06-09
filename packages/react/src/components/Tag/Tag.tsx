@@ -3,7 +3,7 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Tag.css';
 
-export type TagVariant = 'neutral' | 'brand' | 'success' | 'warning';
+export type TagVariant = 'neutral' | 'brand' | 'success' | 'warning' | 'danger';
 
 export interface TagProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: TagVariant;

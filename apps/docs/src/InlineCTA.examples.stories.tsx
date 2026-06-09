@@ -56,3 +56,17 @@ export const WarningWithActionGroup: Story = {
     ),
   },
 };
+
+export const Danger: Story = {
+  args: {
+    tone: 'danger',
+    iconName: 'circle-xmark',
+    heading: 'Payment failed',
+    description: 'We couldn’t process your last payment. Update your card to continue.',
+    action: (
+      <Button size="sm" variant="destructive">
+        Update payment
+      </Button>
+    ),
+  },
+};

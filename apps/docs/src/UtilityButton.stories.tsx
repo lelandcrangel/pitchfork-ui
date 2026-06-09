@@ -12,7 +12,7 @@ const meta = {
     icon: <Icon name="copy" aria-hidden />,
   },
   argTypes: {
-    variant: { control: 'select', options: ['neutral', 'brand', 'danger'] },
+    variant: { control: 'select', options: ['neutral', 'brand', 'destructive'] },
     size: { control: 'inline-radio', options: ['sm', 'md'] },
     tooltip: { control: 'text' },
   },

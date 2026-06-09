@@ -142,3 +142,7 @@
   background: color-mix(in srgb, var(--pf-inline-cta-warning-bg) 60%, var(--color-base-white));
   border-color: var(--pf-inline-cta-warning-border);
 }
+.pf-inline-cta--danger {
+  background: color-mix(in srgb, var(--pf-inline-cta-danger-bg) 55%, var(--color-base-white));
+  border-color: var(--pf-inline-cta-danger-border);
+}

@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './UtilityButton.css';
 
-export type UtilityButtonVariant = 'neutral' | 'brand' | 'danger';
+export type UtilityButtonVariant = 'neutral' | 'brand' | 'destructive';
 export type UtilityButtonSize = 'sm' | 'md';
 
 export interface UtilityButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

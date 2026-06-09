@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Badge.css';
 
-export type BadgeVariant = 'neutral' | 'brand' | 'success' | 'warning';
+export type BadgeVariant = 'neutral' | 'brand' | 'success' | 'warning' | 'danger';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;

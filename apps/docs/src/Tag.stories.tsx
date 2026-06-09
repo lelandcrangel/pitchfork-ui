@@ -15,7 +15,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['neutral', 'brand', 'success', 'warning'],
+      options: ['neutral', 'brand', 'success', 'warning', 'danger'],
     },
     dismissible: { control: 'boolean' },
   },

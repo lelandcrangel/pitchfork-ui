@@ -14,7 +14,7 @@ const meta = {
   argTypes: {
     tone: {
       control: 'inline-radio',
-      options: ['default', 'info', 'success', 'warning'],
+      options: ['default', 'info', 'success', 'warning', 'danger'],
     },
     action: { control: 'text' },
     icon: { control: 'text' },

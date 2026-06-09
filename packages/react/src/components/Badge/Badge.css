@@ -24,3 +24,7 @@
   background: var(--pf-badge-warning-background, var(--color-semantic-status-warning-background));
   color: var(--pf-badge-warning-foreground, var(--color-semantic-status-warning-foreground));
 }
+.pf-badge--danger {
+  background: var(--pf-badge-danger-background, var(--color-semantic-status-danger-background));
+  color: var(--pf-badge-danger-foreground, var(--color-semantic-status-danger-foreground));
+}

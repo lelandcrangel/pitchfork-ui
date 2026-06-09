@@ -32,6 +32,10 @@
   background: var(--pf-tag-warning-bg);
   color: var(--pf-tag-warning-text);
 }
+.pf-tag--danger {
+  background: var(--pf-tag-danger-bg);
+  color: var(--pf-tag-danger-text);
+}
 
 .pf-tag__dismiss {
   align-items: center;

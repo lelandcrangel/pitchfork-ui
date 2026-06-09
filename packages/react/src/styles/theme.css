@@ -305,10 +305,10 @@
   --pf-utility-btn-brand-border: var(--color-brand-300);
   --pf-utility-btn-brand-text: var(--color-brand-700);
   --pf-utility-btn-brand-bg-hover: var(--color-brand-200);
-  --pf-utility-btn-danger-bg: var(--color-semantic-status-danger-background);
-  --pf-utility-btn-danger-border: var(--color-semantic-status-danger-border);
-  --pf-utility-btn-danger-text: var(--color-semantic-status-danger-foreground);
-  --pf-utility-btn-danger-bg-hover: var(--color-danger-100);
+  --pf-utility-btn-destructive-bg: var(--color-semantic-status-danger-background);
+  --pf-utility-btn-destructive-border: var(--color-semantic-status-danger-border);
+  --pf-utility-btn-destructive-text: var(--color-semantic-status-danger-foreground);
+  --pf-utility-btn-destructive-bg-hover: var(--color-danger-100);
 
   /* Kbd aliases */
   --pf-kbd-bg: var(--color-semantic-background-subtle);
@@ -598,6 +598,8 @@
   --pf-inline-cta-success-border: var(--color-semantic-status-success-border);
   --pf-inline-cta-warning-bg: var(--color-semantic-status-warning-background);
   --pf-inline-cta-warning-border: var(--color-semantic-status-warning-border);
+  --pf-inline-cta-danger-bg: var(--color-semantic-status-danger-background);
+  --pf-inline-cta-danger-border: var(--color-semantic-status-danger-border);
 
   /* Select additions */
   --pf-select-focus-border: var(--color-semantic-action-primary);
@@ -658,6 +660,8 @@
   --pf-tag-success-text: var(--color-semantic-status-success-foreground);
   --pf-tag-warning-bg: var(--color-semantic-status-warning-background);
   --pf-tag-warning-text: var(--color-semantic-status-warning-foreground);
+  --pf-tag-danger-bg: var(--color-semantic-status-danger-background);
+  --pf-tag-danger-text: var(--color-semantic-status-danger-foreground);
 
   /* HeaderNavigation aliases */
   --pf-header-nav-bg: var(--color-semantic-background-default);
