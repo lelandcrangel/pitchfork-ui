@@ -13,7 +13,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "style-dictionary": "latest"
+    "style-dictionary": "^5.4.4"
   },
   "exports": {
     "./css": "./dist/css/variables.css",
