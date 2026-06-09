@@ -12,15 +12,33 @@ Buttons trigger key user actions and support clear visual hierarchy through vari
 
 ### Primary
 
+The default, highest-emphasis variant for the main call to action. Limit it to
+one primary button per view or section so the key action stays obvious.
+
 <Canvas of={ButtonExamples.Primary} meta={ButtonExamples} />
 
 ### Secondary
+
+A neutral, lower-emphasis variant for alternative or supporting actions that sit
+beside a primary button — Cancel, Back, or a secondary choice.
 
 <Canvas of={ButtonExamples.Secondary} meta={ButtonExamples} />
 
 ### Ghost
 
+The lowest-emphasis variant — no background until hovered. Use it for tertiary
+actions and dense spots like toolbars, table rows, and card headers where a solid
+button would feel too heavy.
+
 <Canvas of={ButtonExamples.Ghost} meta={ButtonExamples} />
+
+### Destructive
+
+Use `variant="destructive"` for irreversible or dangerous actions like deleting.
+Reserve it for the genuinely destructive action — pair it with a neutral
+`secondary` button for the safe choice (e.g. Cancel).
+
+<Canvas of={ButtonExamples.Destructive} meta={ButtonExamples} />
 
 ### Disabled
 

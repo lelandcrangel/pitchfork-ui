@@ -12,7 +12,7 @@ const meta = {
     size: 'md',
   },
   argTypes: {
-    variant: { control: 'select', options: ['primary', 'secondary', 'ghost'] },
+    variant: { control: 'select', options: ['primary', 'secondary', 'ghost', 'destructive'] },
     size: { control: 'select', options: ['sm', 'md', 'lg'] },
   },
 } satisfies Meta<typeof Button>;
@@ -29,5 +29,6 @@ export const Primary: Story = {
 };
 export const Secondary: Story = { args: { variant: 'secondary' } };
 export const Ghost: Story = { args: { variant: 'ghost' } };
+export const Destructive: Story = { args: { variant: 'destructive', children: 'Delete' } };
 export const Disabled: Story = { args: { disabled: true } };
 export const Loading: Story = { args: { loading: true, children: 'Saving…' } };

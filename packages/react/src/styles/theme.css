@@ -59,6 +59,10 @@
   --pf-button-secondary-text: var(--color-semantic-text-default);
   --pf-button-ghost-text: var(--color-semantic-text-default);
   --pf-button-ghost-bg-hover: var(--color-semantic-background-subtle);
+  /* Solid reds work on both themes; white text = 4.83:1 (bg) / 6.57:1 (hover) */
+  --pf-button-destructive-bg: var(--color-danger-600);
+  --pf-button-destructive-bg-hover: var(--color-danger-700);
+  --pf-button-destructive-text: var(--color-base-white);
 
   /* Field/input aliases */
   --pf-field-label: var(--color-semantic-text-default);

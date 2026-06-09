@@ -39,7 +39,9 @@ The header and footer are optional — omit `title`/`footer` for a body-only mod
       <Button variant="secondary" onClick={() => setOpen(false)}>
         Cancel
       </Button>
-      <Button onClick={confirm}>Delete</Button>
+      <Button variant="destructive" onClick={confirm}>
+        Delete
+      </Button>
     </>
   }
 >

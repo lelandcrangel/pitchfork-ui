@@ -70,6 +70,13 @@
 .pf-button--ghost:hover:not(:disabled) {
   background: var(--pf-button-ghost-bg-hover);
 }
+.pf-button--destructive {
+  background: var(--pf-button-destructive-bg);
+  color: var(--pf-button-destructive-text);
+}
+.pf-button--destructive:hover:not(:disabled) {
+  background: var(--pf-button-destructive-bg-hover);
+}
 
 .pf-button--loading:disabled {
   cursor: wait;

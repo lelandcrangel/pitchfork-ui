@@ -16,7 +16,7 @@ const meta = {
   },
   argTypes: {
     children: { control: 'text' },
-    variant: { control: 'select', options: ['primary', 'secondary', 'ghost'] },
+    variant: { control: 'select', options: ['primary', 'secondary', 'ghost', 'destructive'] },
     size: { control: 'select', options: ['sm', 'md', 'lg'] },
     fullWidth: { control: 'boolean' },
     type: { control: 'select', options: ['button', 'submit', 'reset'] },
