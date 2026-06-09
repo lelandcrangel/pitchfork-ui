@@ -22,7 +22,12 @@ export default defineConfig({
   },
   plugins: [react(), libInjectCss(), dts()],
   build: {
+    // Keep JS readable so `preserveModules` output stays debuggable; the
+    // consumer's bundler minifies it. CSS, however, ships as-is (the monolithic
+    // styles.css and every per-component chunk injected by lib-inject-css), so
+    // minify it explicitly — `cssMinify` otherwise defaults to `minify`.
     minify: false,
+    cssMinify: true,
     cssCodeSplit: true,
     lib: {
       entry: 'src/index.ts',
