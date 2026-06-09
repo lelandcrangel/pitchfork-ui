@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.11.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.11.0...react-v0.11.1) (2026-06-09)
+
+
+### Bug Fixes
+
+* **react:** convert Card to forwardRef and minify shipped CSS ([2dd62bd](https://github.com/lelandcrangel/pitchfork-ui/commit/2dd62bd262201b61b7c9e37c3b77f374dcc2679d))
+* **react:** convert Card to forwardRef and minify shipped CSS ([6494579](https://github.com/lelandcrangel/pitchfork-ui/commit/64945796e57d1afcd1afea1bfe7b04529bae1e40))
+
 ## [0.11.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.10.0...react-v0.11.0) (2026-06-09)
 
 
