@@ -31,6 +31,12 @@ describe('CardHeader', () => {
     const { container } = render(<CardHeader />);
     expect(container.firstChild).toHaveClass('pf-card__header');
   });
+
+  it('forwards ref', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(<CardHeader ref={ref} />);
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
 });
 
 describe('CardContent', () => {
@@ -43,6 +49,12 @@ describe('CardContent', () => {
     const { container } = render(<CardContent />);
     expect(container.firstChild).toHaveClass('pf-card__content');
   });
+
+  it('forwards ref', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(<CardContent ref={ref} />);
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
 });
 
 describe('CardFooter', () => {
@@ -54,6 +66,12 @@ describe('CardFooter', () => {
   it('applies the pf-card__footer class', () => {
     const { container } = render(<CardFooter />);
     expect(container.firstChild).toHaveClass('pf-card__footer');
+  });
+
+  it('forwards ref', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(<CardFooter ref={ref} />);
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
   });
 });
 
