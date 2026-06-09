@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.11.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.10.0...react-v0.11.0) (2026-06-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* UtilityButton's `variant="danger"` is renamed to `variant="destructive"`. Update usages: `<UtilityButton variant="danger">` → `<UtilityButton variant="destructive">`.
+
+### Features
+
+* **Button:** add destructive variant with styles and documentation ([1181acc](https://github.com/lelandcrangel/pitchfork-ui/commit/1181accdf2954732703f5b45f4309f65d1f36017))
+* standardize danger vs destructive variant naming ([426a2c7](https://github.com/lelandcrangel/pitchfork-ui/commit/426a2c78cfc41caa311bd00d15b2ec3384cb1b4c))
+
+
+### Bug Fixes
+
+* **Modal:** adjust overflow and max-height for better mobile visibility ([75324d9](https://github.com/lelandcrangel/pitchfork-ui/commit/75324d93dfd3b091ca25d981ffd79740394f8e27))
+
 ## [0.10.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.9.0...react-v0.10.0) (2026-06-08)
 
 
