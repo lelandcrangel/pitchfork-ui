@@ -221,7 +221,7 @@
 
 .pf-notification__dismiss {
   align-items: center;
-  align-self: start;
+  align-self: flex-start;
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);

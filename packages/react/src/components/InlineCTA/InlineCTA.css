@@ -1,5 +1,5 @@
 .pf-inline-cta {
-  align-items: start;
+  align-items: flex-start;
   background: var(--pf-inline-cta-bg);
   border: 1px solid var(--pf-inline-cta-border);
   border-radius: var(--radius-md);
