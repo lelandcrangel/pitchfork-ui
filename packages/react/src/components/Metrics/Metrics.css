@@ -20,7 +20,7 @@
 }
 
 .pf-metric-card__header {
-  align-items: start;
+  align-items: flex-start;
   display: flex;
   gap: var(--space-3);
   justify-content: space-between;
