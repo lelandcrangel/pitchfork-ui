@@ -212,7 +212,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
           </button>
 
           <div className="pf-calendar__month-controls">
-            <label className="pf-calendar__control-label">Month</label>
+            <span className="pf-calendar__control-label">Month</span>
             <Dropdown
               label={MONTH_OPTIONS[displayMonth.getMonth()].label}
               items={MONTH_OPTIONS.map((month) => ({
@@ -228,7 +228,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
               align="start"
             />
 
-            <label className="pf-calendar__control-label">Year</label>
+            <span className="pf-calendar__control-label">Year</span>
             <Dropdown
               label={String(displayMonth.getFullYear())}
               items={yearOptions.map((year) => ({
