@@ -1,21 +1,4 @@
-/* ─── Chart color palette ─────────────────────────────────────────────── */
-:root {
-  --pf-chart-color-1: var(--color-brand-600);
-  --pf-chart-color-2: var(--color-brand-400);
-  --pf-chart-color-3: var(--color-gray-500);
-  --pf-chart-color-4: var(--color-gray-400);
-  --pf-chart-color-5: #0ea5e9;
-  --pf-chart-color-6: #22c55e;
-  --pf-chart-grid: var(--color-semantic-border-default);
-  --pf-chart-text-muted: var(--color-semantic-text-muted);
-}
-
-[data-theme='dark'] {
-  --pf-chart-color-1: var(--color-brand-400);
-  --pf-chart-color-2: var(--color-brand-300);
-  --pf-chart-color-3: var(--color-gray-400);
-  --pf-chart-color-4: var(--color-gray-500);
-}
+/* Series palette (--pf-chart-color-*) and chart aliases live in theme.css */
 
 /* ─── Container ──────────────────────────────────────────────────────── */
 .pf-chart {

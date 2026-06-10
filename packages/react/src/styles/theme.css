@@ -543,6 +543,17 @@
   --pf-piechart-text: var(--color-semantic-text-default);
   --pf-piechart-text-muted: var(--color-semantic-text-muted);
 
+  /* LineBarChart / AreaChart aliases — shared data-viz series palette */
+  --pf-chart-color-1: var(--color-brand-600);
+  --pf-chart-color-2: var(--color-brand-400);
+  --pf-chart-color-3: var(--color-gray-500);
+  --pf-chart-color-4: var(--color-gray-400);
+  /* sky/green accents — no equivalent in the token color families (success-500 is #12b76a) */
+  --pf-chart-color-5: #0ea5e9;
+  --pf-chart-color-6: #22c55e;
+  --pf-chart-grid: var(--color-semantic-border-default);
+  --pf-chart-text-muted: var(--color-semantic-text-muted);
+
   /* ContentDivider aliases */
   --pf-content-divider-text: var(--color-semantic-text-muted);
   --pf-content-divider-line: var(--color-semantic-border-default);
@@ -776,6 +787,12 @@
 
   /* GaugeChart — track uses background-subtle (gray-700) which is 1.72:1 against gray-900 */
   --pf-gauge-track-color: var(--color-semantic-border-strong);
+
+  /* LineBarChart — brand series colors shift lighter to keep contrast on dark surfaces */
+  --pf-chart-color-1: var(--color-brand-400);
+  --pf-chart-color-2: var(--color-brand-300);
+  --pf-chart-color-3: var(--color-gray-400);
+  --pf-chart-color-4: var(--color-gray-500);
 
   /* ProgressSteps — semantic success bg shades flip in dark mode, so the marker
      numbers need opposite text colors to keep ≥4.5:1.

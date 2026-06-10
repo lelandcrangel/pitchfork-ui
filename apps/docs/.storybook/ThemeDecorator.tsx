@@ -42,10 +42,12 @@ function ThemeTogglePortal() {
 }
 
 export const withTheme: Decorator = (Story, context) => {
-  // Show the light/dark toggle on Interactive component stories and on all
-  // Patterns stories so both themes can be previewed.
+  // Show the light/dark toggle on Interactive component stories (incl. names
+  // like "Interactive Line") and on all Patterns stories so both themes can
+  // be previewed.
   const showToggle =
-    context.name === 'Interactive' || Boolean(context.title?.startsWith('Patterns/'));
+    Boolean(context.name?.startsWith('Interactive')) ||
+    Boolean(context.title?.startsWith('Patterns/'));
 
   if (!showToggle) {
     document.documentElement.setAttribute('data-theme', 'light');
