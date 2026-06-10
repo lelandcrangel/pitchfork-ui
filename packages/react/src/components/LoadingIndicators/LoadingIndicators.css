@@ -83,9 +83,9 @@
   width: var(--pf-skeleton-width, 100%);
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--pf-loading-bg-subtle) 92%, var(--color-base-white) 8%) 25%,
-    color-mix(in srgb, var(--pf-loading-border) 72%, var(--color-base-white) 28%) 37%,
-    color-mix(in srgb, var(--pf-loading-bg-subtle) 92%, var(--color-base-white) 8%) 63%
+    color-mix(in srgb, var(--pf-loading-bg-subtle) 92%, var(--pf-mix-base) 8%) 25%,
+    color-mix(in srgb, var(--pf-loading-border) 72%, var(--pf-mix-base) 28%) 37%,
+    color-mix(in srgb, var(--pf-loading-bg-subtle) 92%, var(--pf-mix-base) 8%) 63%
   );
   background-size: 200% 100%;
   border-radius: var(--radius-sm);

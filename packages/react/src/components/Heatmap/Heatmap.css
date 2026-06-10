@@ -8,7 +8,7 @@
 }
 
 .pf-heatmap__empty {
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-heatmap-empty-text);
   font-size: var(--font-size-sm);
   padding: var(--space-4);
   text-align: center;

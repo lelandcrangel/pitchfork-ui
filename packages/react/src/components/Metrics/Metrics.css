@@ -85,12 +85,12 @@
 }
 
 .pf-metric-card__trend--positive {
-  background: color-mix(in srgb, var(--pf-metric-success-bg) 55%, var(--color-base-white));
+  background: color-mix(in srgb, var(--pf-metric-success-bg) 55%, var(--pf-mix-base));
   color: var(--pf-metric-success-text);
 }
 
 .pf-metric-card__trend--negative {
-  background: color-mix(in srgb, var(--pf-metric-danger-bg) 55%, var(--color-base-white));
+  background: color-mix(in srgb, var(--pf-metric-danger-bg) 55%, var(--pf-mix-base));
   color: var(--pf-metric-danger-text);
 }
 

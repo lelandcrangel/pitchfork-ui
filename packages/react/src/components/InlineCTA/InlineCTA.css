@@ -20,7 +20,7 @@
   background: transparent;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--color-semantic-text-muted);
+  color: var(--pf-inline-cta-text-muted);
   cursor: pointer;
   display: inline-flex;
   height: 28px;
@@ -34,8 +34,8 @@
 
 .pf-inline-cta__dismiss:hover,
 .pf-inline-cta__dismiss:focus-visible {
-  background: var(--color-semantic-background-subtle);
-  color: var(--color-semantic-text-default);
+  background: var(--pf-inline-cta-bg-subtle);
+  color: var(--pf-inline-cta-text);
   outline: none;
 }
 
@@ -117,7 +117,7 @@
 }
 
 .pf-inline-cta--info {
-  background: color-mix(in srgb, var(--pf-inline-cta-info-bg) 70%, var(--color-base-white));
+  background: color-mix(in srgb, var(--pf-inline-cta-info-bg) 70%, var(--pf-mix-base));
   border-color: var(--pf-inline-cta-info-border);
 }
 
@@ -134,15 +134,15 @@
 }
 
 .pf-inline-cta--success {
-  background: color-mix(in srgb, var(--pf-inline-cta-success-bg) 55%, var(--color-base-white));
+  background: color-mix(in srgb, var(--pf-inline-cta-success-bg) 55%, var(--pf-mix-base));
   border-color: var(--pf-inline-cta-success-border);
 }
 
 .pf-inline-cta--warning {
-  background: color-mix(in srgb, var(--pf-inline-cta-warning-bg) 60%, var(--color-base-white));
+  background: color-mix(in srgb, var(--pf-inline-cta-warning-bg) 60%, var(--pf-mix-base));
   border-color: var(--pf-inline-cta-warning-border);
 }
 .pf-inline-cta--danger {
-  background: color-mix(in srgb, var(--pf-inline-cta-danger-bg) 55%, var(--color-base-white));
+  background: color-mix(in srgb, var(--pf-inline-cta-danger-bg) 55%, var(--pf-mix-base));
   border-color: var(--pf-inline-cta-danger-border);
 }

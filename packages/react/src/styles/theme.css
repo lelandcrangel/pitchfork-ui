@@ -22,6 +22,8 @@
   /* Directional easings for enter/exit animations */
   --pf-transition-enter: var(--duration-moderate) var(--easing-decelerate);
   --pf-transition-exit: var(--duration-fast) var(--easing-accelerate);
+  /* Shared color-mix base — hover/skeleton tints mix component colors toward this */
+  --pf-mix-base: var(--color-base-white);
 
   /* Control aliases */
   --pf-control-height-sm: var(--size-control-sm, 36px);
@@ -371,6 +373,7 @@
   --pf-heatmap-color: var(--color-semantic-action-primary);
   --pf-heatmap-empty: var(--color-semantic-background-subtle);
   --pf-heatmap-label-color: var(--color-semantic-text-muted);
+  --pf-heatmap-empty-text: var(--color-semantic-text-muted);
   --pf-heatmap-cell-radius: var(--radius-sm);
 
   /* GaugeChart aliases */
@@ -487,6 +490,18 @@
   --pf-daterange-range-bg: var(--color-brand-600);
   --pf-daterange-range-text: var(--color-base-white);
 
+  /* Badge aliases */
+  --pf-badge-neutral-background: var(--color-gray-100);
+  --pf-badge-neutral-foreground: var(--color-gray-700);
+  --pf-badge-brand-background: var(--color-brand-100);
+  --pf-badge-brand-foreground: var(--color-brand-700);
+  --pf-badge-success-background: var(--color-semantic-status-success-background);
+  --pf-badge-success-foreground: var(--color-semantic-status-success-foreground);
+  --pf-badge-warning-background: var(--color-semantic-status-warning-background);
+  --pf-badge-warning-foreground: var(--color-semantic-status-warning-foreground);
+  --pf-badge-danger-background: var(--color-semantic-status-danger-background);
+  --pf-badge-danger-foreground: var(--color-semantic-status-danger-foreground);
+
   /* BadgeGroup aliases */
   --pf-badgegroup-gray-100: var(--color-gray-100);
   --pf-badgegroup-gray-200: var(--color-gray-200);
@@ -578,6 +593,48 @@
   --pf-loading-accent: var(--color-semantic-action-primary);
   --pf-loading-bg-subtle: var(--color-semantic-background-subtle);
 
+  /* CodeSnippet aliases — the snippet surface stays dark in both themes */
+  --pf-code-snippet-bg: var(--color-gray-900);
+  --pf-code-snippet-text: var(--color-gray-100);
+  --pf-code-snippet-title: var(--color-base-white);
+  --pf-code-snippet-language: var(--color-gray-300);
+  --pf-code-snippet-copy-text: var(--color-gray-100);
+  --pf-code-snippet-line-number: var(--color-gray-400);
+
+  /* CreditCard aliases — card faces stay dark in both themes, like a physical card */
+  --pf-credit-card-text-color: var(--color-base-white);
+  --pf-credit-card-border: color-mix(in srgb, var(--pf-mix-base) 25%, transparent);
+  --pf-credit-card-glare: color-mix(in srgb, var(--pf-mix-base) 22%, transparent);
+  --pf-credit-card-generic-gradient: linear-gradient(
+    135deg,
+    var(--color-gray-800),
+    var(--color-gray-900) 55%,
+    var(--color-gray-700)
+  );
+  --pf-credit-card-visa-gradient: linear-gradient(
+    135deg,
+    var(--color-brand-700),
+    var(--color-brand-900) 55%,
+    var(--color-brand-700)
+  );
+  --pf-credit-card-mastercard-gradient: linear-gradient(
+    135deg,
+    var(--color-warning-600),
+    var(--color-warning-800) 55%,
+    var(--color-danger-500)
+  );
+  --pf-credit-card-amex-gradient: linear-gradient(
+    135deg,
+    var(--color-success-700),
+    var(--color-success-800) 55%,
+    var(--color-gray-800)
+  );
+  --pf-credit-card-chip-gradient: linear-gradient(
+    135deg,
+    var(--color-gray-50),
+    var(--color-gray-300)
+  );
+
   /* Avatar aliases */
   --pf-avatar-text: var(--color-semantic-text-default);
   --pf-avatar-status-border: var(--pf-surface-bg);
@@ -600,6 +657,7 @@
   --pf-inline-cta-border: var(--color-semantic-border-default);
   --pf-inline-cta-text: var(--color-semantic-text-default);
   --pf-inline-cta-text-muted: var(--color-semantic-text-muted);
+  --pf-inline-cta-bg-subtle: var(--color-semantic-background-subtle);
   --pf-inline-cta-info-bg: var(--color-brand-50);
   --pf-inline-cta-info-border: var(--color-brand-300);
   --pf-inline-cta-info-icon: var(--color-brand-700);

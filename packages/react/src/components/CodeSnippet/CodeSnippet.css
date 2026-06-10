@@ -1,16 +1,14 @@
 .pf-code-snippet {
-  background: var(--pf-code-snippet-bg, var(--color-gray-900));
+  background: var(--pf-code-snippet-bg);
+  /* Derived borders/headers stay as fallback mixes (not theme.css aliases) so a
+     scoped --pf-code-snippet-bg override re-tints them. */
   border: 1px solid
     var(
       --pf-code-snippet-border,
-      color-mix(
-        in srgb,
-        var(--pf-code-snippet-bg, var(--color-gray-900)) 82%,
-        var(--color-base-white)
-      )
+      color-mix(in srgb, var(--pf-code-snippet-bg) 82%, var(--pf-mix-base))
     );
   border-radius: var(--radius-md);
-  color: var(--pf-code-snippet-text, var(--color-gray-100));
+  color: var(--pf-code-snippet-text);
   display: grid;
   overflow: hidden;
 }
@@ -20,20 +18,12 @@
   align-items: center;
   background: var(
     --pf-code-snippet-header-bg,
-    color-mix(
-      in srgb,
-      var(--pf-code-snippet-bg, var(--color-gray-900)) 78%,
-      var(--color-base-white)
-    )
+    color-mix(in srgb, var(--pf-code-snippet-bg) 78%, var(--pf-mix-base))
   );
   border-bottom: 1px solid
     var(
       --pf-code-snippet-header-border,
-      color-mix(
-        in srgb,
-        var(--pf-code-snippet-bg, var(--color-gray-900)) 65%,
-        var(--color-base-white)
-      )
+      color-mix(in srgb, var(--pf-code-snippet-bg) 65%, var(--pf-mix-base))
     );
   display: flex;
   gap: var(--space-3);
@@ -49,13 +39,13 @@
 }
 
 .pf-code-snippet__title {
-  color: var(--pf-code-snippet-title, var(--color-base-white));
+  color: var(--pf-code-snippet-title);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
 }
 
 .pf-code-snippet__language {
-  color: var(--pf-code-snippet-language, var(--color-gray-300));
+  color: var(--pf-code-snippet-language);
   font-size: var(--font-size-2xs);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -65,23 +55,15 @@
   align-items: center;
   background: var(
     --pf-code-snippet-copy-bg,
-    color-mix(
-      in srgb,
-      var(--pf-code-snippet-bg, var(--color-gray-900)) 70%,
-      var(--color-base-white)
-    )
+    color-mix(in srgb, var(--pf-code-snippet-bg) 70%, var(--pf-mix-base))
   );
   border: 1px solid
     var(
       --pf-code-snippet-copy-border,
-      color-mix(
-        in srgb,
-        var(--pf-code-snippet-bg, var(--color-gray-900)) 55%,
-        var(--color-base-white)
-      )
+      color-mix(in srgb, var(--pf-code-snippet-bg) 55%, var(--pf-mix-base))
     );
   border-radius: var(--radius-sm);
-  color: var(--pf-code-snippet-copy-text, var(--color-gray-100));
+  color: var(--pf-code-snippet-copy-text);
   cursor: pointer;
   display: inline-flex;
   font-size: var(--font-size-xs);
@@ -93,11 +75,7 @@
 .pf-code-snippet__copy:hover {
   background: var(
     --pf-code-snippet-copy-hover-bg,
-    color-mix(
-      in srgb,
-      var(--pf-code-snippet-bg, var(--color-gray-900)) 58%,
-      var(--color-base-white)
-    )
+    color-mix(in srgb, var(--pf-code-snippet-bg) 58%, var(--pf-mix-base))
   );
 }
 
@@ -130,7 +108,7 @@
 }
 
 .pf-code-snippet__line-number {
-  color: var(--pf-code-snippet-line-number, var(--color-gray-400));
+  color: var(--pf-code-snippet-line-number);
   min-width: 2.5ch;
   padding-inline-end: var(--space-3);
   text-align: end;

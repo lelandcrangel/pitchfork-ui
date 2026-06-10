@@ -1,46 +1,11 @@
-/* Ensure Storybook CSS variable controls always apply to the card */
-/* Ensure Storybook CSS variable controls always apply to the card */
-.css-var-scope .pf-credit-card {
-  color: var(--pf-credit-card-text-color, var(--color-base-white));
-}
-/* ...existing code... */
+/* Color vars (--pf-credit-card-*) live in theme.css; defining them there rather
+   than on .pf-credit-card keeps scoped overrides (e.g. Storybook's CSS variable
+   controls) working via inheritance. */
 .pf-credit-card {
-  --pf-credit-card-border: color-mix(in srgb, var(--color-base-white) 25%, transparent);
-  --pf-credit-card-glare: color-mix(in srgb, var(--color-base-white) 22%, transparent);
-  --pf-credit-card-generic-gradient: linear-gradient(
-    135deg,
-    var(--color-gray-800),
-    var(--color-gray-900) 55%,
-    var(--color-gray-700)
-  );
-  --pf-credit-card-visa-gradient: linear-gradient(
-    135deg,
-    var(--color-brand-700),
-    var(--color-brand-900) 55%,
-    var(--color-brand-700)
-  );
-  --pf-credit-card-mastercard-gradient: linear-gradient(
-    135deg,
-    var(--color-warning-600),
-    var(--color-warning-800) 55%,
-    var(--color-danger-500)
-  );
-  --pf-credit-card-amex-gradient: linear-gradient(
-    135deg,
-    var(--color-success-700),
-    var(--color-success-800) 55%,
-    var(--color-gray-800)
-  );
-  --pf-credit-card-chip-gradient: linear-gradient(
-    135deg,
-    var(--color-gray-50),
-    var(--color-gray-300)
-  );
-
   border: 1px solid var(--pf-credit-card-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  color: var(--pf-credit-card-text-color, var(--color-base-white));
+  color: var(--pf-credit-card-text-color);
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
