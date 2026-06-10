@@ -262,6 +262,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
                     const isSelected = option.value === selectedValue;
                     const isActive = index === activeIndex;
                     return (
+                      // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- aria-activedescendant pattern: keyboard stays on the input, options are mouse targets
                       <li
                         key={option.value}
                         id={`${listboxId}-option-${index}`}

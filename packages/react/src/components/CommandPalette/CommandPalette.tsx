@@ -141,10 +141,12 @@ export function CommandPalette({
   if (!isMounted || typeof document === 'undefined') return null;
 
   return createPortal(
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- backdrop dismiss is a pointer affordance; Escape is the keyboard path
     <div
       className={cx('pf-command__backdrop', isExiting && 'pf-command__backdrop--exiting')}
       onClick={() => onOpenChange(false)}
     >
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- dialog keyboard handling (Escape, arrows) lives on the container */}
       <div
         ref={dialogRef}
         className={cx('pf-command', isExiting && 'pf-command--exiting')}
@@ -196,6 +198,7 @@ export function CommandPalette({
                 {groupItems.map(({ item, index }) => {
                   const isActive = index === activeIndex;
                   return (
+                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus -- aria-activedescendant pattern: keyboard stays on the input, options are mouse targets
                     <div
                       key={item.id}
                       id={`${listId}-option-${index}`}

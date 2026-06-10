@@ -139,6 +139,7 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
         aria-describedby={describedBy}
       >
         <div className="pf-date-picker__control-row">
+          {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid/aria-required on the picker trigger is documented, tested behavior; ARIA 1.2 role="combobox" migration is tracked in todo.md */}
           <button
             ref={triggerRef}
             id={`${pickerId}-trigger`}

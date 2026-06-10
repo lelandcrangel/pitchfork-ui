@@ -196,6 +196,7 @@ export function SlideoutMenu({
 
   return createPortal(
     <div className="pf-slideout__portal" data-state={visible ? 'open' : 'closed'}>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- overlay dismiss is a pointer affordance; Escape is the keyboard path */}
       <div
         className="pf-slideout__overlay"
         onClick={() => {

@@ -108,6 +108,7 @@ export function Popover({
 
       {isMounted && typeof document !== 'undefined'
         ? createPortal(
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- dialog keyboard handling (Escape) lives on the container
             <div
               ref={contentRef}
               id={contentId}

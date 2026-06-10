@@ -370,6 +370,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
           aria-describedby={describedBy}
         >
           <div className="pf-daterange__control-row" ref={rootRef}>
+            {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid/aria-required on the picker trigger is documented, tested behavior; ARIA 1.2 role="combobox" migration is tracked in todo.md */}
             <button
               ref={triggerRef}
               id={`${pickerId}-trigger`}
@@ -428,6 +429,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
 
           {isOpen && typeof document !== 'undefined'
             ? createPortal(
+                // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- dialog keyboard handling (Escape, focus trap) lives on the container
                 <div
                   ref={popoverRef}
                   className="pf-daterange__popover"

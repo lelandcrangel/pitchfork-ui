@@ -113,6 +113,7 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(function Res
         {first}
       </div>
 
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- APG window-splitter: a focusable separator is an interactive widget */}
       <div
         id={handleId}
         role="separator"

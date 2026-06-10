@@ -207,6 +207,7 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
       required={required}
     >
       <div className="pf-timepicker" ref={rootRef}>
+        {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid/aria-required on the picker trigger is documented, tested behavior; ARIA 1.2 role="combobox" migration is tracked in todo.md */}
         <button
           {...props}
           id={fieldId}
@@ -251,6 +252,7 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
                 className={cx('pf-timepicker__panel', isExiting && 'pf-timepicker__panel--exiting')}
                 style={panelStyle}
               >
+                {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus -- options are focusable buttons (roving focus); the listbox container needs no tabindex */}
                 <div
                   className="pf-timepicker__column"
                   role="listbox"
@@ -278,6 +280,7 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
                   })}
                 </div>
 
+                {/* eslint-disable-next-line jsx-a11y/interactive-supports-focus -- options are focusable buttons (roving focus); the listbox container needs no tabindex */}
                 <div
                   className="pf-timepicker__column"
                   role="listbox"
@@ -306,6 +309,7 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
                 </div>
 
                 {hourCycle === 12 ? (
+                  // eslint-disable-next-line jsx-a11y/interactive-supports-focus -- options are focusable buttons (roving focus); the listbox container needs no tabindex
                   <div
                     className="pf-timepicker__column pf-timepicker__column--meridiem"
                     role="listbox"

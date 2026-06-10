@@ -187,6 +187,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
         required={required}
       >
         <div className="pf-select" ref={rootRef}>
+          {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-required on the select-like trigger is documented, tested behavior; ARIA 1.2 role="combobox" migration is tracked in todo.md */}
           <button
             {...props}
             id={selectId}
@@ -240,6 +241,7 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
                     const isSelected = option.value === selectedOption?.value;
                     const isActive = index === activeIndex;
                     return (
+                      // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- aria-activedescendant pattern: keyboard stays on the trigger, options are mouse targets
                       <li
                         key={option.value}
                         id={`${listboxId}-option-${index}`}

@@ -72,6 +72,7 @@ export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(
           )}
         >
           {hasSource ? (
+            // eslint-disable-next-line jsx-a11y/media-has-caption -- captions are consumer-provided via the tracks prop; the rule can't see dynamic <track> children
             <video
               {...props}
               ref={ref}

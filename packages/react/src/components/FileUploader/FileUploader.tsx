@@ -182,6 +182,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
           }}
         />
 
+        {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid on the dropzone trigger is documented, tested behavior */}
         <button
           type="button"
           className={cx(

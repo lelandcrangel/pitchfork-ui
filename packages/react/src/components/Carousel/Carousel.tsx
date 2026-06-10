@@ -126,6 +126,7 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
         {totalSlides > 0 ? slideLabel : ''}
       </div>
 
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- arrow-key shortcuts bubble up from the focusable buttons inside; the wrapper itself is not interactive */}
       <div
         className="pf-carousel__controls"
         onKeyDown={(event) => {

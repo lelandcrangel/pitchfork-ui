@@ -135,6 +135,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function Tag
       errorId={errorId}
       required={required}
     >
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- click forwards focus to the inner input; keyboard users tab to it directly */}
       <div
         className={cx(
           'pf-taginput',

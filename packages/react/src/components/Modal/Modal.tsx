@@ -89,6 +89,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
 
   return createPortal(
     <div className="pf-modal__portal">
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- overlay dismiss is a pointer affordance; Escape is the keyboard path */}
       <div
         className={cx('pf-modal__overlay', isExiting && 'pf-modal__overlay--exiting')}
         onClick={() => {

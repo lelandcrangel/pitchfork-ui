@@ -210,6 +210,7 @@ export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Toolti
 
   return (
     <>
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- hover/focus forwarding wrapper; the focusable child inside is the interactive element */}
       <span
         ref={triggerRef}
         className="pf-tooltip__trigger"
