@@ -1,5 +1,7 @@
 import { forwardRef, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { cx } from '../../utils/cx';
+import { Badge } from '../Badge';
+import { Icon, type IconName } from '../Icon';
 import './Tabs.css';
 
 // Avoid SSR warnings: useLayoutEffect on the client, useEffect on the server.
@@ -17,6 +19,19 @@ export interface TabsItem {
   label: React.ReactNode;
   content: React.ReactNode;
   disabled?: boolean;
+  /** Decorative icon rendered alongside the label (e.g. `"code"` next to "Code"). */
+  icon?: IconName;
+  /** Which side of the label the icon sits on. Defaults to `"start"`. */
+  iconPlacement?: 'start' | 'end';
+  /**
+   * Numeric count rendered as a small badge beside the label (GitHub-style,
+   * e.g. "Issues 12"). The number is part of the tab's accessible name, so
+   * screen readers announce "Issues, 12". Pass `0` to show a zero count;
+   * omit the prop to hide the badge entirely.
+   */
+  count?: number;
+  /** Which side of the label the count badge sits on. Defaults to `"end"`. */
+  badgePlacement?: 'start' | 'end';
 }
 
 export type TabsVariant = 'underline' | 'pills';
@@ -174,6 +189,21 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
           const tabId = `${baseId}-tab-${item.value}`;
           const panelId = `${baseId}-panel-${item.value}`;
 
+          const iconPlacement = item.iconPlacement ?? 'start';
+          const badgePlacement = item.badgePlacement ?? 'end';
+          // Decorative: the label carries the accessible name.
+          const iconNode = item.icon ? (
+            <Icon key="icon" name={item.icon} className="pf-tabs__tab-icon" aria-hidden />
+          ) : null;
+          // The count text is intentionally left in the accessible name so
+          // screen readers announce e.g. "Issues, 12".
+          const countNode =
+            item.count !== undefined ? (
+              <Badge key="count" className="pf-tabs__tab-count" variant="neutral">
+                {item.count}
+              </Badge>
+            ) : null;
+
           return (
             <button
               key={item.value}
@@ -219,7 +249,11 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
                 }
               }}
             >
-              {item.label}
+              {iconPlacement === 'start' ? iconNode : null}
+              {badgePlacement === 'start' ? countNode : null}
+              <span className="pf-tabs__tab-label">{item.label}</span>
+              {badgePlacement === 'end' ? countNode : null}
+              {iconPlacement === 'end' ? iconNode : null}
             </button>
           );
         })}

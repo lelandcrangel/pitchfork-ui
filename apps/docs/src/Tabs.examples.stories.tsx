@@ -36,6 +36,66 @@ const compactItems: TabsItem[] = [
   { value: 'muted', label: 'Muted', content: <p style={pStyle}>Showing muted threads.</p> },
 ];
 
+const repoItems: TabsItem[] = [
+  {
+    value: 'overview',
+    label: 'Overview',
+    icon: 'chart-bar',
+    content: <p style={pStyle}>Repository activity, contributors, and recent releases.</p>,
+  },
+  {
+    value: 'issues',
+    label: 'Issues',
+    icon: 'circle-check',
+    count: 12,
+    content: <p style={pStyle}>12 open issues across 3 milestones.</p>,
+  },
+  {
+    value: 'pulls',
+    label: 'Pull requests',
+    icon: 'copy',
+    count: 4,
+    content: <p style={pStyle}>4 pull requests awaiting review.</p>,
+  },
+  {
+    value: 'stars',
+    label: 'Stargazers',
+    icon: 'star',
+    count: 0,
+    content: <p style={pStyle}>No stargazers yet — be the first.</p>,
+  },
+];
+
+const repoItemsCode = `const items = [
+  {
+    value: 'overview',
+    label: 'Overview',
+    icon: 'chart-bar',
+    content: <p>Repository activity, contributors, and recent releases.</p>,
+  },
+  {
+    value: 'issues',
+    label: 'Issues',
+    icon: 'circle-check',
+    count: 12,
+    content: <p>12 open issues across 3 milestones.</p>,
+  },
+  {
+    value: 'pulls',
+    label: 'Pull requests',
+    icon: 'copy',
+    count: 4,
+    content: <p>4 pull requests awaiting review.</p>,
+  },
+  {
+    value: 'stars',
+    label: 'Stargazers',
+    icon: 'star',
+    count: 0,
+    content: <p>No stargazers yet — be the first.</p>,
+  },
+];`;
+
 const projectItemsCode = `const items = [
   {
     value: 'roadmap',
@@ -107,6 +167,34 @@ export const FullWidth: Story = {
         code: `${projectItemsCode}
 
 <Tabs items={items} variant="pills" fullWidth />`,
+      },
+    },
+  },
+};
+
+export const IconsAndCounts: Story = {
+  args: { items: repoItems, defaultValue: 'issues' },
+  render: (args) => <Tabs {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `${repoItemsCode}
+
+<Tabs items={items} defaultValue="issues" />`,
+      },
+    },
+  },
+};
+
+export const IconsAndCountsPills: Story = {
+  args: { items: repoItems, variant: 'pills', defaultValue: 'issues' },
+  render: (args) => <Tabs {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `${repoItemsCode}
+
+<Tabs items={items} variant="pills" defaultValue="issues" />`,
       },
     },
   },

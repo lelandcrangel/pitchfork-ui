@@ -153,4 +153,41 @@ describe('Tabs', () => {
     render(<Tabs items={items} fullWidth />);
     expect(screen.getByRole('tablist')).toHaveClass('pf-tabs__list--full-width');
   });
+
+  // ─── Count badge ─────────────────────────────────────────────────────────
+
+  it('renders a count badge and includes it in the tab accessible name', () => {
+    const withCount = [
+      { value: 'issues', label: 'Issues', content: <p>Issues</p>, count: 12 },
+      { value: 'prs', label: 'Pull requests', content: <p>PRs</p>, count: 4 },
+    ];
+    render(<Tabs items={withCount} />);
+    // The count text is part of the accessible name (e.g. "Issues 12").
+    const tab = screen.getByRole('tab', { name: /Issues\s*12/ });
+    expect(tab).toBeInTheDocument();
+    expect(tab).toHaveTextContent('12');
+  });
+
+  it('renders a count of 0 but omits the badge when count is undefined', () => {
+    const withCount = [
+      { value: 'zero', label: 'Zero', content: <p>Zero</p>, count: 0 },
+      { value: 'none', label: 'None', content: <p>None</p> },
+    ];
+    render(<Tabs items={withCount} />);
+    expect(screen.getByRole('tab', { name: /Zero\s*0/ })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'None' })).toHaveTextContent('None');
+  });
+
+  // ─── Icon ──────────────────────────────────────────────────────────────────
+
+  it('renders a decorative icon without changing the tab accessible name', () => {
+    const withIcon = [
+      { value: 'starred', label: 'Starred', content: <p>Starred</p>, icon: 'star' },
+      { value: 'docs', label: 'Docs', content: <p>Docs</p> },
+    ];
+    const { container } = render(<Tabs items={withIcon} />);
+    // Accessible name is unaffected by the decorative icon.
+    expect(screen.getByRole('tab', { name: 'Starred' })).toBeInTheDocument();
+    expect(container.querySelector('.pf-tabs__tab-icon')).toBeInTheDocument();
+  });
 });

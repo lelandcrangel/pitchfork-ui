@@ -22,6 +22,20 @@ Pill tabs are useful for compact filters and segmented controls.
 
 <Canvas of={TabsExamples.Pills} meta={TabsExamples} />
 
+### Icons and counts
+
+Each item accepts an optional `icon` and a numeric `count` badge (GitHub-style,
+e.g. "Issues 12"). The icon is decorative — by default it sits before the label
+(`iconPlacement`), while the count badge sits after it (`badgePlacement`). The
+count is included in the tab's accessible name, so screen readers announce
+"Issues, 12". Pass `count: 0` to show a zero count, or omit it to hide the badge.
+
+<Canvas of={TabsExamples.IconsAndCounts} meta={TabsExamples} />
+
+Icons and counts work identically in the `pills` variant:
+
+<Canvas of={TabsExamples.IconsAndCountsPills} meta={TabsExamples} />
+
 ### Full width
 
 Use full-width tabs to distribute options evenly across constrained layouts.

@@ -56,18 +56,36 @@
 }
 
 .pf-tabs__tab {
+  align-items: center;
   appearance: none;
   background: transparent;
   border: 0;
   color: var(--pf-tabs-text-muted);
   cursor: pointer;
+  display: inline-flex;
   font-family: inherit;
   font-weight: var(--font-weight-medium);
+  gap: var(--space-2);
   min-width: 0;
   position: relative;
   z-index: 1;
   transition: color var(--pf-transition-medium);
   white-space: nowrap;
+}
+
+/* Decorative leading/trailing icon; inherits the tab's text color. */
+.pf-tabs__tab-icon {
+  flex-shrink: 0;
+  font-size: 1em;
+}
+
+/* GitHub-style count pill; smaller than a default Badge and color-neutral so
+   it reads in both the active and inactive tab states. */
+.pf-tabs__tab-count {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  min-height: 18px;
+  padding: 0 var(--space-2);
 }
 
 .pf-tabs__tab:disabled {
