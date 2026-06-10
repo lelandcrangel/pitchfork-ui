@@ -11,8 +11,23 @@
 
 .pf-tabs__list {
   display: flex;
+  /* As a grid item the list defaults to `min-width: auto`, which refuses to
+     shrink below its content width — so it would overflow the viewport instead
+     of scrolling internally. `min-width: 0` lets it shrink and scroll. */
+  min-width: 0;
+  /* Horizontal scroll only. Without pinning overflow-y, `overflow-x: auto`
+     forces it to compute to `auto` too, so a horizontal scrollbar (when tabs
+     overflow) eats vertical space and triggers a phantom vertical scrollbar. */
   overflow-x: auto;
+  overflow-y: hidden;
   position: relative;
+  /* Hide the scrollbar so it never renders over the underline border; the
+     active indicator and keyboard/trackpad scrolling remain the affordance. */
+  scrollbar-width: none;
+}
+
+.pf-tabs__list::-webkit-scrollbar {
+  display: none;
 }
 
 .pf-tabs__indicator {

@@ -90,24 +90,39 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
       setIndicator(null);
       return;
     }
+    // offsetLeft/Top are relative to the positioned list and scroll-invariant,
+    // so the indicator (an abs-positioned child) tracks the tab whether or not
+    // the strip is scrolled — no manual scrollLeft math or rect subtraction.
     const measure = () => {
-      const listRect = list.getBoundingClientRect();
-      const tabRect = activeButton.getBoundingClientRect();
       setIndicator({
-        left: tabRect.left - listRect.left + list.scrollLeft,
-        width: tabRect.width,
-        top: tabRect.top - listRect.top,
-        height: tabRect.height,
+        left: activeButton.offsetLeft,
+        width: activeButton.offsetWidth,
+        top: activeButton.offsetTop,
+        height: activeButton.offsetHeight,
       });
     };
     measure();
+
+    // Re-measure once web fonts load: sibling tabs can change width and shift
+    // the active tab without resizing it, which a ResizeObserver alone misses.
+    let cancelled = false;
+    const fonts = typeof document !== 'undefined' ? document.fonts : undefined;
+    fonts?.ready.then(() => {
+      if (!cancelled) measure();
+    });
+
     if (typeof ResizeObserver === 'undefined') {
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
     const observer = new ResizeObserver(measure);
     observer.observe(list);
     observer.observe(activeButton);
-    return () => observer.disconnect();
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
   }, [items, selectedItem?.value, variant, size, fullWidth]);
 
   const setSelectedValue = (nextValue: string) => {
