@@ -97,6 +97,10 @@
   list-style: none;
   margin: 0;
   padding: 0;
+
+  /* Align the legend's start edge with the plot area (the SVG is inset by
+     the y-axis gutter); the var is set inline from the chart's geometry. */
+  padding-inline-start: var(--pf-chart-plot-inset-left, 0);
 }
 
 .pf-chart-legend__item {

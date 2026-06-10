@@ -33,6 +33,13 @@ const VIEW_H = 240;
 const PLOT_W = VIEW_W - PAD.left - PAD.right;
 const PLOT_H = VIEW_H - PAD.top - PAD.bottom;
 
+// The SVG scales to 100% width, so the plot area's left inset is a fixed
+// fraction of the rendered width. Exposed as a CSS var so the legend can
+// align its start edge with the plot area (see .pf-chart-legend).
+const PLOT_INSET_STYLE = {
+  '--pf-chart-plot-inset-left': `${(PAD.left / VIEW_W) * 100}%`,
+} as React.CSSProperties;
+
 // ─── Utilities ────────────────────────────────────────────────────────────
 
 function resolveColor(series: ChartSeries, index: number): string {
@@ -177,6 +184,7 @@ export interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
 export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(function LineChart(
   {
     className,
+    style,
     data,
     series,
     yAxisLabel,
@@ -190,7 +198,7 @@ export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(function Lin
 ) {
   if (!data.length || !series.length) {
     return (
-      <div ref={ref} className={cx('pf-chart', className)} {...props}>
+      <div ref={ref} className={cx('pf-chart', className)} style={style} {...props}>
         <div className="pf-chart__empty">No data</div>
       </div>
     );
@@ -208,7 +216,12 @@ export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(function Lin
   }));
 
   return (
-    <div ref={ref} className={cx('pf-chart', className)} {...props}>
+    <div
+      ref={ref}
+      className={cx('pf-chart', className)}
+      style={{ ...PLOT_INSET_STYLE, ...style }}
+      {...props}
+    >
       <svg
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
         className="pf-chart__svg"
@@ -299,6 +312,7 @@ export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
 export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(function BarChart(
   {
     className,
+    style,
     data,
     series,
     yAxisLabel,
@@ -311,7 +325,7 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(function BarCh
 ) {
   if (!data.length || !series.length) {
     return (
-      <div ref={ref} className={cx('pf-chart', className)} {...props}>
+      <div ref={ref} className={cx('pf-chart', className)} style={style} {...props}>
         <div className="pf-chart__empty">No data</div>
       </div>
     );
@@ -340,7 +354,12 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(function BarCh
   }));
 
   return (
-    <div ref={ref} className={cx('pf-chart', className)} {...props}>
+    <div
+      ref={ref}
+      className={cx('pf-chart', className)}
+      style={{ ...PLOT_INSET_STYLE, ...style }}
+      {...props}
+    >
       <svg
         viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
         className="pf-chart__svg"

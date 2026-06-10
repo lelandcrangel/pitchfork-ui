@@ -63,6 +63,19 @@ describe('LineChart', () => {
     render(<LineChart data={data} series={series} yAxisLabel="Monthly revenue" />);
     expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'Monthly revenue');
   });
+
+  it('exposes the plot inset var so the legend aligns with the plot area', () => {
+    render(<LineChart data={data} series={series} data-testid="chart" />);
+    const inset = screen.getByTestId('chart').style.getPropertyValue('--pf-chart-plot-inset-left');
+    expect(inset).toMatch(/^\d+(\.\d+)?%$/);
+  });
+
+  it('merges consumer style without dropping the plot inset var', () => {
+    render(<LineChart data={data} series={series} data-testid="chart" style={{ color: 'red' }} />);
+    const root = screen.getByTestId('chart');
+    expect(root.style.color).toBe('red');
+    expect(root.style.getPropertyValue('--pf-chart-plot-inset-left')).not.toBe('');
+  });
 });
 
 describe('BarChart', () => {
@@ -103,6 +116,12 @@ describe('BarChart', () => {
   it('uses yAxisLabel as aria-label when provided', () => {
     render(<BarChart data={data} series={series} yAxisLabel="Monthly cost" />);
     expect(screen.getByRole('img')).toHaveAttribute('aria-label', 'Monthly cost');
+  });
+
+  it('exposes the plot inset var so the legend aligns with the plot area', () => {
+    render(<BarChart data={data} series={series} data-testid="chart" />);
+    const inset = screen.getByTestId('chart').style.getPropertyValue('--pf-chart-plot-inset-left');
+    expect(inset).toMatch(/^\d+(\.\d+)?%$/);
   });
 });
 
