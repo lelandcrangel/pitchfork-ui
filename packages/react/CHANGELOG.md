@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.13.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.12.0...react-v0.13.0) (2026-06-10)
+
+
+### Features
+
+* **theme:** add LineBarChart color palette and update dark mode colors ([2871a42](https://github.com/lelandcrangel/pitchfork-ui/commit/2871a42e65ba828fd5f8d03b20139fda69903f82))
+
+
+### Bug Fixes
+
+* **dropdown:** use theme aliases for disabled state instead of hardcoded hex ([099efa5](https://github.com/lelandcrangel/pitchfork-ui/commit/099efa5905e9a401071fd162ea08dc52c28b8309))
+* **theme:** migrate raw color tokens in component CSS to theme aliases ([585f9ad](https://github.com/lelandcrangel/pitchfork-ui/commit/585f9ad4f7a7a775e83ff583cd5dfe2d55e94e44))
+
 ## [0.12.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.11.2...react-v0.12.0) (2026-06-10)
 
 
