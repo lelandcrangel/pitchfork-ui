@@ -23,6 +23,7 @@
     "build:tokens": "npm run build -w @pitchfork-ui/tokens",
     "build:react": "npm run build -w @pitchfork-ui/react",
     "test": "npm run test -w @pitchfork-ui/react",
+    "test:coverage": "npm run test:coverage -w @pitchfork-ui/react",
     "lint": "eslint .",
     "typecheck": "tsc -b",
     "format": "prettier . --write",
