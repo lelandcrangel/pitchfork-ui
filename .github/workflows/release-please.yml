@@ -48,4 +48,3 @@ jobs:
       - run: npm run build:react
       # No NODE_AUTH_TOKEN: auth + provenance come from OIDC via the trusted publisher.
       - run: npm publish --workspace @pitchfork-ui/react --access public
-
