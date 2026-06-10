@@ -24,5 +24,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run test
+      - name: Build (tokens → react → docs)
+        run: npm run build
       - name: Security audit
         run: npm audit --audit-level=high
