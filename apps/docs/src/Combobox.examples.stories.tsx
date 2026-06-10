@@ -107,6 +107,34 @@ export const WithError: Story = {
   },
 };
 
+export const Clearable: Story = {
+  args: { defaultValue: 'fr' },
+  render: (args) => <Combobox {...args} />,
+  parameters: {
+    docs: {
+      source: {
+        code: `${optionsCode}
+
+<Combobox
+  label="Country"
+  description="Start typing to filter the list."
+  placeholder="Search countries…"
+  options={options}
+  defaultValue="fr"
+  clearable
+/>`,
+      },
+    },
+  },
+  play: async ({ canvas, userEvent }) => {
+    const input = canvas.getByRole('combobox', { name: /country/i });
+    await expect(input).toHaveValue('France');
+    await userEvent.click(canvas.getByRole('button', { name: /clear/i }));
+    await expect(input).toHaveValue('');
+    await expect(input).toHaveFocus();
+  },
+};
+
 export const Disabled: Story = {
   args: { disabled: true },
   render: (args) => <Combobox {...args} />,

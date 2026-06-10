@@ -35,6 +35,10 @@ export interface ComboboxProps extends Omit<
   emptyMessage?: string;
   name?: string;
   required?: boolean;
+  /** Show a clear button inside the field when there is a value to clear. Defaults to `true`. */
+  clearable?: boolean;
+  /** Accessible label for the clear button. Defaults to `"Clear"`. */
+  clearLabel?: string;
 }
 
 export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Combobox(
@@ -51,6 +55,8 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     emptyMessage = 'No matches',
     name,
     required,
+    clearable = true,
+    clearLabel = 'Clear',
     className,
     disabled,
     'aria-describedby': ariaDescribedBy,
@@ -122,6 +128,18 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     setQuery(option.label);
     setIsOpen(false);
   };
+
+  // Reset both the query and the committed value, then keep focus and reopen
+  // the (now-unfiltered) list so the user can pick again immediately.
+  const clear = () => {
+    setSelectedValue('');
+    setQuery('');
+    setActiveIndex(0);
+    setIsOpen(true);
+    inputRef.current?.focus();
+  };
+
+  const showClear = clearable && !disabled && (query.length > 0 || selectedValue !== '');
 
   const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
     if (disabled) return;
@@ -200,6 +218,21 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
             onClick={open}
             onKeyDown={onKeyDown}
           />
+          {showClear ? (
+            <button
+              type="button"
+              className="pf-combobox__clear"
+              aria-label={clearLabel}
+              // Kept out of the tab order so it never interrupts the
+              // combobox keyboard flow (Escape still clears/closes).
+              tabIndex={-1}
+              // Prevent the input from blurring before the click resolves.
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={clear}
+            >
+              <Icon name="circle-xmark" aria-hidden />
+            </button>
+          ) : null}
           <span
             aria-hidden
             className={cx('pf-combobox__icon', isOpen && 'pf-combobox__icon--open')}

@@ -51,6 +51,34 @@
   opacity: 0.6;
 }
 
+.pf-combobox__clear {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-combobox-placeholder);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 20px;
+  justify-content: center;
+  padding: 0;
+  transition: color var(--pf-transition-fast);
+  width: 20px;
+}
+
+.pf-combobox__clear:hover,
+.pf-combobox__clear:focus-visible {
+  color: var(--pf-combobox-text);
+}
+
+.pf-combobox__clear svg {
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
 .pf-combobox__icon {
   align-items: center;
   color: var(--pf-combobox-text);
@@ -144,6 +172,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pf-combobox__control,
+  .pf-combobox__clear,
   .pf-combobox__icon {
     transition: none;
   }

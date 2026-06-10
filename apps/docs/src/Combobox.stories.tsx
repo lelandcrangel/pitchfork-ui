@@ -25,6 +25,7 @@ const meta = {
     emptyMessage: 'No matches',
     options,
     disabled: false,
+    clearable: true,
   },
   argTypes: {
     label: { control: 'text' },
@@ -34,6 +35,7 @@ const meta = {
     error: { control: 'text' },
     disabled: { control: 'boolean' },
     required: { control: 'boolean' },
+    clearable: { control: 'boolean' },
     options: { control: 'object' },
     style: { control: 'object' },
     onValueChange: { action: 'value changed' },

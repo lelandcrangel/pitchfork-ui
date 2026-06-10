@@ -62,4 +62,38 @@ describe('Combobox', () => {
     fireEvent.click(screen.getByText('Cherry'));
     expect(onValueChange).not.toHaveBeenCalled();
   });
+
+  // ─── Clear button ──────────────────────────────────────────────────────────
+
+  it('shows the clear button only when there is a value to clear', () => {
+    render(<Combobox options={options} label="Fruit" />);
+    expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument();
+    const input = screen.getByRole('combobox', { name: 'Fruit' });
+    fireEvent.change(input, { target: { value: 'ap' } });
+    expect(screen.getByRole('button', { name: 'Clear' })).toBeInTheDocument();
+  });
+
+  it('clears the query and value and restores focus', () => {
+    const onValueChange = vi.fn();
+    render(<Combobox options={options} label="Fruit" onValueChange={onValueChange} />);
+    const input = screen.getByRole('combobox', { name: 'Fruit' });
+    fireEvent.click(input);
+    fireEvent.click(screen.getByText('Banana'));
+    expect(input).toHaveValue('Banana');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+    expect(input).toHaveValue('');
+    expect(onValueChange).toHaveBeenLastCalledWith('');
+    expect(input).toHaveFocus();
+  });
+
+  it('uses a custom clearLabel', () => {
+    render(<Combobox options={options} label="Fruit" defaultValue="apple" clearLabel="Reset" />);
+    expect(screen.getByRole('button', { name: 'Reset' })).toBeInTheDocument();
+  });
+
+  it('hides the clear button when clearable is false', () => {
+    render(<Combobox options={options} label="Fruit" defaultValue="apple" clearable={false} />);
+    expect(screen.queryByRole('button', { name: 'Clear' })).not.toBeInTheDocument();
+  });
 });

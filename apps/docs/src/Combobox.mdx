@@ -21,6 +21,17 @@ with list autocomplete — arrow keys move the active option, `Enter` selects, a
 
 <Canvas of={ComboboxExamples.WithDefaultValue} meta={ComboboxExamples} />
 
+### Clearable
+
+When `clearable` is enabled (the default), a clear button appears inside the
+field once there is a query or a selected value. Clicking it resets the input,
+keeps focus in the field, and reopens the list so the user can pick again. The
+button is intentionally kept out of the tab order so it never interrupts the
+combobox keyboard flow (`Escape` still closes the list and reverts the text to
+the current selection). Pass `clearable={false}` to hide it.
+
+<Canvas of={ComboboxExamples.Clearable} meta={ComboboxExamples} />
+
 ### With Error
 
 <Canvas of={ComboboxExamples.WithError} meta={ComboboxExamples} />
