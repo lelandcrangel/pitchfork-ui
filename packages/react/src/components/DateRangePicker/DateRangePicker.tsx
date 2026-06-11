@@ -5,6 +5,8 @@ import { useAnchoredPosition, useDisclosure, useOutsideInteraction } from '../..
 import { cx } from '../../utils/cx';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
+import { CalendarGrid } from '../Calendar/CalendarGrid';
+import { addMonths, isSameDay, startOfMonth, toMidday } from '../Calendar/dateUtils';
 import './DateRangePicker.css';
 
 export interface DateRange {
@@ -33,32 +35,7 @@ export interface DateRangePickerProps extends Omit<
 }
 
 // ─── date helpers ────────────────────────────────────────────────────────────
-
-const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const;
-
-const toMidday = (d: Date) => {
-  const n = new Date(d);
-  n.setHours(12, 0, 0, 0);
-  return n;
-};
-
-const isSameDay = (a: Date, b: Date) =>
-  a.getFullYear() === b.getFullYear() &&
-  a.getMonth() === b.getMonth() &&
-  a.getDate() === b.getDate();
-
-const startOfMonth = (d: Date) => new Date(d.getFullYear(), d.getMonth(), 1, 12);
-
-const addMonths = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth() + n, 1, 12);
-
-const buildDays = (monthDate: Date) => {
-  const ms = startOfMonth(monthDate);
-  const firstDay = ms.getDay();
-  return Array.from({ length: 42 }, (_, i) => {
-    const date = new Date(ms.getFullYear(), ms.getMonth(), ms.getDate() - firstDay + i, 12);
-    return { date, inCurrentMonth: date.getMonth() === monthDate.getMonth() };
-  });
-};
+// Date math + the month grid itself are shared with Calendar (CalendarGrid).
 
 const formatDate = (d: Date | null) => {
   if (!d) return '';
@@ -103,9 +80,6 @@ function RangeCalendar({
   onNext,
   hideNavDesktop = false,
 }: RangeCalendarProps) {
-  const days = useMemo(() => buildDays(monthDate), [monthDate]);
-  const today = useMemo(() => toMidday(new Date()), []);
-
   const monthLabel = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(
     monthDate,
   );
@@ -160,63 +134,19 @@ function RangeCalendar({
         </button>
       </div>
 
-      <div className="pf-daterange__grid" role="grid" aria-label={monthLabel}>
-        <div role="row" style={{ display: 'contents' }} aria-hidden>
-          {WEEKDAY_LABELS.map((d) => (
-            <span key={d} role="columnheader" className="pf-daterange__weekday">
-              {d}
-            </span>
-          ))}
-        </div>
-
-        {Array.from({ length: 6 }, (_, week) => (
-          <div key={week} role="row" style={{ display: 'contents' }}>
-            {days.slice(week * 7, (week + 1) * 7).map(({ date, inCurrentMonth }) => {
-              const isToday = isSameDay(today, date);
-              const isStart = isRangeStart(date);
-              const isEnd = isRangeEnd(date);
-              const inRng = isInRange(date);
-              const isDisabled = Boolean(disabledDates?.(date));
-
-              if (!showOutsideDays && !inCurrentMonth) {
-                return (
-                  <span key={date.toISOString()} className="pf-daterange__day-empty" aria-hidden />
-                );
-              }
-
-              return (
-                <button
-                  key={date.toISOString()}
-                  type="button"
-                  role="gridcell"
-                  className={cx(
-                    'pf-daterange__day',
-                    !inCurrentMonth && 'pf-daterange__day--outside',
-                    isToday && 'pf-daterange__day--today',
-                    (isStart || isEnd) && 'pf-daterange__day--selected',
-                    isStart && 'pf-daterange__day--range-start',
-                    isEnd && 'pf-daterange__day--range-end',
-                    inRng && 'pf-daterange__day--in-range',
-                  )}
-                  aria-label={new Intl.DateTimeFormat('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric',
-                  }).format(date)}
-                  aria-selected={isStart || isEnd || inRng}
-                  aria-current={isToday ? 'date' : undefined}
-                  disabled={isDisabled}
-                  onClick={() => onDayClick(date)}
-                  onMouseEnter={() => onDayHover(date)}
-                  onMouseLeave={() => onDayHover(null)}
-                >
-                  {date.getDate()}
-                </button>
-              );
-            })}
-          </div>
-        ))}
-      </div>
+      <CalendarGrid
+        monthDate={monthDate}
+        classPrefix="pf-daterange"
+        getDayState={(date) => ({
+          rangeStart: isRangeStart(date),
+          rangeEnd: isRangeEnd(date),
+          inRange: isInRange(date),
+        })}
+        onDayClick={onDayClick}
+        onDayHover={onDayHover}
+        disabledDates={disabledDates}
+        showOutsideDays={showOutsideDays}
+      />
     </div>
   );
 }

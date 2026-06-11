@@ -2,61 +2,15 @@ import { Dropdown } from '../Dropdown';
 import { forwardRef, useEffect, useId, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
+import { CalendarGrid } from './CalendarGrid';
+import { addMonths, isSameDay, startOfMonth, toMidday } from './dateUtils';
 import './Calendar.css';
 
-const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'] as const;
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, month) => {
   const date = new Date(2024, month, 1);
   const label = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
   return { value: month, label };
 });
-
-const toMidday = (date: Date) => {
-  const next = new Date(date);
-  next.setHours(12, 0, 0, 0);
-  return next;
-};
-
-const isSameDay = (a: Date, b: Date) => {
-  return (
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-  );
-};
-
-const startOfMonth = (date: Date) => {
-  return new Date(date.getFullYear(), date.getMonth(), 1, 12);
-};
-
-const addMonths = (date: Date, amount: number) => {
-  return new Date(date.getFullYear(), date.getMonth() + amount, 1, 12);
-};
-
-const buildCalendarDays = (monthDate: Date) => {
-  const monthStart = startOfMonth(monthDate);
-  const firstWeekday = monthStart.getDay();
-  const gridStart = new Date(
-    monthStart.getFullYear(),
-    monthStart.getMonth(),
-    monthStart.getDate() - firstWeekday,
-    12,
-  );
-
-  return Array.from({ length: 42 }, (_, index) => {
-    const date = new Date(
-      gridStart.getFullYear(),
-      gridStart.getMonth(),
-      gridStart.getDate() + index,
-      12,
-    );
-
-    return {
-      date,
-      inCurrentMonth: date.getMonth() === monthDate.getMonth(),
-    };
-  });
-};
 
 export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {
   value?: Date;
@@ -146,13 +100,6 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, yearRange.end, yearRange.start]);
 
-  const monthLabel = useMemo(() => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'long',
-      year: 'numeric',
-    }).format(displayMonth);
-  }, [displayMonth]);
-
   const yearOptions = useMemo(() => {
     const length = yearRange.end - yearRange.start + 1;
     return Array.from({ length }, (_, index) => yearRange.start + index);
@@ -162,12 +109,6 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
     displayMonth.getFullYear() === yearRange.start && displayMonth.getMonth() === 0;
   const isNextMonthDisabled =
     displayMonth.getFullYear() === yearRange.end && displayMonth.getMonth() === 11;
-
-  const dayItems = useMemo(() => {
-    return buildCalendarDays(displayMonth);
-  }, [displayMonth]);
-
-  const today = useMemo(() => toMidday(new Date()), []);
 
   const selectDate = (nextDate: Date) => {
     if (disabledDates?.(nextDate)) {
@@ -259,60 +200,16 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
           </button>
         </div>
 
-        <div className="pf-calendar__grid" role="grid" aria-label={monthLabel}>
-          {/* Column headers — display:contents keeps the CSS grid layout intact */}
-          <div role="row" style={{ display: 'contents' }} aria-hidden>
-            {WEEKDAY_LABELS.map((day) => (
-              <span key={day} role="columnheader" className="pf-calendar__weekday">
-                {day}
-              </span>
-            ))}
-          </div>
-
-          {/* Week rows — 6 rows of 7 days */}
-          {Array.from({ length: 6 }, (_, week) => (
-            <div key={week} role="row" style={{ display: 'contents' }}>
-              {dayItems.slice(week * 7, (week + 1) * 7).map(({ date, inCurrentMonth }) => {
-                const isSelected = selectedDate ? isSameDay(selectedDate, date) : false;
-                const isToday = isSameDay(today, date);
-                const isDisabled = Boolean(disabledDates?.(date));
-
-                if (!showOutsideDays && !inCurrentMonth) {
-                  return (
-                    <span key={date.toISOString()} className="pf-calendar__day-empty" aria-hidden />
-                  );
-                }
-
-                return (
-                  <button
-                    key={date.toISOString()}
-                    type="button"
-                    role="gridcell"
-                    className={cx(
-                      'pf-calendar__day',
-                      !inCurrentMonth && 'pf-calendar__day--outside',
-                      isToday && 'pf-calendar__day--today',
-                      isSelected && 'pf-calendar__day--selected',
-                    )}
-                    aria-label={new Intl.DateTimeFormat('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    }).format(date)}
-                    aria-selected={isSelected}
-                    aria-current={isToday ? 'date' : undefined}
-                    disabled={isDisabled}
-                    onClick={() => {
-                      selectDate(date);
-                    }}
-                  >
-                    {date.getDate()}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </div>
+        <CalendarGrid
+          monthDate={displayMonth}
+          classPrefix="pf-calendar"
+          getDayState={(date) => ({
+            selected: selectedDate ? isSameDay(selectedDate, date) : false,
+          })}
+          onDayClick={selectDate}
+          disabledDates={disabledDates}
+          showOutsideDays={showOutsideDays}
+        />
       </div>
 
       {description ? (
