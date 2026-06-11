@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.13.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.13.0...react-v0.13.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* **calendar:** use spans for month/year dropdown captions ([07f2069](https://github.com/lelandcrangel/pitchfork-ui/commit/07f206970d110bd10350454011e3ea03e037a980))
+
 ## [0.13.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.12.0...react-v0.13.0) (2026-06-10)
 
 
