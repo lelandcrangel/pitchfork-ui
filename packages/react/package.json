@@ -50,13 +50,13 @@
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
     "prism-react-renderer": "^2.0.0",
-    "react": ">=18.2.0 || >=19.0.0",
-    "react-dom": ">=18.2.0 || >=19.0.0"
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0"
   },
   "devDependencies": {
     "@pitchfork-ui/tokens": "*",
-    "@vitejs/plugin-react": "latest",
-    "vite-plugin-dts": "latest",
+    "@vitejs/plugin-react": "^6.0.2",
+    "vite-plugin-dts": "^5.0.2",
     "vite-plugin-lib-inject-css": "^2.2.2"
   },
   "publishConfig": {

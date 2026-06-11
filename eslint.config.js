@@ -46,7 +46,13 @@ export default tseslint.config(
     },
   },
   {
-    files: ['apps/docs/.storybook/**/*.{ts,tsx}', 'packages/react/src/components/Icon/Icon.tsx'],
+    files: [
+      'apps/docs/.storybook/**/*.{ts,tsx}',
+      'packages/react/src/components/Icon/Icon.tsx',
+      // useToast/toast and the context hook are legitimate public API, not refresh hazards.
+      'packages/react/src/components/Toast/Toast.tsx',
+      'apps/demo/src/context/NotificationContext.tsx',
+    ],
     rules: {
       'react-refresh/only-export-components': 'off',
     },
