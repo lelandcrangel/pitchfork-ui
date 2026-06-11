@@ -29,14 +29,16 @@ jobs:
     # Only when release-please cut a new @pitchfork-ui/react release.
     if: needs.release-please.outputs.react_released == 'true'
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     # Must match the "Environment name" set on the npm trusted publisher.
     environment: release
     permissions:
       contents: read
       id-token: write # required for npm trusted publishing (OIDC) + provenance
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
