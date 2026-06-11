@@ -8,7 +8,7 @@ const meta = {
   args: {
     brand: 'visa',
     cardNumber: '4242 4242 4242 4242',
-    cardholderName: 'Leland Rangel',
+    cardholderName: 'John Smith',
     expiry: '10/29',
     cvc: '123',
     masked: true,

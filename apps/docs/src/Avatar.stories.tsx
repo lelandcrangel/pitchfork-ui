@@ -6,7 +6,7 @@ const meta = {
   component: Avatar,
   tags: ['ai-generated', 'test'],
   args: {
-    name: 'Leland Rangel',
+    name: 'John Smith',
     size: 'md',
     status: 'online',
   },

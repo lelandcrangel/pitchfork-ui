@@ -8,7 +8,7 @@ const meta = {
   component: Avatar,
   tags: ['ai-generated', 'test', 'examplesHidden'],
   args: {
-    name: 'Leland Rangel',
+    name: 'John Smith',
   },
 } satisfies Meta<typeof Avatar>;
 
@@ -28,19 +28,19 @@ export const WithImage: Story = {
 export const Sizes: Story = {
   render: () => (
     <div style={avatarRowStyle}>
-      <Avatar name="Leland Rangel" size="sm" />
-      <Avatar name="Leland Rangel" size="md" />
-      <Avatar name="Leland Rangel" size="lg" />
-      <Avatar name="Leland Rangel" size="xl" />
+      <Avatar name="John Smith" size="sm" />
+      <Avatar name="John Smith" size="md" />
+      <Avatar name="John Smith" size="lg" />
+      <Avatar name="John Smith" size="xl" />
     </div>
   ),
   parameters: {
     docs: {
       source: {
-        code: `<Avatar name="Leland Rangel" size="sm" />
-<Avatar name="Leland Rangel" size="md" />
-<Avatar name="Leland Rangel" size="lg" />
-<Avatar name="Leland Rangel" size="xl" />`,
+        code: `<Avatar name="John Smith" size="sm" />
+<Avatar name="John Smith" size="md" />
+<Avatar name="John Smith" size="lg" />
+<Avatar name="John Smith" size="xl" />`,
       },
     },
   },

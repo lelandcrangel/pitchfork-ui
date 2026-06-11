@@ -87,7 +87,7 @@ const totalAmount: React.CSSProperties = {
 
 function CheckoutDemo() {
   const [number, setNumber] = useState('4242 4242 4242 4242');
-  const [name, setName] = useState('Leland Rangel');
+  const [name, setName] = useState('John Smith');
   const [expiry, setExpiry] = useState('08/27');
   const [cvc, setCvc] = useState('123');
   const [country, setCountry] = useState('us');

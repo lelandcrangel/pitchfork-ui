@@ -99,8 +99,8 @@ function WizardModal({
   const [step, setStep] = useState(0);
 
   // Form state (carried across steps and shown in review).
-  const [name, setName] = useState('Leland Rangel');
-  const [email, setEmail] = useState('hello@lelandrangel.com');
+  const [name, setName] = useState('John Smith');
+  const [email, setEmail] = useState('john@example.com');
   const [workspace, setWorkspace] = useState('Pitchfork');
   const [plan, setPlan] = useState('pro');
   const [invites, setInvites] = useState(true);

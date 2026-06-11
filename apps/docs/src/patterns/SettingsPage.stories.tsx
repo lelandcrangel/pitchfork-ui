@@ -103,11 +103,11 @@ function ProfileTab() {
   return (
     <div style={section}>
       <div style={formRow}>
-        <Input label="First name" defaultValue="Leland" />
-        <Input label="Last name" defaultValue="Rangel" />
+        <Input label="First name" defaultValue="John" />
+        <Input label="Last name" defaultValue="Smith" />
       </div>
-      <Input label="Display name" defaultValue="lelandrangel" />
-      <Input label="Email address" type="email" defaultValue="hello@lelandrangel.com" />
+      <Input label="Display name" defaultValue="johnsmith" />
+      <Input label="Email address" type="email" defaultValue="john@example.com" />
       <Select
         label="Language"
         options={[
