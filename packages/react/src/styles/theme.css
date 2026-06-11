@@ -456,6 +456,8 @@
   --pf-videoplayer-invalid-border: var(--color-semantic-status-danger-border);
 
   /* RadarChart aliases */
+  --pf-radar-stroke: var(--color-semantic-action-primary);
+  --pf-radar-fill: color-mix(in srgb, var(--color-semantic-action-primary) 18%, transparent);
   --pf-radar-grid-stroke: var(--color-semantic-border-default);
   --pf-radar-axis-stroke: var(--color-semantic-border-muted);
   --pf-radar-point-stroke: var(--color-semantic-background-default);
@@ -553,6 +555,7 @@
   --pf-carousel-indicator-active-bg: var(--color-semantic-action-primary);
 
   /* PieChart aliases */
+  --pf-piechart-empty: var(--color-semantic-background-subtle);
   --pf-piechart-border-muted: var(--color-semantic-border-muted);
   --pf-piechart-bg: var(--color-semantic-background-default);
   --pf-piechart-text: var(--color-semantic-text-default);

@@ -38,8 +38,8 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
     levels = 4,
     showAxes = true,
     showLegend = true,
-    strokeColor = 'var(--color-semantic-action-primary)',
-    fillColor = 'rgb(249 115 22 / 0.18)',
+    strokeColor = 'var(--pf-radar-stroke)',
+    fillColor = 'var(--pf-radar-fill)',
     ...props
   },
   ref,

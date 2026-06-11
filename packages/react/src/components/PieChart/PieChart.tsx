@@ -2,13 +2,15 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './PieChart.css';
 
+/* Shared data-viz series palette from theme.css — keeps PieChart consistent
+   with the line/bar/area charts and picks up their dark-mode shifts. */
 const fallbackColors = [
-  'var(--color-brand-600)',
-  'var(--color-brand-500)',
-  'var(--color-gray-500)',
-  '#06b6d4',
-  '#22c55e',
-  'var(--color-gray-500)',
+  'var(--pf-chart-color-1)',
+  'var(--pf-chart-color-2)',
+  'var(--pf-chart-color-3)',
+  'var(--pf-chart-color-4)',
+  'var(--pf-chart-color-5)',
+  'var(--pf-chart-color-6)',
 ] as const;
 
 export interface PieChartDatum {
@@ -88,7 +90,7 @@ export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(function PieCh
   const centerSize = Math.round(chartSize * safeCutout);
   const conicGradient = hasData
     ? toConicGradient(segments)
-    : 'conic-gradient(var(--color-semantic-background-subtle) 0% 100%)';
+    : 'conic-gradient(var(--pf-piechart-empty) 0% 100%)';
 
   return (
     <div ref={ref} className={cx('pf-pie-chart', className)} {...props}>
