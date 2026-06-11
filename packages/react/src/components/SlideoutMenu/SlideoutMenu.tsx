@@ -1,11 +1,9 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { getFocusableElements } from '../../a11y';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './SlideoutMenu.css';
-
-const FOCUSABLE_SELECTOR =
-  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export type SlideoutMenuPlacement = 'left' | 'right';
 export type SlideoutMenuSize = 'sm' | 'md' | 'lg';
@@ -85,16 +83,11 @@ export function SlideoutMenu({
       return;
     }
 
-    const getFocusableElements = () => {
-      if (!panelRef.current) {
-        return [] as HTMLElement[];
-      }
-
-      return Array.from(panelRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
-    };
+    const getFocusables = () =>
+      panelRef.current ? getFocusableElements(panelRef.current) : ([] as HTMLElement[]);
 
     const focusFirstElement = () => {
-      const focusableElements = getFocusableElements();
+      const focusableElements = getFocusables();
 
       if (focusableElements.length > 0) {
         focusableElements[0]?.focus();
@@ -105,7 +98,7 @@ export function SlideoutMenu({
     };
 
     const focusLastElement = () => {
-      const focusableElements = getFocusableElements();
+      const focusableElements = getFocusables();
 
       if (focusableElements.length > 0) {
         focusableElements[focusableElements.length - 1]?.focus();
@@ -130,7 +123,7 @@ export function SlideoutMenu({
         return;
       }
 
-      const focusableElements = getFocusableElements();
+      const focusableElements = getFocusables();
       const activeElement = document.activeElement as HTMLElement | null;
 
       if (!panelRef.current.contains(activeElement)) {
