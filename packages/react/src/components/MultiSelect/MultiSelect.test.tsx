@@ -14,19 +14,19 @@ describe('MultiSelect', () => {
 
   it('renders an accessible trigger button', () => {
     render(<MultiSelect options={options} label="Fruits" />);
-    const trigger = screen.getByRole('button', { name: /Fruits/i });
+    const trigger = screen.getByRole('combobox', { name: /Fruits/i });
     expect(trigger).toBeInTheDocument();
     expect(trigger).toHaveAttribute('aria-haspopup', 'listbox');
   });
 
   it('shows placeholder when nothing is selected', () => {
     render(<MultiSelect options={options} placeholder="Pick fruits" />);
-    expect(screen.getByRole('button')).toHaveTextContent('Pick fruits');
+    expect(screen.getByRole('combobox')).toHaveTextContent('Pick fruits');
   });
 
   it('shows chips for each selected value', () => {
     render(<MultiSelect options={options} value={['apple', 'banana']} />);
-    const trigger = screen.getByRole('button');
+    const trigger = screen.getByRole('combobox');
     expect(within(trigger).getByText('Apple')).toBeInTheDocument();
     expect(within(trigger).getByText('Banana')).toBeInTheDocument();
   });
@@ -36,9 +36,9 @@ describe('MultiSelect', () => {
   it('opens the listbox on click', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     expect(screen.getByRole('listbox')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Fruits/i })).toHaveAttribute(
+    expect(screen.getByRole('combobox', { name: /Fruits/i })).toHaveAttribute(
       'aria-expanded',
       'true',
     );
@@ -47,7 +47,7 @@ describe('MultiSelect', () => {
   it('opens the listbox on Enter key', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    screen.getByRole('button', { name: /Fruits/i }).focus();
+    screen.getByRole('combobox', { name: /Fruits/i }).focus();
     await user.keyboard('{Enter}');
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
@@ -55,7 +55,7 @@ describe('MultiSelect', () => {
   it('opens the listbox on Space key', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    screen.getByRole('button', { name: /Fruits/i }).focus();
+    screen.getByRole('combobox', { name: /Fruits/i }).focus();
     await user.keyboard(' ');
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
@@ -63,7 +63,7 @@ describe('MultiSelect', () => {
   it('opens the listbox on ArrowDown key', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    screen.getByRole('button', { name: /Fruits/i }).focus();
+    screen.getByRole('combobox', { name: /Fruits/i }).focus();
     await user.keyboard('{ArrowDown}');
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
@@ -71,7 +71,7 @@ describe('MultiSelect', () => {
   it('closes the listbox on Escape key', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
@@ -79,7 +79,7 @@ describe('MultiSelect', () => {
   it('keeps the listbox open after selecting an option', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     await user.click(screen.getByRole('option', { name: 'Apple' }));
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
@@ -90,7 +90,7 @@ describe('MultiSelect', () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<MultiSelect options={options} label="Fruits" onValueChange={onValueChange} />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     await user.click(screen.getByRole('option', { name: 'Apple' }));
     expect(onValueChange).toHaveBeenCalledWith(['apple']);
   });
@@ -99,7 +99,7 @@ describe('MultiSelect', () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<MultiSelect options={options} label="Fruits" onValueChange={onValueChange} />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     await user.click(screen.getByRole('option', { name: 'Apple' }));
     await user.click(screen.getByRole('option', { name: 'Banana' }));
     expect(onValueChange).toHaveBeenLastCalledWith(['apple', 'banana']);
@@ -116,7 +116,7 @@ describe('MultiSelect', () => {
         label="Fruits"
       />,
     );
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     await user.click(screen.getByRole('option', { name: 'Apple' }));
     expect(onValueChange).toHaveBeenCalledWith(['banana']);
   });
@@ -124,7 +124,7 @@ describe('MultiSelect', () => {
   it('marks selected options with aria-selected=true', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} value={['apple']} label="Fruits" />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     expect(screen.getByRole('option', { name: 'Apple' })).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByRole('option', { name: 'Banana' })).toHaveAttribute(
       'aria-selected',
@@ -136,7 +136,7 @@ describe('MultiSelect', () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<MultiSelect options={options} label="Fruits" onValueChange={onValueChange} />);
-    screen.getByRole('button', { name: /Fruits/i }).focus();
+    screen.getByRole('combobox', { name: /Fruits/i }).focus();
     await user.keyboard('{ArrowDown}'); // open
     await user.keyboard('{ArrowDown}'); // move to Banana
     await user.keyboard('{Enter}'); // toggle Banana
@@ -148,7 +148,7 @@ describe('MultiSelect', () => {
   it('sets aria-multiselectable on the listbox', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     expect(screen.getByRole('listbox')).toHaveAttribute('aria-multiselectable', 'true');
   });
 
@@ -157,7 +157,7 @@ describe('MultiSelect', () => {
   it('marks the active option during ArrowDown navigation', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    screen.getByRole('button', { name: /Fruits/i }).focus();
+    screen.getByRole('combobox', { name: /Fruits/i }).focus();
     await user.keyboard('{ArrowDown}'); // open, active = Apple
     await user.keyboard('{ArrowDown}'); // active = Banana
     expect(within(screen.getByRole('listbox')).getByRole('option', { name: 'Banana' })).toHaveClass(
@@ -168,7 +168,7 @@ describe('MultiSelect', () => {
   it('jumps to last enabled option on End key', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     await user.keyboard('{End}');
     // Cherry is disabled so last enabled is Banana
     expect(within(screen.getByRole('listbox')).getByRole('option', { name: 'Banana' })).toHaveClass(
@@ -179,7 +179,7 @@ describe('MultiSelect', () => {
   it('jumps to first enabled option on Home key', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     await user.keyboard('{End}');
     await user.keyboard('{Home}');
     expect(within(screen.getByRole('listbox')).getByRole('option', { name: 'Apple' })).toHaveClass(
@@ -191,20 +191,20 @@ describe('MultiSelect', () => {
 
   it('is disabled when the disabled prop is set', () => {
     render(<MultiSelect options={options} label="Fruits" disabled />);
-    expect(screen.getByRole('button', { name: /Fruits/i })).toBeDisabled();
+    expect(screen.getByRole('combobox', { name: /Fruits/i })).toBeDisabled();
   });
 
   it('does not open when disabled', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" disabled />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 
   it('marks disabled options with aria-disabled', async () => {
     const user = userEvent.setup();
     render(<MultiSelect options={options} label="Fruits" />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     expect(screen.getByRole('option', { name: 'Cherry' })).toHaveAttribute('aria-disabled', 'true');
   });
 
@@ -212,7 +212,7 @@ describe('MultiSelect', () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<MultiSelect options={options} label="Fruits" onValueChange={onValueChange} />);
-    await user.click(screen.getByRole('button', { name: /Fruits/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruits/i }));
     await user.click(screen.getByRole('option', { name: 'Cherry' }));
     expect(onValueChange).not.toHaveBeenCalled();
   });
@@ -234,7 +234,7 @@ describe('MultiSelect', () => {
   it('shows the required asterisk and sets aria-required on the trigger', () => {
     render(<MultiSelect options={options} label="Fruits" required />);
     expect(screen.getByText('*')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Fruits/i })).toHaveAttribute(
+    expect(screen.getByRole('combobox', { name: /Fruits/i })).toHaveAttribute(
       'aria-required',
       'true',
     );

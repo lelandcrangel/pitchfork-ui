@@ -139,16 +139,17 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
         aria-describedby={describedBy}
       >
         <div className="pf-date-picker__control-row">
-          {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid/aria-required on the picker trigger is documented, tested behavior; ARIA 1.2 role="combobox" migration is tracked in todo.md */}
           <button
             ref={triggerRef}
             id={`${pickerId}-trigger`}
             type="button"
             className={cx('pf-date-picker__trigger', error && 'pf-date-picker__trigger--invalid')}
             disabled={disabled}
+            role="combobox"
             aria-invalid={error ? true : undefined}
             aria-haspopup="dialog"
             aria-expanded={isOpen}
+            aria-controls={isOpen ? `${pickerId}-dialog` : undefined}
             aria-required={required || undefined}
             onClick={() => {
               disclosure.toggle();
@@ -187,6 +188,7 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
           ? createPortal(
               <div
                 ref={popoverRef}
+                id={`${pickerId}-dialog`}
                 className="pf-date-picker__popover"
                 role="dialog"
                 aria-label="Date picker calendar"

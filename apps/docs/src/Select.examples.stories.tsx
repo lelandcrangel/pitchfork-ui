@@ -46,7 +46,7 @@ export const Default: Story = {
     },
   },
   play: async ({ canvas, userEvent }) => {
-    const trigger = canvas.getByRole('button', { name: /pricing tier/i });
+    const trigger = canvas.getByRole('combobox', { name: /pricing tier/i });
     await userEvent.click(trigger);
     await userEvent.click(canvas.getByRole('option', { name: /pro plan/i }));
     await expect(trigger).toHaveTextContent(/pro plan/i);
@@ -92,7 +92,7 @@ export const WithError: Story = {
     },
   },
   play: async ({ canvas }) => {
-    const trigger = canvas.getByRole('button', { name: /pricing tier/i });
+    const trigger = canvas.getByRole('combobox', { name: /pricing tier/i });
     await expect(trigger).toHaveAttribute('aria-describedby', expect.stringContaining('error'));
   },
 };

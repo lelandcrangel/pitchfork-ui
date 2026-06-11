@@ -51,7 +51,7 @@ export const Default: Story = {
     },
   },
   play: async ({ canvas, userEvent }) => {
-    const trigger = canvas.getByRole('button', { name: /tech stack/i });
+    const trigger = canvas.getByRole('combobox', { name: /tech stack/i });
     await userEvent.click(trigger);
     await userEvent.click(canvas.getByRole('option', { name: /react/i }));
     await userEvent.click(canvas.getByRole('option', { name: /typescript/i }));

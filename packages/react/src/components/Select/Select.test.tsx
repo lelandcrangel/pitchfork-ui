@@ -14,19 +14,19 @@ describe('Select', () => {
 
   it('renders an accessible trigger button', () => {
     render(<Select options={options} label="Fruit" />);
-    const trigger = screen.getByRole('button', { name: /Fruit/i });
+    const trigger = screen.getByRole('combobox', { name: /Fruit/i });
     expect(trigger).toBeInTheDocument();
     expect(trigger).toHaveAttribute('aria-haspopup', 'listbox');
   });
 
   it('shows placeholder when no value is selected', () => {
     render(<Select options={options} placeholder="Pick one" />);
-    expect(screen.getByRole('button')).toHaveTextContent('Pick one');
+    expect(screen.getByRole('combobox')).toHaveTextContent('Pick one');
   });
 
   it('shows the selected option label when a value is provided', () => {
     render(<Select options={options} value="banana" />);
-    expect(screen.getByRole('button')).toHaveTextContent('Banana');
+    expect(screen.getByRole('combobox')).toHaveTextContent('Banana');
   });
 
   // ─── Opening / closing ──────────────────────────────────────────────────
@@ -34,15 +34,18 @@ describe('Select', () => {
   it('opens the listbox on click', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     expect(screen.getByRole('listbox')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Fruit/i })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('combobox', { name: /Fruit/i })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
   });
 
   it('opens the listbox on Enter key', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    screen.getByRole('button', { name: /Fruit/i }).focus();
+    screen.getByRole('combobox', { name: /Fruit/i }).focus();
     await user.keyboard('{Enter}');
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
@@ -50,7 +53,7 @@ describe('Select', () => {
   it('opens the listbox on Space key', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    screen.getByRole('button', { name: /Fruit/i }).focus();
+    screen.getByRole('combobox', { name: /Fruit/i }).focus();
     await user.keyboard(' ');
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
@@ -58,7 +61,7 @@ describe('Select', () => {
   it('opens the listbox on ArrowDown key', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    screen.getByRole('button', { name: /Fruit/i }).focus();
+    screen.getByRole('combobox', { name: /Fruit/i }).focus();
     await user.keyboard('{ArrowDown}');
     expect(screen.getByRole('listbox')).toBeInTheDocument();
   });
@@ -66,7 +69,7 @@ describe('Select', () => {
   it('closes the listbox on Escape key', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     expect(screen.getByRole('listbox')).toBeInTheDocument();
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
@@ -75,7 +78,7 @@ describe('Select', () => {
   it('closes the listbox after an option is selected', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     await user.click(screen.getByRole('option', { name: 'Apple' }));
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
@@ -86,7 +89,7 @@ describe('Select', () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<Select options={options} label="Fruit" onValueChange={onValueChange} />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     await user.click(screen.getByRole('option', { name: 'Banana' }));
     expect(onValueChange).toHaveBeenCalledWith('banana');
   });
@@ -95,7 +98,7 @@ describe('Select', () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<Select options={options} label="Fruit" onValueChange={onValueChange} />);
-    screen.getByRole('button', { name: /Fruit/i }).focus();
+    screen.getByRole('combobox', { name: /Fruit/i }).focus();
     await user.keyboard('{ArrowDown}'); // open
     await user.keyboard('{ArrowDown}'); // move to Banana
     await user.keyboard('{Enter}'); // confirm
@@ -105,17 +108,17 @@ describe('Select', () => {
   it('updates the displayed label after selection', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     await user.click(screen.getByRole('option', { name: 'Apple' }));
-    expect(screen.getByRole('button', { name: /Fruit/i })).toHaveTextContent('Apple');
+    expect(screen.getByRole('combobox', { name: /Fruit/i })).toHaveTextContent('Apple');
   });
 
   it('respects a controlled value', async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<Select options={options} value="apple" onValueChange={onValueChange} label="Fruit" />);
-    expect(screen.getByRole('button', { name: /Fruit/i })).toHaveTextContent('Apple');
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    expect(screen.getByRole('combobox', { name: /Fruit/i })).toHaveTextContent('Apple');
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     expect(screen.getByRole('option', { name: 'Apple' })).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -124,7 +127,7 @@ describe('Select', () => {
   it('marks the active option during keyboard navigation', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    screen.getByRole('button', { name: /Fruit/i }).focus();
+    screen.getByRole('combobox', { name: /Fruit/i }).focus();
     await user.keyboard('{ArrowDown}'); // open, active = Apple (firstEnabled)
     await user.keyboard('{ArrowDown}'); // active = Banana
     const listbox = screen.getByRole('listbox');
@@ -136,7 +139,7 @@ describe('Select', () => {
   it('jumps to the last enabled option on End key', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     await user.keyboard('{End}');
     // Cherry is disabled so last enabled is Banana
     const listbox = screen.getByRole('listbox');
@@ -148,7 +151,7 @@ describe('Select', () => {
   it('jumps to the first enabled option on Home key', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     await user.keyboard('{End}');
     await user.keyboard('{Home}');
     const listbox = screen.getByRole('listbox');
@@ -161,20 +164,20 @@ describe('Select', () => {
 
   it('is disabled when the disabled prop is set', () => {
     render(<Select options={options} label="Fruit" disabled />);
-    expect(screen.getByRole('button', { name: /Fruit/i })).toBeDisabled();
+    expect(screen.getByRole('combobox', { name: /Fruit/i })).toBeDisabled();
   });
 
   it('does not open when disabled', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" disabled />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 
   it('marks disabled options with aria-disabled', async () => {
     const user = userEvent.setup();
     render(<Select options={options} label="Fruit" />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     expect(screen.getByRole('option', { name: 'Cherry' })).toHaveAttribute('aria-disabled', 'true');
   });
 
@@ -182,7 +185,7 @@ describe('Select', () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<Select options={options} label="Fruit" onValueChange={onValueChange} />);
-    await user.click(screen.getByRole('button', { name: /Fruit/i }));
+    await user.click(screen.getByRole('combobox', { name: /Fruit/i }));
     await user.click(screen.getByRole('option', { name: 'Cherry' }));
     expect(onValueChange).not.toHaveBeenCalled();
     // Listbox should remain open
@@ -193,7 +196,7 @@ describe('Select', () => {
 
   it('associates the label with the trigger via htmlFor', () => {
     render(<Select options={options} label="Fruit" />);
-    const trigger = screen.getByRole('button', { name: /Fruit/i });
+    const trigger = screen.getByRole('combobox', { name: /Fruit/i });
     const label = screen.getByText('Fruit');
     expect(label).toHaveAttribute('for', trigger.id);
   });
@@ -211,7 +214,10 @@ describe('Select', () => {
   it('shows the required asterisk and sets aria-required on the trigger', () => {
     render(<Select options={options} label="Fruit" required />);
     expect(screen.getByText('*')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Fruit/i })).toHaveAttribute('aria-required', 'true');
+    expect(screen.getByRole('combobox', { name: /Fruit/i })).toHaveAttribute(
+      'aria-required',
+      'true',
+    );
   });
 
   // ─── Form integration ────────────────────────────────────────────────────

@@ -187,7 +187,6 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
         required={required}
       >
         <div className="pf-select" ref={rootRef}>
-          {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-required on the select-like trigger is documented, tested behavior; ARIA 1.2 role="combobox" migration is tracked in todo.md */}
           <button
             {...props}
             id={selectId}
@@ -200,8 +199,13 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
               className,
             )}
             disabled={disabled}
+            role="combobox"
             aria-haspopup="listbox"
             aria-expanded={isOpen}
+            aria-controls={isOpen ? listboxId : undefined}
+            aria-activedescendant={
+              isOpen && activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
+            }
             aria-required={required || undefined}
             aria-describedby={describedBy}
             onClick={() => {

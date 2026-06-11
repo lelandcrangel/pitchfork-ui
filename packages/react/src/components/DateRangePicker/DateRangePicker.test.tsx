@@ -5,19 +5,19 @@ import { DateRangePicker } from './DateRangePicker';
 describe('DateRangePicker', () => {
   it('renders a trigger button with label', () => {
     render(<DateRangePicker label="Stay dates" />);
-    expect(screen.getByRole('button', { name: /stay dates/i })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: /stay dates/i })).toBeInTheDocument();
   });
 
   it('opens the calendar dialog on trigger click', () => {
     render(<DateRangePicker label="Dates" />);
-    fireEvent.click(screen.getByRole('button', { name: /dates/i }));
+    fireEvent.click(screen.getByRole('combobox', { name: /dates/i }));
     expect(screen.getByRole('dialog', { name: /date range picker/i })).toBeInTheDocument();
   });
 
   it('selects a start then end date and fires onValueChange', () => {
     const onValueChange = vi.fn();
     render(<DateRangePicker label="Dates" onValueChange={onValueChange} />);
-    fireEvent.click(screen.getByRole('button', { name: /dates/i }));
+    fireEvent.click(screen.getByRole('combobox', { name: /dates/i }));
 
     // Click a day for start — any available gridcell
     const days = screen.getAllByRole('gridcell');
@@ -37,7 +37,7 @@ describe('DateRangePicker', () => {
 
   it('shows the hint text prompting which date to choose', () => {
     render(<DateRangePicker label="Dates" />);
-    fireEvent.click(screen.getByRole('button', { name: /dates/i }));
+    fireEvent.click(screen.getByRole('combobox', { name: /dates/i }));
     expect(screen.getByText(/select a start date/i)).toBeInTheDocument();
 
     const days = screen.getAllByRole('gridcell');
@@ -47,7 +47,7 @@ describe('DateRangePicker', () => {
 
   it('closes on Escape and reverts selecting state', () => {
     render(<DateRangePicker label="Dates" />);
-    fireEvent.click(screen.getByRole('button', { name: /dates/i }));
+    fireEvent.click(screen.getByRole('combobox', { name: /dates/i }));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     fireEvent.keyDown(screen.getByRole('dialog'), { key: 'Escape' });
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

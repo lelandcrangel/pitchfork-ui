@@ -207,7 +207,6 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
       required={required}
     >
       <div className="pf-timepicker" ref={rootRef}>
-        {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid/aria-required on the picker trigger is documented, tested behavior; ARIA 1.2 role="combobox" migration is tracked in todo.md */}
         <button
           {...props}
           id={fieldId}
@@ -220,8 +219,10 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
             className,
           )}
           disabled={disabled}
+          role="combobox"
           aria-haspopup="dialog"
           aria-expanded={isOpen}
+          aria-controls={isOpen ? panelId : undefined}
           aria-required={required || undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
