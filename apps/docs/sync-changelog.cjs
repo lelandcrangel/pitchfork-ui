@@ -16,8 +16,30 @@ const frontmatter = mdxContent.slice(0, frontmatterEnd);
 // Read the Markdown changelog
 const mdContent = fs.readFileSync(mdPath, 'utf8');
 
+// Drop duplicate bullets within a release section (same text, different SHA).
+// Merge-commit PRs used to make release-please credit both the merge commit
+// and the identical branch commit; merge commits are now disabled on the repo,
+// but keep the docs page clean regardless.
+function dedupeBullets(markdown) {
+  const seen = new Set();
+  return markdown
+    .split('\n')
+    .filter((line) => {
+      if (line.startsWith('## ')) {
+        seen.clear(); // new release section
+        return true;
+      }
+      const bullet = line.match(/^(\* .*) \(\[\w+\]\(.*\)\)\s*$/);
+      if (!bullet) return true;
+      if (seen.has(bullet[1])) return false;
+      seen.add(bullet[1]);
+      return true;
+    })
+    .join('\n');
+}
+
 // Compose new MDX content
-const newMdx = `${frontmatter}${mdContent}`;
+const newMdx = `${frontmatter}${dedupeBullets(mdContent)}`;
 
 // Write back to the MDX file
 fs.writeFileSync(mdxPath, newMdx, 'utf8');

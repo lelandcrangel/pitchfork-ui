@@ -41,7 +41,6 @@ All notable changes to this project are documented below, grouped by date and fe
 
 ### Bug Fixes
 
-* **react:** use flex-start/flex-end for flexbox alignment ([cd8dc53](https://github.com/lelandcrangel/pitchfork-ui/commit/cd8dc5374285a698b977629beb37994ed774af30))
 * **react:** use flex-start/flex-end for flexbox alignment ([83558c5](https://github.com/lelandcrangel/pitchfork-ui/commit/83558c5e16f147b79c8c3546d70f406c937a4604))
 
 ## [0.11.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.11.0...react-v0.11.1) (2026-06-09)
@@ -49,7 +48,6 @@ All notable changes to this project are documented below, grouped by date and fe
 
 ### Bug Fixes
 
-* **react:** convert Card to forwardRef and minify shipped CSS ([2dd62bd](https://github.com/lelandcrangel/pitchfork-ui/commit/2dd62bd262201b61b7c9e37c3b77f374dcc2679d))
 * **react:** convert Card to forwardRef and minify shipped CSS ([6494579](https://github.com/lelandcrangel/pitchfork-ui/commit/64945796e57d1afcd1afea1bfe7b04529bae1e40))
 
 ## [0.11.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.10.0...react-v0.11.0) (2026-06-09)
