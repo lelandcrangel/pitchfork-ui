@@ -16,6 +16,18 @@ export const isActivationKey = (key: string) => key === Keys.Enter || key === Ke
 export const composeDescribedBy = (...ids: Array<string | false | null | undefined>) =>
   ids.filter(Boolean).join(' ') || undefined;
 
+const isElementVisible = (element: HTMLElement) => {
+  // Most accurate where supported (display/visibility/content-visibility).
+  if (typeof element.checkVisibility === 'function') {
+    return element.checkVisibility();
+  }
+
+  // offsetParent is null inside display:none subtrees — but also for
+  // position: fixed elements, which feed the modal focus trap, so visible
+  // fixed elements are rescued via their client rects.
+  return element.offsetParent !== null || element.getClientRects().length > 0;
+};
+
 export const getFocusableElements = (container: HTMLElement) => {
   const selector = [
     'a[href]',
@@ -23,7 +35,8 @@ export const getFocusableElements = (container: HTMLElement) => {
     'input:not([disabled])',
     'select:not([disabled])',
     'textarea:not([disabled])',
-    '[contenteditable="true"]',
+    // contenteditable="" is also valid/enabled; only "false" disables editing.
+    '[contenteditable]:not([contenteditable="false"])',
     '[tabindex]:not([tabindex="-1"])',
   ].join(',');
 
@@ -32,6 +45,6 @@ export const getFocusableElements = (container: HTMLElement) => {
       return false;
     }
 
-    return element.offsetParent !== null;
+    return isElementVisible(element);
   });
 };
