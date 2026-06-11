@@ -1,7 +1,7 @@
 {
   "name": "@pitchfork-ui/react",
   "version": "0.13.2",
-  "description": "Accessible, themeable React component library for lelandrangel.com — 65+ components backed by a Style Dictionary token system, with dark mode and bundled CSS.",
+  "description": "Accessible, themeable React component library — 70+ components backed by a Style Dictionary token system, with dark mode and bundled CSS.",
   "license": "MIT",
   "author": "Leland Rangel",
   "homepage": "https://lelandrangel.com/pitchfork-ui/",
