@@ -18,6 +18,8 @@ export interface SlideoutMenuProps extends Omit<React.HTMLAttributes<HTMLDivElem
   size?: SlideoutMenuSize;
   closeOnOverlayClick?: boolean;
   showCloseButton?: boolean;
+  /** Accessible name for the dialog when `title` is not provided. */
+  'aria-label'?: string;
 }
 
 export function SlideoutMenu({

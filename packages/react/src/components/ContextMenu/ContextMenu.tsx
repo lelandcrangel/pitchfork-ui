@@ -145,6 +145,9 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(function
               role="menu"
               aria-label="Context menu"
               tabIndex={-1}
+              aria-activedescendant={
+                actionable[activeIndex] ? `${menuId}-item-${activeIndex}` : undefined
+              }
               className={cx('pf-context-menu__menu', isExiting && 'pf-context-menu__menu--exiting')}
               style={{
                 position: 'fixed',
@@ -171,6 +174,7 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(function
                 return (
                   <button
                     key={entry.id ?? `${entry.label}-${index}`}
+                    id={`${menuId}-item-${itemIndex}`}
                     type="button"
                     role="menuitem"
                     disabled={entry.disabled}

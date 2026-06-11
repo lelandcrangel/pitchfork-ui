@@ -6,6 +6,7 @@ import {
   useComposedRefs,
   useControllableState,
   useDisclosure,
+  useFocusTrap,
   useOutsideInteraction,
   usePresence,
 } from '../../hooks';
@@ -124,6 +125,12 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
     onInteractOutside: () => disclosure.close(),
   });
 
+  useFocusTrap({
+    containerRef: panelRef,
+    enabled: isOpen,
+    onEscape: disclosure.close,
+  });
+
   // Column option sets.
   const hours = hourCycle === 24 ? range(24) : range(12).map((h) => h + 1); // 24h: 0–23, 12h: 1–12
   const minutes = range(60, minuteStep);
@@ -207,6 +214,7 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
       required={required}
     >
       <div className="pf-timepicker" ref={rootRef}>
+        {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid/aria-required on a dialog-opener trigger is a known form-field pattern; combobox role is not appropriate here because aria-controls would reference a conditionally-rendered portal that axe can't reliably resolve */}
         <button
           {...props}
           id={fieldId}
@@ -219,10 +227,8 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
             className,
           )}
           disabled={disabled}
-          role="combobox"
           aria-haspopup="dialog"
           aria-expanded={isOpen}
-          aria-controls={isOpen ? panelId : undefined}
           aria-required={required || undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}

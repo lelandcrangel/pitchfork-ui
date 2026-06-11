@@ -16,6 +16,8 @@ export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   size?: ModalSize;
   closeOnOverlayClick?: boolean;
   showCloseButton?: boolean;
+  /** Accessible name for the dialog when `title` is not provided. */
+  'aria-label'?: string;
 }
 
 export type ModalSectionProps = React.HTMLAttributes<HTMLDivElement>;

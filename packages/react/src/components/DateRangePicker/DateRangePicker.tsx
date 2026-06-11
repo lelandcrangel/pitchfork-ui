@@ -1,7 +1,12 @@
 import { forwardRef, useCallback, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
-import { useAnchoredPosition, useDisclosure, useOutsideInteraction } from '../../hooks';
+import {
+  useAnchoredPosition,
+  useDisclosure,
+  useFocusTrap,
+  useOutsideInteraction,
+} from '../../hooks';
 import { cx } from '../../utils/cx';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
@@ -244,6 +249,16 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
       },
     });
 
+    useFocusTrap({
+      containerRef: popoverRef,
+      enabled: isOpen,
+      onEscape: () => {
+        setSelecting(null);
+        setHoverDate(null);
+        disclosure.close();
+      },
+    });
+
     const handleDayClick = (date: Date) => {
       if (selecting === null) {
         // First click — set start, clear end
@@ -300,17 +315,16 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
           aria-describedby={describedBy}
         >
           <div className="pf-daterange__control-row" ref={rootRef}>
+            {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid/aria-required on a dialog-opener trigger is a known form-field pattern; combobox role is not appropriate here because aria-controls would reference a conditionally-rendered portal that axe can't reliably resolve */}
             <button
               ref={triggerRef}
               id={`${pickerId}-trigger`}
               type="button"
               className={cx('pf-daterange__trigger', error && 'pf-daterange__trigger--invalid')}
               disabled={disabled}
-              role="combobox"
               aria-invalid={error ? true : undefined}
               aria-haspopup="dialog"
               aria-expanded={isOpen}
-              aria-controls={isOpen ? `${pickerId}-dialog` : undefined}
               aria-required={required || undefined}
               onClick={() => {
                 if (!isOpen) setSelecting(null);
@@ -363,7 +377,6 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                 // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- dialog keyboard handling (Escape, focus trap) lives on the container
                 <div
                   ref={popoverRef}
-                  id={`${pickerId}-dialog`}
                   className="pf-daterange__popover"
                   role="dialog"
                   aria-label="Date range picker"

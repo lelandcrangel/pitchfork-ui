@@ -1,7 +1,12 @@
 import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
-import { useAnchoredPosition, useDisclosure, useOutsideInteraction } from '../../hooks';
+import {
+  useAnchoredPosition,
+  useDisclosure,
+  useFocusTrap,
+  useOutsideInteraction,
+} from '../../hooks';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import { Calendar } from '../Calendar';
@@ -89,6 +94,12 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
     onInteractOutside: disclosure.close,
   });
 
+  useFocusTrap({
+    containerRef: popoverRef,
+    enabled: isOpen,
+    onEscape: disclosure.close,
+  });
+
   const formattedDate = useMemo(() => {
     if (!selectedDate) {
       return '';
@@ -139,17 +150,16 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
         aria-describedby={describedBy}
       >
         <div className="pf-date-picker__control-row">
+          {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props -- aria-invalid/aria-required on a dialog-opener trigger is a known form-field pattern; combobox role is not appropriate here because aria-controls would reference a conditionally-rendered portal that axe can't reliably resolve */}
           <button
             ref={triggerRef}
             id={`${pickerId}-trigger`}
             type="button"
             className={cx('pf-date-picker__trigger', error && 'pf-date-picker__trigger--invalid')}
             disabled={disabled}
-            role="combobox"
             aria-invalid={error ? true : undefined}
             aria-haspopup="dialog"
             aria-expanded={isOpen}
-            aria-controls={isOpen ? `${pickerId}-dialog` : undefined}
             aria-required={required || undefined}
             onClick={() => {
               disclosure.toggle();
@@ -188,7 +198,6 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
           ? createPortal(
               <div
                 ref={popoverRef}
-                id={`${pickerId}-dialog`}
                 className="pf-date-picker__popover"
                 role="dialog"
                 aria-label="Date picker calendar"

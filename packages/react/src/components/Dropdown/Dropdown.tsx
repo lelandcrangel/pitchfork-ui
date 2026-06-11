@@ -43,7 +43,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     const menuRef = useRef<HTMLDivElement>(null);
     const disclosure = useDisclosure({ disabled });
     const { isOpen } = disclosure;
-    const { activeIndex, firstEnabledIndex, move, setActiveIndex } = useListNavigation({
+    const { activeIndex, setActiveIndex } = useListNavigation({
       items,
       isDisabled: (item) => Boolean(item.disabled),
     });
@@ -61,49 +61,57 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       onInteractOutside: disclosure.close,
     });
 
+    // Move focus to the first enabled menu item when the menu opens.
+    // No RAF needed — portal is mounted in the same render cycle, menuRef is available.
     useEffect(() => {
-      if (!isOpen) {
-        return;
-      }
-
-      setActiveIndex(firstEnabledIndex);
-    }, [firstEnabledIndex, isOpen, setActiveIndex]);
-
-    useEffect(() => {
-      const handleEscape = (event: KeyboardEvent) => {
-        if (event.key === Keys.Escape) {
-          disclosure.close();
-          triggerRef.current?.focus();
-        }
-      };
-
-      document.addEventListener('keydown', handleEscape);
-
-      return () => {
-        document.removeEventListener('keydown', handleEscape);
-      };
-    }, [disclosure]);
+      if (!isOpen) return;
+      const first = menuRef.current?.querySelector<HTMLButtonElement>(
+        '[role="menuitem"]:not([disabled])',
+      );
+      first?.focus();
+    }, [isOpen]);
 
     const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (event) => {
-      if (disabled) {
-        return;
-      }
-
+      if (disabled) return;
       if (event.key === Keys.ArrowDown || event.key === Keys.ArrowUp) {
         event.preventDefault();
-
-        if (!isOpen) {
-          disclosure.open();
-          return;
-        }
-
-        const startIndex = activeIndex >= 0 ? activeIndex : 0;
-        move(event.key === Keys.ArrowDown ? 'next' : 'previous', startIndex);
+        if (!isOpen) disclosure.open();
+        return;
       }
-
+      if (event.key === Keys.Escape && isOpen) {
+        disclosure.close();
+        return;
+      }
       if (isActivationKey(event.key)) {
         event.preventDefault();
         disclosure.toggle();
+      }
+    };
+
+    const onMenuKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+      const menuItems = Array.from(
+        menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not([disabled])') ??
+          [],
+      );
+      const currentIndex = menuItems.indexOf(document.activeElement as HTMLButtonElement);
+
+      if (event.key === Keys.ArrowDown) {
+        event.preventDefault();
+        menuItems[Math.min(currentIndex + 1, menuItems.length - 1)]?.focus();
+      } else if (event.key === Keys.ArrowUp) {
+        event.preventDefault();
+        menuItems[Math.max(currentIndex - 1, 0)]?.focus();
+      } else if (event.key === Keys.Home) {
+        event.preventDefault();
+        menuItems[0]?.focus();
+      } else if (event.key === Keys.End) {
+        event.preventDefault();
+        menuItems[menuItems.length - 1]?.focus();
+      } else if (event.key === Keys.Escape) {
+        disclosure.close();
+        triggerRef.current?.focus();
+      } else if (event.key === Keys.Tab) {
+        disclosure.close();
       }
     };
 
@@ -129,6 +137,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           className="pf-dropdown__trigger"
           aria-haspopup="menu"
           aria-expanded={isOpen}
+          aria-controls={isOpen ? menuId : undefined}
           onClick={() => {
             disclosure.toggle();
           }}
@@ -151,10 +160,12 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                 ref={menuRef}
                 className="pf-dropdown__menu"
                 role="menu"
+                tabIndex={-1}
                 style={{
                   ...menuStyle,
                   ...(menuMaxHeight ? { maxHeight: menuMaxHeight, overflowY: 'auto' } : {}),
                 }}
+                onKeyDown={onMenuKeyDown}
               >
                 {items.map((item, index) => {
                   const isActive = index === activeIndex;
@@ -170,6 +181,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                         isActive && 'pf-dropdown__item--active',
                         item.destructive && 'pf-dropdown__item--destructive',
                       )}
+                      onFocus={() => {
+                        if (!item.disabled) setActiveIndex(index);
+                      }}
                       onMouseEnter={() => {
                         if (!item.disabled) {
                           setActiveIndex(index);

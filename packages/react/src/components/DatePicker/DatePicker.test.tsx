@@ -23,22 +23,22 @@ describe('DatePicker', () => {
 
   it('renders a trigger button with the placeholder', () => {
     render(<DatePicker placeholder="Pick a date" label="Date" />);
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveTextContent('Pick a date');
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Pick a date');
   });
 
   it('shows a formatted date when a controlled value is set', () => {
     render(<DatePicker value={JUNE_15} label="Date" />);
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveTextContent('Jun 15, 2024');
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Jun 15, 2024');
   });
 
   it('shows a formatted date from defaultValue (uncontrolled)', () => {
     render(<DatePicker defaultValue={JUNE_15} label="Date" />);
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveTextContent('Jun 15, 2024');
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Jun 15, 2024');
   });
 
   it('has aria-haspopup=dialog on the trigger', () => {
     render(<DatePicker label="Date" />);
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveAttribute(
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute(
       'aria-haspopup',
       'dialog',
     );
@@ -49,18 +49,15 @@ describe('DatePicker', () => {
   it('opens the calendar popover on click', async () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" value={JUNE_1} />);
-    await user.click(screen.getByRole('combobox', { name: /Date/i }));
+    await user.click(screen.getByRole('button', { name: /Date/i }));
     expect(screen.getByRole('dialog', { name: /calendar/i })).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveAttribute(
-      'aria-expanded',
-      'true',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute('aria-expanded', 'true');
   });
 
   it('opens the calendar on Enter key', async () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" value={JUNE_1} />);
-    screen.getByRole('combobox', { name: /Date/i }).focus();
+    screen.getByRole('button', { name: /Date/i }).focus();
     await user.keyboard('{Enter}');
     expect(screen.getByRole('dialog', { name: /calendar/i })).toBeInTheDocument();
   });
@@ -68,7 +65,7 @@ describe('DatePicker', () => {
   it('closes the calendar on Escape key', async () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" value={JUNE_1} />);
-    await user.click(screen.getByRole('combobox', { name: /Date/i }));
+    await user.click(screen.getByRole('button', { name: /Date/i }));
     expect(screen.getByRole('dialog', { name: /calendar/i })).toBeInTheDocument();
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog', { name: /calendar/i })).not.toBeInTheDocument();
@@ -77,7 +74,7 @@ describe('DatePicker', () => {
   it('closes the calendar after a date is selected', async () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" value={JUNE_1} onValueChange={vi.fn()} />);
-    await user.click(screen.getByRole('combobox', { name: /Date/i }));
+    await user.click(screen.getByRole('button', { name: /Date/i }));
     await user.click(getDayCell(20));
     expect(screen.queryByRole('dialog', { name: /calendar/i })).not.toBeInTheDocument();
   });
@@ -88,7 +85,7 @@ describe('DatePicker', () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(<DatePicker label="Date" value={JUNE_1} onValueChange={onValueChange} />);
-    await user.click(screen.getByRole('combobox', { name: /Date/i }));
+    await user.click(screen.getByRole('button', { name: /Date/i }));
     await user.click(getDayCell(20));
     expect(onValueChange).toHaveBeenCalledOnce();
     const called = onValueChange.mock.calls[0][0] as Date;
@@ -99,15 +96,15 @@ describe('DatePicker', () => {
   it('updates the displayed date after selection (uncontrolled)', async () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" defaultValue={JUNE_1} />);
-    await user.click(screen.getByRole('combobox', { name: /Date/i }));
+    await user.click(screen.getByRole('button', { name: /Date/i }));
     await user.click(getDayCell(20));
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveTextContent('Jun 20, 2024');
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Jun 20, 2024');
   });
 
   it('marks the selected date in the calendar grid', async () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" value={JUNE_15} />);
-    await user.click(screen.getByRole('combobox', { name: /Date/i }));
+    await user.click(screen.getByRole('button', { name: /Date/i }));
     expect(getDayCell(15)).toHaveAttribute('aria-selected', 'true');
     expect(getDayCell(20)).toHaveAttribute('aria-selected', 'false');
   });
@@ -136,20 +133,20 @@ describe('DatePicker', () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" defaultValue={JUNE_15} allowClear />);
     await user.click(screen.getByRole('button', { name: /Clear selected date/i }));
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveTextContent('Select a date');
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveTextContent('Select a date');
   });
 
   // ─── Disabled ────────────────────────────────────────────────────────────
 
   it('disables the trigger when disabled prop is set', () => {
     render(<DatePicker label="Date" disabled />);
-    expect(screen.getByRole('combobox', { name: /Date/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Date/i })).toBeDisabled();
   });
 
   it('does not open the calendar when disabled', async () => {
     const user = userEvent.setup();
     render(<DatePicker label="Date" disabled />);
-    await user.click(screen.getByRole('combobox', { name: /Date/i }));
+    await user.click(screen.getByRole('button', { name: /Date/i }));
     expect(screen.queryByRole('dialog', { name: /calendar/i })).not.toBeInTheDocument();
   });
 
@@ -157,7 +154,7 @@ describe('DatePicker', () => {
 
   it('associates the label with the trigger', () => {
     render(<DatePicker label="Date" />);
-    const trigger = screen.getByRole('combobox', { name: /Date/i });
+    const trigger = screen.getByRole('button', { name: /Date/i });
     const label = screen.getByText('Date');
     expect(label).toHaveAttribute('for', trigger.id);
   });
@@ -170,15 +167,12 @@ describe('DatePicker', () => {
   it('shows an error message and marks the trigger as aria-invalid', () => {
     render(<DatePicker label="Date" error="Date is required" />);
     expect(screen.getByText('Date is required')).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('shows the required asterisk and sets aria-required on the trigger', () => {
     render(<DatePicker label="Date" required />);
     expect(screen.getByText('*')).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: /Date/i })).toHaveAttribute(
-      'aria-required',
-      'true',
-    );
+    expect(screen.getByRole('button', { name: /Date/i })).toHaveAttribute('aria-required', 'true');
   });
 });

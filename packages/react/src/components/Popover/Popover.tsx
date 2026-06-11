@@ -96,6 +96,7 @@ export function Popover({
     ref: composedTriggerRef,
     'aria-haspopup': 'dialog',
     'aria-expanded': isOpen,
+    'aria-controls': isOpen ? contentId : undefined,
     onClick: (event: React.MouseEvent) => {
       triggerProps.onClick?.(event);
       setOpen(!isOpen);
