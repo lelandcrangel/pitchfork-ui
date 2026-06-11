@@ -40,3 +40,61 @@ are `Date | null`.
 ### Disabled
 
 <Canvas of={DateRangePickerExamples.Disabled} meta={DateRangePickerExamples} />
+
+---
+
+## API Reference
+
+### `DateRangePicker`
+
+**`onValueChange`** — `(range: DateRange) => void`  
+Called after the user completes a two-click selection. Receives `{ start: Date, end: Date }` with both dates normalized to noon local time. If the user clicks the same day twice the selection resets and `end` will be `null`.
+
+**`value`** — `DateRange`  
+The currently selected range in controlled mode. Pair with `onValueChange`.
+
+**`defaultValue`** — `DateRange`  
+The initially selected range in uncontrolled mode.
+
+**`startPlaceholder`** — `string` · default `'Start date'`  
+Placeholder text for the start date slot in the trigger.
+
+**`endPlaceholder`** — `string` · default `'End date'`  
+Placeholder text for the end date slot in the trigger.
+
+**`disabledDates`** — `(date: Date) => boolean`  
+Called for each visible day. Return `true` to disable that day.
+
+**`showOutsideDays`** — `boolean` · default `true`  
+Shows days from adjacent months that fill out the calendar grid.
+
+**`startYear`** — `number`  
+The earliest year accessible via the year selector. Defaults to 50 years before today.
+
+**`endYear`** — `number`  
+The latest year accessible via the year selector. Defaults to 50 years after today.
+
+**`label`** — `string`  
+Visible label rendered above the trigger.
+
+**`description`** — `string`  
+Helper text rendered below the label.
+
+**`error`** — `string`  
+Error message rendered below the trigger. Also sets `aria-invalid` on the trigger.
+
+**`required`** — `boolean`  
+Marks the field as required and sets `aria-required` on the trigger.
+
+**`disabled`** — `boolean`  
+Disables the trigger and prevents opening the calendar.
+
+---
+
+### `DateRange`
+
+**`start`** — `Date | null` · required  
+The start of the selected range, or `null` when unset.
+
+**`end`** — `Date | null` · required  
+The end of the selected range, or `null` when only a start date has been chosen.

@@ -23,3 +23,33 @@ Pass any element as the `trigger`; the Popover augments it with `aria-haspopup="
 ### Aligned to end
 
 <Canvas of={PopoverExamples.AlignEnd} meta={PopoverExamples} />
+
+---
+
+## API Reference
+
+### `Popover`
+
+**`trigger`** — `ReactElement` · required  
+The element that toggles the popover. It is cloned and augmented with `onClick`, `aria-haspopup="dialog"`, `aria-expanded`, and `aria-controls` — so it must accept and forward a `ref`. A `<Button>` or any focusable element works out of the box.
+
+**`children`** — `ReactNode` · required  
+The content rendered inside the popover panel.
+
+**`onOpenChange`** — `(open: boolean) => void`  
+Called when the popover opens or closes.
+
+**`open`** — `boolean`  
+Controlled open state. Pair with `onOpenChange`.
+
+**`defaultOpen`** — `boolean`  
+Initial open state in uncontrolled mode.
+
+**`align`** — `'start' | 'end'` · default `'start'`  
+Horizontal alignment of the panel relative to the trigger. `'end'` right-aligns the panel.
+
+**`label`** — `string`  
+Accessible label for the popover dialog (`aria-label`). Provide this when the panel content has no visible heading.
+
+**`closeOnOutsideClick`** — `boolean` · default `true`  
+Whether clicking outside the panel closes it.

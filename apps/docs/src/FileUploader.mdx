@@ -29,3 +29,45 @@ FileUploader supports clicking or dragging files into a dropzone with optional l
 ### With error
 
 <Canvas of={FileUploaderExamples.WithError} meta={FileUploaderExamples} />
+
+---
+
+## API Reference
+
+### `FileUploader`
+
+**`onFilesChange`** — `(files: File[]) => void`  
+Called with the updated file list whenever files are added or removed.
+
+**`value`** — `File[]`  
+The current file list in controlled mode. Pair with `onFilesChange`.
+
+**`defaultValue`** — `File[]`  
+The initial file list in uncontrolled mode.
+
+**`accept`** — `string`  
+Accepted MIME types or file extensions, passed directly to the underlying `<input accept>`. Examples: `"image/*"`, `".pdf,.docx"`, `"image/png,image/jpeg"`.
+
+**`multiple`** — `boolean` · default `true`  
+Allows selecting more than one file at a time. Set to `false` to restrict to a single file.
+
+**`maxFiles`** — `number`  
+Maximum number of files that can be held simultaneously. Adding files beyond this limit is silently prevented.
+
+**`maxFileSize`** — `number`  
+Maximum size per file in bytes. Files exceeding this limit show a validation error.
+
+**`label`** — `string`  
+Visible label rendered above the dropzone.
+
+**`description`** — `string`  
+Helper text rendered below the label.
+
+**`error`** — `string`  
+Error message rendered below the dropzone.
+
+**`required`** — `boolean`  
+Marks the field as required.
+
+**`disabled`** — `boolean` · default `false`  
+Disables click and drag interactions.

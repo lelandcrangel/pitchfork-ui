@@ -47,3 +47,58 @@ Use full-width tabs to distribute options evenly across constrained layouts.
 A small-size variant for denser utility surfaces.
 
 <Canvas of={TabsExamples.CompactSmall} meta={TabsExamples} />
+
+---
+
+## API Reference
+
+### `Tabs`
+
+**`items`** — `TabsItem[]` · required  
+The tabs to render. Each item includes its trigger label and panel content. See `TabsItem` below.
+
+**`onValueChange`** — `(value: string) => void`  
+Called with the newly selected tab's `value` when the user switches tabs.
+
+**`value`** — `string`  
+The currently active tab in controlled mode. Pair with `onValueChange`.
+
+**`defaultValue`** — `string`  
+The initially active tab in uncontrolled mode. Defaults to the first enabled tab if omitted.
+
+**`variant`** — `'underline' | 'pills'` · default `'underline'`  
+Visual style. `'underline'` suits section navigation; `'pills'` suits filters and segmented controls.
+
+**`size`** — `'sm' | 'md'` · default `'md'`  
+Controls tab button size. Use `'sm'` for denser surfaces.
+
+**`fullWidth`** — `boolean` · default `false`  
+Distributes tab buttons evenly across the full width of the container.
+
+---
+
+### `TabsItem`
+
+**`value`** — `string` · required  
+Unique identifier for the tab. Passed to `onValueChange` when this tab is selected.
+
+**`label`** — `ReactNode` · required  
+The tab button label.
+
+**`content`** — `ReactNode` · required  
+The panel content shown when this tab is active.
+
+**`icon`** — `IconName`  
+Decorative icon rendered alongside the label. Uses the shared `Icon` component.
+
+**`iconPlacement`** — `'start' | 'end'` · default `'start'`  
+Which side of the label the icon sits on.
+
+**`count`** — `number`  
+Numeric badge rendered beside the label (GitHub-style). Included in the tab's accessible name so screen readers announce e.g. "Issues, 12". Pass `0` to show a zero count; omit to hide the badge entirely.
+
+**`badgePlacement`** — `'start' | 'end'` · default `'end'`  
+Which side of the label the count badge sits on.
+
+**`disabled`** — `boolean`  
+Prevents the tab from being selected and dims the trigger visually.

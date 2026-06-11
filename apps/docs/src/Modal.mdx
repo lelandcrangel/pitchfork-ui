@@ -62,3 +62,36 @@ The header and footer are optional — omit `title`/`footer` for a body-only mod
 ### Large content
 
 <Canvas of={ModalExamples.LargeContent} meta={ModalExamples} />
+
+---
+
+## API Reference
+
+### `Modal`
+
+**`open`** — `boolean` · required  
+Controls whether the modal is visible.
+
+**`onOpenChange`** — `(open: boolean) => void`  
+Called when the modal should close — from the close button, overlay click, or Escape key.
+
+**`title`** — `ReactNode`  
+Heading text rendered in the header. Also serves as the dialog's accessible name. Use `aria-label` instead when you need a headingless modal.
+
+**`description`** — `ReactNode`  
+Secondary text rendered below the title in the header.
+
+**`footer`** — `ReactNode`  
+Content pinned at the bottom of the dialog, typically action buttons. Laid out as a flex row.
+
+**`size`** — `'sm' | 'md' | 'lg'` · default `'md'`  
+Controls the max-width of the dialog.
+
+**`closeOnOverlayClick`** — `boolean` · default `true`  
+Whether clicking the dimmed overlay closes the modal.
+
+**`showCloseButton`** — `boolean` · default `true`  
+Whether the × close button is shown in the header.
+
+**`aria-label`** — `string`  
+Accessible name for the dialog when `title` is not provided (e.g. a body-only modal with no visible heading).

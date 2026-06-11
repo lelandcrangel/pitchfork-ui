@@ -25,3 +25,58 @@ Select presents a custom dropdown for choosing a single option from a list.
 ### Disabled
 
 <Canvas of={SelectExamples.Disabled} meta={SelectExamples} />
+
+---
+
+## API Reference
+
+### `Select`
+
+**`options`** — `SelectOption[]` · required  
+The list of choices to display. See `SelectOption` below.
+
+**`onValueChange`** — `(value: string) => void`  
+Called with the selected option's `value` string when the user makes a selection.
+
+**`value`** — `string`  
+The currently selected value in controlled mode. Pair with `onValueChange`.
+
+**`defaultValue`** — `string`  
+The initially selected value in uncontrolled mode.
+
+**`placeholder`** — `string` · default `'Select an option'`  
+Text shown in the trigger when nothing is selected.
+
+**`name`** — `string`  
+Forwarded to the hidden `<input>` used for form submission.
+
+**`label`** — `string`  
+Visible label rendered above the trigger.
+
+**`description`** — `string`  
+Helper text rendered below the label.
+
+**`error`** — `string`  
+Error message rendered below the trigger. Also sets `aria-invalid` on the trigger.
+
+**`required`** — `boolean`  
+Marks the field as required and sets `aria-required` on the trigger.
+
+**`maxVisibleOptions`** — `number`  
+Maximum number of options to show before the listbox scrolls. Omit to let the menu grow to fit all options.
+
+**`disabled`** — `boolean`  
+Disables the trigger and prevents opening the listbox.
+
+---
+
+### `SelectOption`
+
+**`value`** — `string` · required  
+The value passed to `onValueChange` when this option is selected.
+
+**`label`** — `string` · required  
+The display text shown in the listbox and in the trigger when selected.
+
+**`disabled`** — `boolean`  
+Prevents the option from being selected and dims it visually.

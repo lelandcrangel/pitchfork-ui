@@ -29,3 +29,51 @@ DatePicker combines a field trigger with the Calendar component for selecting a 
 ### With error
 
 <Canvas of={DatePickerExamples.WithError} meta={DatePickerExamples} />
+
+---
+
+## API Reference
+
+### `DatePicker`
+
+**`onValueChange`** — `(value: Date | undefined) => void`  
+Called with the selected `Date` when the user picks a day, or `undefined` when the value is cleared. Dates are normalized to noon local time to avoid timezone-boundary issues.
+
+**`value`** — `Date`  
+The currently selected date in controlled mode. Pair with `onValueChange`.
+
+**`defaultValue`** — `Date`  
+The initially selected date in uncontrolled mode.
+
+**`placeholder`** — `string` · default `'Select a date'`  
+Text shown in the trigger when no date is selected.
+
+**`allowClear`** — `boolean` · default `false`  
+Shows a clear button beside the trigger when a date is selected.
+
+**`disabledDates`** — `(date: Date) => boolean`  
+Called for each day in the calendar. Return `true` to disable that day (prevents selection and dims it visually). Use this to block weekends, holidays, or dates outside a valid range.
+
+**`showOutsideDays`** — `boolean` · default `true`  
+Shows the days from the previous and next month that fill out the calendar grid.
+
+**`startYear`** — `number`  
+The earliest year accessible via the year selector. Defaults to 50 years before today.
+
+**`endYear`** — `number`  
+The latest year accessible via the year selector. Defaults to 50 years after today.
+
+**`label`** — `string`  
+Visible label rendered above the trigger.
+
+**`description`** — `string`  
+Helper text rendered below the label.
+
+**`error`** — `string`  
+Error message rendered below the trigger. Also sets `aria-invalid` on the trigger.
+
+**`required`** — `boolean` · default `false`  
+Marks the field as required and sets `aria-required` on the trigger.
+
+**`disabled`** — `boolean` · default `false`  
+Disables the trigger and prevents opening the calendar.

@@ -39,3 +39,80 @@ Header cells remain visible while scrolling long result sets.
 Use a clear message when the current filters return no rows.
 
 <Canvas of={TableExamples.EmptyState} meta={TableExamples} />
+
+---
+
+## API Reference
+
+### `Table`
+
+**`columns`** — `TableColumn[]` · required  
+Column definitions. See `TableColumn` below.
+
+**`rows`** — `TableRow[]` · required  
+Data rows, where each row is `Record<string, ReactNode>`. Values are looked up by `column.key`.
+
+**`onSortStateChange`** — `(state: TableSortState) => void`  
+Called when the user clicks a sortable column header. Receives the new `{ key, direction }` state.
+
+**`sortState`** — `TableSortState`  
+The active sort in controlled mode. Pair with `onSortStateChange`.
+
+**`defaultSortState`** — `TableSortState`  
+The initial sort in uncontrolled mode.
+
+**`caption`** — `ReactNode`  
+Accessible table caption rendered as a visible `<caption>` element.
+
+**`emptyState`** — `ReactNode` · default `'No data available.'`  
+Content shown when `rows` is empty.
+
+**`getRowKey`** — `(row: TableRow, index: number) => React.Key`  
+Returns the React key for each row. Defaults to the row's array index. Provide this whenever rows can be reordered or filtered to avoid key collisions.
+
+**`dense`** — `boolean` · default `false`  
+Reduces cell padding for information-dense layouts.
+
+**`striped`** — `boolean` · default `false`  
+Applies alternating row background colors to improve legibility.
+
+**`hoverable`** — `boolean` · default `true`  
+Highlights the row under the cursor.
+
+**`stickyHeader`** — `boolean` · default `false`  
+Keeps the header row visible when the table scrolls.
+
+---
+
+### `TableColumn`
+
+**`key`** — `string` · required  
+Used to look up the value in each row object (`row[column.key]`).
+
+**`header`** — `ReactNode` · required  
+Content rendered in the column header cell.
+
+**`sortable`** — `boolean`  
+Makes the header clickable and wires it into the sort state.
+
+**`sortValue`** — `(row: TableRow) => string | number | Date | null | undefined`  
+Custom value extractor used for sorting. Defaults to `row[column.key]`. Provide this when the display value (e.g. a formatted date string) differs from the sort-worthy value (e.g. a `Date` object).
+
+**`align`** — `'left' | 'center' | 'right'`  
+Horizontal alignment of header and cell content.
+
+**`width`** — `number | string`  
+Fixed width for the column (passed directly to the `<col>` element).
+
+**`className`** — `string`  
+Extra class applied to every cell in the column.
+
+---
+
+### `TableSortState`
+
+**`key`** — `string` · required  
+The `key` of the column currently sorted.
+
+**`direction`** — `'asc' | 'desc'` · required  
+Sort direction.

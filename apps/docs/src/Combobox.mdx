@@ -39,3 +39,64 @@ the current selection). Pass `clearable={false}` to hide it.
 ### Disabled
 
 <Canvas of={ComboboxExamples.Disabled} meta={ComboboxExamples} />
+
+---
+
+## API Reference
+
+### `Combobox`
+
+**`options`** — `ComboboxOption[]` · required  
+The full list of options. Filtering against the typed query is handled internally — pass the complete unfiltered set and let the component narrow it.
+
+**`onValueChange`** — `(value: string) => void`  
+Called with the selected option's `value` string when the user confirms a selection.
+
+**`value`** — `string`  
+The currently selected value in controlled mode. Pair with `onValueChange`.
+
+**`defaultValue`** — `string`  
+The initially selected value in uncontrolled mode.
+
+**`placeholder`** — `string` · default `'Search…'`  
+Input placeholder text shown when the field is empty.
+
+**`emptyMessage`** — `string` · default `'No matches'`  
+Text shown in the listbox when the typed query matches no options.
+
+**`clearable`** — `boolean` · default `true`  
+Shows a clear button inside the field when there is a query or a committed value. The button is kept out of the tab order so it doesn't interrupt keyboard flow; `Escape` still reverts the input to the current selection.
+
+**`clearLabel`** — `string` · default `'Clear'`  
+Accessible label for the clear button.
+
+**`name`** — `string`  
+Forwarded to the hidden `<input>` used for form submission.
+
+**`label`** — `string`  
+Visible label rendered above the input.
+
+**`description`** — `string`  
+Helper text rendered below the label.
+
+**`error`** — `string`  
+Error message rendered below the input. Also sets `aria-invalid` on the input.
+
+**`required`** — `boolean`  
+Marks the field as required and sets `aria-required` on the input.
+
+**`disabled`** — `boolean`  
+Disables the input and prevents opening the listbox.
+
+---
+
+### `ComboboxOption`
+
+**`value`** — `string` · required  
+The value passed to `onValueChange` when this option is selected.
+
+**`label`** — `string` · required  
+The display text shown in the listbox and written into the input when selected.
+
+**`disabled`** — `boolean`  
+Prevents the option from being selected and dims it visually.

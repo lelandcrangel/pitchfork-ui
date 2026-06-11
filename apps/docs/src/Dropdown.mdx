@@ -21,3 +21,49 @@ Dropdown menus let users choose an action from a compact menu anchored to a trig
 ### With disabled item
 
 <Canvas of={DropdownExamples.WithDisabledItem} meta={DropdownExamples} />
+
+---
+
+## API Reference
+
+### `Dropdown`
+
+**`items`** — `DropdownItem[]` · required  
+The actions to render in the menu. See `DropdownItem` below.
+
+**`label`** — `string` · default `'Actions'`  
+Text label for the trigger button.
+
+**`align`** — `'start' | 'end'` · default `'start'`  
+Which edge of the trigger the menu aligns to. `'end'` right-aligns the menu, useful when the trigger is near the right side of the viewport.
+
+**`maxVisibleItems`** — `number`  
+Maximum number of items visible before the menu scrolls. Omit to let it grow to fit all items.
+
+**`disabled`** — `boolean`  
+Disables the trigger and prevents opening the menu.
+
+---
+
+### `DropdownItem`
+
+**`label`** — `string` · required  
+The display text for the action.
+
+**`onSelect`** — `() => void`  
+Called when the item is clicked or activated with Enter. The menu closes automatically.
+
+**`id`** — `string`  
+Optional stable key. If omitted, the item's position index is used.
+
+**`icon`** — `ReactNode`  
+Optional leading icon rendered before the label.
+
+**`shortcut`** — `string`  
+Keyboard shortcut hint displayed at the trailing edge of the item (e.g. `'⌘D'`). Display only — the component does not register the shortcut.
+
+**`disabled`** — `boolean`  
+Prevents the item from being selected and dims it visually.
+
+**`destructive`** — `boolean`  
+Renders the item in the danger/red color to signal a destructive action.

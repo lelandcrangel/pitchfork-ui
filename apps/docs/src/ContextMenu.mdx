@@ -25,3 +25,53 @@ Set `disabled` to let the browser's native context menu through instead.
 ### Default
 
 <Canvas of={ContextMenuExamples.Default} meta={ContextMenuExamples} />
+
+---
+
+## API Reference
+
+### `ContextMenu`
+
+**`items`** — `ContextMenuEntry[]` · required  
+The menu contents. Each entry is either a `ContextMenuItem` (an action) or `{ separator: true }` (a visual divider). See the types below.
+
+**`onOpenChange`** — `(open: boolean) => void`  
+Called when the menu opens or closes.
+
+**`disabled`** — `boolean`  
+Disables the custom menu entirely. Right-clicking falls back to the browser's native context menu.
+
+**`children`** — `ReactNode`  
+The content area that listens for right-click / long-press. Wrap any element or region — the menu appears at the cursor position.
+
+---
+
+### `ContextMenuItem`
+
+**`label`** — `string` · required  
+The display text for the action.
+
+**`onSelect`** — `() => void`  
+Called when the item is clicked or activated with Enter. The menu closes automatically.
+
+**`id`** — `string`  
+Optional stable key. If omitted, the item's position index is used.
+
+**`icon`** — `ReactNode`  
+Optional leading icon rendered before the label.
+
+**`shortcut`** — `string`  
+Keyboard shortcut hint displayed at the trailing edge (e.g. `'⌘⌫'`). Display only — the component does not register the shortcut.
+
+**`disabled`** — `boolean`  
+Prevents the item from being selected and dims it visually.
+
+**`destructive`** — `boolean`  
+Renders the item in the danger/red color to signal a destructive action.
+
+---
+
+### `ContextMenuSeparator`
+
+**`separator`** — `true` · required  
+A plain horizontal divider. Pass `{ separator: true }` to add a visual break between groups of items.

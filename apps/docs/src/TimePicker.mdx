@@ -39,3 +39,45 @@ listbox, and arrow keys move through options within a focused column.
 ### Disabled
 
 <Canvas of={TimePickerExamples.Disabled} meta={TimePickerExamples} />
+
+---
+
+## API Reference
+
+### `TimePicker`
+
+**`onValueChange`** — `(value: string) => void`  
+Called with a canonical 24-hour string `"HH:mm"` (e.g. `"14:30"`) when the user confirms a time. The value format is always 24-hour regardless of the `hourCycle` display setting.
+
+**`value`** — `string`  
+The currently selected time in controlled mode (`"HH:mm"`). Pass `""` for an empty state. Pair with `onValueChange`.
+
+**`defaultValue`** — `string`  
+The initially selected time in uncontrolled mode.
+
+**`hourCycle`** — `12 | 24` · default `24`  
+Display format. `12` shows a 12-hour clock with an AM/PM column; `24` shows a 24-hour clock. The emitted value is always canonical 24-hour either way.
+
+**`minuteStep`** — `number` · default `1`  
+Granularity of the minutes column. `15` gives quarter-hour increments; `30` gives half-hour. Must divide evenly into 60.
+
+**`placeholder`** — `string`  
+Text shown in the trigger when no time is selected.
+
+**`name`** — `string`  
+Forwarded to the hidden `<input>` used for form submission.
+
+**`label`** — `string`  
+Visible label rendered above the trigger.
+
+**`description`** — `string`  
+Helper text rendered below the label.
+
+**`error`** — `string`  
+Error message rendered below the trigger. Also sets `aria-invalid` on the trigger.
+
+**`required`** — `boolean`  
+Marks the field as required and sets `aria-required` on the trigger.
+
+**`disabled`** — `boolean`  
+Disables the trigger and prevents opening the time panel.

@@ -39,3 +39,64 @@ Demonstrates a six-level nested tree path for complex information architectures.
 Adds quick controls to open or close every branch in the tree.
 
 <Canvas of={TreeViewExamples.ExpandCollapseAll} />
+
+---
+
+## API Reference
+
+### `TreeView`
+
+**`nodes`** — `TreeViewNode[]` · required  
+The root-level nodes of the tree. Each node can have nested `children` for any depth. See `TreeViewNode` below.
+
+**`onSelectedValueChange`** — `(value: string) => void`  
+Called with the `value` of the node the user clicks or activates with keyboard.
+
+**`selectedValue`** — `string`  
+The currently selected node in controlled mode. Pair with `onSelectedValueChange`.
+
+**`defaultSelectedValue`** — `string`  
+The initially selected node in uncontrolled mode.
+
+**`onExpandedValuesChange`** — `(values: string[]) => void`  
+Called with the full array of expanded node values whenever a branch is toggled.
+
+**`expandedValues`** — `string[]`  
+The set of expanded node values in controlled mode. Pair with `onExpandedValuesChange`.
+
+**`defaultExpandedValues`** — `string[]`  
+The initially expanded nodes in uncontrolled mode.
+
+---
+
+### `TreeViewHandle`
+
+Attach a `ref` to `TreeView` to access the imperative handle:
+
+**`expandAll()`**  
+Expands every branch in the tree that has children.
+
+**`collapseAll()`**  
+Collapses every branch in the tree.
+
+---
+
+### `TreeViewNode`
+
+**`value`** — `string` · required  
+Unique identifier for the node. Used as the selected and expanded value.
+
+**`label`** — `ReactNode` · required  
+The display content rendered in the tree row.
+
+**`children`** — `TreeViewNode[]`  
+Nested child nodes. Providing this makes the node a branch (expandable/collapsible).
+
+**`icon`** — `ReactNode`  
+Optional leading icon rendered before the label.
+
+**`badge`** — `ReactNode`  
+Optional trailing badge (e.g. a count) rendered at the end of the row.
+
+**`disabled`** — `boolean`  
+Prevents the node from being selected and dims it visually.

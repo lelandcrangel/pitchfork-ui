@@ -25,3 +25,55 @@ Multi select presents a custom dropdown that allows selecting multiple options f
 ### Disabled
 
 <Canvas of={MultiSelectExamples.Disabled} meta={MultiSelectExamples} />
+
+---
+
+## API Reference
+
+### `MultiSelect`
+
+**`options`** — `MultiSelectOption[]` · required  
+The list of choices to display. See `MultiSelectOption` below.
+
+**`onValueChange`** — `(value: string[]) => void`  
+Called with the full array of selected value strings whenever the selection changes.
+
+**`value`** — `string[]`  
+The currently selected values in controlled mode. Pair with `onValueChange`.
+
+**`defaultValue`** — `string[]`  
+The initially selected values in uncontrolled mode.
+
+**`placeholder`** — `string` · default `'Select options'`  
+Text shown in the trigger when nothing is selected.
+
+**`name`** — `string`  
+Forwarded to the hidden `<input>` used for form submission.
+
+**`label`** — `string`  
+Visible label rendered above the trigger.
+
+**`description`** — `string`  
+Helper text rendered below the label.
+
+**`error`** — `string`  
+Error message rendered below the trigger. Also sets `aria-invalid` on the trigger.
+
+**`required`** — `boolean`  
+Marks the field as required and sets `aria-required` on the trigger.
+
+**`disabled`** — `boolean`  
+Disables the trigger and prevents opening the listbox.
+
+---
+
+### `MultiSelectOption`
+
+**`value`** — `string` · required  
+The value included in the `onValueChange` array when this option is selected.
+
+**`label`** — `string` · required  
+The display text shown in the listbox and as a tag in the trigger when selected.
+
+**`disabled`** — `boolean`  
+Prevents the option from being toggled and dims it visually.

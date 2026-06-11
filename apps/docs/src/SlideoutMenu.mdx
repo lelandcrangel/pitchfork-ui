@@ -21,3 +21,39 @@ SlideoutMenu presents tasks in a side panel while preserving context on the unde
 ### Large panel
 
 <Canvas of={SlideoutExamples.LargePanel} meta={SlideoutExamples} />
+
+---
+
+## API Reference
+
+### `SlideoutMenu`
+
+**`open`** — `boolean` · required  
+Controls whether the panel is visible.
+
+**`onOpenChange`** — `(open: boolean) => void`  
+Called when the panel should close — from the close button, overlay click, or Escape key.
+
+**`title`** — `ReactNode`  
+Heading text rendered in the panel header. Also serves as the dialog's accessible name. Use `aria-label` instead when no visible title is present.
+
+**`description`** — `ReactNode`  
+Secondary text rendered below the title in the header.
+
+**`footer`** — `ReactNode`  
+Content pinned at the bottom of the panel, typically action buttons.
+
+**`placement`** — `'left' | 'right'` · default `'right'`  
+Which edge of the viewport the panel slides in from.
+
+**`size`** — `'sm' | 'md' | 'lg'` · default `'md'`  
+Controls the panel's width.
+
+**`closeOnOverlayClick`** — `boolean` · default `true`  
+Whether clicking the dimmed overlay closes the panel.
+
+**`showCloseButton`** — `boolean` · default `true`  
+Whether the × close button is shown in the header.
+
+**`aria-label`** — `string`  
+Accessible name for the dialog when `title` is not provided.
