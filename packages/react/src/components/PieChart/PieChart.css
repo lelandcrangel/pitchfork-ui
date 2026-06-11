@@ -21,16 +21,15 @@
   position: relative;
 }
 
-/* The conic-gradient lives on a masked layer so it can sweep ("build out")
-   clockwise on mount without clipping the center label. */
+/* The conic-gradient lives on a real child div (not ::before) so axe can
+   compute text contrast on the center label without encountering a pseudo-element. */
 @property --pf-pie-sweep {
   syntax: '<percentage>';
   inherits: false;
   initial-value: 0%;
 }
 
-.pf-pie-chart__visual::before {
-  content: '';
+.pf-pie-chart__gradient {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -48,7 +47,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pf-pie-chart__visual::before {
+  .pf-pie-chart__gradient {
     animation: none;
   }
 }

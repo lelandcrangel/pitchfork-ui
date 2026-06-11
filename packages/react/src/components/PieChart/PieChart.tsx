@@ -96,16 +96,16 @@ export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(function PieCh
     <div ref={ref} className={cx('pf-pie-chart', className)} {...props}>
       <div
         className={cx('pf-pie-chart__visual', !hasData && 'pf-pie-chart__visual--empty')}
-        style={
-          {
-            width: chartSize,
-            height: chartSize,
-            '--pf-pie-gradient': conicGradient,
-          } as React.CSSProperties
-        }
+        style={{ width: chartSize, height: chartSize } as React.CSSProperties}
         role="img"
         aria-label="Pie chart"
       >
+        {/* Gradient layer replaces ::before so axe can compute text contrast on the center label */}
+        <div
+          className="pf-pie-chart__gradient"
+          style={{ '--pf-pie-gradient': conicGradient } as React.CSSProperties}
+          aria-hidden
+        />
         <div className="pf-pie-chart__center" style={{ width: centerSize, height: centerSize }}>
           {hasData ? centerLabel : emptyLabel}
         </div>
