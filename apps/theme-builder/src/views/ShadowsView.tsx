@@ -7,7 +7,31 @@ import {
   Slider,
   UtilityButton,
 } from '@pitchfork-ui/react';
+import { useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
+
+function StableColorInput({
+  initialHex,
+  onChange,
+  ariaLabel,
+  className,
+}: {
+  initialHex: string;
+  onChange: (hex: string) => void;
+  ariaLabel: string;
+  className: string;
+}) {
+  const [stableHex] = useState(initialHex);
+  return (
+    <input
+      type="color"
+      className={className}
+      defaultValue={stableHex}
+      onChange={(e) => onChange(e.target.value)}
+      aria-label={ariaLabel}
+    />
+  );
+}
 import { hexToRgb, parseShadow, rgbToHex, serializeShadow } from '../utils/shadow';
 import '../styles/controls.css';
 import './ShadowsView.css';
@@ -90,6 +114,10 @@ function ShadowControl({ label, hint, cssVar, mode, theme }: ShadowControlProps)
     theme.set(cssVar, serializeShadow({ ...parts, ...patch }));
   };
 
+  const handleReset = () => {
+    theme.resetVar(cssVar);
+  };
+
   return (
     <div className={`shadow-control ${modified ? 'shadow-control--modified' : ''}`}>
       <div className="shadow-control__header">
@@ -101,11 +129,7 @@ function ShadowControl({ label, hint, cssVar, mode, theme }: ShadowControlProps)
           <span className="shadow-control__hint">{hint}</span>
         </div>
         {modified && (
-          <UtilityButton
-            size="sm"
-            onClick={() => theme.resetVar(cssVar)}
-            aria-label={`Reset ${label}`}
-          >
+          <UtilityButton size="sm" onClick={handleReset} aria-label={`Reset ${label}`}>
             ↺
           </UtilityButton>
         )}
@@ -161,15 +185,14 @@ function ShadowControl({ label, hint, cssVar, mode, theme }: ShadowControlProps)
                 className="shadow-control__color-swatch"
                 style={{ background: rgbToHex(parts.r, parts.g, parts.b) }}
               />
-              <input
-                type="color"
-                className="shadow-control__color-picker"
-                value={rgbToHex(parts.r, parts.g, parts.b)}
-                aria-label={`${label} color`}
-                onChange={(e) => {
-                  const { r, g, b } = hexToRgb(e.target.value);
+              <StableColorInput
+                initialHex={rgbToHex(parts.r, parts.g, parts.b)}
+                onChange={(hex) => {
+                  const { r, g, b } = hexToRgb(hex);
                   update({ r, g, b });
                 }}
+                ariaLabel={`${label} color`}
+                className="shadow-control__color-picker"
               />
             </div>
             <span className="shadow-control__color-hex">

@@ -1,4 +1,37 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
+// Chrome fires `input` events continuously while dragging inside the color picker.
+// Each fires React onChange → setState → re-render → React updates `input.defaultValue`
+// → Chrome detects the DOM value attribute changed → closes the picker.
+//
+// Fix: capture the initial hex in useState at mount so defaultValue never changes.
+// The component re-mounts (via `key` on the caller) only when an external batch
+// operation replaces the whole scale, at which point the picker is already closed.
+function StableColorInput({
+  initialHex,
+  onChange,
+  onClick,
+  ariaLabel,
+  className,
+}: {
+  initialHex: string;
+  onChange: (hex: string) => void;
+  onClick?: React.MouseEventHandler<HTMLInputElement>;
+  ariaLabel: string;
+  className: string;
+}) {
+  const [stableHex] = useState(initialHex);
+  return (
+    <input
+      type="color"
+      className={className}
+      defaultValue={stableHex}
+      onChange={(e) => onChange(e.target.value)}
+      onClick={onClick}
+      aria-label={ariaLabel}
+    />
+  );
+}
 import { Button, UtilityButton } from '@pitchfork-ui/react';
 import { Canvas } from '../components/Canvas';
 import { formatHex, oklch } from 'culori';
@@ -99,6 +132,9 @@ function applyScaleToTheme(prefix: string, seedHex: string, theme: ThemeState) {
 
 export function ColorsView({ theme }: ColorsViewProps) {
   const scaleRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  // Incremented whenever a batch operation changes all scales from the parent level,
+  // so ScaleEditor instances re-mount their swatches with the correct defaultValues.
+  const [masterRevision, setMasterRevision] = useState(0);
 
   function scrollToScale(name: ScaleName) {
     scaleRefs.current[name]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -112,6 +148,7 @@ export function ColorsView({ theme }: ColorsViewProps) {
         theme.set(`${prefix}-${stop}`, color);
       });
     });
+    setMasterRevision((r) => r + 1);
   }
 
   const brandModified = SCALE_STOPS.some((s) => theme.isModified(`--color-brand-${s}`));
@@ -154,6 +191,7 @@ export function ColorsView({ theme }: ColorsViewProps) {
               showHarmony={scale.name === 'Brand'}
               showTintFromBrand={scale.name === 'Gray'}
               brandModified={brandModified}
+              masterRevision={masterRevision}
             />
           ))}
 
@@ -200,13 +238,12 @@ function PaletteStrip({ theme, onScaleClick }: PaletteStripProps) {
             aria-label={`${scale.name} ${hex500}. Click to jump to editor.`}
             onKeyDown={(e) => e.key === 'Enter' && onScaleClick(scale.name)}
           >
-            <input
-              type="color"
-              className="palette-block__picker"
-              value={safe500}
-              onChange={(e) => applyScaleToTheme(scale.prefix, e.target.value, theme)}
-              aria-label={`${scale.name} seed color`}
+            <StableColorInput
+              initialHex={safe500}
+              onChange={(hex) => applyScaleToTheme(scale.prefix, hex, theme)}
               onClick={(e) => e.stopPropagation()}
+              ariaLabel={`${scale.name} seed color`}
+              className="palette-block__picker"
             />
             <div
               className={`wcag-badge wcag-badge--${level700} palette-block__badge`}
@@ -242,6 +279,7 @@ interface ScaleEditorProps {
   showHarmony?: boolean;
   showTintFromBrand?: boolean;
   brandModified?: boolean;
+  masterRevision: number;
   ref: React.Ref<HTMLDivElement>;
 }
 
@@ -253,19 +291,45 @@ const ScaleEditor = function ScaleEditor({
   showHarmony,
   showTintFromBrand,
   brandModified,
+  masterRevision,
   ref,
 }: ScaleEditorProps) {
   const varName = (stop: string) => `${prefix}-${stop}`;
   const seed500 = theme.getValue(varName('500'));
-  const safeSeed = /^#[0-9a-fA-F]{6}$/.test(seed500) ? seed500 : defaultSeed;
+  const [seedHex, setSeedHex] = useState(/^#[0-9a-fA-F]{6}$/.test(seed500) ? seed500 : defaultSeed);
+  // Only increments on explicit reset/tint — NOT on handleSeed — so the seed
+  // picker's key never changes while the user is actively picking a color.
+  const [resetCount, setResetCount] = useState(0);
+  const seedPickerKey = `seed-${masterRevision}-${resetCount}`;
+
   const anyModified = SCALE_STOPS.some((s) => theme.isModified(varName(s)));
 
+  // Detect external resets (resetAll) by watching anyModified go true→false.
+  // didExplicitReset guards against double-bumping when resetScale handles it directly.
+  const prevAnyModified = useRef(false);
+  const didExplicitReset = useRef(false);
+  useEffect(() => {
+    if (!anyModified && prevAnyModified.current) {
+      if (!didExplicitReset.current) {
+        setSeedHex(defaultSeed);
+        setResetCount((c) => c + 1);
+      }
+      didExplicitReset.current = false;
+    }
+    prevAnyModified.current = anyModified;
+  }, [anyModified, defaultSeed]);
+
   function handleSeed(hex: string) {
+    setSeedHex(hex);
     applyScaleToTheme(prefix, hex, theme);
+    // Intentionally do NOT change seedPickerKey here — the picker stays open.
   }
 
   function resetScale() {
     SCALE_STOPS.forEach((s) => theme.resetVar(varName(s)));
+    setSeedHex(defaultSeed);
+    setResetCount((c) => c + 1);
+    didExplicitReset.current = true;
   }
 
   function tintGrayFromBrand() {
@@ -275,7 +339,9 @@ const ScaleEditor = function ScaleEditor({
     const grayChroma = Math.min((base.c ?? 0.15) * 0.12, 0.022);
     const graySeed =
       formatHex({ mode: 'oklch', l: 0.59, c: grayChroma, h: base.h ?? 0 }) ?? defaultSeed;
+    setSeedHex(graySeed);
     applyScaleToTheme(prefix, graySeed, theme);
+    setResetCount((c) => c + 1);
   }
 
   return (
@@ -298,13 +364,13 @@ const ScaleEditor = function ScaleEditor({
           className="scale-editor__seed"
           title="Seed color — pick any hue to regenerate the scale"
         >
-          <div className="scale-editor__seed-swatch" style={{ background: safeSeed }} />
-          <input
-            type="color"
+          <div className="scale-editor__seed-swatch" style={{ background: seedHex }} />
+          <StableColorInput
+            key={seedPickerKey}
+            initialHex={seedHex}
+            onChange={handleSeed}
+            ariaLabel={`${name} seed color`}
             className="scale-editor__seed-picker"
-            value={safeSeed}
-            onChange={(e) => handleSeed(e.target.value)}
-            aria-label={`${name} seed color`}
           />
         </div>
 
@@ -320,7 +386,7 @@ const ScaleEditor = function ScaleEditor({
         )}
       </div>
 
-      {showHarmony && <HarmonyChips seedHex={safeSeed} onApply={handleSeed} />}
+      {showHarmony && <HarmonyChips seedHex={seedHex} onApply={handleSeed} />}
 
       <div className="scale-editor__swatches">
         {SCALE_STOPS.map((stop) => {
@@ -341,12 +407,12 @@ const ScaleEditor = function ScaleEditor({
                 style={{ background: value }}
                 title={`${stop}: ${value.toUpperCase()} | White ${whiteContrast.toFixed(1)}:1 · Dark ${darkContrast.toFixed(1)}:1`}
               >
-                <input
-                  type="color"
+                <StableColorInput
+                  key={resetCount}
+                  initialHex={safeHex}
+                  onChange={(hex) => theme.set(vn, hex)}
+                  ariaLabel={`${name} ${stop}`}
                   className="swatch__picker"
-                  value={safeHex}
-                  onChange={(e) => theme.set(vn, e.target.value)}
-                  aria-label={`${name} ${stop}`}
                 />
                 {showWhiteAa && (
                   <span className="swatch__aa swatch__aa--white" aria-hidden="true">
@@ -481,12 +547,12 @@ function BaseColorsSection({ theme }: { theme: ThemeState }) {
                 style={{ background: value }}
                 title={`${v}: ${value}`}
               >
-                <input
-                  type="color"
+                <StableColorInput
+                  key={modified ? 'modified' : 'default'}
+                  initialHex={safeHex}
+                  onChange={(hex) => theme.set(v, hex)}
+                  ariaLabel={label}
                   className="swatch__picker"
-                  value={safeHex}
-                  onChange={(e) => theme.set(v, e.target.value)}
-                  aria-label={label}
                 />
               </div>
               <span className="base-color__label">{label}</span>

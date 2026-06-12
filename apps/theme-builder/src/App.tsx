@@ -4,7 +4,6 @@ import { Button, Switch, Tabs } from '@pitchfork-ui/react';
 import { ExportModal } from './components/ExportModal';
 import { useTheme } from './hooks/useTheme';
 import { ColorsView } from './views/ColorsView';
-import { ComponentsView } from './views/ComponentsView';
 import { MotionView } from './views/MotionView';
 import { ShadowsView } from './views/ShadowsView';
 import { SizeView } from './views/SizeView';
@@ -72,11 +71,6 @@ export function App() {
             value: 'typography',
             label: 'Typography',
             content: <TypographyView theme={theme} />,
-          },
-          {
-            value: 'components',
-            label: 'Components',
-            content: <ComponentsView />,
           },
         ]}
       />
