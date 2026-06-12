@@ -1,0 +1,67 @@
+.editor-section {
+  margin-bottom: 28px;
+}
+
+.editor-section__label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-semantic-text-muted);
+  margin-bottom: 12px;
+}
+
+.control {
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+}
+
+.control--modified {
+  border-color: var(--color-semantic-border-focus);
+  background: color-mix(in srgb, var(--color-semantic-action-primary) 6%, transparent);
+}
+
+.control__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.control__label {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-semantic-text-default);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.control__value {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-semantic-text-muted);
+  flex-shrink: 0;
+  min-width: 40px;
+  text-align: right;
+}
+
+.control__text-wrap {
+  margin-top: 4px;
+}
+
+.control__text-wrap .pf-input {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 12px;
+}
+
+.shadow-preview {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-border-default);
+  flex-shrink: 0;
+}

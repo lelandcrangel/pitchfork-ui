@@ -1,0 +1,206 @@
+.size-editor {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.size-editor__spacing-note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--color-semantic-text-muted);
+  margin: -4px 0 6px;
+}
+
+/* ── Shared control internals ──────────────────────────── */
+
+.size-control__preview-wrap {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.size-control__radius-preview {
+  width: 26px;
+  height: 26px;
+  background: var(--color-semantic-action-primary);
+  opacity: 0.18;
+  border: 2px solid var(--color-semantic-action-primary);
+}
+
+.size-control__space-preview {
+  width: 36px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.size-control__space-bar {
+  height: 10px;
+  min-width: 2px;
+  background: var(--color-semantic-action-primary);
+  border-radius: 2px;
+  opacity: 0.35;
+  transition: width 80ms ease;
+}
+
+.size-control__meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.size-control__hint {
+  font-size: 11px;
+  color: var(--color-semantic-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Size Canvas ───────────────────────────────────────── */
+
+.size-canvas {
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.size-canvas__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 640px;
+}
+
+.size-canvas__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.size-canvas__section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.size-canvas__section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-semantic-text-default);
+}
+
+.size-canvas__token-group {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.size-canvas__token-badge {
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+  color: var(--color-semantic-text-muted);
+  background: var(--color-semantic-background-subtle);
+  border: 1px solid var(--color-semantic-border-muted);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.size-canvas__card {
+  background: var(--color-semantic-background-default);
+  border: 1px solid var(--color-semantic-border-default);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.size-canvas__card--col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.size-canvas__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.size-canvas__row--wrap {
+  flex-wrap: wrap;
+}
+
+/* Shape scale tiles */
+
+.size-canvas__shape-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.size-canvas__shape-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.size-canvas__shape-tile {
+  width: 56px;
+  height: 56px;
+  background: var(--color-semantic-action-primary);
+  opacity: 0.15;
+  border: 2px solid var(--color-semantic-action-primary);
+}
+
+.size-canvas__shape-label {
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+  color: var(--color-semantic-text-muted);
+}
+
+/* Form controls */
+
+.size-canvas__checkbox-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Card example */
+
+.size-canvas__card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.size-canvas__card-text {
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-semantic-text-muted);
+}
+
+.size-canvas__card-text code {
+  font-size: 11px;
+  font-family: ui-monospace, monospace;
+  background: var(--color-semantic-background-subtle);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.size-canvas__card-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}

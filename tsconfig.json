@@ -3,6 +3,7 @@
   "references": [
     { "path": "./packages/tokens" },
     { "path": "./packages/react" },
-    { "path": "./apps/docs" }
+    { "path": "./apps/docs" },
+    { "path": "./apps/theme-builder" }
   ]
 }

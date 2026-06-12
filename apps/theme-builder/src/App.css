@@ -1,0 +1,104 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-family-sans, Geist, Inter, system-ui, sans-serif);
+  color: var(--color-semantic-text-default);
+  background: var(--color-semantic-background-default);
+}
+
+/* App shell */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 52px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--color-semantic-border-default);
+  background: var(--color-semantic-background-default);
+  gap: 16px;
+}
+
+.toolbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toolbar__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-semantic-text-default);
+}
+
+.toolbar__count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-semantic-action-primary);
+  background: color-mix(in srgb, var(--color-semantic-action-primary) 10%, transparent);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* App-level Tabs — fills remaining height, zero gap, panel fills */
+.app .app-tabs {
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+  grid-template-rows: auto 1fr;
+}
+
+.app .app-tabs .pf-tabs__list {
+  padding: 0 20px;
+  border-bottom: 1px solid var(--color-semantic-border-default);
+}
+
+.app .app-tabs .pf-tabs__panel {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Shared split layout for all views */
+.view-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.view-layout__editor {
+  width: 360px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--color-semantic-border-default);
+  overflow-y: auto;
+  background: var(--color-semantic-background-default);
+}
+
+.view-layout__canvas {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--color-semantic-background-subtle);
+}

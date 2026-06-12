@@ -1,0 +1,75 @@
+.canvas {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--color-semantic-background-subtle, #f8fafc);
+  min-height: 100%;
+}
+
+.canvas__inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 32px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.canvas__section {
+  background: var(--color-semantic-background-default, #fff);
+  border: 1px solid var(--color-semantic-border-default, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+}
+
+.canvas__section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-semantic-text-muted, #64748b);
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid var(--color-semantic-border-muted, #f1f5f9);
+  margin: 0;
+}
+
+.canvas__section-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.canvas__row {
+  display: flex;
+  gap: 12px;
+}
+
+.canvas__card-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.canvas__card-content {
+  padding: 4px;
+}
+
+.canvas__card-title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  color: var(--color-semantic-text-muted, #64748b);
+}
+
+.canvas__card-value {
+  margin: 0 0 2px;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--color-semantic-text-default, #0f172a);
+  line-height: 1.2;
+}
+
+.canvas__card-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-semantic-status-success-foreground, #027a48);
+}

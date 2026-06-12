@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "dev": "npm run storybook -w @pitchfork-ui/docs",
+    "dev:theme-builder": "npm run dev -w @pitchfork-ui/theme-builder",
     "dev:demo": "npm run dev -w @pitchfork-ui/demo",
     "storybook": "npm run storybook -w @pitchfork-ui/docs",
     "build": "npm run build -w @pitchfork-ui/tokens && npm run build -w @pitchfork-ui/react && npm run build -w @pitchfork-ui/docs",

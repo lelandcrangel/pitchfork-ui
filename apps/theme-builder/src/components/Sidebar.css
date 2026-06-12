@@ -1,0 +1,133 @@
+.sidebar {
+  width: 288px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--color-semantic-border-default);
+  background: var(--color-semantic-background-default);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sidebar__scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0 24px;
+}
+
+.sidebar__group {
+  padding: 16px 16px 8px;
+  border-bottom: 1px solid var(--color-semantic-border-muted);
+}
+
+.sidebar__group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-semantic-text-muted);
+  margin-bottom: 10px;
+}
+
+.sidebar__advanced-row {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Control row layout */
+.control {
+  margin-bottom: 8px;
+  padding: 6px 6px 6px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+}
+
+.control--modified {
+  border-color: var(--color-semantic-border-focus);
+  background: color-mix(in srgb, var(--color-semantic-action-primary) 6%, transparent);
+}
+
+.control__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+}
+
+.control__label {
+  flex: 1;
+  font-size: 13px;
+  color: var(--color-semantic-text-default);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.control__value {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-semantic-text-muted);
+  flex-shrink: 0;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* Color control */
+.control__color-inputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.control__swatch-wrap {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.control__swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+.control__color-picker {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  padding: 0;
+  border: none;
+}
+
+/* Compact hex input */
+.control__hex-wrap {
+  width: 84px;
+  flex-shrink: 0;
+}
+
+.control__hex-wrap .pf-input {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 12px;
+}
+
+/* Radius control */
+.control--radius .control__row {
+  margin-bottom: 6px;
+}
+
+/* Full-width text input (font family) */
+.control__text-wrap {
+  margin-top: 4px;
+}
+
+.control__text-wrap .pf-input {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 12px;
+}
