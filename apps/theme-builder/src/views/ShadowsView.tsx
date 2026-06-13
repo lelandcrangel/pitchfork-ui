@@ -4,6 +4,7 @@ import {
   CardContent,
   CardHeader,
   Dropdown,
+  Input,
   Slider,
   UtilityButton,
 } from '@pitchfork-ui/react';
@@ -314,12 +315,25 @@ function ShadowCanvas() {
           </CardHeader>
           <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <p className="shadow-canvas__card-text">
-              <code>--shadow-focus</code> defines the focus halo spread and opacity. Tab into these
-              controls to see the token live.
+              <code>--shadow-focus</code> is the keyboard focus indicator applied to all interactive
+              elements. Adjust spread, opacity, and color in the sidebar to see changes here in real
+              time.
             </p>
             <div className="shadow-canvas__focus-row">
-              <Button>Primary button</Button>
-              <Button variant="secondary">Secondary</Button>
+              <Button className="shadow-canvas__focus-demo">Primary</Button>
+              <Button variant="secondary" className="shadow-canvas__focus-demo">
+                Secondary
+              </Button>
+              <Button variant="ghost" className="shadow-canvas__focus-demo">
+                Ghost
+              </Button>
+            </div>
+            <div className="shadow-canvas__focus-row">
+              <Input
+                label="Email address"
+                placeholder="you@example.com"
+                className="shadow-canvas__focus-demo-input"
+              />
             </div>
           </CardContent>
         </Card>

@@ -41,14 +41,29 @@ export function MotionView({ theme }: MotionViewProps) {
           </div>
           <div className="editor-section">
             <div className="editor-section__label">Easing</div>
-            <EasingControl label="Standard" cssVar="--easing-standard" theme={theme} />
-            <EasingControl label="Decelerate" cssVar="--easing-decelerate" theme={theme} />
-            <EasingControl label="Accelerate" cssVar="--easing-accelerate" theme={theme} />
+            <EasingControl
+              label="Standard"
+              cssVar="--easing-standard"
+              theme={theme}
+              description="For elements transitioning between states on screen — switches, tabs, color changes. Accelerates out of the initial state and decelerates into the final one."
+            />
+            <EasingControl
+              label="Decelerate"
+              cssVar="--easing-decelerate"
+              theme={theme}
+              description="For elements entering the viewport — dropdowns, tooltips, and modals appearing. The element decelerates as it arrives, giving a sense of landing."
+            />
+            <EasingControl
+              label="Accelerate"
+              cssVar="--easing-accelerate"
+              theme={theme}
+              description="For elements leaving the viewport — menus closing, modals dismissing. The element accelerates as it departs, giving a sense of lifting away."
+            />
           </div>
-          <div className="motion-preview-section">
-            <div className="editor-section__label">Preview</div>
-            <MotionPreview theme={theme} />
-          </div>
+        </div>
+        <div className="motion-preview-section">
+          <div className="editor-section__label">Preview</div>
+          <MotionPreview theme={theme} />
         </div>
       </div>
       <div className="view-layout__canvas">
@@ -63,6 +78,7 @@ interface ControlProps {
   cssVar: string;
   theme: ThemeState;
   max?: number;
+  description?: string;
 }
 
 function DurationControl({ label, cssVar, theme, max = 600 }: ControlProps) {
@@ -97,7 +113,63 @@ function DurationControl({ label, cssVar, theme, max = 600 }: ControlProps) {
   );
 }
 
-function EasingControl({ label, cssVar, theme }: ControlProps) {
+const EASING_PRESETS = [
+  { label: 'In-Out', value: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+  { label: 'Ease Out', value: 'cubic-bezier(0, 0, 0.2, 1)' },
+  { label: 'Ease In', value: 'cubic-bezier(0.4, 0, 1, 1)' },
+  { label: 'Spring', value: 'cubic-bezier(0.34, 1.56, 0.64, 1)' },
+  { label: 'Linear', value: 'linear' },
+];
+
+function EasingCurve({ value }: { value: string }) {
+  const NAMED: Record<string, [number, number, number, number]> = {
+    linear: [0, 0, 1, 1],
+    ease: [0.25, 0.1, 0.25, 1],
+    'ease-in': [0.42, 0, 1, 1],
+    'ease-out': [0, 0, 0.58, 1],
+    'ease-in-out': [0.42, 0, 0.58, 1],
+  };
+  let x1 = 0.4,
+    y1 = 0,
+    x2 = 0.2,
+    y2 = 1;
+  if (NAMED[value]) {
+    [x1, y1, x2, y2] = NAMED[value];
+  } else {
+    const m = value.match(
+      /cubic-bezier\(\s*([\d.]+)\s*,\s*([\d.-]+)\s*,\s*([\d.]+)\s*,\s*([\d.-]+)\s*\)/,
+    );
+    if (m) {
+      x1 = parseFloat(m[1]);
+      y1 = parseFloat(m[2]);
+      x2 = parseFloat(m[3]);
+      y2 = parseFloat(m[4]);
+    }
+  }
+  const W = 44,
+    H = 32,
+    pad = 5;
+  const w = W - pad * 2,
+    h = H - pad * 2;
+  const path = `M ${pad} ${H - pad} C ${pad + x1 * w} ${H - pad - y1 * h} ${pad + x2 * w} ${H - pad - y2 * h} ${W - pad} ${pad}`;
+  return (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="easing-curve" aria-hidden>
+      <line
+        x1={pad}
+        y1={H - pad}
+        x2={W - pad}
+        y2={pad}
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeDasharray="2 2"
+        opacity="0.3"
+      />
+      <path d={path} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function EasingControl({ label, cssVar, theme, description }: ControlProps) {
   const value = theme.getValue(cssVar);
   const modified = theme.isModified(cssVar);
 
@@ -115,14 +187,31 @@ function EasingControl({ label, cssVar, theme }: ControlProps) {
           </UtilityButton>
         )}
       </div>
-      <div className="control__text-wrap">
-        <Input
-          value={value}
-          aria-label={label}
-          onChange={(e) => theme.set(cssVar, e.target.value)}
-          spellCheck={false}
-        />
+      <div className="easing-chips">
+        {EASING_PRESETS.map((p) => (
+          <button
+            key={p.value}
+            type="button"
+            className={`easing-chip ${value === p.value ? 'easing-chip--active' : ''}`}
+            onClick={() => theme.set(cssVar, p.value)}
+            title={p.value}
+          >
+            {p.label}
+          </button>
+        ))}
       </div>
+      <div className="easing-value-row">
+        <EasingCurve value={value} />
+        <div className="easing-input-wrap">
+          <Input
+            value={value}
+            aria-label={`${label} easing value`}
+            onChange={(e) => theme.set(cssVar, e.target.value)}
+            spellCheck={false}
+          />
+        </div>
+      </div>
+      {description && <p className="easing-description">{description}</p>}
     </div>
   );
 }

@@ -116,11 +116,11 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
               <Badge variant="neutral">Neutral</Badge>
             </Row>
             <Row wrap>
-              <Tag color="neutral">Neutral</Tag>
-              <Tag color="brand">Brand</Tag>
-              <Tag color="success">Success</Tag>
-              <Tag color="warning">Warning</Tag>
-              <Tag color="danger">Danger</Tag>
+              <Tag variant="brand">Brand</Tag>
+              <Tag variant="success">Success</Tag>
+              <Tag variant="warning">Warning</Tag>
+              <Tag variant="danger">Danger</Tag>
+              <Tag variant="neutral">Neutral</Tag>
             </Row>
           </Section>
         )}

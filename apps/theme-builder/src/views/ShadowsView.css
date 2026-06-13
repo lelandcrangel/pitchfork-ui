@@ -226,4 +226,17 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Force the focus ring to always render so changes are visible without tabbing */
+.shadow-canvas__focus-demo,
+.shadow-canvas__focus-demo:focus-visible {
+  box-shadow: var(--shadow-focus);
+  outline: none;
+}
+
+.shadow-canvas__focus-demo-input .pf-input {
+  box-shadow: var(--shadow-focus);
+  outline: none;
 }

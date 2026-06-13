@@ -373,6 +373,26 @@
   color: var(--color-semantic-text-default);
 }
 
+/* ── Scale editor hint ─────────────────────────────────── */
+
+.scale-editor__hint {
+  font-size: 11px;
+  color: var(--color-semantic-text-muted);
+  line-height: 1.55;
+  margin: 6px 0 0;
+}
+
+.scale-editor__hint strong {
+  font-weight: 600;
+  color: var(--color-semantic-text-default);
+}
+
+.scale-editor__hint em {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--color-semantic-text-default);
+}
+
 /* ── Contrast Table ────────────────────────────────────── */
 
 .contrast-preview {

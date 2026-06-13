@@ -76,7 +76,78 @@
 }
 
 .motion-preview-section {
-  margin-top: 8px;
+  position: sticky;
+  bottom: 0;
+  background: var(--color-semantic-background-default);
+  border-top: 1px solid var(--color-semantic-border-muted);
+  padding: 12px 20px 16px;
+}
+
+/* ── Easing chips ───────────────────────────────────────── */
+
+.easing-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.easing-chip {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-semantic-border-muted);
+  background: var(--color-semantic-background-subtle);
+  color: var(--color-semantic-text-muted);
+  cursor: pointer;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition:
+    background 80ms,
+    color 80ms,
+    border-color 80ms;
+}
+
+.easing-chip:hover {
+  background: var(--color-semantic-background-default);
+  border-color: var(--color-semantic-border-default);
+  color: var(--color-semantic-text-default);
+}
+
+.easing-chip--active {
+  background: var(--color-semantic-action-primary);
+  border-color: var(--color-semantic-action-primary);
+  color: var(--color-semantic-action-primary-foreground, #fff);
+}
+
+.easing-value-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.easing-curve {
+  flex-shrink: 0;
+  color: var(--color-semantic-text-muted);
+}
+
+.easing-input-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.easing-input-wrap .pf-input {
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 11px;
+}
+
+.easing-description {
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--color-semantic-text-muted);
+  margin: 6px 0 0;
 }
 
 .motion-preview {

@@ -181,8 +181,9 @@ export function ColorsView({ theme }: ColorsViewProps) {
             </div>
             <PaletteStrip theme={theme} onScaleClick={scrollToScale} />
             <p className="palette-section__hint">
-              Click a swatch to jump to that scale. Badges show WCAG contrast of white text on the
-              700 stop.
+              Each block previews the <strong>500 stop</strong> of that scale. Click to scroll to
+              its editor. The AA / AAA badges test white text on the <strong>700 stop</strong> — the
+              shade typically used for primary actions and alert foregrounds.
             </p>
           </div>
 
@@ -441,6 +442,20 @@ const ScaleEditor = function ScaleEditor({
           );
         })}
       </div>
+      <p className="scale-editor__hint">
+        The <strong>color circle</strong> in the header is the seed — pick any hue to auto-generate
+        all 10 stops using perceptually even steps. Click any <strong>stop swatch</strong> to
+        fine-tune that shade individually. The small <em>Aa</em> badge marks stops that pass AA
+        contrast with white or dark text. Modified stops show a blue outline.
+        {showTintFromBrand && (
+          <>
+            {' '}
+            <strong>Tint from brand ↗</strong> shifts this gray scale to pick up a subtle warm or
+            cool cast from your current brand hue — the button activates once the brand scale has
+            been modified.
+          </>
+        )}
+      </p>
     </div>
   );
 };
@@ -454,26 +469,33 @@ function HarmonyChips({ seedHex, onApply }: { seedHex: string; onApply: (hex: st
   const baseHue = base?.h ?? 0;
 
   return (
-    <div className="harmony-chips">
-      <span className="harmony-chips__label">Harmonics</span>
-      <div className="harmony-chips__row">
-        {hues.map((hex, i) => {
-          const chipBase = oklch(hex as string);
-          const chipHue = chipBase?.h ?? 0;
-          const isActive = Math.abs(chipHue - baseHue) < 5;
-          return (
-            <button
-              key={i}
-              className={`harmony-chip ${isActive ? 'harmony-chip--active' : ''}`}
-              style={{ background: hex }}
-              onClick={() => onApply(hex)}
-              title={labels[i]}
-              aria-label={`Apply ${labels[i]} hue`}
-            />
-          );
-        })}
+    <>
+      <div className="harmony-chips">
+        <span className="harmony-chips__label">Harmonics</span>
+        <div className="harmony-chips__row">
+          {hues.map((hex, i) => {
+            const chipBase = oklch(hex as string);
+            const chipHue = chipBase?.h ?? 0;
+            const isActive = Math.abs(chipHue - baseHue) < 5;
+            return (
+              <button
+                key={i}
+                className={`harmony-chip ${isActive ? 'harmony-chip--active' : ''}`}
+                style={{ background: hex }}
+                onClick={() => onApply(hex)}
+                title={labels[i]}
+                aria-label={`Apply ${labels[i]} hue`}
+              />
+            );
+          })}
+        </div>
       </div>
-    </div>
+      <p className="scale-editor__hint">
+        Preset hue relationships relative to your brand color — analogous (±30°),
+        split-complementary (±60°), and triadic (±90°). Click a chip to shift the entire brand scale
+        to that hue.
+      </p>
+    </>
   );
 }
 
@@ -540,6 +562,11 @@ function BaseColorsSection({ theme }: { theme: ThemeState }) {
       <div className="scale-editor__header">
         <span className="scale-editor__name">Base</span>
       </div>
+      <p className="scale-editor__hint">
+        Base White and Base Black are not part of any tonal scale — they are fixed reference points
+        that anchor semantic tokens for page backgrounds, body text, and borders. They also serve as
+        the reference values in the WCAG contrast table.
+      </p>
       <div className="base-colors">
         {colors.map(({ label, var: v, defaultHex }) => {
           const value = theme.getValue(v);
