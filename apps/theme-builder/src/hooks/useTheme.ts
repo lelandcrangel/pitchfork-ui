@@ -21,10 +21,20 @@ function loadFromUrl(): Overrides {
   return encoded ? decodeOverrides(encoded) : {};
 }
 
+// Track every var we've ever written so we can clear it on the next apply,
+// even if it's not in DEFAULTS (e.g. --pf-* component vars).
+const appliedVars = new Set<string>();
+
 function applyToRoot(overrides: Overrides) {
   const root = document.documentElement;
-  Object.keys(DEFAULTS).forEach((v) => root.style.removeProperty(v));
-  Object.entries(overrides).forEach(([v, val]) => root.style.setProperty(v, val));
+  // Clear everything previously applied (covers --color-*, --pf-*, etc.)
+  appliedVars.forEach((v) => root.style.removeProperty(v));
+  appliedVars.clear();
+  // Apply the current overrides and remember what we set
+  Object.entries(overrides).forEach(([v, val]) => {
+    root.style.setProperty(v, val);
+    appliedVars.add(v);
+  });
 }
 
 export function useTheme() {
