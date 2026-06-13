@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:hostinger": "tsc -b && VITE_BASE_PATH=/pitchfork-ui/theme-builder/ vite build",
     "preview": "vite preview"
   },
   "dependencies": {

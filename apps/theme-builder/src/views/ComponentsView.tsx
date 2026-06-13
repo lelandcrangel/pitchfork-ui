@@ -2046,7 +2046,7 @@ function ComponentCanvas({ component, theme }: ComponentCanvasProps) {
               <span className="comp-canvas__no-preview-text">
                 No inline preview — open in{' '}
                 <a
-                  href="http://localhost:6006"
+                  href="https://lelandrangel.com/pitchfork-ui/"
                   target="_blank"
                   rel="noreferrer"
                   className="comp-canvas__storybook-link"
