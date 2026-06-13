@@ -7,18 +7,10 @@
 
 .canvas__inner {
   max-width: 900px;
-  margin: 0 auto;
-  padding: 32px 32px 64px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-}
-
-.canvas__section {
-  background: var(--color-semantic-background-default, #fff);
-  border: 1px solid var(--color-semantic-border-default, #e2e8f0);
-  border-radius: var(--radius-lg, 12px);
-  overflow: hidden;
 }
 
 .canvas__section-title {
@@ -26,17 +18,8 @@
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-semantic-text-muted, #64748b);
-  padding: 14px 20px 10px;
-  border-bottom: 1px solid var(--color-semantic-border-muted, #f1f5f9);
+  color: var(--color-semantic-text-muted);
   margin: 0;
-}
-
-.canvas__section-body {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .canvas__row {

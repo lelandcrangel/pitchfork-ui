@@ -5,6 +5,8 @@ import {
   Badge,
   Button,
   Card,
+  CardContent,
+  CardHeader,
   Checkbox,
   Input,
   LoadingDots,
@@ -19,9 +21,10 @@ import './Canvas.css';
 
 interface CanvasProps {
   sections?: string[];
+  children?: React.ReactNode;
 }
 
-export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections }, ref) => {
+export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, children }, ref) => {
   const show = (name: string) => !sections || sections.includes(name);
 
   return (
@@ -183,6 +186,8 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections }, ref
             </Row>
           </Section>
         )}
+
+        {children}
       </div>
     </div>
   );
@@ -192,10 +197,14 @@ Canvas.displayName = 'Canvas';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="canvas__section">
-      <h2 className="canvas__section-title">{title}</h2>
-      <div className="canvas__section-body">{children}</div>
-    </div>
+    <Card>
+      <CardHeader>
+        <span className="canvas__section-title">{title}</span>
+      </CardHeader>
+      <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {children}
+      </CardContent>
+    </Card>
   );
 }
 

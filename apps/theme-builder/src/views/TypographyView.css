@@ -160,29 +160,6 @@
   flex: 1;
 }
 
-.font-custom__apply {
-  height: 36px;
-  padding: 0 12px;
-  border-radius: var(--radius-md);
-  background: var(--color-semantic-action-primary);
-  color: #fff;
-  border: none;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  flex-shrink: 0;
-  transition: opacity 120ms;
-}
-
-.font-custom__apply:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.font-custom__apply:hover:not(:disabled) {
-  opacity: 0.88;
-}
-
 /* ── Type specimen ─────────────────────────────────────── */
 
 .type-specimen {
@@ -203,8 +180,6 @@
 }
 
 .type-specimen__divider {
-  border: none;
-  border-top: 1px solid var(--color-semantic-border-muted);
   margin-bottom: 28px;
 }
 

@@ -1,4 +1,4 @@
-import { Input, UtilityButton } from '@pitchfork-ui/react';
+import { Button, Card, CardContent, CardHeader, Input, UtilityButton } from '@pitchfork-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 import '../styles/controls.css';
@@ -252,13 +252,9 @@ function FontPicker({ label, cssVar, category, theme }: FontPickerProps) {
             onChange={(e) => setCustomStack(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleCustomSubmit()}
           />
-          <button
-            className="font-custom__apply"
-            onClick={handleCustomSubmit}
-            disabled={!customStack.trim()}
-          >
+          <Button size="sm" onClick={handleCustomSubmit} disabled={!customStack.trim()}>
             Apply
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -275,34 +271,44 @@ function TypographySpecimen({ theme }: { theme: ThemeState }) {
 
   return (
     <div className="type-specimen">
-      <div className="type-specimen__section" style={{ fontFamily: sans }}>
-        <p className="type-specimen__label">Sans — {sansName}</p>
-        <p className="type-specimen__display">The quick brown fox</p>
-        <p className="type-specimen__heading">Jumps over the lazy dog</p>
-        <p className="type-specimen__body">
-          A design system is a collection of reusable components, guided by clear standards, that
-          can be assembled to build any number of applications.
-        </p>
-        <p className="type-specimen__weights">
-          <span style={{ fontWeight: 300 }}>Light</span>
-          <span style={{ fontWeight: 400 }}>Regular</span>
-          <span style={{ fontWeight: 500 }}>Medium</span>
-          <span style={{ fontWeight: 600 }}>Semibold</span>
-          <span style={{ fontWeight: 700 }}>Bold</span>
-        </p>
-        <p className="type-specimen__small">
-          Label · Helper text · Caption — 11px / 12px / 14px / 16px / 20px
-        </p>
-      </div>
+      <Card>
+        <CardHeader>
+          <span className="type-specimen__section-title">Sans — {sansName}</span>
+        </CardHeader>
+        <CardContent>
+          <div className="type-specimen__section" style={{ fontFamily: sans }}>
+            <p className="type-specimen__display">The quick brown fox</p>
+            <p className="type-specimen__heading">Jumps over the lazy dog</p>
+            <p className="type-specimen__body">
+              A design system is a collection of reusable components, guided by clear standards,
+              that can be assembled to build any number of applications.
+            </p>
+            <p className="type-specimen__weights">
+              <span style={{ fontWeight: 300 }}>Light</span>
+              <span style={{ fontWeight: 400 }}>Regular</span>
+              <span style={{ fontWeight: 500 }}>Medium</span>
+              <span style={{ fontWeight: 600 }}>Semibold</span>
+              <span style={{ fontWeight: 700 }}>Bold</span>
+            </p>
+            <p className="type-specimen__small">
+              Label · Helper text · Caption — 11px / 12px / 14px / 16px / 20px
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="type-specimen__divider" />
-
-      <div className="type-specimen__section" style={{ fontFamily: mono }}>
-        <p className="type-specimen__label">Mono — {monoName}</p>
-        <p className="type-specimen__code">{'const theme = { brand: "#6366f1" };'}</p>
-        <p className="type-specimen__code">{'--color-brand-500: oklch(59% 0.204 277);'}</p>
-        <p className="type-specimen__code">{'0 O o 1 l I { } ( ) [ ] = > =>'}</p>
-      </div>
+      <Card>
+        <CardHeader>
+          <span className="type-specimen__section-title">Mono — {monoName}</span>
+        </CardHeader>
+        <CardContent>
+          <div className="type-specimen__section" style={{ fontFamily: mono }}>
+            <p className="type-specimen__code">{'const theme = { brand: "#6366f1" };'}</p>
+            <p className="type-specimen__code">{'--color-brand-500: oklch(59% 0.204 277);'}</p>
+            <p className="type-specimen__code">{'0 O o 1 l I { } ( ) [ ] = > =>'}</p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

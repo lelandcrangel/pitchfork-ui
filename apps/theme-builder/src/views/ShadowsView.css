@@ -4,6 +4,10 @@
   flex-direction: column;
 }
 
+.shadows-editor .editor-section__label {
+  padding: 16px 20px 0;
+}
+
 /* ── Shadow control ────────────────────────────────────── */
 
 .shadow-control {
@@ -136,12 +140,6 @@
   max-width: 640px;
 }
 
-.shadow-canvas__section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .shadow-canvas__section-header {
   display: flex;
   align-items: center;
@@ -164,19 +162,6 @@
   padding: 2px 7px;
   line-height: 1.6;
   white-space: nowrap;
-}
-
-.shadow-canvas__card {
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
-  border-radius: var(--radius-md);
-  padding: 16px;
-}
-
-.shadow-canvas__card--focus-demo {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
 }
 
 .shadow-canvas__card-text {

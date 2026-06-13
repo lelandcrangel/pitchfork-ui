@@ -215,17 +215,19 @@ function SizeCanvas() {
     <div className="size-canvas">
       <div className="size-canvas__grid">
         {/* Shape scale */}
-        <section className="size-canvas__section">
-          <header className="size-canvas__section-header">
-            <span className="size-canvas__section-title">Shape scale</span>
-            <span className="size-canvas__token-group">
-              <code className="size-canvas__token-badge">--radius-sm</code>
-              <code className="size-canvas__token-badge">--radius-md</code>
-              <code className="size-canvas__token-badge">--radius-lg</code>
-              <code className="size-canvas__token-badge">--radius-full</code>
-            </span>
-          </header>
-          <div className="size-canvas__card">
+        <Card>
+          <CardHeader>
+            <div className="size-canvas__section-header">
+              <span className="size-canvas__section-title">Shape scale</span>
+              <span className="size-canvas__token-group">
+                <code className="size-canvas__token-badge">--radius-sm</code>
+                <code className="size-canvas__token-badge">--radius-md</code>
+                <code className="size-canvas__token-badge">--radius-lg</code>
+                <code className="size-canvas__token-badge">--radius-full</code>
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent>
             <div className="size-canvas__shape-row">
               {(
                 [
@@ -244,19 +246,21 @@ function SizeCanvas() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Buttons — radius-md + space-2/3/4 */}
-        <section className="size-canvas__section">
-          <header className="size-canvas__section-header">
-            <span className="size-canvas__section-title">Buttons</span>
-            <span className="size-canvas__token-group">
-              <code className="size-canvas__token-badge">--radius-md</code>
-              <code className="size-canvas__token-badge">--space-2 –4</code>
-            </span>
-          </header>
-          <div className="size-canvas__card size-canvas__card--col">
+        <Card>
+          <CardHeader>
+            <div className="size-canvas__section-header">
+              <span className="size-canvas__section-title">Buttons</span>
+              <span className="size-canvas__token-group">
+                <code className="size-canvas__token-badge">--radius-md</code>
+                <code className="size-canvas__token-badge">--space-2 –4</code>
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="size-canvas__row">
               <Button size="sm">Small</Button>
               <Button size="md">Medium</Button>
@@ -276,19 +280,21 @@ function SizeCanvas() {
                 Pill
               </Button>
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Form controls — radius-md + space-3 */}
-        <section className="size-canvas__section">
-          <header className="size-canvas__section-header">
-            <span className="size-canvas__section-title">Form controls</span>
-            <span className="size-canvas__token-group">
-              <code className="size-canvas__token-badge">--radius-md</code>
-              <code className="size-canvas__token-badge">--space-3</code>
-            </span>
-          </header>
-          <div className="size-canvas__card size-canvas__card--col">
+        <Card>
+          <CardHeader>
+            <div className="size-canvas__section-header">
+              <span className="size-canvas__section-title">Form controls</span>
+              <span className="size-canvas__token-group">
+                <code className="size-canvas__token-badge">--radius-md</code>
+                <code className="size-canvas__token-badge">--space-3</code>
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <Input
               label="Project name"
               placeholder="My design system"
@@ -313,19 +319,21 @@ function SizeCanvas() {
                 onChange={(e) => setChecked2(e.target.checked)}
               />
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Badges & Tags — radius-sm + space-2 */}
-        <section className="size-canvas__section">
-          <header className="size-canvas__section-header">
-            <span className="size-canvas__section-title">Badges &amp; Tags</span>
-            <span className="size-canvas__token-group">
-              <code className="size-canvas__token-badge">--radius-sm</code>
-              <code className="size-canvas__token-badge">--space-2</code>
-            </span>
-          </header>
-          <div className="size-canvas__card size-canvas__card--col">
+        <Card>
+          <CardHeader>
+            <div className="size-canvas__section-header">
+              <span className="size-canvas__section-title">Badges &amp; Tags</span>
+              <span className="size-canvas__token-group">
+                <code className="size-canvas__token-badge">--radius-sm</code>
+                <code className="size-canvas__token-badge">--space-2</code>
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="size-canvas__row size-canvas__row--wrap">
               {BADGE_VARIANTS.map((v) => (
                 <Badge key={v} variant={v}>
@@ -340,39 +348,44 @@ function SizeCanvas() {
                 </Tag>
               ))}
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Card — radius-lg + space-4 */}
-        <section className="size-canvas__section">
-          <header className="size-canvas__section-header">
-            <span className="size-canvas__section-title">Card</span>
-            <span className="size-canvas__token-group">
-              <code className="size-canvas__token-badge">--radius-lg</code>
-              <code className="size-canvas__token-badge">--space-4</code>
-            </span>
-          </header>
-          <Card>
-            <CardHeader>
-              <div className="size-canvas__card-header-row">
-                <strong>Design tokens</strong>
-                <Badge variant="brand">New</Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="size-canvas__card-text">
-                Card corners use <code>--radius-lg</code>. Each section's padding comes from{' '}
-                <code>--space-4</code> — drag that slider to see the internal breathing room change.
-              </p>
-              <div className="size-canvas__card-actions">
-                <Button size="sm" variant="secondary">
-                  Cancel
-                </Button>
-                <Button size="sm">Apply</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
+        <Card>
+          <CardHeader>
+            <div className="size-canvas__section-header">
+              <span className="size-canvas__section-title">Card</span>
+              <span className="size-canvas__token-group">
+                <code className="size-canvas__token-badge">--radius-lg</code>
+                <code className="size-canvas__token-badge">--space-4</code>
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Card>
+              <CardHeader>
+                <div className="size-canvas__card-header-row">
+                  <strong>Design tokens</strong>
+                  <Badge variant="brand">New</Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="size-canvas__card-text">
+                  Card corners use <code>--radius-lg</code>. Each section's padding comes from{' '}
+                  <code>--space-4</code> — drag that slider to see the internal breathing room
+                  change.
+                </p>
+                <div className="size-canvas__card-actions">
+                  <Button size="sm" variant="secondary">
+                    Cancel
+                  </Button>
+                  <Button size="sm">Apply</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

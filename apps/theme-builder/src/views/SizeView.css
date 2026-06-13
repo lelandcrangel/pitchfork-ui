@@ -1,5 +1,5 @@
 .size-editor {
-  padding: 0;
+  padding: 16px 20px;
   display: flex;
   flex-direction: column;
 }
@@ -79,12 +79,6 @@
   max-width: 640px;
 }
 
-.size-canvas__section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .size-canvas__section-header {
   display: flex;
   align-items: center;
@@ -114,19 +108,6 @@
   padding: 2px 6px;
   line-height: 1.6;
   white-space: nowrap;
-}
-
-.size-canvas__card {
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
-  border-radius: var(--radius-md);
-  padding: 16px;
-}
-
-.size-canvas__card--col {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
 }
 
 .size-canvas__row {

@@ -14,12 +14,6 @@
   max-width: 640px;
 }
 
-.motion-canvas__section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .motion-canvas__section-header {
   display: flex;
   align-items: center;
@@ -44,22 +38,11 @@
   white-space: nowrap;
 }
 
-.motion-canvas__card {
-  background: var(--color-semantic-background-default);
-  border: 1px solid var(--color-semantic-border-default);
-  border-radius: var(--radius-md);
-  padding: 16px;
-}
-
-.motion-canvas__card--col {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.motion-canvas__card--flush {
-  padding: 0;
-  overflow: hidden;
+.motion-canvas__modal-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-semantic-text-muted);
 }
 
 .motion-canvas__row {
@@ -89,7 +72,7 @@
 /* ── Motion Editor ─────────────────────────────────────── */
 
 .motion-editor {
-  padding: 20px;
+  padding: 16px 20px;
 }
 
 .motion-preview-section {

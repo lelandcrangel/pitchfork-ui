@@ -1,6 +1,9 @@
 import {
   Accordion,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   LoadingDots,
   LoadingSpinner,
   Input,
@@ -198,12 +201,14 @@ function MotionCanvas() {
     <div className="motion-canvas">
       <div className="motion-canvas__grid">
         {/* Always animating */}
-        <section className="motion-canvas__section">
-          <header className="motion-canvas__section-header">
-            <span className="motion-canvas__section-title">Continuous</span>
-            <code className="motion-canvas__token-badge">keyframe animation</code>
-          </header>
-          <div className="motion-canvas__card">
+        <Card>
+          <CardHeader>
+            <div className="motion-canvas__section-header">
+              <span className="motion-canvas__section-title">Continuous</span>
+              <code className="motion-canvas__token-badge">keyframe animation</code>
+            </div>
+          </CardHeader>
+          <CardContent>
             <div className="motion-canvas__row">
               <div className="motion-canvas__item">
                 <span className="motion-canvas__item-label">Spinner</span>
@@ -214,16 +219,20 @@ function MotionCanvas() {
                 <LoadingDots />
               </div>
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Switch — fast */}
-        <section className="motion-canvas__section">
-          <header className="motion-canvas__section-header">
-            <span className="motion-canvas__section-title">Toggle</span>
-            <code className="motion-canvas__token-badge">--duration-fast + --easing-standard</code>
-          </header>
-          <div className="motion-canvas__card motion-canvas__card--col">
+        <Card>
+          <CardHeader>
+            <div className="motion-canvas__section-header">
+              <span className="motion-canvas__section-title">Toggle</span>
+              <code className="motion-canvas__token-badge">
+                --duration-fast + --easing-standard
+              </code>
+            </div>
+          </CardHeader>
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <Switch
               label="Enable notifications"
               checked={switches.notifications}
@@ -239,36 +248,38 @@ function MotionCanvas() {
               checked={switches.animations}
               onChange={(e) => setSwitches((s) => ({ ...s, animations: e.target.checked }))}
             />
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Accordion — moderate */}
-        <section className="motion-canvas__section">
-          <header className="motion-canvas__section-header">
-            <span className="motion-canvas__section-title">Expand / collapse</span>
-            <code className="motion-canvas__token-badge">
-              --duration-moderate + --easing-standard
-            </code>
-          </header>
-          <div className="motion-canvas__card motion-canvas__card--flush">
-            <Accordion
-              items={ACCORDION_ITEMS}
-              type="single"
-              value={accordionValue}
-              onValueChange={setAccordionValue}
-            />
-          </div>
-        </section>
+        <Card>
+          <CardHeader>
+            <div className="motion-canvas__section-header">
+              <span className="motion-canvas__section-title">Expand / collapse</span>
+              <code className="motion-canvas__token-badge">
+                --duration-moderate + --easing-standard
+              </code>
+            </div>
+          </CardHeader>
+          <Accordion
+            items={ACCORDION_ITEMS}
+            type="single"
+            value={accordionValue}
+            onValueChange={setAccordionValue}
+          />
+        </Card>
 
         {/* Select — enter animation */}
-        <section className="motion-canvas__section">
-          <header className="motion-canvas__section-header">
-            <span className="motion-canvas__section-title">Dropdown enter</span>
-            <code className="motion-canvas__token-badge">
-              --duration-fast + --easing-decelerate
-            </code>
-          </header>
-          <div className="motion-canvas__card">
+        <Card>
+          <CardHeader>
+            <div className="motion-canvas__section-header">
+              <span className="motion-canvas__section-title">Dropdown enter</span>
+              <code className="motion-canvas__token-badge">
+                --duration-fast + --easing-decelerate
+              </code>
+            </div>
+          </CardHeader>
+          <CardContent>
             <Select
               label="Component"
               options={SELECT_OPTIONS}
@@ -276,18 +287,20 @@ function MotionCanvas() {
               onValueChange={setSelectedComponent}
               placeholder="Open to see enter animation"
             />
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Tooltip + Modal — overlay enter/exit */}
-        <section className="motion-canvas__section">
-          <header className="motion-canvas__section-header">
-            <span className="motion-canvas__section-title">Overlay enter / exit</span>
-            <code className="motion-canvas__token-badge">
-              --pf-transition-enter / --pf-transition-exit
-            </code>
-          </header>
-          <div className="motion-canvas__card">
+        <Card>
+          <CardHeader>
+            <div className="motion-canvas__section-header">
+              <span className="motion-canvas__section-title">Overlay enter / exit</span>
+              <code className="motion-canvas__token-badge">
+                --pf-transition-enter / --pf-transition-exit
+              </code>
+            </div>
+          </CardHeader>
+          <CardContent>
             <div className="motion-canvas__row motion-canvas__row--wrap">
               <Tooltip content="Appears with --duration-fast + --easing-decelerate" placement="top">
                 <Button variant="secondary">Hover for tooltip</Button>
@@ -296,19 +309,12 @@ function MotionCanvas() {
                 Open modal
               </Button>
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
       </div>
 
       <Modal open={modalOpen} onOpenChange={setModalOpen} title="Motion in action">
-        <p
-          style={{
-            margin: 0,
-            color: 'var(--color-semantic-text-muted)',
-            fontSize: '14px',
-            lineHeight: 1.6,
-          }}
-        >
+        <p className="motion-canvas__modal-text">
           This modal entered with <code>--duration-moderate</code> +{' '}
           <code>--easing-decelerate</code>
           &nbsp;and will exit with <code>--duration-fast</code> + <code>--easing-accelerate</code>.

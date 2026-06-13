@@ -32,7 +32,16 @@ function StableColorInput({
     />
   );
 }
-import { Button, UtilityButton } from '@pitchfork-ui/react';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  Table,
+  UtilityButton,
+} from '@pitchfork-ui/react';
+import type { TableColumn } from '@pitchfork-ui/react';
 import { Canvas } from '../components/Canvas';
 import { formatHex, oklch } from 'culori';
 import {
@@ -200,8 +209,9 @@ export function ColorsView({ theme }: ColorsViewProps) {
       </div>
 
       <div className="view-layout__canvas">
-        <Canvas sections={['Buttons', 'Badges & Tags', 'Alerts', 'Avatar']} />
-        <ContrastPanel theme={theme} />
+        <Canvas sections={['Buttons', 'Badges & Tags', 'Alerts', 'Avatar']}>
+          <ContrastPanel theme={theme} />
+        </Canvas>
       </div>
     </div>
   );
@@ -350,14 +360,15 @@ const ScaleEditor = function ScaleEditor({
         <span className="scale-editor__name">{name}</span>
 
         {showTintFromBrand && (
-          <button
-            className="scale-editor__tint-btn"
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={tintGrayFromBrand}
             title="Tint gray with brand hue — creates a subtle branded neutral"
             disabled={!brandModified}
           >
             Tint from brand ↗
-          </button>
+          </Button>
         )}
 
         <div
@@ -468,57 +479,51 @@ function HarmonyChips({ seedHex, onApply }: { seedHex: string; onApply: (hex: st
 
 // ── Contrast Panel ───────────────────────────────────────
 
+const CONTRAST_COLUMNS: TableColumn[] = [
+  { key: 'preview', header: '', width: 48 },
+  { key: 'name', header: 'Pair' },
+  { key: 'note', header: 'Colors' },
+  { key: 'ratio', header: 'Ratio', align: 'right', width: 72 },
+  { key: 'level', header: 'WCAG', align: 'center', width: 72 },
+];
+
 function ContrastPanel({ theme }: { theme: ThemeState }) {
+  const rows = CONTRAST_PAIRS.map((pair) => {
+    const fgHex = theme.getValue(pair.fg);
+    const bgHex = theme.getValue(pair.bg);
+    const ratio = getContrastRatio(fgHex, bgHex);
+    const level = getWCAGLevel(ratio);
+    return {
+      preview: (
+        <div
+          className="contrast-preview"
+          style={{ background: bgHex, color: fgHex }}
+          aria-hidden="true"
+        >
+          Aa
+        </div>
+      ),
+      name: pair.name,
+      note: <span className="contrast-note">{pair.note}</span>,
+      ratio: `${ratio.toFixed(1)}:1`,
+      level: <WCAGBadge level={level} />,
+    };
+  });
+
   return (
-    <div className="contrast-panel">
-      <div className="contrast-panel__header">
-        <span className="contrast-panel__title">Accessibility — WCAG Contrast</span>
-        <span className="contrast-panel__legend">
-          <span className="wcag-badge wcag-badge--AAA">AAA</span>
-          <span className="wcag-badge wcag-badge--AA">AA</span>
-          <span className="wcag-badge wcag-badge--AA-large">~AA</span>
-          <span className="wcag-badge wcag-badge--fail">Fail</span>
+    <Card>
+      <CardHeader>
+        <span className="canvas__section-title">Accessibility — WCAG Contrast</span>
+      </CardHeader>
+      <CardContent>
+        <Table columns={CONTRAST_COLUMNS} rows={rows} dense hoverable={false} />
+      </CardContent>
+      <CardFooter>
+        <span className="contrast-panel__footnote">
+          AA requires 4.5:1 (normal text) · 3:1 (large text / UI). AAA requires 7:1.
         </span>
-      </div>
-
-      <div className="contrast-grid">
-        {CONTRAST_PAIRS.map((pair) => {
-          const fgHex = theme.getValue(pair.fg);
-          const bgHex = theme.getValue(pair.bg);
-          const ratio = getContrastRatio(fgHex, bgHex);
-          const level = getWCAGLevel(ratio);
-
-          return (
-            <div
-              key={pair.name}
-              className={`contrast-row ${level === 'fail' ? 'contrast-row--fail' : ''}`}
-            >
-              <div
-                className="contrast-preview"
-                style={{ background: bgHex, color: fgHex }}
-                aria-hidden="true"
-              >
-                Aa
-              </div>
-              <div className="contrast-info">
-                <span className="contrast-name">{pair.name}</span>
-                <span className="contrast-note">{pair.note}</span>
-              </div>
-              <div className="contrast-ratio" title={`${ratio.toFixed(2)}:1`}>
-                {ratio.toFixed(1)}:1
-              </div>
-              <div className={`wcag-badge wcag-badge--${level}`}>
-                {level === 'fail' ? 'Fail' : level === 'AA-large' ? '~AA' : level}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <p className="contrast-panel__footnote">
-        AA requires 4.5:1 (normal text) · 3:1 (large text / UI). AAA requires 7:1.
-      </p>
-    </div>
+      </CardFooter>
+    </Card>
   );
 }
 

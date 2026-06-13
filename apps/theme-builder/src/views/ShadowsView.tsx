@@ -238,12 +238,14 @@ function ShadowCanvas() {
     <div className="shadow-canvas">
       <div className="shadow-canvas__grid">
         {/* Elevation scale */}
-        <section className="shadow-canvas__section">
-          <header className="shadow-canvas__section-header">
-            <span className="shadow-canvas__section-title">Elevation scale</span>
-            <code className="shadow-canvas__token-badge">Visual depth hierarchy</code>
-          </header>
-          <div className="shadow-canvas__card">
+        <Card>
+          <CardHeader>
+            <div className="shadow-canvas__section-header">
+              <span className="shadow-canvas__section-title">Elevation scale</span>
+              <code className="shadow-canvas__token-badge">Visual depth hierarchy</code>
+            </div>
+          </CardHeader>
+          <CardContent>
             <div className="shadow-canvas__elevation-row">
               {(
                 [
@@ -259,50 +261,58 @@ function ShadowCanvas() {
                 </div>
               ))}
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Card — shadow-sm */}
-        <section className="shadow-canvas__section">
-          <header className="shadow-canvas__section-header">
-            <span className="shadow-canvas__section-title">Card</span>
-            <code className="shadow-canvas__token-badge">--shadow-sm</code>
-          </header>
-          <Card>
-            <CardHeader>
-              <strong>Design tokens</strong>
-            </CardHeader>
-            <CardContent>
-              <p className="shadow-canvas__card-text">
-                Cards use <code>--shadow-sm</code> to sit just above the page surface. Drag the Y
-                offset and blur sliders to change how cards lift off the background.
-              </p>
-            </CardContent>
-          </Card>
-        </section>
+        <Card>
+          <CardHeader>
+            <div className="shadow-canvas__section-header">
+              <span className="shadow-canvas__section-title">Card</span>
+              <code className="shadow-canvas__token-badge">--shadow-sm</code>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Card>
+              <CardHeader>
+                <strong>Design tokens</strong>
+              </CardHeader>
+              <CardContent>
+                <p className="shadow-canvas__card-text">
+                  Cards use <code>--shadow-sm</code> to sit just above the page surface. Drag the Y
+                  offset and blur sliders to change how cards lift off the background.
+                </p>
+              </CardContent>
+            </Card>
+          </CardContent>
+        </Card>
 
         {/* Dropdown — shadow-md */}
-        <section className="shadow-canvas__section">
-          <header className="shadow-canvas__section-header">
-            <span className="shadow-canvas__section-title">Dropdown</span>
-            <code className="shadow-canvas__token-badge">--shadow-md</code>
-          </header>
-          <div className="shadow-canvas__card">
+        <Card>
+          <CardHeader>
+            <div className="shadow-canvas__section-header">
+              <span className="shadow-canvas__section-title">Dropdown</span>
+              <code className="shadow-canvas__token-badge">--shadow-md</code>
+            </div>
+          </CardHeader>
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <p className="shadow-canvas__card-text">
               Dropdown menus use <code>--shadow-md</code> to float above the page. Open it to see
               the shadow in context.
             </p>
             <Dropdown label="Actions" items={DROPDOWN_ITEMS} />
-          </div>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* Focus ring — shadow-focus */}
-        <section className="shadow-canvas__section">
-          <header className="shadow-canvas__section-header">
-            <span className="shadow-canvas__section-title">Focus ring</span>
-            <code className="shadow-canvas__token-badge">--shadow-focus</code>
-          </header>
-          <div className="shadow-canvas__card shadow-canvas__card--focus-demo">
+        <Card>
+          <CardHeader>
+            <div className="shadow-canvas__section-header">
+              <span className="shadow-canvas__section-title">Focus ring</span>
+              <code className="shadow-canvas__token-badge">--shadow-focus</code>
+            </div>
+          </CardHeader>
+          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <p className="shadow-canvas__card-text">
               <code>--shadow-focus</code> defines the focus halo spread and opacity. Tab into these
               controls to see the token live.
@@ -311,8 +321,8 @@ function ShadowCanvas() {
               <Button>Primary button</Button>
               <Button variant="secondary">Secondary</Button>
             </div>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
