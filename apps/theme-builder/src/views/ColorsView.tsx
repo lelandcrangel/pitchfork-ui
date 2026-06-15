@@ -491,9 +491,8 @@ function HarmonyChips({ seedHex, onApply }: { seedHex: string; onApply: (hex: st
         </div>
       </div>
       <p className="scale-editor__hint">
-        Preset hue relationships relative to your brand color — analogous (±30°),
-        split-complementary (±60°), and triadic (±90°). Click a chip to shift the entire brand scale
-        to that hue.
+        Click a chip to preview that hue as your brand color — the entire brand scale regenerates
+        instantly. The chips step outward in 30° increments from your current hue.
       </p>
     </>
   );
