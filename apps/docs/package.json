@@ -13,12 +13,12 @@
   "dependencies": {
     "@pitchfork-ui/react": "*",
     "@pitchfork-ui/tokens": "*",
-    "@storybook/addon-a11y": "latest",
-    "@storybook/addon-docs": "latest",
-    "@storybook/react-vite": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "storybook": "latest"
+    "@storybook/addon-a11y": "^10.4.5",
+    "@storybook/addon-docs": "^10.4.5",
+    "@storybook/react-vite": "^10.4.5",
+    "react": "*",
+    "react-dom": "*",
+    "storybook": "*"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^5.2.1",
