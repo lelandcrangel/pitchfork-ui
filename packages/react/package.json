@@ -50,8 +50,8 @@
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
     "prism-react-renderer": "^2.0.0",
-    "react": ">=18.2.0",
-    "react-dom": ">=18.2.0"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@pitchfork-ui/tokens": "*",
