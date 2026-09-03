@@ -2,6 +2,17 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.14.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.13.2...react-v0.14.0) (2026-09-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **react:** the package no longer ships dist/index.cjs or a "require" export condition. Consumers on Node 22+ can still require() it; older CommonJS consumers must import it as ESM.
+
+### Features
+
+* **react:** ship ESM only; keep styles.css from a CSS-only pass ([08c3fcc](https://github.com/lelandcrangel/pitchfork-ui/commit/08c3fccdf6d2f7d5a8132dab2418366034098e32))
+
 ## [0.13.2](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.13.1...react-v0.13.2) (2026-06-11)
 
 
