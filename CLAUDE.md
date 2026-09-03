@@ -36,7 +36,7 @@ npm run lint             # ESLint across workspace
 npm run format           # Prettier across workspace
 npm run build            # tokens → react → docs (in order)
 npm run build:tokens     # Style Dictionary → dist/css/variables.css + dist/json/tokens.json
-npm run build:react      # Vite lib build → dist/ (ESM + CJS + types)
+npm run build:react      # Vite lib build → dist/ (ESM + types + styles.css; no CJS)
 ```
 
 Tokens must be built before react. The `build` script enforces this order.

@@ -3,11 +3,27 @@ import react from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import customMedia from 'postcss-custom-media';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import dts from 'vite-plugin-dts';
 import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+/**
+ * The second rollup output below exists only to produce the monolithic
+ * `dist/styles.css` that consumers import (see README). Its single JS chunk is
+ * a throwaway duplicate of the ESM build, so drop it before it is written.
+ */
+const STYLES_ONLY_ENTRY = '.styles-only.js';
+const stylesOnlyOutput = (): Plugin => ({
+  name: 'pitchfork:styles-only-output',
+  generateBundle(options, bundle) {
+    if (options.entryFileNames !== STYLES_ONLY_ENTRY) return;
+    for (const [fileName, output] of Object.entries(bundle)) {
+      if (output.type === 'chunk') delete bundle[fileName];
+    }
+  },
+});
 
 export default defineConfig({
   css: {
@@ -20,7 +36,7 @@ export default defineConfig({
       ],
     },
   },
-  plugins: [react(), libInjectCss(), dts()],
+  plugins: [react(), libInjectCss(), dts(), stylesOnlyOutput()],
   build: {
     // Keep JS readable so `preserveModules` output stays debuggable; the
     // consumer's bundler minifies it. CSS, however, ships as-is (the monolithic
@@ -53,10 +69,13 @@ export default defineConfig({
           banner: "'use client';",
         },
         {
-          format: 'cjs',
-          entryFileNames: 'index.cjs',
+          // CSS-only pass: one bundled chunk means one CSS asset, which is the
+          // `styles.css` consumers import. The chunk itself is removed by
+          // `stylesOnlyOutput`. There is no CommonJS build: every known
+          // consumer is ESM, and Node 22+ can `require()` ESM directly.
+          format: 'es',
+          entryFileNames: STYLES_ONLY_ENTRY,
           assetFileNames: 'styles.css',
-          banner: "'use client';",
         },
       ],
     },
