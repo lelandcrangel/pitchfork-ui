@@ -5,12 +5,7 @@ import { cx } from '../../utils/cx';
 import './RichTextEditor.css';
 
 type ToolbarCommand =
-  | 'bold'
-  | 'italic'
-  | 'underline'
-  | 'insertUnorderedList'
-  | 'insertOrderedList'
-  | 'removeFormat';
+  'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList' | 'removeFormat';
 
 export interface RichTextEditorProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,

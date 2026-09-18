@@ -88,8 +88,7 @@ export function Popover({
 
   const triggerProps = trigger.props as TriggerProps;
   const existingRef = ((trigger as { ref?: React.Ref<HTMLElement> }).ref ?? triggerProps.ref) as
-    | React.Ref<HTMLElement>
-    | undefined;
+    React.Ref<HTMLElement> | undefined;
   const composedTriggerRef = useComposedRefs(triggerRef, existingRef);
 
   const triggerNode = cloneElement(trigger, {
