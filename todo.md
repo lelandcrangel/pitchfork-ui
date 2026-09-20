@@ -39,3 +39,21 @@ into CI**, so nothing stops further regressions.
 **Fix:** correct the dark-mode token pairs in the `[data-theme='dark']` block of
 `packages/react/src/styles/theme.css`, then add the checker to CI so the
 accessibility claim in the package description stays true.
+
+---
+
+## Carousel examples do not demonstrate its required prop
+
+`Carousel` requires `slides`, but the four stories in
+`apps/docs/src/Carousel.examples.stories.tsx` supply it through `render` rather
+than `args`. The metadata extractor therefore cannot synthesise a usable example
+— synthesis produces `<Carousel />`, which does not work — and drops all four
+rather than publish something misleading. `Carousel` is currently the only
+component in the library shipping no examples in `metadata.json`,
+`llms-full.txt` or the MCP server.
+
+Surfaced by running `validate_usage` across every extracted example.
+
+**Fix:** move `slides` into the story `args`, or add an explicit
+`parameters.docs.source.code` block to each story, per the convention in
+`CLAUDE.md`.

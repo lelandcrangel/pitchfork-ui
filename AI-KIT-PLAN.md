@@ -198,32 +198,31 @@ stdio via `node:test` (no extra dependency). Wired into CI as `test:mcp`.
 `packages/mcp` is registered in `release-please-config.json`, so it versions
 alongside the other packages.
 
-## 5. Phase 4 — Agent-facing repo files
+## 5. Phase 4 — Agent-facing repo files ✅
 
-- `.claude/skills/pitchfork-ui/SKILL.md` — so Claude Code users in _consuming_
-  projects pick up the conventions automatically, not just those working in this repo.
-- Keep it thin: point at the MCP tools rather than restating the API, which would
-  reintroduce the drift problem.
-
----
-
-## 6. Phase 5 — Showcase
-
-This is the portfolio deliverable. Publishing it is not the same as showing it.
-
-- **Storybook docs page — "Using Pitchfork UI with AI."** Setup, the tools, and what
-  each artifact is for.
-- **Side-by-side demo.** The same prompt ("build a settings page with a form")
-  run twice:
-  - _Without_ the MCP server — hallucinated props, hardcoded hex, `<div role="button">`.
-  - _With_ it — real props, `var(--pf-*)` aliases, semantic HTML.
-
-  That contrast is the whole pitch and it demos in about thirty seconds. Capture it
-  as a recording or a static diff so it survives on the site without a live model.
-
-- README section plus a line in the package description.
+`.claude/skills/pitchfork-ui/SKILL.md`. Deliberately thin: it names the MCP
+tools and the rules that do not bend, and points at the generated artifacts for
+anything specific. Restating the API here would reintroduce exactly the drift
+problem the rest of this plan exists to solve.
 
 ---
+
+## 6. Phase 5 — Showcase ✅
+
+`apps/docs/src/UsingWithAI.mdx`, published at
+`Foundations/Using with AI`. Covers all three consumption paths — MCP server,
+`llms.txt`, `metadata.json` — and leads with the side-by-side.
+
+The comparison uses **real `validate_usage` output**, not a mock-up: the
+un-grounded snippet is the kind of code an agent writes without the API
+(`padding` on Card, `severity` on Alert, `size="medium"` on Button, a hex colour
+in a `style` prop), and the findings shown are what the tool actually returns.
+The page also states where the validator falls short — `<Badge type="success">`
+is not flagged, because `type` is a real DOM attribute and proving it wrong
+would mean rejecting legitimate passthrough props everywhere else.
+
+Claiming a capability the tool does not have would be found out in thirty
+seconds by anyone who tried it, which is the whole audience.
 
 ## 7. CI & maintenance
 

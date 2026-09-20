@@ -383,6 +383,19 @@ function propsTypeNameOf(node, sourceFile) {
   return found;
 }
 
+/** Heritage clauses wrap across lines in source; collapse them to one line. */
+const normaliseType = (text) => text.replace(/\s+/g, ' ').trim();
+
+/** A React DOM attributes type — props are then "whatever HTML allows". */
+const isDomAttributes = (type) =>
+  /React\.(?:\w*HTMLAttributes|AriaAttributes|DOMAttributes|SVGAttributes|SVGProps)\b/.test(type);
+
+/** Keys removed by an `Omit<X, 'a' | 'b'>` wrapper. */
+function omittedKeys(type) {
+  const match = type.match(/^Omit<.*?,\s*(.*)>$/);
+  return match ? new Set([...match[1].matchAll(/'([^']+)'/g)].map((m) => m[1])) : new Set();
+}
+
 /**
  * Normalise an interface or type alias into its own members plus the types it
  * builds on. What it extends is recorded rather than inlined: flattening
@@ -394,7 +407,7 @@ function readPropsDeclaration(declaration, sourceFile) {
     return {
       members: [...declaration.members],
       extendsTypes: (declaration.heritageClauses ?? []).flatMap((clause) =>
-        clause.types.map((t) => t.getText(sourceFile)),
+        clause.types.map((t) => normaliseType(t.getText(sourceFile))),
       ),
     };
   }
@@ -407,12 +420,49 @@ function readPropsDeclaration(declaration, sourceFile) {
     } else if (ts.isIntersectionTypeNode(typeNode)) {
       typeNode.types.forEach(walk);
     } else {
-      extendsTypes.push(typeNode.getText(sourceFile));
+      extendsTypes.push(normaliseType(typeNode.getText(sourceFile)));
     }
   };
   walk(declaration.type);
 
   return { members, extendsTypes };
+}
+
+/**
+ * Expand an extends clause that names another props type from the same file.
+ * AreaChart's props are `Omit<LineChartProps, 'area'>`; without this it reports
+ * no props at all, which is worse than useless — and makes any consumer that
+ * checks props against the list reject perfectly valid code.
+ */
+function expandInherited(extendsTypes, declarations, sourceFile, seen = new Set()) {
+  const inherited = [];
+  const unresolved = [];
+
+  for (const type of extendsTypes) {
+    const referenced = type.match(/\b([A-Z]\w*Props)\b/)?.[1];
+    const declaration = referenced && !seen.has(referenced) ? declarations.get(referenced) : null;
+
+    if (!declaration) {
+      unresolved.push(type);
+      continue;
+    }
+
+    seen.add(referenced);
+    const omitted = omittedKeys(type);
+    const { members, extendsTypes: nested } = readPropsDeclaration(declaration, sourceFile);
+
+    for (const member of members) {
+      if (!ts.isPropertySignature(member)) continue;
+      if (omitted.has(member.name.getText(sourceFile))) continue;
+      inherited.push({ member, from: referenced });
+    }
+
+    const deeper = expandInherited(nested, declarations, sourceFile, seen);
+    inherited.push(...deeper.inherited);
+    unresolved.push(...deeper.unresolved);
+  }
+
+  return { inherited, unresolved };
 }
 
 function extractComponents(theme) {
@@ -490,7 +540,11 @@ function extractComponents(theme) {
 
       const { members, extendsTypes } = readPropsDeclaration(propsDeclaration, sourceFile);
       const defaults = collectDefaults(node, sourceFile);
-      const props = members.filter(ts.isPropertySignature).map((member) => {
+      // Props inherited from another props type in the same file are this
+      // component's props too; only unresolvable clauses stay in `extends`.
+      const { inherited, unresolved } = expandInherited(extendsTypes, interfaces, sourceFile);
+
+      const describe = (member, from) => {
         const propName = member.name.getText(sourceFile);
         const entry = {
           name: propName,
@@ -500,8 +554,18 @@ function extractComponents(theme) {
         if (defaults[propName] !== undefined) entry.default = defaults[propName];
         const description = jsDocOf(member);
         if (description) entry.description = description;
+        if (from) entry.inheritedFrom = from;
         return entry;
-      });
+      };
+
+      const own = members.filter(ts.isPropertySignature).map((member) => describe(member, null));
+      const ownNames = new Set(own.map((prop) => prop.name));
+      const props = [
+        ...own,
+        ...inherited
+          .filter(({ member }) => !ownNames.has(member.name.getText(sourceFile)))
+          .map(({ member, from }) => describe(member, from)),
+      ];
 
       entries.push({
         name,
@@ -510,7 +574,11 @@ function extractComponents(theme) {
         category: categoryOf(name, folder),
         importPath: '@pitchfork-ui/react',
         propsInterface: declaredName,
-        extends: extendsTypes,
+        extends: unresolved,
+        // False when a props type extends something we cannot enumerate, so the
+        // prop list is known to be partial. A consumer must not then treat an
+        // unlisted prop as invalid.
+        propsComplete: unresolved.every(isDomAttributes),
         forwardsRef:
           sourceFile.text.includes(`forwardRef`) && node.getText(sourceFile).includes('forwardRef'),
         props,
@@ -700,6 +768,7 @@ function extractExamples() {
             name: declName,
             code: synthesizeJsx(metaComponent, [...merged.values()], sourceFile),
             source: 'synthesized',
+            args: [...merged.keys()],
           });
           continue;
         }
@@ -793,6 +862,7 @@ function main() {
     readFileSync(join(root, 'packages/react/package.json'), 'utf8'),
   ).version;
 
+  let skippedExamples = 0;
   const theme = parseThemeAliases();
   const components = extractComponents(theme);
   const examples = extractExamples();
@@ -805,7 +875,21 @@ function main() {
       if (doc.a11y) component.a11y = doc.a11y;
     }
     const found = examples.get(component.name);
-    if (found) component.examples = found;
+    if (found) {
+      // A synthesised example is built from a story's args. When the story
+      // supplies a required prop through `render` instead, synthesis produces
+      // something that does not actually work (`<Carousel />`). Publishing that
+      // to an agent is worse than publishing nothing.
+      const required = component.props.filter((p) => p.required && p.name !== 'children');
+      const usable = found.filter((example) => {
+        if (example.source !== 'synthesized') return true;
+        const supplied = new Set(example.args ?? []);
+        return required.every((p) => supplied.has(p.name));
+      });
+      skippedExamples += found.length - usable.length;
+      for (const example of usable) delete example.args;
+      if (usable.length) component.examples = usable;
+    }
   }
 
   const metadata = {
@@ -832,7 +916,7 @@ function main() {
   console.log(`  described:   ${documented}`);
   console.log(`  w/ examples: ${withExamples}`);
   console.log(
-    `  examples:    ${components.flatMap((c) => c.examples ?? []).length} (${synthesized} synthesized from args)`,
+    `  examples:    ${components.flatMap((c) => c.examples ?? []).length} (${synthesized} synthesized, ${skippedExamples} skipped as incomplete)`,
   );
   console.log(
     `  css vars:    ${new Set(components.flatMap((c) => c.cssVars.map((v) => v.name))).size} distinct`,

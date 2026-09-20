@@ -122,3 +122,61 @@ test('validate_usage does not flag legitimate passthrough props', async () => {
   });
   assert.match(out, /No problems found/);
 });
+
+test('validate_usage does not require children when they are nested', async () => {
+  const out = await call('validate_usage', {
+    code: '<Popover label="About" trigger={<Button>Why?</Button>}>\n  <p>Detail</p>\n</Popover>',
+  });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage handles escaped quotes in an attribute value', async () => {
+  const out = await call('validate_usage', {
+    code: '<EmptyState heading="No results for \\"dashboard\\"" />',
+  });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage does not mistake nested JSX for attributes', async () => {
+  const out = await call('validate_usage', {
+    code: '<Modal open title="Confirm" footer={<><Button>Cancel</Button><Button>OK</Button></>} />',
+  });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage reports an invented prop even with no near match', async () => {
+  const out = await call('validate_usage', { code: '<Alert severity="error" />' });
+  assert.match(out, /has no prop `severity`/);
+  assert.match(out, /not a DOM attribute/);
+  assert.match(out, /`variant`/, 'should list the real props');
+});
+
+test('validate_usage stays quiet when a prop list is known to be partial', async () => {
+  // Icon extends FontAwesomeIconProps, which we cannot enumerate.
+  const out = await call('validate_usage', { code: '<Icon name="circle-check" spin />' });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage accepts every documented example', async () => {
+  // The strongest false-positive check available: every extracted example is
+  // real, working code lifted from the docs.
+  const { metadata } = await import('../src/data.mjs');
+  const { validateUsage } = await import('../src/validate.mjs');
+  const { componentsByName } = await import('../src/data.mjs');
+
+  const failures = [];
+  let checked = 0;
+  for (const component of metadata.components) {
+    for (const example of component.examples ?? []) {
+      checked += 1;
+      for (const finding of validateUsage(example.code, componentsByName)) {
+        if (finding.severity === 'error') {
+          failures.push(`${component.name}/${example.name}: ${finding.message}`);
+        }
+      }
+    }
+  }
+
+  assert.ok(checked > 200, `expected a substantial corpus, got ${checked}`);
+  assert.deepEqual(failures, [], 'no documented example should fail validation');
+});
