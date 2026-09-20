@@ -40,5 +40,15 @@ jobs:
         run: npm run build:llms -- --strict --verify
       - name: Test MCP server
         run: npm run test:mcp
+
+      # The unit suite renders components from source in jsdom, where theme.css
+      # is imported directly, so it cannot see a bundler regression: 933 tests
+      # passed while every published component rendered with no design tokens at
+      # all. This renders the built output in a real browser and fails if the
+      # tokens do not resolve.
+      - name: Install Chromium for the smoke test
+        run: npx playwright install --with-deps chromium
+      - name: Smoke-test the built Storybook
+        run: npm run test:smoke -- --dir apps/docs/storybook-static
       - name: Security audit
         run: npm audit --audit-level=high
