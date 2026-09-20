@@ -28,12 +28,19 @@ jobs:
       # upload step reported a missing secret. Check them up front instead, and
       # name the ones that are absent -- an unset secret arrives as an empty
       # string, so the action's own error only says "Input required".
-      # The first run spent four minutes building before the upload reported a
-      # missing secret; the second spent four more before reporting a hostname
-      # that does not resolve. Both are knowable in a second. The upload action
-      # cannot say what is wrong with FTP_HOST because the value is masked in
-      # its error, so the shape checks below name the problem instead. None of
-      # them echo the value.
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      # Earlier runs spent four minutes building before the upload reported a
+      # missing secret, then a hostname that did not resolve. Both are knowable
+      # up front. The upload action cannot say what is wrong with FTP_HOST
+      # because the value is masked in its error, so the checks below name the
+      # problem instead. None of them echo the value. This runs after setup-node
+      # because the resolution check uses the same Node resolver as the action.
       - name: Check deploy credentials
         env:
           FTP_HOST: ${{ secrets.FTP_HOST }}
@@ -67,19 +74,29 @@ jobs:
             echo "::error::FTP_HOST includes a port. Remove it -- the protocol setting selects the port."
             exit 1
           fi
-          if ! getent hosts "$FTP_HOST" >/dev/null 2>&1; then
-            echo "::error::FTP_HOST does not resolve. hPanel shows the value to use as 'FTP IP' under Files > FTP Accounts; copy it exactly, with no scheme, port or path."
+          # Resolve with the same call the upload action makes (getaddrinfo via
+          # dns.lookup) so this check cannot disagree with it. getent hosts did:
+          # it timed out on a host FTPS had just connected to, and failed a
+          # deploy that would have worked. Retry, so a transient DNS blip cannot
+          # block a deploy either.
+          attempt=1
+          until [ "$attempt" -gt 3 ]; do
+            result=$(node -e '
+              const dns = require("node:dns");
+              dns.lookup(process.env.FTP_HOST, (err) => {
+                process.stdout.write(err ? "no:" + (err.code || "ERROR") : "yes");
+              });
+            ' 2>/dev/null || echo "no:NODE")
+            [ "$result" = "yes" ] && break
+            attempt=$((attempt + 1))
+            [ "$attempt" -le 3 ] && sleep 3
+          done
+          if [ "${result:-}" != "yes" ]; then
+            echo "::error::FTP_HOST did not resolve after 3 attempts (${result#no:}). hPanel shows the value under Files > FTP Accounts as 'FTP IP'; copy it exactly, with no scheme, port or path."
             exit 1
           fi
 
           echo "Credentials present; FTP_HOST resolves."
-
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 24
-          cache: npm
 
       - run: npm ci
 
