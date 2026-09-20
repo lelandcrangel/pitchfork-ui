@@ -28,13 +28,20 @@ jobs:
       # upload step reported a missing secret. Check them up front instead, and
       # name the ones that are absent -- an unset secret arrives as an empty
       # string, so the action's own error only says "Input required".
-      - name: Check deploy credentials are present
+      # The first run spent four minutes building before the upload reported a
+      # missing secret; the second spent four more before reporting a hostname
+      # that does not resolve. Both are knowable in a second. The upload action
+      # cannot say what is wrong with FTP_HOST because the value is masked in
+      # its error, so the shape checks below name the problem instead. None of
+      # them echo the value.
+      - name: Check deploy credentials
         env:
           FTP_HOST: ${{ secrets.FTP_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
         run: |
           set -euo pipefail
+
           missing=""
           [ -n "${FTP_HOST:-}" ]     || missing="$missing FTP_HOST"
           [ -n "${FTP_USER:-}" ]     || missing="$missing FTP_USER"
@@ -43,7 +50,29 @@ jobs:
             echo "::error::Missing repository secret(s):$missing -- set them under Settings > Secrets and variables > Actions."
             exit 1
           fi
-          echo "All three FTP secrets are present."
+
+          if [[ "$FTP_HOST" =~ [[:space:]] ]]; then
+            echo "::error::FTP_HOST contains whitespace, most likely a newline picked up when pasting. Re-enter it with no leading or trailing space."
+            exit 1
+          fi
+          if [[ "$FTP_HOST" == *"://"* ]]; then
+            echo "::error::FTP_HOST includes a scheme. Use a bare hostname or IP, with no ftp:// or ftps:// prefix."
+            exit 1
+          fi
+          if [[ "$FTP_HOST" == */* ]]; then
+            echo "::error::FTP_HOST includes a path. Use only the hostname or IP -- the upload directory comes from server-dir."
+            exit 1
+          fi
+          if [[ "$FTP_HOST" =~ ^[^:]+:[0-9]+$ ]]; then
+            echo "::error::FTP_HOST includes a port. Remove it -- the protocol setting selects the port."
+            exit 1
+          fi
+          if ! getent hosts "$FTP_HOST" >/dev/null 2>&1; then
+            echo "::error::FTP_HOST does not resolve. hPanel shows the value to use as 'FTP IP' under Files > FTP Accounts; copy it exactly, with no scheme, port or path."
+            exit 1
+          fi
+
+          echo "Credentials present; FTP_HOST resolves."
 
       - uses: actions/checkout@v7
 
