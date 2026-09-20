@@ -294,9 +294,11 @@ function parseAttrs(attrText) {
     skipSpace();
     if (i >= attrText.length) break;
 
-    // A spread ({...props}) contributes no name we can check.
+    // A spread ({...props}) contributes no name we can check, but its presence
+    // matters: it may supply anything, so required props cannot be judged.
     if (attrText[i] === '{') {
-      skipBraced();
+      const body = skipBraced();
+      if (body.trimStart().startsWith('...')) attrs.push({ name: null, spread: true });
       continue;
     }
 
@@ -367,9 +369,12 @@ export function validateUsage(code, componentsByName) {
 
     const attrs = parseAttrs(usage.attrText);
     const seen = new Set(attrs.map((a) => a.name));
+    // `{...props}` can supply any prop, so a missing required one proves nothing.
+    const hasSpread = attrs.some((a) => a.spread);
     const propsByName = new Map(component.props.map((p) => [p.name, p]));
 
     for (const attr of attrs) {
+      if (attr.spread) continue;
       const prop = propsByName.get(attr.name);
 
       if (!prop) {
@@ -406,6 +411,7 @@ export function validateUsage(code, componentsByName) {
     }
 
     for (const prop of component.props) {
+      if (hasSpread) break;
       // `children` is normally supplied by nesting, not as an attribute.
       if (prop.name === 'children' && !usage.selfClosing) continue;
       if (prop.required && !seen.has(prop.name)) {

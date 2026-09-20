@@ -198,3 +198,16 @@ test('validate_usage still sees attributes after a braced value with an escaped 
   });
   assert.match(out, /not valid on `Alert`/);
 });
+
+test('validate_usage does not demand a required prop when a spread could supply it', async () => {
+  const out = await call('validate_usage', { code: '<Carousel {...props} />' });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage still checks written attributes alongside a spread', async () => {
+  // A spread excuses a *missing* required prop, not an invalid written value.
+  const out = await call('validate_usage', {
+    code: '<Badge {...rest} variant="primary">New</Badge>',
+  });
+  assert.match(out, /not valid on `Badge`/);
+});
