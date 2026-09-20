@@ -180,3 +180,12 @@ test('validate_usage accepts every documented example', async () => {
   assert.ok(checked > 200, `expected a substantial corpus, got ${checked}`);
   assert.deepEqual(failures, [], 'no documented example should fail validation');
 });
+
+test('validate_usage still sees attributes after an escaped quote containing ">"', async () => {
+  // The tag scanner must not treat `\"` as ending the string, or it terminates
+  // the tag at the wrong `>` and silently stops checking the rest.
+  const out = await call('validate_usage', {
+    code: '<Alert heading="x \\" > y" variant="nonsense" />',
+  });
+  assert.match(out, /not valid on `Alert`/);
+});

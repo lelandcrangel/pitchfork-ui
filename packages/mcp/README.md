@@ -67,9 +67,22 @@ Most component-library MCP servers only read. This one checks work:
 - warning (line 4): Hardcoded colour `#4f46e5`. Use a CSS variable instead.
 ```
 
-It deliberately does **not** flag every unrecognised prop. Almost every component
-spreads onto a native element, so `onMouseEnter` and `data-testid` are valid; an
-unknown prop is reported only when it looks like a typo of a real one.
+For an attribute that is not a declared prop, the rule is:
+
+- `data-*`, `aria-*`, `on*` handlers and DOM attributes pass, because almost
+  every component spreads onto a native element — `onMouseEnter` and
+  `data-testid` are legitimate anywhere.
+- Anything else is reported as invented, with a suggestion when it is close to a
+  real prop (`varient` → `variant`) and the component's real prop list when it
+  is not (`padding` on `Card`).
+- Components whose props cannot be fully enumerated are skipped entirely. `Icon`
+  extends a type from outside the library, so an unlisted prop there proves
+  nothing; its metadata carries `propsComplete: false`.
+
+The consequence worth knowing: a _valid DOM attribute_ that is meaningless on a
+given component is not flagged. `<Badge type="success">` passes, because `type`
+is real HTML and rejecting it would mean rejecting legitimate passthrough props
+everywhere else.
 
 ## Configuration
 

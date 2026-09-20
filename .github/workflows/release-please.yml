@@ -16,6 +16,7 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     outputs:
       react_released: ${{ steps.release.outputs['packages/react--release_created'] }}
+      mcp_released: ${{ steps.release.outputs['packages/mcp--release_created'] }}
     steps:
       - uses: googleapis/release-please-action@v5
         id: release
@@ -26,8 +27,10 @@ jobs:
 
   publish:
     needs: release-please
-    # Only when release-please cut a new @pitchfork-ui/react release.
-    if: needs.release-please.outputs.react_released == 'true'
+    # Whenever release-please cut a release for a package we publish.
+    if: >-
+      needs.release-please.outputs.react_released == 'true' ||
+      needs.release-please.outputs.mcp_released == 'true'
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -48,5 +51,21 @@ jobs:
       - run: npm ci
       - run: npm run build:tokens
       - run: npm run build:react
+      # @pitchfork-ui/react exports ./metadata, and @pitchfork-ui/mcp serves the
+      # bundled copies. Both are generated, so both must be built before packing
+      # or the published packages ship a broken entry point.
+      - run: npm run build:metadata
+      - run: npm run build:mcp
+      - name: Check the generated artifacts are in the tarballs
+        run: |
+          set -euo pipefail
+          npm pack --workspace @pitchfork-ui/react --dry-run 2>&1 | grep -q 'dist/metadata.json'
+          npm pack --workspace @pitchfork-ui/mcp --dry-run 2>&1 | grep -q 'data/metadata.json'
+          npm pack --workspace @pitchfork-ui/mcp --dry-run 2>&1 | grep -q 'data/tokens.json'
       # No NODE_AUTH_TOKEN: auth + provenance come from OIDC via the trusted publisher.
-      - run: npm publish --workspace @pitchfork-ui/react --access public
+      - name: Publish @pitchfork-ui/react
+        if: needs.release-please.outputs.react_released == 'true'
+        run: npm publish --workspace @pitchfork-ui/react --access public
+      - name: Publish @pitchfork-ui/mcp
+        if: needs.release-please.outputs.mcp_released == 'true'
+        run: npm publish --workspace @pitchfork-ui/mcp --access public

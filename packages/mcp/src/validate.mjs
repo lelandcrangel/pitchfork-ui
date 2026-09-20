@@ -209,6 +209,12 @@ function findUsages(code) {
     while (cursor < code.length) {
       const char = code[cursor];
       if (quote) {
+        // Step over an escaped character, or `\"` inside a string ends the
+        // string early and the tag terminates at the wrong `>`.
+        if (char === '\\') {
+          cursor += 2;
+          continue;
+        }
         if (char === quote) quote = null;
       } else if (char === '"' || char === "'" || char === '`') {
         quote = char;
