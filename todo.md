@@ -81,11 +81,20 @@ the "Using with AI" docs page.
 
 ---
 
-Once it is published, two places stop needing their caveat: the "while
-`@pitchfork-ui/mcp` is being published" callout in `apps/docs/src/UsingWithAI.mdx`,
-and the "not on npm yet" paragraph under _Using it with a coding agent_ in
-`README.md`, where the checkout config can give way to the `claude mcp add`
-one-liner already shown beneath it.
+Once it is published, four places swap the checkout for the package:
+
+- `apps/docs/src/UsingWithAI.mdx` — the "not on npm yet" paragraph under
+  _Install it_, and the "Once the package is published" callout below it, which
+  then becomes the whole of that section.
+- `apps/docs/src/UsingWithAI.mdx` — the two `PITCHFORK_UI_METADATA` examples
+  under _Getting the most out of it_, both of which run `node` against a
+  checkout path and become `npx -y @pitchfork-ui/mcp`.
+- `README.md` — the "not on npm yet" paragraph under _Using it with a coding
+  agent_, where the checkout config gives way to the `claude mcp add` one-liner
+  already shown beneath it.
+
+The rule that keeps these honest: no command in the docs should 404 for a reader
+following it today. Grepping for `npx -y @pitchfork-ui/mcp` finds every one.
 
 ---
 

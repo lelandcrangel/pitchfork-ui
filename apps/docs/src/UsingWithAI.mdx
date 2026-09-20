@@ -208,8 +208,8 @@ own shell has no effect on an already-configured client:
 {
   "mcpServers": {
     "pitchfork-ui": {
-      "command": "npx",
-      "args": ["-y", "@pitchfork-ui/mcp"],
+      "command": "node",
+      "args": ["/absolute/path/to/pitchfork-ui/packages/mcp/src/index.mjs"],
       "env": {
         "PITCHFORK_UI_METADATA": "/absolute/path/to/metadata.json"
       }
@@ -228,8 +228,13 @@ To check a metadata file by hand, where the working directory _is_ yours, pass
 it on the command line:
 
 ```bash
-PITCHFORK_UI_METADATA=./packages/react/dist/metadata.json npx -y @pitchfork-ui/mcp
+PITCHFORK_UI_METADATA=./packages/react/dist/metadata.json \
+  node /absolute/path/to/pitchfork-ui/packages/mcp/src/index.mjs
 ```
+
+Both forms use `node` against a checkout, matching the setup above. Once
+`@pitchfork-ui/mcp` is published, swap either for `npx -y @pitchfork-ui/mcp` —
+the `env` block and the variable work the same way.
 
 ## 2. `llms.txt` — nothing to install
 
