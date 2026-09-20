@@ -69,6 +69,7 @@
       "default": "./dist/index.js"
     },
     "./styles.css": "./dist/styles.css",
-    "./theme.starter.css": "./theme.starter.css"
+    "./theme.starter.css": "./theme.starter.css",
+    "./metadata": "./dist/metadata.json"
   }
 }

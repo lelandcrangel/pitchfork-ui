@@ -186,9 +186,14 @@ This is the portfolio deliverable. Publishing it is not the same as showing it.
 
 ## 7. CI & maintenance
 
-- **Metadata freshness gate** in `.github/workflows/ci.yml`: regenerate, `git diff
---exit-code`, fail if stale. Same spirit as open issue #26 (validate published
-  artifacts, not just source).
+- **Extractor gate** in `.github/workflows/ci.yml`: `npm run build:metadata -- --strict`.
+  The plan originally called for a "regenerate and diff" freshness check; that does
+  not apply, because `dist/` is gitignored, so there is no committed copy to drift
+  from. What is worth gating on instead is the extractor still understanding the
+  codebase: a new component nobody categorised, a CSS variable that resolves to
+  nothing, a story whose usage cannot be read. `--strict` exits non-zero on any of
+  those, against a documented known-issues allowlist. Same spirit as open issue #26
+  (validate published artifacts, not just source).
 - Run `validate_usage` against every extracted example in CI — if an example no
   longer type-checks against its own component, both the docs and the agent output
   are wrong.
@@ -207,10 +212,19 @@ This is the portfolio deliverable. Publishing it is not the same as showing it.
    130 of the 231 files under `apps/docs/src/`, so it is a deliberate provenance
    convention, not a stray. Decide whether it stays internal or ships as a
    `provenance` field before it becomes part of a published artifact.
-3. **`todo.md`** — `CLAUDE.md` "Known gaps" points at a root `todo.md` that does not
-   exist. Create it or drop the reference.
+3. **`todo.md`** — `CLAUDE.md` "Known gaps" points at a root `todo.md` that is listed
+   in `.gitignore`, so it is deliberately local-only and simply absent from a fresh
+   clone. Not a bug; decide whether a shared gaps list belongs in the repo.
 4. **Category taxonomy** — reuse `FIGMA-KIT-PLAN.md` §2 groupings verbatim so the
-   Figma kit, Storybook sidebar, and AI metadata all agree.
+   Figma kit, Storybook sidebar, and AI metadata all agree. Settled in Phase 1:
+   `CATEGORIES` in `scripts/build-metadata.mjs` is the shared list, and a component
+   missing from it fails `--strict`.
+5. **Timeline marker variables** — surfaced by the extractor, not previously known.
+   `.pf-timeline__marker` reads `--pf-timeline-marker-bg`, `-border` and `-icon`,
+   which are defined nowhere. Every marker renders with a `--<tone>` modifier that
+   overrides all three, so nothing is visibly wrong. Either they are intended as
+   consumer override hooks (add fallbacks to `theme.css`) or they are dead
+   declarations (remove them). Allowlisted in the extractor until decided.
 
 ---
 
