@@ -1,7 +1,7 @@
 {
   "name": "@pitchfork-ui/mcp",
-  "version": "0.1.0",
-  "description": "MCP server for Pitchfork UI \u2014 gives coding agents the real component API, design tokens and conventions, so generated code uses the design system correctly.",
+  "version": "0.2.0",
+  "description": "MCP server for Pitchfork UI — gives coding agents the real component API, design tokens and conventions, so generated code uses the design system correctly.",
   "license": "MIT",
   "author": "Leland Rangel",
   "homepage": "https://lelandrangel.com/pitchfork-ui/",
