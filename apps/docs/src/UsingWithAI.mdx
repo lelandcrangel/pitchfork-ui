@@ -200,10 +200,37 @@ calls for it. Two things make that reliable:
 
 If your project has `@pitchfork-ui/react` installed, the server answers from
 _that_ copy, so it describes the version you are actually building against
-rather than the newest one. Override it explicitly if you need to:
+rather than the newest one.
+
+To point it somewhere else, set `PITCHFORK_UI_METADATA` in the client's `env`
+block. The client is what launches the server, so exporting the variable in your
+own shell has no effect on an already-configured client:
+
+```json
+{
+  "mcpServers": {
+    "pitchfork-ui": {
+      "command": "npx",
+      "args": ["-y", "@pitchfork-ui/mcp"],
+      "env": {
+        "PITCHFORK_UI_METADATA": "/absolute/path/to/metadata.json"
+      }
+    }
+  }
+}
+```
+
+Use an absolute path there. A relative one resolves against the client's working
+directory, which is rarely your project, and a path that does not exist is not
+an error — the server quietly falls back to its bundled copy and answers as if
+nothing were wrong. The startup line on stderr names the file it actually
+loaded, so check that if an override seems to have no effect.
+
+To check a metadata file by hand, where the working directory _is_ yours, pass
+it on the command line:
 
 ```bash
-PITCHFORK_UI_METADATA=./node_modules/@pitchfork-ui/react/dist/metadata.json
+PITCHFORK_UI_METADATA=./packages/react/dist/metadata.json npx -y @pitchfork-ui/mcp
 ```
 
 ## 2. `llms.txt` — nothing to install

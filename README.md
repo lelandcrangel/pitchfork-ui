@@ -51,6 +51,23 @@ npm run test
 The library publishes its own API in machine-readable form, generated from
 source on every build, so an agent does not have to guess at prop names.
 
+`@pitchfork-ui/mcp` is not on npm yet, so point your MCP client at a checkout
+for now. Run `npm install && npm run build` in it first, so the metadata the
+server reads exists:
+
+```json
+{
+  "mcpServers": {
+    "pitchfork-ui": {
+      "command": "node",
+      "args": ["/absolute/path/to/pitchfork-ui/packages/mcp/src/index.mjs"]
+    }
+  }
+}
+```
+
+Once the package is published, that becomes a one-liner:
+
 ```bash
 claude mcp add pitchfork-ui -- npx -y @pitchfork-ui/mcp
 ```

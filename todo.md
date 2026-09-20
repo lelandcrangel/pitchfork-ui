@@ -81,9 +81,11 @@ the "Using with AI" docs page.
 
 ---
 
-Once it is published, drop the "while `@pitchfork-ui/mcp` is being published"
-callout from `apps/docs/src/UsingWithAI.mdx` — it exists only because the
-`npx -y @pitchfork-ui/mcp` instruction above it does not work yet.
+Once it is published, two places stop needing their caveat: the "while
+`@pitchfork-ui/mcp` is being published" callout in `apps/docs/src/UsingWithAI.mdx`,
+and the "not on npm yet" paragraph under _Using it with a coding agent_ in
+`README.md`, where the checkout config can give way to the `claude mcp add`
+one-liner already shown beneath it.
 
 ---
 
