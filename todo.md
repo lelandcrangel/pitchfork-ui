@@ -5,6 +5,21 @@ does not need discussion. Referenced from `CLAUDE.md`.
 
 ---
 
+## Markdown tables do not render in Storybook MDX
+
+Storybook's MDX pipeline does not load `remark-gfm`, so a GFM table in an
+`.mdx` file renders as a paragraph of pipe characters rather than a table. The
+one table in the docs — the MCP tool list in `UsingWithAI.mdx` — hit this and
+now uses the library's own `Table` component instead, which looks better
+anyway. But the trap is still there for the next person who writes one.
+
+**Fix:** add `remark-gfm` to the docs addon's
+`mdxPluginOptions.mdxCompileOptions.remarkPlugins` in
+`apps/docs/.storybook/main.ts`. Worth checking the other MDX pages afterwards,
+since the same plugin also turns on strikethrough, footnotes and autolinks.
+
+---
+
 ## Dark mode contrast failures
 
 `node scripts/check-dark-contrast.mjs` reports 6 failing token pairs, including:

@@ -1,4 +1,5 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { Table } from '@pitchfork-ui/react';
 
 <Meta title="Foundations/Using with AI" />
 
@@ -148,15 +149,42 @@ picked the server up — check its MCP panel or logs.
 
 ### The tools
 
-| Tool                | What it answers                                                 |
-| ------------------- | --------------------------------------------------------------- |
-| `list_components`   | What is in the library, by category                             |
-| `search_components` | "I need something for uploading a file"                         |
-| `get_component`     | Props, defaults, accessibility contract, theme variables        |
-| `get_examples`      | Working JSX for a component                                     |
-| `get_tokens`        | Colours, spacing, radii, typography, shadows, motion            |
-| `get_conventions`   | The house rules — naming, the variable chain, breakpoints, a11y |
-| `validate_usage`    | Check a snippet against the real API                            |
+<Table
+  columns={[
+    { key: 'tool', header: 'Tool', width: 190 },
+    { key: 'answers', header: 'What it answers' },
+  ]}
+  rows={[
+    {
+      tool: <code>list_components</code>,
+      answers: 'What is in the library, by category',
+    },
+    {
+      tool: <code>search_components</code>,
+      answers: '“I need something for uploading a file”',
+    },
+    {
+      tool: <code>get_component</code>,
+      answers: 'Props, defaults, accessibility contract, theme variables',
+    },
+    {
+      tool: <code>get_examples</code>,
+      answers: 'Working JSX for a component',
+    },
+    {
+      tool: <code>get_tokens</code>,
+      answers: 'Colours, spacing, radii, typography, shadows, motion',
+    },
+    {
+      tool: <code>get_conventions</code>,
+      answers: 'The house rules — naming, the variable chain, breakpoints, a11y',
+    },
+    {
+      tool: <code>validate_usage</code>,
+      answers: 'Check a snippet against the real API',
+    },
+  ]}
+/>
 
 ### Getting the most out of it
 
