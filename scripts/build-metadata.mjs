@@ -36,23 +36,6 @@ const warn = (message) => warnings.push(message);
 
 const strict = process.argv.includes('--strict');
 
-/**
- * Warnings that are known, understood, and deliberately not fixed here, so
- * --strict can gate on anything new without silently swallowing these.
- *
- * Timeline's base `.pf-timeline__marker` rule reads three variables that are
- * defined nowhere. Every marker is rendered with a `--<tone>` modifier that
- * overrides all three, so nothing is visibly broken — but it is unclear whether
- * these are intended as consumer override hooks (which would want fallbacks in
- * theme.css) or are simply dead declarations (which would want removing). That
- * is a design decision for the library owner, not the extractor.
- */
-const KNOWN_ISSUES = [
-  '--pf-timeline-marker-bg',
-  '--pf-timeline-marker-border',
-  '--pf-timeline-marker-icon',
-];
-
 /* ------------------------------------------------------------------ *
  * Category taxonomy
  *
@@ -825,15 +808,11 @@ function main() {
   // still understanding the codebase: a new component nobody categorised, a
   // variable that resolves to nothing, a story whose usage cannot be read.
   if (strict) {
-    const unexpected = warnings.filter(
-      (message) => !KNOWN_ISSUES.some((known) => message.includes(known)),
-    );
-    if (unexpected.length) {
-      console.error(`\n--strict: ${unexpected.length} warning(s) not on the known-issues list.`);
-      for (const message of unexpected) console.error(`  - ${message}`);
+    if (warnings.length) {
+      console.error(`\n--strict: ${warnings.length} warning(s); failing.`);
       process.exit(1);
     }
-    console.log('\n--strict: no unexpected warnings.');
+    console.log('\n--strict: clean.');
   }
 }
 

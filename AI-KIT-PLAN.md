@@ -219,12 +219,13 @@ This is the portfolio deliverable. Publishing it is not the same as showing it.
    Figma kit, Storybook sidebar, and AI metadata all agree. Settled in Phase 1:
    `CATEGORIES` in `scripts/build-metadata.mjs` is the shared list, and a component
    missing from it fails `--strict`.
-5. **Timeline marker variables** — surfaced by the extractor, not previously known.
-   `.pf-timeline__marker` reads `--pf-timeline-marker-bg`, `-border` and `-icon`,
-   which are defined nowhere. Every marker renders with a `--<tone>` modifier that
-   overrides all three, so nothing is visibly wrong. Either they are intended as
-   consumer override hooks (add fallbacks to `theme.css`) or they are dead
-   declarations (remove them). Allowlisted in the extractor until decided.
+5. **Timeline marker variables** — surfaced by the extractor, not previously known,
+   and now resolved. `.pf-timeline__marker` read `--pf-timeline-marker-bg`,
+   `-border` and `-icon`, which were defined nowhere; every marker renders with a
+   `--<tone>` modifier that overrode all three, so they were dead declarations and
+   have been removed. The base rule keeps the border geometry (`border-style` /
+   `border-width`) and the tone modifier supplies the colour. With that gone,
+   `--strict` needs no known-issues allowlist and fails on any warning at all.
 
 ---
 

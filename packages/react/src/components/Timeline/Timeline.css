@@ -25,10 +25,9 @@
 
 .pf-timeline__marker {
   align-items: center;
-  background: var(--pf-timeline-marker-bg);
-  border: 2px solid var(--pf-timeline-marker-border);
   border-radius: var(--radius-full);
-  color: var(--pf-timeline-marker-icon);
+  border-style: solid;
+  border-width: 2px;
   display: inline-flex;
   flex-shrink: 0;
   height: var(--pf-timeline-marker-size);
