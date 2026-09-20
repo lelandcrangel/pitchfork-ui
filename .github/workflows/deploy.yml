@@ -183,23 +183,54 @@ jobs:
 
       # A sync can report complete success while uploading to the wrong
       # directory, which is how the first four runs "succeeded" without ever
-      # changing the site. llms.txt is generated and carries the version, so
-      # fetching it back proves the live URL serves this build.
+      # changing the site. Two files are fetched back, and both carry the
+      # version just built:
+      #
+      #   llms.txt          a static file copied straight from apps/docs/public
+      #   CHANGELOG-*.js    the compiled Storybook chunk behind the changelog page
+      #
+      # The second matters because the first cannot fail on its own: the static
+      # files can land while the compiled docs are stale, and the changelog is
+      # the page where that shows first. Checking a fingerprinted chunk also
+      # proves this exact build is being served -- the name changes whenever the
+      # content does, so a cached or leftover copy cannot satisfy it.
       - name: Verify the live site serves this build
         run: |
           set -euo pipefail
+          base="https://lelandrangel.com/pitchfork-ui"
           version=$(node -p "require('./packages/react/package.json').version")
-          url="https://lelandrangel.com/pitchfork-ui/llms.txt"
+          static_dir=apps/docs/storybook-static
+
+          changelog_chunk=$(cd "$static_dir/assets" && ls | grep -E '^CHANGELOG-[A-Za-z0-9_-]+\.js$' | head -1)
+          if [ -z "$changelog_chunk" ]; then
+            echo "::error::No CHANGELOG-*.js chunk in $static_dir/assets -- the changelog page did not compile."
+            exit 1
+          fi
+
+          # A check that cannot fail is worse than no check, so confirm each
+          # marker is in the local file before asking the server for it.
+          grep -q "Version $version\." "$static_dir/llms.txt" || {
+            echo "::error::Local llms.txt does not carry version $version -- the canary is broken, not the deploy."
+            exit 1
+          }
+          grep -q "react-v$version" "$static_dir/assets/$changelog_chunk" || {
+            echo "::error::Local $changelog_chunk has no $version entry -- CHANGELOG.mdx is out of sync with packages/react/CHANGELOG.md."
+            exit 1
+          }
+
+          check() {
+            curl -fsS --max-time 30 -H 'Cache-Control: no-cache' "$1" 2>/dev/null | grep -q "$2"
+          }
 
           for attempt in 1 2 3 4 5; do
-            body=$(curl -fsS --max-time 30 "$url" || true)
-            if printf '%s' "$body" | grep -q "Version $version\."; then
-              echo "$url serves version $version."
+            if check "$base/llms.txt" "Version $version\." \
+               && check "$base/assets/$changelog_chunk" "react-v$version"; then
+              echo "$base serves version $version, docs bundle included."
               exit 0
             fi
             echo "Attempt $attempt: not serving $version yet."
             sleep 10
           done
 
-          echo "::error::$url did not serve version $version after the upload reported success. Check that server-dir points at the directory the site is actually served from."
+          echo "::error::$base did not serve version $version after the upload reported success. Check that server-dir points at the directory the site is actually served from."
           exit 1

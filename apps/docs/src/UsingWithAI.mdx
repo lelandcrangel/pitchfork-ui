@@ -79,11 +79,20 @@ tool that cries wolf gets switched off.
 
 ## 1. MCP server — the richest option
 
+The [Model Context Protocol](https://modelcontextprotocol.io) server answers
+questions about the library on demand, so the agent looks things up while it
+works instead of being handed a wall of documentation up front.
+
+### Install it
+
+**Claude Code**
+
 ```bash
 claude mcp add pitchfork-ui -- npx -y @pitchfork-ui/mcp
 ```
 
-Or in any MCP client's config:
+**Cursor, VS Code, Zed, or any other MCP client** — add it to the client's MCP
+config file:
 
 ```json
 {
@@ -96,6 +105,49 @@ Or in any MCP client's config:
 }
 ```
 
+Restart the client. The server is stdio-based, needs no API key and no network
+access — everything it answers from is bundled in the package.
+
+<div
+  style={{
+    borderLeft: '3px solid var(--color-semantic-border-default)',
+    padding: '0.75rem 1rem',
+    margin: '1.5rem 0',
+    background: 'var(--color-semantic-background-subtle)',
+  }}
+>
+
+**While `@pitchfork-ui/mcp` is being published,** point the client at a checkout
+instead — same server, same tools:
+
+```json
+{
+  "mcpServers": {
+    "pitchfork-ui": {
+      "command": "node",
+      "args": ["/absolute/path/to/pitchfork-ui/packages/mcp/src/index.mjs"]
+    }
+  }
+}
+```
+
+Run `npm install && npm run build` in that checkout first, so the metadata the
+server reads exists.
+
+</div>
+
+### Check it is working
+
+Ask the agent for something only the server can answer:
+
+> Using the pitchfork-ui MCP server, what variants does `Button` take?
+
+A grounded answer names `primary`, `secondary`, `ghost` and `destructive`. A
+guess says `default` and `outline`. If you get the guess, the client has not
+picked the server up — check its MCP panel or logs.
+
+### The tools
+
 | Tool                | What it answers                                                 |
 | ------------------- | --------------------------------------------------------------- |
 | `list_components`   | What is in the library, by category                             |
@@ -106,8 +158,25 @@ Or in any MCP client's config:
 | `get_conventions`   | The house rules — naming, the variable chain, breakpoints, a11y |
 | `validate_usage`    | Check a snippet against the real API                            |
 
+### Getting the most out of it
+
+Agents reach for a tool when they know it exists and when the task obviously
+calls for it. Two things make that reliable:
+
+- **Say so once, at the start of the session.** "Use the pitchfork-ui MCP server
+  for component APIs — don't guess prop names." That one line is usually enough
+  for the rest of the conversation.
+- **Ask for validation as part of the work,** not as a review afterwards: "write
+  the settings panel, then run `validate_usage` on it and fix anything it
+  reports." The agent then catches its own mistakes before you read the diff.
+
 If your project has `@pitchfork-ui/react` installed, the server answers from
-_that_ copy, so it describes the version you are actually building against.
+_that_ copy, so it describes the version you are actually building against
+rather than the newest one. Override it explicitly if you need to:
+
+```bash
+PITCHFORK_UI_METADATA=./node_modules/@pitchfork-ui/react/dist/metadata.json
+```
 
 ## 2. `llms.txt` — nothing to install
 

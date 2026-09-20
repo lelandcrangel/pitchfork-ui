@@ -24,6 +24,13 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run format:check
+
+      # CHANGELOG.mdx is generated from packages/react/CHANGELOG.md by the docs
+      # build. format:check runs before the build, so a stale committed copy
+      # passes here and the build silently regenerates it -- which is how the
+      # published changelog page sat on 0.13.2 while the library was on 0.15.0.
+      - name: Check the Storybook changelog is in sync
+        run: npm run sync-changelog -w @pitchfork-ui/docs -- --check
       - run: npm run test
       - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build

@@ -5,27 +5,6 @@ does not need discussion. Referenced from `CLAUDE.md`.
 
 ---
 
-## Storybook changelog page is stale and reformats on build
-
-`apps/docs/src/CHANGELOG.mdx` is generated from `packages/react/CHANGELOG.md` by
-`apps/docs/sync-changelog.cjs`, which runs as a pre-step of both `storybook` and
-`build`. Two problems:
-
-1. **The committed copy is stale.** It predates the 0.14.0 release, so the
-   published changelog page is missing the most recent entries, including a
-   breaking change.
-2. **The regenerated copy is not Prettier-formatted**, so `npm run build`
-   followed by `npm run format:check` fails on a clean tree.
-
-CI does not catch either, because `format:check` runs _before_ `build` — the
-committed file passes, and the regenerated one is never re-checked.
-
-**Fix:** have `sync-changelog.cjs` write Prettier-formatted output (or run
-Prettier over its output), then commit the regenerated file. Optionally move
-`format:check` after `build` in `.github/workflows/ci.yml` so drift is caught.
-
----
-
 ## Dark mode contrast failures
 
 `node scripts/check-dark-contrast.mjs` reports 6 failing token pairs, including:
@@ -84,6 +63,12 @@ every release after this one.
 Until it is published, `npx @pitchfork-ui/mcp` does not work. That command
 appears in `packages/mcp/README.md`, `.claude/skills/pitchfork-ui/SKILL.md` and
 the "Using with AI" docs page.
+
+---
+
+Once it is published, drop the "while `@pitchfork-ui/mcp` is being published"
+callout from `apps/docs/src/UsingWithAI.mdx` — it exists only because the
+`npx -y @pitchfork-ui/mcp` instruction above it does not work yet.
 
 ---
 

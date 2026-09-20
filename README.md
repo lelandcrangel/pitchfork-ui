@@ -26,8 +26,12 @@ Storybook runs from `apps/docs` and imports components from `@pitchfork-ui/react
 
 ```txt
 apps/docs              Storybook documentation app
-packages/tokens        Style Dictionary token source and CSS variable output
+apps/theme-builder     Live token-editing playground
+apps/demo              Example application built on the library
 packages/react         React component library
+packages/tokens        Style Dictionary token source and CSS variable output
+packages/mcp           MCP server exposing the library's API to coding agents
+scripts/               Metadata, llms.txt and MCP data generators
 ```
 
 ## Build
@@ -41,3 +45,23 @@ npm run build
 ```bash
 npm run test
 ```
+
+## Using it with a coding agent
+
+The library publishes its own API in machine-readable form, generated from
+source on every build, so an agent does not have to guess at prop names.
+
+```bash
+claude mcp add pitchfork-ui -- npx -y @pitchfork-ui/mcp
+```
+
+The server exposes the component list, props, design tokens, the house
+conventions, working examples, and a `validate_usage` tool that checks a JSX
+snippet against the real API. If you would rather not install anything, the
+same content is published as
+[`llms.txt`](https://lelandrangel.com/pitchfork-ui/llms.txt) and
+[`llms-full.txt`](https://lelandrangel.com/pitchfork-ui/llms-full.txt), or as
+`@pitchfork-ui/react/metadata` for your own tooling.
+
+See [Using with AI](https://lelandrangel.com/pitchfork-ui/?path=/docs/foundations-using-with-ai--docs)
+for setup in other clients and for what changes in the output.
