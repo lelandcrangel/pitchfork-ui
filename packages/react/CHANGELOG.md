@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.15.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.14.0...react-v0.15.0) (2026-09-20)
+
+
+### Features
+
+* make the component library machine-consumable for coding agents ([#74](https://github.com/lelandcrangel/pitchfork-ui/issues/74)) ([3a4a904](https://github.com/lelandcrangel/pitchfork-ui/commit/3a4a904a47b7c11f31d4aafe9a9f7b8b2c613e3d))
+
 ## [0.14.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.13.2...react-v0.14.0) (2026-09-18)
 
 
