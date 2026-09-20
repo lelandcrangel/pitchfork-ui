@@ -192,7 +192,7 @@ not in the published package, so a runtime reader could not otherwise see them.
 
 ### 4d. Verification
 
-13 end-to-end tests in `packages/mcp/test/`, run against a real client over
+20 end-to-end tests in `packages/mcp/test/`, run against a real client over
 stdio via `node:test` (no extra dependency). Wired into CI as `test:mcp`.
 
 `packages/mcp` is registered in `release-please-config.json`, so it versions
