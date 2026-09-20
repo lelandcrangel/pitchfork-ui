@@ -6,6 +6,15 @@ import customMedia from 'postcss-custom-media';
 
 const storybookDir = dirname(fileURLToPath(import.meta.url));
 const reactSourceEntry = resolve(storybookDir, '../../../packages/react/src/index.ts');
+// The published package ships a single styles.css; from source, the equivalent
+// entry point is theme.css, which defines the design tokens and every --pf-*
+// alias on :root. Aliasing the stylesheet specifier to the TypeScript entry
+// instead made preview.ts's `import '@pitchfork-ui/react/styles.css'` a
+// side-effect-only import of a module Rollup treats as side-effect-free, so the
+// whole chain -- theme.css included -- was tree-shaken out of the build. Every
+// component class still landed, so the site rendered with correct markup and no
+// token values at all, and nothing failed loudly enough to notice.
+const reactThemeCss = resolve(storybookDir, '../../../packages/react/src/styles/theme.css');
 
 const rawBasePath = process.env.STORYBOOK_BASE_PATH ?? '/';
 const withLeadingSlash = rawBasePath.startsWith('/') ? rawBasePath : `/${rawBasePath}`;
@@ -51,7 +60,7 @@ const config: StorybookConfig = {
       alias: [
         {
           find: '@pitchfork-ui/react/styles.css',
-          replacement: reactSourceEntry,
+          replacement: reactThemeCss,
         },
         {
           find: '@pitchfork-ui/react',
