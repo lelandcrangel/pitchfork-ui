@@ -247,3 +247,14 @@ jobs:
 
           echo "::error::$base did not serve version $version after the upload reported success. Check that server-dir points at the directory the site is actually served from."
           exit 1
+
+      # Freshness is not function. The check above proves the bytes served are
+      # the bytes just built -- it caught four deploys that uploaded to a
+      # directory nothing serves -- but it passed green throughout the outage
+      # where every component rendered with no design tokens, because an
+      # unstyled bundle is still the current bundle. This renders the live site
+      # in a real browser and fails if the tokens do not resolve.
+      - name: Install Chromium for the smoke test
+        run: npx playwright install --with-deps chromium
+      - name: Smoke-test the live site
+        run: npm run test:smoke -- --base https://lelandrangel.com/pitchfork-ui

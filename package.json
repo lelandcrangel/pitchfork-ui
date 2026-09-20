@@ -28,6 +28,7 @@
     "build:mcp": "node scripts/build-mcp-data.mjs",
     "test": "npm run test -w @pitchfork-ui/react",
     "test:mcp": "npm run test -w @pitchfork-ui/mcp",
+    "test:smoke": "node scripts/smoke-storybook.mjs",
     "test:coverage": "npm run test:coverage -w @pitchfork-ui/react",
     "lint": "eslint .",
     "typecheck": "tsc -b",
