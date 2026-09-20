@@ -86,40 +86,9 @@ works instead of being handed a wall of documentation up front.
 
 ### Install it
 
-**Claude Code**
-
-```bash
-claude mcp add pitchfork-ui -- npx -y @pitchfork-ui/mcp
-```
-
-**Cursor, VS Code, Zed, or any other MCP client** — add it to the client's MCP
-config file:
-
-```json
-{
-  "mcpServers": {
-    "pitchfork-ui": {
-      "command": "npx",
-      "args": ["-y", "@pitchfork-ui/mcp"]
-    }
-  }
-}
-```
-
-Restart the client. The server is stdio-based, needs no API key and no network
-access — everything it answers from is bundled in the package.
-
-<div
-  style={{
-    borderLeft: '3px solid var(--color-semantic-border-default)',
-    padding: '0.75rem 1rem',
-    margin: '1.5rem 0',
-    background: 'var(--color-semantic-background-subtle)',
-  }}
->
-
-**While `@pitchfork-ui/mcp` is being published,** point the client at a checkout
-instead — same server, same tools:
+`@pitchfork-ui/mcp` is not on npm yet, so point your client at a checkout for
+now. Run `npm install && npm run build` in it first, so the metadata the server
+reads exists:
 
 ```json
 {
@@ -132,8 +101,37 @@ instead — same server, same tools:
 }
 ```
 
-Run `npm install && npm run build` in that checkout first, so the metadata the
-server reads exists.
+Restart the client. The server is stdio-based, needs no API key and no network
+access — everything it answers from is read off disk.
+
+<div
+  style={{
+    borderLeft: '3px solid var(--color-semantic-border-default)',
+    padding: '0.75rem 1rem',
+    margin: '1.5rem 0',
+    background: 'var(--color-semantic-background-subtle)',
+  }}
+>
+
+**Once the package is published,** it installs without a checkout. In Claude
+Code:
+
+```bash
+claude mcp add pitchfork-ui -- npx -y @pitchfork-ui/mcp
+```
+
+or, in any other client's MCP config:
+
+```json
+{
+  "mcpServers": {
+    "pitchfork-ui": {
+      "command": "npx",
+      "args": ["-y", "@pitchfork-ui/mcp"]
+    }
+  }
+}
+```
 
 </div>
 

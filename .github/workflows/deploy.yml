@@ -209,21 +209,34 @@ jobs:
 
           # A check that cannot fail is worse than no check, so confirm each
           # marker is in the local file before asking the server for it.
-          grep -q "Version $version\." "$static_dir/llms.txt" || {
+          grep -qF "Version $version." "$static_dir/llms.txt" || {
             echo "::error::Local llms.txt does not carry version $version -- the canary is broken, not the deploy."
             exit 1
           }
-          grep -q "react-v$version" "$static_dir/assets/$changelog_chunk" || {
+          grep -qF "react-v$version" "$static_dir/assets/$changelog_chunk" || {
             echo "::error::Local $changelog_chunk has no $version entry -- CHANGELOG.mdx is out of sync with packages/react/CHANGELOG.md."
             exit 1
           }
 
+          # Download, then search the file. Piping curl into `grep -q` looks
+          # tidier but races: grep exits at the first match, curl is still
+          # writing, and the resulting EPIPE (exit 23) propagates through
+          # pipefail as a failed check. The changelog chunk is 85 KB against a
+          # 64 KB pipe buffer with its marker in the first 2 KB, so it loses
+          # that race a few percent of the time -- reported as "not serving
+          # $version yet", which is precisely the lie this step exists to
+          # prevent. It grows more likely as the changelog does.
           check() {
-            curl -fsS --max-time 30 -H 'Cache-Control: no-cache' "$1" 2>/dev/null | grep -q "$2"
+            local body
+            body=$(curl -fsS --max-time 30 -H 'Cache-Control: no-cache' "$1" 2>/dev/null) || return 1
+            case "$body" in
+              *"$2"*) return 0 ;;
+              *) return 1 ;;
+            esac
           }
 
           for attempt in 1 2 3 4 5; do
-            if check "$base/llms.txt" "Version $version\." \
+            if check "$base/llms.txt" "Version $version." \
                && check "$base/assets/$changelog_chunk" "react-v$version"; then
               echo "$base serves version $version, docs bundle included."
               exit 0
