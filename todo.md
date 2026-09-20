@@ -5,24 +5,18 @@ does not need discussion. Referenced from `CLAUDE.md`.
 
 ---
 
-## Storybook changelog page is stale and reformats on build
+## Markdown tables do not render in Storybook MDX
 
-`apps/docs/src/CHANGELOG.mdx` is generated from `packages/react/CHANGELOG.md` by
-`apps/docs/sync-changelog.cjs`, which runs as a pre-step of both `storybook` and
-`build`. Two problems:
+Storybook's MDX pipeline does not load `remark-gfm`, so a GFM table in an
+`.mdx` file renders as a paragraph of pipe characters rather than a table. The
+one table in the docs — the MCP tool list in `UsingWithAI.mdx` — hit this and
+now uses the library's own `Table` component instead, which looks better
+anyway. But the trap is still there for the next person who writes one.
 
-1. **The committed copy is stale.** It predates the 0.14.0 release, so the
-   published changelog page is missing the most recent entries, including a
-   breaking change.
-2. **The regenerated copy is not Prettier-formatted**, so `npm run build`
-   followed by `npm run format:check` fails on a clean tree.
-
-CI does not catch either, because `format:check` runs _before_ `build` — the
-committed file passes, and the regenerated one is never re-checked.
-
-**Fix:** have `sync-changelog.cjs` write Prettier-formatted output (or run
-Prettier over its output), then commit the regenerated file. Optionally move
-`format:check` after `build` in `.github/workflows/ci.yml` so drift is caught.
+**Fix:** add `remark-gfm` to the docs addon's
+`mdxPluginOptions.mdxCompileOptions.remarkPlugins` in
+`apps/docs/.storybook/main.ts`. Worth checking the other MDX pages afterwards,
+since the same plugin also turns on strikethrough, footnotes and autolinks.
 
 ---
 
@@ -84,6 +78,23 @@ every release after this one.
 Until it is published, `npx @pitchfork-ui/mcp` does not work. That command
 appears in `packages/mcp/README.md`, `.claude/skills/pitchfork-ui/SKILL.md` and
 the "Using with AI" docs page.
+
+---
+
+Once it is published, four places swap the checkout for the package:
+
+- `apps/docs/src/UsingWithAI.mdx` — the "not on npm yet" paragraph under
+  _Install it_, and the "Once the package is published" callout below it, which
+  then becomes the whole of that section.
+- `apps/docs/src/UsingWithAI.mdx` — the two `PITCHFORK_UI_METADATA` examples
+  under _Getting the most out of it_, both of which run `node` against a
+  checkout path and become `npx -y @pitchfork-ui/mcp`.
+- `README.md` — the "not on npm yet" paragraph under _Using it with a coding
+  agent_, where the checkout config gives way to the `claude mcp add` one-liner
+  already shown beneath it.
+
+The rule that keeps these honest: no command in the docs should 404 for a reader
+following it today. Grepping for `npx -y @pitchfork-ui/mcp` finds every one.
 
 ---
 
