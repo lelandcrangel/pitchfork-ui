@@ -24,6 +24,27 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
+      # The first run of this workflow spent four minutes building before the
+      # upload step reported a missing secret. Check them up front instead, and
+      # name the ones that are absent -- an unset secret arrives as an empty
+      # string, so the action's own error only says "Input required".
+      - name: Check deploy credentials are present
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          missing=""
+          [ -n "${FTP_HOST:-}" ]     || missing="$missing FTP_HOST"
+          [ -n "${FTP_USER:-}" ]     || missing="$missing FTP_USER"
+          [ -n "${FTP_PASSWORD:-}" ] || missing="$missing FTP_PASSWORD"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secret(s):$missing -- set them under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          echo "All three FTP secrets are present."
+
       - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
@@ -78,8 +99,8 @@ jobs:
       - name: Deploy docs to /pitchfork-ui/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./apps/docs/storybook-static/
@@ -96,8 +117,8 @@ jobs:
       - name: Deploy theme builder to /pitchfork-ui/theme-builder/
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./apps/theme-builder/dist/
