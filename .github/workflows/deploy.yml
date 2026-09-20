@@ -1,0 +1,108 @@
+name: Deploy to Hostinger
+
+# Publishes the docs site to lelandrangel.com/pitchfork-ui/ and the theme
+# builder to lelandrangel.com/pitchfork-ui/theme-builder/.
+#
+# public_html on this host is shared by four separately deployed projects — the
+# main site plus /pitchfork-ui/, /nextthyme/ and /spatialstudio/. This workflow
+# only ever writes inside ./pitchfork-ui/, and the exclude rules below keep each
+# sync from deleting what the other one owns.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-pitchfork-ui
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - name: Build site (tokens → react → metadata → llms → docs + theme builder)
+        run: npm run build:hostinger
+
+      - name: Verify build output
+        run: |
+          set -euo pipefail
+          docs=apps/docs/storybook-static
+          builder=apps/theme-builder/dist
+
+          test -f "$docs/index.html"     || { echo "::error::$docs/index.html missing"; exit 1; }
+          test -f "$docs/index.json"     || { echo "::error::$docs/index.json missing -- Storybook did not finish"; exit 1; }
+          test -f "$builder/index.html"  || { echo "::error::$builder/index.html missing"; exit 1; }
+
+          # The generated agent-facing files are the point of the docs deploy;
+          # shipping the site without them silently breaks every published link.
+          # These are produced by `build:llms`, which `build:hostinger` only
+          # runs once the AI kit work is on main — deploy after that lands.
+          for f in llms.txt llms-full.txt; do
+            test -f "$docs/$f" || {
+              echo "::error::$docs/$f missing -- build:hostinger did not run build:llms. Is the AI kit merged to main?"
+              exit 1
+            }
+          done
+
+          echo "Build output looks sane:"
+          ls -la "$docs" | head -15
+
+      # The docs sync owns ./pitchfork-ui/ and the theme-builder sync owns
+      # ./pitchfork-ui/theme-builder/. If the Storybook build ever emitted a
+      # theme-builder directory of its own, the exclude below would stop
+      # protecting the live one and the two syncs would fight over it.
+      - name: Guard the nested deploy target
+        run: |
+          set -euo pipefail
+          if [ -e apps/docs/storybook-static/theme-builder ]; then
+            echo "::error::storybook-static/theme-builder collides with the separately deployed theme builder"
+            exit 1
+          fi
+          echo "No collision with the nested theme-builder deployment."
+
+      - name: Deploy docs to /pitchfork-ui/
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./apps/docs/storybook-static/
+          server-dir: ./pitchfork-ui/
+          # theme-builder/ lives inside this directory but is not produced by
+          # the Storybook build. Without excluding it the sync treats it as
+          # stale and deletes the live theme builder on every deploy.
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            theme-builder/**
+
+      - name: Deploy theme builder to /pitchfork-ui/theme-builder/
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./apps/theme-builder/dist/
+          server-dir: ./pitchfork-ui/theme-builder/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
