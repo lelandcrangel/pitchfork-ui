@@ -82,34 +82,6 @@ function docsUrlFor(component) {
 }
 
 /* ------------------------------------------------------------------ *
- * Conventions, lifted from CLAUDE.md
- *
- * These are the rules that make generated code look like it belongs in this
- * codebase. Reading them from CLAUDE.md rather than restating them here keeps
- * one source of truth.
- * ------------------------------------------------------------------ */
-function readConventions(headings) {
-  const claude = readFileSync(join(root, 'CLAUDE.md'), 'utf8');
-  const sections = [];
-
-  for (const heading of headings) {
-    const start = claude.indexOf(`## ${heading}`);
-    if (start === -1) {
-      console.warn(`  ! CLAUDE.md section "${heading}" not found — skipped`);
-      continue;
-    }
-    // Run to the next H2, so nested H3s come along.
-    const rest = claude.slice(start + 3);
-    const next = rest.search(/\n## /);
-    sections.push(
-      (next === -1 ? claude.slice(start) : claude.slice(start, start + 3 + next)).trim(),
-    );
-  }
-
-  return sections.join('\n\n');
-}
-
-/* ------------------------------------------------------------------ *
  * Rendering helpers
  * ------------------------------------------------------------------ */
 
@@ -237,14 +209,7 @@ function buildFull() {
   out.push(`import '${metadata.name}/styles.css';`);
   out.push('```');
   out.push('');
-  out.push(
-    readConventions([
-      'Component conventions',
-      'Icon system',
-      'Form field pattern',
-      'Accessibility',
-    ]),
-  );
+  out.push(metadata.conventions);
   out.push('');
   out.push('---');
   out.push('');

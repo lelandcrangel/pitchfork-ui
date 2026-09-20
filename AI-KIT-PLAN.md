@@ -142,34 +142,61 @@ Two gates, both in CI:
   place yields a plausible-looking link to a page that does not exist — three did,
   because some stories files open with sample data carrying its own `title:` field.
 
-## 4. Phase 3 — `@pitchfork-ui/mcp`
+## 4. Phase 3 — `@pitchfork-ui/mcp` ✅
 
-New workspace package (`packages/mcp`), stdio transport, published to npm.
+`packages/mcp`, a stdio MCP server published to npm. Plain ESM with no build
+step, like `scripts/*.mjs` — it is a small binary, not part of the component
+library, so it needs neither a bundler nor shipped types.
 
 ### 4a. Tools
 
-| Tool                | Purpose                                                                                 |
-| ------------------- | --------------------------------------------------------------------------------------- |
-| `list_components`   | All components, optionally filtered by category                                         |
-| `search_components` | Natural language → component ("something for file upload")                              |
-| `get_component`     | Props, variants, a11y contract, CSS variables                                           |
-| `get_examples`      | Working JSX for a component                                                             |
-| `get_tokens`        | The design token tree, light and dark                                                   |
-| `get_conventions`   | The `CLAUDE.md` rules — `cx`, `forwardRef`, `pf-` naming, the token chain, mobile-first |
-| `validate_usage`    | Check a JSX snippet against the real prop types                                         |
+| Tool                | What it does                                                               |
+| ------------------- | -------------------------------------------------------------------------- |
+| `list_components`   | Every component, optionally filtered by category                           |
+| `search_components` | Find a component from a plain-language description                         |
+| `get_component`     | Full API for one: props, defaults, a11y contract, theme variables, example |
+| `get_examples`      | Every worked example for a component                                       |
+| `get_tokens`        | The design token tree                                                      |
+| `get_conventions`   | The house rules                                                            |
+| `validate_usage`    | Check a JSX snippet against the real API                                   |
 
-`validate_usage` is the differentiator — most component-library MCP servers only
-read. A tool that tells an agent _"`Badge` has no `size` prop"_ closes the loop.
+Tools return Markdown rather than raw JSON: fewer tokens than the equivalent
+object, and models act on it more reliably.
 
-### 4b. Packaging
+### 4b. validate_usage
 
-- Add `packages/mcp` to `release-please-config.json` (the config already handles
-  multiple packages with `separate-pull-requests: false`).
-- README with the `claude mcp add` snippet and a JSON config block.
-- Reads `@pitchfork-ui/react/metadata` — so the server is a thin serving layer with
-  no duplicated knowledge.
+The differentiator, and the reason to prefer this over scraping the docs. It
+catches invalid variant values, unknown components, misspelled props, missing
+required props and hardcoded colours — each with a suggestion.
 
----
+Every check is chosen to have effectively no false positives, because a
+validator that cries wolf gets ignored. In particular it does **not** flag every
+unrecognised prop: nearly every component spreads onto a native element, so
+`onMouseEnter` and `data-testid` are legitimate. An unknown prop is reported
+only when it is within edit distance 2 of a real one.
+
+### 4c. Where the data comes from
+
+The server has no knowledge of its own. It resolves, in order:
+
+1. `PITCHFORK_UI_METADATA` / `PITCHFORK_UI_TOKENS`, for local development
+2. the consumer's own installed `@pitchfork-ui/react` — so answers match the
+   version they are building against, not whichever the server shipped with
+3. copies bundled at build time by `scripts/build-mcp-data.mjs`, which is what
+   makes `npx @pitchfork-ui/mcp` work with nothing installed
+
+Conventions travel inside `metadata.json` for the same reason: `CLAUDE.md` is
+not in the published package, so a runtime reader could not otherwise see them.
+`build-llms-txt.mjs` now reads them from there too, rather than parsing
+`CLAUDE.md` a second time.
+
+### 4d. Verification
+
+13 end-to-end tests in `packages/mcp/test/`, run against a real client over
+stdio via `node:test` (no extra dependency). Wired into CI as `test:mcp`.
+
+`packages/mcp` is registered in `release-please-config.json`, so it versions
+alongside the other packages.
 
 ## 5. Phase 4 — Agent-facing repo files
 

@@ -14,6 +14,13 @@
       "changelog-path": "CHANGELOG.md",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": false
+    },
+    "packages/mcp": {
+      "release-type": "node",
+      "package-name": "@pitchfork-ui/mcp",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
     }
   },
   "pull-request-title-pattern": "chore: release${component} ${version}",

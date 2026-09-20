@@ -31,5 +31,7 @@ jobs:
         run: npm run build:metadata -- --strict
       - name: Validate llms.txt (every component linked, every link resolves)
         run: npm run build:llms -- --strict --verify
+      - name: Test MCP server
+        run: npm run test:mcp
       - name: Security audit
         run: npm audit --audit-level=high

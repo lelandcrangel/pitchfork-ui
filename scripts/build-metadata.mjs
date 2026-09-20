@@ -750,6 +750,42 @@ function extractDocs() {
 }
 
 /* ------------------------------------------------------------------ *
+ * Conventions, lifted from CLAUDE.md
+ *
+ * The rules that make generated code look like it belongs in this codebase.
+ * They travel inside the metadata artifact because that is what gets published:
+ * CLAUDE.md is not in the npm package, so anything reading the metadata at
+ * runtime (the MCP server) could not otherwise see them.
+ * ------------------------------------------------------------------ */
+const CONVENTION_SECTIONS = [
+  'Component conventions',
+  'Icon system',
+  'Form field pattern',
+  'Accessibility',
+];
+
+function readConventions() {
+  const claude = readFileSync(join(root, 'CLAUDE.md'), 'utf8');
+  const sections = [];
+
+  for (const heading of CONVENTION_SECTIONS) {
+    const start = claude.indexOf(`## ${heading}`);
+    if (start === -1) {
+      warn(`CLAUDE.md section "${heading}" not found — omitted from conventions`);
+      continue;
+    }
+    // Run to the next H2 so nested H3s come along.
+    const rest = claude.slice(start + 3);
+    const next = rest.search(/\n## /);
+    sections.push(
+      (next === -1 ? claude.slice(start) : claude.slice(start, start + 3 + next)).trim(),
+    );
+  }
+
+  return sections.join('\n\n');
+}
+
+/* ------------------------------------------------------------------ *
  * Assemble
  * ------------------------------------------------------------------ */
 function main() {
@@ -778,6 +814,7 @@ function main() {
     version,
     generatedBy: 'scripts/build-metadata.mjs',
     categories: Object.keys(CATEGORIES),
+    conventions: readConventions(),
     components,
   };
 

@@ -1,0 +1,47 @@
+{
+  "name": "@pitchfork-ui/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for Pitchfork UI \u2014 gives coding agents the real component API, design tokens and conventions, so generated code uses the design system correctly.",
+  "license": "MIT",
+  "author": "Leland Rangel",
+  "homepage": "https://lelandrangel.com/pitchfork-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lelandcrangel/pitchfork-ui.git",
+    "directory": "packages/mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/lelandcrangel/pitchfork-ui/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "pitchfork-ui",
+    "design-system",
+    "component-library",
+    "ai",
+    "codegen"
+  ],
+  "type": "module",
+  "bin": {
+    "pitchfork-ui-mcp": "./src/index.mjs"
+  },
+  "main": "./src/index.mjs",
+  "files": [
+    "src",
+    "data",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node ../../scripts/build-mcp-data.mjs",
+    "start": "node ./src/index.mjs",
+    "test": "node --test 'test/*.test.mjs'"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

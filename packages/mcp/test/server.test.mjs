@@ -1,0 +1,124 @@
+/**
+ * End-to-end check of the MCP server: spawns it over stdio with a real client
+ * and exercises each tool. Uses node:test so it needs no extra dependency.
+ */
+
+import assert from 'node:assert/strict';
+import { test, after, before } from 'node:test';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+
+const pkgRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+let client;
+
+before(async () => {
+  client = new Client({ name: 'pitchfork-ui-tests', version: '0' });
+  await client.connect(
+    new StdioClientTransport({
+      command: process.execPath,
+      args: [join(pkgRoot, 'src/index.mjs')],
+      cwd: pkgRoot,
+    }),
+  );
+});
+
+after(async () => {
+  await client?.close();
+});
+
+const call = async (name, args = {}) => {
+  const result = await client.callTool({ name, arguments: args });
+  return result.content[0].text;
+};
+
+test('exposes every documented tool', async () => {
+  const { tools } = await client.listTools();
+  const names = tools.map((t) => t.name).sort();
+  assert.deepEqual(names, [
+    'get_component',
+    'get_conventions',
+    'get_examples',
+    'get_tokens',
+    'list_components',
+    'search_components',
+    'validate_usage',
+  ]);
+});
+
+test('get_component returns props, theme variables and an example', async () => {
+  const out = await call('get_component', { name: 'Badge' });
+  assert.match(out, /# Badge/);
+  assert.match(out, /'neutral'/, 'variant union should be expanded');
+  assert.match(out, /--pf-badge-brand-background/, 'theme aliases should be listed');
+  assert.match(out, /```tsx/, 'an example should be included');
+});
+
+test('get_component suggests a near match for a typo', async () => {
+  const out = await call('get_component', { name: 'Buttonn' });
+  assert.match(out, /Did you mean: Button\?/);
+});
+
+test('search_components matches on whole words, not substrings', async () => {
+  const out = await call('search_components', { query: 'upload a file' });
+  assert.match(out, /FileUploader/);
+  // "file" must not match inside "profile" (Avatar's description).
+  assert.doesNotMatch(out, /Avatar/);
+});
+
+test('list_components can filter by category', async () => {
+  const out = await call('list_components', { category: 'feedback' });
+  assert.match(out, /Alert/);
+  assert.doesNotMatch(out, /\*\*Button\*\*/);
+});
+
+test('get_tokens can return a single group', async () => {
+  const out = await call('get_tokens', { group: 'color' });
+  assert.match(out, /Tokens — color/);
+  assert.match(out, /brand/);
+});
+
+test('get_conventions returns the house rules', async () => {
+  const out = await call('get_conventions');
+  assert.match(out, /CSS variable inheritance chain/);
+});
+
+test('validate_usage accepts correct code', async () => {
+  const out = await call('validate_usage', {
+    code: '<Badge variant="brand">New</Badge>\n<Alert variant="info" heading="Hi" />',
+  });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage catches an invalid variant value', async () => {
+  const out = await call('validate_usage', { code: '<Badge variant="primary">New</Badge>' });
+  assert.match(out, /not valid on `Badge`/);
+  assert.match(out, /"neutral"/);
+});
+
+test('validate_usage catches an unknown component', async () => {
+  const out = await call('validate_usage', { code: '<Buton>Go</Buton>' });
+  assert.match(out, /not exported by the library/);
+  assert.match(out, /Did you mean `Button`\?/);
+});
+
+test('validate_usage catches a misspelled prop', async () => {
+  const out = await call('validate_usage', { code: '<Alert varient="info" />' });
+  assert.match(out, /has no prop `varient`/);
+  assert.match(out, /Did you mean `variant`\?/);
+});
+
+test('validate_usage flags a hardcoded colour', async () => {
+  const out = await call('validate_usage', { code: "<div style={{ color: '#4f46e5' }} />" });
+  assert.match(out, /Hardcoded colour/);
+});
+
+test('validate_usage does not flag legitimate passthrough props', async () => {
+  const out = await call('validate_usage', {
+    code: '<Badge className="x" data-testid="y" aria-label="z" onClick={fn} id="q" />',
+  });
+  assert.match(out, /No problems found/);
+});
