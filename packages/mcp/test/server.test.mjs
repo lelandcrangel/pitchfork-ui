@@ -211,3 +211,10 @@ test('validate_usage still checks written attributes alongside a spread', async 
   });
   assert.match(out, /not valid on `Badge`/);
 });
+
+test('get_examples includes stories whose args use shorthand properties', async () => {
+  // Carousel's meta supplies its required prop as `args: { slides }`, a
+  // shorthand property. Dropping those leaves it with no usable example.
+  const out = await call('get_examples', { name: 'Carousel' });
+  assert.match(out, /slides=\{slides\}/);
+});

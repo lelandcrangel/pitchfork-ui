@@ -616,6 +616,26 @@ function extractComponents(theme) {
  * are args-only. Rather than block on hand-editing those, synthesize JSX from
  * the args — mechanical, and it keeps the extractor honest about what's there.
  * ------------------------------------------------------------------ */
+/**
+ * The name and value of an object-literal property, covering the shorthand
+ * form. `args: { slides }` is a ShorthandPropertyAssignment, not a
+ * PropertyAssignment — filtering on the latter silently drops it, which is how
+ * Carousel ended up with no usable examples.
+ */
+function propertyEntry(node, sourceFile) {
+  if (ts.isPropertyAssignment(node)) {
+    return {
+      name: node.name.getText(sourceFile).replace(/^['"]|['"]$/g, ''),
+      initializer: node.initializer,
+    };
+  }
+  if (ts.isShorthandPropertyAssignment(node)) {
+    // `{ slides }` means `slides={slides}` — the value is the name itself.
+    return { name: node.name.getText(sourceFile), initializer: node.name };
+  }
+  return null;
+}
+
 function literalToJsx(name, node, sourceFile) {
   if (node.kind === ts.SyntaxKind.TrueKeyword) return name;
   if (node.kind === ts.SyntaxKind.FalseKeyword) return `${name}={false}`;
@@ -633,15 +653,16 @@ function synthesizeJsx(componentName, args, sourceFile) {
   let children = null;
 
   for (const prop of args) {
-    if (!ts.isPropertyAssignment(prop)) continue;
-    const key = prop.name.getText(sourceFile).replace(/^['"]|['"]$/g, '');
+    const entry = propertyEntry(prop, sourceFile);
+    if (!entry) continue;
+    const { name: key, initializer } = entry;
     if (key === 'children') {
-      children = ts.isStringLiteral(prop.initializer)
-        ? prop.initializer.text
-        : prop.initializer.getText(sourceFile);
+      children = ts.isStringLiteral(initializer)
+        ? initializer.text
+        : initializer.getText(sourceFile);
       continue;
     }
-    attrs.push(literalToJsx(key, prop.initializer, sourceFile));
+    attrs.push(literalToJsx(key, initializer, sourceFile));
   }
 
   const open = attrs.length ? `<${componentName} ${attrs.join(' ')}` : `<${componentName}`;
@@ -652,11 +673,9 @@ function findProperty(objectLiteral, path, sourceFile) {
   let current = objectLiteral;
   for (const segment of path) {
     if (!current || !ts.isObjectLiteralExpression(current)) return undefined;
-    const match = current.properties.find(
-      (p) =>
-        ts.isPropertyAssignment(p) &&
-        p.name.getText(sourceFile).replace(/^['"]|['"]$/g, '') === segment,
-    );
+    const match = current.properties
+      .map((p) => propertyEntry(p, sourceFile))
+      .find((entry) => entry?.name === segment);
     if (!match) return undefined;
     current = match.initializer;
   }
@@ -778,9 +797,8 @@ function extractExamples() {
         if (metaArgs.length || storyProperties.length) {
           const merged = new Map();
           for (const property of [...metaArgs, ...storyProperties]) {
-            if (ts.isPropertyAssignment(property)) {
-              merged.set(property.name.getText(sourceFile).replace(/^['"]|['"]$/g, ''), property);
-            }
+            const entry = propertyEntry(property, sourceFile);
+            if (entry) merged.set(entry.name, property);
           }
           examples.push({
             name: declName,
