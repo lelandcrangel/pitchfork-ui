@@ -1,0 +1,143 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Using with AI" />
+
+# Using Pitchfork UI with AI
+
+Coding agents are good at React and know nothing about _this_ library. Ask one
+for a settings page and it will invent `severity` on an alert, guess that a
+button size is `"medium"`, and drop a hex colour into a `style` prop — because
+those are the odds-on answers across every component library it has ever seen.
+
+Pitchfork UI publishes its real API in three machine-readable forms so an agent
+does not have to guess. All three are generated from source on every build, so
+none of them can drift from the library.
+
+---
+
+## The difference it makes
+
+Here is what an agent typically writes without the API:
+
+```tsx
+<Card padding="large">
+  <Badge type="success">Active</Badge>
+  <Alert severity="error" title="Payment failed" />
+  <Button variant="default" size="medium">
+    Retry
+  </Button>
+  <div role="button" onClick={onDismiss} style={{ color: '#4f46e5' }}>
+    Dismiss
+  </div>
+</Card>
+```
+
+Every line of that is wrong in a way that type-checks cleanly at a glance and
+fails in review. Running it through the `validate_usage` tool gives:
+
+```
+4 error(s), 1 warning(s).
+
+- error (line 1): `Card` has no prop `padding`, and it is not a DOM attribute.
+  It takes no props of its own — only React.HTMLAttributes<HTMLDivElement> attributes.
+- error (line 3): `Alert` has no prop `severity`, and it is not a DOM attribute.
+  Its props are: `variant`, `heading`, `description`, `dismissible`, `onDismiss`, `icon`.
+- error (line 4): `variant="default"` is not valid on `Button`.
+  Expected one of: "primary", "secondary", "ghost", "destructive".
+- error (line 4): `size="medium"` is not valid on `Button`.
+  Expected one of: "sm", "md", "lg".
+- warning (line 5): Hardcoded colour `#4f46e5`. Use a CSS variable instead —
+  component styles go through a `--pf-*` alias, never a raw value.
+```
+
+The same request, with the agent grounded in the library's API:
+
+```tsx
+<Card>
+  <Badge variant="success">Active</Badge>
+  <Alert variant="danger" heading="Payment failed" />
+  <Button variant="primary" size="md">
+    Retry
+  </Button>
+  <Button variant="ghost" onClick={onDismiss}>
+    Dismiss
+  </Button>
+</Card>
+```
+
+```
+No problems found. Components, props and values all check out.
+```
+
+One honest caveat: `<Badge type="success">` in the first snippet is **not**
+flagged. `type` is a real DOM attribute, so the validator cannot prove it is
+wrong without rejecting legitimate passthrough props on every other component.
+The validator is deliberately tuned to stay quiet when it cannot be sure — a
+tool that cries wolf gets switched off.
+
+---
+
+## 1. MCP server — the richest option
+
+```bash
+claude mcp add pitchfork-ui -- npx -y @pitchfork-ui/mcp
+```
+
+Or in any MCP client's config:
+
+```json
+{
+  "mcpServers": {
+    "pitchfork-ui": {
+      "command": "npx",
+      "args": ["-y", "@pitchfork-ui/mcp"]
+    }
+  }
+}
+```
+
+| Tool                | What it answers                                                 |
+| ------------------- | --------------------------------------------------------------- |
+| `list_components`   | What is in the library, by category                             |
+| `search_components` | "I need something for uploading a file"                         |
+| `get_component`     | Props, defaults, accessibility contract, theme variables        |
+| `get_examples`      | Working JSX for a component                                     |
+| `get_tokens`        | Colours, spacing, radii, typography, shadows, motion            |
+| `get_conventions`   | The house rules — naming, the variable chain, breakpoints, a11y |
+| `validate_usage`    | Check a snippet against the real API                            |
+
+If your project has `@pitchfork-ui/react` installed, the server answers from
+_that_ copy, so it describes the version you are actually building against.
+
+## 2. `llms.txt` — nothing to install
+
+- [`llms.txt`](https://lelandrangel.com/pitchfork-ui/llms.txt) — an index of every component, one line each
+- [`llms-full.txt`](https://lelandrangel.com/pitchfork-ui/llms-full.txt) — the whole library in one fetch: props,
+  accessibility notes, theme variables and every example
+
+Paste either URL into any assistant that can read a link.
+
+## 3. `metadata.json` — for your own tooling
+
+```ts
+import metadata from '@pitchfork-ui/react/metadata' with { type: 'json' };
+```
+
+Every component with its props, types, defaults, resolved CSS variable chains
+and examples. This is the artifact the other two are generated from — use it if
+you are building codegen, a linter, or a docs site of your own.
+
+---
+
+## Why it stays correct
+
+Nothing above is hand-maintained. A build step reads the TypeScript source, the
+component stylesheets, the Storybook examples and the contributor guide, and
+emits the metadata; everything else is a projection of it. Add a prop and it
+appears in all three surfaces on the next build.
+
+CI fails if a component is missing from the category list, if a CSS variable
+resolves to nothing, if a documentation link points at a page that does not
+exist, or if any of the library's own documented examples fail `validate_usage`
+— which is the strongest check available, since those examples are real working
+code.
