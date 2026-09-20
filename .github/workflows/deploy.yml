@@ -3,10 +3,17 @@ name: Deploy to Hostinger
 # Publishes the docs site to lelandrangel.com/pitchfork-ui/ and the theme
 # builder to lelandrangel.com/pitchfork-ui/theme-builder/.
 #
-# public_html on this host is shared by four separately deployed projects — the
-# main site plus /pitchfork-ui/, /nextthyme/ and /spatialstudio/. This workflow
-# only ever writes inside ./pitchfork-ui/, and the exclude rules below keep each
-# sync from deleting what the other one owns.
+# The document root is /domains/lelandrangel.com/public_html, and server-dir is
+# relative to the FTP account's root, which is above it. Dropping that prefix
+# uploads a complete copy of the site to a directory nothing serves: the run
+# succeeds, the live site never changes, and the only tell is "Server Files: 0"
+# in the sync log. The post-deploy check at the end of this job exists to catch
+# exactly that, by verifying the live URL serves what was just built.
+#
+# That document root is shared by four separately deployed projects — the main
+# site plus /pitchfork-ui/, /nextthyme/ and /spatialstudio/. This workflow only
+# ever writes inside pitchfork-ui/, and the exclude rules below keep each sync
+# from deleting what the other one owns.
 on:
   push:
     branches: [main]
@@ -150,7 +157,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./apps/docs/storybook-static/
-          server-dir: ./pitchfork-ui/
+          server-dir: ./domains/lelandrangel.com/public_html/pitchfork-ui/
           # theme-builder/ lives inside this directory but is not produced by
           # the Storybook build. Without excluding it the sync treats it as
           # stale and deletes the live theme builder on every deploy.
@@ -168,8 +175,31 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftps
           local-dir: ./apps/theme-builder/dist/
-          server-dir: ./pitchfork-ui/theme-builder/
+          server-dir: ./domains/lelandrangel.com/public_html/pitchfork-ui/theme-builder/
           exclude: |
             **/.git*
             **/.git*/**
             **/node_modules/**
+
+      # A sync can report complete success while uploading to the wrong
+      # directory, which is how the first four runs "succeeded" without ever
+      # changing the site. llms.txt is generated and carries the version, so
+      # fetching it back proves the live URL serves this build.
+      - name: Verify the live site serves this build
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./packages/react/package.json').version")
+          url="https://lelandrangel.com/pitchfork-ui/llms.txt"
+
+          for attempt in 1 2 3 4 5; do
+            body=$(curl -fsS --max-time 30 "$url" || true)
+            if printf '%s' "$body" | grep -q "Version $version\."; then
+              echo "$url serves version $version."
+              exit 0
+            fi
+            echo "Attempt $attempt: not serving $version yet."
+            sleep 10
+          done
+
+          echo "::error::$url did not serve version $version after the upload reported success. Check that server-dir points at the directory the site is actually served from."
+          exit 1
