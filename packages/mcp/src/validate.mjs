@@ -5,10 +5,19 @@
  * checks a snippet against the real API and says what is wrong.
  *
  * Every check here is chosen to have effectively no false positives, because a
- * validator that cries wolf gets ignored. Notably it does NOT flag unrecognised
- * props outright: nearly every component spreads onto a native element, so
- * `onMouseEnter` or `data-testid` are perfectly valid. It flags an unknown prop
- * only when it looks like a typo of a real one.
+ * validator that cries wolf gets ignored. For an attribute that is not a
+ * declared prop:
+ *
+ *   - `data-*`, `aria-*`, `on*` handlers and DOM attributes pass, since nearly
+ *     every component spreads onto a native element.
+ *   - anything else is reported as invented, with a suggestion when it is close
+ *     to a real prop and the component's prop list when it is not.
+ *   - components whose props cannot be fully enumerated (`propsComplete: false`)
+ *     are skipped, because an unlisted prop there proves nothing.
+ *
+ * The limitation that remains: a valid DOM attribute meaningless on a given
+ * component is not flagged, since rejecting it would reject legitimate
+ * passthrough props everywhere else.
  */
 
 /** Levenshtein distance, capped — we only care about "is this within 2?". */
@@ -257,6 +266,13 @@ function parseAttrs(attrText) {
     while (i < attrText.length) {
       const char = attrText[i];
       if (quote) {
+        // Same escape rule as the tag scanner: without it, `\"` closes the
+        // string early, the closing `}` is read as part of it, and every
+        // attribute after this one is swallowed unchecked.
+        if (char === '\\') {
+          i += 2;
+          continue;
+        }
         if (char === quote) quote = null;
       } else if (char === '"' || char === "'" || char === '`') {
         quote = char;

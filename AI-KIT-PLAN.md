@@ -170,10 +170,16 @@ catches invalid variant values, unknown components, misspelled props, missing
 required props and hardcoded colours — each with a suggestion.
 
 Every check is chosen to have effectively no false positives, because a
-validator that cries wolf gets ignored. In particular it does **not** flag every
-unrecognised prop: nearly every component spreads onto a native element, so
-`onMouseEnter` and `data-testid` are legitimate. An unknown prop is reported
-only when it is within edit distance 2 of a real one.
+validator that cries wolf gets ignored. `data-*`, `aria-*`, `on*` handlers and
+DOM attributes pass, since nearly every component spreads onto a native element;
+anything else is reported as invented, with a suggestion when it is close to a
+real prop and the component's prop list when it is not. Components whose props
+cannot be fully enumerated (`propsComplete: false`, only `Icon`) are skipped
+entirely.
+
+What that leaves uncaught: a valid DOM attribute that is meaningless on a given
+component, such as `type` on `Badge`. Rejecting it would mean rejecting
+legitimate passthrough props everywhere else.
 
 ### 4c. Where the data comes from
 

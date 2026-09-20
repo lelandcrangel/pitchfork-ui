@@ -189,3 +189,12 @@ test('validate_usage still sees attributes after an escaped quote containing ">"
   });
   assert.match(out, /not valid on `Alert`/);
 });
+
+test('validate_usage still sees attributes after a braced value with an escaped quote', async () => {
+  // skipBraced must skip escapes too, or `\"` closes the string, the closing
+  // `}` is read as part of it, and every later attribute is swallowed.
+  const out = await call('validate_usage', {
+    code: '<Alert heading={"x \\" y"} variant="nonsense" />',
+  });
+  assert.match(out, /not valid on `Alert`/);
+});

@@ -390,10 +390,28 @@ const normaliseType = (text) => text.replace(/\s+/g, ' ').trim();
 const isDomAttributes = (type) =>
   /React\.(?:\w*HTMLAttributes|AriaAttributes|DOMAttributes|SVGAttributes|SVGProps)\b/.test(type);
 
-/** Keys removed by an `Omit<X, 'a' | 'b'>` wrapper. */
-function omittedKeys(type) {
-  const match = type.match(/^Omit<.*?,\s*(.*)>$/);
-  return match ? new Set([...match[1].matchAll(/'([^']+)'/g)].map((m) => m[1])) : new Set();
+/**
+ * How an `Omit<X, 'a'>` or `Pick<X, 'a'>` wrapper narrows what it brings in.
+ * Without the `Pick` arm a picked type would contribute every member of its
+ * source, which is worse than missing it: the metadata would claim props the
+ * component does not accept.
+ */
+function memberFilter(type) {
+  const keysIn = (source) => new Set([...source.matchAll(/'([^']+)'/g)].map((m) => m[1]));
+
+  const omit = type.match(/^Omit<.*?,\s*(.*)>$/);
+  if (omit) {
+    const dropped = keysIn(omit[1]);
+    return (name) => !dropped.has(name);
+  }
+
+  const pick = type.match(/^Pick<.*?,\s*(.*)>$/);
+  if (pick) {
+    const kept = keysIn(pick[1]);
+    return (name) => kept.has(name);
+  }
+
+  return () => true;
 }
 
 /**
@@ -448,12 +466,12 @@ function expandInherited(extendsTypes, declarations, sourceFile, seen = new Set(
     }
 
     seen.add(referenced);
-    const omitted = omittedKeys(type);
+    const keep = memberFilter(type);
     const { members, extendsTypes: nested } = readPropsDeclaration(declaration, sourceFile);
 
     for (const member of members) {
       if (!ts.isPropertySignature(member)) continue;
-      if (omitted.has(member.name.getText(sourceFile))) continue;
+      if (!keep(member.name.getText(sourceFile))) continue;
       inherited.push({ member, from: referenced });
     }
 
