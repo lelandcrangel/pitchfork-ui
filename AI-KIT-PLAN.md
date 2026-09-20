@@ -114,19 +114,33 @@ produces, and the reason an agent using this themes correctly.
 
 ---
 
-## 3. Phase 2 — `llms.txt`
+## 3. Phase 2 — `llms.txt` ✅
 
-Generated from the Phase 1 artifact, so it cannot drift.
+Built by `scripts/build-llms-txt.mjs` from the Phase 1 artifact plus the
+conventions sections of `CLAUDE.md`, so neither file can drift from the library.
+Output goes to `apps/docs/public/`, which Storybook copies to the site root.
 
-- `apps/docs/public/llms.txt` — component index plus links, per the emerging
-  convention. Lands at `lelandrangel.com/pitchfork-ui/llms.txt`.
-- `apps/docs/public/llms-full.txt` — the whole library flattened for a single
-  fetch: components, props, token tree, conventions, one example each.
+- `llms.txt` (18 KB) — the index: what exists, one line each, grouped by
+  category and linked to its docs page. Served at `<homepage>llms.txt`.
+- `llms-full.txt` (194 KB) — the whole library in one fetch: install, conventions,
+  and per component the props table, accessibility notes, theme variables and
+  every worked example.
 
-Cheap once Phase 1 exists, and it is the zero-friction entry point — no install,
-no MCP client, just a URL an agent can read.
+`llms-full.txt` carries a deliberately trimmed projection of the metadata. Only
+the `alias` CSS variables appear, pointing at the last _variable_ in their chain
+rather than its final literal value — a composite alias such as `--pf-focus-ring`
+bottoms out in `3px`, which says nothing about what the variable controls. Tokens
+used directly, runtime-computed values and override hooks are omitted as noise.
+That keeps the file under 200 KB against 286 KB of raw metadata, of which CSS
+variables alone are 44%.
 
----
+Two gates, both in CI:
+
+- `--strict` fails if any component has no docs page.
+- `--verify` cross-checks every generated link against the ids Storybook actually
+  built. Docs slugs are derived from story titles, and a title read from the wrong
+  place yields a plausible-looking link to a page that does not exist — three did,
+  because some stories files open with sample data carrying its own `title:` field.
 
 ## 4. Phase 3 — `@pitchfork-ui/mcp`
 

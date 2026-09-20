@@ -25,9 +25,11 @@ jobs:
       - run: npm run lint
       - run: npm run format:check
       - run: npm run test
-      - name: Build (tokens → react → metadata → docs)
+      - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build
       - name: Validate component metadata
         run: npm run build:metadata -- --strict
+      - name: Validate llms.txt (every component linked, every link resolves)
+        run: npm run build:llms -- --strict --verify
       - name: Security audit
         run: npm audit --audit-level=high

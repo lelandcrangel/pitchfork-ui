@@ -6,3 +6,7 @@ coverage
 .env
 todo.md
 *.tsbuildinfo
+
+# Generated from packages/react/dist/metadata.json by scripts/build-llms-txt.mjs
+apps/docs/public/llms.txt
+apps/docs/public/llms-full.txt

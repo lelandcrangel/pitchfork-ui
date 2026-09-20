@@ -446,6 +446,9 @@ function extractComponents(theme) {
     if (!sourceFile) continue;
 
     const folder = file.slice(componentsDir.length + 1).split('/')[0];
+    // The defining file is not always named after the folder or the component:
+    // LineChart and BarChart both live in LineBarCharts/LineBarChart.tsx.
+    const definedIn = file.slice(file.lastIndexOf('/') + 1).replace(/\.tsx$/, '');
     const cssPath = file.replace(/\.tsx$/, '.css');
     const cssVars = extractCssVars(cssPath, theme, sourceFile.text);
 
@@ -503,6 +506,7 @@ function extractComponents(theme) {
       entries.push({
         name,
         folder,
+        sourceFile: definedIn,
         category: categoryOf(name, folder),
         importPath: '@pitchfork-ui/react',
         propsInterface: declaredName,
