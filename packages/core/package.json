@@ -1,0 +1,55 @@
+{
+  "name": "@pitchfork-ui/core",
+  "version": "0.1.0",
+  "description": "Framework-free behaviour for Pitchfork UI \u2014 anchored positioning, focus trapping, outside-interaction dismissal, list navigation and accessibility helpers, with no dependency on any UI framework.",
+  "license": "MIT",
+  "author": "Leland Rangel",
+  "homepage": "https://lelandrangel.com/pitchfork-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lelandcrangel/pitchfork-ui.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/lelandcrangel/pitchfork-ui/issues"
+  },
+  "keywords": [
+    "design-system",
+    "headless",
+    "accessibility",
+    "a11y",
+    "focus-trap",
+    "positioning",
+    "web-components",
+    "framework-agnostic",
+    "pitchfork-ui"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vite-plugin-dts": "^5.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  }
+}

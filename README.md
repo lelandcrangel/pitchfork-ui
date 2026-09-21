@@ -28,6 +28,7 @@ Storybook runs from `apps/docs` and imports components from `@pitchfork-ui/react
 apps/docs              Storybook documentation app
 apps/theme-builder     Live token-editing playground
 apps/demo              Example application built on the library
+packages/core          Framework-free behaviour shared by every rendering layer
 packages/react         React component library
 packages/tokens        Style Dictionary token source and CSS variable output
 packages/mcp           MCP server exposing the library's API to coding agents

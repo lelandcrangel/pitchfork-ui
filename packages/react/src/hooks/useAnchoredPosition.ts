@@ -1,15 +1,10 @@
+import { observeAnchoredPosition, type AnchoredPositionOptions } from '@pitchfork-ui/core';
 import { useEffect, useState } from 'react';
 
-export interface UseAnchoredPositionOptions {
+export interface UseAnchoredPositionOptions extends AnchoredPositionOptions {
   anchorRef: React.RefObject<HTMLElement | null>;
   floatingRef?: React.RefObject<HTMLElement | null>;
   enabled?: boolean;
-  align?: 'start' | 'end';
-  offset?: number;
-  viewportPadding?: number;
-  minWidth?: number;
-  matchAnchorWidth?: boolean;
-  flip?: boolean;
 }
 
 export function useAnchoredPosition({
@@ -26,60 +21,21 @@ export function useAnchoredPosition({
   const [style, setStyle] = useState<React.CSSProperties>({});
 
   useEffect(() => {
-    if (!enabled || typeof window === 'undefined') {
+    if (!enabled) {
       return;
     }
 
-    const updatePosition = () => {
-      const anchor = anchorRef.current;
-      if (!anchor) {
-        return;
-      }
-
-      const anchorRect = anchor.getBoundingClientRect();
-      const floatingRect = floatingRef?.current?.getBoundingClientRect();
-      const width = Math.max(
-        matchAnchorWidth ? anchorRect.width : 0,
-        minWidth ?? 0,
-        floatingRect?.width ?? 0,
-      );
-      const maxLeft = window.innerWidth - viewportPadding - width;
-      const alignedLeft = align === 'end' ? anchorRect.right - width : anchorRect.left;
-      const left =
-        maxLeft >= viewportPadding
-          ? Math.min(Math.max(alignedLeft, viewportPadding), maxLeft)
-          : viewportPadding;
-
-      const floatingHeight = floatingRect?.height ?? 0;
-      const belowTop = anchorRect.bottom + offset;
-      const aboveTop = anchorRect.top - floatingHeight - offset;
-      const canFlip =
-        flip &&
-        floatingHeight > 0 &&
-        window.innerHeight - anchorRect.bottom < floatingHeight + offset + viewportPadding;
-      const rawTop = canFlip ? aboveTop : belowTop;
-      const maxTop = window.innerHeight - viewportPadding - floatingHeight;
-      const top =
-        floatingHeight > 0 && maxTop >= viewportPadding
-          ? Math.min(Math.max(rawTop, viewportPadding), maxTop)
-          : rawTop;
-
-      setStyle({
-        left,
-        top,
-        width: matchAnchorWidth ? width : undefined,
-        minWidth: matchAnchorWidth ? undefined : width,
-      });
-    };
-
-    updatePosition();
-    window.addEventListener('resize', updatePosition);
-    window.addEventListener('scroll', updatePosition, true);
-
-    return () => {
-      window.removeEventListener('resize', updatePosition);
-      window.removeEventListener('scroll', updatePosition, true);
-    };
+    return observeAnchoredPosition({
+      getAnchor: () => anchorRef.current,
+      getFloating: floatingRef ? () => floatingRef.current : undefined,
+      onChange: (next) => setStyle(next),
+      align,
+      offset,
+      viewportPadding,
+      minWidth,
+      matchAnchorWidth,
+      flip,
+    });
   }, [
     align,
     anchorRef,

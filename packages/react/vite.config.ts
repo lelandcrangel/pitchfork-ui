@@ -51,6 +51,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        '@pitchfork-ui/core',
         'react',
         'react-dom',
         'react/jsx-runtime',

@@ -16,7 +16,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@pitchfork-ui/react": ["../../packages/react/src"]
+      "@pitchfork-ui/react": ["../../packages/react/src"],
+      "@pitchfork-ui/core": ["../../packages/core/src"]
     }
   },
   "include": ["src"]

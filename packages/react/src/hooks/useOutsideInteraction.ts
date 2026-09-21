@@ -1,3 +1,4 @@
+import { onOutsideInteraction } from '@pitchfork-ui/core';
 import { useEffect } from 'react';
 
 export interface UseOutsideInteractionOptions {
@@ -14,22 +15,14 @@ export function useOutsideInteraction({
   eventName = 'pointerdown',
 }: UseOutsideInteractionOptions) {
   useEffect(() => {
-    if (!enabled || typeof document === 'undefined') {
+    if (!enabled) {
       return;
     }
 
-    const handleEvent = (event: PointerEvent | MouseEvent) => {
-      const target = event.target as Node;
-      const isInside = refs.some((ref) => ref.current?.contains(target));
-
-      if (!isInside) {
-        onInteractOutside(event);
-      }
-    };
-
-    document.addEventListener(eventName, handleEvent);
-    return () => {
-      document.removeEventListener(eventName, handleEvent);
-    };
+    return onOutsideInteraction({
+      getContainers: () => refs.map((ref) => ref.current),
+      onInteractOutside,
+      eventName,
+    });
   }, [enabled, eventName, onInteractOutside, refs]);
 }
