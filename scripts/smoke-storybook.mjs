@@ -57,11 +57,27 @@ const CONTENT_TYPES = {
 
 function parseArgs(argv) {
   const args = { dir: null, base: null, sample: 6 };
+
+  // A flag whose value is missing -- last on the line, or an empty shell
+  // expansion -- used to read as undefined and fall through to the local
+  // default below, so `--base "$SITE"` with SITE unset smoke-tested local files
+  // and called the live site healthy. An unknown flag did the same. Both are
+  // errors now: this script may not quietly check something other than what it
+  // was asked to check.
+  const value = (flag, i) => {
+    const v = argv[i];
+    if (v === undefined || v === '' || v.startsWith('--')) {
+      throw new Error(`${flag} requires a value`);
+    }
+    return v;
+  };
+
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
-    if (arg === '--dir') args.dir = argv[(i += 1)];
-    else if (arg === '--base') args.base = argv[(i += 1)];
-    else if (arg === '--sample') args.sample = Number(argv[(i += 1)]);
+    if (arg === '--dir') args.dir = value('--dir', (i += 1));
+    else if (arg === '--base') args.base = value('--base', (i += 1));
+    else if (arg === '--sample') args.sample = Number(value('--sample', (i += 1)));
+    else throw new Error(`Unknown argument: ${arg}`);
   }
   // Alternative targets, not composable. Passing both used to serve the
   // directory and silently drop --base, so a deploy job asking for the live
@@ -154,19 +170,48 @@ function watchPage(page, origin, failures) {
 // networkidle waits for *every* request to settle, including the third-party
 // ones this script deliberately ignores for pass/fail -- so a slow or hanging
 // Google Fonts request could time out a navigation that has nothing wrong with
-// it. Waiting on the two things that actually matter is both faster and honest:
-// the story has rendered, and stylesheets have been applied. Neither presumes
-// the tokens resolve, which is the thing under test.
-async function openAndSettle(page, url, rootSelector) {
+// it.
+//
+// Readiness is Storybook's own settled state, not a guess from the DOM. An
+// earlier version waited for #storybook-root to have children, which a story
+// that throws can satisfy: Storybook catches the error and renders an error
+// screen, so nothing reaches pageerror and the run reported a clean pass over
+// stories that were not rendering at all. Only the Button anchor had a
+// story-specific assertion, so the other sampled stories were effectively
+// unchecked beyond the global tokens.
+//
+// Storybook sets exactly one of these on the body, so waiting for any of them
+// and then reading which one is both a readiness signal and a result.
+async function openStory(page, url) {
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(
-    (sel) => {
-      const root = document.querySelector(sel);
-      return Boolean(root && root.children.length > 0) && document.styleSheets.length > 0;
+    () => {
+      const c = document.body.classList;
+      // sb-show-main flips before React has necessarily put the story in the
+      // DOM, so on the success path the root must also have content. The two
+      // failure screens leave the root empty by design, so they settle on the
+      // class alone -- requiring children there would turn a detected error
+      // into a timeout with a worse message.
+      const rendered =
+        c.contains('sb-show-main') &&
+        (document.querySelector('#storybook-root')?.children.length ?? 0) > 0;
+      const failed = c.contains('sb-show-errordisplay') || c.contains('sb-show-nopreview');
+      return (rendered || failed) && document.styleSheets.length > 0;
     },
-    rootSelector,
+    undefined,
     { timeout: 20000 },
   );
+  return page.evaluate(() => {
+    const c = document.body.classList;
+    if (c.contains('sb-show-errordisplay')) {
+      const message = document.querySelector('#error-message')?.textContent?.trim();
+      return { ok: false, reason: `Storybook render error -- ${message || 'no message given'}` };
+    }
+    if (c.contains('sb-show-nopreview')) {
+      return { ok: false, reason: 'Storybook showed its "no preview" screen' };
+    }
+    return { ok: true };
+  });
 }
 
 async function main() {
@@ -225,10 +270,18 @@ async function run(args, served) {
       const failures = [];
       watchPage(page, origin, failures);
 
+      let state;
       try {
-        await openAndSettle(page, `${base}/iframe.html?id=${id}&viewMode=story`, '#storybook-root');
+        state = await openStory(page, `${base}/iframe.html?id=${id}&viewMode=story`);
       } catch {
-        problems.push(`${id}: the story did not render within 20s`);
+        problems.push(`${id}: Storybook never reached a settled state within 20s`);
+        if (failures.length) problems.push(`${id}: ${failures.join('; ')}`);
+        await page.close();
+        continue;
+      }
+
+      if (!state.ok) {
+        problems.push(`${id}: ${state.reason}`);
         if (failures.length) problems.push(`${id}: ${failures.join('; ')}`);
         await page.close();
         continue;
@@ -278,7 +331,9 @@ async function run(args, served) {
     const failures = [];
     watchPage(page, origin, failures);
     try {
-      await openAndSettle(page, `${base}/index.html`, 'body');
+      // Not a story, so none of the sb-show-* classes apply here; the sidebar
+      // rendering is the equivalent signal.
+      await page.goto(`${base}/index.html`, { waitUntil: 'domcontentloaded' });
       await page.waitForSelector('#storybook-explorer-tree, .sidebar-container', {
         timeout: 20000,
       });
