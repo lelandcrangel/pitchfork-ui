@@ -66,6 +66,8 @@ jobs:
           npm pack --workspace @pitchfork-ui/mcp --dry-run 2>&1 | grep -q 'data/tokens.json'
           npm pack --workspace @pitchfork-ui/tokens --dry-run 2>&1 | grep -q 'dist/css/variables.css'
           npm pack --workspace @pitchfork-ui/tokens --dry-run 2>&1 | grep -q 'dist/json/tokens.json'
+          npm pack --workspace @pitchfork-ui/tokens --dry-run 2>&1 | grep -q 'README.md'
+          npm pack --workspace @pitchfork-ui/tokens --dry-run 2>&1 | grep -q 'LICENSE'
       # No NODE_AUTH_TOKEN: auth + provenance come from OIDC via the trusted publisher.
       - name: Publish @pitchfork-ui/tokens
         if: needs.release-please.outputs.tokens_released == 'true'

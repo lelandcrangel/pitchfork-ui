@@ -42,7 +42,8 @@ Two entry points, the same values in both.
 }
 ```
 
-**JSON** — a flat object, grouped by category:
+**JSON** — nested by category, with plain string values (Style Dictionary's
+`json/nested` format, not `{ value, type }` wrappers):
 
 ```ts
 import tokens from '@pitchfork-ui/tokens/tokens' with { type: 'json' };
