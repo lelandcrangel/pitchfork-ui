@@ -61,13 +61,31 @@ stop relying on.
 
 ---
 
-## @pitchfork-ui/tokens is versioned but never published
+## @pitchfork-ui/tokens needs its first publish by hand
 
-Pre-existing, and probably intentional — noting it so it is not mistaken for
-fallout from the above. `release-please-config.json` versions the package and
-cuts it a changelog, but the publish job only publishes `react` and `mcp`, so
-npm has no `@pitchfork-ui/tokens`. Nothing depends on it being there:
-`packages/react` takes it as a devDependency and inlines the built CSS.
+Decided: publish it. The package is now prepared — it has the description,
+license, repository, keywords and `publishConfig` the other two packages had
+and it did not, plus a README and LICENSE in the tarball — and the release
+workflow publishes it alongside `react` and `mcp`.
 
-**Decide:** either publish it, or drop it from release-please so it stops
-getting version bumps and tags that lead nowhere.
+What is left is the one step automation cannot do. npm's trusted publishing is
+configured **per package** and cannot create a package that does not exist, so
+the first version has to go up manually, exactly as `@pitchfork-ui/mcp` did:
+
+```bash
+npm login
+npm run build:tokens
+npm publish --workspace @pitchfork-ui/tokens --access public
+```
+
+Then add a trusted publisher on npmjs.com for `@pitchfork-ui/tokens` —
+repository `lelandcrangel/pitchfork-ui`, workflow `release-please.yml`,
+environment `release` — and every later version publishes through OIDC with
+provenance, unattended.
+
+**Also worth doing once it is live:** `packages/mcp/src/data.mjs` resolves
+`@pitchfork-ui/tokens/tokens` from the user's working directory before falling
+back to its bundled copy. That branch can never fire today, because the package
+is not on npm — so the documented "answers from _your_ installed copy" is true
+of metadata and silently untrue of tokens. Publishing makes it real; no code
+change needed.
