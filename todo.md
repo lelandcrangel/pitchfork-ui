@@ -61,34 +61,40 @@ stop relying on.
 
 ---
 
-## @pitchfork-ui/tokens 0.4.0 is on npm without a license or README
+## @pitchfork-ui/mcp has never published through OIDC
 
-Published 2026-09-21. Both entry points work from the registry — 137 values as
-CSS custom properties and as JSON — but the version that went up predates the
-packaging fix, so the tarball is three files and the npm page is blank:
+Two of the three packages have now published from CI with provenance:
 
 ```
-dist.fileCount = 3          (variables.css, tokens.json, package.json)
-description: <empty>   license: <empty>   homepage: <empty>
+@pitchfork-ui/react   0.15.0  GitHub Actions  provenance=yes
+@pitchfork-ui/tokens  0.4.1   GitHub Actions  provenance=yes
+@pitchfork-ui/mcp     0.2.0   lelandrangel    provenance=NO
 ```
 
-A published package with no declared license is the part that matters; the rest
-is presentation.
+`mcp@0.2.0` went up by hand during the npm bootstrap, so its trusted publisher
+has never actually been exercised. Its next release will be its first OIDC
+publish, and that is where a misconfiguration surfaces — on a real release, at
+the publish step, after release-please has already cut the tag.
 
-**Fix:** already on `main` once the packaging change lands — it adds the
-metadata, a README and a LICENSE to the tarball. It is committed as `fix:` so
-release-please actually cuts 0.4.1; as a `chore:` it would have been hidden and
-the correction would never have reached npm.
+**The gotcha to check first, before that release.** On npmjs.com a trusted
+publisher has an **Allowed actions** section, and `Allow npm publish` is **off
+by default** — the publisher may only _stage_ a publish. The workflow runs
+`npm publish`, so with the box unchecked the release fails with:
 
-**Prerequisite:** that release publishes through OIDC, so
-`@pitchfork-ui/tokens` needs a trusted publisher on npmjs.com first —
-repository `lelandcrangel/pitchfork-ui`, workflow `release-please.yml`,
-environment `release`. Without it the publish job fails on an otherwise good
-release. This will be the first time any package in this repo publishes through
-OIDC rather than by hand.
+```
+npm notice publish Signed provenance statement with source and build information
+npm error code E403
+npm error 403 Forbidden - PUT ... - OIDC permission denied for this action
+```
 
-**Then:** `packages/mcp/src/data.mjs` resolves `@pitchfork-ui/tokens/tokens`
-from the user's working directory before falling back to its bundled copy. That
-branch could never fire while the package was unpublished, so the documented
-"answers from _your_ installed copy" was true of metadata and silently untrue of
-tokens. It is real now — no code change needed.
+"this action" means the operation, not the identity. That is what cost tokens
+0.4.1 two failed runs. Worth distinguishing from its predecessor:
+
+- **E404 on PUT, no provenance line, fails in ~50ms** — no trusted publisher at
+  all. npm masks unauthorised writes as 404, so it reads like the package does
+  not exist when it means the credential was not accepted.
+- **E403 after the provenance line** — publisher matches, operation not allowed.
+
+`@pitchfork-ui/react`'s configuration is the known-good reference, since it has
+published this way successfully. Compare `mcp`'s against it rather than against
+a config that has never run.
