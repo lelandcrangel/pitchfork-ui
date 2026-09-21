@@ -24,7 +24,7 @@
   ],
   "type": "module",
   "bin": {
-    "pitchfork-ui-mcp": "./src/index.mjs"
+    "pitchfork-ui-mcp": "src/index.mjs"
   },
   "main": "./src/index.mjs",
   "files": [
