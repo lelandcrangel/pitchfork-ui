@@ -61,31 +61,34 @@ stop relying on.
 
 ---
 
-## @pitchfork-ui/tokens needs its first publish by hand
+## @pitchfork-ui/tokens 0.4.0 is on npm without a license or README
 
-Decided: publish it. The package is now prepared — it has the description,
-license, repository, keywords and `publishConfig` the other two packages had
-and it did not, plus a README and LICENSE in the tarball — and the release
-workflow publishes it alongside `react` and `mcp`.
+Published 2026-09-21. Both entry points work from the registry — 137 values as
+CSS custom properties and as JSON — but the version that went up predates the
+packaging fix, so the tarball is three files and the npm page is blank:
 
-What is left is the one step automation cannot do. npm's trusted publishing is
-configured **per package** and cannot create a package that does not exist, so
-the first version has to go up manually, exactly as `@pitchfork-ui/mcp` did:
-
-```bash
-npm login
-npm run build:tokens
-npm publish --workspace @pitchfork-ui/tokens --access public
+```
+dist.fileCount = 3          (variables.css, tokens.json, package.json)
+description: <empty>   license: <empty>   homepage: <empty>
 ```
 
-Then add a trusted publisher on npmjs.com for `@pitchfork-ui/tokens` —
-repository `lelandcrangel/pitchfork-ui`, workflow `release-please.yml`,
-environment `release` — and every later version publishes through OIDC with
-provenance, unattended.
+A published package with no declared license is the part that matters; the rest
+is presentation.
 
-**Also worth doing once it is live:** `packages/mcp/src/data.mjs` resolves
-`@pitchfork-ui/tokens/tokens` from the user's working directory before falling
-back to its bundled copy. That branch can never fire today, because the package
-is not on npm — so the documented "answers from _your_ installed copy" is true
-of metadata and silently untrue of tokens. Publishing makes it real; no code
-change needed.
+**Fix:** already on `main` once the packaging change lands — it adds the
+metadata, a README and a LICENSE to the tarball. It is committed as `fix:` so
+release-please actually cuts 0.4.1; as a `chore:` it would have been hidden and
+the correction would never have reached npm.
+
+**Prerequisite:** that release publishes through OIDC, so
+`@pitchfork-ui/tokens` needs a trusted publisher on npmjs.com first —
+repository `lelandcrangel/pitchfork-ui`, workflow `release-please.yml`,
+environment `release`. Without it the publish job fails on an otherwise good
+release. This will be the first time any package in this repo publishes through
+OIDC rather than by hand.
+
+**Then:** `packages/mcp/src/data.mjs` resolves `@pitchfork-ui/tokens/tokens`
+from the user's working directory before falling back to its bundled copy. That
+branch could never fire while the package was unpublished, so the documented
+"answers from _your_ installed copy" was true of metadata and silently untrue of
+tokens. It is real now — no code change needed.
