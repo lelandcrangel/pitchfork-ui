@@ -1,0 +1,101 @@
+# Verifies a package's npm trusted publisher without releasing anything.
+#
+# npm authenticates a publish before it rejects a duplicate version, so
+# publishing a version that is ALREADY on the registry exercises the whole OIDC
+# path and cannot ship anything. The three outcomes are distinguishable:
+#
+#   "cannot publish over"           -> auth worked; the publisher is correct
+#   "OIDC permission denied"        -> publisher matches, `npm publish` not
+#                                      allowed (tick "Allow npm publish")
+#   E404 on PUT, no provenance line -> no trusted publisher at all; npm masks
+#                                      unauthorised writes as 404
+#
+# `npm publish --dry-run` cannot do this -- it never authenticates.
+#
+# A guard refuses to run unless the local version is already published, so this
+# can never publish a new version by accident.
+name: Verify npm trusted publisher
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Which package's trusted publisher to verify
+        required: true
+        default: mcp
+        type: choice
+        options:
+          - mcp
+          - react
+          - tokens
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    # Must match the publish job, or the `environment` claim differs and the
+    # result would not tell us anything about a real release.
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: 'https://registry.npmjs.org'
+      # Trusted publishing (OIDC) requires npm >= 11.5.1; Node 24 ships older.
+      - run: npm install -g npm@latest
+      - run: npm ci
+      # The same artifacts the real publish job builds, so the pack succeeds.
+      - run: npm run build:tokens
+      - run: npm run build:react
+      - run: npm run build:metadata
+      - run: npm run build:mcp
+
+      - name: Refuse to run unless this version is already published
+        id: guard
+        env:
+          PKG: ${{ inputs.package }}
+        run: |
+          set -euo pipefail
+          local_version=$(node -p "require('./packages/${PKG}/package.json').version")
+          published=$(curl -fsS "https://registry.npmjs.org/@pitchfork-ui%2f${PKG}" \
+            | node -p "Object.keys(JSON.parse(require('fs').readFileSync(0,'utf8')).versions).join(' ')")
+          echo "local:     @pitchfork-ui/${PKG}@${local_version}"
+          echo "published: ${published}"
+          case " ${published} " in
+            *" ${local_version} "*)
+              echo "Already published -- a publish attempt cannot ship anything." ;;
+            *)
+              echo "::error::@pitchfork-ui/${PKG}@${local_version} is NOT published. Refusing: this would publish a real version."
+              exit 1 ;;
+          esac
+
+      - name: Attempt the publish and classify the result
+        env:
+          PKG: ${{ inputs.package }}
+        run: |
+          set -uo pipefail
+          out=$(npm publish --workspace "@pitchfork-ui/${PKG}" --access public 2>&1) || true
+          echo "$out"
+          echo
+          case "$out" in
+            *"cannot publish over"*)
+              echo "PASS: the registry authenticated this workflow, then refused the duplicate version."
+              echo "      The trusted publisher for @pitchfork-ui/${PKG} is configured correctly."
+              ;;
+            *"OIDC permission denied"*)
+              echo "::error::The publisher matches but 'npm publish' is not permitted. On npmjs.com, package Settings -> Allowed actions -> tick 'Allow npm publish'."
+              exit 1 ;;
+            *"E404"*|*"404 Not Found - PUT"*)
+              echo "::error::No usable trusted publisher. npm masks unauthorised writes as 404. Check org/user, repository, workflow filename (release-please.yml) and environment (release)."
+              exit 1 ;;
+            *)
+              echo "::error::Unrecognised result -- read the output above before drawing a conclusion."
+              exit 1 ;;
+          esac
