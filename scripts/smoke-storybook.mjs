@@ -63,6 +63,13 @@ function parseArgs(argv) {
     else if (arg === '--base') args.base = argv[(i += 1)];
     else if (arg === '--sample') args.sample = Number(argv[(i += 1)]);
   }
+  // Alternative targets, not composable. Passing both used to serve the
+  // directory and silently drop --base, so a deploy job asking for the live
+  // site would have tested local files and reported the site healthy. That is
+  // the failure this script exists to make impossible, so it is an error.
+  if (args.dir && args.base) {
+    throw new Error('--dir and --base are alternative targets; pass one, not both.');
+  }
   if (!args.dir && !args.base) args.dir = 'apps/docs/storybook-static';
   if (!Number.isInteger(args.sample) || args.sample < 1) {
     throw new Error('--sample must be a positive integer');
@@ -95,8 +102,24 @@ async function serve(dir) {
   return { base: `http://127.0.0.1:${server.address().port}`, close: () => server.close() };
 }
 
+// node's fetch has no default timeout. Against the live site, a server that
+// accepts the connection and then stalls would hang here forever -- before the
+// browser timeouts or any cleanup could run -- leaving the deploy job stuck
+// rather than failing. Matches the 30s the freshness check already uses.
+const FETCH_TIMEOUT_MS = Number(process.env.SMOKE_FETCH_TIMEOUT_MS ?? 30_000);
+
 async function fetchJson(url) {
-  const response = await fetch(url, { headers: { 'cache-control': 'no-cache' } });
+  let response;
+  try {
+    response = await fetch(url, {
+      headers: { 'cache-control': 'no-cache' },
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    });
+  } catch (error) {
+    const reason =
+      error?.name === 'TimeoutError' ? `no response within ${FETCH_TIMEOUT_MS}ms` : error?.message;
+    throw new Error(`GET ${url} failed: ${reason}`, { cause: error });
+  }
   if (!response.ok) throw new Error(`GET ${url} -> ${response.status}`);
   return response.json();
 }
