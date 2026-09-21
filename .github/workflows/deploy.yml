@@ -158,7 +158,7 @@ jobs:
       - name: Deploy docs to /pitchfork-ui/
         id: deploy_docs
         continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
@@ -177,7 +177,7 @@ jobs:
 
       - name: Deploy docs to /pitchfork-ui/ (retry)
         if: steps.deploy_docs.outcome == 'failure'
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
@@ -197,7 +197,7 @@ jobs:
       - name: Deploy theme builder to /pitchfork-ui/theme-builder/
         id: deploy_theme_builder
         continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
@@ -212,7 +212,7 @@ jobs:
 
       - name: Deploy theme builder to /pitchfork-ui/theme-builder/ (retry)
         if: steps.deploy_theme_builder.outcome == 'failure'
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
