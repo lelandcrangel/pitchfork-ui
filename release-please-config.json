@@ -23,6 +23,5 @@
       "bump-patch-for-minor-pre-major": false
     }
   },
-  "pull-request-title-pattern": "chore: release${component} ${version}",
   "separate-pull-requests": false
 }
