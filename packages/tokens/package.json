@@ -1,7 +1,7 @@
 {
   "name": "@pitchfork-ui/tokens",
-  "version": "0.4.0",
-  "description": "Design tokens for Pitchfork UI \u2014 colour, spacing, radii, typography, shadow and motion, built with Style Dictionary and shipped as CSS custom properties and JSON.",
+  "version": "0.4.1",
+  "description": "Design tokens for Pitchfork UI — colour, spacing, radii, typography, shadow and motion, built with Style Dictionary and shipped as CSS custom properties and JSON.",
   "license": "MIT",
   "author": "Leland Rangel",
   "homepage": "https://lelandrangel.com/pitchfork-ui/",

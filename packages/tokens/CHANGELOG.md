@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.4.0...tokens-v0.4.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* **tokens:** correct the README's JSON shape, and assert the tarball ([5748c39](https://github.com/lelandcrangel/pitchfork-ui/commit/5748c39ff03e6b722658e7c9349f7995218d9564))
+* **tokens:** ship the license and README that 0.4.0 went out without ([939fbce](https://github.com/lelandcrangel/pitchfork-ui/commit/939fbce320e51c5a8070fca667e98ccbcdf1ed3a))
+
 ## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.3.0...tokens-v0.4.0) (2026-09-20)
 
 
