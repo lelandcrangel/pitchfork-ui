@@ -61,40 +61,38 @@ stop relying on.
 
 ---
 
-## @pitchfork-ui/mcp has never published through OIDC
+## Publishing a new package: tick "Allow npm publish"
 
-Two of the three packages have now published from CI with provenance:
+Not an open gap — all three trusted publishers are verified. Kept because this
+will bite the next package added to the workspace, and this is where someone
+would look.
+
+On npmjs.com a package's trusted publisher has an **Allowed actions** section,
+and **`Allow npm publish` is off by default** — the publisher may only _stage_ a
+publish. The release workflow runs `npm publish`, so with the box unticked a
+release fails at the publish step, after release-please has already cut the tag.
+
+Tell the two failure modes apart by the message, not the exit code; the good
+case and one bad case are both E403:
+
+| Output                                   | Meaning                                                       |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| `cannot publish over`                    | Authenticated, duplicate refused — the publisher is correct   |
+| `OIDC permission denied for this action` | Publisher matches, `npm publish` not permitted — tick the box |
+| `E404` on `PUT`, no provenance line      | No usable publisher; npm masks unauthorised writes as 404     |
+
+`@pitchfork-ui/react`'s configuration is the known-good reference to copy.
+
+**Check it without releasing:** Actions → _Verify npm trusted publisher_ → pick
+the package. It attempts to publish a version already on the registry, which
+exercises the whole OIDC path and cannot ship anything — npm authenticates
+before it rejects a duplicate. `npm publish --dry-run` cannot do this; it never
+authenticates at all.
+
+Verified this way on 2026-09-21:
 
 ```
-@pitchfork-ui/react   0.15.0  GitHub Actions  provenance=yes
-@pitchfork-ui/tokens  0.4.1   GitHub Actions  provenance=yes
-@pitchfork-ui/mcp     0.2.0   lelandrangel    provenance=NO
+@pitchfork-ui/react   0.15.0  published via OIDC with provenance
+@pitchfork-ui/tokens  0.4.1   published via OIDC with provenance
+@pitchfork-ui/mcp     0.2.0   publisher verified; publishes on its next release
 ```
-
-`mcp@0.2.0` went up by hand during the npm bootstrap, so its trusted publisher
-has never actually been exercised. Its next release will be its first OIDC
-publish, and that is where a misconfiguration surfaces — on a real release, at
-the publish step, after release-please has already cut the tag.
-
-**The gotcha to check first, before that release.** On npmjs.com a trusted
-publisher has an **Allowed actions** section, and `Allow npm publish` is **off
-by default** — the publisher may only _stage_ a publish. The workflow runs
-`npm publish`, so with the box unchecked the release fails with:
-
-```
-npm notice publish Signed provenance statement with source and build information
-npm error code E403
-npm error 403 Forbidden - PUT ... - OIDC permission denied for this action
-```
-
-"this action" means the operation, not the identity. That is what cost tokens
-0.4.1 two failed runs. Worth distinguishing from its predecessor:
-
-- **E404 on PUT, no provenance line, fails in ~50ms** — no trusted publisher at
-  all. npm masks unauthorised writes as 404, so it reads like the package does
-  not exist when it means the credential was not accepted.
-- **E403 after the provenance line** — publisher matches, operation not allowed.
-
-`@pitchfork-ui/react`'s configuration is the known-good reference, since it has
-published this way successfully. Compare `mcp`'s against it rather than against
-a config that has never run.
