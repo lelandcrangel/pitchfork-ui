@@ -106,8 +106,10 @@ config file:
 }
 ```
 
-Restart the client. The server is stdio-based, needs no API key and no network
-access — everything it answers from ships inside the package.
+Restart the client. The server is stdio-based and needs no API key. Everything
+it answers from ships inside the package, so once running it makes no network
+requests of its own — `npx` fetches the package itself on first run, and again
+whenever the npm cache is cold.
 
 ### Check it is working
 
