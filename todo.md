@@ -20,22 +20,6 @@ since the same plugin also turns on strikethrough, footnotes and autolinks.
 
 ---
 
-## Dark mode contrast failures
-
-`node scripts/check-dark-contrast.mjs` reports 6 failing token pairs, including:
-
-- `Warning border on warning bg` — `#b54708` on `#7a2e0e` → 1.74:1 (needs 3:1)
-- `Danger border on danger bg` — `#d92d20` on `#7a271a` → 2.04:1 (needs 3:1)
-
-These are pre-existing and predate the AI kit work. The script is **not wired
-into CI**, so nothing stops further regressions.
-
-**Fix:** correct the dark-mode token pairs in the `[data-theme='dark']` block of
-`packages/react/src/styles/theme.css`, then add the checker to CI so the
-accessibility claim in the package description stays true.
-
----
-
 ## Publishing a new package: tick "Allow npm publish"
 
 Not an open gap — all three trusted publishers are verified. Kept because this

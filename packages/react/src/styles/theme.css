@@ -776,8 +776,14 @@
   --color-semantic-text-inverse: var(--color-gray-900);
   --color-semantic-text-disabled: var(--color-gray-500);
   --color-semantic-border-muted: var(--color-gray-800);
-  --color-semantic-border-default: var(--color-gray-700);
-  --color-semantic-border-strong: var(--color-gray-500);
+  /* These drive --pf-control-border and --pf-button-secondary-border, which
+     are UI components under WCAG 1.4.11 and need 3:1. gray-700 gave 1.72:1 on
+     the default background and 1.41:1 on raised; gray-600 only reaches 2.36:1,
+     so gray-500 is the darkest step that passes. border-strong moves with it,
+     because it is the hover state of those same borders and would otherwise be
+     identical to their resting state. */
+  --color-semantic-border-default: var(--color-gray-500);
+  --color-semantic-border-strong: var(--color-gray-400);
   --color-semantic-border-focus: var(--color-brand-400);
 
   /* brand-600 (#2563eb) on white = ~5:1 — passes WCAG AA for normal text */
@@ -789,16 +795,22 @@
   --color-semantic-action-secondary-hover: var(--color-gray-700);
   --color-semantic-action-secondary-text: var(--color-gray-50);
   --color-semantic-status-success-background: var(--color-success-900);
-  --color-semantic-status-success-border: var(--color-success-700);
+  /* success-700 was 1.79:1 on success-900; success-600 reaches only 2.59:1. */
+  --color-semantic-status-success-border: var(--color-success-500);
   --color-semantic-status-success-foreground: var(--color-success-300);
   --color-semantic-status-success-bright: var(--color-success-400);
   --color-semantic-status-warning-background: var(--color-warning-900);
-  --color-semantic-status-warning-border: var(--color-warning-700);
+  /* warning-700 was 1.74:1 on warning-900; warning-600 reaches only 2.71:1. */
+  --color-semantic-status-warning-border: var(--color-warning-500);
   --color-semantic-status-warning-foreground: var(--color-warning-300);
   --color-semantic-status-warning-bright: var(--color-warning-400);
   --color-semantic-status-danger-background: var(--color-danger-900);
-  /* danger-600 (#d92d20) on gray-900 = 3.71:1 — danger-700 only gives 2.72:1 */
-  --color-semantic-status-danger-border: var(--color-danger-600);
+  /* Sized against the danger background, which is the tighter constraint: an
+     earlier note here justified danger-600 by its 3.70:1 on gray-900 and never
+     checked it against danger-900, where the same colour is 2.04:1. danger-500
+     gives 2.62:1, so danger-400 (3.53:1) is the darkest step that passes. It
+     matches status-danger-bright below; they never appear adjacent. */
+  --color-semantic-status-danger-border: var(--color-danger-400);
   --color-semantic-status-danger-foreground: var(--color-danger-300);
   --color-semantic-status-danger-bright: var(--color-danger-400);
 

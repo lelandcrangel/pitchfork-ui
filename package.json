@@ -34,6 +34,7 @@
     "typecheck": "tsc -b",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
+    "check:contrast": "node scripts/check-dark-contrast.mjs",
     "prepare": "husky"
   },
   "devDependencies": {
