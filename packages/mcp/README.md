@@ -91,11 +91,24 @@ everywhere else.
 | `PITCHFORK_UI_METADATA` | Path to a `metadata.json` to use instead of the default |
 | `PITCHFORK_UI_TOKENS`   | Path to a `tokens.json` to use instead of the default   |
 
-Useful when developing the library itself:
+By default the server answers from the `@pitchfork-ui/react` installed in your
+project, falling back to the copy bundled here. To point it at a specific file:
 
 ```bash
-PITCHFORK_UI_METADATA=./packages/react/dist/metadata.json npx @pitchfork-ui/mcp
+PITCHFORK_UI_METADATA=./node_modules/@pitchfork-ui/react/dist/metadata.json \
+  npx -y @pitchfork-ui/mcp
 ```
+
+When developing the library itself, run the server from source instead — inside
+the monorepo `npx` resolves the workspace symlink and cannot find the bin:
+
+```bash
+PITCHFORK_UI_METADATA=./packages/react/dist/metadata.json node packages/mcp/src/index.mjs
+```
+
+A path that does not exist is not an error; the server quietly falls back to its
+bundled copy. The startup line on stderr names the file it actually loaded, so
+check that if an override seems to have no effect.
 
 ## License
 
