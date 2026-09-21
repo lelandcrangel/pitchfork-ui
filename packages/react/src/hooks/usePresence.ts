@@ -1,9 +1,5 @@
+import { prefersReducedMotion } from '@pitchfork-ui/core';
 import { useEffect, useRef, useState } from 'react';
-
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' &&
-  typeof window.matchMedia === 'function' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export interface UsePresence {
   /** Whether the element should be rendered (true while open and while exiting). */

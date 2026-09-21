@@ -9,11 +9,13 @@ Component library for lelandrangel.com. React components backed by a Style Dicti
 ```
 pitchfork-ui/
 ├── packages/
+│   ├── core/           # Framework-free behaviour (@pitchfork-ui/core)
+│   │   └── src/        # anchoring, focus, dismiss, navigation, keys, aria, motion
 │   ├── react/          # Component library (@pitchfork-ui/react)
 │   │   └── src/
 │   │       ├── components/   # One folder per component
-│   │       ├── hooks/        # Shared hooks (useDisclosure, useListNavigation, etc.)
-│   │       ├── a11y/         # Shared a11y utilities (Keys, getFocusableElements, etc.)
+│   │       ├── hooks/        # React adapters over @pitchfork-ui/core
+│   │       ├── a11y/         # Re-exports the a11y helpers from core
 │   │       ├── utils/cx.ts   # className joiner
 │   │       ├── styles/theme.css  # Global token aliases (:root vars)
 │   │       └── index.ts      # Public exports
@@ -30,7 +32,7 @@ pitchfork-ui/
 
 ```bash
 npm run storybook        # Start Storybook dev server (port 6006)
-npm run test             # Run Vitest (packages/react only)
+npm run test             # Run Vitest (core, then react)
 npm run typecheck        # tsc --build across all packages
 npm run lint             # ESLint across workspace
 npm run format           # Prettier across workspace
@@ -202,6 +204,37 @@ Icons return `null` silently for unknown names in production. Use `getAvailableI
 Form components (`Input`, `Select`, `Textarea`, etc.) wrap the control in a `.pf-field` div that handles label, description, and error display. They manage their own `id` generation via `useId` and wire up `aria-describedby` automatically.
 
 Prefer `useControllableState` (from `hooks/`) for any component that supports both controlled and uncontrolled usage.
+
+---
+
+## Where behaviour lives
+
+`@pitchfork-ui/core` holds the parts of the system that are about the DOM and
+about arithmetic rather than about React: anchored positioning, focus trapping,
+outside-interaction dismissal, list-navigation index maths, `Keys`,
+`composeDescribedBy`, `getFocusableElements` and `prefersReducedMotion`. It
+imports nothing.
+
+The dividing line, which decides where a new piece of behaviour goes:
+
+- **Core owns the DOM and the maths.** Geometry, focus order, event wiring,
+  index arithmetic — the parts that are identical in every rendering layer.
+  Every `observe*`/`trap*`/`on*` function attaches listeners and returns a
+  cleanup function.
+- **The rendering layer owns its own reactivity.** `packages/react/src/hooks`
+  are thin adapters: a `useEffect` that calls the core function and returns its
+  cleanup, or a `useState` around a core pure function. Core is never a state
+  container.
+
+So a hook that is only a `useEffect` wrapper belongs in core; a hook that owns
+React state keeps that state and delegates the calculation. When adding
+behaviour, write and test it in core first, then adapt it.
+
+`packages/react/src/a11y` re-exports core's helpers because they are part of
+`@pitchfork-ui/react`'s public API — import from `../../a11y` inside components
+as before.
+
+Full reasoning: `WEB-COMPONENTS-PLAN.md`.
 
 ---
 

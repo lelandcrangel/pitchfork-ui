@@ -1,9 +1,5 @@
+import { prefersReducedMotion } from '@pitchfork-ui/core';
 import { useState } from 'react';
-
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' &&
-  typeof window.matchMedia === 'function' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export interface UseExitAnimationOptions {
   /** Called once the exit animation has finished (or immediately if reduced motion). */

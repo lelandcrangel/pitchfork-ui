@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "@pitchfork-ui/react": ["../../packages/react/src"]
+      "@pitchfork-ui/react": ["../../packages/react/src"],
+      "@pitchfork-ui/core": ["../../packages/core/src"]
     }
   },
   "include": ["src", ".storybook"],

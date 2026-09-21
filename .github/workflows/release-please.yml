@@ -15,6 +15,7 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     outputs:
+      core_released: ${{ steps.release.outputs['packages/core--release_created'] }}
       react_released: ${{ steps.release.outputs['packages/react--release_created'] }}
       mcp_released: ${{ steps.release.outputs['packages/mcp--release_created'] }}
       tokens_released: ${{ steps.release.outputs['packages/tokens--release_created'] }}
@@ -30,6 +31,7 @@ jobs:
     needs: release-please
     # Whenever release-please cut a release for a package we publish.
     if: >-
+      needs.release-please.outputs.core_released == 'true' ||
       needs.release-please.outputs.react_released == 'true' ||
       needs.release-please.outputs.mcp_released == 'true' ||
       needs.release-please.outputs.tokens_released == 'true'
@@ -52,6 +54,7 @@ jobs:
       - run: npm install -g npm@latest
       - run: npm ci
       - run: npm run build:tokens
+      - run: npm run build:core
       - run: npm run build:react
       # @pitchfork-ui/react exports ./metadata, and @pitchfork-ui/mcp serves the
       # bundled copies. Both are generated, so both must be built before packing
@@ -61,6 +64,7 @@ jobs:
       - name: Check the generated artifacts are in the tarballs
         run: |
           set -euo pipefail
+          npm pack --workspace @pitchfork-ui/core --dry-run 2>&1 | grep -q 'dist/index.js'
           npm pack --workspace @pitchfork-ui/react --dry-run 2>&1 | grep -q 'dist/metadata.json'
           npm pack --workspace @pitchfork-ui/mcp --dry-run 2>&1 | grep -q 'data/metadata.json'
           npm pack --workspace @pitchfork-ui/mcp --dry-run 2>&1 | grep -q 'data/tokens.json'
@@ -72,6 +76,11 @@ jobs:
       - name: Publish @pitchfork-ui/tokens
         if: needs.release-please.outputs.tokens_released == 'true'
         run: npm publish --workspace @pitchfork-ui/tokens --access public
+      - name: Publish @pitchfork-ui/core
+        if: needs.release-please.outputs.core_released == 'true'
+        run: npm publish --workspace @pitchfork-ui/core --access public
+      # react depends on core, so core must reach the registry first -- a
+      # consumer installing react before core exists gets an unresolvable tree.
       - name: Publish @pitchfork-ui/react
         if: needs.release-please.outputs.react_released == 'true'
         run: npm publish --workspace @pitchfork-ui/react --access public

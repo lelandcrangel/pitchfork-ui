@@ -1,6 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "packages": {
+    "packages/core": {
+      "release-type": "node",
+      "package-name": "@pitchfork-ui/core",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    },
     "packages/react": {
       "release-type": "node",
       "package-name": "@pitchfork-ui/react",

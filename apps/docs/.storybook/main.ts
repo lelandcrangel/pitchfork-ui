@@ -15,6 +15,10 @@ const reactSourceEntry = resolve(storybookDir, '../../../packages/react/src/inde
 // component class still landed, so the site rendered with correct markup and no
 // token values at all, and nothing failed loudly enough to notice.
 const reactThemeCss = resolve(storybookDir, '../../../packages/react/src/styles/theme.css');
+// react's source imports @pitchfork-ui/core; without this alias Storybook would
+// resolve it to core's dist, which means `npm run storybook` on a fresh clone
+// fails until core has been built.
+const coreSourceEntry = resolve(storybookDir, '../../../packages/core/src/index.ts');
 
 const rawBasePath = process.env.STORYBOOK_BASE_PATH ?? '/';
 const withLeadingSlash = rawBasePath.startsWith('/') ? rawBasePath : `/${rawBasePath}`;
@@ -65,6 +69,10 @@ const config: StorybookConfig = {
         {
           find: '@pitchfork-ui/react',
           replacement: reactSourceEntry,
+        },
+        {
+          find: '@pitchfork-ui/core',
+          replacement: coreSourceEntry,
         },
       ],
     };
