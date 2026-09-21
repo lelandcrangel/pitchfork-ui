@@ -31,6 +31,8 @@ jobs:
       # published changelog page sat on 0.13.2 while the library was on 0.15.0.
       - name: Check the Storybook changelog is in sync
         run: npm run sync-changelog -w @pitchfork-ui/docs -- --check
+      - name: Check dark mode contrast (WCAG AA)
+        run: npm run check:contrast
       - run: npm run test
       - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build

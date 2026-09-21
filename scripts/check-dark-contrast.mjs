@@ -27,38 +27,36 @@ function flattenTokens(node, path = []) {
 
 const TOKEN_HEX = flattenTokens(colorTokens);
 
-// ─── Dark mode token aliases (mirrored from theme.css [data-theme='dark']) ───
+// ─── Dark mode token aliases (read from theme.css, not copied) ───────────────
+// This used to be a hand-maintained mirror of the [data-theme='dark'] block.
+// A checker that validates a copy of the thing it is checking will eventually
+// pass while the real stylesheet is broken, so it parses the stylesheet.
 
-const DARK_SEMANTIC = {
-  'color-semantic-background-default': 'color-gray-900',
-  'color-semantic-background-subtle': 'color-gray-700',
-  'color-semantic-background-raised': 'color-gray-800',
-  'color-semantic-background-disabled': 'color-gray-800',
-  'color-semantic-text-default': 'color-gray-50',
-  'color-semantic-text-muted': 'color-gray-300',
-  'color-semantic-text-subtle': 'color-gray-200',
-  'color-semantic-text-inverse': 'color-gray-900',
-  'color-semantic-text-disabled': 'color-gray-500',
-  'color-semantic-border-default': 'color-gray-700',
-  'color-semantic-border-strong': 'color-gray-500',
-  'color-semantic-border-muted': 'color-gray-800',
-  'color-semantic-border-focus': 'color-brand-400',
-  'color-semantic-action-primary': 'color-brand-600',
-  'color-semantic-action-primary-hover': 'color-brand-700',
-  'color-semantic-action-primary-text': 'color-base-white',
-  'color-semantic-action-secondary': 'color-gray-800',
-  'color-semantic-action-secondary-hover': 'color-gray-700',
-  'color-semantic-action-secondary-text': 'color-gray-50',
-  'color-semantic-status-success-background': 'color-success-900',
-  'color-semantic-status-success-border': 'color-success-700',
-  'color-semantic-status-success-foreground': 'color-success-300',
-  'color-semantic-status-warning-background': 'color-warning-900',
-  'color-semantic-status-warning-border': 'color-warning-700',
-  'color-semantic-status-warning-foreground': 'color-warning-300',
-  'color-semantic-status-danger-background': 'color-danger-900',
-  'color-semantic-status-danger-border': 'color-danger-600',
-  'color-semantic-status-danger-foreground': 'color-danger-300',
-};
+const THEME_CSS = resolve(root, 'packages/react/src/styles/theme.css');
+
+function readDarkAliases() {
+  const css = readFileSync(THEME_CSS, 'utf8');
+  const marker = "[data-theme='dark']";
+  const at = css.indexOf(marker);
+  if (at === -1) {
+    throw new Error(`No ${marker} block in ${THEME_CSS}`);
+  }
+  const block = css.slice(at, css.indexOf('\n}', at));
+  const aliases = {};
+  for (const [, name, target] of block.matchAll(
+    /--(color-semantic-[\w-]+):\s*var\(--([\w-]+)\)/g,
+  )) {
+    aliases[name] = target;
+  }
+  if (Object.keys(aliases).length === 0) {
+    throw new Error(
+      `Parsed no aliases from the dark block -- the parser is broken, not the theme.`,
+    );
+  }
+  return aliases;
+}
+
+const DARK_SEMANTIC = readDarkAliases();
 
 function resolveHex(token) {
   const resolved = DARK_SEMANTIC[token] ?? token;
@@ -321,3 +319,9 @@ if (failures.length === 0) {
 }
 
 console.log('────────────────────────────────────────────────────────────────\n');
+
+// Exit non-zero so CI can gate on this. Reporting failures on stdout while
+// exiting 0 is a check that cannot fail, which is worse than no check at all.
+if (failures.length > 0) {
+  process.exitCode = 1;
+}
