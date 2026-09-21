@@ -36,6 +36,31 @@ accessibility claim in the package description stays true.
 
 ---
 
+## The deploy has no retry around a transient FTP failure
+
+`SamKirkland/FTP-Deploy-Action` exposes a `timeout` input but no retry — its
+`action.yml` has 14 inputs and none of them mention retries or attempts. One
+dropped connection fails the whole deploy.
+
+This happened on `a73d61d`: the deploy failed after about 30 seconds with
+`Failed to connect ... Error: Timeout (control socket)`, and a re-run of the
+identical commit went green, live smoke test and all. Same build, same
+artifacts, different outcome — transport, not the diff.
+
+That instance was harmless because it died _before_ transferring anything, so
+the site stayed on the previous good build. A timeout part-way through a sync
+is the case worth guarding: the action tracks what it has uploaded in a state
+file on the server, so a half-finished sync can leave that file disagreeing
+with what is actually there, and the next incremental deploy trusts it.
+
+**Fix:** wrap the two deploy steps in `.github/workflows/deploy.yml` in a retry
+(`nick-fields/retry`, or a step that re-invokes the action on failure), and
+consider raising `timeout` from its default. Re-running by hand works but only
+when someone is watching, which is the thing this workstream has been trying to
+stop relying on.
+
+---
+
 ## @pitchfork-ui/tokens is versioned but never published
 
 Pre-existing, and probably intentional — noting it so it is not mistaken for
