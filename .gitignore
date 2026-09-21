@@ -10,5 +10,9 @@ coverage
 apps/docs/public/llms.txt
 apps/docs/public/llms-full.txt
 
+# Generated from packages/react/CHANGELOG.md by apps/docs/sync-changelog.cjs,
+# which every docs build and `npm run storybook` runs first.
+apps/docs/src/CHANGELOG.mdx
+
 # Copied from the built artifacts by scripts/build-mcp-data.mjs
 packages/mcp/data/
