@@ -104,18 +104,65 @@ async function fetchJson(url) {
 // Only same-origin failures count. A blocked Google Fonts request says nothing
 // about whether the build is sound, and failing on it would make this flaky in
 // exactly the environments where it matters most.
+//
+// Filtering on the origin rather than the base path is deliberate. In deploy
+// mode the base is https://host/pitchfork-ui, and a build that lost its base
+// path requests its assets from the domain root instead -- same origin, outside
+// the base path. That is a broken deploy, and matching on the path would let it
+// through silently.
+//
+// A request that fails at the network layer never produces a response event, so
+// it needs watching separately or a dead asset host looks like a clean run.
 function watchPage(page, origin, failures) {
   page.on('response', (r) => {
-    if (r.status() >= 400 && r.url().startsWith(origin))
+    if (r.status() >= 400 && new URL(r.url()).origin === origin) {
       failures.push(`HTTP ${r.status()} ${r.url()}`);
+    }
+  });
+  page.on('requestfailed', (r) => {
+    if (new URL(r.url()).origin === origin) {
+      failures.push(`request failed (${r.failure()?.errorText ?? 'unknown'}) ${r.url()}`);
+    }
   });
   page.on('pageerror', (e) => failures.push(`page error: ${String(e).slice(0, 200)}`));
+}
+
+// domcontentloaded plus an explicit readiness condition, never networkidle.
+// networkidle waits for *every* request to settle, including the third-party
+// ones this script deliberately ignores for pass/fail -- so a slow or hanging
+// Google Fonts request could time out a navigation that has nothing wrong with
+// it. Waiting on the two things that actually matter is both faster and honest:
+// the story has rendered, and stylesheets have been applied. Neither presumes
+// the tokens resolve, which is the thing under test.
+async function openAndSettle(page, url, rootSelector) {
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(
+    (sel) => {
+      const root = document.querySelector(sel);
+      return Boolean(root && root.children.length > 0) && document.styleSheets.length > 0;
+    },
+    rootSelector,
+    { timeout: 20000 },
+  );
 }
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const served = args.dir ? await serve(args.dir) : null;
+  try {
+    return await run(args, served);
+  } finally {
+    // Everything from here used to sit outside a cleanup path: a missing
+    // index.json, an empty story list or a Chromium that would not launch left
+    // the server listening, which keeps node alive. The process then hung until
+    // the job timed out instead of failing in a second with a reason.
+    served?.close();
+  }
+}
+
+async function run(args, served) {
   const base = (served?.base ?? args.base).replace(/\/$/, '');
+  const origin = new URL(base).origin;
   const problems = [];
 
   console.log(`Smoke-testing the built Storybook at ${base}`);
@@ -138,10 +185,16 @@ async function main() {
     for (const id of sample) {
       const page = await browser.newPage({ viewport: { width: 1024, height: 700 } });
       const failures = [];
-      watchPage(page, base, failures);
+      watchPage(page, origin, failures);
 
-      await page.goto(`${base}/iframe.html?id=${id}&viewMode=story`, { waitUntil: 'networkidle' });
-      await page.waitForTimeout(700);
+      try {
+        await openAndSettle(page, `${base}/iframe.html?id=${id}&viewMode=story`, '#storybook-root');
+      } catch {
+        problems.push(`${id}: the story did not render within 20s`);
+        if (failures.length) problems.push(`${id}: ${failures.join('; ')}`);
+        await page.close();
+        continue;
+      }
 
       const empty = await page.evaluate((tokens) => {
         const root = getComputedStyle(document.documentElement);
@@ -185,16 +238,19 @@ async function main() {
     // upload can leave one working and the other not.
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
     const failures = [];
-    watchPage(page, base, failures);
-    await page.goto(`${base}/index.html`, { waitUntil: 'networkidle' });
-    await page.waitForTimeout(2500);
-    const sidebar = await page.locator('#storybook-explorer-tree, .sidebar-container').count();
-    if (sidebar === 0) problems.push('index.html: the sidebar did not render');
+    watchPage(page, origin, failures);
+    try {
+      await openAndSettle(page, `${base}/index.html`, 'body');
+      await page.waitForSelector('#storybook-explorer-tree, .sidebar-container', {
+        timeout: 20000,
+      });
+    } catch {
+      problems.push('index.html: the sidebar did not render within 20s');
+    }
     if (failures.length) problems.push(`index.html: ${failures.join('; ')}`);
     await page.close();
   } finally {
     await browser.close();
-    served?.close();
   }
 
   if (problems.length) {
