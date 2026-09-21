@@ -283,7 +283,21 @@ jobs:
             body=$(curl -sS --max-time 30 -H 'Cache-Control: no-cache' \
               -w $'\n%{http_code}' "$url" 2>/dev/null) || rc=$?
             if [ "$rc" -ne 0 ]; then
-              echo "  $url -- server did not answer (curl exit $rc)"
+              # Name the cause rather than guessing at it. "Server did not
+              # answer" would cover exit 7 and 28 but quietly mislabel a DNS or
+              # TLS failure, which is the same conflation this function exists
+              # to end.
+              local why
+              case "$rc" in
+                6) why='could not resolve host' ;;
+                7) why='could not connect' ;;
+                28) why='timed out' ;;
+                35) why='TLS handshake failed' ;;
+                52) why='empty reply from server' ;;
+                56) why='connection reset' ;;
+                *) why='see curl exit codes' ;;
+              esac
+              echo "  $url -- curl failed (exit $rc: $why)"
               return 1
             fi
             status=${body##*$'\n'}
