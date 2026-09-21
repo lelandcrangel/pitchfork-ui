@@ -34,14 +34,40 @@ const TOKEN_HEX = flattenTokens(colorTokens);
 
 const THEME_CSS = resolve(root, 'packages/react/src/styles/theme.css');
 
-function readDarkAliases() {
-  const css = readFileSync(THEME_CSS, 'utf8');
-  const marker = "[data-theme='dark']";
+// Walks braces rather than searching for a closing delimiter. `indexOf('\n}')`
+// looked fine but only guesses where the block ends: indent that brace and it
+// silently finds a later one, overshooting the block by thousands of
+// characters; remove it and `indexOf` returns -1, which `slice` reads as
+// "second to last character" and swallows most of the file. Either way the
+// audit would then measure aliases it was never meant to see, and report a
+// confident pass. Comments are stripped first so a brace inside one cannot
+// throw the count off.
+function extractBlock(css, marker) {
   const at = css.indexOf(marker);
   if (at === -1) {
     throw new Error(`No ${marker} block in ${THEME_CSS}`);
   }
-  const block = css.slice(at, css.indexOf('\n}', at));
+  const open = css.indexOf('{', at);
+  if (open === -1) {
+    throw new Error(`${marker} in ${THEME_CSS} has no opening brace`);
+  }
+  let depth = 0;
+  for (let i = open; i < css.length; i += 1) {
+    if (css[i] === '{') {
+      depth += 1;
+    } else if (css[i] === '}') {
+      depth -= 1;
+      if (depth === 0) {
+        return css.slice(open + 1, i);
+      }
+    }
+  }
+  throw new Error(`${marker} block in ${THEME_CSS} is never closed`);
+}
+
+function readDarkAliases() {
+  const css = readFileSync(THEME_CSS, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+  const block = extractBlock(css, "[data-theme='dark']");
   const aliases = {};
   for (const [, name, target] of block.matchAll(
     /--(color-semantic-[\w-]+):\s*var\(--([\w-]+)\)/g,
