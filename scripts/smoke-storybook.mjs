@@ -171,10 +171,25 @@ async function run(args, served) {
   const stories = Object.values(index.entries ?? {}).filter((e) => e.type === 'story');
   if (stories.length === 0) throw new Error(`${base}/index.json lists no stories`);
 
-  // Deterministic sample: sorted, evenly spread, with the anchor always in.
+  // Deterministic sample: sorted, evenly spread including both endpoints, with
+  // the anchor always in.
+  //
+  // Computing the indices directly rather than taking every Nth id and slicing.
+  // That older form did not do what its comment claimed: with 396 stories and a
+  // sample of 6 it stopped at index 330, leaving the last 65 stories never
+  // looked at, and whenever the story count fell below twice the sample the
+  // step collapsed to 1 and it degenerated to "the first N". A regression
+  // confined to either end of the sorted list would have gone unseen.
   const ids = stories.map((s) => s.id).sort();
-  const step = Math.max(1, Math.floor(ids.length / args.sample));
-  const sample = new Set(ids.filter((_, i) => i % step === 0).slice(0, args.sample));
+  const count = Math.min(args.sample, ids.length);
+  const sample = new Set(
+    count === 1
+      ? [ids[0]]
+      : Array.from(
+          { length: count },
+          (_, i) => ids[Math.round((i * (ids.length - 1)) / (count - 1))],
+        ),
+  );
   sample.add(ANCHOR.storyId);
 
   const browser = await chromium.launch({
