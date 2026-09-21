@@ -1,22 +1,45 @@
 {
   "name": "@pitchfork-ui/tokens",
   "version": "0.4.0",
+  "description": "Design tokens for Pitchfork UI \u2014 colour, spacing, radii, typography, shadow and motion, built with Style Dictionary and shipped as CSS custom properties and JSON.",
+  "license": "MIT",
+  "author": "Leland Rangel",
+  "homepage": "https://lelandrangel.com/pitchfork-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lelandcrangel/pitchfork-ui.git",
+    "directory": "packages/tokens"
+  },
+  "keywords": [
+    "design-tokens",
+    "style-dictionary",
+    "css-variables",
+    "design-system",
+    "pitchfork-ui",
+    "theming",
+    "dark-mode"
+  ],
   "type": "module",
   "sideEffects": [
     "dist/**/*.css"
   ],
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    "./css": "./dist/css/variables.css",
+    "./tokens": "./dist/json/tokens.json"
+  },
   "scripts": {
     "build": "style-dictionary build --config style-dictionary.config.mjs",
     "clean": "rm -rf dist"
   },
   "devDependencies": {
     "style-dictionary": "^5.4.4"
-  },
-  "exports": {
-    "./css": "./dist/css/variables.css",
-    "./tokens": "./dist/json/tokens.json"
   }
 }
