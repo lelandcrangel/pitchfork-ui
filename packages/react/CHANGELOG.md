@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.15.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.0...react-v0.15.1) (2026-09-21)
+
+
+### Bug Fixes
+
+* **theme:** meet WCAG 3:1 on the five failing dark mode border pairs ([780e687](https://github.com/lelandcrangel/pitchfork-ui/commit/780e68766494e83795815cfeccd7b6994fcce7d7))
+
 ## [0.15.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.14.0...react-v0.15.0) (2026-09-20)
 
 
