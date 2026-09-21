@@ -173,12 +173,14 @@ function watchPage(page, origin, failures) {
 // it.
 //
 // Readiness is Storybook's own settled state, not a guess from the DOM. An
-// earlier version waited for #storybook-root to have children, which a story
-// that throws can satisfy: Storybook catches the error and renders an error
-// screen, so nothing reaches pageerror and the run reported a clean pass over
-// stories that were not rendering at all. Only the Button anchor had a
-// story-specific assertion, so the other sampled stories were effectively
-// unchecked beyond the global tokens.
+// earlier version waited for #storybook-root to have children, which asks the
+// wrong question: it describes the shape of the DOM rather than whether
+// Storybook thinks it succeeded. Against a story the bundle cannot render that
+// version did fail -- both failure screens leave the root empty, so it never
+// reported a clean pass -- but it blamed a 20s timeout instead of naming the
+// error. Reading the state gives the real reason, and gives it per story:
+// before this, only the Button anchor carried a story-specific assertion, so
+// the rest were checked for little beyond the global tokens.
 //
 // Storybook sets exactly one of these on the body, so waiting for any of them
 // and then reading which one is both a readiness signal and a result.
