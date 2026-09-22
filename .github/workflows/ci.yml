@@ -36,12 +36,16 @@ jobs:
       - run: npm run test
       - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build
-      # vite-plugin-dts infers its output root from the whole program, so a
-      # tsconfig `paths` entry pointing outside a package silently relocates
-      # dist and strands the declared types path. Derive the path from
-      # package.json rather than hardcoding it, so this catches both a wrong
-      # field and a moved build output.
-      - name: Check every declared types path points at a real file
+      # Two ways the published types break silently, both of which have
+      # happened: vite-plugin-dts infers its output root from the whole
+      # program, so a tsconfig `paths` entry pointing outside a package
+      # relocates dist and strands the declared types path; and an
+      # unrecognised plugin option (bundleTypes was once spelled rollupTypes)
+      # is accepted and ignored, leaving extensionless relative specifiers
+      # that moduleResolution=nodenext cannot follow. Derive the path from
+      # package.json rather than hardcoding it, then assert the declarations
+      # are actually bundled.
+      - name: Check the published type declarations
         run: |
           set -euo pipefail
           for pkg in core react; do
@@ -54,8 +58,16 @@ jobs:
               for (const path of declared) {
                 const full = `${dir}/${path.replace(/^\.\//, "")}`;
                 if (!fs.existsSync(full)) throw new Error(`${dir}: types path "${path}" does not exist`);
+                const relative = fs.readFileSync(full, "utf8").match(/from\s+["\x27]\.[^"\x27]*["\x27]/g);
+                if (relative) {
+                  throw new Error(
+                    `${dir}: ${path} has ${relative.length} relative specifier(s) ` +
+                      `(${relative[0]}) -- declarations are not bundled, so they will ` +
+                      `not resolve under moduleResolution=nodenext`,
+                  );
+                }
               }
-              console.log(`${dir}: ${declared.join(", ")}`);
+              console.log(`${dir}: ${declared.join(", ")} bundled`);
             ' "packages/$pkg"
           done
       - name: Validate component metadata

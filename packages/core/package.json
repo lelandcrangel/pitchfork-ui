@@ -1,7 +1,7 @@
 {
   "name": "@pitchfork-ui/core",
   "version": "0.1.0",
-  "description": "Framework-free behaviour for Pitchfork UI \u2014 anchored positioning, focus trapping, outside-interaction dismissal, list navigation and accessibility helpers, with no dependency on any UI framework.",
+  "description": "Framework-free behaviour for Pitchfork UI — anchored positioning, focus trapping, outside-interaction dismissal, list navigation and accessibility helpers, with no dependency on any UI framework.",
   "license": "MIT",
   "author": "Leland Rangel",
   "homepage": "https://lelandrangel.com/pitchfork-ui/",
@@ -40,6 +40,7 @@
     "test:watch": "vitest"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.59.1",
     "vite-plugin-dts": "^5.0.2"
   },
   "publishConfig": {
