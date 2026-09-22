@@ -36,6 +36,28 @@ jobs:
       - run: npm run test
       - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build
+      # vite-plugin-dts infers its output root from the whole program, so a
+      # tsconfig `paths` entry pointing outside a package silently relocates
+      # dist and strands the declared types path. Derive the path from
+      # package.json rather than hardcoding it, so this catches both a wrong
+      # field and a moved build output.
+      - name: Check every declared types path points at a real file
+        run: |
+          set -euo pipefail
+          for pkg in core react; do
+            node -e '
+              const fs = require("node:fs");
+              const dir = process.argv[1];
+              const pkg = JSON.parse(fs.readFileSync(`${dir}/package.json`, "utf8"));
+              const declared = [pkg.types, pkg.exports?.["."]?.types].filter(Boolean);
+              if (declared.length === 0) throw new Error(`${dir}: no types field to check`);
+              for (const path of declared) {
+                const full = `${dir}/${path.replace(/^\.\//, "")}`;
+                if (!fs.existsSync(full)) throw new Error(`${dir}: types path "${path}" does not exist`);
+              }
+              console.log(`${dir}: ${declared.join(", ")}`);
+            ' "packages/$pkg"
+          done
       - name: Validate component metadata
         run: npm run build:metadata -- --strict
       - name: Validate llms.txt (every component linked, every link resolves)

@@ -36,7 +36,7 @@ export default defineConfig({
       ],
     },
   },
-  plugins: [react(), libInjectCss(), dts(), stylesOnlyOutput()],
+  plugins: [react(), libInjectCss(), dts({ entryRoot: 'src' }), stylesOnlyOutput()],
   build: {
     // Keep JS readable so `preserveModules` output stays debuggable; the
     // consumer's bundler minifies it. CSS, however, ships as-is (the monolithic
