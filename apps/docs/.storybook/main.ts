@@ -27,7 +27,7 @@ const storybookBasePath = withLeadingSlash.endsWith('/')
 // "storybook", which is what link previews showed before manager-head.html.
 const config: StorybookConfig & { title: string } = {
   title: 'Pitchfork UI',
-  stories:['../src/**/*.mdx', '../src/**/*.stories.{js,jsx,mjs,ts,tsx}'],
+  stories: ['../src/**/*.mdx', '../src/**/*.stories.{js,jsx,mjs,ts,tsx}'],
   tags: {
     examplesHidden: {
       excludeFromSidebar: true,
