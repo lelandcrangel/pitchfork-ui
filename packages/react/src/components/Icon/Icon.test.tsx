@@ -1,4 +1,4 @@
-import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { faPaperPlane, faStar } from '@fortawesome/free-regular-svg-icons';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { Icon, getAvailableIconNames, registerIcons } from './Icon';
@@ -73,6 +73,49 @@ describe('Icon', () => {
     const { container } = render(<Icon name="paper-plane" aria-hidden />);
     expect(container.querySelector('svg')).toBeInTheDocument();
     expect(getAvailableIconNames()).toContain('paper-plane');
+  });
+
+  // ─── Name normalization ──────────────────────────────────────────────────
+
+  const glyph = (name: string) => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { container } = render(<Icon name={name} aria-hidden />);
+    warn.mockRestore();
+    const svg = container.querySelector('svg');
+    return svg ? (svg.getAttribute('data-icon') ?? 'inline') : null;
+  };
+
+  it('resolves a Font Awesome alias to the icon that replaced it', () => {
+    expect(glyph('bar-chart')).toBe('chart-bar');
+  });
+
+  it('resolves a camelCase spelling', () => {
+    expect(glyph('chartBar')).toBe('chart-bar');
+    expect(glyph('circleCheck')).toBe('circle-check');
+  });
+
+  // `legacyAliases` maps `circleInfo` to `circle-info`, a custom SVG — but the
+  // custom lookup ran on the raw name only, so that mapping never took effect
+  // and `circleInfo` rendered nothing.
+  it('resolves a camelCase spelling of a custom icon', () => {
+    expect(glyph('circleInfo')).toBe('inline');
+    expect(glyph('magnifyingGlass')).toBe('inline');
+  });
+
+  it('renders the icons the docs examples use', () => {
+    for (const name of ['folder-open', 'bell', 'file']) {
+      expect(glyph(name), name).toBe(name);
+    }
+  });
+
+  it('takes the replaced icon aliases with it', () => {
+    expect(glyph('bar-chart')).toBe('chart-bar');
+
+    registerIcons({ 'chart-bar': faStar });
+
+    expect(glyph('chart-bar')).toBe('star');
+    // Not still rendering the icon it replaced.
+    expect(glyph('bar-chart')).not.toBe('chart-bar');
   });
 
   // ─── getAvailableIconNames ───────────────────────────────────────────────

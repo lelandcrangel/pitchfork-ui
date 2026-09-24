@@ -36,7 +36,8 @@
     "format:check": "prettier . --check",
     "check:contrast": "node scripts/check-dark-contrast.mjs",
     "prepare": "husky",
-    "check:package": "node scripts/check-built-packages.mjs"
+    "check:package": "node scripts/check-built-packages.mjs",
+    "check:icons": "node scripts/check-icon-names.mjs"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",

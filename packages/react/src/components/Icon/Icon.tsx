@@ -1,11 +1,14 @@
 import {
   faBarChart,
+  faBell,
   faCalendar,
   faCircleCheck,
   faCircleQuestion,
   faCircleXmark,
   faCopy,
   faCreditCard,
+  faFile,
+  faFolderOpen,
   faSquareCaretLeft,
   faSquareCaretRight,
   faSquareCheck,
@@ -119,6 +122,42 @@ const customIcons = {
       <path d="M12 17h.01" />
     </svg>
   ),
+  // The mirror of file-arrow-up, for an export or download action. Neither is
+  // in the free-regular set.
+  'file-arrow-down': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+      <path d="M12 12v6" />
+      <path d="m9 15 3 3 3-3" />
+    </svg>
+  ),
+  // "More options". The free-regular set has no horizontal ellipsis.
+  ellipsis: (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <circle cx="5" cy="12" r="2" />
+      <circle cx="12" cy="12" r="2" />
+      <circle cx="19" cy="12" r="2" />
+    </svg>
+  ),
   'file-arrow-up': (
     <svg
       width="1em"
@@ -217,6 +256,7 @@ const customIcons = {
  * `@fortawesome/free-regular-svg-icons` peer dependency you already install.
  */
 const bundledRegularIcons = {
+  bell: faBell,
   calendar: faCalendar,
   'chart-bar': faBarChart,
   'circle-check': faCircleCheck,
@@ -224,6 +264,8 @@ const bundledRegularIcons = {
   'circle-xmark': faCircleXmark,
   copy: faCopy,
   'credit-card': faCreditCard,
+  file: faFile,
+  'folder-open': faFolderOpen,
   'square-caret-left': faSquareCaretLeft,
   'square-caret-right': faSquareCaretRight,
   'square-check': faSquareCheck,
@@ -262,6 +304,18 @@ const registerAliases = (icon: IconDefinition) => {
   });
 };
 
+/**
+ * Drop the aliases an icon brought with it. Without this, replacing a
+ * registered icon leaves its old aliases pointing at the old glyph:
+ * `registerIcons({ 'chart-bar': other })` would swap `chart-bar` and leave
+ * `bar-chart` rendering the icon it replaced.
+ */
+const unregisterAliases = (icon: IconDefinition) => {
+  aliases.forEach((target, alias) => {
+    if (target === icon) aliases.delete(alias);
+  });
+};
+
 registeredIcons.forEach(registerAliases);
 
 /**
@@ -280,10 +334,14 @@ registeredIcons.forEach(registerAliases);
  * ```
  *
  * Registering a name that already exists replaces it, which is how you
- * substitute a different glyph for a bundled one.
+ * substitute a different glyph for a bundled one. The replaced icon's aliases
+ * go with it, so no former name is left rendering the old glyph.
  */
 export const registerIcons = (icons: Record<string, IconDefinition>) => {
   Object.entries(icons).forEach(([name, icon]) => {
+    const replaced = registeredIcons.get(name);
+    if (replaced !== undefined && replaced !== icon) unregisterAliases(replaced);
+
     registeredIcons.set(name, icon);
     registerAliases(icon);
     // A name that failed before may now resolve, so let it warn again if it
@@ -344,7 +402,14 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
 }
 
 export function Icon({ name, label, className, style, ...props }: IconProps) {
-  const customIcon = (customIcons as Record<string, React.ReactNode>)[name];
+  const normalizedName = normalizeName(name);
+
+  // Normalized as well as raw: `legacyAliases` maps `circleInfo` to
+  // `circle-info`, which is a custom SVG -- and a raw-only lookup here meant
+  // that mapping never took effect. `circleInfo` and `magnifyingGlass`
+  // rendered nothing.
+  const custom = customIcons as Record<string, React.ReactNode>;
+  const customIcon = custom[name] ?? custom[normalizedName];
   if (customIcon !== undefined) {
     return (
       <span
@@ -359,7 +424,6 @@ export function Icon({ name, label, className, style, ...props }: IconProps) {
     );
   }
 
-  const normalizedName = normalizeName(name);
   const faIcon = registeredIcons.get(normalizedName) ?? aliases.get(normalizedName);
 
   if (!faIcon) {

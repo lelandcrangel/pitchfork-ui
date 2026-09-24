@@ -354,7 +354,7 @@ function unionMembers(type) {
 const isIconProp = (component, propName) =>
   propName === 'iconName' || (component === 'Icon' && propName === 'name');
 
-export function validateUsage(code, componentsByName, iconNames = new Set()) {
+export function validateUsage(code, componentsByName, icons = null) {
   const findings = [];
   const known = [...componentsByName.keys()];
 
@@ -407,13 +407,13 @@ export function validateUsage(code, componentsByName, iconNames = new Set()) {
       // `IconName` widens to `string`, so the type cannot catch this: an
       // unregistered name is accepted everywhere and renders nothing.
       if (
-        iconNames.size > 0 &&
+        icons?.available &&
         isIconProp(usage.name, attr.name) &&
         attr.literal &&
         attr.value !== null &&
-        !iconNames.has(attr.value)
+        !icons.resolves(attr.value)
       ) {
-        const suggestion = closest(attr.value, [...iconNames]);
+        const suggestion = closest(attr.value, [...icons.names]);
         findings.push({
           severity: 'error',
           line: usage.line,

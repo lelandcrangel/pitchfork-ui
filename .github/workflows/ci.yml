@@ -51,6 +51,12 @@ jobs:
 
       - name: Validate component metadata
         run: npm run build:metadata -- --strict
+
+      # `validate_usage` checks the code an agent writes; nothing checked ours.
+      # EmptyState's published examples used three icons the registry does not
+      # have, so the docs site demonstrated broken usage.
+      - name: Check every icon name this repository uses resolves
+        run: npm run check:icons
       - name: Validate llms.txt (every component linked, every link resolves)
         run: npm run build:llms -- --strict --verify
       - name: Test MCP server

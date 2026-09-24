@@ -3,7 +3,8 @@
  * Checks that only the built output can answer.
  *
  * 1. Every path a package.json advertises exists.
- * 2. Icon's unknown-name warning survived bundling.
+ * 2. No ambient type dependency leaked into the published declarations.
+ * 3. Icon's unknown-name warning survived bundling.
  *
  * @pitchfork-ui/react shipped 0.15.1 with `types` pointing at
  * `dist/src/index.d.ts`, a path the build has never produced. Nothing caught
@@ -22,6 +23,8 @@ import { fileURLToPath } from 'node:url';
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const PACKAGES = ['packages/react', 'packages/tokens', 'packages/mcp'];
+
+const reactDist = join(repoRoot, 'packages/react/dist');
 
 /** The fields that name a file consumers will actually resolve. */
 const FILE_FIELDS = ['main', 'module', 'types', 'typings', 'bin'];
@@ -89,6 +92,47 @@ if (failures > 0) {
 }
 
 /**
+ * A `/// <reference types="..." />` in the declarations makes that types
+ * package a silent requirement of every consumer. `vite/client` is the live
+ * risk here: it supplies `import.meta.env` and the CSS side-effect
+ * declarations to this package's own source, but `vite` is a build dependency,
+ * not a peer, so a consumer that does not use Vite would fail with "Cannot
+ * find type definition file for 'vite/client'".
+ *
+ * The dts plugin strips these today. This fails the moment it stops, which is
+ * not something the repo's own typechecks can see -- `vite` resolves fine from
+ * inside the workspace, so even the node16 fixture would pass.
+ */
+const declarationFiles = existsSync(reactDist)
+  ? (await readdir(reactDist, { recursive: true }))
+      .filter((name) => typeof name === 'string' && name.endsWith('.d.ts'))
+      .map((name) => join(reactDist, name))
+  : [];
+
+const REFERENCE = /\/\/\/\s*<reference\s+types=["']([^"']+)["']/g;
+const leaked = [];
+
+for (const file of declarationFiles) {
+  const contents = await readFile(file, 'utf8');
+  for (const [, types] of contents.matchAll(REFERENCE)) {
+    leaked.push(`${file.slice(repoRoot.length + 1)} -> ${types}`);
+  }
+}
+
+if (leaked.length > 0) {
+  console.error(
+    `\n${leaked.length} ambient type reference(s) leaked into the published ` +
+      'declarations. Every consumer would need those types installed:',
+  );
+  for (const entry of leaked) console.error(`  ${entry}`);
+  process.exitCode = 1;
+} else if (declarationFiles.length > 0) {
+  console.log(
+    `@pitchfork-ui/react: no ambient type references in ${declarationFiles.length} declaration files`,
+  );
+}
+
+/**
  * `Icon` renders nothing for a name it does not recognise, so its console
  * warning is the only way a consumer ever finds out. That warning used to sit
  * behind `import.meta.env.DEV`, which the library build replaces with `false` --
@@ -96,7 +140,6 @@ if (failures > 0) {
  * out of the published bundle. Nothing but the built output can catch that.
  */
 const DIAGNOSTIC = 'Unknown icon name';
-const reactDist = join(repoRoot, 'packages/react/dist');
 
 const bundledFiles = existsSync(reactDist)
   ? (await readdir(reactDist, { recursive: true }))

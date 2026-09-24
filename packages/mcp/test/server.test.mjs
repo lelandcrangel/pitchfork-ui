@@ -132,6 +132,23 @@ test('validate_usage checks iconName on components that render one', async () =>
   assert.match(out, /`iconName="hourglass"`/);
 });
 
+// Icon kebab-cases a name and honours Font Awesome's own aliases before
+// looking it up, so checking the raw literal against the canonical list alone
+// rejects working code — which is worse than not checking at all.
+test('validate_usage accepts the spellings Icon actually resolves', async () => {
+  const out = await call('validate_usage', {
+    code: [
+      '<Icon name="bar-chart" />',
+      '<Icon name="chartBar" />',
+      '<Icon name="circleCheck" />',
+      '<Icon name="circleInfo" />',
+      '<Icon name="magnifyingGlass" />',
+      '<EmptyState heading="Nothing here" iconName="folder-open" />',
+    ].join('\n'),
+  });
+  assert.match(out, /No problems found/);
+});
+
 test('validate_usage accepts a registered icon name', async () => {
   const out = await call('validate_usage', {
     code: '<Icon name="circle-check" />\n<EmptyState heading="None" iconName="chart-bar" />',
