@@ -58,6 +58,13 @@ jobs:
       # or the published packages ship a broken entry point.
       - run: npm run build:metadata
       - run: npm run build:mcp
+      # 0.15.1 published with `types` naming a file the build never wrote and
+      # declarations node16 could not resolve. Both were invisible to CI's
+      # typecheck and to 936 passing tests; only the built output shows them.
+      - name: Check the built packages
+        run: npm run check:package
+      - name: Check the published types resolve under node16
+        run: npx tsc --noEmit -p scripts/fixtures/node16-resolution/tsconfig.json
       - name: Check the generated artifacts are in the tarballs
         run: |
           set -euo pipefail
