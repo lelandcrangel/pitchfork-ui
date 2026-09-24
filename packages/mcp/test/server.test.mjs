@@ -111,6 +111,51 @@ test('validate_usage catches a misspelled prop', async () => {
   assert.match(out, /Did you mean `variant`\?/);
 });
 
+// Icon resolves an explicit registry, not all of Font Awesome, and `IconName`
+// widens to `string` -- so an unregistered name typechecks, renders nothing,
+// and is exactly the kind of mistake this tool exists to catch.
+test('validate_usage catches an icon name the library does not resolve', async () => {
+  const out = await call('validate_usage', { code: '<Icon name="paper-plane" />' });
+  assert.match(out, /is not an icon the library resolves/);
+  assert.match(out, /registerIcons/);
+});
+
+test('validate_usage suggests the nearest icon name', async () => {
+  const out = await call('validate_usage', { code: '<Icon name="circle-chek" />' });
+  assert.match(out, /Did you mean `"circle-check"`\?/);
+});
+
+test('validate_usage checks iconName on components that render one', async () => {
+  const out = await call('validate_usage', {
+    code: '<MetricCard heading="Applications" value={5} iconName="hourglass" />',
+  });
+  assert.match(out, /`iconName="hourglass"`/);
+});
+
+// Icon kebab-cases a name and honours Font Awesome's own aliases before
+// looking it up, so checking the raw literal against the canonical list alone
+// rejects working code — which is worse than not checking at all.
+test('validate_usage accepts the spellings Icon actually resolves', async () => {
+  const out = await call('validate_usage', {
+    code: [
+      '<Icon name="bar-chart" />',
+      '<Icon name="chartBar" />',
+      '<Icon name="circleCheck" />',
+      '<Icon name="circleInfo" />',
+      '<Icon name="magnifyingGlass" />',
+      '<EmptyState heading="Nothing here" iconName="folder-open" />',
+    ].join('\n'),
+  });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage accepts a registered icon name', async () => {
+  const out = await call('validate_usage', {
+    code: '<Icon name="circle-check" />\n<EmptyState heading="None" iconName="chart-bar" />',
+  });
+  assert.match(out, /No problems found/);
+});
+
 test('validate_usage flags a hardcoded colour', async () => {
   const out = await call('validate_usage', { code: "<div style={{ color: '#4f46e5' }} />" });
   assert.match(out, /Hardcoded colour/);

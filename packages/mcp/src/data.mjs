@@ -62,3 +62,40 @@ export const { data: tokens, path: tokensPath } = load('design tokens', {
 });
 
 export const componentsByName = new Map(metadata.components.map((c) => [c.name, c]));
+
+/**
+ * What `Icon` resolves without the consumer registering anything.
+ *
+ * Checking a name against the canonical list alone produces false positives:
+ * `Icon` also accepts a Font Awesome alias (`bar-chart` for `chart-bar`), a
+ * legacy camelCase spelling (`circleCheck`), and a camelCase spelling of any
+ * name at all (`chartBar`), because it kebab-cases before looking up. This
+ * mirrors that resolution order exactly -- a validator that rejects working
+ * code is worse than one that checks nothing.
+ */
+const iconRegistry = metadata.icons ?? {};
+
+const customIconNames = new Set(iconRegistry.custom ?? []);
+const fontAwesomeIconNames = new Set([
+  ...(iconRegistry.fontAwesome ?? []),
+  ...(iconRegistry.aliases ?? []),
+]);
+const legacyIconAliases = iconRegistry.legacyAliases ?? {};
+
+const toKebabCase = (value) => value.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
+
+/** The canonical names, for suggesting a correction. */
+export const iconNames = new Set(iconRegistry.all ?? []);
+
+/**
+ * False for metadata built before `icons` existed, which callers must treat as
+ * "cannot check" rather than "nothing is valid".
+ */
+export const iconRegistryAvailable = customIconNames.size > 0 || fontAwesomeIconNames.size > 0;
+
+export function resolvesIconName(name) {
+  if (customIconNames.has(name)) return true;
+
+  const normalized = legacyIconAliases[name] ?? toKebabCase(name);
+  return customIconNames.has(normalized) || fontAwesomeIconNames.has(normalized);
+}

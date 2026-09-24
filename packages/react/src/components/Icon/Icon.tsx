@@ -1,12 +1,14 @@
-/// <reference types="vite/client" />
 import {
   faBarChart,
+  faBell,
   faCalendar,
   faCircleCheck,
   faCircleQuestion,
   faCircleXmark,
   faCopy,
   faCreditCard,
+  faFile,
+  faFolderOpen,
   faSquareCaretLeft,
   faSquareCaretRight,
   faSquareCheck,
@@ -18,10 +20,8 @@ import { FontAwesomeIcon, type FontAwesomeIconProps } from '@fortawesome/react-f
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
-export type IconName = string;
-
 // Custom SVGs not available in the free-regular FA set
-const customIcons: Record<string, React.ReactNode> = {
+const customIcons = {
   'chevron-down': (
     <svg
       width="1em"
@@ -122,6 +122,42 @@ const customIcons: Record<string, React.ReactNode> = {
       <path d="M12 17h.01" />
     </svg>
   ),
+  // The mirror of file-arrow-up, for an export or download action. Neither is
+  // in the free-regular set.
+  'file-arrow-down': (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+      <path d="M12 12v6" />
+      <path d="m9 15 3 3 3-3" />
+    </svg>
+  ),
+  // "More options". The free-regular set has no horizontal ellipsis.
+  ellipsis: (
+    <svg
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      focusable="false"
+      aria-hidden="true"
+    >
+      <circle cx="5" cy="12" r="2" />
+      <circle cx="12" cy="12" r="2" />
+      <circle cx="19" cy="12" r="2" />
+    </svg>
+  ),
   'file-arrow-up': (
     <svg
       width="1em"
@@ -208,9 +244,19 @@ const customIcons: Record<string, React.ReactNode> = {
       <path d="M5 12h14" />
     </svg>
   ),
-};
+} satisfies Record<string, React.ReactNode>;
 
-const regularIcons: Record<string, IconDefinition> = {
+/**
+ * The Font Awesome regular icons bundled with the library. This is an explicit
+ * registry, not the whole free-regular set: each entry is an individual import,
+ * so a consumer's bundle carries only these.
+ *
+ * Anything outside it is not "an icon this library doesn't have" -- it is an
+ * icon you can add yourself with `registerIcons()`, using the
+ * `@fortawesome/free-regular-svg-icons` peer dependency you already install.
+ */
+const bundledRegularIcons = {
+  bell: faBell,
   calendar: faCalendar,
   'chart-bar': faBarChart,
   'circle-check': faCircleCheck,
@@ -218,34 +264,117 @@ const regularIcons: Record<string, IconDefinition> = {
   'circle-xmark': faCircleXmark,
   copy: faCopy,
   'credit-card': faCreditCard,
+  file: faFile,
+  'folder-open': faFolderOpen,
   'square-caret-left': faSquareCaretLeft,
   'square-caret-right': faSquareCaretRight,
   'square-check': faSquareCheck,
   star: faStar,
   user: faUser,
-};
+} satisfies Record<string, IconDefinition>;
 
-const toAliasLookup = (icons: Record<string, IconDefinition>) => {
-  const lookup: Record<string, IconDefinition> = {};
+export type RegisteredIconName = keyof typeof customIcons | keyof typeof bundledRegularIcons;
 
-  Object.values(icons).forEach((icon) => {
-    const aliases = icon.icon?.[2];
+/**
+ * A registered name, or any other string: `registerIcons()` can add names at
+ * runtime that no type here can know about. The union is what editors offer;
+ * the `string` keeps a registered name from being a type error.
+ */
+export type IconName = RegisteredIconName | (string & {});
 
-    if (!Array.isArray(aliases)) {
-      return;
-    }
+/**
+ * Every registered Font Awesome icon, bundled or added by the consumer. A Map
+ * rather than the object literal above, because `registerIcons()` writes to it.
+ */
+const registeredIcons = new Map<string, IconDefinition>(Object.entries(bundledRegularIcons));
 
-    aliases.forEach((alias) => {
-      if (typeof alias === 'string') {
-        lookup[alias] = icon;
-      }
-    });
+/**
+ * Font Awesome records each icon's former names in `icon[2]`, so `"bar-chart"`
+ * keeps working after the icon is renamed to `"chart-bar"`. Aliases lose to
+ * registered names, so registering an icon under an alias is never shadowed.
+ */
+const aliases = new Map<string, IconDefinition>();
+
+const registerAliases = (icon: IconDefinition) => {
+  const names = icon.icon?.[2];
+  if (!Array.isArray(names)) return;
+
+  names.forEach((alias) => {
+    if (typeof alias === 'string') aliases.set(alias, icon);
   });
-
-  return lookup;
 };
 
-const regularAliases = toAliasLookup(regularIcons);
+/**
+ * Drop the aliases an icon brought with it. Without this, replacing a
+ * registered icon leaves its old aliases pointing at the old glyph:
+ * `registerIcons({ 'chart-bar': other })` would swap `chart-bar` and leave
+ * `bar-chart` rendering the icon it replaced.
+ */
+const unregisterAliases = (icon: IconDefinition) => {
+  aliases.forEach((target, alias) => {
+    if (target === icon) aliases.delete(alias);
+  });
+};
+
+registeredIcons.forEach(registerAliases);
+
+/**
+ * Add Font Awesome icons the library does not bundle.
+ *
+ * `Icon` resolves an explicit registry of icons, not the whole free-regular
+ * set -- individually importing them is what keeps a consumer's bundle to the
+ * icons actually in use. Anything else you import yourself and register once,
+ * at startup, from the peer dependency you already have:
+ *
+ * ```tsx
+ * import { faPaperPlane, faComments } from '@fortawesome/free-regular-svg-icons';
+ * import { registerIcons } from '@pitchfork-ui/react';
+ *
+ * registerIcons({ 'paper-plane': faPaperPlane, comments: faComments });
+ * ```
+ *
+ * Registering a name that already exists replaces it, which is how you
+ * substitute a different glyph for a bundled one. The replaced icon's aliases
+ * go with it, so no former name is left rendering the old glyph.
+ */
+export const registerIcons = (icons: Record<string, IconDefinition>) => {
+  Object.entries(icons).forEach(([name, icon]) => {
+    const replaced = registeredIcons.get(name);
+    if (replaced !== undefined && replaced !== icon) unregisterAliases(replaced);
+
+    registeredIcons.set(name, icon);
+    registerAliases(icon);
+    // A name that failed before may now resolve, so let it warn again if it
+    // is somehow still unknown.
+    warnedNames.delete(name);
+  });
+};
+
+/**
+ * An unknown name renders nothing, and rendering nothing is indistinguishable
+ * from an icon that happens to be invisible -- so say so, once per name.
+ *
+ * This deliberately is not behind `import.meta.env.DEV`. That constant is
+ * replaced with `false` when this package is bundled for publication, so a
+ * guarded warning is stripped from the published build entirely: consumers got
+ * an empty `<span>` and no diagnostic anywhere. Once per name keeps a
+ * re-rendering component from filling the console.
+ */
+const warnedNames = new Set<string>();
+
+const warnUnknownIcon = (name: string) => {
+  if (warnedNames.has(name)) return;
+  warnedNames.add(name);
+
+  console.warn(
+    `[Icon] Unknown icon name: "${name}". This renders nothing. ` +
+      'Pitchfork UI bundles an explicit set of icons rather than all of Font ' +
+      'Awesome -- call getAvailableIconNames() to list them, or add this one ' +
+      "with registerIcons({ '" +
+      name +
+      "': <the icon> }) from @fortawesome/free-regular-svg-icons.",
+  );
+};
 
 const legacyAliases: Record<string, string> = {
   circleCheck: 'circle-check',
@@ -262,7 +391,7 @@ const normalizeName = (name: IconName) => {
 };
 
 export const getAvailableIconNames = () => {
-  return [...new Set([...Object.keys(regularIcons), ...Object.keys(customIcons)])].sort();
+  return [...new Set([...registeredIcons.keys(), ...Object.keys(customIcons)])].sort();
 };
 
 export const getCustomIconNames = () => Object.keys(customIcons).sort();
@@ -273,7 +402,14 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
 }
 
 export function Icon({ name, label, className, style, ...props }: IconProps) {
-  const customIcon = customIcons[name];
+  const normalizedName = normalizeName(name);
+
+  // Normalized as well as raw: `legacyAliases` maps `circleInfo` to
+  // `circle-info`, which is a custom SVG -- and a raw-only lookup here meant
+  // that mapping never took effect. `circleInfo` and `magnifyingGlass`
+  // rendered nothing.
+  const custom = customIcons as Record<string, React.ReactNode>;
+  const customIcon = custom[name] ?? custom[normalizedName];
   if (customIcon !== undefined) {
     return (
       <span
@@ -288,15 +424,10 @@ export function Icon({ name, label, className, style, ...props }: IconProps) {
     );
   }
 
-  const normalizedName = normalizeName(name);
-  const faIcon = regularIcons[normalizedName] ?? regularAliases[normalizedName];
+  const faIcon = registeredIcons.get(normalizedName) ?? aliases.get(normalizedName);
 
   if (!faIcon) {
-    if (import.meta.env.DEV) {
-      console.warn(
-        `[Icon] Unknown icon name: "${name}". Check getAvailableIconNames() for valid options.`,
-      );
-    }
+    warnUnknownIcon(name);
     return null;
   }
 

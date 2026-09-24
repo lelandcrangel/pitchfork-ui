@@ -55,3 +55,29 @@ Verified this way on 2026-09-21:
 @pitchfork-ui/tokens  0.4.1   published via OIDC with provenance
 @pitchfork-ui/mcp     0.2.0   publisher verified; publishes on its next release
 ```
+
+---
+
+## Root `optionalDependencies` pin OXC bindings nothing consumes
+
+`package.json` pins `@oxc-parser/binding-linux-x64-gnu` and
+`@oxc-resolver/binding-linux-x64-gnu` at exact versions in
+`optionalDependencies` — a workaround for npm omitting platform-specific
+optional dependencies from the lockfile, which broke `npm ci` on CI.
+
+The pins have since drifted away from the packages that actually use them.
+Today the root pins 0.150.0 and 11.24.2, while `oxc-parser@0.127.0` and
+`oxc-resolver@11.21.2` each require their own exact match — so npm installs
+the pinned versions at the top level, nests the correct ones underneath, and
+nothing ever loads the pinned copies. Verified: both modules load, and the
+bindings they load are the nested ones.
+
+It works, but Dependabot now bumps these pins on their own schedule,
+unanchored to any consumer, and each bump is a change that cannot affect
+anything. Copilot flagged the drift on
+[#98](https://github.com/lelandcrangel/pitchfork-ui/pull/98).
+
+**Fix:** check whether the npm bug that prompted the pins is still live (it
+was fixed in npm 10.x for most cases). If it is, tie the pins to the
+consumers' versions and add a check that they match. If it isn't, drop both
+pins and the `optionalDependencies` block with them.

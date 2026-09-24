@@ -1,3 +1,9 @@
+/// <reference types="vite/client" />
+// Package-wide, despite sitting in the entry file: this directive supplies
+// `import.meta.env` and the declarations for the `./Component.css` side-effect
+// imports that every component makes. In `tsc -b` mode the same directive in a
+// `.d.ts` is not picked up, so it has to live in a `.ts` source file.
+
 import './styles/theme.css';
 
 export * from './a11y';

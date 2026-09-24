@@ -14,7 +14,15 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 
-import { componentsByName, metadata, metadataPath, tokens } from './data.mjs';
+import {
+  componentsByName,
+  iconNames,
+  iconRegistryAvailable,
+  metadata,
+  metadataPath,
+  resolvesIconName,
+  tokens,
+} from './data.mjs';
 import { closest, validateUsage } from './validate.mjs';
 
 const text = (body) => ({ content: [{ type: 'text', text: body }] });
@@ -294,7 +302,11 @@ server.registerTool(
     inputSchema: { code: z.string().min(1).describe('The JSX snippet to check') },
   },
   async ({ code }) => {
-    const findings = validateUsage(code, componentsByName);
+    const findings = validateUsage(code, componentsByName, {
+      available: iconRegistryAvailable,
+      resolves: resolvesIconName,
+      names: iconNames,
+    });
     if (!findings.length) {
       return text('No problems found. Components, props and values all check out.');
     }

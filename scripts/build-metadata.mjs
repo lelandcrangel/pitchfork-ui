@@ -19,6 +19,7 @@
  */
 
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
@@ -928,6 +929,113 @@ function main() {
     }
   }
 
+  /**
+   * Everything `Icon` will actually resolve, in the shapes it resolves them.
+   *
+   * `IconName` widens to `string`, because `registerIcons()` can add names at
+   * runtime, so nothing in the type tells a consumer -- or the MCP server's
+   * `validate_usage` -- which names resolve out of the box. Without this list
+   * an unregistered name like `paper-plane` looks perfectly valid and silently
+   * renders nothing.
+   *
+   * Canonical names alone are not enough to check against: `Icon` also accepts
+   * a Font Awesome alias (`bar-chart` for `chart-bar`) and a camelCase
+   * spelling (`chartBar`). A validator holding only the canonical list rejects
+   * both, which is worse than not checking at all.
+   *
+   * Read from the source, the same way this script reads everything else --
+   * except the aliases, which come from the Font Awesome definitions
+   * themselves rather than being transcribed here.
+   */
+  function readIconNames() {
+    const source = readFileSync(join(componentsDir, 'Icon/Icon.tsx'), 'utf8');
+
+    const blockAfter = (declaration) => {
+      const start = source.indexOf(declaration);
+      if (start === -1) {
+        throw new Error(
+          `build-metadata: \`${declaration}\` not found in Icon.tsx. The icon ` +
+            'registry was renamed or restructured; update readIconNames().',
+        );
+      }
+
+      // Match braces from the opening one so a nested object or JSX cannot end
+      // the block early.
+      let depth = 0;
+      for (let i = source.indexOf('{', start); i < source.length; i += 1) {
+        if (source[i] === '{') depth += 1;
+        else if (source[i] === '}') {
+          depth -= 1;
+          if (depth === 0) return source.slice(start, i);
+        }
+      }
+      throw new Error(`build-metadata: unbalanced braces after \`${declaration}\``);
+    };
+
+    /** Keys at one level of indentation: `name:` or `'kebab-name':`. */
+    const keysIn = (declaration) =>
+      [...blockAfter(declaration).matchAll(/^ {2}'?([a-zA-Z][a-zA-Z0-9-]*)'?:/gm)].map((m) => m[1]);
+
+    const custom = keysIn('const customIcons = {');
+
+    // name -> the `faXxx` export it is bound to.
+    const bundled = new Map(
+      [
+        ...blockAfter('const bundledRegularIcons = {').matchAll(
+          /^ {2}'?([a-zA-Z][a-zA-Z0-9-]*)'?:\s*(fa[A-Za-z0-9]+)/gm,
+        ),
+      ].map((m) => [m[1], m[2]]),
+    );
+
+    const legacyAliases = Object.fromEntries(
+      [
+        ...blockAfter('const legacyAliases: Record<string, string> = {').matchAll(
+          /^ {2}([a-zA-Z][a-zA-Z0-9]*):\s*'([^']+)'/gm,
+        ),
+      ].map((m) => [m[1], m[2]]),
+    );
+
+    if (custom.length === 0 || bundled.size === 0) {
+      throw new Error('build-metadata: parsed an empty icon registry from Icon.tsx');
+    }
+
+    // A synchronous require: this script is otherwise entirely sync, and the
+    // package is CJS, so there is nothing to gain from making the whole call
+    // chain async for one lookup table.
+    const fontAwesomeIcons = createRequire(import.meta.url)('@fortawesome/free-regular-svg-icons');
+    const aliases = new Set();
+
+    for (const [name, exportName] of bundled) {
+      const definition = fontAwesomeIcons[exportName];
+      if (!definition) {
+        throw new Error(
+          `build-metadata: Icon.tsx binds "${name}" to ${exportName}, which ` +
+            '@fortawesome/free-regular-svg-icons does not export.',
+        );
+      }
+      // Font Awesome keeps an icon's former names in `icon[2]`, mixed in with
+      // the unicode codepoints it also renders under.
+      for (const alias of definition.icon?.[2] ?? []) {
+        if (typeof alias === 'string') aliases.add(alias);
+      }
+    }
+
+    const fontAwesome = [...bundled.keys()].sort();
+
+    return {
+      custom: [...custom].sort(),
+      fontAwesome,
+      aliases: [...aliases].sort(),
+      legacyAliases,
+      all: [...new Set([...custom, ...fontAwesome])].sort(),
+      note:
+        '`all` is what getAvailableIconNames() returns. Icon also resolves ' +
+        'every entry in `aliases`, every key of `legacyAliases`, and a ' +
+        'camelCase spelling of any of them. Anything else renders nothing ' +
+        'until the consumer adds it with registerIcons().',
+    };
+  }
+
   const metadata = {
     $schema: 'https://lelandrangel.com/pitchfork-ui/metadata.schema.json',
     name: '@pitchfork-ui/react',
@@ -935,6 +1043,7 @@ function main() {
     generatedBy: 'scripts/build-metadata.mjs',
     categories: Object.keys(CATEGORIES),
     conventions: readConventions(),
+    icons: readIconNames(),
     components,
   };
 

@@ -1,7 +1,5 @@
 import type { Preview } from '@storybook/react-vite';
 import '@pitchfork-ui/react/styles.css';
-import { initialize, mswLoader } from 'msw-storybook-addon';
-import { mswHandlers } from './msw-handlers';
 import { withCssVariableControls } from './CssVariableDecorator';
 import { withTheme } from './ThemeDecorator';
 
@@ -33,21 +31,9 @@ const pitchforkViewports = {
   },
 };
 
-initialize({
-  onUnhandledRequest: 'bypass',
-  quiet: true,
-  serviceWorker: {
-    url: './mockServiceWorker.js',
-  },
-});
-
 const preview: Preview = {
   decorators: [withTheme, withCssVariableControls],
-  loaders: [mswLoader],
   parameters: {
-    msw: {
-      handlers: mswHandlers,
-    },
     a11y: {
       test: 'todo',
     },

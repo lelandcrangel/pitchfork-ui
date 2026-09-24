@@ -34,8 +34,29 @@ jobs:
       - run: npm run test
       - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build
+
+      # Two failures only the built output can show: a package.json path that
+      # names a file the build never writes, and a runtime diagnostic that
+      # `import.meta.env.DEV` strips out of the published bundle. Both shipped
+      # in 0.15.1 with every test passing.
+      - name: Check the built packages
+        run: npm run check:package
+
+      # The repo's own tsconfigs use `moduleResolution: "bundler"`, which
+      # forgives declaration files that node16 does not. 0.15.1 published
+      # declarations whose relative specifiers carried no extension: under
+      # node16 every import off the package resolved to nothing.
+      - name: Check the published types resolve under node16
+        run: npx tsc --noEmit -p scripts/fixtures/node16-resolution/tsconfig.json
+
       - name: Validate component metadata
         run: npm run build:metadata -- --strict
+
+      # `validate_usage` checks the code an agent writes; nothing checked ours.
+      # EmptyState's published examples used three icons the registry does not
+      # have, so the docs site demonstrated broken usage.
+      - name: Check every icon name this repository uses resolves
+        run: npm run check:icons
       - name: Validate llms.txt (every component linked, every link resolves)
         run: npm run build:llms -- --strict --verify
       - name: Test MCP server
