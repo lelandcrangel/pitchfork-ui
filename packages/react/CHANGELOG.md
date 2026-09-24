@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.15.2](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.1...react-v0.15.2) (2026-09-24)
+
+
+### Bug Fixes
+
+* make the published package usable from outside this repo ([#101](https://github.com/lelandcrangel/pitchfork-ui/issues/101)) ([ee345c6](https://github.com/lelandcrangel/pitchfork-ui/commit/ee345c6a1d3f61c045ec7cc498726bc3e50c51cc))
+
 ## [0.15.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.0...react-v0.15.1) (2026-09-21)
 
 
