@@ -22,8 +22,12 @@ const storybookBasePath = withLeadingSlash.endsWith('/')
   ? withLeadingSlash
   : `${withLeadingSlash}/`;
 
-const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.{js,jsx,mjs,ts,tsx}'],
+// `title` is a Storybook preset the manager renders as "<title> - Storybook".
+// It isn't in the StorybookConfig type, and unset it falls back to
+// "storybook", which is what link previews showed before manager-head.html.
+const config: StorybookConfig & { title: string } = {
+  title: 'Pitchfork UI',
+  stories:['../src/**/*.mdx', '../src/**/*.stories.{js,jsx,mjs,ts,tsx}'],
   tags: {
     examplesHidden: {
       excludeFromSidebar: true,
