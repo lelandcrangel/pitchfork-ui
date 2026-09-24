@@ -57,15 +57,63 @@ const PATTERNS = [
   /<Icon\b[^>]*?\bname=["']([^"'{}]+)["']/g,
 ];
 
+/**
+ * Tests are exempt, and have to be: a test that an unknown name renders
+ * nothing and warns can only be written by using an unknown name.
+ */
+const isTest = (name) => /\.(test|spec)\.(tsx?|jsx?)$/.test(name);
+
 async function sourceFiles(dir) {
   const found = [];
   if (!existsSync(dir)) return found;
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) found.push(...(await sourceFiles(path)));
-    else if (/\.(tsx?|mdx)$/.test(entry.name)) found.push(path);
+    else if (/\.(tsx?|mdx)$/.test(entry.name) && !isTest(entry.name)) found.push(path);
   }
   return found;
+}
+
+/**
+ * The names a file registers for itself.
+ *
+ * Exempting the whole file because it mentions `registerIcons` would make this
+ * check unsound: a file could register one icon and misspell another a line
+ * later, and nothing would say so. Only the names actually registered count,
+ * and only in the file that registers them.
+ */
+function registeredIn(contents) {
+  const registered = new Set();
+
+  for (const call of contents.matchAll(/registerIcons\s*\(/g)) {
+    // Brace-match the argument object so a nested value cannot end it early.
+    const open = contents.indexOf('{', call.index);
+    if (open === -1) continue;
+
+    let depth = 0;
+    let close = -1;
+    for (let i = open; i < contents.length; i += 1) {
+      if (contents[i] === '{') depth += 1;
+      else if (contents[i] === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          close = i;
+          break;
+        }
+      }
+    }
+    if (close === -1) continue;
+
+    // `'paper-plane': faPaperPlane` / `comments: faComments`. Requiring the
+    // `fa...` value keeps this from matching any other key in the block.
+    for (const [, quoted, bare] of contents
+      .slice(open, close)
+      .matchAll(/(?:'([^']+)'|([A-Za-z][A-Za-z0-9-]*))\s*:\s*fa[A-Z]/g)) {
+      registered.add(quoted ?? bare);
+    }
+  }
+
+  return registered;
 }
 
 const problems = [];
@@ -73,13 +121,12 @@ const problems = [];
 for (const searchDir of SEARCH) {
   for (const file of await sourceFiles(join(repoRoot, searchDir))) {
     const contents = readFileSync(file, 'utf8');
-    // A file that registers its own icons is allowed to use them.
-    if (contents.includes('registerIcons')) continue;
+    const registered = registeredIn(contents);
 
     for (const pattern of PATTERNS) {
       for (const match of contents.matchAll(pattern)) {
         const name = match[1];
-        if (resolves(name)) continue;
+        if (resolves(name) || registered.has(name)) continue;
         const line = contents.slice(0, match.index).split('\n').length;
         problems.push({ file: relative(repoRoot, file), line, name });
       }
