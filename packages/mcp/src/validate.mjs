@@ -347,7 +347,14 @@ function unionMembers(type) {
   return members.map((m) => m.slice(1, -1));
 }
 
-export function validateUsage(code, componentsByName) {
+/**
+ * Props whose value is an icon name. `Icon` takes `name`; the components that
+ * render one internally take `iconName`.
+ */
+const isIconProp = (component, propName) =>
+  propName === 'iconName' || (component === 'Icon' && propName === 'name');
+
+export function validateUsage(code, componentsByName, iconNames = new Set()) {
   const findings = [];
   const known = [...componentsByName.keys()];
 
@@ -393,6 +400,31 @@ export function validateUsage(code, componentsByName) {
               (propsByName.size
                 ? `Its props are: ${[...propsByName.keys()].map((n) => `\`${n}\``).join(', ')}.`
                 : `It takes no props of its own — only ${component.extends?.join(', ') || 'DOM'} attributes.`),
+        });
+        continue;
+      }
+
+      // `IconName` widens to `string`, so the type cannot catch this: an
+      // unregistered name is accepted everywhere and renders nothing.
+      if (
+        iconNames.size > 0 &&
+        isIconProp(usage.name, attr.name) &&
+        attr.literal &&
+        attr.value !== null &&
+        !iconNames.has(attr.value)
+      ) {
+        const suggestion = closest(attr.value, [...iconNames]);
+        findings.push({
+          severity: 'error',
+          line: usage.line,
+          component: usage.name,
+          message:
+            `\`${attr.name}="${attr.value}"\` is not an icon the library resolves, ` +
+            'so it renders nothing. ' +
+            (suggestion
+              ? `Did you mean \`"${suggestion}"\`?`
+              : 'Pitchfork UI bundles a set of icons rather than all of Font Awesome.') +
+            ' Add it with `registerIcons()` if you need it.',
         });
         continue;
       }

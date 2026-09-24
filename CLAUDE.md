@@ -184,16 +184,27 @@ Breakpoints are defined in `packages/react/src/styles/theme.css` and resolved at
 
 Icons come from `@fortawesome/free-regular-svg-icons` only (the free **regular** set). Solid and brand sets are not installed.
 
-Custom SVGs (chevrons, `triangle-exclamation`) live in the `customIcons` map inside `Icon.tsx` and take precedence over the FA lookup. Add new custom SVGs there when a needed icon isn't in the regular FA set.
+**`Icon` resolves an explicit registry, not the whole regular set.** Each icon is an individual import in `bundledRegularIcons` inside `Icon.tsx`, which is what keeps a consumer's bundle to the icons actually in use. A name outside the registry renders `null` and warns once on the console — `paper-plane` and `folder-open` are real FA regular icons and neither of them works out of the box.
 
-`IconName` is typed as `string`. Pass any valid FA regular icon kebab-case name (e.g. `"circle-check"`, `"circle-xmark"`) or a custom icon name.
+Custom SVGs (chevrons, `triangle-exclamation`) live in the `customIcons` map in the same file and take precedence over the FA lookup. Add new custom SVGs there when a needed icon isn't in the regular FA set.
+
+`getAvailableIconNames()` lists everything registered; `metadata.json` carries the same list under `icons`, which is how the MCP server's `validate_usage` catches an unresolvable name.
 
 ```tsx
 <Icon name="circle-check" aria-hidden />
 <Icon name="triangle-exclamation" label="Warning" />  {/* label adds aria-label */}
 ```
 
-Icons return `null` silently for unknown names in production. Use `getAvailableIconNames()` to list what's registered.
+To add one this library doesn't bundle, register it once at startup from the peer dependency the consumer already installs:
+
+```tsx
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
+import { registerIcons } from '@pitchfork-ui/react';
+
+registerIcons({ 'paper-plane': faPaperPlane });
+```
+
+`IconName` is the union of registered names widened with `string`, so editors complete the bundled names while a runtime registration is still accepted. Adding an icon the library's own components need goes in `bundledRegularIcons`, not in consumer code.
 
 ---
 

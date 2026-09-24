@@ -1,6 +1,7 @@
+import { faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Icon, getAvailableIconNames } from './Icon';
+import { Icon, getAvailableIconNames, registerIcons } from './Icon';
 
 describe('Icon', () => {
   // ─── Known FA icon names ─────────────────────────────────────────────────
@@ -34,11 +35,44 @@ describe('Icon', () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it('logs a dev warning for unknown icon names', () => {
+  it('warns for unknown icon names', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Icon name="totally-fake-icon" aria-hidden />);
     expect(warn).toHaveBeenCalledWith(expect.stringContaining('totally-fake-icon'));
     warn.mockRestore();
+  });
+
+  // Rendering nothing is indistinguishable from an invisible icon, so the
+  // warning is the only signal a consumer gets -- but a component that
+  // re-renders must not fill the console with the same line.
+  it('warns once per unknown name, however many times it renders', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    const { rerender } = render(<Icon name="repeated-fake-icon" aria-hidden />);
+    rerender(<Icon name="repeated-fake-icon" aria-hidden />);
+    render(<Icon name="repeated-fake-icon" aria-hidden />);
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    warn.mockRestore();
+  });
+
+  // ─── registerIcons ───────────────────────────────────────────────────────
+
+  it('renders nothing for a Font Awesome icon the library does not bundle', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const { container } = render(<Icon name="paper-plane" aria-hidden />);
+
+    expect(container.firstChild).toBeNull();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('registerIcons'));
+    warn.mockRestore();
+  });
+
+  it('renders it once the consumer registers it', () => {
+    registerIcons({ 'paper-plane': faPaperPlane });
+
+    const { container } = render(<Icon name="paper-plane" aria-hidden />);
+    expect(container.querySelector('svg')).toBeInTheDocument();
+    expect(getAvailableIconNames()).toContain('paper-plane');
   });
 
   // ─── getAvailableIconNames ───────────────────────────────────────────────

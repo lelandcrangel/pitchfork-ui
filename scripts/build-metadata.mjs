@@ -928,6 +928,69 @@ function main() {
     }
   }
 
+  /**
+   * The names `Icon` will actually resolve.
+   *
+   * `IconName` widens to `string`, because `registerIcons()` can add names at
+   * runtime, so nothing in the type tells a consumer -- or the MCP server's
+   * `validate_usage` -- which names resolve out of the box. Without this list an
+   * unregistered name like `paper-plane` looks perfectly valid and silently
+   * renders nothing.
+   *
+   * Read from the source, the same way this script reads everything else.
+   */
+  function readIconNames() {
+    const source = readFileSync(join(componentsDir, 'Icon/Icon.tsx'), 'utf8');
+
+    const namesIn = (declaration) => {
+      const start = source.indexOf(declaration);
+      if (start === -1) {
+        throw new Error(
+          `build-metadata: \`${declaration}\` not found in Icon.tsx. The icon ` +
+            'registry was renamed or restructured; update readIconNames().',
+        );
+      }
+
+      // Match braces from the opening one so a nested object or JSX cannot end
+      // the block early.
+      let depth = 0;
+      let end = -1;
+      for (let i = source.indexOf('{', start); i < source.length; i += 1) {
+        if (source[i] === '{') depth += 1;
+        else if (source[i] === '}') {
+          depth -= 1;
+          if (depth === 0) {
+            end = i;
+            break;
+          }
+        }
+      }
+      if (end === -1) {
+        throw new Error(`build-metadata: unbalanced braces after \`${declaration}\``);
+      }
+
+      const body = source.slice(start, end);
+      // Keys at one level of indentation: `name:` or `'kebab-name':`.
+      return [...body.matchAll(/^ {2}'?([a-zA-Z][a-zA-Z0-9-]*)'?:/gm)].map((m) => m[1]);
+    };
+
+    const custom = namesIn('const customIcons = {');
+    const bundled = namesIn('const bundledRegularIcons = {');
+
+    if (custom.length === 0 || bundled.length === 0) {
+      throw new Error('build-metadata: parsed an empty icon registry from Icon.tsx');
+    }
+
+    return {
+      custom: [...custom].sort(),
+      fontAwesome: [...bundled].sort(),
+      all: [...new Set([...custom, ...bundled])].sort(),
+      note:
+        'Icon resolves these names. Any other name renders nothing until the ' +
+        'consumer adds it with registerIcons().',
+    };
+  }
+
   const metadata = {
     $schema: 'https://lelandrangel.com/pitchfork-ui/metadata.schema.json',
     name: '@pitchfork-ui/react',
@@ -935,6 +998,7 @@ function main() {
     generatedBy: 'scripts/build-metadata.mjs',
     categories: Object.keys(CATEGORIES),
     conventions: readConventions(),
+    icons: readIconNames(),
     components,
   };
 

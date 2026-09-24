@@ -55,3 +55,24 @@ Verified this way on 2026-09-21:
 @pitchfork-ui/tokens  0.4.1   published via OIDC with provenance
 @pitchfork-ui/mcp     0.2.0   publisher verified; publishes on its next release
 ```
+
+---
+
+## `Icon` bundles 23 names, and the library's own components want more
+
+`Icon` resolves an explicit registry — 12 Font Awesome regular icons imported
+individually, plus 11 custom SVGs — rather than the whole free-regular set.
+That is a deliberate bundle-size trade, and `registerIcons()` now lets a
+consumer add anything else. But the registry has grown one panicked entry at a
+time: `file-arrow-up` was added after `FileUploader` shipped rendering nothing,
+and the same class of bug produced `clock`, `plus` and `minus`.
+
+The gap is that nothing tells a _component author_ their icon isn't registered.
+`validate_usage` catches it in generated JSX, and the console warns at runtime,
+but a component added to `packages/react/src` referencing an unregistered name
+passes every check in CI.
+
+**Fix:** a lint rule, or a check in `build-metadata.mjs`, that scans component
+source for `iconName="…"` / `<Icon name="…">` literals and fails on any name
+outside the registry — the same check `validate_usage` already does for
+consumer code, applied to the library's own.

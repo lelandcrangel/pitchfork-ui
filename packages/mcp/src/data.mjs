@@ -62,3 +62,11 @@ export const { data: tokens, path: tokensPath } = load('design tokens', {
 });
 
 export const componentsByName = new Map(metadata.components.map((c) => [c.name, c]));
+
+/**
+ * The icon names `Icon` resolves without the consumer registering anything.
+ *
+ * Empty for metadata built before `icons` was added, which every consumer of
+ * this list must treat as "cannot check" rather than "nothing is valid".
+ */
+export const iconNames = new Set(metadata.icons?.all ?? []);

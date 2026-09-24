@@ -6,7 +6,9 @@ import * as IconExamples from './Icon.examples.stories';
 
 # Icon
 
-Icons come from two sources: the **Font Awesome Free Regular** set, and a small set of **custom SVGs** for icons not available in the regular set (chevrons, `triangle-exclamation`).
+Icons come from two sources: a curated set from **Font Awesome Free Regular**, and a small set of **custom SVGs** for icons not available in the regular set (chevrons, `triangle-exclamation`).
+
+> **`Icon` resolves a registry, not all of Font Awesome.** Every bundled icon is an individual import, so your bundle carries only what this library uses. A name outside the registry — `paper-plane` and `folder-open` are real FA regular icons, and neither is bundled — renders nothing and warns once on the console. `getAvailableIconNames()` returns the full list.
 
 ## Examples
 
@@ -23,3 +25,25 @@ Custom SVGs maintained in `Icon.tsx`. Add to `customIcons` when a needed icon is
 ### Sizes
 
 <Canvas of={IconExamples.Sizes} meta={IconExamples} />
+
+## Adding an icon the library doesn't bundle
+
+`@fortawesome/free-regular-svg-icons` is already a peer dependency, so the icon
+is one import away. Register it once, at startup, before anything renders it:
+
+```tsx
+import { faPaperPlane, faComments } from '@fortawesome/free-regular-svg-icons';
+import { registerIcons } from '@pitchfork-ui/react';
+
+registerIcons({
+  'paper-plane': faPaperPlane,
+  comments: faComments,
+});
+```
+
+From then on `<Icon name="paper-plane" />` renders, and the name appears in
+`getAvailableIconNames()`. Registering a name that already exists replaces it,
+which is how you substitute a different glyph for a bundled one.
+
+`IconName` is the union of the bundled names widened with `string`: your editor
+completes what ships, and a name you registered yourself is still accepted.
