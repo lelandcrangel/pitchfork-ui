@@ -1,4 +1,5 @@
 import globalData from '@csstools/postcss-global-data';
+import { angularOutputTarget } from '@stencil/angular-output-target';
 import { reactOutputTarget } from '@stencil/react-output-target';
 import { postcss } from '@stencil/postcss';
 import { Config } from '@stencil/core';
@@ -37,6 +38,25 @@ export const config: Config = {
     reactOutputTarget({
       outDir: '../elements-react/src/components',
       esModules: true,
+    }),
+    // Standalone Angular components, plus the ControlValueAccessor directives
+    // that let a form control bind with formControlName / ngModel. This is the
+    // capability the engine was chosen for -- a Lit element would need these
+    // hand-written, once per control.
+    angularOutputTarget({
+      componentCorePackage: '@pitchfork-ui/elements',
+      directivesProxyFile: '../elements-angular/src/lib/components.ts',
+      outputType: 'standalone',
+      valueAccessorConfigs: [
+        {
+          elementSelectors: ['pf-input'],
+          // pfChange is emitted on commit, which is the moment Angular should
+          // see a new value; pfInput fires on every keystroke.
+          event: 'pfChange',
+          targetAttr: 'value',
+          type: 'text',
+        },
+      ],
     }),
   ],
   plugins: [

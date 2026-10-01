@@ -55,6 +55,11 @@ jobs:
       - name: Check the published types resolve under node16
         run: npx tsc --noEmit -p scripts/fixtures/node16-resolution/tsconfig.json
 
+      # Runs after the build, not in the test sweep above: it bootstraps a real
+      # Angular application against the built library to prove the generated
+      # ControlValueAccessor binds, so the artifacts have to exist first.
+      - name: Test the Angular bindings against the built library
+        run: npm run test:angular
       - name: Validate component metadata
         run: npm run build:metadata -- --strict
 

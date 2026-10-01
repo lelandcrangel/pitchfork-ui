@@ -22,6 +22,13 @@
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": false
     },
+    "packages/elements-angular": {
+      "release-type": "node",
+      "package-name": "@pitchfork-ui/elements-angular",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    },
     "packages/react": {
       "release-type": "node",
       "package-name": "@pitchfork-ui/react",

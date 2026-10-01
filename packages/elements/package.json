@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",
+    "@stencil/angular-output-target": "^1.5.0",
     "@stencil/core": "^4.45.1",
     "@stencil/postcss": "^2.1.0",
     "@stencil/react-output-target": "^1.6.2",
@@ -78,6 +79,12 @@
       "import": "./dist/components/index.js",
       "default": "./dist/components/index.js"
     },
-    "./dist/components/*": "./dist/components/*"
+    "./dist/components/*": "./dist/components/*",
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js",
+      "default": "./dist/components/index.js"
+    },
+    "./components/*": "./dist/components/*"
   }
 }

@@ -26,6 +26,7 @@ const PACKAGES = [
   'packages/core',
   'packages/elements',
   'packages/elements-react',
+  'packages/elements-angular',
   'packages/react',
   'packages/tokens',
   'packages/mcp',
