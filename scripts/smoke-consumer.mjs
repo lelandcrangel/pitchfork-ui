@@ -56,6 +56,10 @@ const EXPECTED = [
   'pf-loading-skeleton',
   'pf-utility-button',
   'pf-scroll-area',
+  'pf-badge-group',
+  'pf-progress-bar',
+  'pf-progress-circle',
+  'pf-credit-card',
 ];
 
 const TYPES = {
@@ -225,6 +229,51 @@ try {
       if (scroller.scrollHeight <= scroller.clientHeight) {
         result.unstyled.push('pf-scroll-area has nothing to scroll — the fixture is wrong');
       }
+    }
+
+    // --pf-progress-*: the track and the drawn arc both chain to tokens.
+    const bar = document.querySelector('pf-progress-bar');
+    const barFill = bar?.shadowRoot?.querySelector('[part="fill"]');
+    const barTrack = bar?.shadowRoot?.querySelector('[part="track"]');
+    if (barFill && barTrack) {
+      if (transparent(getComputedStyle(barFill).backgroundColor)) {
+        result.unstyled.push('pf-progress-bar fill has no background');
+      }
+      if (transparent(getComputedStyle(barTrack).backgroundColor)) {
+        result.unstyled.push('pf-progress-bar track has no background');
+      }
+      // value=30 max=60 is half drawn; the fill is set as a percentage width.
+      const drawn = barFill.getBoundingClientRect().width;
+      const whole = barTrack.getBoundingClientRect().width;
+      if (whole <= 0 || Math.abs(drawn / whole - 0.5) > 0.02) {
+        result.unstyled.push(`pf-progress-bar fill is ${drawn}/${whole}, expected about half`);
+      }
+    }
+
+    const arc = document
+      .querySelector('pf-progress-circle')
+      ?.shadowRoot?.querySelector('[part="fill"]');
+    if (arc && transparent(getComputedStyle(arc).stroke)) {
+      result.unstyled.push('pf-progress-circle arc has no stroke');
+    }
+
+    // --pf-credit-card-*: the brand gradient is a background-image, not a colour.
+    const card2 = document.querySelector('pf-credit-card[brand="visa"]');
+    if (card2) {
+      const style = getComputedStyle(card2);
+      if (style.backgroundImage === 'none') {
+        result.unstyled.push('pf-credit-card has no brand gradient');
+      }
+      if (transparent(style.color)) {
+        result.unstyled.push('pf-credit-card has no text colour');
+      }
+    }
+
+    // --pf-badgegroup-*: the badge and the message share one outline.
+    const group = document.querySelector('pf-badge-group');
+    const groupBadge = group?.shadowRoot?.querySelector('[part="badge"]');
+    if (groupBadge && transparent(getComputedStyle(groupBadge).backgroundColor)) {
+      result.unstyled.push('pf-badge-group badge has no background');
     }
 
     const rule = document.querySelector('pf-content-divider')?.shadowRoot?.querySelector('.line');

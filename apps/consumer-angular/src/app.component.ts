@@ -3,18 +3,22 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import {
   PfAvatar,
   PfBadge,
+  PfBadgeGroup,
   PfButton,
   PfCard,
   PfCardContent,
   PfCardFooter,
   PfCardHeader,
   PfContentDivider,
+  PfCreditCard,
   PfIcon,
   PfInput,
   PfKbd,
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfProgressBar,
+  PfProgressCircle,
   PfScrollArea,
   PfTag,
   PfUtilityButton,
@@ -34,18 +38,22 @@ import {
     ReactiveFormsModule,
     PfAvatar,
     PfBadge,
+    PfBadgeGroup,
     PfButton,
     PfCard,
     PfCardContent,
     PfCardFooter,
     PfCardHeader,
     PfContentDivider,
+    PfCreditCard,
     PfIcon,
     PfInput,
     PfKbd,
     PfLoadingDots,
     PfLoadingSkeleton,
     PfLoadingSpinner,
+    PfProgressBar,
+    PfProgressCircle,
     PfScrollArea,
     PfTag,
     PfUtilityButton,
@@ -147,6 +155,37 @@ import {
           Delete
         </pf-utility-button>
       </div>
+
+      <div class="row">
+        <pf-badge-group label="2 new" message="See what changed" color="brand"></pf-badge-group>
+        <pf-badge-group
+          label="Beta"
+          message="Try it out"
+          color="success"
+          appearance="modern"
+          badge-position="trailing"
+        ></pf-badge-group>
+      </div>
+
+      <div class="row">
+        <!-- 30 of 60 is half drawn but must announce 30, not 50. -->
+        <pf-progress-bar [value]="30" [max]="60" label="Upload"></pf-progress-bar>
+        <pf-progress-circle [value]="75" label="Sync"></pf-progress-circle>
+        <pf-progress-circle
+          [value]="40"
+          [size]="96"
+          [strokeWidth]="10"
+          [showValue]="false"
+        ></pf-progress-circle>
+      </div>
+
+      <pf-credit-card
+        brand="visa"
+        card-number="4111111111111111"
+        cardholder-name="Ada Lovelace"
+        expiry="01/30"
+        cvc="123"
+      ></pf-credit-card>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>

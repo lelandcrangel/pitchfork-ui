@@ -233,9 +233,19 @@ Prefer `useControllableState` (from `hooks/`) for any component that supports bo
 
 `@pitchfork-ui/core` holds the parts of the system that are about the DOM and
 about arithmetic rather than about React: anchored positioning, focus trapping,
-outside-interaction dismissal, list-navigation index maths, `Keys`,
+outside-interaction dismissal, list-navigation index maths, progress and
+circular-arc geometry, avatar initials and card-number formatting, `Keys`,
 `composeDescribedBy`, `getFocusableElements` and `prefersReducedMotion`. It
 imports nothing.
+
+**A shared pure function goes here on the way through, not afterwards.** When a
+port finds arithmetic or string formatting that both layers need, move it to
+core and point the React component at it in the same change. Two copies agree
+on the day they are written and diverge the first time one is fixed — and the
+divergence is silent, because each layer's tests still pass. `progress.ts` and
+the card formatters in `text.ts` came out of the React components this way, and
+the React tests passed unchanged across the move, which is the signal that the
+extraction was faithful.
 
 The dividing line, which decides where a new piece of behaviour goes:
 

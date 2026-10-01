@@ -1,3 +1,8 @@
+import {
+  clampProgressPercent,
+  getProgressCircleGeometry,
+  progressValueNow,
+} from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './ProgressIndicators.css';
@@ -18,19 +23,11 @@ export interface ProgressCircleProps extends React.HTMLAttributes<HTMLDivElement
   label?: string;
 }
 
-const clampPercent = (value: number, max: number) => {
-  if (max <= 0) {
-    return 0;
-  }
-
-  return Math.max(0, Math.min(100, (value / max) * 100));
-};
-
 export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(function ProgressBar(
   { value, max = 100, showValue = true, label, className, ...props },
   ref,
 ) {
-  const percent = clampPercent(value, max);
+  const percent = clampProgressPercent(value, max);
 
   return (
     <div
@@ -40,7 +37,7 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(function
       aria-label={label}
       aria-valuemin={0}
       aria-valuemax={max}
-      aria-valuenow={Math.round((percent / 100) * max)}
+      aria-valuenow={progressValueNow(percent, max)}
       {...props}
     >
       <div className="pf-progress-bar__track">
@@ -60,10 +57,12 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
     { value, max = 100, size = 64, strokeWidth = 6, showValue = true, label, className, ...props },
     ref,
   ) {
-    const percent = clampPercent(value, max);
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const dashOffset = circumference * (1 - percent / 100);
+    const percent = clampProgressPercent(value, max);
+    const { radius, circumference, dashOffset, center } = getProgressCircleGeometry(
+      size,
+      strokeWidth,
+      percent,
+    );
 
     return (
       <div
@@ -74,21 +73,21 @@ export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
         aria-label={label}
         aria-valuemin={0}
         aria-valuemax={max}
-        aria-valuenow={Math.round((percent / 100) * max)}
+        aria-valuenow={progressValueNow(percent, max)}
         {...props}
       >
         <svg viewBox={`0 0 ${size} ${size}`} className="pf-progress-circle__svg" aria-hidden>
           <circle
             className="pf-progress-circle__track"
-            cx={size / 2}
-            cy={size / 2}
+            cx={center}
+            cy={center}
             r={radius}
             strokeWidth={strokeWidth}
           />
           <circle
             className="pf-progress-circle__fill"
-            cx={size / 2}
-            cy={size / 2}
+            cx={center}
+            cy={center}
             r={radius}
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}

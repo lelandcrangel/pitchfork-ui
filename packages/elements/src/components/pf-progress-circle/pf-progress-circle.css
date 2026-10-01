@@ -1,0 +1,62 @@
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-progress-circle-in {
+  from {
+    stroke-dashoffset: var(--pf-progress-circ);
+  }
+}
+
+:host {
+  align-items: center;
+  display: inline-flex;
+  height: var(--pf-progress-circle-size, 64px);
+  justify-content: center;
+  position: relative;
+  width: var(--pf-progress-circle-size, 64px);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.svg {
+  display: block;
+  height: 100%;
+  /* Start the arc at twelve o'clock rather than three. */
+  transform: rotate(-90deg);
+  width: 100%;
+}
+
+.circle-track,
+.circle-fill {
+  fill: none;
+}
+
+.circle-track {
+  stroke: var(--pf-progress-track-bg);
+}
+
+.circle-fill {
+  animation: pf-progress-circle-in var(--duration-slow) var(--easing-decelerate);
+  stroke: var(--pf-progress-accent);
+  stroke-dashoffset: var(--pf-progress-dashoffset);
+  stroke-linecap: round;
+  /* Animate in from empty on mount, and smoothly between values on change. */
+  transition: stroke-dashoffset var(--pf-transition-slow);
+}
+
+.value {
+  color: var(--pf-progress-text);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circle-fill {
+    animation: none;
+    transition: none;
+  }
+}

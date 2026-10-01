@@ -2,18 +2,22 @@ import { useState } from 'react';
 import {
   PfAvatar,
   PfBadge,
+  PfBadgeGroup,
   PfButton,
   PfCard,
   PfCardContent,
   PfCardFooter,
   PfCardHeader,
   PfContentDivider,
+  PfCreditCard,
   PfIcon,
   PfInput,
   PfKbd,
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfProgressBar,
+  PfProgressCircle,
   PfScrollArea,
   PfTag,
   PfUtilityButton,
@@ -134,6 +138,32 @@ export function App() {
           Delete
         </PfUtilityButton>
       </div>
+
+      <div className="row">
+        <PfBadgeGroup label="2 new" message="See what changed" color="brand" />
+        <PfBadgeGroup
+          label="Beta"
+          message="Try it out"
+          color="success"
+          appearance="modern"
+          badgePosition="trailing"
+        />
+      </div>
+
+      <div className="row">
+        {/* 30 of 60 is half drawn but must announce 30, not 50. */}
+        <PfProgressBar value={30} max={60} label="Upload" />
+        <PfProgressCircle value={75} label="Sync" />
+        <PfProgressCircle value={40} size={96} strokeWidth={10} showValue={false} />
+      </div>
+
+      <PfCreditCard
+        brand="visa"
+        cardNumber="4111111111111111"
+        cardholderName="Ada Lovelace"
+        expiry="01/30"
+        cvc="123"
+      />
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

@@ -1,0 +1,119 @@
+:host {
+  align-items: center;
+  display: inline-flex;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.badge,
+.text {
+  border: 1px solid;
+  display: inline-flex;
+  min-height: 24px;
+  padding: 0 var(--space-2);
+  white-space: nowrap;
+}
+
+.badge {
+  align-items: center;
+  border-radius: var(--radius-full);
+  /* Above the text, so the shared edge shows the badge's border, not both. */
+  z-index: 1;
+}
+
+.text {
+  align-items: center;
+}
+
+/*
+ * The two halves overlap by a pixel so their borders coincide into one line,
+ * and the inner padding gains that pixel back so the text is not pulled
+ * off-centre.
+ */
+:host([badge-position='leading']) .text {
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+  margin-inline-start: -1px;
+  padding-inline-start: calc(var(--space-2) + 2px);
+}
+
+:host([badge-position='leading']) .badge {
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+}
+
+:host([badge-position='trailing']) .text {
+  border-radius: var(--radius-full) 0 0 var(--radius-full);
+  margin-inline-end: -1px;
+  padding-inline-end: calc(var(--space-2) + 2px);
+}
+
+:host([badge-position='trailing']) .badge {
+  border-radius: 0 var(--radius-full) var(--radius-full) 0;
+}
+
+:host([color='gray']) .badge {
+  background: var(--pf-badgegroup-gray-100);
+  border-color: var(--pf-badgegroup-gray-200);
+  color: var(--pf-badgegroup-gray-700);
+}
+
+:host([color='brand']) .badge {
+  background: var(--pf-badgegroup-brand-100);
+  border-color: var(--pf-badgegroup-brand-300);
+  color: var(--pf-badgegroup-brand-700);
+}
+
+:host([color='error']) .badge {
+  background: var(--pf-badgegroup-danger-bg);
+  border-color: var(--pf-badgegroup-danger-border);
+  color: var(--pf-badgegroup-danger-text);
+}
+
+:host([color='warning']) .badge {
+  background: var(--pf-badgegroup-warning-bg);
+  border-color: var(--pf-badgegroup-warning-border);
+  color: var(--pf-badgegroup-warning-text);
+}
+
+:host([color='success']) .badge {
+  background: var(--pf-badgegroup-success-bg);
+  border-color: var(--pf-badgegroup-success-border);
+  color: var(--pf-badgegroup-success-text);
+}
+
+:host([appearance='pill']) .text {
+  background: var(--pf-badgegroup-surface-bg, var(--pf-surface-bg));
+}
+
+:host([appearance='modern']) .text {
+  background: var(--pf-badgegroup-surface-subtle, var(--pf-surface-subtle));
+}
+
+:host([color='gray']) .text {
+  border-color: var(--pf-badgegroup-gray-200);
+  color: var(--pf-badgegroup-gray-700);
+}
+
+:host([color='brand']) .text {
+  border-color: var(--pf-badgegroup-brand-300);
+  color: var(--pf-badgegroup-brand-700);
+}
+
+:host([color='error']) .text {
+  border-color: var(--pf-badgegroup-danger-border);
+  color: var(--pf-badgegroup-danger-text);
+}
+
+:host([color='warning']) .text {
+  border-color: var(--pf-badgegroup-warning-border);
+  color: var(--pf-badgegroup-warning-text);
+}
+
+:host([color='success']) .text {
+  border-color: var(--pf-badgegroup-success-border);
+  color: var(--pf-badgegroup-success-text);
+}

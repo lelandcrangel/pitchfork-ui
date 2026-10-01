@@ -6,5 +6,6 @@ export * from './icons';
 export * from './keys';
 export * from './motion';
 export * from './navigation';
+export * from './progress';
 export * from './state';
 export * from './text';

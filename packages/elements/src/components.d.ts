@@ -7,8 +7,10 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 import { PfBadgeVariant } from "./components/pf-badge/pf-badge";
+import { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
 import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 import { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
+import { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
@@ -17,8 +19,10 @@ import { PfTagVariant } from "./components/pf-tag/pf-tag";
 import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
+export { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 export { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
+export { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
@@ -54,6 +58,37 @@ export namespace Components {
           * @default 'neutral'
          */
         "variant": PfBadgeVariant;
+    }
+    /**
+     * A badge joined to a line of text, sharing one rounded outline — the
+     * "2 new · See what's changed" pattern.
+     */
+    interface PfBadgeGroup {
+        /**
+          * Surface treatment for the message. Reflected for the stylesheet.
+          * @default 'pill'
+         */
+        "appearance": PfBadgeGroupAppearance;
+        /**
+          * Which side the badge sits on. Reflected for the stylesheet.
+          * @default 'leading'
+         */
+        "badgePosition": PfBadgeGroupBadgePosition;
+        /**
+          * Colour treatment. Reflected so the stylesheet can select on it.
+          * @default 'gray'
+         */
+        "color": PfBadgeGroupColor;
+        /**
+          * The badge's text.
+          * @default ''
+         */
+        "label": string;
+        /**
+          * The message beside the badge.
+          * @default ''
+         */
+        "message": string;
     }
     interface PfButton {
         /**
@@ -133,6 +168,41 @@ export namespace Components {
           * @default 'horizontal'
          */
         "orientation": PfContentDividerOrientation;
+    }
+    /**
+     * A card-shaped display of payment details. Presentational only — it stores
+     * nothing and submits nothing.
+     */
+    interface PfCreditCard {
+        /**
+          * Card network. Reflected so the stylesheet can pick the gradient.
+          * @default 'generic'
+         */
+        "brand": PfCreditCardBrand;
+        /**
+          * The number to display. Separators in the input are regrouped.
+          * @default ''
+         */
+        "cardNumber": string;
+        /**
+          * Name on the card.
+          * @default ''
+         */
+        "cardholderName": string;
+        /**
+          * Security code. Omit it to leave the field out entirely.
+         */
+        "cvc"?: string;
+        /**
+          * Expiry, displayed as given.
+          * @default ''
+         */
+        "expiry": string;
+        /**
+          * Hide all but the last four digits, and the CVC with it. Defaults to true, so the careless case is the safe one. Reflected for the stylesheet.
+          * @default true
+         */
+        "masked": boolean;
     }
     interface PfIcon {
         /**
@@ -274,6 +344,64 @@ export namespace Components {
         "size": number;
     }
     /**
+     * A horizontal determinate progress track.
+     */
+    interface PfProgressBar {
+        /**
+          * Accessible name.
+         */
+        "label"?: string;
+        /**
+          * The top of the scale.
+          * @default 100
+         */
+        "max": number;
+        /**
+          * Show the percentage beside the track. Reflected for the stylesheet.
+          * @default true
+         */
+        "showValue": boolean;
+        /**
+          * How far along, on the 0..max scale.
+          * @default 0
+         */
+        "value": number;
+    }
+    /**
+     * A circular determinate progress track.
+     */
+    interface PfProgressCircle {
+        /**
+          * Accessible name.
+         */
+        "label"?: string;
+        /**
+          * The top of the scale.
+          * @default 100
+         */
+        "max": number;
+        /**
+          * Show the percentage in the middle. Reflected for the stylesheet.
+          * @default true
+         */
+        "showValue": boolean;
+        /**
+          * Diameter in pixels.
+          * @default 64
+         */
+        "size": number;
+        /**
+          * Ring thickness in pixels.
+          * @default 6
+         */
+        "strokeWidth": number;
+        /**
+          * How far along, on the 0..max scale.
+          * @default 0
+         */
+        "value": number;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -376,6 +504,16 @@ declare global {
         prototype: HTMLPfBadgeElement;
         new (): HTMLPfBadgeElement;
     };
+    /**
+     * A badge joined to a line of text, sharing one rounded outline — the
+     * "2 new · See what's changed" pattern.
+     */
+    interface HTMLPfBadgeGroupElement extends Components.PfBadgeGroup, HTMLStencilElement {
+    }
+    var HTMLPfBadgeGroupElement: {
+        prototype: HTMLPfBadgeGroupElement;
+        new (): HTMLPfBadgeGroupElement;
+    };
     interface HTMLPfButtonElement extends Components.PfButton, HTMLStencilElement {
     }
     var HTMLPfButtonElement: {
@@ -434,6 +572,16 @@ declare global {
     var HTMLPfContentDividerElement: {
         prototype: HTMLPfContentDividerElement;
         new (): HTMLPfContentDividerElement;
+    };
+    /**
+     * A card-shaped display of payment details. Presentational only — it stores
+     * nothing and submits nothing.
+     */
+    interface HTMLPfCreditCardElement extends Components.PfCreditCard, HTMLStencilElement {
+    }
+    var HTMLPfCreditCardElement: {
+        prototype: HTMLPfCreditCardElement;
+        new (): HTMLPfCreditCardElement;
     };
     interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
     }
@@ -500,6 +648,24 @@ declare global {
         new (): HTMLPfLoadingSpinnerElement;
     };
     /**
+     * A horizontal determinate progress track.
+     */
+    interface HTMLPfProgressBarElement extends Components.PfProgressBar, HTMLStencilElement {
+    }
+    var HTMLPfProgressBarElement: {
+        prototype: HTMLPfProgressBarElement;
+        new (): HTMLPfProgressBarElement;
+    };
+    /**
+     * A circular determinate progress track.
+     */
+    interface HTMLPfProgressCircleElement extends Components.PfProgressCircle, HTMLStencilElement {
+    }
+    var HTMLPfProgressCircleElement: {
+        prototype: HTMLPfProgressCircleElement;
+        new (): HTMLPfProgressCircleElement;
+    };
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface HTMLPfScrollAreaElement extends Components.PfScrollArea, HTMLStencilElement {
@@ -553,18 +719,22 @@ declare global {
     interface HTMLElementTagNameMap {
         "pf-avatar": HTMLPfAvatarElement;
         "pf-badge": HTMLPfBadgeElement;
+        "pf-badge-group": HTMLPfBadgeGroupElement;
         "pf-button": HTMLPfButtonElement;
         "pf-card": HTMLPfCardElement;
         "pf-card-content": HTMLPfCardContentElement;
         "pf-card-footer": HTMLPfCardFooterElement;
         "pf-card-header": HTMLPfCardHeaderElement;
         "pf-content-divider": HTMLPfContentDividerElement;
+        "pf-credit-card": HTMLPfCreditCardElement;
         "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
         "pf-kbd": HTMLPfKbdElement;
         "pf-loading-dots": HTMLPfLoadingDotsElement;
         "pf-loading-skeleton": HTMLPfLoadingSkeletonElement;
         "pf-loading-spinner": HTMLPfLoadingSpinnerElement;
+        "pf-progress-bar": HTMLPfProgressBarElement;
+        "pf-progress-circle": HTMLPfProgressCircleElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
         "pf-tag": HTMLPfTagElement;
         "pf-utility-button": HTMLPfUtilityButtonElement;
@@ -602,6 +772,37 @@ declare namespace LocalJSX {
           * @default 'neutral'
          */
         "variant"?: PfBadgeVariant;
+    }
+    /**
+     * A badge joined to a line of text, sharing one rounded outline — the
+     * "2 new · See what's changed" pattern.
+     */
+    interface PfBadgeGroup {
+        /**
+          * Surface treatment for the message. Reflected for the stylesheet.
+          * @default 'pill'
+         */
+        "appearance"?: PfBadgeGroupAppearance;
+        /**
+          * Which side the badge sits on. Reflected for the stylesheet.
+          * @default 'leading'
+         */
+        "badgePosition"?: PfBadgeGroupBadgePosition;
+        /**
+          * Colour treatment. Reflected so the stylesheet can select on it.
+          * @default 'gray'
+         */
+        "color"?: PfBadgeGroupColor;
+        /**
+          * The badge's text.
+          * @default ''
+         */
+        "label"?: string;
+        /**
+          * The message beside the badge.
+          * @default ''
+         */
+        "message"?: string;
     }
     interface PfButton {
         /**
@@ -681,6 +882,41 @@ declare namespace LocalJSX {
           * @default 'horizontal'
          */
         "orientation"?: PfContentDividerOrientation;
+    }
+    /**
+     * A card-shaped display of payment details. Presentational only — it stores
+     * nothing and submits nothing.
+     */
+    interface PfCreditCard {
+        /**
+          * Card network. Reflected so the stylesheet can pick the gradient.
+          * @default 'generic'
+         */
+        "brand"?: PfCreditCardBrand;
+        /**
+          * The number to display. Separators in the input are regrouped.
+          * @default ''
+         */
+        "cardNumber"?: string;
+        /**
+          * Name on the card.
+          * @default ''
+         */
+        "cardholderName"?: string;
+        /**
+          * Security code. Omit it to leave the field out entirely.
+         */
+        "cvc"?: string;
+        /**
+          * Expiry, displayed as given.
+          * @default ''
+         */
+        "expiry"?: string;
+        /**
+          * Hide all but the last four digits, and the CVC with it. Defaults to true, so the careless case is the safe one. Reflected for the stylesheet.
+          * @default true
+         */
+        "masked"?: boolean;
     }
     interface PfIcon {
         /**
@@ -822,6 +1058,64 @@ declare namespace LocalJSX {
         "size"?: number;
     }
     /**
+     * A horizontal determinate progress track.
+     */
+    interface PfProgressBar {
+        /**
+          * Accessible name.
+         */
+        "label"?: string;
+        /**
+          * The top of the scale.
+          * @default 100
+         */
+        "max"?: number;
+        /**
+          * Show the percentage beside the track. Reflected for the stylesheet.
+          * @default true
+         */
+        "showValue"?: boolean;
+        /**
+          * How far along, on the 0..max scale.
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
+     * A circular determinate progress track.
+     */
+    interface PfProgressCircle {
+        /**
+          * Accessible name.
+         */
+        "label"?: string;
+        /**
+          * The top of the scale.
+          * @default 100
+         */
+        "max"?: number;
+        /**
+          * Show the percentage in the middle. Reflected for the stylesheet.
+          * @default true
+         */
+        "showValue"?: boolean;
+        /**
+          * Diameter in pixels.
+          * @default 64
+         */
+        "size"?: number;
+        /**
+          * Ring thickness in pixels.
+          * @default 6
+         */
+        "strokeWidth"?: number;
+        /**
+          * How far along, on the 0..max scale.
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -917,6 +1211,13 @@ declare namespace LocalJSX {
     interface PfBadgeAttributes {
         "variant": PfBadgeVariant;
     }
+    interface PfBadgeGroupAttributes {
+        "label": string;
+        "message": string;
+        "color": PfBadgeGroupColor;
+        "appearance": PfBadgeGroupAppearance;
+        "badgePosition": PfBadgeGroupBadgePosition;
+    }
     interface PfButtonAttributes {
         "variant": PfButtonVariant;
         "size": PfButtonSize;
@@ -929,6 +1230,14 @@ declare namespace LocalJSX {
     interface PfContentDividerAttributes {
         "orientation": PfContentDividerOrientation;
         "inset": boolean;
+    }
+    interface PfCreditCardAttributes {
+        "brand": PfCreditCardBrand;
+        "cardNumber": string;
+        "cardholderName": string;
+        "expiry": string;
+        "cvc": string;
+        "masked": boolean;
     }
     interface PfIconAttributes {
         "name": string;
@@ -964,6 +1273,20 @@ declare namespace LocalJSX {
         "size": number;
         "label": string;
     }
+    interface PfProgressBarAttributes {
+        "value": number;
+        "max": number;
+        "showValue": boolean;
+        "label": string;
+    }
+    interface PfProgressCircleAttributes {
+        "value": number;
+        "max": number;
+        "size": number;
+        "strokeWidth": number;
+        "showValue": boolean;
+        "label": string;
+    }
     interface PfScrollAreaAttributes {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
@@ -988,18 +1311,22 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "pf-avatar": Omit<PfAvatar, keyof PfAvatarAttributes> & { [K in keyof PfAvatar & keyof PfAvatarAttributes]?: PfAvatar[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `attr:${K}`]?: PfAvatarAttributes[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `prop:${K}`]?: PfAvatar[K] };
         "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
+        "pf-badge-group": Omit<PfBadgeGroup, keyof PfBadgeGroupAttributes> & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes]?: PfBadgeGroup[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `attr:${K}`]?: PfBadgeGroupAttributes[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `prop:${K}`]?: PfBadgeGroup[K] };
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
         "pf-card": PfCard;
         "pf-card-content": PfCardContent;
         "pf-card-footer": PfCardFooter;
         "pf-card-header": PfCardHeader;
         "pf-content-divider": Omit<PfContentDivider, keyof PfContentDividerAttributes> & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes]?: PfContentDivider[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `attr:${K}`]?: PfContentDividerAttributes[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `prop:${K}`]?: PfContentDivider[K] };
+        "pf-credit-card": Omit<PfCreditCard, keyof PfCreditCardAttributes> & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes]?: PfCreditCard[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `attr:${K}`]?: PfCreditCardAttributes[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `prop:${K}`]?: PfCreditCard[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
         "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
         "pf-loading-dots": Omit<PfLoadingDots, keyof PfLoadingDotsAttributes> & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes]?: PfLoadingDots[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `attr:${K}`]?: PfLoadingDotsAttributes[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `prop:${K}`]?: PfLoadingDots[K] };
         "pf-loading-skeleton": Omit<PfLoadingSkeleton, keyof PfLoadingSkeletonAttributes> & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes]?: PfLoadingSkeleton[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `attr:${K}`]?: PfLoadingSkeletonAttributes[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `prop:${K}`]?: PfLoadingSkeleton[K] };
         "pf-loading-spinner": Omit<PfLoadingSpinner, keyof PfLoadingSpinnerAttributes> & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes]?: PfLoadingSpinner[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `attr:${K}`]?: PfLoadingSpinnerAttributes[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `prop:${K}`]?: PfLoadingSpinner[K] };
+        "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
+        "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
         "pf-utility-button": Omit<PfUtilityButton, keyof PfUtilityButtonAttributes> & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes]?: PfUtilityButton[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `attr:${K}`]?: PfUtilityButtonAttributes[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `prop:${K}`]?: PfUtilityButton[K] };
@@ -1012,6 +1339,11 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "pf-avatar": LocalJSX.IntrinsicElements["pf-avatar"] & JSXBase.HTMLAttributes<HTMLPfAvatarElement>;
             "pf-badge": LocalJSX.IntrinsicElements["pf-badge"] & JSXBase.HTMLAttributes<HTMLPfBadgeElement>;
+            /**
+             * A badge joined to a line of text, sharing one rounded outline — the
+             * "2 new · See what's changed" pattern.
+             */
+            "pf-badge-group": LocalJSX.IntrinsicElements["pf-badge-group"] & JSXBase.HTMLAttributes<HTMLPfBadgeGroupElement>;
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
             /**
              * A surface that groups related content.
@@ -1041,6 +1373,11 @@ declare module "@stencil/core" {
              * A rule that separates content, optionally labelled.
              */
             "pf-content-divider": LocalJSX.IntrinsicElements["pf-content-divider"] & JSXBase.HTMLAttributes<HTMLPfContentDividerElement>;
+            /**
+             * A card-shaped display of payment details. Presentational only — it stores
+             * nothing and submits nothing.
+             */
+            "pf-credit-card": LocalJSX.IntrinsicElements["pf-credit-card"] & JSXBase.HTMLAttributes<HTMLPfCreditCardElement>;
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
              * A form-associated text input.
@@ -1063,6 +1400,14 @@ declare module "@stencil/core" {
              * An indeterminate spinner.
              */
             "pf-loading-spinner": LocalJSX.IntrinsicElements["pf-loading-spinner"] & JSXBase.HTMLAttributes<HTMLPfLoadingSpinnerElement>;
+            /**
+             * A horizontal determinate progress track.
+             */
+            "pf-progress-bar": LocalJSX.IntrinsicElements["pf-progress-bar"] & JSXBase.HTMLAttributes<HTMLPfProgressBarElement>;
+            /**
+             * A circular determinate progress track.
+             */
+            "pf-progress-circle": LocalJSX.IntrinsicElements["pf-progress-circle"] & JSXBase.HTMLAttributes<HTMLPfProgressCircleElement>;
             /**
              * A scrollable region with a styled, non-overlaying scrollbar.
              */
