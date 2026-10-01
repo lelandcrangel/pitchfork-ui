@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "lib": ["DOM", "ES2022"],
+    "strict": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "esModuleInterop": true,
+    "types": ["zone.js"]
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true
+  },
+  "files": ["src/main.ts"],
+  "include": ["src/**/*.ts"]
+}

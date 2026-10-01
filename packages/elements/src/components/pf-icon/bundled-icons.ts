@@ -29,20 +29,21 @@ import {
  * Anything outside the list is not "an icon the library lacks": register it
  * with `registerIconGlyphs()` from the peer dependency you already install.
  */
-registerIconGlyphs({
-  bell: faBell,
-  calendar: faCalendar,
-  'chart-bar': faBarChart,
-  'circle-check': faCircleCheck,
-  'circle-question': faCircleQuestion,
-  'circle-xmark': faCircleXmark,
-  copy: faCopy,
-  'credit-card': faCreditCard,
-  file: faFile,
-  'folder-open': faFolderOpen,
-  'square-caret-left': faSquareCaretLeft,
-  'square-caret-right': faSquareCaretRight,
-  'square-check': faSquareCheck,
-  star: faStar,
-  user: faUser,
-});
+export const registerBundledIcons = () =>
+  registerIconGlyphs({
+    bell: faBell,
+    calendar: faCalendar,
+    'chart-bar': faBarChart,
+    'circle-check': faCircleCheck,
+    'circle-question': faCircleQuestion,
+    'circle-xmark': faCircleXmark,
+    copy: faCopy,
+    'credit-card': faCreditCard,
+    file: faFile,
+    'folder-open': faFolderOpen,
+    'square-caret-left': faSquareCaretLeft,
+    'square-caret-right': faSquareCaretRight,
+    'square-check': faSquareCheck,
+    star: faStar,
+    user: faUser,
+  });

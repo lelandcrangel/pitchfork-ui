@@ -60,6 +60,14 @@ jobs:
       # ControlValueAccessor binds, so the artifacts have to exist first.
       - name: Test the Angular bindings against the built library
         run: npm run test:angular
+      # The consumer apps resolve the published wrapper packages through their
+      # exports maps and render in a real browser. Between them they caught a
+      # "sideEffects": false that let the icon registry be tree-shaken, an
+      # elements package that shipped no token stylesheet at all, and an
+      # Angular package with no entry points -- none of which any unit test
+      # could see.
+      - name: Smoke-test the consumer apps
+        run: npm run test:consumers
       - name: Validate component metadata
         run: npm run build:metadata -- --strict
 

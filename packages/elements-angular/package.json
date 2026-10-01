@@ -48,5 +48,21 @@
     "ng-packagr": "^21.2.7",
     "vitest": "^4.1.11",
     "zone.js": "^0.16.3"
-  }
+  },
+  "module": "dist/fesm2022/pitchfork-ui-elements-angular.mjs",
+  "types": "dist/types/pitchfork-ui-elements-angular.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/pitchfork-ui-elements-angular.d.ts",
+      "default": "./dist/fesm2022/pitchfork-ui-elements-angular.mjs"
+    },
+    "./package.json": {
+      "default": "./package.json"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ]
 }

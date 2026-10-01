@@ -17,6 +17,17 @@ const themeCss = resolve(__dirname, '../react/src/styles/theme.css');
 
 export const config: Config = {
   namespace: 'pitchfork',
+  /**
+   * The `--pf-*` alias layer, shipped so an elements-only consumer gets styled
+   * components. Without it the tokens load but every alias resolves to
+   * nothing: markup and class names are perfect and the buttons have no
+   * background.
+   *
+   * Same file the React library ships inside its styles.css. That it lives in
+   * packages/react while two packages now ship it is a wart -- theme.css wants
+   * a neutral home.
+   */
+  globalStyle: resolve(__dirname, 'src/global/pitchfork.css'),
   taskQueue: 'async',
   sourceMap: true,
   outputTargets: [

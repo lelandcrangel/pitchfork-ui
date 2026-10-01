@@ -1,0 +1,25 @@
+{
+  "name": "@pitchfork-ui/consumer-react",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Builds a real React application against the published @pitchfork-ui/elements-react, to catch what unit tests cannot: resolution, bundling and whether the tokens actually reach the page.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "smoke": "node ../../scripts/smoke-consumer.mjs --dir apps/consumer-react/dist --label react"
+  },
+  "dependencies": {
+    "@pitchfork-ui/elements-react": "*",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@vitejs/plugin-react": "*",
+    "typescript": "*",
+    "vite": "*"
+  }
+}

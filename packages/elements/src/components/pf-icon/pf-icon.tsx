@@ -1,7 +1,11 @@
 import { getIconPaths, normalizeIconName, resolveIconGlyph } from '@pitchfork-ui/core';
 import { Component, h, Host, Prop } from '@stencil/core';
-import './bundled-icons';
+import { registerBundledIcons } from './bundled-icons';
 import { customIcons } from './custom-icons';
+
+// Called rather than imported for its side effect: a side-effect-only
+// import is something a bundler may drop, and did.
+registerBundledIcons();
 
 const warned = new Set<string>();
 

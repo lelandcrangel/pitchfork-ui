@@ -31,7 +31,6 @@
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
   "unpkg": "dist/pitchfork/pitchfork.esm.js",
-  "sideEffects": false,
   "files": [
     "dist",
     "loader",
@@ -39,7 +38,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "stencil build",
+    "build": "node ../../scripts/build-elements-global-css.mjs && stencil build",
     "start": "stencil build --dev --watch --serve",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -59,6 +58,7 @@
     "@stencil/vitest": "^1.15.1",
     "@vitest/browser-playwright": "^4.1.11",
     "postcss-custom-media": "^12.0.0",
+    "postcss-import": "^17.0.0",
     "vitest": "^4.1.11"
   },
   "publishConfig": {
@@ -88,6 +88,7 @@
       "import": "./dist/components/index.js",
       "default": "./dist/components/index.js"
     },
-    "./components/*": "./dist/components/*"
+    "./components/*": "./dist/components/*",
+    "./styles.css": "./dist/pitchfork/pitchfork.css"
   }
 }
