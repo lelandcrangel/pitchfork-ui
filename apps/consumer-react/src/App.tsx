@@ -3,10 +3,16 @@ import {
   PfAvatar,
   PfBadge,
   PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardFooter,
+  PfCardHeader,
+  PfContentDivider,
   PfIcon,
   PfInput,
   PfKbd,
   PfTag,
+  PfVisuallyHidden,
 } from '@pitchfork-ui/elements-react';
 
 /**
@@ -75,6 +81,29 @@ export function App() {
         />
         <p data-testid="echo">{email}</p>
       </div>
+
+      <PfContentDivider />
+
+      <PfCard>
+        <PfCardHeader>
+          <strong>Card</strong>
+          <PfVisuallyHidden> (a grouping surface)</PfVisuallyHidden>
+        </PfCardHeader>
+        <PfCardContent>
+          Three sections, each its own element. A card using only some of them still renders
+          correctly.
+        </PfCardContent>
+        <PfCardFooter>
+          <PfButton variant="secondary">Dismiss</PfButton>
+          <PfButton variant="primary">Confirm</PfButton>
+        </PfCardFooter>
+      </PfCard>
+
+      <PfContentDivider>or</PfContentDivider>
+
+      <PfCard>
+        <PfCardContent>A card with content alone — no header, no footer.</PfCardContent>
+      </PfCard>
     </main>
   );
 }

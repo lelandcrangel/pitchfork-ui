@@ -4,10 +4,16 @@ import {
   PfAvatar,
   PfBadge,
   PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardFooter,
+  PfCardHeader,
+  PfContentDivider,
   PfIcon,
   PfInput,
   PfKbd,
   PfTag,
+  PfVisuallyHidden,
   TextValueAccessor,
 } from '@pitchfork-ui/elements-angular';
 
@@ -24,10 +30,16 @@ import {
     PfAvatar,
     PfBadge,
     PfButton,
+    PfCard,
+    PfCardContent,
+    PfCardFooter,
+    PfCardHeader,
+    PfContentDivider,
     PfIcon,
     PfInput,
     PfKbd,
     PfTag,
+    PfVisuallyHidden,
     TextValueAccessor,
   ],
   template: `
@@ -77,6 +89,29 @@ import {
         ></pf-input>
         <p data-testid="echo">{{ email.value }}</p>
       </div>
+
+      <pf-content-divider></pf-content-divider>
+
+      <pf-card>
+        <pf-card-header>
+          <strong>Card</strong>
+          <pf-visually-hidden> (a grouping surface)</pf-visually-hidden>
+        </pf-card-header>
+        <pf-card-content>
+          Three sections, each its own element. A card using only some of them still renders
+          correctly.
+        </pf-card-content>
+        <pf-card-footer>
+          <pf-button variant="secondary">Dismiss</pf-button>
+          <pf-button variant="primary">Confirm</pf-button>
+        </pf-card-footer>
+      </pf-card>
+
+      <pf-content-divider>or</pf-content-divider>
+
+      <pf-card>
+        <pf-card-content>A card with content alone — no header, no footer.</pf-card-content>
+      </pf-card>
     </main>
   `,
 })

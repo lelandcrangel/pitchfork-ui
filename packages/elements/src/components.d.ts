@@ -8,12 +8,14 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 import { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
+import { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
+export { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
@@ -82,6 +84,49 @@ export namespace Components {
           * @default 'primary'
          */
         "variant": PfButtonVariant;
+    }
+    /**
+     * A surface that groups related content.
+     * The React library's `Card` / `CardHeader` / `CardContent` / `CardFooter` map
+     * to four elements rather than to one element with named slots. Named slots
+     * would need a slot controller to know whether to render each wrapper at all —
+     * an unslotted `header` would otherwise leave a padded, bordered empty strip.
+     * Separate elements have no such state: the consumer writing
+     * `<pf-card-header>` *is* the signal.
+     */
+    interface PfCard {
+    }
+    /**
+     * The body section of a `pf-card`.
+     */
+    interface PfCardContent {
+    }
+    /**
+     * The bottom section of a `pf-card`, separated from what precedes it by a rule.
+     * Lays its children out in a row, which is what makes it the natural home for
+     * a card's actions.
+     */
+    interface PfCardFooter {
+    }
+    /**
+     * The top section of a `pf-card`, separated from what follows by a rule.
+     */
+    interface PfCardHeader {
+    }
+    /**
+     * A rule that separates content, optionally labelled.
+     */
+    interface PfContentDivider {
+        /**
+          * Pad the divider horizontally. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "inset": boolean;
+        /**
+          * Reflected so the stylesheet can select on it.
+          * @default 'horizontal'
+         */
+        "orientation": PfContentDividerOrientation;
     }
     interface PfIcon {
         /**
@@ -183,6 +228,22 @@ export namespace Components {
          */
         "variant": PfTagVariant;
     }
+    /**
+     * Hides content visually while keeping it available to screen readers and
+     * other assistive technology. Use for labels, instructions and status text
+     * that are implied visually but need to be announced.
+     * The React component takes an `as` prop to choose its tag; a custom element's
+     * tag is fixed, so wrap this instead of configuring it — `<h2><pf-visually-
+     * hidden>Results</pf-visually-hidden></h2>` is still a heading named
+     * "Results".
+     */
+    interface PfVisuallyHidden {
+        /**
+          * Reveal the content when it, or a descendant, receives keyboard focus — the classic "skip link" pattern. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "focusable": boolean;
+    }
 }
 export interface PfInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -210,6 +271,59 @@ declare global {
     var HTMLPfButtonElement: {
         prototype: HTMLPfButtonElement;
         new (): HTMLPfButtonElement;
+    };
+    /**
+     * A surface that groups related content.
+     * The React library's `Card` / `CardHeader` / `CardContent` / `CardFooter` map
+     * to four elements rather than to one element with named slots. Named slots
+     * would need a slot controller to know whether to render each wrapper at all —
+     * an unslotted `header` would otherwise leave a padded, bordered empty strip.
+     * Separate elements have no such state: the consumer writing
+     * `<pf-card-header>` *is* the signal.
+     */
+    interface HTMLPfCardElement extends Components.PfCard, HTMLStencilElement {
+    }
+    var HTMLPfCardElement: {
+        prototype: HTMLPfCardElement;
+        new (): HTMLPfCardElement;
+    };
+    /**
+     * The body section of a `pf-card`.
+     */
+    interface HTMLPfCardContentElement extends Components.PfCardContent, HTMLStencilElement {
+    }
+    var HTMLPfCardContentElement: {
+        prototype: HTMLPfCardContentElement;
+        new (): HTMLPfCardContentElement;
+    };
+    /**
+     * The bottom section of a `pf-card`, separated from what precedes it by a rule.
+     * Lays its children out in a row, which is what makes it the natural home for
+     * a card's actions.
+     */
+    interface HTMLPfCardFooterElement extends Components.PfCardFooter, HTMLStencilElement {
+    }
+    var HTMLPfCardFooterElement: {
+        prototype: HTMLPfCardFooterElement;
+        new (): HTMLPfCardFooterElement;
+    };
+    /**
+     * The top section of a `pf-card`, separated from what follows by a rule.
+     */
+    interface HTMLPfCardHeaderElement extends Components.PfCardHeader, HTMLStencilElement {
+    }
+    var HTMLPfCardHeaderElement: {
+        prototype: HTMLPfCardHeaderElement;
+        new (): HTMLPfCardHeaderElement;
+    };
+    /**
+     * A rule that separates content, optionally labelled.
+     */
+    interface HTMLPfContentDividerElement extends Components.PfContentDivider, HTMLStencilElement {
+    }
+    var HTMLPfContentDividerElement: {
+        prototype: HTMLPfContentDividerElement;
+        new (): HTMLPfContentDividerElement;
     };
     interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
     }
@@ -265,14 +379,35 @@ declare global {
         prototype: HTMLPfTagElement;
         new (): HTMLPfTagElement;
     };
+    /**
+     * Hides content visually while keeping it available to screen readers and
+     * other assistive technology. Use for labels, instructions and status text
+     * that are implied visually but need to be announced.
+     * The React component takes an `as` prop to choose its tag; a custom element's
+     * tag is fixed, so wrap this instead of configuring it — `<h2><pf-visually-
+     * hidden>Results</pf-visually-hidden></h2>` is still a heading named
+     * "Results".
+     */
+    interface HTMLPfVisuallyHiddenElement extends Components.PfVisuallyHidden, HTMLStencilElement {
+    }
+    var HTMLPfVisuallyHiddenElement: {
+        prototype: HTMLPfVisuallyHiddenElement;
+        new (): HTMLPfVisuallyHiddenElement;
+    };
     interface HTMLElementTagNameMap {
         "pf-avatar": HTMLPfAvatarElement;
         "pf-badge": HTMLPfBadgeElement;
         "pf-button": HTMLPfButtonElement;
+        "pf-card": HTMLPfCardElement;
+        "pf-card-content": HTMLPfCardContentElement;
+        "pf-card-footer": HTMLPfCardFooterElement;
+        "pf-card-header": HTMLPfCardHeaderElement;
+        "pf-content-divider": HTMLPfContentDividerElement;
         "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
         "pf-kbd": HTMLPfKbdElement;
         "pf-tag": HTMLPfTagElement;
+        "pf-visually-hidden": HTMLPfVisuallyHiddenElement;
     }
 }
 declare namespace LocalJSX {
@@ -342,6 +477,49 @@ declare namespace LocalJSX {
           * @default 'primary'
          */
         "variant"?: PfButtonVariant;
+    }
+    /**
+     * A surface that groups related content.
+     * The React library's `Card` / `CardHeader` / `CardContent` / `CardFooter` map
+     * to four elements rather than to one element with named slots. Named slots
+     * would need a slot controller to know whether to render each wrapper at all —
+     * an unslotted `header` would otherwise leave a padded, bordered empty strip.
+     * Separate elements have no such state: the consumer writing
+     * `<pf-card-header>` *is* the signal.
+     */
+    interface PfCard {
+    }
+    /**
+     * The body section of a `pf-card`.
+     */
+    interface PfCardContent {
+    }
+    /**
+     * The bottom section of a `pf-card`, separated from what precedes it by a rule.
+     * Lays its children out in a row, which is what makes it the natural home for
+     * a card's actions.
+     */
+    interface PfCardFooter {
+    }
+    /**
+     * The top section of a `pf-card`, separated from what follows by a rule.
+     */
+    interface PfCardHeader {
+    }
+    /**
+     * A rule that separates content, optionally labelled.
+     */
+    interface PfContentDivider {
+        /**
+          * Pad the divider horizontally. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "inset"?: boolean;
+        /**
+          * Reflected so the stylesheet can select on it.
+          * @default 'horizontal'
+         */
+        "orientation"?: PfContentDividerOrientation;
     }
     interface PfIcon {
         /**
@@ -447,6 +625,22 @@ declare namespace LocalJSX {
          */
         "variant"?: PfTagVariant;
     }
+    /**
+     * Hides content visually while keeping it available to screen readers and
+     * other assistive technology. Use for labels, instructions and status text
+     * that are implied visually but need to be announced.
+     * The React component takes an `as` prop to choose its tag; a custom element's
+     * tag is fixed, so wrap this instead of configuring it — `<h2><pf-visually-
+     * hidden>Results</pf-visually-hidden></h2>` is still a heading named
+     * "Results".
+     */
+    interface PfVisuallyHidden {
+        /**
+          * Reveal the content when it, or a descendant, receives keyboard focus — the classic "skip link" pattern. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "focusable"?: boolean;
+    }
 
     interface PfAvatarAttributes {
         "src": string;
@@ -466,6 +660,10 @@ declare namespace LocalJSX {
         "disabled": boolean;
         "type": PfButtonType;
         "label": string;
+    }
+    interface PfContentDividerAttributes {
+        "orientation": PfContentDividerOrientation;
+        "inset": boolean;
     }
     interface PfIconAttributes {
         "name": string;
@@ -492,15 +690,24 @@ declare namespace LocalJSX {
         "dismissible": boolean;
         "dismissLabel": string;
     }
+    interface PfVisuallyHiddenAttributes {
+        "focusable": boolean;
+    }
 
     interface IntrinsicElements {
         "pf-avatar": Omit<PfAvatar, keyof PfAvatarAttributes> & { [K in keyof PfAvatar & keyof PfAvatarAttributes]?: PfAvatar[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `attr:${K}`]?: PfAvatarAttributes[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `prop:${K}`]?: PfAvatar[K] };
         "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
+        "pf-card": PfCard;
+        "pf-card-content": PfCardContent;
+        "pf-card-footer": PfCardFooter;
+        "pf-card-header": PfCardHeader;
+        "pf-content-divider": Omit<PfContentDivider, keyof PfContentDividerAttributes> & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes]?: PfContentDivider[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `attr:${K}`]?: PfContentDividerAttributes[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `prop:${K}`]?: PfContentDivider[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
         "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
+        "pf-visually-hidden": Omit<PfVisuallyHidden, keyof PfVisuallyHiddenAttributes> & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes]?: PfVisuallyHidden[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `attr:${K}`]?: PfVisuallyHiddenAttributes[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `prop:${K}`]?: PfVisuallyHidden[K] };
     }
 }
 export { LocalJSX as JSX };
@@ -510,6 +717,34 @@ declare module "@stencil/core" {
             "pf-avatar": LocalJSX.IntrinsicElements["pf-avatar"] & JSXBase.HTMLAttributes<HTMLPfAvatarElement>;
             "pf-badge": LocalJSX.IntrinsicElements["pf-badge"] & JSXBase.HTMLAttributes<HTMLPfBadgeElement>;
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
+            /**
+             * A surface that groups related content.
+             * The React library's `Card` / `CardHeader` / `CardContent` / `CardFooter` map
+             * to four elements rather than to one element with named slots. Named slots
+             * would need a slot controller to know whether to render each wrapper at all —
+             * an unslotted `header` would otherwise leave a padded, bordered empty strip.
+             * Separate elements have no such state: the consumer writing
+             * `<pf-card-header>` *is* the signal.
+             */
+            "pf-card": LocalJSX.IntrinsicElements["pf-card"] & JSXBase.HTMLAttributes<HTMLPfCardElement>;
+            /**
+             * The body section of a `pf-card`.
+             */
+            "pf-card-content": LocalJSX.IntrinsicElements["pf-card-content"] & JSXBase.HTMLAttributes<HTMLPfCardContentElement>;
+            /**
+             * The bottom section of a `pf-card`, separated from what precedes it by a rule.
+             * Lays its children out in a row, which is what makes it the natural home for
+             * a card's actions.
+             */
+            "pf-card-footer": LocalJSX.IntrinsicElements["pf-card-footer"] & JSXBase.HTMLAttributes<HTMLPfCardFooterElement>;
+            /**
+             * The top section of a `pf-card`, separated from what follows by a rule.
+             */
+            "pf-card-header": LocalJSX.IntrinsicElements["pf-card-header"] & JSXBase.HTMLAttributes<HTMLPfCardHeaderElement>;
+            /**
+             * A rule that separates content, optionally labelled.
+             */
+            "pf-content-divider": LocalJSX.IntrinsicElements["pf-content-divider"] & JSXBase.HTMLAttributes<HTMLPfContentDividerElement>;
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
              * A form-associated text input.
@@ -521,6 +756,16 @@ declare module "@stencil/core" {
             "pf-input": LocalJSX.IntrinsicElements["pf-input"] & JSXBase.HTMLAttributes<HTMLPfInputElement>;
             "pf-kbd": LocalJSX.IntrinsicElements["pf-kbd"] & JSXBase.HTMLAttributes<HTMLPfKbdElement>;
             "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
+            /**
+             * Hides content visually while keeping it available to screen readers and
+             * other assistive technology. Use for labels, instructions and status text
+             * that are implied visually but need to be announced.
+             * The React component takes an `as` prop to choose its tag; a custom element's
+             * tag is fixed, so wrap this instead of configuring it — `<h2><pf-visually-
+             * hidden>Results</pf-visually-hidden></h2>` is still a heading named
+             * "Results".
+             */
+            "pf-visually-hidden": LocalJSX.IntrinsicElements["pf-visually-hidden"] & JSXBase.HTMLAttributes<HTMLPfVisuallyHiddenElement>;
         }
     }
 }

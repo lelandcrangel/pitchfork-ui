@@ -1,0 +1,14 @@
+/*
+ * Reads pf-card's own variables rather than defining its own: a consumer who
+ * sets --pf-card-section-padding on a card expects every section to follow,
+ * and custom properties inherit through the shadow boundary.
+ */
+:host {
+  border-bottom: 1px solid var(--pf-card-border);
+  display: block;
+  padding: var(--pf-card-section-padding, var(--space-4));
+}
+
+:host([hidden]) {
+  display: none;
+}

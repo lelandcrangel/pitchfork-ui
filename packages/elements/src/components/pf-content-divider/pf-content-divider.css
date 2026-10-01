@@ -1,0 +1,61 @@
+:host {
+  align-items: center;
+  color: var(--pf-content-divider-text);
+  display: flex;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([inset]) {
+  padding-inline-end: var(--space-2);
+  padding-inline-start: var(--space-2);
+}
+
+.line {
+  background: var(--pf-content-divider-line);
+  display: block;
+  flex: 1;
+  height: 1px;
+}
+
+.label {
+  color: var(--pf-content-divider-text);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/*
+ * `display: none` rather than omitting the nodes: the slot has to stay in the
+ * shadow tree for `slotchange` to fire at all, and the trailing rule would
+ * otherwise double the gap around a zero-width label.
+ */
+.label--empty,
+.line--hidden {
+  display: none;
+}
+
+/*
+ * Vertical is a different shape, not a variant of the horizontal one: the host
+ * itself is the rule, so its own children have no part to play.
+ */
+:host([orientation='vertical']) {
+  align-self: stretch;
+  background: var(--pf-content-divider-line);
+  display: inline-block;
+  flex: 0 0 auto;
+  height: auto;
+  min-height: 100%;
+  width: 1px;
+}
+
+:host([orientation='vertical']) .line,
+:host([orientation='vertical']) .label {
+  display: none;
+}

@@ -1,0 +1,42 @@
+/*
+ * The host does the hiding, so the slotted content needs no cooperation: it is
+ * clipped wherever it happens to be in the consumer's tree.
+ */
+:host {
+  border: 0;
+  /* `clip` is the deprecated fallback the React library also carries; both are
+     kept so the two layers hide content identically in older Safari. */
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  display: block;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * Reveal on keyboard focus (skip-link pattern). `:focus-within` is what catches
+ * the common case of a focusable descendant, such as a skip link's anchor;
+ * `:focus` alone covers a consumer who made the host itself focusable with
+ * tabindex.
+ */
+:host([focusable]:focus),
+:host([focusable]:focus-within) {
+  clip: auto;
+  clip-path: none;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  /* Flow back into layout so the revealed content doesn't overlap siblings. */
+  position: static;
+  white-space: normal;
+  width: auto;
+}

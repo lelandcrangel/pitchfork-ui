@@ -1,0 +1,10 @@
+:host {
+  border-top: 1px solid var(--pf-card-border);
+  display: flex;
+  gap: var(--pf-card-footer-gap);
+  padding: var(--pf-card-section-padding, var(--space-4));
+}
+
+:host([hidden]) {
+  display: none;
+}

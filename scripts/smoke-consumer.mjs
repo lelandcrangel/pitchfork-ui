@@ -37,7 +37,21 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const root = isAbsolute(args.dir) ? args.dir : resolve(repoRoot, args.dir);
 
 /** Every element the app is expected to have upgraded. */
-const EXPECTED = ['pf-button', 'pf-badge', 'pf-tag', 'pf-avatar', 'pf-kbd', 'pf-input', 'pf-icon'];
+const EXPECTED = [
+  'pf-button',
+  'pf-badge',
+  'pf-tag',
+  'pf-avatar',
+  'pf-kbd',
+  'pf-input',
+  'pf-icon',
+  'pf-card',
+  'pf-card-header',
+  'pf-card-content',
+  'pf-card-footer',
+  'pf-content-divider',
+  'pf-visually-hidden',
+];
 
 const TYPES = {
   '.html': 'text/html',
@@ -124,6 +138,41 @@ try {
         result.unstyled.push(`pf-button primary background is "${background}"`);
       }
       result.buttonBackground = background;
+    }
+
+    /*
+     * Each new element brings new --pf-* aliases, and a missing alias is
+     * invisible: the element upgrades, the markup is right, and the colour
+     * silently resolves to nothing. These are the cheapest assertions that
+     * would catch it -- one per alias group added since pf-button.
+     */
+    const transparent = (value) =>
+      !value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent';
+
+    const card = document.querySelector('pf-card');
+    if (card) {
+      const style = getComputedStyle(card);
+      if (transparent(style.backgroundColor)) {
+        result.unstyled.push(`pf-card background is "${style.backgroundColor}"`);
+      }
+      if (transparent(style.borderTopColor)) {
+        result.unstyled.push(`pf-card border is "${style.borderTopColor}"`);
+      }
+      // --pf-card-radius has no theme alias; it falls back to a token.
+      if (parseFloat(style.borderTopLeftRadius) <= 0) {
+        result.unstyled.push(`pf-card radius is "${style.borderTopLeftRadius}"`);
+      }
+    }
+
+    const rule = document.querySelector('pf-content-divider')?.shadowRoot?.querySelector('.line');
+    if (rule) {
+      const background = getComputedStyle(rule).backgroundColor;
+      if (transparent(background)) {
+        result.unstyled.push(`pf-content-divider rule background is "${background}"`);
+      }
+      if (rule.getBoundingClientRect().width <= 0) {
+        result.unstyled.push('pf-content-divider rule has no width');
+      }
     }
 
     return result;

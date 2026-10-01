@@ -332,6 +332,25 @@ assertions. Stencil's mock DOM stubs `ElementInternals`, and jsdom 30 provides
 component throws on its first lifecycle call anywhere but a real browser.
 Everything else belongs in the fast `unit` project.
 
+What each project cannot do, measured rather than assumed:
+
+- **The mock DOM never fires `slotchange`.** Anything that reacts to slotted
+  content changing has to be browser-tested. Read the light DOM in
+  `componentWillLoad` as well, so first paint is right without waiting for the
+  event — that part the `unit` project can cover. `pf-content-divider` is the
+  worked example, and its two spec files split exactly along this line.
+- **Neither project applies `styleUrl` CSS.** A mounted element's shadow root
+  has zero adopted stylesheets and zero `<style>` tags, because the styles are
+  bundled by the output targets and neither test project runs them. So no test
+  here can assert a computed colour or `display`; assert the class names and
+  reflected attributes the stylesheet selects on instead. Computed styles are
+  the consumer apps' job — `scripts/smoke-consumer.mjs` asserts them against a
+  real build, which is where a missing `--pf-*` alias actually shows up.
+
+**Stencil's queue is `async`**, so a re-render provoked by an event lands
+several frames after the mutation. A single `requestAnimationFrame` is reliably
+too early. Poll to a deadline rather than picking a sleep.
+
 Set `PW_CHROMIUM_PATH` if the environment already has a Chromium that
 Playwright's pinned build does not match.
 
