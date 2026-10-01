@@ -44,7 +44,15 @@ function resolves(name) {
   return custom.has(normalized) || fontAwesome.has(normalized);
 }
 
-const SEARCH = ['packages/react/src', 'apps/docs/src', 'apps/demo/src', 'apps/theme-builder/src'];
+const SEARCH = [
+  'packages/react/src',
+  'packages/elements/src',
+  'apps/docs/src',
+  'apps/demo/src',
+  'apps/theme-builder/src',
+  'apps/consumer-react/src',
+  'apps/consumer-angular/src',
+];
 
 /**
  * Only props that are unambiguously an icon name. A bare `name=` is the `name`
@@ -55,6 +63,12 @@ const PATTERNS = [
   /iconName=["']([^"'{}]+)["']/g,
   /iconName:\s*["']([^"']+)["']/g,
   /<Icon\b[^>]*?\bname=["']([^"'{}]+)["']/g,
+  // The elements layer and its generated wrappers: <pf-icon> in HTML and
+  // Angular templates, <PfIcon> in React. Same reasoning as above -- the tag
+  // has to be in the pattern, because a bare `name=` is the native attribute
+  // on every form control in the repo.
+  /<pf-icon\b[^>]*?\bname=["']([^"'{}]+)["']/g,
+  /<PfIcon\b[^>]*?\bname=["']([^"'{}]+)["']/g,
 ];
 
 /**

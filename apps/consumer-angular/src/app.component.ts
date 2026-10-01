@@ -12,7 +12,12 @@ import {
   PfIcon,
   PfInput,
   PfKbd,
+  PfLoadingDots,
+  PfLoadingSkeleton,
+  PfLoadingSpinner,
+  PfScrollArea,
   PfTag,
+  PfUtilityButton,
   PfVisuallyHidden,
   TextValueAccessor,
 } from '@pitchfork-ui/elements-angular';
@@ -38,7 +43,12 @@ import {
     PfIcon,
     PfInput,
     PfKbd,
+    PfLoadingDots,
+    PfLoadingSkeleton,
+    PfLoadingSpinner,
+    PfScrollArea,
     PfTag,
+    PfUtilityButton,
     PfVisuallyHidden,
     TextValueAccessor,
   ],
@@ -112,6 +122,40 @@ import {
       <pf-card>
         <pf-card-content>A card with content alone — no header, no footer.</pf-card-content>
       </pf-card>
+
+      <div class="row">
+        <pf-loading-spinner></pf-loading-spinner>
+        <pf-loading-spinner [size]="40" label="Fetching"></pf-loading-spinner>
+        <pf-loading-dots size="sm"></pf-loading-dots>
+        <pf-loading-dots></pf-loading-dots>
+        <pf-loading-dots size="lg"></pf-loading-dots>
+      </div>
+
+      <div class="row">
+        <pf-loading-skeleton [width]="160" [height]="12"></pf-loading-skeleton>
+        <pf-loading-skeleton width="40%" [rounded]="true"></pf-loading-skeleton>
+      </div>
+
+      <div class="row">
+        <!-- Icon-only, label-only and both: the three slot combinations. -->
+        <pf-utility-button label="Search">
+          <pf-icon slot="icon" name="magnifying-glass"></pf-icon>
+        </pf-utility-button>
+        <pf-utility-button variant="brand">Archive</pf-utility-button>
+        <pf-utility-button variant="destructive" size="sm">
+          <pf-icon slot="icon" name="circle-xmark"></pf-icon>
+          Delete
+        </pf-utility-button>
+      </div>
+
+      <pf-scroll-area style="height: 80px; max-width: 280px">
+        <p>
+          A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
+          it holds no focusable child.
+        </p>
+        <p>Its scrollbar reserves a gutter rather than overlaying this text.</p>
+        <p>Third paragraph, to make sure there is something to scroll to.</p>
+      </pf-scroll-area>
     </main>
   `,
 })

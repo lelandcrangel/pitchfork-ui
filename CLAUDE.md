@@ -299,7 +299,13 @@ Things that differ from the React library, learned by porting the first two:
 - **`@keyframes` do not cross a shadow boundary.** The React library declares
   `pf-spin` once in `LoadingIndicators.css` and everything picks it up from the
   global sheet. Each element needs its own copy. The same goes for anything
-  else that relies on CSS being global.
+  else that relies on CSS being global — including `.pf-sr-only`, which the
+  loading indicators each redeclare locally.
+  To check a copy is really there, use `element.getAnimations().length`:
+  `getComputedStyle(el).animationName` reports whatever `animation` declared
+  whether or not the keyframes resolve, so it cannot tell a working animation
+  from a missing one. `scripts/smoke-consumer.mjs` asserts this for all three
+  loading elements.
 - **No `useId`.** IDs are scoped to the shadow root, so use literal ones
   (`id="input"`).
 - **Variants select on reflected attributes**, not BEM classes:

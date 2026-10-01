@@ -1,0 +1,100 @@
+:host {
+  display: inline-flex;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+[part='button'] {
+  align-items: center;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  gap: var(--space-1);
+  justify-content: center;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease;
+  width: 100%;
+}
+
+[part='button']:focus-visible {
+  box-shadow: var(--pf-utilitybutton-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+[part='button']:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+:host([size='sm']) [part='button'] {
+  min-height: 32px;
+  padding: 0 var(--space-2);
+}
+
+:host([size='md']) [part='button'] {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+}
+
+:host([variant='neutral']) [part='button'] {
+  background: var(--pf-utility-btn-neutral-bg);
+  border-color: var(--pf-utility-btn-neutral-border);
+  color: var(--pf-utility-btn-neutral-text);
+}
+
+:host([variant='neutral']) [part='button']:hover:not(:disabled) {
+  background: var(--pf-utility-btn-neutral-bg-hover);
+  border-color: var(--pf-utility-btn-neutral-border-hover);
+}
+
+:host([variant='brand']) [part='button'] {
+  background: var(--pf-utility-btn-brand-bg);
+  border-color: var(--pf-utility-btn-brand-border);
+  color: var(--pf-utility-btn-brand-text);
+}
+
+:host([variant='brand']) [part='button']:hover:not(:disabled) {
+  background: var(--pf-utility-btn-brand-bg-hover);
+}
+
+:host([variant='destructive']) [part='button'] {
+  background: var(--pf-utility-btn-destructive-bg);
+  border-color: var(--pf-utility-btn-destructive-border);
+  color: var(--pf-utility-btn-destructive-text);
+}
+
+:host([variant='destructive']) [part='button']:hover:not(:disabled) {
+  background: var(--pf-utility-btn-destructive-bg-hover);
+}
+
+/*
+ * Sizes the icon the consumer slots in. The React library reaches it with a
+ * descendant selector (`.pf-utility-button__icon svg`); across a shadow
+ * boundary only `::slotted` can, and it reaches the assigned node itself
+ * rather than inside it -- so a slotted `pf-icon` is sized here and sizes its
+ * own svg.
+ */
+slot[name='icon']::slotted(*) {
+  display: block;
+  flex: 0 0 auto;
+  height: 16px;
+  width: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [part='button'] {
+    transition: none;
+  }
+}

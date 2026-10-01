@@ -11,14 +11,20 @@ import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-but
 import { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
+import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
+import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
+import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 export { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
+export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
+export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
+export { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export namespace Components {
     interface PfAvatar {
         /**
@@ -212,6 +218,76 @@ export namespace Components {
          */
         "size": PfKbdSize;
     }
+    /**
+     * Three pulsing dots, for an indeterminate wait in a tight space.
+     */
+    interface PfLoadingDots {
+        /**
+          * Accessible name, announced by the live region.
+          * @default 'Loading'
+         */
+        "label": string;
+        /**
+          * Dot size. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size": PfLoadingDotsSize;
+    }
+    /**
+     * A shimmering placeholder for content that has not arrived.
+     */
+    interface PfLoadingSkeleton {
+        /**
+          * Height, as a CSS length. A bare number is read as pixels.
+          * @default 16
+         */
+        "height": number | string;
+        /**
+          * Accessible name, announced by the live region.
+          * @default 'Loading content'
+         */
+        "label": string;
+        /**
+          * Use a pill radius instead of the default. Reflected for the stylesheet.
+          * @default false
+         */
+        "rounded": boolean;
+        /**
+          * Width, as a CSS length. A bare number is read as pixels.
+          * @default '100%'
+         */
+        "width": number | string;
+    }
+    /**
+     * An indeterminate spinner.
+     */
+    interface PfLoadingSpinner {
+        /**
+          * Accessible name, announced by the live region.
+          * @default 'Loading'
+         */
+        "label": string;
+        /**
+          * Diameter in pixels.
+          * @default 24
+         */
+        "size": number;
+    }
+    /**
+     * A scrollable region with a styled, non-overlaying scrollbar.
+     */
+    interface PfScrollArea {
+        /**
+          * Make the region keyboard-focusable so it can be scrolled with the arrow keys (WCAG 2.1.1). Set false when a focusable child already provides keyboard access.
+          * @default true
+         */
+        "focusable": boolean;
+        /**
+          * Which axis scrolls. Reflected so the stylesheet can select on it.
+          * @default 'vertical'
+         */
+        "orientation": PfScrollAreaOrientation;
+    }
     interface PfTag {
         /**
           * Accessible name for the remove button.
@@ -227,6 +303,40 @@ export namespace Components {
           * @default 'neutral'
          */
         "variant": PfTagVariant;
+    }
+    /**
+     * A compact button for toolbars and table rows, where the affordance is often
+     * an icon alone.
+     */
+    interface PfUtilityButton {
+        /**
+          * Disable the button. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Accessible name. Required for an icon-only button, and also used as the native tooltip unless `tooltip` says otherwise.
+         */
+        "label"?: string;
+        /**
+          * Control size. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size": PfUtilityButtonSize;
+        /**
+          * Native tooltip text. Defaults to `label`.
+         */
+        "tooltip"?: string;
+        /**
+          * Mirrors the native attribute.
+          * @default 'button'
+         */
+        "type": 'button' | 'submit' | 'reset';
+        /**
+          * Colour treatment. Reflected so the stylesheet can select on it.
+          * @default 'neutral'
+         */
+        "variant": PfUtilityButtonVariant;
     }
     /**
      * Hides content visually while keeping it available to screen readers and
@@ -362,6 +472,42 @@ declare global {
         prototype: HTMLPfKbdElement;
         new (): HTMLPfKbdElement;
     };
+    /**
+     * Three pulsing dots, for an indeterminate wait in a tight space.
+     */
+    interface HTMLPfLoadingDotsElement extends Components.PfLoadingDots, HTMLStencilElement {
+    }
+    var HTMLPfLoadingDotsElement: {
+        prototype: HTMLPfLoadingDotsElement;
+        new (): HTMLPfLoadingDotsElement;
+    };
+    /**
+     * A shimmering placeholder for content that has not arrived.
+     */
+    interface HTMLPfLoadingSkeletonElement extends Components.PfLoadingSkeleton, HTMLStencilElement {
+    }
+    var HTMLPfLoadingSkeletonElement: {
+        prototype: HTMLPfLoadingSkeletonElement;
+        new (): HTMLPfLoadingSkeletonElement;
+    };
+    /**
+     * An indeterminate spinner.
+     */
+    interface HTMLPfLoadingSpinnerElement extends Components.PfLoadingSpinner, HTMLStencilElement {
+    }
+    var HTMLPfLoadingSpinnerElement: {
+        prototype: HTMLPfLoadingSpinnerElement;
+        new (): HTMLPfLoadingSpinnerElement;
+    };
+    /**
+     * A scrollable region with a styled, non-overlaying scrollbar.
+     */
+    interface HTMLPfScrollAreaElement extends Components.PfScrollArea, HTMLStencilElement {
+    }
+    var HTMLPfScrollAreaElement: {
+        prototype: HTMLPfScrollAreaElement;
+        new (): HTMLPfScrollAreaElement;
+    };
     interface HTMLPfTagElementEventMap {
         "pfDismiss": void;
     }
@@ -378,6 +524,16 @@ declare global {
     var HTMLPfTagElement: {
         prototype: HTMLPfTagElement;
         new (): HTMLPfTagElement;
+    };
+    /**
+     * A compact button for toolbars and table rows, where the affordance is often
+     * an icon alone.
+     */
+    interface HTMLPfUtilityButtonElement extends Components.PfUtilityButton, HTMLStencilElement {
+    }
+    var HTMLPfUtilityButtonElement: {
+        prototype: HTMLPfUtilityButtonElement;
+        new (): HTMLPfUtilityButtonElement;
     };
     /**
      * Hides content visually while keeping it available to screen readers and
@@ -406,7 +562,12 @@ declare global {
         "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
         "pf-kbd": HTMLPfKbdElement;
+        "pf-loading-dots": HTMLPfLoadingDotsElement;
+        "pf-loading-skeleton": HTMLPfLoadingSkeletonElement;
+        "pf-loading-spinner": HTMLPfLoadingSpinnerElement;
+        "pf-scroll-area": HTMLPfScrollAreaElement;
         "pf-tag": HTMLPfTagElement;
+        "pf-utility-button": HTMLPfUtilityButtonElement;
         "pf-visually-hidden": HTMLPfVisuallyHiddenElement;
     }
 }
@@ -605,6 +766,76 @@ declare namespace LocalJSX {
          */
         "size"?: PfKbdSize;
     }
+    /**
+     * Three pulsing dots, for an indeterminate wait in a tight space.
+     */
+    interface PfLoadingDots {
+        /**
+          * Accessible name, announced by the live region.
+          * @default 'Loading'
+         */
+        "label"?: string;
+        /**
+          * Dot size. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size"?: PfLoadingDotsSize;
+    }
+    /**
+     * A shimmering placeholder for content that has not arrived.
+     */
+    interface PfLoadingSkeleton {
+        /**
+          * Height, as a CSS length. A bare number is read as pixels.
+          * @default 16
+         */
+        "height"?: number | string;
+        /**
+          * Accessible name, announced by the live region.
+          * @default 'Loading content'
+         */
+        "label"?: string;
+        /**
+          * Use a pill radius instead of the default. Reflected for the stylesheet.
+          * @default false
+         */
+        "rounded"?: boolean;
+        /**
+          * Width, as a CSS length. A bare number is read as pixels.
+          * @default '100%'
+         */
+        "width"?: number | string;
+    }
+    /**
+     * An indeterminate spinner.
+     */
+    interface PfLoadingSpinner {
+        /**
+          * Accessible name, announced by the live region.
+          * @default 'Loading'
+         */
+        "label"?: string;
+        /**
+          * Diameter in pixels.
+          * @default 24
+         */
+        "size"?: number;
+    }
+    /**
+     * A scrollable region with a styled, non-overlaying scrollbar.
+     */
+    interface PfScrollArea {
+        /**
+          * Make the region keyboard-focusable so it can be scrolled with the arrow keys (WCAG 2.1.1). Set false when a focusable child already provides keyboard access.
+          * @default true
+         */
+        "focusable"?: boolean;
+        /**
+          * Which axis scrolls. Reflected so the stylesheet can select on it.
+          * @default 'vertical'
+         */
+        "orientation"?: PfScrollAreaOrientation;
+    }
     interface PfTag {
         /**
           * Accessible name for the remove button.
@@ -624,6 +855,40 @@ declare namespace LocalJSX {
           * @default 'neutral'
          */
         "variant"?: PfTagVariant;
+    }
+    /**
+     * A compact button for toolbars and table rows, where the affordance is often
+     * an icon alone.
+     */
+    interface PfUtilityButton {
+        /**
+          * Disable the button. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Accessible name. Required for an icon-only button, and also used as the native tooltip unless `tooltip` says otherwise.
+         */
+        "label"?: string;
+        /**
+          * Control size. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size"?: PfUtilityButtonSize;
+        /**
+          * Native tooltip text. Defaults to `label`.
+         */
+        "tooltip"?: string;
+        /**
+          * Mirrors the native attribute.
+          * @default 'button'
+         */
+        "type"?: 'button' | 'submit' | 'reset';
+        /**
+          * Colour treatment. Reflected so the stylesheet can select on it.
+          * @default 'neutral'
+         */
+        "variant"?: PfUtilityButtonVariant;
     }
     /**
      * Hides content visually while keeping it available to screen readers and
@@ -685,10 +950,36 @@ declare namespace LocalJSX {
         "size": PfKbdSize;
         "separator": string;
     }
+    interface PfLoadingDotsAttributes {
+        "size": PfLoadingDotsSize;
+        "label": string;
+    }
+    interface PfLoadingSkeletonAttributes {
+        "width": string;
+        "height": string;
+        "rounded": boolean;
+        "label": string;
+    }
+    interface PfLoadingSpinnerAttributes {
+        "size": number;
+        "label": string;
+    }
+    interface PfScrollAreaAttributes {
+        "orientation": PfScrollAreaOrientation;
+        "focusable": boolean;
+    }
     interface PfTagAttributes {
         "variant": PfTagVariant;
         "dismissible": boolean;
         "dismissLabel": string;
+    }
+    interface PfUtilityButtonAttributes {
+        "variant": PfUtilityButtonVariant;
+        "size": PfUtilityButtonSize;
+        "disabled": boolean;
+        "type": 'button' | 'submit' | 'reset';
+        "label": string;
+        "tooltip": string;
     }
     interface PfVisuallyHiddenAttributes {
         "focusable": boolean;
@@ -706,7 +997,12 @@ declare namespace LocalJSX {
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
         "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
+        "pf-loading-dots": Omit<PfLoadingDots, keyof PfLoadingDotsAttributes> & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes]?: PfLoadingDots[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `attr:${K}`]?: PfLoadingDotsAttributes[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `prop:${K}`]?: PfLoadingDots[K] };
+        "pf-loading-skeleton": Omit<PfLoadingSkeleton, keyof PfLoadingSkeletonAttributes> & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes]?: PfLoadingSkeleton[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `attr:${K}`]?: PfLoadingSkeletonAttributes[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `prop:${K}`]?: PfLoadingSkeleton[K] };
+        "pf-loading-spinner": Omit<PfLoadingSpinner, keyof PfLoadingSpinnerAttributes> & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes]?: PfLoadingSpinner[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `attr:${K}`]?: PfLoadingSpinnerAttributes[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `prop:${K}`]?: PfLoadingSpinner[K] };
+        "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
+        "pf-utility-button": Omit<PfUtilityButton, keyof PfUtilityButtonAttributes> & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes]?: PfUtilityButton[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `attr:${K}`]?: PfUtilityButtonAttributes[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `prop:${K}`]?: PfUtilityButton[K] };
         "pf-visually-hidden": Omit<PfVisuallyHidden, keyof PfVisuallyHiddenAttributes> & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes]?: PfVisuallyHidden[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `attr:${K}`]?: PfVisuallyHiddenAttributes[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `prop:${K}`]?: PfVisuallyHidden[K] };
     }
 }
@@ -755,7 +1051,28 @@ declare module "@stencil/core" {
              */
             "pf-input": LocalJSX.IntrinsicElements["pf-input"] & JSXBase.HTMLAttributes<HTMLPfInputElement>;
             "pf-kbd": LocalJSX.IntrinsicElements["pf-kbd"] & JSXBase.HTMLAttributes<HTMLPfKbdElement>;
+            /**
+             * Three pulsing dots, for an indeterminate wait in a tight space.
+             */
+            "pf-loading-dots": LocalJSX.IntrinsicElements["pf-loading-dots"] & JSXBase.HTMLAttributes<HTMLPfLoadingDotsElement>;
+            /**
+             * A shimmering placeholder for content that has not arrived.
+             */
+            "pf-loading-skeleton": LocalJSX.IntrinsicElements["pf-loading-skeleton"] & JSXBase.HTMLAttributes<HTMLPfLoadingSkeletonElement>;
+            /**
+             * An indeterminate spinner.
+             */
+            "pf-loading-spinner": LocalJSX.IntrinsicElements["pf-loading-spinner"] & JSXBase.HTMLAttributes<HTMLPfLoadingSpinnerElement>;
+            /**
+             * A scrollable region with a styled, non-overlaying scrollbar.
+             */
+            "pf-scroll-area": LocalJSX.IntrinsicElements["pf-scroll-area"] & JSXBase.HTMLAttributes<HTMLPfScrollAreaElement>;
             "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
+            /**
+             * A compact button for toolbars and table rows, where the affordance is often
+             * an icon alone.
+             */
+            "pf-utility-button": LocalJSX.IntrinsicElements["pf-utility-button"] & JSXBase.HTMLAttributes<HTMLPfUtilityButtonElement>;
             /**
              * Hides content visually while keeping it available to screen readers and
              * other assistive technology. Use for labels, instructions and status text

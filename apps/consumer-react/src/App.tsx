@@ -11,7 +11,12 @@ import {
   PfIcon,
   PfInput,
   PfKbd,
+  PfLoadingDots,
+  PfLoadingSkeleton,
+  PfLoadingSpinner,
+  PfScrollArea,
   PfTag,
+  PfUtilityButton,
   PfVisuallyHidden,
 } from '@pitchfork-ui/elements-react';
 
@@ -104,6 +109,40 @@ export function App() {
       <PfCard>
         <PfCardContent>A card with content alone — no header, no footer.</PfCardContent>
       </PfCard>
+
+      <div className="row">
+        <PfLoadingSpinner />
+        <PfLoadingSpinner size={40} label="Fetching" />
+        <PfLoadingDots size="sm" />
+        <PfLoadingDots />
+        <PfLoadingDots size="lg" />
+      </div>
+
+      <div className="row">
+        <PfLoadingSkeleton width={160} height={12} />
+        <PfLoadingSkeleton width="40%" rounded />
+      </div>
+
+      <div className="row">
+        {/* Icon-only, label-only and both: the three slot combinations. */}
+        <PfUtilityButton label="Search">
+          <PfIcon slot="icon" name="magnifying-glass" />
+        </PfUtilityButton>
+        <PfUtilityButton variant="brand">Archive</PfUtilityButton>
+        <PfUtilityButton variant="destructive" size="sm">
+          <PfIcon slot="icon" name="circle-xmark" />
+          Delete
+        </PfUtilityButton>
+      </div>
+
+      <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
+        <p>
+          A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
+          it holds no focusable child.
+        </p>
+        <p>Its scrollbar reserves a gutter rather than overlaying this text.</p>
+        <p>Third paragraph, to make sure there is something to scroll to.</p>
+      </PfScrollArea>
     </main>
   );
 }

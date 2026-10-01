@@ -51,6 +51,11 @@ const EXPECTED = [
   'pf-card-footer',
   'pf-content-divider',
   'pf-visually-hidden',
+  'pf-loading-spinner',
+  'pf-loading-dots',
+  'pf-loading-skeleton',
+  'pf-utility-button',
+  'pf-scroll-area',
 ];
 
 const TYPES = {
@@ -161,6 +166,64 @@ try {
       // --pf-card-radius has no theme alias; it falls back to a token.
       if (parseFloat(style.borderTopLeftRadius) <= 0) {
         result.unstyled.push(`pf-card radius is "${style.borderTopLeftRadius}"`);
+      }
+    }
+
+    // A new alias group: --pf-utility-btn-*. The button is in the shadow root.
+    const utility = document
+      .querySelector('pf-utility-button[variant="brand"]')
+      ?.shadowRoot?.querySelector('button');
+    if (utility) {
+      const background = getComputedStyle(utility).backgroundColor;
+      if (transparent(background)) {
+        result.unstyled.push(`pf-utility-button brand background is "${background}"`);
+      }
+    }
+
+    /*
+     * @keyframes do not cross a shadow boundary, so each of these elements
+     * carries its own copy. A copy that went missing would leave the element
+     * static and otherwise perfect -- exactly the kind of silence this script
+     * exists to break.
+     *
+     * getAnimations(), not getComputedStyle().animationName: the computed
+     * style reports whatever `animation` declared, resolved keyframes or not,
+     * so it cannot tell the two apart. getAnimations() returns nothing when
+     * the name matches no @keyframes in the element's tree -- measured by
+     * deleting the rule and watching this fire.
+     */
+    const animated = [
+      ['pf-loading-spinner', null],
+      ['pf-loading-skeleton', null],
+      ['pf-loading-dots', '.dot'],
+    ];
+    for (const [tag, inner] of animated) {
+      const host = document.querySelector(tag);
+      if (!host) continue;
+      const target = inner ? host.shadowRoot?.querySelector(inner) : host;
+      if (!target) {
+        result.unstyled.push(`${tag} is missing ${inner}`);
+        continue;
+      }
+      if (target.getAnimations().length === 0) {
+        const declared = getComputedStyle(target).animationName;
+        result.unstyled.push(
+          `${tag} declares animation "${declared}" but runs none — its @keyframes copy is missing`,
+        );
+      }
+    }
+
+    // The host is the scroll container, and the host is what takes focus.
+    const scroller = document.querySelector('pf-scroll-area');
+    if (scroller) {
+      if (getComputedStyle(scroller).overflowY !== 'auto') {
+        result.unstyled.push('pf-scroll-area does not scroll vertically');
+      }
+      if (scroller.getAttribute('tabindex') !== '0') {
+        result.unstyled.push('pf-scroll-area is not keyboard-focusable');
+      }
+      if (scroller.scrollHeight <= scroller.clientHeight) {
+        result.unstyled.push('pf-scroll-area has nothing to scroll — the fixture is wrong');
       }
     }
 
