@@ -56,7 +56,9 @@
     "@stencil/postcss": "^2.1.0",
     "@stencil/react-output-target": "^1.6.2",
     "@stencil/vitest": "^1.15.1",
-    "postcss-custom-media": "^12.0.0"
+    "@vitest/browser-playwright": "^4.1.11",
+    "postcss-custom-media": "^12.0.0",
+    "vitest": "^4.1.11"
   },
   "publishConfig": {
     "access": "public"

@@ -51,8 +51,8 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@vitejs/plugin-react": "latest",
-    "@vitest/browser-playwright": "latest",
-    "@vitest/coverage-v8": "latest",
+    "@vitest/browser-playwright": "^4.1.11",
+    "@vitest/coverage-v8": "^4.1.11",
     "eslint": "latest",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "latest",
@@ -68,7 +68,7 @@
     "typescript-eslint": "latest",
     "vite": "latest",
     "vite-plugin-dts": "latest",
-    "vitest": "latest"
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "prism-react-renderer": "^2.4.1"
@@ -83,7 +83,11 @@
   "overrides": {
     "eslint-plugin-jsx-a11y": {
       "eslint": "$eslint"
-    }
+    },
+    "vitest": "^4.1.11",
+    "@vitest/browser": "^4.1.11",
+    "@vitest/browser-playwright": "^4.1.11",
+    "@vitest/coverage-v8": "^4.1.11"
   },
   "optionalDependencies": {
     "@oxc-parser/binding-linux-x64-gnu": "0.150.0",
