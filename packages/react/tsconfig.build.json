@@ -1,0 +1,13 @@
+{
+  // The main tsconfig maps @pitchfork-ui/core to core's SOURCE so that
+  // `tsc -b` and vitest work without building core first. That mapping is
+  // wrong for the declaration build: it pulls core's source files into the
+  // program, and they sit outside this package's rootDir. Clearing `paths`
+  // makes the build resolve core the way a consumer does -- through
+  // node_modules to its published declarations -- so the emitted types
+  // import @pitchfork-ui/core by name instead of inlining a copy.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {}
+  }
+}

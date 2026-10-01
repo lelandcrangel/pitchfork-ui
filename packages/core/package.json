@@ -35,7 +35,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && node ../../scripts/fix-dts-extensions.mjs dist",
     "test": "vitest run",
     "test:watch": "vitest"
   },

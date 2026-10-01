@@ -11,9 +11,17 @@
  * Run against dist, after a build. A regression shows up here as
  * "has no exported member".
  */
+import { Keys, computeAnchoredPosition, type AnchoredPositionStyle } from '@pitchfork-ui/core';
 import { Badge, Button, Icon, type BadgeProps } from '@pitchfork-ui/react';
 
 export const badge: BadgeProps['variant'] = 'success';
+
+export const escape: string = Keys.Escape;
+export const anchored: AnchoredPositionStyle = computeAnchoredPosition(
+  { top: 0, right: 10, bottom: 10, left: 0, width: 10, height: 10 },
+  undefined,
+  { width: 100, height: 100 },
+);
 
 export const probe = (
   <>
