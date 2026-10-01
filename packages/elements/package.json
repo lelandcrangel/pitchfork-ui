@@ -51,6 +51,7 @@
     "@csstools/postcss-global-data": "^4.0.0",
     "@stencil/core": "^4.45.1",
     "@stencil/postcss": "^2.1.0",
+    "@stencil/react-output-target": "^1.6.2",
     "@stencil/vitest": "^1.15.1",
     "postcss-custom-media": "^12.0.0"
   },
@@ -69,6 +70,12 @@
       "import": "./loader/index.js",
       "require": "./loader/index.cjs.js",
       "default": "./loader/index.js"
-    }
+    },
+    "./dist/components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js",
+      "default": "./dist/components/index.js"
+    },
+    "./dist/components/*": "./dist/components/*"
   }
 }

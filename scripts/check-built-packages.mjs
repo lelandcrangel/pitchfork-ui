@@ -25,6 +25,7 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PACKAGES = [
   'packages/core',
   'packages/elements',
+  'packages/elements-react',
   'packages/react',
   'packages/tokens',
   'packages/mcp',

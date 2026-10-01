@@ -1,4 +1,5 @@
 import globalData from '@csstools/postcss-global-data';
+import { reactOutputTarget } from '@stencil/react-output-target';
 import { postcss } from '@stencil/postcss';
 import { Config } from '@stencil/core';
 import customMedia from 'postcss-custom-media';
@@ -18,11 +19,25 @@ export const config: Config = {
   taskQueue: 'async',
   sourceMap: true,
   outputTargets: [
-    { type: 'dist-custom-elements', customElementsExportBehavior: 'auto-define-custom-elements' },
+    {
+      type: 'dist-custom-elements',
+      customElementsExportBehavior: 'auto-define-custom-elements',
+      // The React output target requires the runtime to be bundled into each
+      // component rather than imported from @stencil/core at runtime.
+      externalRuntime: false,
+    },
     // esmLoaderPath puts the loader at the package root, so consumers can
     // import '@pitchfork-ui/elements/loader' as the exports map promises.
     { type: 'dist', esmLoaderPath: '../loader' },
     { type: 'docs-json', file: 'dist/docs.json' },
+    // Typed React components generated from these elements. The hand-written
+    // @pitchfork-ui/react owns that name, so the generated bindings are
+    // elements-react -- and every framework wrapper is elements-<framework>,
+    // rather than React being special-cased because of a name collision.
+    reactOutputTarget({
+      outDir: '../elements-react/src/components',
+      esModules: true,
+    }),
   ],
   plugins: [
     // The same chain packages/react runs through Vite, so the 32

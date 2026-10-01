@@ -1,0 +1,58 @@
+{
+  "name": "@pitchfork-ui/elements-react",
+  "version": "0.1.0",
+  "description": "React bindings for @pitchfork-ui/elements \u2014 typed React components generated from the Pitchfork UI custom elements.",
+  "license": "MIT",
+  "author": "Leland Rangel",
+  "homepage": "https://lelandrangel.com/pitchfork-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lelandcrangel/pitchfork-ui.git",
+    "directory": "packages/elements-react"
+  },
+  "bugs": {
+    "url": "https://github.com/lelandcrangel/pitchfork-ui/issues"
+  },
+  "keywords": [
+    "react",
+    "web-components",
+    "custom-elements",
+    "design-system",
+    "pitchfork-ui",
+    "stencil"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vite build && node ../../scripts/fix-dts-extensions.mjs dist"
+  },
+  "dependencies": {
+    "@pitchfork-ui/elements": "^0.1.0",
+    "@stencil/react-output-target": "^1.6.2"
+  },
+  "peerDependencies": {
+    "react": ">=18.2.0",
+    "react-dom": ">=18.2.0"
+  },
+  "devDependencies": {
+    "vite-plugin-dts": "^5.0.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  }
+}
