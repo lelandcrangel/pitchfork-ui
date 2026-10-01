@@ -5,11 +5,48 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
+import { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 import { PfInputType } from "./components/pf-input/pf-input";
+import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
+import { PfTagVariant } from "./components/pf-tag/pf-tag";
+export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
+export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 export { PfInputType } from "./components/pf-input/pf-input";
+export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
+export { PfTagVariant } from "./components/pf-tag/pf-tag";
 export namespace Components {
+    interface PfAvatar {
+        /**
+          * Alternative text for the photo.
+         */
+        "alt"?: string;
+        /**
+          * The person's name: used for the accessible name and the initials.
+         */
+        "name"?: string;
+        /**
+          * @default 'md'
+         */
+        "size": PfAvatarSize;
+        /**
+          * Photo URL. Without one the avatar shows initials.
+         */
+        "src"?: string;
+        /**
+          * Presence indicator. Decorative — convey it in text as well.
+         */
+        "status"?: PfAvatarStatus;
+    }
+    interface PfBadge {
+        /**
+          * Colour treatment. Reflected so the stylesheet can select on it.
+          * @default 'neutral'
+         */
+        "variant": PfBadgeVariant;
+    }
     interface PfButton {
         /**
           * Disable the button.
@@ -115,12 +152,59 @@ export namespace Components {
          */
         "value": string;
     }
+    interface PfKbd {
+        /**
+          * A key combination rendered as one cap, e.g. `["⌘", "K"]`.
+         */
+        "keys"?: string[];
+        /**
+          * Separator between keys in a combination. Defaults to `+`.
+          * @default '+'
+         */
+        "separator": string;
+        /**
+          * @default 'md'
+         */
+        "size": PfKbdSize;
+    }
+    interface PfTag {
+        /**
+          * Accessible name for the remove button.
+          * @default 'Remove tag'
+         */
+        "dismissLabel": string;
+        /**
+          * Show a button that removes the tag.
+          * @default false
+         */
+        "dismissible": boolean;
+        /**
+          * @default 'neutral'
+         */
+        "variant": PfTagVariant;
+    }
 }
 export interface PfInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfInputElement;
 }
+export interface PfTagCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTagElement;
+}
 declare global {
+    interface HTMLPfAvatarElement extends Components.PfAvatar, HTMLStencilElement {
+    }
+    var HTMLPfAvatarElement: {
+        prototype: HTMLPfAvatarElement;
+        new (): HTMLPfAvatarElement;
+    };
+    interface HTMLPfBadgeElement extends Components.PfBadge, HTMLStencilElement {
+    }
+    var HTMLPfBadgeElement: {
+        prototype: HTMLPfBadgeElement;
+        new (): HTMLPfBadgeElement;
+    };
     interface HTMLPfButtonElement extends Components.PfButton, HTMLStencilElement {
     }
     var HTMLPfButtonElement: {
@@ -158,15 +242,71 @@ declare global {
         prototype: HTMLPfInputElement;
         new (): HTMLPfInputElement;
     };
+    interface HTMLPfKbdElement extends Components.PfKbd, HTMLStencilElement {
+    }
+    var HTMLPfKbdElement: {
+        prototype: HTMLPfKbdElement;
+        new (): HTMLPfKbdElement;
+    };
+    interface HTMLPfTagElementEventMap {
+        "pfDismiss": void;
+    }
+    interface HTMLPfTagElement extends Components.PfTag, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTagElementEventMap>(type: K, listener: (this: HTMLPfTagElement, ev: PfTagCustomEvent<HTMLPfTagElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTagElementEventMap>(type: K, listener: (this: HTMLPfTagElement, ev: PfTagCustomEvent<HTMLPfTagElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTagElement: {
+        prototype: HTMLPfTagElement;
+        new (): HTMLPfTagElement;
+    };
     interface HTMLElementTagNameMap {
+        "pf-avatar": HTMLPfAvatarElement;
+        "pf-badge": HTMLPfBadgeElement;
         "pf-button": HTMLPfButtonElement;
         "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
+        "pf-kbd": HTMLPfKbdElement;
+        "pf-tag": HTMLPfTagElement;
     }
 }
 declare namespace LocalJSX {
     type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K]?: never };
 
+    interface PfAvatar {
+        /**
+          * Alternative text for the photo.
+         */
+        "alt"?: string;
+        /**
+          * The person's name: used for the accessible name and the initials.
+         */
+        "name"?: string;
+        /**
+          * @default 'md'
+         */
+        "size"?: PfAvatarSize;
+        /**
+          * Photo URL. Without one the avatar shows initials.
+         */
+        "src"?: string;
+        /**
+          * Presence indicator. Decorative — convey it in text as well.
+         */
+        "status"?: PfAvatarStatus;
+    }
+    interface PfBadge {
+        /**
+          * Colour treatment. Reflected so the stylesheet can select on it.
+          * @default 'neutral'
+         */
+        "variant"?: PfBadgeVariant;
+    }
     interface PfButton {
         /**
           * Disable the button.
@@ -272,7 +412,52 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    interface PfKbd {
+        /**
+          * A key combination rendered as one cap, e.g. `["⌘", "K"]`.
+         */
+        "keys"?: string[];
+        /**
+          * Separator between keys in a combination. Defaults to `+`.
+          * @default '+'
+         */
+        "separator"?: string;
+        /**
+          * @default 'md'
+         */
+        "size"?: PfKbdSize;
+    }
+    interface PfTag {
+        /**
+          * Accessible name for the remove button.
+          * @default 'Remove tag'
+         */
+        "dismissLabel"?: string;
+        /**
+          * Show a button that removes the tag.
+          * @default false
+         */
+        "dismissible"?: boolean;
+        /**
+          * Fired when the remove button is pressed. The tag does not remove itself — whoever owns the list decides, exactly as the React `onDismiss` callback leaves it to the caller.
+         */
+        "onPfDismiss"?: (event: PfTagCustomEvent<void>) => void;
+        /**
+          * @default 'neutral'
+         */
+        "variant"?: PfTagVariant;
+    }
 
+    interface PfAvatarAttributes {
+        "src": string;
+        "alt": string;
+        "name": string;
+        "size": PfAvatarSize;
+        "status": PfAvatarStatus;
+    }
+    interface PfBadgeAttributes {
+        "variant": PfBadgeVariant;
+    }
     interface PfButtonAttributes {
         "variant": PfButtonVariant;
         "size": PfButtonSize;
@@ -298,17 +483,32 @@ declare namespace LocalJSX {
         "disabled": boolean;
         "readonly": boolean;
     }
+    interface PfKbdAttributes {
+        "size": PfKbdSize;
+        "separator": string;
+    }
+    interface PfTagAttributes {
+        "variant": PfTagVariant;
+        "dismissible": boolean;
+        "dismissLabel": string;
+    }
 
     interface IntrinsicElements {
+        "pf-avatar": Omit<PfAvatar, keyof PfAvatarAttributes> & { [K in keyof PfAvatar & keyof PfAvatarAttributes]?: PfAvatar[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `attr:${K}`]?: PfAvatarAttributes[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `prop:${K}`]?: PfAvatar[K] };
+        "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
+        "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
+        "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "pf-avatar": LocalJSX.IntrinsicElements["pf-avatar"] & JSXBase.HTMLAttributes<HTMLPfAvatarElement>;
+            "pf-badge": LocalJSX.IntrinsicElements["pf-badge"] & JSXBase.HTMLAttributes<HTMLPfBadgeElement>;
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
@@ -319,6 +519,8 @@ declare module "@stencil/core" {
              * `<input>` inside a shadow root does none of that.
              */
             "pf-input": LocalJSX.IntrinsicElements["pf-input"] & JSXBase.HTMLAttributes<HTMLPfInputElement>;
+            "pf-kbd": LocalJSX.IntrinsicElements["pf-kbd"] & JSXBase.HTMLAttributes<HTMLPfKbdElement>;
+            "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
         }
     }
 }

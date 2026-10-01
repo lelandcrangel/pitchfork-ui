@@ -7,3 +7,4 @@ export * from './keys';
 export * from './motion';
 export * from './navigation';
 export * from './state';
+export * from './text';

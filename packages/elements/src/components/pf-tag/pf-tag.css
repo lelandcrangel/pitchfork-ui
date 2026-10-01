@@ -1,0 +1,71 @@
+:host {
+  align-items: center;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  gap: var(--space-1);
+  min-height: 26px;
+  padding: 0 var(--space-2);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+:host([variant='neutral']) {
+  background: var(--pf-tag-neutral-bg);
+  color: var(--pf-tag-neutral-text);
+}
+
+:host([variant='brand']) {
+  background: var(--pf-tag-brand-bg);
+  color: var(--pf-tag-brand-text);
+}
+
+:host([variant='success']) {
+  background: var(--pf-tag-success-bg);
+  color: var(--pf-tag-success-text);
+}
+
+:host([variant='warning']) {
+  background: var(--pf-tag-warning-bg);
+  color: var(--pf-tag-warning-text);
+}
+
+:host([variant='danger']) {
+  background: var(--pf-tag-danger-bg);
+  color: var(--pf-tag-danger-text);
+}
+
+.dismiss {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-full);
+  color: currentColor;
+  cursor: pointer;
+  display: inline-flex;
+  height: 18px;
+  justify-content: center;
+  margin-inline-end: -2px;
+  padding: 0;
+  width: 18px;
+}
+
+.dismiss:hover {
+  background: var(--pf-tag-subtle-hover-overlay, var(--pf-subtle-hover-overlay));
+}
+
+.dismiss:focus-visible {
+  box-shadow: var(--pf-tag-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.dismiss pf-icon {
+  font-size: 12px;
+}

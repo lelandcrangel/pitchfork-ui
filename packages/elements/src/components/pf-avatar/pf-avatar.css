@@ -1,0 +1,101 @@
+:host {
+  --pf-avatar-status-size: 10px;
+  --pf-avatar-status-offset: -2px;
+
+  background: var(--pf-avatar-bg, var(--pf-surface-subtle));
+  border: 1px solid var(--pf-avatar-border, var(--pf-surface-border));
+  border-radius: var(--radius-full);
+  color: var(--pf-avatar-text);
+  display: inline-flex;
+  font-weight: var(--font-weight-semibold);
+  justify-content: center;
+  overflow: visible;
+  position: relative;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+:host([size='sm']) {
+  --pf-avatar-status-size: 9px;
+  --pf-avatar-status-offset: -2px;
+
+  font-size: var(--font-size-2xs);
+  height: 24px;
+  width: 24px;
+}
+
+:host([size='md']) {
+  --pf-avatar-status-size: 10px;
+  --pf-avatar-status-offset: -2px;
+
+  font-size: var(--font-size-xs);
+  height: 32px;
+  width: 32px;
+}
+
+:host([size='lg']) {
+  --pf-avatar-status-size: 12px;
+  --pf-avatar-status-offset: -2px;
+
+  font-size: var(--font-size-sm);
+  height: 40px;
+  width: 40px;
+}
+
+:host([size='xl']) {
+  --pf-avatar-status-size: 14px;
+  --pf-avatar-status-offset: -1px;
+
+  font-size: var(--font-size-md);
+  height: 56px;
+  width: 56px;
+}
+
+.image {
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.fallback {
+  align-items: center;
+  border-radius: inherit;
+  display: inline-flex;
+  height: 100%;
+  justify-content: center;
+  line-height: 1;
+  width: 100%;
+}
+
+.status {
+  border: 2px solid var(--pf-avatar-status-border);
+  border-radius: var(--radius-full);
+  top: var(--pf-avatar-status-offset);
+  height: var(--pf-avatar-status-size, 10px);
+  position: absolute;
+  inset-inline-end: var(--pf-avatar-status-offset);
+  width: var(--pf-avatar-status-size, 10px);
+  z-index: 1;
+}
+
+:host([status='online']) .status {
+  background: var(--pf-avatar-status-online);
+}
+
+:host([status='away']) .status {
+  background: var(--pf-avatar-status-away);
+}
+
+:host([status='busy']) .status {
+  background: var(--pf-avatar-status-busy);
+}
+
+:host([status='offline']) .status {
+  background: var(--pf-avatar-status-offline);
+}
+
+:host([hidden]) {
+  display: none;
+}
