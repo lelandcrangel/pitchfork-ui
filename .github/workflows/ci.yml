@@ -31,6 +31,12 @@ jobs:
       # published changelog page sat on 0.13.2 while the library was on 0.15.0.
       - name: Check dark mode contrast (WCAG AA)
         run: npm run check:contrast
+      # packages/elements runs its form-associated components in a real
+      # browser -- Stencil's mock DOM and jsdom both lack a working
+      # ElementInternals -- so Chromium has to be here, before the tests, not
+      # only before the Storybook smoke test further down.
+      - name: Install Chromium for the element browser tests
+        run: npx playwright install --with-deps chromium
       - run: npm run test
       - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build
@@ -67,8 +73,6 @@ jobs:
       # passed while every published component rendered with no design tokens at
       # all. This renders the built output in a real browser and fails if the
       # tokens do not resolve.
-      - name: Install Chromium for the smoke test
-        run: npx playwright install --with-deps chromium
       - name: Smoke-test the built Storybook
         run: npm run test:smoke -- --dir apps/docs/storybook-static
       - name: Security audit

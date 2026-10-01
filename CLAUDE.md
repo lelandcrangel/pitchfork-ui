@@ -271,6 +271,52 @@ Each component should have at minimum one accessibility-focused test (role prese
 
 ---
 
+## Web components (`packages/elements`)
+
+Stencil-authored custom elements, with the React bindings in
+`packages/elements-react` **generated** by the Stencil output target — never
+hand-edited. Fix a wrapper by fixing the element it comes from.
+
+Things that differ from the React library, learned by porting the first two:
+
+- **`@keyframes` do not cross a shadow boundary.** The React library declares
+  `pf-spin` once in `LoadingIndicators.css` and everything picks it up from the
+  global sheet. Each element needs its own copy. The same goes for anything
+  else that relies on CSS being global.
+- **No `useId`.** IDs are scoped to the shadow root, so use literal ones
+  (`id="input"`).
+- **Variants select on reflected attributes**, not BEM classes:
+  `:host([variant='primary'])`. Reflect any prop the stylesheet reads.
+- **Expose internals as `::part()`**, and document each part on the component.
+  A consumer's stylesheet cannot otherwise reach inside.
+- **Form controls must be `formAssociated` with `@AttachInternals()`.** A plain
+  `<input>` in a shadow root does not reach the surrounding form. Forward
+  `checkValidity`/`reportValidity` with `@Method()` — a form-associated custom
+  element does not inherit them.
+- **The package cannot be `"type": "module"`** — Stencil loads
+  `stencil.config.ts` through `require()`. Hence `vitest.config.mts`.
+
+### Testing elements
+
+Two Vitest projects, because the two kinds of test need different DOMs:
+
+```bash
+npm run test:unit -w @pitchfork-ui/elements     # Stencil's environment, fast
+npm run test:browser -w @pitchfork-ui/elements  # Chromium, via Playwright
+npm run test -w @pitchfork-ui/elements          # both
+```
+
+**A form-associated component is browser-tested in full**, not just its form
+assertions. Stencil's mock DOM stubs `ElementInternals`, and jsdom 30 provides
+`attachInternals()` but neither `setFormValue` nor `setValidity`, so such a
+component throws on its first lifecycle call anywhere but a real browser.
+Everything else belongs in the fast `unit` project.
+
+Set `PW_CHROMIUM_PATH` if the environment already has a Chromium that
+Playwright's pinned build does not match.
+
+---
+
 ## Known gaps
 
 See `todo.md` at the repo root.

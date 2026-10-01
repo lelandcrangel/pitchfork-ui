@@ -6,7 +6,9 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
+import { PfInputType } from "./components/pf-input/pf-input";
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
+export { PfInputType } from "./components/pf-input/pf-input";
 export namespace Components {
     interface PfButton {
         /**
@@ -44,6 +46,69 @@ export namespace Components {
          */
         "variant": PfButtonVariant;
     }
+    /**
+     * A form-associated text input.
+     * `formAssociated` plus `ElementInternals` is what makes this participate in a
+     * real `<form>`: the value reaches `FormData`, constraint validation works, and
+     * Angular's generated value accessor has something to bind to. A plain
+     * `<input>` inside a shadow root does none of that.
+     */
+    interface PfInput {
+        /**
+          * Whether the control currently satisfies its constraints.  A form-associated custom element does not inherit `checkValidity` from anywhere -- the spec puts it on ElementInternals, so the element has to forward it or consumers cannot ask.
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The message explaining why the control is invalid, or an empty string.
+         */
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * Visible label. Rendered in the same root as the input, so `for` works.
+         */
+        "label"?: string;
+        /**
+          * Submitted under this name.
+         */
+        "name"?: string;
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "readonly": boolean;
+        /**
+          * As `checkValidity`, but also shows the browser's validation message.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * @default 'text'
+         */
+        "type": PfInputType;
+        /**
+          * The control's value.
+          * @default ''
+         */
+        "value": string;
+    }
+}
+export interface PfInputCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfInputElement;
 }
 declare global {
     interface HTMLPfButtonElement extends Components.PfButton, HTMLStencilElement {
@@ -52,8 +117,34 @@ declare global {
         prototype: HTMLPfButtonElement;
         new (): HTMLPfButtonElement;
     };
+    interface HTMLPfInputElementEventMap {
+        "pfInput": { value: string };
+        "pfChange": { value: string };
+    }
+    /**
+     * A form-associated text input.
+     * `formAssociated` plus `ElementInternals` is what makes this participate in a
+     * real `<form>`: the value reaches `FormData`, constraint validation works, and
+     * Angular's generated value accessor has something to bind to. A plain
+     * `<input>` inside a shadow root does none of that.
+     */
+    interface HTMLPfInputElement extends Components.PfInput, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfInputElementEventMap>(type: K, listener: (this: HTMLPfInputElement, ev: PfInputCustomEvent<HTMLPfInputElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfInputElementEventMap>(type: K, listener: (this: HTMLPfInputElement, ev: PfInputCustomEvent<HTMLPfInputElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfInputElement: {
+        prototype: HTMLPfInputElement;
+        new (): HTMLPfInputElement;
+    };
     interface HTMLElementTagNameMap {
         "pf-button": HTMLPfButtonElement;
+        "pf-input": HTMLPfInputElement;
     }
 }
 declare namespace LocalJSX {
@@ -93,6 +184,65 @@ declare namespace LocalJSX {
          */
         "variant"?: PfButtonVariant;
     }
+    /**
+     * A form-associated text input.
+     * `formAssociated` plus `ElementInternals` is what makes this participate in a
+     * real `<form>`: the value reaches `FormData`, constraint validation works, and
+     * Angular's generated value accessor has something to bind to. A plain
+     * `<input>` inside a shadow root does none of that.
+     */
+    interface PfInput {
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * Visible label. Rendered in the same root as the input, so `for` works.
+         */
+        "label"?: string;
+        /**
+          * Submitted under this name.
+         */
+        "name"?: string;
+        /**
+          * Fires when the value is committed, like the native `change` event.
+         */
+        "onPfChange"?: (event: PfInputCustomEvent<{ value: string }>) => void;
+        /**
+          * Fires on every keystroke, like the native `input` event.
+         */
+        "onPfInput"?: (event: PfInputCustomEvent<{ value: string }>) => void;
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "readonly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default 'text'
+         */
+        "type"?: PfInputType;
+        /**
+          * The control's value.
+          * @default ''
+         */
+        "value"?: string;
+    }
 
     interface PfButtonAttributes {
         "variant": PfButtonVariant;
@@ -103,9 +253,22 @@ declare namespace LocalJSX {
         "type": PfButtonType;
         "label": string;
     }
+    interface PfInputAttributes {
+        "name": string;
+        "value": string;
+        "type": PfInputType;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "required": boolean;
+        "disabled": boolean;
+        "readonly": boolean;
+    }
 
     interface IntrinsicElements {
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
+        "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
     }
 }
 export { LocalJSX as JSX };
@@ -113,6 +276,14 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
+            /**
+             * A form-associated text input.
+             * `formAssociated` plus `ElementInternals` is what makes this participate in a
+             * real `<form>`: the value reaches `FormData`, constraint validation works, and
+             * Angular's generated value accessor has something to bind to. A plain
+             * `<input>` inside a shadow root does none of that.
+             */
+            "pf-input": LocalJSX.IntrinsicElements["pf-input"] & JSXBase.HTMLAttributes<HTMLPfInputElement>;
         }
     }
 }
