@@ -7,27 +7,28 @@ import customMedia from 'postcss-custom-media';
 import { resolve } from 'node:path';
 
 /**
- * `theme.css` is read at build time only, for its `@custom-media` definitions —
- * nothing from it is inlined. It still lives in packages/react because that is
- * where the theming contract has always been; the `:root` custom properties it
- * declares reach these components at runtime by inheriting through the shadow
- * boundary, exactly as they do for the React library.
+ * The `--pf-*` alias layer, in its neutral home alongside the tokens it
+ * aliases. Read twice, for two different reasons:
+ *
+ * - the source copy supplies `@custom-media` definitions to PostCSS at build
+ *   time, so the 32 `@media (--sm/--md)` queries in component CSS resolve;
+ * - the built copy is the `globalStyle` below, shipped so an elements-only
+ *   consumer gets styled components.
  */
-const themeCss = resolve(__dirname, '../react/src/styles/theme.css');
+const themeCssSource = resolve(__dirname, '../tokens/src/theme.css');
+const themeCssBuilt = resolve(__dirname, '../tokens/dist/css/theme.css');
 
 export const config: Config = {
   namespace: 'pitchfork',
   /**
-   * The `--pf-*` alias layer, shipped so an elements-only consumer gets styled
-   * components. Without it the tokens load but every alias resolves to
+   * Without this a consumer gets tokens but every `--pf-*` resolves to
    * nothing: markup and class names are perfect and the buttons have no
-   * background.
-   *
-   * Same file the React library ships inside its styles.css. That it lives in
-   * packages/react while two packages now ship it is a wart -- theme.css wants
-   * a neutral home.
+   * background. Stencil's own importer handles the `@import './variables.css'`
+   * at the top of this file, which is why it can be pointed at the built
+   * stylesheet directly -- a bare `@pitchfork-ui/tokens/css` specifier could
+   * not be, and used to need a concatenation step.
    */
-  globalStyle: resolve(__dirname, 'src/global/pitchfork.css'),
+  globalStyle: themeCssBuilt,
   taskQueue: 'async',
   sourceMap: true,
   outputTargets: [
@@ -75,7 +76,7 @@ export const config: Config = {
     // `@media (--sm/--md)` queries and the token alias chain behave
     // identically in both layers.
     postcss({
-      plugins: [globalData({ files: [themeCss] }), customMedia()],
+      plugins: [globalData({ files: [themeCssSource] }), customMedia()],
     }),
   ],
   testing: {

@@ -10,21 +10,32 @@ Component library for lelandrangel.com. React components backed by a Style Dicti
 pitchfork-ui/
 ├── packages/
 │   ├── core/           # Framework-free behaviour (@pitchfork-ui/core)
-│   │   └── src/        # anchoring, focus, dismiss, navigation, keys, aria, motion
+│   │   └── src/        # anchoring, focus, dismiss, navigation, keys, aria, motion, icons
 │   ├── react/          # Component library (@pitchfork-ui/react)
 │   │   └── src/
 │   │       ├── components/   # One folder per component
 │   │       ├── hooks/        # React adapters over @pitchfork-ui/core
 │   │       ├── a11y/         # Re-exports the a11y helpers from core
 │   │       ├── utils/cx.ts   # className joiner
-│   │       ├── styles/theme.css  # Global token aliases (:root vars)
 │   │       └── index.ts      # Public exports
-│   └── tokens/         # Design tokens (@pitchfork-ui/tokens)
-│       └── src/tokens/ # color.json, shadow.json, size.json, typography.json
+│   ├── elements/       # Stencil custom elements (@pitchfork-ui/elements)
+│   ├── elements-react/ # Generated React bindings — never hand-edited
+│   ├── elements-angular/ # Generated Angular bindings — never hand-edited
+│   └── tokens/         # Design tokens + theming contract (@pitchfork-ui/tokens)
+│       └── src/
+│           ├── tokens/   # color.json, shadow.json, size.json, typography.json
+│           └── theme.css # Global token aliases (:root vars), breakpoints, dark mode
 └── apps/
-    └── docs/           # Storybook site (@pitchfork-ui/docs)
-        └── src/        # *.stories.tsx, *.examples.stories.tsx, *.mdx per component
+    ├── docs/           # Storybook site (@pitchfork-ui/docs)
+    │   └── src/        # *.stories.tsx, *.examples.stories.tsx, *.mdx per component
+    ├── consumer-react/   # Vite app that smoke-tests the React bindings
+    └── consumer-angular/ # Angular CLI app that smoke-tests the Angular bindings
 ```
+
+`theme.css` sits in `packages/tokens` rather than in a rendering layer because
+both `@pitchfork-ui/react` and `@pitchfork-ui/elements` ship it, and neither
+owns it. It `@import`s `./variables.css` relatively, so any build that can
+resolve a relative CSS import can consume the built copy directly.
 
 ---
 
@@ -151,7 +162,7 @@ Example from a component CSS file:
 }
 ```
 
-Token names (`--color-*`, `--space-*`, `--size-*`, `--font-*`, `--radius-*`, `--shadow-*`) come from Style Dictionary and must not be used directly in component CSS — go through a `theme.css` alias. Add new aliases to `packages/react/src/styles/theme.css` as needed.
+Token names (`--color-*`, `--space-*`, `--size-*`, `--font-*`, `--radius-*`, `--shadow-*`) come from Style Dictionary and must not be used directly in component CSS — go through a `theme.css` alias. Add new aliases to `packages/tokens/src/theme.css` as needed.
 
 Dark mode is handled via `[data-theme='dark']` in `theme.css` — component CSS needs no dark mode selectors.
 
@@ -178,7 +189,7 @@ This project uses **mobile-first** responsive CSS. Base styles target mobile; `@
 }
 ```
 
-Breakpoints are defined in `packages/react/src/styles/theme.css` and resolved at build time by `postcss-custom-media`. Never use raw `min-width`/`max-width` pixel values in component CSS.
+Breakpoints are defined in `packages/tokens/src/theme.css` and resolved at build time by `postcss-custom-media`. Never use raw `min-width`/`max-width` pixel values in component CSS.
 
 ---
 

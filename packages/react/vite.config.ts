@@ -30,7 +30,7 @@ export default defineConfig({
     postcss: {
       plugins: [
         globalData({
-          files: [resolve(__dirname, 'src/styles/theme.css')],
+          files: [resolve(__dirname, '../tokens/src/theme.css')],
         }),
         customMedia(),
       ],

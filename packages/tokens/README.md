@@ -76,12 +76,25 @@ token  →  theme alias  →  component variable
 --color-semantic-action-primary  →  --pf-button-primary-bg  →  background
 ```
 
-`@pitchfork-ui/react` owns the middle tier. If you are theming the component
-library, override the `--pf-*` aliases rather than these tokens; if you are
-building something of your own, start here.
+The middle tier is `theme.css`, shipped from this package as
+`@pitchfork-ui/tokens/theme.css`. It lives here rather than in a rendering
+layer because `@pitchfork-ui/react` and `@pitchfork-ui/elements` both ship it
+and neither owns it. If you are theming the component library, override the
+`--pf-*` aliases rather than these tokens; if you are building something of
+your own, start here.
 
-Dark mode lives in the react package's `theme.css` under `[data-theme='dark']`,
-not in this package. These values are mode-independent.
+`theme.css` also carries the `@custom-media` breakpoint definitions and the
+`[data-theme='dark']` block. The token values themselves are
+mode-independent — dark mode is entirely a matter of which tokens the aliases
+point at.
+
+```css
+/* everything: tokens + aliases + dark mode */
+@import '@pitchfork-ui/tokens/theme.css';
+
+/* or the raw tokens alone */
+@import '@pitchfork-ui/tokens/variables.css';
+```
 
 ## License
 

@@ -38,7 +38,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "node ../../scripts/build-elements-global-css.mjs && stencil build",
+    "build": "stencil build",
     "start": "stencil build --dev --watch --serve",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -47,7 +47,8 @@
   },
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
-    "@pitchfork-ui/core": "^0.1.0"
+    "@pitchfork-ui/core": "^0.1.0",
+    "@pitchfork-ui/tokens": "^0.4.1"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",

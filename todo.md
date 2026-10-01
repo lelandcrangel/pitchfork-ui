@@ -81,3 +81,26 @@ anything. Copilot flagged the drift on
 was fixed in npm 10.x for most cases). If it is, tie the pins to the
 consumers' versions and add a check that they match. If it isn't, drop both
 pins and the `optionalDependencies` block with them.
+
+---
+
+## Two names for the Chromium-path escape hatch
+
+Four places launch Playwright Chromium, and they disagree on which
+environment variable points at a pre-installed browser:
+
+| Entry point                                   | Variable                   |
+| --------------------------------------------- | -------------------------- |
+| `packages/elements/vitest.config.mts`         | `PW_CHROMIUM_PATH`         |
+| `packages/elements-angular/vitest.config.mts` | `PW_CHROMIUM_PATH`         |
+| `scripts/smoke-consumer.mjs`                  | `PW_CHROMIUM_PATH`         |
+| `scripts/smoke-storybook.mjs`                 | `PLAYWRIGHT_CHROMIUM_PATH` |
+
+`CLAUDE.md` documents only the first name. So in an environment whose
+Chromium does not match Playwright's pinned build, setting the documented
+variable gets three of the four suites passing and leaves `npm run
+test:smoke` failing with Playwright's own "run npx playwright install"
+banner — which points at the wrong cause entirely.
+
+**Fix:** settle on `PW_CHROMIUM_PATH` and have `smoke-storybook.mjs` read
+it, keeping the old name as a fallback if anything depends on it.

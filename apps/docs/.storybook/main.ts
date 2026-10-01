@@ -7,14 +7,21 @@ import customMedia from 'postcss-custom-media';
 const storybookDir = dirname(fileURLToPath(import.meta.url));
 const reactSourceEntry = resolve(storybookDir, '../../../packages/react/src/index.ts');
 // The published package ships a single styles.css; from source, the equivalent
-// entry point is theme.css, which defines the design tokens and every --pf-*
-// alias on :root. Aliasing the stylesheet specifier to the TypeScript entry
-// instead made preview.ts's `import '@pitchfork-ui/react/styles.css'` a
-// side-effect-only import of a module Rollup treats as side-effect-free, so the
-// whole chain -- theme.css included -- was tree-shaken out of the build. Every
-// component class still landed, so the site rendered with correct markup and no
-// token values at all, and nothing failed loudly enough to notice.
-const reactThemeCss = resolve(storybookDir, '../../../packages/react/src/styles/theme.css');
+// entry point is @pitchfork-ui/tokens' theme.css, which defines the design
+// tokens and every --pf-* alias on :root. Aliasing the stylesheet specifier to
+// the TypeScript entry instead made preview.ts's
+// `import '@pitchfork-ui/react/styles.css'` a side-effect-only import of a
+// module Rollup treats as side-effect-free, so the whole chain -- theme.css
+// included -- was tree-shaken out of the build. Every component class still
+// landed, so the site rendered with correct markup and no token values at all,
+// and nothing failed loudly enough to notice.
+//
+// This is the built copy, not the source: it is served as a stylesheet, so its
+// `@import './variables.css'` has to resolve to a file beside it, which only
+// holds in dist/css.
+const themeCssBuilt = resolve(storybookDir, '../../../packages/tokens/dist/css/theme.css');
+// Read only for its `@custom-media` definitions, which are authored in src.
+const themeCssSource = resolve(storybookDir, '../../../packages/tokens/src/theme.css');
 // react's source imports @pitchfork-ui/core; without this alias Storybook would
 // resolve it to core's dist, which means `npm run storybook` on a fresh clone
 // fails until core has been built.
@@ -57,7 +64,7 @@ const config: StorybookConfig & { title: string } = {
       postcss: {
         plugins: [
           globalData({
-            files: [resolve(storybookDir, '../../../packages/react/src/styles/theme.css')],
+            files: [themeCssSource],
           }),
           customMedia(),
         ],
@@ -68,7 +75,7 @@ const config: StorybookConfig & { title: string } = {
       alias: [
         {
           find: '@pitchfork-ui/react/styles.css',
-          replacement: reactThemeCss,
+          replacement: themeCssBuilt,
         },
         {
           find: '@pitchfork-ui/react',

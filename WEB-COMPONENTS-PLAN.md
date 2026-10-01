@@ -280,12 +280,12 @@ _Exit:_ an Angular app and a React app both build against published packages.
 
 ## Reference
 
-| Thing                      | Where                                 |
-| -------------------------- | ------------------------------------- |
-| React components (kept)    | `packages/react/src/components/`      |
-| Framework-free behaviour   | `packages/core/src/`                  |
-| Theming contract           | `packages/react/src/styles/theme.css` |
-| PostCSS chain to replicate | `packages/react/vite.config.ts`       |
-| Tokens                     | `packages/tokens/src/tokens/`         |
-| Conventions                | `CLAUDE.md`                           |
-| Release gotchas            | `todo.md`                             |
+| Thing                      | Where                            |
+| -------------------------- | -------------------------------- |
+| React components (kept)    | `packages/react/src/components/` |
+| Framework-free behaviour   | `packages/core/src/`             |
+| Theming contract           | `packages/tokens/src/theme.css`  |
+| PostCSS chain to replicate | `packages/react/vite.config.ts`  |
+| Tokens                     | `packages/tokens/src/tokens/`    |
+| Conventions                | `CLAUDE.md`                      |
+| Release gotchas            | `todo.md`                        |

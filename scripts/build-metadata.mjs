@@ -7,7 +7,7 @@
  * Sources, in order of authority:
  *   props        <- TS interfaces under packages/react/src/components
  *   defaults     <- destructuring defaults in the component render function
- *   cssVars      <- component .css files, resolved through styles/theme.css
+ *   cssVars      <- component .css files, resolved through tokens/src/theme.css
  *   examples     <- apps/docs/src/*.examples.stories.tsx
  *   description  <- apps/docs/src/*.mdx
  *
@@ -27,7 +27,7 @@ import ts from 'typescript';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const componentsDir = join(root, 'packages/react/src/components');
-const themeCssPath = join(root, 'packages/react/src/styles/theme.css');
+const themeCssPath = join(root, 'packages/tokens/src/theme.css');
 const docsDir = join(root, 'apps/docs/src');
 const outDir = join(root, 'packages/react/dist');
 const outFile = join(outDir, 'metadata.json');
