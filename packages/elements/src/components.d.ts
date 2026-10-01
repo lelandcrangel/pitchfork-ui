@@ -46,6 +46,16 @@ export namespace Components {
          */
         "variant": PfButtonVariant;
     }
+    interface PfIcon {
+        /**
+          * Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label.
+         */
+        "label"?: string;
+        /**
+          * A registered Font Awesome name, one of its aliases, or a custom glyph.
+         */
+        "name": string;
+    }
     /**
      * A form-associated text input.
      * `formAssociated` plus `ElementInternals` is what makes this participate in a
@@ -117,6 +127,12 @@ declare global {
         prototype: HTMLPfButtonElement;
         new (): HTMLPfButtonElement;
     };
+    interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
+    }
+    var HTMLPfIconElement: {
+        prototype: HTMLPfIconElement;
+        new (): HTMLPfIconElement;
+    };
     interface HTMLPfInputElementEventMap {
         "pfInput": { value: string };
         "pfChange": { value: string };
@@ -144,10 +160,13 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "pf-button": HTMLPfButtonElement;
+        "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
     }
 }
 declare namespace LocalJSX {
+    type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K]?: never };
+
     interface PfButton {
         /**
           * Disable the button.
@@ -183,6 +202,16 @@ declare namespace LocalJSX {
           * @default 'primary'
          */
         "variant"?: PfButtonVariant;
+    }
+    interface PfIcon {
+        /**
+          * Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label.
+         */
+        "label"?: string;
+        /**
+          * A registered Font Awesome name, one of its aliases, or a custom glyph.
+         */
+        "name": string;
     }
     /**
      * A form-associated text input.
@@ -253,6 +282,10 @@ declare namespace LocalJSX {
         "type": PfButtonType;
         "label": string;
     }
+    interface PfIconAttributes {
+        "name": string;
+        "label": string;
+    }
     interface PfInputAttributes {
         "name": string;
         "value": string;
@@ -268,6 +301,7 @@ declare namespace LocalJSX {
 
     interface IntrinsicElements {
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
+        "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
     }
 }
@@ -276,6 +310,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
+            "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
              * A form-associated text input.
              * `formAssociated` plus `ElementInternals` is what makes this participate in a

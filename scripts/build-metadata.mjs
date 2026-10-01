@@ -949,12 +949,16 @@ function main() {
    */
   function readIconNames() {
     const source = readFileSync(join(componentsDir, 'Icon/Icon.tsx'), 'utf8');
+    // The registry moved to @pitchfork-ui/core so React components and custom
+    // elements resolve the same names; the spellings table went with it, while
+    // the bundled list and the custom SVGs stay with the component.
+    const coreSource = readFileSync(join(root, 'packages/core/src/icons.ts'), 'utf8');
 
-    const blockAfter = (declaration) => {
-      const start = source.indexOf(declaration);
+    const blockAfter = (declaration, text = source) => {
+      const start = text.indexOf(declaration);
       if (start === -1) {
         throw new Error(
-          `build-metadata: \`${declaration}\` not found in Icon.tsx. The icon ` +
+          `build-metadata: \`${declaration}\` not found. The icon ` +
             'registry was renamed or restructured; update readIconNames().',
         );
       }
@@ -962,11 +966,11 @@ function main() {
       // Match braces from the opening one so a nested object or JSX cannot end
       // the block early.
       let depth = 0;
-      for (let i = source.indexOf('{', start); i < source.length; i += 1) {
-        if (source[i] === '{') depth += 1;
-        else if (source[i] === '}') {
+      for (let i = text.indexOf('{', start); i < text.length; i += 1) {
+        if (text[i] === '{') depth += 1;
+        else if (text[i] === '}') {
           depth -= 1;
-          if (depth === 0) return source.slice(start, i);
+          if (depth === 0) return text.slice(start, i);
         }
       }
       throw new Error(`build-metadata: unbalanced braces after \`${declaration}\``);
@@ -989,7 +993,7 @@ function main() {
 
     const legacyAliases = Object.fromEntries(
       [
-        ...blockAfter('const legacyAliases: Record<string, string> = {').matchAll(
+        ...blockAfter('const legacySpellings: Record<string, string> = {', coreSource).matchAll(
           /^ {2}([a-zA-Z][a-zA-Z0-9]*):\s*'([^']+)'/gm,
         ),
       ].map((m) => [m[1], m[2]]),

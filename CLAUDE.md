@@ -241,6 +241,12 @@ So a hook that is only a `useEffect` wrapper belongs in core; a hook that owns
 React state keeps that state and delegates the calculation. When adding
 behaviour, write and test it in core first, then adapt it.
 
+The icon registry lives in core for the same reason, and it is the clearest
+case: a consumer calling `registerIcons()` has to get the icon in React
+components _and_ in `<pf-icon>`. A registry per layer would silently give them
+one or the other. Core types the glyph structurally rather than importing
+Font Awesome, so it still imports nothing.
+
 `packages/react/src/a11y` re-exports core's helpers because they are part of
 `@pitchfork-ui/react`'s public API — import from `../../a11y` inside components
 as before.
@@ -293,6 +299,9 @@ Things that differ from the React library, learned by porting the first two:
   `<input>` in a shadow root does not reach the surrounding form. Forward
   `checkValidity`/`reportValidity` with `@Method()` — a form-associated custom
   element does not inherit them.
+- **A component file may have only one export** — the component class.
+  Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
+  and `icon-names.ts` beside it.
 - **The package cannot be `"type": "module"`** — Stencil loads
   `stencil.config.ts` through `require()`. Hence `vitest.config.mts`.
 

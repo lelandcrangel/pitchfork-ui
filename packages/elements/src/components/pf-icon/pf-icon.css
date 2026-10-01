@@ -1,0 +1,17 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* The glyph scales with the surrounding text, as the React Icon does. */
+  line-height: 1;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+svg {
+  display: block;
+  height: 1em;
+  width: 1em;
+}

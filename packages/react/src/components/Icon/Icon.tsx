@@ -17,6 +17,12 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon, type FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
+import {
+  getRegisteredIconNames,
+  normalizeIconName,
+  registerIconGlyphs,
+  resolveIconGlyph,
+} from '@pitchfork-ui/core';
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
@@ -283,71 +289,21 @@ export type RegisteredIconName = keyof typeof customIcons | keyof typeof bundled
 export type IconName = RegisteredIconName | (string & {});
 
 /**
- * Every registered Font Awesome icon, bundled or added by the consumer. A Map
- * rather than the object literal above, because `registerIcons()` writes to it.
+ * The registry lives in @pitchfork-ui/core so that React components and
+ * custom elements resolve the same names: a consumer who calls
+ * `registerIcons()` must get the icon in both, and a registry per layer would
+ * give them one or the other.
  */
-const registeredIcons = new Map<string, IconDefinition>(Object.entries(bundledRegularIcons));
+registerIconGlyphs(bundledRegularIcons);
 
-/**
- * Font Awesome records each icon's former names in `icon[2]`, so `"bar-chart"`
- * keeps working after the icon is renamed to `"chart-bar"`. Aliases lose to
- * registered names, so registering an icon under an alias is never shadowed.
- */
-const aliases = new Map<string, IconDefinition>();
-
-const registerAliases = (icon: IconDefinition) => {
-  const names = icon.icon?.[2];
-  if (!Array.isArray(names)) return;
-
-  names.forEach((alias) => {
-    if (typeof alias === 'string') aliases.set(alias, icon);
-  });
-};
-
-/**
- * Drop the aliases an icon brought with it. Without this, replacing a
- * registered icon leaves its old aliases pointing at the old glyph:
- * `registerIcons({ 'chart-bar': other })` would swap `chart-bar` and leave
- * `bar-chart` rendering the icon it replaced.
- */
-const unregisterAliases = (icon: IconDefinition) => {
-  aliases.forEach((target, alias) => {
-    if (target === icon) aliases.delete(alias);
-  });
-};
-
-registeredIcons.forEach(registerAliases);
-
-/**
- * Add Font Awesome icons the library does not bundle.
- *
- * `Icon` resolves an explicit registry of icons, not the whole free-regular
- * set -- individually importing them is what keeps a consumer's bundle to the
- * icons actually in use. Anything else you import yourself and register once,
- * at startup, from the peer dependency you already have:
- *
- * ```tsx
- * import { faPaperPlane, faComments } from '@fortawesome/free-regular-svg-icons';
- * import { registerIcons } from '@pitchfork-ui/react';
- *
- * registerIcons({ 'paper-plane': faPaperPlane, comments: faComments });
- * ```
- *
- * Registering a name that already exists replaces it, which is how you
- * substitute a different glyph for a bundled one. The replaced icon's aliases
- * go with it, so no former name is left rendering the old glyph.
- */
 export const registerIcons = (icons: Record<string, IconDefinition>) => {
-  Object.entries(icons).forEach(([name, icon]) => {
-    const replaced = registeredIcons.get(name);
-    if (replaced !== undefined && replaced !== icon) unregisterAliases(replaced);
+  registerIconGlyphs(icons);
 
-    registeredIcons.set(name, icon);
-    registerAliases(icon);
+  for (const name of Object.keys(icons)) {
     // A name that failed before may now resolve, so let it warn again if it
-    // is somehow still unknown.
+    // is removed later.
     warnedNames.delete(name);
-  });
+  }
 };
 
 /**
@@ -376,22 +332,8 @@ const warnUnknownIcon = (name: string) => {
   );
 };
 
-const legacyAliases: Record<string, string> = {
-  circleCheck: 'circle-check',
-  circleQuestion: 'circle-question',
-  circleInfo: 'circle-info',
-};
-
-const toKebabCase = (value: string) => {
-  return value.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
-};
-
-const normalizeName = (name: IconName) => {
-  return legacyAliases[name] ?? toKebabCase(name);
-};
-
 export const getAvailableIconNames = () => {
-  return [...new Set([...registeredIcons.keys(), ...Object.keys(customIcons)])].sort();
+  return [...new Set([...getRegisteredIconNames(), ...Object.keys(customIcons)])].sort();
 };
 
 export const getCustomIconNames = () => Object.keys(customIcons).sort();
@@ -402,7 +344,7 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
 }
 
 export function Icon({ name, label, className, style, ...props }: IconProps) {
-  const normalizedName = normalizeName(name);
+  const normalizedName = normalizeIconName(name);
 
   // Normalized as well as raw: `legacyAliases` maps `circleInfo` to
   // `circle-info`, which is a custom SVG -- and a raw-only lookup here meant
@@ -424,7 +366,9 @@ export function Icon({ name, label, className, style, ...props }: IconProps) {
     );
   }
 
-  const faIcon = registeredIcons.get(normalizedName) ?? aliases.get(normalizedName);
+  // core's registry is structurally typed so that core imports nothing;
+  // everything registered here is a real IconDefinition.
+  const faIcon = resolveIconGlyph(name) as IconDefinition | undefined;
 
   if (!faIcon) {
     warnUnknownIcon(name);
