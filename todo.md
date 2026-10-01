@@ -104,3 +104,29 @@ banner — which points at the wrong cause entirely.
 
 **Fix:** settle on `PW_CHROMIUM_PATH` and have `smoke-storybook.mjs` read
 it, keeping the old name as a fallback if anything depends on it.
+
+---
+
+## An ellipsis can stand in for a single page
+
+`getPaginationItems` in `packages/core/src/pagination.ts` opens a gap wherever
+the sibling window does not reach the boundary — even when exactly one page is
+behind it. At 4 of 7 with the default counts the run is
+
+```
+1 … 3 4 5 … 7
+```
+
+where each ellipsis hides one page: 2 on the left, 6 on the right. An ellipsis
+costs the same room as the page it hides and says less, so showing `1 2 3 4 5 6
+7` would be strictly better there.
+
+This is the React component's long-standing behaviour, carried over verbatim
+when the maths moved into core, and both layers now share the one
+implementation. It is asserted in `pagination.test.ts` so the port is
+faithful, not so the behaviour is blessed.
+
+**Fix:** collapse a gap that would hide fewer than two pages into the page
+itself — in core, which changes `Pagination` and `<pf-pagination>` together.
+Update the two assertions in `pagination.test.ts` that pin the current run, and
+check the Pagination stories still read sensibly at small totals.

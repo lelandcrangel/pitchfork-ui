@@ -348,6 +348,50 @@ export namespace Components {
         "size": number;
     }
     /**
+     * A pager: boundary pages pinned at each end, a window around the current
+     * page, and an ellipsis wherever that leaves a gap.
+     * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
+     * lets the element advance itself, and setting it on every `pfPageChange`
+     * keeps the consumer in charge.
+     */
+    interface PfPagination {
+        /**
+          * Pages to pin at each end.
+          * @default 1
+         */
+        "boundaryCount": number;
+        /**
+          * Disable every button. Reflected for the stylesheet.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Accessible name for the navigation landmark.
+          * @default 'Pagination'
+         */
+        "label": string;
+        /**
+          * The current page, 1-based. Mutable so the element can advance itself.
+          * @default 1
+         */
+        "page": number;
+        /**
+          * Show the previous/next buttons. Reflected for the stylesheet.
+          * @default true
+         */
+        "showPrevNext": boolean;
+        /**
+          * Pages to show either side of the current one.
+          * @default 1
+         */
+        "siblingCount": number;
+        /**
+          * How many pages there are in total.
+          * @default 1
+         */
+        "totalPages": number;
+    }
+    /**
      * A horizontal determinate progress track.
      */
     interface PfProgressBar {
@@ -521,6 +565,10 @@ export interface PfInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfInputElement;
 }
+export interface PfPaginationCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfPaginationElement;
+}
 export interface PfTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfTagElement;
@@ -681,6 +729,30 @@ declare global {
         prototype: HTMLPfLoadingSpinnerElement;
         new (): HTMLPfLoadingSpinnerElement;
     };
+    interface HTMLPfPaginationElementEventMap {
+        "pfPageChange": { page: number };
+    }
+    /**
+     * A pager: boundary pages pinned at each end, a window around the current
+     * page, and an ellipsis wherever that leaves a gap.
+     * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
+     * lets the element advance itself, and setting it on every `pfPageChange`
+     * keeps the consumer in charge.
+     */
+    interface HTMLPfPaginationElement extends Components.PfPagination, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfPaginationElementEventMap>(type: K, listener: (this: HTMLPfPaginationElement, ev: PfPaginationCustomEvent<HTMLPfPaginationElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfPaginationElementEventMap>(type: K, listener: (this: HTMLPfPaginationElement, ev: PfPaginationCustomEvent<HTMLPfPaginationElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfPaginationElement: {
+        prototype: HTMLPfPaginationElement;
+        new (): HTMLPfPaginationElement;
+    };
     /**
      * A horizontal determinate progress track.
      */
@@ -795,6 +867,7 @@ declare global {
         "pf-loading-dots": HTMLPfLoadingDotsElement;
         "pf-loading-skeleton": HTMLPfLoadingSkeletonElement;
         "pf-loading-spinner": HTMLPfLoadingSpinnerElement;
+        "pf-pagination": HTMLPfPaginationElement;
         "pf-progress-bar": HTMLPfProgressBarElement;
         "pf-progress-circle": HTMLPfProgressCircleElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
@@ -1122,6 +1195,54 @@ declare namespace LocalJSX {
         "size"?: number;
     }
     /**
+     * A pager: boundary pages pinned at each end, a window around the current
+     * page, and an ellipsis wherever that leaves a gap.
+     * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
+     * lets the element advance itself, and setting it on every `pfPageChange`
+     * keeps the consumer in charge.
+     */
+    interface PfPagination {
+        /**
+          * Pages to pin at each end.
+          * @default 1
+         */
+        "boundaryCount"?: number;
+        /**
+          * Disable every button. Reflected for the stylesheet.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Accessible name for the navigation landmark.
+          * @default 'Pagination'
+         */
+        "label"?: string;
+        /**
+          * Emitted with the page the user asked for, already clamped to the range.
+         */
+        "onPfPageChange"?: (event: PfPaginationCustomEvent<{ page: number }>) => void;
+        /**
+          * The current page, 1-based. Mutable so the element can advance itself.
+          * @default 1
+         */
+        "page"?: number;
+        /**
+          * Show the previous/next buttons. Reflected for the stylesheet.
+          * @default true
+         */
+        "showPrevNext"?: boolean;
+        /**
+          * Pages to show either side of the current one.
+          * @default 1
+         */
+        "siblingCount"?: number;
+        /**
+          * How many pages there are in total.
+          * @default 1
+         */
+        "totalPages"?: number;
+    }
+    /**
      * A horizontal determinate progress track.
      */
     interface PfProgressBar {
@@ -1367,6 +1488,15 @@ declare namespace LocalJSX {
         "size": number;
         "label": string;
     }
+    interface PfPaginationAttributes {
+        "page": number;
+        "totalPages": number;
+        "siblingCount": number;
+        "boundaryCount": number;
+        "showPrevNext": boolean;
+        "disabled": boolean;
+        "label": string;
+    }
     interface PfProgressBarAttributes {
         "value": number;
         "max": number;
@@ -1425,6 +1555,7 @@ declare namespace LocalJSX {
         "pf-loading-dots": Omit<PfLoadingDots, keyof PfLoadingDotsAttributes> & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes]?: PfLoadingDots[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `attr:${K}`]?: PfLoadingDotsAttributes[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `prop:${K}`]?: PfLoadingDots[K] };
         "pf-loading-skeleton": Omit<PfLoadingSkeleton, keyof PfLoadingSkeletonAttributes> & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes]?: PfLoadingSkeleton[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `attr:${K}`]?: PfLoadingSkeletonAttributes[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `prop:${K}`]?: PfLoadingSkeleton[K] };
         "pf-loading-spinner": Omit<PfLoadingSpinner, keyof PfLoadingSpinnerAttributes> & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes]?: PfLoadingSpinner[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `attr:${K}`]?: PfLoadingSpinnerAttributes[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `prop:${K}`]?: PfLoadingSpinner[K] };
+        "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
@@ -1502,6 +1633,14 @@ declare module "@stencil/core" {
              * An indeterminate spinner.
              */
             "pf-loading-spinner": LocalJSX.IntrinsicElements["pf-loading-spinner"] & JSXBase.HTMLAttributes<HTMLPfLoadingSpinnerElement>;
+            /**
+             * A pager: boundary pages pinned at each end, a window around the current
+             * page, and an ellipsis wherever that leaves a gap.
+             * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
+             * lets the element advance itself, and setting it on every `pfPageChange`
+             * keeps the consumer in charge.
+             */
+            "pf-pagination": LocalJSX.IntrinsicElements["pf-pagination"] & JSXBase.HTMLAttributes<HTMLPfPaginationElement>;
             /**
              * A horizontal determinate progress track.
              */

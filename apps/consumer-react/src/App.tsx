@@ -16,6 +16,7 @@ import {
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfPagination,
   PfProgressBar,
   PfProgressCircle,
   PfScrollArea,
@@ -34,6 +35,7 @@ import {
 export function App() {
   const [email, setEmail] = useState('ada@example.com');
   const [tags, setTags] = useState(['design', 'systems']);
+  const [page, setPage] = useState(3);
 
   return (
     <main data-testid="app">
@@ -183,6 +185,14 @@ export function App() {
           Share
         </PfButton>
       </PfToolbar>
+
+      {/* Uncontrolled: the element advances itself and reports where it went. */}
+      <PfPagination
+        totalPages={10}
+        page={page}
+        onPfPageChange={(event) => setPage(event.detail.page)}
+      />
+      <p data-testid="page-echo">page {page}</p>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

@@ -62,6 +62,7 @@ const EXPECTED = [
   'pf-credit-card',
   'pf-toolbar',
   'pf-toolbar-separator',
+  'pf-pagination',
 ];
 
 const TYPES = {
@@ -320,6 +321,24 @@ try {
       }
     }
 
+    /*
+     * Pagination is the one element here whose state the host app holds, so
+     * this checks the round trip: click next, and the app's echo follows. A
+     * broken event or a wrapper that drops `detail` would leave the page
+     * buttons rendering perfectly and the number frozen.
+     */
+    const pager = document.querySelector('pf-pagination');
+    if (pager) {
+      const current = () => pager.shadowRoot?.querySelector('[part~="current"]')?.textContent;
+      const activeBg = pager.shadowRoot?.querySelector('.page--active');
+      if (activeBg && transparent(getComputedStyle(activeBg).backgroundColor)) {
+        result.unstyled.push('pf-pagination current page has no background');
+      }
+      result.pagerBefore = current();
+      pager.shadowRoot?.querySelector('[part~="next"]')?.click();
+      result.pagerClicked = true;
+    }
+
     const rule = document.querySelector('pf-content-divider')?.shadowRoot?.querySelector('.line');
     if (rule) {
       const background = getComputedStyle(rule).backgroundColor;
@@ -333,6 +352,37 @@ try {
 
     return result;
   }, EXPECTED);
+
+  if (report.pagerClicked) {
+    // Stencil's queue is async and the host framework re-renders after that.
+    const after = await page
+      .waitForFunction(
+        (before) => {
+          const pager = document.querySelector('pf-pagination');
+          const current = pager?.shadowRoot?.querySelector('[part~="current"]')?.textContent;
+          const echo = document.querySelector('[data-testid="page-echo"]')?.textContent;
+          return current !== before && echo?.includes(current ?? '\u0000')
+            ? { current, echo }
+            : null;
+        },
+        report.pagerBefore,
+        { timeout: 5_000 },
+      )
+      .then((handle) => handle.jsonValue())
+      .catch(() => null);
+
+    if (!after) {
+      const state = await page.evaluate(() => ({
+        current: document
+          .querySelector('pf-pagination')
+          ?.shadowRoot?.querySelector('[part~="current"]')?.textContent,
+        echo: document.querySelector('[data-testid="page-echo"]')?.textContent,
+      }));
+      problems.push(
+        `pf-pagination: clicking next left the page at "${state.current}" and the app echo at "${state.echo}" (was page "${report.pagerBefore}")`,
+      );
+    }
+  }
 
   for (const tag of report.missing) problems.push(`${tag} did not render`);
   for (const tag of report.notUpgraded) problems.push(`${tag} rendered but never upgraded`);

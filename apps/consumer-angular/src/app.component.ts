@@ -17,6 +17,7 @@ import {
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfPagination,
   PfProgressBar,
   PfProgressCircle,
   PfScrollArea,
@@ -54,6 +55,7 @@ import {
     PfLoadingDots,
     PfLoadingSkeleton,
     PfLoadingSpinner,
+    PfPagination,
     PfProgressBar,
     PfProgressCircle,
     PfScrollArea,
@@ -206,6 +208,14 @@ import {
         <pf-button variant="ghost" data-toolbar-item>Share</pf-button>
       </pf-toolbar>
 
+      <!-- Driven from Angular state: the element emits, the component decides. -->
+      <pf-pagination
+        [totalPages]="10"
+        [page]="page()"
+        (pfPageChange)="page.set($event.detail.page)"
+      ></pf-pagination>
+      <p data-testid="page-echo">page {{ page() }}</p>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -220,6 +230,7 @@ import {
 export class AppComponent {
   email = new FormControl('ada@example.com');
   tags = signal(['design', 'systems']);
+  page = signal(3);
 
   removeTag(tag: string) {
     this.tags.update((current) => current.filter((t) => t !== tag));
