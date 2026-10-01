@@ -325,7 +325,24 @@ Things that differ from the React library, learned by porting the first two:
 - **Form controls must be `formAssociated` with `@AttachInternals()`.** A plain
   `<input>` in a shadow root does not reach the surrounding form. Forward
   `checkValidity`/`reportValidity` with `@Method()` — a form-associated custom
-  element does not inherit them.
+  element does not inherit them. Three further rules, each learned from a
+  defect the consumer apps caught:
+  - **Reflect `name`.** The submission name comes from the `name` _content
+    attribute_, not the property. The generated React bindings set properties,
+    so an unreflected `name` leaves the control nameless and absent from the
+    submission with every other sign of working.
+  - **`setFormValue(null)`, not `''`, for an unchecked box.** An unticked
+    checkbox is absent from the submission entirely; empty-but-present is a
+    different thing, and a server telling "unticked" from "not sent" relies on
+    it.
+  - **`formResetCallback` restores the initial attribute**, not an empty value
+    — verified against a native `<input value="initial">` and
+    `<input type=checkbox checked>`, both of which come back to their attribute.
+    The validity precedence (`error` beats `required`) lives in
+    `src/form-validity.ts` so the controls cannot disagree about which message
+    wins. `scripts/check-built-packages.mjs` checks every generated value
+    accessor is exported from `elements-angular/src/public-api.ts`, which is
+    hand-written while the accessors are generated.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

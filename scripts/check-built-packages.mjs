@@ -177,3 +177,46 @@ if (bundledFiles.length === 0) {
 } else {
   console.log("@pitchfork-ui/react: Icon's unknown-name warning survived bundling");
 }
+
+/*
+ * The Stencil Angular output target generates one module per value accessor
+ * into src/lib/, but public-api.ts is hand-written. So adding a new accessor
+ * type to `valueAccessorConfigs` produces a file that nobody exports, and the
+ * failure surfaces as "does not provide an export named …" in a consumer —
+ * which is how the boolean accessor was first missed.
+ */
+const angularSrc = join(repoRoot, 'packages/elements-angular/src');
+const publicApi = await readFile(join(angularSrc, 'public-api.ts'), 'utf8').catch(() => null);
+
+if (publicApi === null) {
+  console.error('\npackages/elements-angular/src/public-api.ts is missing.');
+  process.exitCode = 1;
+} else {
+  const accessors = (await readdir(join(angularSrc, 'lib')).catch(() => [])).filter((name) =>
+    name.endsWith('-value-accessor.ts'),
+  );
+  const unexported = accessors.filter(
+    (name) => !publicApi.includes(`./lib/${name.replace(/\.ts$/, '')}`),
+  );
+
+  if (accessors.length === 0) {
+    console.error(
+      '\npackages/elements-angular/src/lib has no value accessors -- ' +
+        'run `npm run build:elements` first.',
+    );
+    process.exitCode = 1;
+  } else if (unexported.length > 0) {
+    console.error(
+      `\n@pitchfork-ui/elements-angular: ${unexported.length} generated value ` +
+        `accessor(s) are not exported from public-api.ts:\n` +
+        unexported.map((name) => `  ${name}`).join('\n') +
+        '\n\nAdd an `export * from` line for each, or an Angular consumer gets ' +
+        '"does not provide an export named ..." at runtime.',
+    );
+    process.exitCode = 1;
+  } else {
+    console.log(
+      `@pitchfork-ui/elements-angular: all ${accessors.length} generated value accessors are exported`,
+    );
+  }
+}

@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   PfAvatar,
   PfBadge,
@@ -9,6 +9,7 @@ import {
   PfCardContent,
   PfCardFooter,
   PfCardHeader,
+  PfCheckbox,
   PfContentDivider,
   PfCreditCard,
   PfIcon,
@@ -21,12 +22,14 @@ import {
   PfProgressBar,
   PfProgressCircle,
   PfScrollArea,
+  PfSwitch,
   PfTag,
   PfToolbar,
   PfToolbarSeparator,
   PfUtilityButton,
   PfVisuallyHidden,
   TextValueAccessor,
+  BooleanValueAccessor,
 } from '@pitchfork-ui/elements-angular';
 
 /**
@@ -47,6 +50,7 @@ import {
     PfCardContent,
     PfCardFooter,
     PfCardHeader,
+    PfCheckbox,
     PfContentDivider,
     PfCreditCard,
     PfIcon,
@@ -59,12 +63,14 @@ import {
     PfProgressBar,
     PfProgressCircle,
     PfScrollArea,
+    PfSwitch,
     PfTag,
     PfToolbar,
     PfToolbarSeparator,
     PfUtilityButton,
     PfVisuallyHidden,
     TextValueAccessor,
+    BooleanValueAccessor,
   ],
   template: `
     <main data-testid="app">
@@ -216,6 +222,29 @@ import {
       ></pf-pagination>
       <p data-testid="page-echo">page {{ page() }}</p>
 
+      <!--
+        The wave Stencil was chosen for: both bind with formControlName through
+        a generated BooleanValueAccessor, and requiredTrue drives validation.
+      -->
+      <form [formGroup]="prefs" data-testid="prefs">
+        <!--
+          name and required alongside formControlName on purpose: Angular drives
+          the value, and the native attributes keep the control in the browser's
+          own submission and constraint validation. Both have to work.
+        -->
+        <pf-checkbox
+          label="Accept terms"
+          name="terms"
+          required
+          formControlName="terms"
+        ></pf-checkbox>
+        <pf-switch label="Email notifications" name="notify" formControlName="notify"></pf-switch>
+      </form>
+      <p data-testid="prefs-state">
+        terms {{ prefs.controls.terms.value }} / notify {{ prefs.controls.notify.value }} / valid
+        {{ prefs.valid }}
+      </p>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -231,6 +260,10 @@ export class AppComponent {
   email = new FormControl('ada@example.com');
   tags = signal(['design', 'systems']);
   page = signal(3);
+  prefs = new FormGroup({
+    terms: new FormControl(false, Validators.requiredTrue),
+    notify: new FormControl(true),
+  });
 
   removeTag(tag: string) {
     this.tags.update((current) => current.filter((t) => t !== tag));

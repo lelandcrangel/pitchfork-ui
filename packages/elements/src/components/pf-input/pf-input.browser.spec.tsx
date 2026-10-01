@@ -117,11 +117,36 @@ test('emits pfChange when the value is committed', async () => {
   expect(seen).toEqual(['start']);
 });
 
-test('clears itself when the form resets', async () => {
+/*
+ * A reset restores the value the control started with, which is what a native
+ * `<input value="initial">` does — verified against one directly. This test
+ * previously asserted the value was cleared, which was the defect rather than
+ * the contract: a `<pf-input value="…">` lost its value on any form reset.
+ */
+test('restores its initial value when the form resets', async () => {
   document.body.innerHTML = `<form><pf-input name="email" value="a@b.c"></pf-input></form>`;
   const form = document.body.firstElementChild as HTMLFormElement;
   const el = form.firstElementChild as HTMLElement & { value: string };
   await customElements.whenDefined('pf-input');
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  el.value = 'typed@example.com';
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  form.reset();
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  expect(el.value).toBe('a@b.c');
+});
+
+test('resets to empty when it started empty', async () => {
+  document.body.innerHTML = `<form><pf-input name="email"></pf-input></form>`;
+  const form = document.body.firstElementChild as HTMLFormElement;
+  const el = form.firstElementChild as HTMLElement & { value: string };
+  await customElements.whenDefined('pf-input');
+  await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  el.value = 'typed@example.com';
   await new Promise((resolve) => requestAnimationFrame(resolve));
 
   form.reset();

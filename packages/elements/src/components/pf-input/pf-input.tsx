@@ -1,4 +1,5 @@
 import { composeDescribedBy } from '@pitchfork-ui/core';
+import { applyControlValidity } from '../../form-validity';
 import {
   AttachInternals,
   Component,
@@ -36,8 +37,16 @@ export type PfInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'ur
 export class PfInput {
   @AttachInternals() internals!: ElementInternals;
 
-  /** Submitted under this name. */
-  @Prop() name?: string;
+  /**
+   * Submitted under this name.
+   *
+   * Reflected, because a form-associated custom element takes its submission
+   * name from the `name` *content attribute* -- not from this property. A
+   * framework wrapper that sets properties rather than attributes (the
+   * generated React bindings do) would otherwise leave the control nameless
+   * and absent from the submission, with every other sign of working.
+   */
+  @Prop({ reflect: true }) name?: string;
 
   /** The control's value. */
   @Prop({ mutable: true }) value = '';
@@ -67,7 +76,14 @@ export class PfInput {
   /** Fires when the value is committed, like the native `change` event. */
   @Event() pfChange!: EventEmitter<{ value: string }>;
 
+  /**
+   * The value the control had when it was created, which is what a form reset
+   * restores. Captured here because `value` has been overwritten by then.
+   */
+  private initialValue = '';
+
   componentWillLoad() {
+    this.initialValue = this.value ?? '';
     this.syncFormState();
   }
 
@@ -76,18 +92,7 @@ export class PfInput {
   @Watch('required')
   syncFormState() {
     this.internals.setFormValue(this.value ?? '');
-
-    if (this.error) {
-      this.internals.setValidity({ customError: true }, this.error);
-      return;
-    }
-
-    if (this.required && !this.value) {
-      this.internals.setValidity({ valueMissing: true }, 'This field is required.');
-      return;
-    }
-
-    this.internals.setValidity({});
+    applyControlValidity(this.internals, Boolean(this.value), this.required, this.error);
   }
 
   /**
@@ -114,9 +119,14 @@ export class PfInput {
     return this.internals.validationMessage;
   }
 
-  /** The form resetting has to clear the control, not just the form value. */
+  /**
+   * A reset restores the value the control started with, not an empty string —
+   * verified against a native `<input value="initial">`, which comes back to
+   * "initial" rather than to "". Clearing it was a real defect: a
+   * `<pf-input value="…">` in a form lost its value on any reset.
+   */
   formResetCallback() {
-    this.value = '';
+    this.value = this.initialValue;
   }
 
   private onInput = (event: Event) => {

@@ -159,6 +159,53 @@ export namespace Components {
     interface PfCardHeader {
     }
     /**
+     * A form-associated checkbox.
+     */
+    interface PfCheckbox {
+        /**
+          * A form-associated custom element does not inherit this.
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Whether the box is ticked. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "checked": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The message explaining why the control is invalid, or an empty string.
+         */
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * Visible label, rendered in the same root so `for` actually associates.
+         */
+        "label"?: string;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working.
+         */
+        "name"?: string;
+        /**
+          * As `checkValidity`, but also shows the browser's validation message.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * What is submitted when ticked. Mirrors the native attribute, whose default is also `on` — a checkbox with no value still submits something.
+          * @default 'on'
+         */
+        "value": string;
+    }
+    /**
      * A rule that separates content, optionally labelled.
      */
     interface PfContentDivider {
@@ -251,7 +298,7 @@ export namespace Components {
          */
         "label"?: string;
         /**
-          * Submitted under this name.
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working.
          */
         "name"?: string;
         "placeholder"?: string;
@@ -464,6 +511,57 @@ export namespace Components {
          */
         "orientation": PfScrollAreaOrientation;
     }
+    /**
+     * A form-associated on/off switch.
+     * Built on a native checkbox with `role="switch"`, exactly as the React
+     * component is: a switch is a checkbox whose two states are "on" and "off"
+     * rather than "selected" and "not selected", and the role is the only
+     * difference assistive technology needs.
+     */
+    interface PfSwitch {
+        /**
+          * A form-associated custom element does not inherit this.
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Whether the switch is on. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "checked": boolean;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The message explaining why the control is invalid, or an empty string.
+         */
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * Visible label, rendered in the same root so `for` actually associates.
+         */
+        "label"?: string;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working.
+         */
+        "name"?: string;
+        /**
+          * As `checkValidity`, but also shows the browser's validation message.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * What is submitted when on. Mirrors the native attribute, whose default is also `on` — a checkbox with no value still submits something.
+          * @default 'on'
+         */
+        "value": string;
+    }
     interface PfTag {
         /**
           * Accessible name for the remove button.
@@ -561,6 +659,10 @@ export namespace Components {
         "focusable": boolean;
     }
 }
+export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfCheckboxElement;
+}
 export interface PfInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfInputElement;
@@ -568,6 +670,10 @@ export interface PfInputCustomEvent<T> extends CustomEvent<T> {
 export interface PfPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfPaginationElement;
+}
+export interface PfSwitchCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfSwitchElement;
 }
 export interface PfTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -645,6 +751,26 @@ declare global {
     var HTMLPfCardHeaderElement: {
         prototype: HTMLPfCardHeaderElement;
         new (): HTMLPfCardHeaderElement;
+    };
+    interface HTMLPfCheckboxElementEventMap {
+        "pfChange": { checked: boolean; value: string };
+    }
+    /**
+     * A form-associated checkbox.
+     */
+    interface HTMLPfCheckboxElement extends Components.PfCheckbox, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfCheckboxElementEventMap>(type: K, listener: (this: HTMLPfCheckboxElement, ev: PfCheckboxCustomEvent<HTMLPfCheckboxElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfCheckboxElementEventMap>(type: K, listener: (this: HTMLPfCheckboxElement, ev: PfCheckboxCustomEvent<HTMLPfCheckboxElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfCheckboxElement: {
+        prototype: HTMLPfCheckboxElement;
+        new (): HTMLPfCheckboxElement;
     };
     /**
      * A rule that separates content, optionally labelled.
@@ -780,6 +906,30 @@ declare global {
         prototype: HTMLPfScrollAreaElement;
         new (): HTMLPfScrollAreaElement;
     };
+    interface HTMLPfSwitchElementEventMap {
+        "pfChange": { checked: boolean; value: string };
+    }
+    /**
+     * A form-associated on/off switch.
+     * Built on a native checkbox with `role="switch"`, exactly as the React
+     * component is: a switch is a checkbox whose two states are "on" and "off"
+     * rather than "selected" and "not selected", and the role is the only
+     * difference assistive technology needs.
+     */
+    interface HTMLPfSwitchElement extends Components.PfSwitch, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfSwitchElementEventMap>(type: K, listener: (this: HTMLPfSwitchElement, ev: PfSwitchCustomEvent<HTMLPfSwitchElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfSwitchElementEventMap>(type: K, listener: (this: HTMLPfSwitchElement, ev: PfSwitchCustomEvent<HTMLPfSwitchElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfSwitchElement: {
+        prototype: HTMLPfSwitchElement;
+        new (): HTMLPfSwitchElement;
+    };
     interface HTMLPfTagElementEventMap {
         "pfDismiss": void;
     }
@@ -859,6 +1009,7 @@ declare global {
         "pf-card-content": HTMLPfCardContentElement;
         "pf-card-footer": HTMLPfCardFooterElement;
         "pf-card-header": HTMLPfCardHeaderElement;
+        "pf-checkbox": HTMLPfCheckboxElement;
         "pf-content-divider": HTMLPfContentDividerElement;
         "pf-credit-card": HTMLPfCreditCardElement;
         "pf-icon": HTMLPfIconElement;
@@ -871,6 +1022,7 @@ declare global {
         "pf-progress-bar": HTMLPfProgressBarElement;
         "pf-progress-circle": HTMLPfProgressCircleElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
+        "pf-switch": HTMLPfSwitchElement;
         "pf-tag": HTMLPfTagElement;
         "pf-toolbar": HTMLPfToolbarElement;
         "pf-toolbar-separator": HTMLPfToolbarSeparatorElement;
@@ -1006,6 +1158,49 @@ declare namespace LocalJSX {
     interface PfCardHeader {
     }
     /**
+     * A form-associated checkbox.
+     */
+    interface PfCheckbox {
+        /**
+          * Whether the box is ticked. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "checked"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * Visible label, rendered in the same root so `for` actually associates.
+         */
+        "label"?: string;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working.
+         */
+        "name"?: string;
+        /**
+          * Fires when the user ticks or unticks the box.
+         */
+        "onPfChange"?: (event: PfCheckboxCustomEvent<{ checked: boolean; value: string }>) => void;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * What is submitted when ticked. Mirrors the native attribute, whose default is also `on` — a checkbox with no value still submits something.
+          * @default 'on'
+         */
+        "value"?: string;
+    }
+    /**
      * A rule that separates content, optionally labelled.
      */
     interface PfContentDivider {
@@ -1094,7 +1289,7 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
-          * Submitted under this name.
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working.
          */
         "name"?: string;
         /**
@@ -1315,6 +1510,53 @@ declare namespace LocalJSX {
          */
         "orientation"?: PfScrollAreaOrientation;
     }
+    /**
+     * A form-associated on/off switch.
+     * Built on a native checkbox with `role="switch"`, exactly as the React
+     * component is: a switch is a checkbox whose two states are "on" and "off"
+     * rather than "selected" and "not selected", and the role is the only
+     * difference assistive technology needs.
+     */
+    interface PfSwitch {
+        /**
+          * Whether the switch is on. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "checked"?: boolean;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * Visible label, rendered in the same root so `for` actually associates.
+         */
+        "label"?: string;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working.
+         */
+        "name"?: string;
+        /**
+          * Fires when the user turns the switch on or off.
+         */
+        "onPfChange"?: (event: PfSwitchCustomEvent<{ checked: boolean; value: string }>) => void;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * What is submitted when on. Mirrors the native attribute, whose default is also `on` — a checkbox with no value still submits something.
+          * @default 'on'
+         */
+        "value"?: string;
+    }
     interface PfTag {
         /**
           * Accessible name for the remove button.
@@ -1442,6 +1684,15 @@ declare namespace LocalJSX {
         "type": PfButtonType;
         "label": string;
     }
+    interface PfCheckboxAttributes {
+        "name": string;
+        "checked": boolean;
+        "value": string;
+        "label": string;
+        "error": string;
+        "required": boolean;
+        "disabled": boolean;
+    }
     interface PfContentDividerAttributes {
         "orientation": PfContentDividerOrientation;
         "inset": boolean;
@@ -1515,6 +1766,15 @@ declare namespace LocalJSX {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
     }
+    interface PfSwitchAttributes {
+        "name": string;
+        "checked": boolean;
+        "value": string;
+        "label": string;
+        "error": string;
+        "required": boolean;
+        "disabled": boolean;
+    }
     interface PfTagAttributes {
         "variant": PfTagVariant;
         "dismissible": boolean;
@@ -1547,6 +1807,7 @@ declare namespace LocalJSX {
         "pf-card-content": PfCardContent;
         "pf-card-footer": PfCardFooter;
         "pf-card-header": PfCardHeader;
+        "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
         "pf-content-divider": Omit<PfContentDivider, keyof PfContentDividerAttributes> & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes]?: PfContentDivider[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `attr:${K}`]?: PfContentDividerAttributes[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `prop:${K}`]?: PfContentDivider[K] };
         "pf-credit-card": Omit<PfCreditCard, keyof PfCreditCardAttributes> & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes]?: PfCreditCard[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `attr:${K}`]?: PfCreditCardAttributes[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `prop:${K}`]?: PfCreditCard[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
@@ -1559,6 +1820,7 @@ declare namespace LocalJSX {
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
+        "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
         "pf-toolbar": Omit<PfToolbar, keyof PfToolbarAttributes> & { [K in keyof PfToolbar & keyof PfToolbarAttributes]?: PfToolbar[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `attr:${K}`]?: PfToolbarAttributes[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `prop:${K}`]?: PfToolbar[K] };
         "pf-toolbar-separator": Omit<PfToolbarSeparator, keyof PfToolbarSeparatorAttributes> & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes]?: PfToolbarSeparator[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `attr:${K}`]?: PfToolbarSeparatorAttributes[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `prop:${K}`]?: PfToolbarSeparator[K] };
@@ -1602,6 +1864,10 @@ declare module "@stencil/core" {
              * The top section of a `pf-card`, separated from what follows by a rule.
              */
             "pf-card-header": LocalJSX.IntrinsicElements["pf-card-header"] & JSXBase.HTMLAttributes<HTMLPfCardHeaderElement>;
+            /**
+             * A form-associated checkbox.
+             */
+            "pf-checkbox": LocalJSX.IntrinsicElements["pf-checkbox"] & JSXBase.HTMLAttributes<HTMLPfCheckboxElement>;
             /**
              * A rule that separates content, optionally labelled.
              */
@@ -1653,6 +1919,14 @@ declare module "@stencil/core" {
              * A scrollable region with a styled, non-overlaying scrollbar.
              */
             "pf-scroll-area": LocalJSX.IntrinsicElements["pf-scroll-area"] & JSXBase.HTMLAttributes<HTMLPfScrollAreaElement>;
+            /**
+             * A form-associated on/off switch.
+             * Built on a native checkbox with `role="switch"`, exactly as the React
+             * component is: a switch is a checkbox whose two states are "on" and "off"
+             * rather than "selected" and "not selected", and the role is the only
+             * difference assistive technology needs.
+             */
+            "pf-switch": LocalJSX.IntrinsicElements["pf-switch"] & JSXBase.HTMLAttributes<HTMLPfSwitchElement>;
             "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
             /**
              * A group of controls that is one tab stop from outside and navigated

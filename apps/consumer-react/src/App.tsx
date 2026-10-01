@@ -8,6 +8,7 @@ import {
   PfCardContent,
   PfCardFooter,
   PfCardHeader,
+  PfCheckbox,
   PfContentDivider,
   PfCreditCard,
   PfIcon,
@@ -20,6 +21,7 @@ import {
   PfProgressBar,
   PfProgressCircle,
   PfScrollArea,
+  PfSwitch,
   PfTag,
   PfToolbar,
   PfToolbarSeparator,
@@ -36,6 +38,7 @@ export function App() {
   const [email, setEmail] = useState('ada@example.com');
   const [tags, setTags] = useState(['design', 'systems']);
   const [page, setPage] = useState(3);
+  const [submitted, setSubmitted] = useState('');
 
   return (
     <main data-testid="app">
@@ -193,6 +196,23 @@ export function App() {
         onPfPageChange={(event) => setPage(event.detail.page)}
       />
       <p data-testid="page-echo">page {page}</p>
+
+      {/* Form-associated: these reach a real <form> through ElementInternals. */}
+      <form
+        data-testid="prefs"
+        onSubmit={(event) => {
+          event.preventDefault();
+          const data = new FormData(event.currentTarget);
+          setSubmitted([...data.keys()].sort().join(','));
+        }}
+      >
+        <PfCheckbox name="terms" label="Accept terms" required />
+        <PfSwitch name="notify" label="Email notifications" checked />
+        <PfButton type="submit" variant="primary">
+          Save
+        </PfButton>
+      </form>
+      <p data-testid="submitted">submitted: {submitted}</p>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

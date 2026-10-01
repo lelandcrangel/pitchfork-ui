@@ -1,0 +1,79 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.input {
+  appearance: none;
+  background: var(--pf-switch-track-bg);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  height: 24px;
+  margin: 0;
+  position: relative;
+  transition: background-color 120ms ease;
+  width: 44px;
+}
+
+/* The thumb. */
+.input::after {
+  background: var(--pf-switch-thumb-bg);
+  border-radius: 50%;
+  content: '';
+  height: 20px;
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  transition: transform 120ms ease;
+  width: 20px;
+}
+
+.input:checked {
+  background: var(--pf-switch-track-checked-bg);
+}
+
+.input:checked::after {
+  transform: translateX(20px);
+}
+
+.input:focus-visible {
+  box-shadow: var(--pf-switch-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.input:disabled + .label {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.label {
+  color: var(--pf-switch-label-text);
+  font-size: var(--font-size-md);
+}
+
+.error {
+  color: var(--pf-switch-field-error, var(--pf-field-error));
+  font-size: var(--font-size-sm);
+  margin: var(--space-1) 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .input::after {
+    transition: none;
+  }
+}

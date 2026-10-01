@@ -63,6 +63,8 @@ const EXPECTED = [
   'pf-toolbar',
   'pf-toolbar-separator',
   'pf-pagination',
+  'pf-checkbox',
+  'pf-switch',
 ];
 
 const TYPES = {
@@ -339,6 +341,36 @@ try {
       result.pagerClicked = true;
     }
 
+    /*
+     * Form association, against a real build: a shadow-DOM <input> reaches no
+     * surrounding form on its own, so this is the claim ElementInternals is
+     * there to make good. Both apps put a checkbox and a switch in a <form>.
+     */
+    const prefs = document.querySelector('[data-testid="prefs"]');
+    if (prefs instanceof HTMLFormElement) {
+      const names = [...new FormData(prefs).keys()].sort();
+      // terms starts unticked (absent), notify starts on (present).
+      if (names.join(',') !== 'notify') {
+        result.unstyled.push(
+          `form sees [${names.join(', ')}] from pf-checkbox/pf-switch, expected just notify`,
+        );
+      }
+      const box = prefs.querySelector('pf-checkbox');
+      if (box && typeof box.checkValidity === 'function') {
+        result.requiredBoxValid = prefs.checkValidity();
+      }
+      const native = box?.shadowRoot?.querySelector('input');
+      if (native && transparent(getComputedStyle(native).borderTopColor)) {
+        result.unstyled.push('pf-checkbox has no border');
+      }
+      const toggle = document.querySelector('pf-switch')?.shadowRoot?.querySelector('input');
+      if (toggle && transparent(getComputedStyle(toggle).backgroundColor)) {
+        result.unstyled.push('pf-switch track has no background');
+      }
+    } else {
+      result.unstyled.push('the consumer app has no [data-testid="prefs"] form');
+    }
+
     const rule = document.querySelector('pf-content-divider')?.shadowRoot?.querySelector('.line');
     if (rule) {
       const background = getComputedStyle(rule).backgroundColor;
@@ -382,6 +414,18 @@ try {
         `pf-pagination: clicking next left the page at "${state.current}" and the app echo at "${state.echo}" (was page "${report.pagerBefore}")`,
       );
     }
+  }
+
+  /*
+   * A required checkbox left unticked must make its form invalid. If the
+   * validity never reached ElementInternals the form would report valid, and
+   * a consumer's submit guard would wave the empty value through.
+   */
+  if (report.requiredBoxValid === true) {
+    problems.push(
+      'a form holding an unticked required pf-checkbox reports itself valid — ' +
+        'setValidity is not reaching the form',
+    );
   }
 
   for (const tag of report.missing) problems.push(`${tag} did not render`);

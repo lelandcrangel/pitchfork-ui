@@ -68,6 +68,15 @@ export const config: Config = {
           targetAttr: 'value',
           type: 'text',
         },
+        {
+          // A boolean accessor writes `checked`, not `value`. One config for
+          // both because a switch is a checkbox with a different role, and
+          // Angular binds them identically.
+          elementSelectors: ['pf-checkbox', 'pf-switch'],
+          event: 'pfChange',
+          targetAttr: 'checked',
+          type: 'boolean',
+        },
       ],
     }),
   ],

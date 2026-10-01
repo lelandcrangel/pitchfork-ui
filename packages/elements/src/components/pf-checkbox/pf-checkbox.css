@@ -1,0 +1,77 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.input {
+  appearance: none;
+  background: var(--pf-checkbox-bg);
+  border: 1px solid var(--pf-checkbox-border);
+  border-radius: var(--pf-checkbox-radius, var(--radius-sm));
+  box-sizing: border-box;
+  cursor: pointer;
+  display: inline-block;
+  flex-shrink: 0;
+  height: 18px;
+  margin: 0;
+  position: relative;
+  width: 18px;
+}
+
+.input:checked {
+  background: var(--pf-checkbox-checked-bg);
+  border-color: var(--pf-checkbox-border);
+}
+
+/* The tick: two borders of a rotated box. */
+.input::after {
+  border: solid var(--pf-checkbox-check-color);
+  border-width: 0 2px 2px 0;
+  content: '';
+  height: 9px;
+  left: 5px;
+  opacity: 0;
+  position: absolute;
+  top: 2px;
+  transform: rotate(45deg);
+  width: 5px;
+}
+
+.input:checked::after {
+  opacity: 1;
+}
+
+.input:focus-visible {
+  box-shadow: var(--pf-checkbox-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.input:disabled + .label {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.label {
+  color: var(--pf-checkbox-label-text);
+  font-size: var(--font-size-md);
+}
+
+.error {
+  color: var(--pf-checkbox-field-error, var(--pf-field-error));
+  font-size: var(--font-size-sm);
+  margin: var(--space-1) 0 0;
+}
