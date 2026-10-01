@@ -355,6 +355,12 @@ What each project cannot do, measured rather than assumed:
   `componentWillLoad` as well, so first paint is right without waiting for the
   event — that part the `unit` project can cover. `pf-content-divider` is the
   worked example, and its two spec files split exactly along this line.
+- **The mock DOM ignores `:disabled` and `:not(:disabled)`.** Measured:
+  `button:not(:disabled)` matches 2 of 2 buttons when one is disabled, and
+  `button.disabled` reads `undefined` there. So anything that filters items by
+  disabled state is untestable in the `unit` project — put those assertions in
+  a browser spec. Core's own tests do cover it, because they run on jsdom,
+  which honours the selector; `pf-toolbar` is the worked example.
 - **Neither project applies `styleUrl` CSS.** A mounted element's shadow root
   has zero adopted stylesheets and zero `<style>` tags, because the styles are
   bundled by the output targets and neither test project runs them. So no test

@@ -7,5 +7,6 @@ export * from './keys';
 export * from './motion';
 export * from './navigation';
 export * from './progress';
+export * from './roving';
 export * from './state';
 export * from './text';

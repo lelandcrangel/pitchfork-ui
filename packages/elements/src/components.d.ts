@@ -16,6 +16,8 @@ import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
+import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
+import { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
 import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
@@ -28,6 +30,8 @@ export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
+export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
+export { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
 export { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export namespace Components {
     interface PfAvatar {
@@ -433,6 +437,36 @@ export namespace Components {
         "variant": PfTagVariant;
     }
     /**
+     * A group of controls that is one tab stop from outside and navigated
+     * internally with the arrow keys.
+     * Items are matched in the light DOM, so a native `button`, `a[href]` or form
+     * control works with no ceremony. A custom element is not a native control and
+     * has to opt in with `data-toolbar-item` — `<pf-button data-toolbar-item>`.
+     * Focusing it still reaches the real button inside, because `pf-button`
+     * delegates focus.
+     */
+    interface PfToolbar {
+        /**
+          * Layout and arrow-key axis. Reflected so the stylesheet can select on it.
+          * @default 'horizontal'
+         */
+        "orientation": PfToolbarOrientation;
+    }
+    /**
+     * A rule between groups of toolbar controls.
+     * `orientation` describes the toolbar it sits in, not the rule's own shape: a
+     * horizontal toolbar gets a vertical hairline. `pf-toolbar` sets it on every
+     * separator it contains, so a consumer does not have to — and cannot leave one
+     * pointing the wrong way.
+     */
+    interface PfToolbarSeparator {
+        /**
+          * The axis of the toolbar this sits in. Reflected for the stylesheet.
+          * @default 'horizontal'
+         */
+        "orientation": PfToolbarSeparatorOrientation;
+    }
+    /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
      */
@@ -692,6 +726,34 @@ declare global {
         new (): HTMLPfTagElement;
     };
     /**
+     * A group of controls that is one tab stop from outside and navigated
+     * internally with the arrow keys.
+     * Items are matched in the light DOM, so a native `button`, `a[href]` or form
+     * control works with no ceremony. A custom element is not a native control and
+     * has to opt in with `data-toolbar-item` — `<pf-button data-toolbar-item>`.
+     * Focusing it still reaches the real button inside, because `pf-button`
+     * delegates focus.
+     */
+    interface HTMLPfToolbarElement extends Components.PfToolbar, HTMLStencilElement {
+    }
+    var HTMLPfToolbarElement: {
+        prototype: HTMLPfToolbarElement;
+        new (): HTMLPfToolbarElement;
+    };
+    /**
+     * A rule between groups of toolbar controls.
+     * `orientation` describes the toolbar it sits in, not the rule's own shape: a
+     * horizontal toolbar gets a vertical hairline. `pf-toolbar` sets it on every
+     * separator it contains, so a consumer does not have to — and cannot leave one
+     * pointing the wrong way.
+     */
+    interface HTMLPfToolbarSeparatorElement extends Components.PfToolbarSeparator, HTMLStencilElement {
+    }
+    var HTMLPfToolbarSeparatorElement: {
+        prototype: HTMLPfToolbarSeparatorElement;
+        new (): HTMLPfToolbarSeparatorElement;
+    };
+    /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
      */
@@ -737,6 +799,8 @@ declare global {
         "pf-progress-circle": HTMLPfProgressCircleElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
         "pf-tag": HTMLPfTagElement;
+        "pf-toolbar": HTMLPfToolbarElement;
+        "pf-toolbar-separator": HTMLPfToolbarSeparatorElement;
         "pf-utility-button": HTMLPfUtilityButtonElement;
         "pf-visually-hidden": HTMLPfVisuallyHiddenElement;
     }
@@ -1151,6 +1215,36 @@ declare namespace LocalJSX {
         "variant"?: PfTagVariant;
     }
     /**
+     * A group of controls that is one tab stop from outside and navigated
+     * internally with the arrow keys.
+     * Items are matched in the light DOM, so a native `button`, `a[href]` or form
+     * control works with no ceremony. A custom element is not a native control and
+     * has to opt in with `data-toolbar-item` — `<pf-button data-toolbar-item>`.
+     * Focusing it still reaches the real button inside, because `pf-button`
+     * delegates focus.
+     */
+    interface PfToolbar {
+        /**
+          * Layout and arrow-key axis. Reflected so the stylesheet can select on it.
+          * @default 'horizontal'
+         */
+        "orientation"?: PfToolbarOrientation;
+    }
+    /**
+     * A rule between groups of toolbar controls.
+     * `orientation` describes the toolbar it sits in, not the rule's own shape: a
+     * horizontal toolbar gets a vertical hairline. `pf-toolbar` sets it on every
+     * separator it contains, so a consumer does not have to — and cannot leave one
+     * pointing the wrong way.
+     */
+    interface PfToolbarSeparator {
+        /**
+          * The axis of the toolbar this sits in. Reflected for the stylesheet.
+          * @default 'horizontal'
+         */
+        "orientation"?: PfToolbarSeparatorOrientation;
+    }
+    /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
      */
@@ -1296,6 +1390,12 @@ declare namespace LocalJSX {
         "dismissible": boolean;
         "dismissLabel": string;
     }
+    interface PfToolbarAttributes {
+        "orientation": PfToolbarOrientation;
+    }
+    interface PfToolbarSeparatorAttributes {
+        "orientation": PfToolbarSeparatorOrientation;
+    }
     interface PfUtilityButtonAttributes {
         "variant": PfUtilityButtonVariant;
         "size": PfUtilityButtonSize;
@@ -1329,6 +1429,8 @@ declare namespace LocalJSX {
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
+        "pf-toolbar": Omit<PfToolbar, keyof PfToolbarAttributes> & { [K in keyof PfToolbar & keyof PfToolbarAttributes]?: PfToolbar[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `attr:${K}`]?: PfToolbarAttributes[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `prop:${K}`]?: PfToolbar[K] };
+        "pf-toolbar-separator": Omit<PfToolbarSeparator, keyof PfToolbarSeparatorAttributes> & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes]?: PfToolbarSeparator[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `attr:${K}`]?: PfToolbarSeparatorAttributes[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `prop:${K}`]?: PfToolbarSeparator[K] };
         "pf-utility-button": Omit<PfUtilityButton, keyof PfUtilityButtonAttributes> & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes]?: PfUtilityButton[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `attr:${K}`]?: PfUtilityButtonAttributes[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `prop:${K}`]?: PfUtilityButton[K] };
         "pf-visually-hidden": Omit<PfVisuallyHidden, keyof PfVisuallyHiddenAttributes> & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes]?: PfVisuallyHidden[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `attr:${K}`]?: PfVisuallyHiddenAttributes[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `prop:${K}`]?: PfVisuallyHidden[K] };
     }
@@ -1413,6 +1515,24 @@ declare module "@stencil/core" {
              */
             "pf-scroll-area": LocalJSX.IntrinsicElements["pf-scroll-area"] & JSXBase.HTMLAttributes<HTMLPfScrollAreaElement>;
             "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
+            /**
+             * A group of controls that is one tab stop from outside and navigated
+             * internally with the arrow keys.
+             * Items are matched in the light DOM, so a native `button`, `a[href]` or form
+             * control works with no ceremony. A custom element is not a native control and
+             * has to opt in with `data-toolbar-item` — `<pf-button data-toolbar-item>`.
+             * Focusing it still reaches the real button inside, because `pf-button`
+             * delegates focus.
+             */
+            "pf-toolbar": LocalJSX.IntrinsicElements["pf-toolbar"] & JSXBase.HTMLAttributes<HTMLPfToolbarElement>;
+            /**
+             * A rule between groups of toolbar controls.
+             * `orientation` describes the toolbar it sits in, not the rule's own shape: a
+             * horizontal toolbar gets a vertical hairline. `pf-toolbar` sets it on every
+             * separator it contains, so a consumer does not have to — and cannot leave one
+             * pointing the wrong way.
+             */
+            "pf-toolbar-separator": LocalJSX.IntrinsicElements["pf-toolbar-separator"] & JSXBase.HTMLAttributes<HTMLPfToolbarSeparatorElement>;
             /**
              * A compact button for toolbars and table rows, where the affordance is often
              * an icon alone.

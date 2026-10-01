@@ -20,6 +20,8 @@ import {
   PfProgressCircle,
   PfScrollArea,
   PfTag,
+  PfToolbar,
+  PfToolbarSeparator,
   PfUtilityButton,
   PfVisuallyHidden,
 } from '@pitchfork-ui/elements-react';
@@ -164,6 +166,23 @@ export function App() {
         expiry="01/30"
         cvc="123"
       />
+
+      {/*
+        One tab stop, then the arrows move within it. pf-button is not a native
+        control, so it opts into the keyboard order with data-toolbar-item.
+      */}
+      <PfToolbar>
+        <PfUtilityButton label="Search" data-toolbar-item>
+          <PfIcon slot="icon" name="magnifying-glass" />
+        </PfUtilityButton>
+        <PfUtilityButton label="Download" data-toolbar-item>
+          <PfIcon slot="icon" name="file-arrow-down" />
+        </PfUtilityButton>
+        <PfToolbarSeparator />
+        <PfButton variant="ghost" data-toolbar-item>
+          Share
+        </PfButton>
+      </PfToolbar>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

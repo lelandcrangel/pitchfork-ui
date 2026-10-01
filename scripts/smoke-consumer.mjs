@@ -60,6 +60,8 @@ const EXPECTED = [
   'pf-progress-bar',
   'pf-progress-circle',
   'pf-credit-card',
+  'pf-toolbar',
+  'pf-toolbar-separator',
 ];
 
 const TYPES = {
@@ -131,8 +133,13 @@ try {
         result.missing.push(tag);
         continue;
       }
-      // An upgraded Stencil element has a shadow root with content in it.
-      if (!el.shadowRoot || el.shadowRoot.childElementCount === 0) {
+      /*
+       * A shadow root exists only once the component has upgraded and
+       * rendered, so its presence is the whole signal. Counting children
+       * instead would fail a content-free element: pf-toolbar-separator is
+       * a styled hairline and renders nothing inside itself.
+       */
+      if (!customElements.get(tag) || !el.shadowRoot) {
         result.notUpgraded.push(tag);
       }
     }
@@ -274,6 +281,43 @@ try {
     const groupBadge = group?.shadowRoot?.querySelector('[part="badge"]');
     if (groupBadge && transparent(getComputedStyle(groupBadge).backgroundColor)) {
       result.unstyled.push('pf-badge-group badge has no background');
+    }
+
+    /*
+     * The toolbar is one tab stop from outside. Asserted against a real build
+     * because the mock DOM does not support `:not(:disabled)`, so the unit
+     * project cannot tell an item list from a list of every control.
+     */
+    const toolbar = document.querySelector('pf-toolbar');
+    if (toolbar) {
+      const style = getComputedStyle(toolbar);
+      if (transparent(style.backgroundColor)) {
+        result.unstyled.push('pf-toolbar has no background');
+      }
+      if (style.display !== 'flex') {
+        result.unstyled.push(`pf-toolbar display is "${style.display}"`);
+      }
+      const stops = Array.from(toolbar.querySelectorAll('[data-toolbar-item]')).filter(
+        (item) => item.getAttribute('tabindex') === '0',
+      );
+      if (stops.length !== 1) {
+        result.unstyled.push(`pf-toolbar has ${stops.length} tab stops, expected 1`);
+      }
+    }
+
+    // The separator is a hairline on the axis across the toolbar's own.
+    const separator = document.querySelector('pf-toolbar-separator');
+    if (separator) {
+      const style = getComputedStyle(separator);
+      if (transparent(style.backgroundColor)) {
+        result.unstyled.push('pf-toolbar-separator has no background');
+      }
+      if (style.width !== '1px') {
+        result.unstyled.push(`pf-toolbar-separator width is "${style.width}", expected 1px`);
+      }
+      if (separator.getBoundingClientRect().height <= 0) {
+        result.unstyled.push('pf-toolbar-separator has no height to stretch into');
+      }
     }
 
     const rule = document.querySelector('pf-content-divider')?.shadowRoot?.querySelector('.line');

@@ -1,5 +1,10 @@
+import {
+  getRovingItems,
+  resolveListMove,
+  resolveRovingKey,
+  syncRovingTabIndex,
+} from '@pitchfork-ui/core';
 import { forwardRef, useEffect, useRef } from 'react';
-import { Keys } from '../../a11y';
 import { useComposedRefs } from '../../hooks';
 import { cx } from '../../utils/cx';
 import './Toolbar.css';
@@ -11,10 +16,6 @@ export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: ToolbarOrientation;
 }
 
-// Interactive children, matched regardless of their current (roving) tabindex.
-const ITEM_SELECTOR =
-  'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [data-toolbar-item]:not([aria-disabled="true"])';
-
 export const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(function Toolbar(
   { className, orientation = 'horizontal', onKeyDown, onFocus, children, ...props },
   ref,
@@ -22,29 +23,17 @@ export const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(function Toolbar
   const rootRef = useRef<HTMLDivElement>(null);
   const refs = useComposedRefs(rootRef, ref);
 
-  const getItems = () =>
-    rootRef.current ? Array.from(rootRef.current.querySelectorAll<HTMLElement>(ITEM_SELECTOR)) : [];
+  const getItems = () => (rootRef.current ? getRovingItems(rootRef.current) : []);
 
-  // Maintain exactly one roving tab stop without clobbering the user's current one.
-  // Read the explicit tabindex *attribute* — native buttons report `.tabIndex === 0`
-  // even without one, which would otherwise look like an existing tab stop.
+  // Every render, so items added or removed since the last one are brought back
+  // to exactly one tab stop. Core keeps an established stop rather than
+  // resetting it, so this never moves the user's place.
   useEffect(() => {
-    const items = getItems();
-    if (items.length === 0) return;
-    const current = items.find((el) => el.getAttribute('tabindex') === '0');
-    items.forEach((el, i) => {
-      el.tabIndex = (current ? el === current : i === 0) ? 0 : -1;
-    });
+    syncRovingTabIndex(getItems());
   });
 
   const handleFocus: React.FocusEventHandler<HTMLDivElement> = (event) => {
-    const items = getItems();
-    const target = event.target as HTMLElement;
-    if (items.includes(target)) {
-      items.forEach((el) => {
-        el.tabIndex = el === target ? 0 : -1;
-      });
-    }
+    syncRovingTabIndex(getItems(), event.target as HTMLElement);
     onFocus?.(event);
   };
 
@@ -52,20 +41,18 @@ export const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(function Toolbar
     onKeyDown?.(event);
     if (event.defaultPrevented) return;
 
-    const nextKey = orientation === 'vertical' ? Keys.ArrowDown : Keys.ArrowRight;
-    const prevKey = orientation === 'vertical' ? Keys.ArrowUp : Keys.ArrowLeft;
+    const action = resolveRovingKey(event.key, orientation);
+    if (!action) return;
 
     const items = getItems();
-    if (items.length === 0) return;
     const currentIndex = items.indexOf(document.activeElement as HTMLElement);
     if (currentIndex === -1) return;
 
-    let nextIndex = -1;
-    if (event.key === nextKey) nextIndex = (currentIndex + 1) % items.length;
-    else if (event.key === prevKey) nextIndex = (currentIndex - 1 + items.length) % items.length;
-    else if (event.key === Keys.Home) nextIndex = 0;
-    else if (event.key === Keys.End) nextIndex = items.length - 1;
-
+    const nextIndex = resolveListMove(
+      action,
+      items.map((_, index) => index),
+      currentIndex,
+    );
     if (nextIndex >= 0) {
       event.preventDefault();
       items[nextIndex].focus();

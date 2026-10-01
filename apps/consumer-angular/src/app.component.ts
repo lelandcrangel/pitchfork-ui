@@ -21,6 +21,8 @@ import {
   PfProgressCircle,
   PfScrollArea,
   PfTag,
+  PfToolbar,
+  PfToolbarSeparator,
   PfUtilityButton,
   PfVisuallyHidden,
   TextValueAccessor,
@@ -56,6 +58,8 @@ import {
     PfProgressCircle,
     PfScrollArea,
     PfTag,
+    PfToolbar,
+    PfToolbarSeparator,
     PfUtilityButton,
     PfVisuallyHidden,
     TextValueAccessor,
@@ -186,6 +190,21 @@ import {
         expiry="01/30"
         cvc="123"
       ></pf-credit-card>
+
+      <!--
+        One tab stop, then the arrows move within it. pf-button is not a native
+        control, so it opts into the keyboard order with data-toolbar-item.
+      -->
+      <pf-toolbar>
+        <pf-utility-button label="Search" data-toolbar-item>
+          <pf-icon slot="icon" name="magnifying-glass"></pf-icon>
+        </pf-utility-button>
+        <pf-utility-button label="Download" data-toolbar-item>
+          <pf-icon slot="icon" name="file-arrow-down"></pf-icon>
+        </pf-utility-button>
+        <pf-toolbar-separator></pf-toolbar-separator>
+        <pf-button variant="ghost" data-toolbar-item>Share</pf-button>
+      </pf-toolbar>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
