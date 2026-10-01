@@ -19,3 +19,6 @@ packages/mcp/data/
 
 # Stencil emits the loader beside dist
 packages/elements/loader
+
+# Stencil's build cache
+packages/elements/.stencil
