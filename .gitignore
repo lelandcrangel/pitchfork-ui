@@ -16,3 +16,6 @@ apps/docs/src/CHANGELOG.mdx
 
 # Copied from the built artifacts by scripts/build-mcp-data.mjs
 packages/mcp/data/
+
+# Stencil emits the loader beside dist
+packages/elements/loader

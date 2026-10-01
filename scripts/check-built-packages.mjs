@@ -22,7 +22,13 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-const PACKAGES = ['packages/core', 'packages/react', 'packages/tokens', 'packages/mcp'];
+const PACKAGES = [
+  'packages/core',
+  'packages/elements',
+  'packages/react',
+  'packages/tokens',
+  'packages/mcp',
+];
 
 const reactDist = join(repoRoot, 'packages/react/dist');
 
