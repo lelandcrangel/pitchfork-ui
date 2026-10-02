@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { clampProgressPercent, getProgressCircleGeometry, progressValueNow } from './progress';
+import {
+  clampProgressPercent,
+  clampToRange,
+  getProgressCircleGeometry,
+  getRangePercent,
+  normalizeRange,
+  progressValueNow,
+} from './progress';
 
 describe('clampProgressPercent', () => {
   it('converts a value to a percentage of max', () => {
@@ -86,5 +93,74 @@ describe('getProgressCircleGeometry', () => {
 
     expect(radius).toBe(0);
     expect(circumference).toBe(0);
+  });
+});
+
+describe('normalizeRange', () => {
+  it('passes a sane range through untouched', () => {
+    expect(normalizeRange(0, 100, 1)).toEqual({ min: 0, max: 100, step: 1 });
+    expect(normalizeRange(-5, 5, 0.5)).toEqual({ min: -5, max: 5, step: 0.5 });
+  });
+
+  /* A NaN bound would give a track of NaN width — nothing to draw. */
+  it('substitutes a default for a non-finite bound', () => {
+    expect(normalizeRange(Number.NaN, 50, 1)).toEqual({ min: 0, max: 50, step: 1 });
+    expect(normalizeRange(10, Number.NaN, 1)).toEqual({ min: 10, max: 110, step: 1 });
+    expect(normalizeRange(10, Number.POSITIVE_INFINITY, 1).max).toBe(110);
+  });
+
+  /* Reading backwards is not a thing a track can draw, so it collapses. */
+  it('collapses an inverted range to a single point', () => {
+    expect(normalizeRange(100, 0, 1)).toEqual({ min: 100, max: 100, step: 1 });
+  });
+
+  /* A step of zero makes the control reject every value the user picks. */
+  it('falls back to a step of 1 for a non-positive or non-finite step', () => {
+    expect(normalizeRange(0, 10, 0).step).toBe(1);
+    expect(normalizeRange(0, 10, -2).step).toBe(1);
+    expect(normalizeRange(0, 10, Number.NaN).step).toBe(1);
+  });
+});
+
+describe('getRangePercent', () => {
+  /*
+   * The distinction from clampProgressPercent: a slider's track starts at min,
+   * so the same value sits differently on two ranges of the same width.
+   */
+  it('measures from min, not from zero', () => {
+    expect(getRangePercent(5, 0, 10)).toBe(50);
+    expect(getRangePercent(5, 5, 15)).toBe(0);
+    expect(getRangePercent(10, 5, 15)).toBe(50);
+  });
+
+  it('handles a range that does not start at zero', () => {
+    expect(getRangePercent(-5, -10, 0)).toBe(50);
+  });
+
+  it('clamps outside the range', () => {
+    expect(getRangePercent(-20, 0, 10)).toBe(0);
+    expect(getRangePercent(99, 0, 10)).toBe(100);
+  });
+
+  it('returns zero for a collapsed range rather than dividing by zero', () => {
+    expect(getRangePercent(5, 5, 5)).toBe(0);
+    expect(getRangePercent(5, 10, 0)).toBe(0);
+  });
+
+  it('returns zero for a NaN value', () => {
+    expect(getRangePercent(Number.NaN, 0, 10)).toBe(0);
+  });
+});
+
+describe('clampToRange', () => {
+  it('keeps a value inside the bounds', () => {
+    expect(clampToRange(5, 0, 10)).toBe(5);
+    expect(clampToRange(-1, 0, 10)).toBe(0);
+    expect(clampToRange(11, 0, 10)).toBe(10);
+  });
+
+  /* NaN has no place on the range, so it starts at the bottom of it. */
+  it('maps NaN onto min', () => {
+    expect(clampToRange(Number.NaN, 3, 10)).toBe(3);
   });
 });

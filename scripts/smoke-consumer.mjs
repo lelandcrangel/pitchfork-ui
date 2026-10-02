@@ -65,6 +65,8 @@ const EXPECTED = [
   'pf-pagination',
   'pf-checkbox',
   'pf-switch',
+  'pf-textarea',
+  'pf-slider',
 ];
 
 const TYPES = {
@@ -349,10 +351,17 @@ try {
     const prefs = document.querySelector('[data-testid="prefs"]');
     if (prefs instanceof HTMLFormElement) {
       const names = [...new FormData(prefs).keys()].sort();
-      // terms starts unticked (absent), notify starts on (present).
-      if (names.join(',') !== 'notify') {
+      /*
+       * The two kinds of absence, in one check. `terms` is an unticked
+       * checkbox, so it is absent from the submission entirely. `notes` is a
+       * text control that may be empty, so it is present with an empty value —
+       * a distinction a server relies on, and one `setFormValue('')` would
+       * erase for the checkbox.
+       */
+      if (names.join(',') !== 'notes,notify,volume') {
         result.unstyled.push(
-          `form sees [${names.join(', ')}] from pf-checkbox/pf-switch, expected just notify`,
+          `form sees [${names.join(', ')}] from the form controls, ` +
+            'expected notes,notify,volume (terms is unticked, so absent)',
         );
       }
       const box = prefs.querySelector('pf-checkbox');

@@ -21,8 +21,10 @@ import {
   PfProgressBar,
   PfProgressCircle,
   PfScrollArea,
+  PfSlider,
   PfSwitch,
   PfTag,
+  PfTextarea,
   PfToolbar,
   PfToolbarSeparator,
   PfUtilityButton,
@@ -39,6 +41,7 @@ export function App() {
   const [tags, setTags] = useState(['design', 'systems']);
   const [page, setPage] = useState(3);
   const [submitted, setSubmitted] = useState('');
+  const [volume] = useState(7);
 
   return (
     <main data-testid="app">
@@ -208,6 +211,13 @@ export function App() {
       >
         <PfCheckbox name="terms" label="Accept terms" required />
         <PfSwitch name="notify" label="Email notifications" checked />
+        <PfTextarea
+          name="notes"
+          label="Notes"
+          description="Multi-line, form-associated."
+          rows={3}
+        />
+        <PfSlider name="volume" label="Volume" min={0} max={10} value={volume} />
         <PfButton type="submit" variant="primary">
           Save
         </PfButton>

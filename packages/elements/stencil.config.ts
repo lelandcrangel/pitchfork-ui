@@ -61,12 +61,21 @@ export const config: Config = {
       outputType: 'standalone',
       valueAccessorConfigs: [
         {
-          elementSelectors: ['pf-input'],
           // pfChange is emitted on commit, which is the moment Angular should
           // see a new value; pfInput fires on every keystroke.
+          elementSelectors: ['pf-input', 'pf-textarea'],
           event: 'pfChange',
           targetAttr: 'value',
           type: 'text',
+        },
+        {
+          // A slider is numeric: without this Angular would store the string
+          // the DOM gives it, and a `min`/`max` validator comparing it to a
+          // number would compare a string instead.
+          elementSelectors: ['pf-slider'],
+          event: 'pfChange',
+          targetAttr: 'value',
+          type: 'number',
         },
         {
           // A boolean accessor writes `checked`, not `value`. One config for

@@ -15,6 +15,20 @@
   },
   "angularCompilerOptions": {
     "strictTemplates": true,
+    // The generated value accessors bind `$event.target?.["value"]` in a host
+    // expression. Angular can narrow `$event.target` when a directive's
+    // selector names one tag, but not across a comma-separated list -- it
+    // falls back to `EventTarget`, which has no `value`, and strict DOM event
+    // types then reject it (TS7053). Bisected: `selector: 'pf-input'` compiles
+    // and `selector: 'pf-input, pf-textarea'` does not, with identical
+    // generated code otherwise.
+    //
+    // Narrowed to this one flag rather than turning strictTemplates off, and
+    // safe here because this package contains only generated proxies and
+    // accessors -- there is no hand-written template whose event types this
+    // would stop checking. The runtime behaviour is covered by
+    // test/reactive-forms*.spec.ts, which drive real Angular forms.
+    "strictDomEventTypes": false,
     "enableI18nLegacyMessageIdFormat": false
   },
   "include": ["src/**/*.ts"]

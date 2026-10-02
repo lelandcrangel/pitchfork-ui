@@ -512,6 +512,68 @@ export namespace Components {
         "orientation": PfScrollAreaOrientation;
     }
     /**
+     * A form-associated range slider.
+     * A native `<input type="range">`, as the React component is — the drag, the
+     * keyboard stepping and the touch handling are all the browser's, and nothing
+     * here reimplements them.
+     */
+    interface PfSlider {
+        /**
+          * A form-associated custom element does not inherit this.
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The message explaining why the control is invalid, or an empty string.
+         */
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * Visible label, rendered in the same root so `for` actually associates.
+         */
+        "label"?: string;
+        /**
+          * @default 100
+         */
+        "max": number;
+        /**
+          * @default 0
+         */
+        "min": number;
+        /**
+          * Submitted under this name. Reflected, because a form-associated element takes its submission name from the attribute, not this property.
+         */
+        "name"?: string;
+        /**
+          * As `checkValidity`, but also shows the browser's validation message.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * Show the current value beside the label. Reflected for the stylesheet.
+          * @default true
+         */
+        "showValue": boolean;
+        /**
+          * @default 1
+         */
+        "step": number;
+        /**
+          * The control's value.
+          * @default 0
+         */
+        "value": number;
+    }
+    /**
      * A form-associated on/off switch.
      * Built on a native checkbox with `role="switch"`, exactly as the React
      * component is: a switch is a checkbox whose two states are "on" and "off"
@@ -577,6 +639,64 @@ export namespace Components {
           * @default 'neutral'
          */
         "variant": PfTagVariant;
+    }
+    /**
+     * A form-associated multi-line text control.
+     * Shares `pf-input`'s field anatomy and form wiring; the control is a
+     * `<textarea>` rather than an `<input>`, so it takes `rows` and resizes.
+     */
+    interface PfTextarea {
+        /**
+          * Whether the control currently satisfies its constraints.  A form-associated custom element does not inherit `checkValidity` from anywhere -- the spec puts it on ElementInternals, so the element has to forward it or consumers cannot ask.
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The message explaining why the control is invalid, or an empty string.
+         */
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * Visible label. Rendered in the same root as the input, so `for` works.
+         */
+        "label"?: string;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working.
+         */
+        "name"?: string;
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "readonly": boolean;
+        /**
+          * As `checkValidity`, but also shows the browser's validation message.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * Visible rows. Mirrors the native attribute.
+          * @default 4
+         */
+        "rows": number;
+        /**
+          * The control's value.
+          * @default ''
+         */
+        "value": string;
     }
     /**
      * A group of controls that is one tab stop from outside and navigated
@@ -671,6 +791,10 @@ export interface PfPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfPaginationElement;
 }
+export interface PfSliderCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfSliderElement;
+}
 export interface PfSwitchCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfSwitchElement;
@@ -678,6 +802,10 @@ export interface PfSwitchCustomEvent<T> extends CustomEvent<T> {
 export interface PfTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfTagElement;
+}
+export interface PfTextareaCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTextareaElement;
 }
 declare global {
     interface HTMLPfAvatarElement extends Components.PfAvatar, HTMLStencilElement {
@@ -906,6 +1034,30 @@ declare global {
         prototype: HTMLPfScrollAreaElement;
         new (): HTMLPfScrollAreaElement;
     };
+    interface HTMLPfSliderElementEventMap {
+        "pfInput": { value: number };
+        "pfChange": { value: number };
+    }
+    /**
+     * A form-associated range slider.
+     * A native `<input type="range">`, as the React component is — the drag, the
+     * keyboard stepping and the touch handling are all the browser's, and nothing
+     * here reimplements them.
+     */
+    interface HTMLPfSliderElement extends Components.PfSlider, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfSliderElementEventMap>(type: K, listener: (this: HTMLPfSliderElement, ev: PfSliderCustomEvent<HTMLPfSliderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfSliderElementEventMap>(type: K, listener: (this: HTMLPfSliderElement, ev: PfSliderCustomEvent<HTMLPfSliderElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfSliderElement: {
+        prototype: HTMLPfSliderElement;
+        new (): HTMLPfSliderElement;
+    };
     interface HTMLPfSwitchElementEventMap {
         "pfChange": { checked: boolean; value: string };
     }
@@ -946,6 +1098,29 @@ declare global {
     var HTMLPfTagElement: {
         prototype: HTMLPfTagElement;
         new (): HTMLPfTagElement;
+    };
+    interface HTMLPfTextareaElementEventMap {
+        "pfInput": { value: string };
+        "pfChange": { value: string };
+    }
+    /**
+     * A form-associated multi-line text control.
+     * Shares `pf-input`'s field anatomy and form wiring; the control is a
+     * `<textarea>` rather than an `<input>`, so it takes `rows` and resizes.
+     */
+    interface HTMLPfTextareaElement extends Components.PfTextarea, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTextareaElementEventMap>(type: K, listener: (this: HTMLPfTextareaElement, ev: PfTextareaCustomEvent<HTMLPfTextareaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTextareaElementEventMap>(type: K, listener: (this: HTMLPfTextareaElement, ev: PfTextareaCustomEvent<HTMLPfTextareaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTextareaElement: {
+        prototype: HTMLPfTextareaElement;
+        new (): HTMLPfTextareaElement;
     };
     /**
      * A group of controls that is one tab stop from outside and navigated
@@ -1022,8 +1197,10 @@ declare global {
         "pf-progress-bar": HTMLPfProgressBarElement;
         "pf-progress-circle": HTMLPfProgressCircleElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
+        "pf-slider": HTMLPfSliderElement;
         "pf-switch": HTMLPfSwitchElement;
         "pf-tag": HTMLPfTagElement;
+        "pf-textarea": HTMLPfTextareaElement;
         "pf-toolbar": HTMLPfToolbarElement;
         "pf-toolbar-separator": HTMLPfToolbarSeparatorElement;
         "pf-utility-button": HTMLPfUtilityButtonElement;
@@ -1511,6 +1688,68 @@ declare namespace LocalJSX {
         "orientation"?: PfScrollAreaOrientation;
     }
     /**
+     * A form-associated range slider.
+     * A native `<input type="range">`, as the React component is — the drag, the
+     * keyboard stepping and the touch handling are all the browser's, and nothing
+     * here reimplements them.
+     */
+    interface PfSlider {
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * Visible label, rendered in the same root so `for` actually associates.
+         */
+        "label"?: string;
+        /**
+          * @default 100
+         */
+        "max"?: number;
+        /**
+          * @default 0
+         */
+        "min"?: number;
+        /**
+          * Submitted under this name. Reflected, because a form-associated element takes its submission name from the attribute, not this property.
+         */
+        "name"?: string;
+        /**
+          * Fires when the value is committed, like the native `change` event.
+         */
+        "onPfChange"?: (event: PfSliderCustomEvent<{ value: number }>) => void;
+        /**
+          * Fires as the user drags, like the native `input` event.
+         */
+        "onPfInput"?: (event: PfSliderCustomEvent<{ value: number }>) => void;
+        /**
+          * Show the current value beside the label. Reflected for the stylesheet.
+          * @default true
+         */
+        "showValue"?: boolean;
+        /**
+          * @default 1
+         */
+        "step"?: number;
+        /**
+          * The control's value.
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
      * A form-associated on/off switch.
      * Built on a native checkbox with `role="switch"`, exactly as the React
      * component is: a switch is a checkbox whose two states are "on" and "off"
@@ -1576,6 +1815,64 @@ declare namespace LocalJSX {
           * @default 'neutral'
          */
         "variant"?: PfTagVariant;
+    }
+    /**
+     * A form-associated multi-line text control.
+     * Shares `pf-input`'s field anatomy and form wiring; the control is a
+     * `<textarea>` rather than an `<input>`, so it takes `rows` and resizes.
+     */
+    interface PfTextarea {
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * Visible label. Rendered in the same root as the input, so `for` works.
+         */
+        "label"?: string;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working.
+         */
+        "name"?: string;
+        /**
+          * Fires when the value is committed, like the native `change` event.
+         */
+        "onPfChange"?: (event: PfTextareaCustomEvent<{ value: string }>) => void;
+        /**
+          * Fires on every keystroke, like the native `input` event.
+         */
+        "onPfInput"?: (event: PfTextareaCustomEvent<{ value: string }>) => void;
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "readonly"?: boolean;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * Visible rows. Mirrors the native attribute.
+          * @default 4
+         */
+        "rows"?: number;
+        /**
+          * The control's value.
+          * @default ''
+         */
+        "value"?: string;
     }
     /**
      * A group of controls that is one tab stop from outside and navigated
@@ -1766,6 +2063,18 @@ declare namespace LocalJSX {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
     }
+    interface PfSliderAttributes {
+        "name": string;
+        "value": number;
+        "min": number;
+        "max": number;
+        "step": number;
+        "label": string;
+        "description": string;
+        "error": string;
+        "showValue": boolean;
+        "disabled": boolean;
+    }
     interface PfSwitchAttributes {
         "name": string;
         "checked": boolean;
@@ -1779,6 +2088,18 @@ declare namespace LocalJSX {
         "variant": PfTagVariant;
         "dismissible": boolean;
         "dismissLabel": string;
+    }
+    interface PfTextareaAttributes {
+        "name": string;
+        "value": string;
+        "rows": number;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "required": boolean;
+        "disabled": boolean;
+        "readonly": boolean;
     }
     interface PfToolbarAttributes {
         "orientation": PfToolbarOrientation;
@@ -1820,8 +2141,10 @@ declare namespace LocalJSX {
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
+        "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
+        "pf-textarea": Omit<PfTextarea, keyof PfTextareaAttributes> & { [K in keyof PfTextarea & keyof PfTextareaAttributes]?: PfTextarea[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `attr:${K}`]?: PfTextareaAttributes[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `prop:${K}`]?: PfTextarea[K] };
         "pf-toolbar": Omit<PfToolbar, keyof PfToolbarAttributes> & { [K in keyof PfToolbar & keyof PfToolbarAttributes]?: PfToolbar[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `attr:${K}`]?: PfToolbarAttributes[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `prop:${K}`]?: PfToolbar[K] };
         "pf-toolbar-separator": Omit<PfToolbarSeparator, keyof PfToolbarSeparatorAttributes> & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes]?: PfToolbarSeparator[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `attr:${K}`]?: PfToolbarSeparatorAttributes[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `prop:${K}`]?: PfToolbarSeparator[K] };
         "pf-utility-button": Omit<PfUtilityButton, keyof PfUtilityButtonAttributes> & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes]?: PfUtilityButton[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `attr:${K}`]?: PfUtilityButtonAttributes[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `prop:${K}`]?: PfUtilityButton[K] };
@@ -1920,6 +2243,13 @@ declare module "@stencil/core" {
              */
             "pf-scroll-area": LocalJSX.IntrinsicElements["pf-scroll-area"] & JSXBase.HTMLAttributes<HTMLPfScrollAreaElement>;
             /**
+             * A form-associated range slider.
+             * A native `<input type="range">`, as the React component is — the drag, the
+             * keyboard stepping and the touch handling are all the browser's, and nothing
+             * here reimplements them.
+             */
+            "pf-slider": LocalJSX.IntrinsicElements["pf-slider"] & JSXBase.HTMLAttributes<HTMLPfSliderElement>;
+            /**
              * A form-associated on/off switch.
              * Built on a native checkbox with `role="switch"`, exactly as the React
              * component is: a switch is a checkbox whose two states are "on" and "off"
@@ -1928,6 +2258,12 @@ declare module "@stencil/core" {
              */
             "pf-switch": LocalJSX.IntrinsicElements["pf-switch"] & JSXBase.HTMLAttributes<HTMLPfSwitchElement>;
             "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
+            /**
+             * A form-associated multi-line text control.
+             * Shares `pf-input`'s field anatomy and form wiring; the control is a
+             * `<textarea>` rather than an `<input>`, so it takes `rows` and resizes.
+             */
+            "pf-textarea": LocalJSX.IntrinsicElements["pf-textarea"] & JSXBase.HTMLAttributes<HTMLPfTextareaElement>;
             /**
              * A group of controls that is one tab stop from outside and navigated
              * internally with the arrow keys.

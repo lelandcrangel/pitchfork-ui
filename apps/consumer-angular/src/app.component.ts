@@ -22,14 +22,17 @@ import {
   PfProgressBar,
   PfProgressCircle,
   PfScrollArea,
+  PfSlider,
   PfSwitch,
   PfTag,
+  PfTextarea,
   PfToolbar,
   PfToolbarSeparator,
   PfUtilityButton,
   PfVisuallyHidden,
   TextValueAccessor,
   BooleanValueAccessor,
+  NumericValueAccessor,
 } from '@pitchfork-ui/elements-angular';
 
 /**
@@ -63,14 +66,17 @@ import {
     PfProgressBar,
     PfProgressCircle,
     PfScrollArea,
+    PfSlider,
     PfSwitch,
     PfTag,
+    PfTextarea,
     PfToolbar,
     PfToolbarSeparator,
     PfUtilityButton,
     PfVisuallyHidden,
     TextValueAccessor,
     BooleanValueAccessor,
+    NumericValueAccessor,
   ],
   template: `
     <main data-testid="app">
@@ -239,6 +245,14 @@ import {
           formControlName="terms"
         ></pf-checkbox>
         <pf-switch label="Email notifications" name="notify" formControlName="notify"></pf-switch>
+        <pf-textarea label="Notes" name="notes" [rows]="3" formControlName="notes"></pf-textarea>
+        <pf-slider
+          label="Volume"
+          name="volume"
+          [min]="0"
+          [max]="10"
+          formControlName="volume"
+        ></pf-slider>
       </form>
       <p data-testid="prefs-state">
         terms {{ prefs.controls.terms.value }} / notify {{ prefs.controls.notify.value }} / valid
@@ -263,6 +277,8 @@ export class AppComponent {
   prefs = new FormGroup({
     terms: new FormControl(false, Validators.requiredTrue),
     notify: new FormControl(true),
+    notes: new FormControl('first draft'),
+    volume: new FormControl(7),
   });
 
   removeTag(tag: string) {

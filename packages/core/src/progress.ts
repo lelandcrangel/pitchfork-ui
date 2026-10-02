@@ -63,3 +63,52 @@ export function getProgressCircleGeometry(
     center: size / 2,
   };
 }
+
+export interface NormalizedRange {
+  min: number;
+  max: number;
+  step: number;
+}
+
+/**
+ * Sanitise a slider's bounds.
+ *
+ * Every rule here exists because the alternative renders nothing useful: a
+ * non-finite bound gives a track of NaN width, an inverted range gives a
+ * negative one, and a step of zero or less makes the control refuse every
+ * value the user picks.
+ */
+export function normalizeRange(min: number, max: number, step: number): NormalizedRange {
+  const safeMin = Number.isFinite(min) ? min : 0;
+  const safeMax = Number.isFinite(max) ? max : safeMin + 100;
+
+  return {
+    min: safeMin,
+    // An inverted range collapses to a single point rather than reading
+    // backwards, which is the only interpretation a track can draw.
+    max: safeMax >= safeMin ? safeMax : safeMin,
+    step: Number.isFinite(step) && step > 0 ? step : 1,
+  };
+}
+
+/**
+ * Where `value` sits between `min` and `max`, as a percentage in 0–100.
+ *
+ * Distinct from `clampProgressPercent`, which measures a fraction of `max`
+ * from an implicit zero. A slider's track starts at `min`, so a value of 5 on
+ * a 0–10 range and on a 5–15 range are 50% and 0% respectively.
+ */
+export function getRangePercent(value: number, min: number, max: number): number {
+  const range = max - min;
+  if (!(range > 0)) return 0;
+  if (Number.isNaN(value)) return 0;
+
+  return Math.max(0, Math.min(100, ((value - min) / range) * 100));
+}
+
+/** Keep `value` within the inclusive range. */
+export function clampToRange(value: number, min: number, max: number): number {
+  if (Number.isNaN(value)) return min;
+
+  return Math.min(Math.max(value, min), max);
+}
