@@ -69,6 +69,7 @@ const EXPECTED = [
   'pf-slider',
   'pf-radio-group',
   'pf-radio-button',
+  'pf-tooltip',
 ];
 
 const TYPES = {
@@ -429,6 +430,53 @@ try {
       }
     } else {
       result.unstyled.push('the consumer app has no [data-testid="prefs"] form');
+    }
+
+    /*
+     * The claim the overlay wave rests on: a `popover` opened from inside a
+     * shadow root escapes an ancestor's `overflow` and stacking context. That
+     * is what `createPortal` does for the React library and the only
+     * equivalent available to a custom element. Both apps put the tooltip in a
+     * 120x40 clipping box with a z-index:999 sibling after it.
+     */
+    const tip = document.querySelector('pf-tooltip');
+    const clip = document.querySelector('[data-testid="tooltip-clip"]');
+    const tipPanel = tip?.shadowRoot?.querySelector('[part="tooltip"]');
+    if (tipPanel && clip) {
+      const panelBox = tipPanel.getBoundingClientRect();
+      const clipBox = clip.getBoundingClientRect();
+
+      if (panelBox.width <= 0 || panelBox.height <= 0) {
+        result.unstyled.push('pf-tooltip panel has no size — the popover never opened');
+      } else {
+        // Wider than its clipping ancestor, so it is demonstrably not clipped.
+        if (panelBox.width <= clipBox.width) {
+          result.unstyled.push(
+            `pf-tooltip panel is ${Math.round(panelBox.width)}px wide inside a ` +
+              `${Math.round(clipBox.width)}px clip box — it is being clipped`,
+          );
+        }
+        // And it wins the hit test at its own centre, over the z-index rival.
+        const hit = document.elementFromPoint(
+          panelBox.left + panelBox.width / 2,
+          panelBox.top + panelBox.height / 2,
+        );
+        if (!hit || !(tip.contains(hit) || hit === tip)) {
+          result.unstyled.push(
+            `pf-tooltip panel lost the top layer to <${hit?.tagName?.toLowerCase() ?? 'nothing'}>`,
+          );
+        }
+      }
+
+      if (transparent(getComputedStyle(tipPanel).backgroundColor)) {
+        result.unstyled.push('pf-tooltip panel has no background');
+      }
+
+      // The trigger's accessible description is copied text, not an IDREF.
+      const described = tip.firstElementChild?.getAttribute('aria-description');
+      if (!described) {
+        result.unstyled.push('pf-tooltip did not describe its trigger');
+      }
     }
 
     const rule = document.querySelector('pf-content-divider')?.shadowRoot?.querySelector('.line');

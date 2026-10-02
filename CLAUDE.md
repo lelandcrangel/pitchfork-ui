@@ -356,6 +356,24 @@ Things that differ from the React library, learned by porting the first two:
   `checked` first and then emits, which makes a disabled group, a disabled
   choice and a consumer holding `value` all correct without the group having to
   undo anything.
+- **An overlay is a `popover`, not a portal.** `createPortal` has no
+  equivalent inside a shadow root, and a positioned element there is clipped by
+  any ancestor's `overflow` and loses to any higher stacking context. A
+  `popover` opened from a shadow root is promoted to the top layer and escapes
+  both — measured: it beats a `z-index: 999` sibling from inside an
+  `overflow: hidden` box, where a plain absolute element in the same place
+  loses. `pf-tooltip` is the worked example, and
+  `scripts/smoke-consumer.mjs` asserts it against a real build by putting the
+  tooltip in a 120x40 clip box.
+- **An overlay cannot describe its trigger with an IDREF.** `aria-describedby`
+  does not cross a shadow boundary, and `ariaDescribedByElements` silently
+  reads back empty when handed an element from a root the trigger does not own
+  — both measured. Copy the text onto the trigger as `aria-description`
+  instead; Chromium's accessibility tree reports it identically to a same-root
+  IDREF, also measured. And watch the content with a `MutationObserver`:
+  `slotchange` fires when the assignment changes, not when text inside an
+  already-assigned node is edited, so without it the visible tooltip updates
+  while the accessible description goes stale.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

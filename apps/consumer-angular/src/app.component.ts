@@ -29,6 +29,7 @@ import {
   PfTag,
   PfTextarea,
   PfToolbar,
+  PfTooltip,
   PfToolbarSeparator,
   PfUtilityButton,
   PfVisuallyHidden,
@@ -75,6 +76,7 @@ import {
     PfTag,
     PfTextarea,
     PfToolbar,
+    PfTooltip,
     PfToolbarSeparator,
     PfUtilityButton,
     PfVisuallyHidden,
@@ -271,6 +273,21 @@ import {
         terms {{ prefs.controls.terms.value }} / notify {{ prefs.controls.notify.value }} / valid
         {{ prefs.valid }}
       </p>
+
+      <!--
+        Deliberately inside a clipping, stacking-context box: the panel is a
+        popover, so it escapes both.
+      -->
+      <div
+        data-testid="tooltip-clip"
+        style="overflow: hidden; width: 120px; height: 40px; position: relative; z-index: 0"
+      >
+        <pf-tooltip [open]="true" placement="bottom">
+          <button type="button">Anchored</button>
+          <span slot="content">Escapes the clip box and the stacking context</span>
+        </pf-tooltip>
+      </div>
+      <div style="position: relative; z-index: 999; height: 4px"></div>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>

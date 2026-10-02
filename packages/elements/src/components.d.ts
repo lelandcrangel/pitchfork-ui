@@ -19,6 +19,7 @@ import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-a
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 import { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
+import { Side } from "@pitchfork-ui/core";
 import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
@@ -34,6 +35,7 @@ export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-a
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
 export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 export { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
+export { Side } from "@pitchfork-ui/core";
 export { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export namespace Components {
     interface PfAvatar {
@@ -816,6 +818,36 @@ export namespace Components {
         "orientation": PfToolbarSeparatorOrientation;
     }
     /**
+     * A tooltip anchored to whatever is slotted into it.
+     * The panel is a `popover`, which is how it escapes an ancestor's `overflow`
+     * and stacking context — the thing `createPortal` does for the React
+     * component, and the only equivalent available from inside a shadow root.
+     * Verified: a popover opened from a shadow root inside an `overflow: hidden`
+     * container beats a `z-index: 999` sibling, where a plain absolute element in
+     * the same place loses.
+     */
+    interface PfTooltip {
+        /**
+          * Milliseconds to wait before showing on hover or focus.
+          * @default 120
+         */
+        "delay": number;
+        /**
+          * Never show. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Force the tooltip open or closed, rather than letting it react.
+         */
+        "open"?: boolean;
+        /**
+          * Preferred side. Reflected so the stylesheet can place the arrow.
+          * @default 'top'
+         */
+        "placement": Side;
+    }
+    /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
      */
@@ -1303,6 +1335,21 @@ declare global {
         new (): HTMLPfToolbarSeparatorElement;
     };
     /**
+     * A tooltip anchored to whatever is slotted into it.
+     * The panel is a `popover`, which is how it escapes an ancestor's `overflow`
+     * and stacking context — the thing `createPortal` does for the React
+     * component, and the only equivalent available from inside a shadow root.
+     * Verified: a popover opened from a shadow root inside an `overflow: hidden`
+     * container beats a `z-index: 999` sibling, where a plain absolute element in
+     * the same place loses.
+     */
+    interface HTMLPfTooltipElement extends Components.PfTooltip, HTMLStencilElement {
+    }
+    var HTMLPfTooltipElement: {
+        prototype: HTMLPfTooltipElement;
+        new (): HTMLPfTooltipElement;
+    };
+    /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
      */
@@ -1357,6 +1404,7 @@ declare global {
         "pf-textarea": HTMLPfTextareaElement;
         "pf-toolbar": HTMLPfToolbarElement;
         "pf-toolbar-separator": HTMLPfToolbarSeparatorElement;
+        "pf-tooltip": HTMLPfTooltipElement;
         "pf-utility-button": HTMLPfUtilityButtonElement;
         "pf-visually-hidden": HTMLPfVisuallyHiddenElement;
     }
@@ -2144,6 +2192,36 @@ declare namespace LocalJSX {
         "orientation"?: PfToolbarSeparatorOrientation;
     }
     /**
+     * A tooltip anchored to whatever is slotted into it.
+     * The panel is a `popover`, which is how it escapes an ancestor's `overflow`
+     * and stacking context — the thing `createPortal` does for the React
+     * component, and the only equivalent available from inside a shadow root.
+     * Verified: a popover opened from a shadow root inside an `overflow: hidden`
+     * container beats a `z-index: 999` sibling, where a plain absolute element in
+     * the same place loses.
+     */
+    interface PfTooltip {
+        /**
+          * Milliseconds to wait before showing on hover or focus.
+          * @default 120
+         */
+        "delay"?: number;
+        /**
+          * Never show. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Force the tooltip open or closed, rather than letting it react.
+         */
+        "open"?: boolean;
+        /**
+          * Preferred side. Reflected so the stylesheet can place the arrow.
+          * @default 'top'
+         */
+        "placement"?: Side;
+    }
+    /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
      */
@@ -2360,6 +2438,12 @@ declare namespace LocalJSX {
     interface PfToolbarSeparatorAttributes {
         "orientation": PfToolbarSeparatorOrientation;
     }
+    interface PfTooltipAttributes {
+        "placement": Side;
+        "delay": number;
+        "open": boolean;
+        "disabled": boolean;
+    }
     interface PfUtilityButtonAttributes {
         "variant": PfUtilityButtonVariant;
         "size": PfUtilityButtonSize;
@@ -2402,6 +2486,7 @@ declare namespace LocalJSX {
         "pf-textarea": Omit<PfTextarea, keyof PfTextareaAttributes> & { [K in keyof PfTextarea & keyof PfTextareaAttributes]?: PfTextarea[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `attr:${K}`]?: PfTextareaAttributes[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `prop:${K}`]?: PfTextarea[K] };
         "pf-toolbar": Omit<PfToolbar, keyof PfToolbarAttributes> & { [K in keyof PfToolbar & keyof PfToolbarAttributes]?: PfToolbar[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `attr:${K}`]?: PfToolbarAttributes[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `prop:${K}`]?: PfToolbar[K] };
         "pf-toolbar-separator": Omit<PfToolbarSeparator, keyof PfToolbarSeparatorAttributes> & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes]?: PfToolbarSeparator[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `attr:${K}`]?: PfToolbarSeparatorAttributes[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `prop:${K}`]?: PfToolbarSeparator[K] };
+        "pf-tooltip": Omit<PfTooltip, keyof PfTooltipAttributes> & { [K in keyof PfTooltip & keyof PfTooltipAttributes]?: PfTooltip[K] } & { [K in keyof PfTooltip & keyof PfTooltipAttributes as `attr:${K}`]?: PfTooltipAttributes[K] } & { [K in keyof PfTooltip & keyof PfTooltipAttributes as `prop:${K}`]?: PfTooltip[K] };
         "pf-utility-button": Omit<PfUtilityButton, keyof PfUtilityButtonAttributes> & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes]?: PfUtilityButton[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `attr:${K}`]?: PfUtilityButtonAttributes[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `prop:${K}`]?: PfUtilityButton[K] };
         "pf-visually-hidden": Omit<PfVisuallyHidden, keyof PfVisuallyHiddenAttributes> & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes]?: PfVisuallyHidden[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `attr:${K}`]?: PfVisuallyHiddenAttributes[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `prop:${K}`]?: PfVisuallyHidden[K] };
     }
@@ -2562,6 +2647,16 @@ declare module "@stencil/core" {
              * pointing the wrong way.
              */
             "pf-toolbar-separator": LocalJSX.IntrinsicElements["pf-toolbar-separator"] & JSXBase.HTMLAttributes<HTMLPfToolbarSeparatorElement>;
+            /**
+             * A tooltip anchored to whatever is slotted into it.
+             * The panel is a `popover`, which is how it escapes an ancestor's `overflow`
+             * and stacking context — the thing `createPortal` does for the React
+             * component, and the only equivalent available from inside a shadow root.
+             * Verified: a popover opened from a shadow root inside an `overflow: hidden`
+             * container beats a `z-index: 999` sibling, where a plain absolute element in
+             * the same place loses.
+             */
+            "pf-tooltip": LocalJSX.IntrinsicElements["pf-tooltip"] & JSXBase.HTMLAttributes<HTMLPfTooltipElement>;
             /**
              * A compact button for toolbars and table rows, where the affordance is often
              * an icon alone.

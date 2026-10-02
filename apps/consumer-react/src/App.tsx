@@ -28,6 +28,7 @@ import {
   PfTag,
   PfTextarea,
   PfToolbar,
+  PfTooltip,
   PfToolbarSeparator,
   PfUtilityButton,
   PfVisuallyHidden,
@@ -248,6 +249,28 @@ export function App() {
         </PfButton>
       </form>
       <p data-testid="submitted">submitted: {submitted}</p>
+
+      {/*
+        Deliberately inside a clipping, stacking-context box: the panel is a
+        popover, so it escapes both. A plain positioned element here would be
+        cut off and lose to the z-index below it.
+      */}
+      <div
+        data-testid="tooltip-clip"
+        style={{
+          overflow: 'hidden',
+          width: '120px',
+          height: '40px',
+          position: 'relative',
+          zIndex: 0,
+        }}
+      >
+        <PfTooltip open placement="bottom">
+          <button type="button">Anchored</button>
+          <span slot="content">Escapes the clip box and the stacking context</span>
+        </PfTooltip>
+      </div>
+      <div style={{ position: 'relative', zIndex: 999, height: '4px' }} />
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>
