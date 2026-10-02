@@ -104,6 +104,46 @@ Worth recording so nobody re-litigates it later: **`@stencil/react-output-target
 depends on `@lit/react`.** Choosing Stencil does not avoid Lit; it adds a
 compiler above it.
 
+### 2.1 Data-driven components take child elements, not options arrays
+
+Decided after `pf-radio-group` forced the question. `<pf-select>` gets
+`<pf-option>` children, not an `options` property; the same for every one of
+the 22 data-driven components.
+
+**Radios made part of it non-negotiable.** A form-associated custom element
+gets no radio grouping from the browser. Measured against a hand-rolled one:
+three such elements sharing a `name` all stay checked and the form submits one
+entry _each_, where native radios submit one between them. So something has to
+own single selection, and that something is a group element with the radios as
+its children. There is no standalone-radio design that works.
+
+**For the rest it was a choice, and this is what it costs.** The React library
+keeps its `options`/`items` arrays, so the two layers' APIs diverge and their
+docs stop matching. Rendering a list needs a loop in the consumer's template —
+`@for` in Angular, `.map()` in React — rather than one property assignment.
+Both consumer apps show exactly that, deliberately.
+
+**What it buys:** a child's label is a slot, so it takes arbitrary content,
+which an array of strings never can — and §1 names `React.ReactNode` fields in
+those arrays as the thing that cannot cross the HTML boundary under any
+engine. It also means one pattern rather than two, and it matches Shoelace,
+which §2 already cites as the precedent for the engine choice.
+
+### Angular output-target constraints, learned the hard way
+
+Two rules about `valueAccessorConfigs`, both found by a failing build:
+
+- **One config per `type`.** The generator merges the `elementSelectors` of
+  same-typed configs but emits the host binding once per config, so a second
+  `'text'` entry produces a duplicate `'(pfChange)'` key and TS1117. Put every
+  text-valued element in the one text config.
+- **A multi-tag selector defeats strict DOM event types.** The generated host
+  binding is `$event.target?.["value"]`. Angular narrows `$event.target` when a
+  selector names one tag but falls back to `EventTarget` across a list, and
+  TS7053 follows. `strictDomEventTypes: false` on `packages/elements-angular`
+  only — the package holds nothing but generated code, so no hand-written
+  template loses checking.
+
 ### Rejected
 
 | Option        | Why not                                                                               |
@@ -220,7 +260,7 @@ Ordered by leverage and by the dependency graph — `Icon` has a fan-in of 25, a
 | **2** | The 45 leaves — Badge, Card, Tag, Avatar, Kbd, Metrics, EmptyState, … | Mechanical. Establish the `::part()` conventions while stakes are low.                                                                                                      |
 | **3** | Form controls (15)                                                    | `valueAccessorConfigs` for every one. **The wave that justified Stencil** — prove the Angular forms story end to end here.                                                  |
 | **4** | Overlays (14)                                                         | `<dialog>` and `popover` replace the portal machinery.                                                                                                                      |
-| **5** | Data-driven composites (22)                                           | The §1 API redesign. Hardest wave; do it once the slot conventions are proven.                                                                                              |
+| **5** | Data-driven composites (22)                                           | The §1 API redesign — **child elements, decided**; see §2.1. Hardest wave; do it once the slot conventions are proven.                                                      |
 | **6** | Charts and media                                                      | Bulky, low-risk SVG transcription. Good parallel work.                                                                                                                      |
 | **7** | Wrapper packages, docs story, release wiring                          | Angular and Vue packages published; elements documented.                                                                                                                    |
 

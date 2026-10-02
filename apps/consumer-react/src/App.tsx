@@ -20,6 +20,8 @@ import {
   PfPagination,
   PfProgressBar,
   PfProgressCircle,
+  PfRadioButton,
+  PfRadioGroup,
   PfScrollArea,
   PfSlider,
   PfSwitch,
@@ -42,6 +44,12 @@ export function App() {
   const [page, setPage] = useState(3);
   const [submitted, setSubmitted] = useState('');
   const [volume] = useState(7);
+  const [plan, setPlan] = useState('pro');
+  const plans = [
+    { value: 'free', label: 'Free' },
+    { value: 'pro', label: 'Pro' },
+    { value: 'team', label: 'Team' },
+  ];
 
   return (
     <main data-testid="app">
@@ -218,6 +226,23 @@ export function App() {
           rows={3}
         />
         <PfSlider name="volume" label="Volume" min={0} max={10} value={volume} />
+        {/*
+          Children, not an options array — the decision for every data-driven
+          element in this layer. The cost is the map; the gain is that a
+          choice's label is a slot, so it can hold anything.
+        */}
+        <PfRadioGroup
+          name="plan"
+          legend="Plan"
+          value={plan}
+          onPfChange={(e) => setPlan(e.detail.value)}
+        >
+          {plans.map((option) => (
+            <PfRadioButton key={option.value} value={option.value}>
+              {option.label}
+            </PfRadioButton>
+          ))}
+        </PfRadioGroup>
         <PfButton type="submit" variant="primary">
           Save
         </PfButton>

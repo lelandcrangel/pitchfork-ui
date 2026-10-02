@@ -343,6 +343,19 @@ Things that differ from the React library, learned by porting the first two:
     wins. `scripts/check-built-packages.mjs` checks every generated value
     accessor is exported from `elements-angular/src/public-api.ts`, which is
     hand-written while the accessors are generated.
+- **Data-driven elements take child elements, not `options` arrays.** `<pf-select>`
+  gets `<pf-option>` children; a consumer loops in their own template. Decided
+  in `WEB-COMPONENTS-PLAN.md` §2.1, and forced for radios: a form-associated
+  custom element gets no radio grouping from the browser, so a group element
+  has to own single selection. `pf-radio-group` is the worked example — it is
+  the form control, holding the one `name` and the one `value`, and
+  `pf-radio-button` only asks to be chosen.
+- **A child control restores its own DOM state before asking.** A native
+  `<input type="radio">` checks itself the instant it is clicked, before the
+  group has any say. `pf-radio-button.onChange` writes the dot back to its own
+  `checked` first and then emits, which makes a disabled group, a disabled
+  choice and a consumer holding `value` all correct without the group having to
+  undo anything.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

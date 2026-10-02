@@ -63,7 +63,13 @@ export const config: Config = {
         {
           // pfChange is emitted on commit, which is the moment Angular should
           // see a new value; pfInput fires on every keystroke.
-          elementSelectors: ['pf-input', 'pf-textarea'],
+          //
+          // One config per `type`, never two: the generator merges the
+          // selectors of same-typed configs but emits the host binding once
+          // per config, so a second 'text' entry produces a duplicate
+          // `'(pfChange)'` key and TS1117. pf-radio-group belongs here because
+          // the group is the control — one name, one string value.
+          elementSelectors: ['pf-input', 'pf-textarea', 'pf-radio-group'],
           event: 'pfChange',
           targetAttr: 'value',
           type: 'text',

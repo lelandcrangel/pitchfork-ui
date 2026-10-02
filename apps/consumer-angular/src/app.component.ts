@@ -21,6 +21,8 @@ import {
   PfPagination,
   PfProgressBar,
   PfProgressCircle,
+  PfRadioButton,
+  PfRadioGroup,
   PfScrollArea,
   PfSlider,
   PfSwitch,
@@ -65,6 +67,8 @@ import {
     PfPagination,
     PfProgressBar,
     PfProgressCircle,
+    PfRadioButton,
+    PfRadioGroup,
     PfScrollArea,
     PfSlider,
     PfSwitch,
@@ -253,6 +257,15 @@ import {
           [max]="10"
           formControlName="volume"
         ></pf-slider>
+        <!--
+          Children rendered with @for, not an options array. The group is the
+          one form control; Angular never sees the radios inside it.
+        -->
+        <pf-radio-group legend="Plan" name="plan" formControlName="plan">
+          @for (option of plans; track option.value) {
+            <pf-radio-button [value]="option.value">{{ option.label }}</pf-radio-button>
+          }
+        </pf-radio-group>
       </form>
       <p data-testid="prefs-state">
         terms {{ prefs.controls.terms.value }} / notify {{ prefs.controls.notify.value }} / valid
@@ -279,7 +292,14 @@ export class AppComponent {
     notify: new FormControl(true),
     notes: new FormControl('first draft'),
     volume: new FormControl(7),
+    plan: new FormControl('pro'),
   });
+
+  plans = [
+    { value: 'free', label: 'Free' },
+    { value: 'pro', label: 'Pro' },
+    { value: 'team', label: 'Team' },
+  ];
 
   removeTag(tag: string) {
     this.tags.update((current) => current.filter((t) => t !== tag));

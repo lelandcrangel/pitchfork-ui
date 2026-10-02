@@ -14,6 +14,7 @@ import { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
+import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
@@ -28,6 +29,7 @@ export { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
+export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
 export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
@@ -497,6 +499,91 @@ export namespace Components {
         "value": number;
     }
     /**
+     * One choice inside a `pf-radio-group`.
+     * Not form-associated, and deliberately so: a form-associated custom element
+     * gets no radio grouping from the browser. Measured — checking a second one
+     * leaves the first checked and the form submits *both* values, where native
+     * radios submit one. So `pf-radio-group` owns the single-selection invariant
+     * and the form value, and this element only asks to be chosen.
+     * The control is a native `<input type="radio">` so the dot is the browser's,
+     * drawn from `accent-color` exactly as the React component's is. It carries
+     * `tabindex="-1"` and the host delegates focus, which means the group governs
+     * the tab order through the host while `:focus-visible` still lands on the
+     * input the user can see.
+     */
+    interface PfRadioButton {
+        /**
+          * Whether this is the chosen one. The group sets this — a consumer who sets it directly will have it overwritten the next time the group syncs.
+          * @default false
+         */
+        "checked": boolean;
+        /**
+          * Disable this choice alone. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Submitted by the group when this choice is the selected one.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
+     * A form-associated group of `pf-radio-button` children.
+     * The group is the control, not the radios: it holds the one `name` and the
+     * one `value`, because a form-associated custom element gets no radio grouping
+     * from the browser. Measured — three independent form-associated elements with
+     * the same name all stay checked and all submit. So single selection is this
+     * element's job, and it is the only one of the pair that touches the form.
+     * Keyboard follows the ARIA radiogroup pattern rather than the toolbar one:
+     * the group is a single tab stop, and the arrows both move and select.
+     */
+    interface PfRadioGroup {
+        /**
+          * A form-associated custom element does not inherit this.
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Disable every choice. Reflected for the stylesheet.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message. Its presence is what marks the group invalid.
+         */
+        "error"?: string;
+        /**
+          * The message explaining why the group is invalid, or an empty string.
+         */
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * The group's heading.
+         */
+        "legend"?: string;
+        /**
+          * Submitted under this name. Reflected, because a form-associated element takes its submission name from the attribute, not this property.
+         */
+        "name"?: string;
+        /**
+          * Layout and arrow-key axis. Reflected for the stylesheet.
+          * @default 'vertical'
+         */
+        "orientation": PfRadioGroupOrientation;
+        /**
+          * As `checkValidity`, but also shows the browser's validation message.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * The selected choice's value. Empty means nothing is selected.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -791,6 +878,14 @@ export interface PfPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfPaginationElement;
 }
+export interface PfRadioButtonCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfRadioButtonElement;
+}
+export interface PfRadioGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfRadioGroupElement;
+}
 export interface PfSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfSliderElement;
@@ -1025,6 +1120,63 @@ declare global {
         prototype: HTMLPfProgressCircleElement;
         new (): HTMLPfProgressCircleElement;
     };
+    interface HTMLPfRadioButtonElementEventMap {
+        "pfRadioSelect": { value: string };
+    }
+    /**
+     * One choice inside a `pf-radio-group`.
+     * Not form-associated, and deliberately so: a form-associated custom element
+     * gets no radio grouping from the browser. Measured — checking a second one
+     * leaves the first checked and the form submits *both* values, where native
+     * radios submit one. So `pf-radio-group` owns the single-selection invariant
+     * and the form value, and this element only asks to be chosen.
+     * The control is a native `<input type="radio">` so the dot is the browser's,
+     * drawn from `accent-color` exactly as the React component's is. It carries
+     * `tabindex="-1"` and the host delegates focus, which means the group governs
+     * the tab order through the host while `:focus-visible` still lands on the
+     * input the user can see.
+     */
+    interface HTMLPfRadioButtonElement extends Components.PfRadioButton, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfRadioButtonElementEventMap>(type: K, listener: (this: HTMLPfRadioButtonElement, ev: PfRadioButtonCustomEvent<HTMLPfRadioButtonElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfRadioButtonElementEventMap>(type: K, listener: (this: HTMLPfRadioButtonElement, ev: PfRadioButtonCustomEvent<HTMLPfRadioButtonElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfRadioButtonElement: {
+        prototype: HTMLPfRadioButtonElement;
+        new (): HTMLPfRadioButtonElement;
+    };
+    interface HTMLPfRadioGroupElementEventMap {
+        "pfChange": { value: string };
+    }
+    /**
+     * A form-associated group of `pf-radio-button` children.
+     * The group is the control, not the radios: it holds the one `name` and the
+     * one `value`, because a form-associated custom element gets no radio grouping
+     * from the browser. Measured — three independent form-associated elements with
+     * the same name all stay checked and all submit. So single selection is this
+     * element's job, and it is the only one of the pair that touches the form.
+     * Keyboard follows the ARIA radiogroup pattern rather than the toolbar one:
+     * the group is a single tab stop, and the arrows both move and select.
+     */
+    interface HTMLPfRadioGroupElement extends Components.PfRadioGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfRadioGroupElementEventMap>(type: K, listener: (this: HTMLPfRadioGroupElement, ev: PfRadioGroupCustomEvent<HTMLPfRadioGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfRadioGroupElementEventMap>(type: K, listener: (this: HTMLPfRadioGroupElement, ev: PfRadioGroupCustomEvent<HTMLPfRadioGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfRadioGroupElement: {
+        prototype: HTMLPfRadioGroupElement;
+        new (): HTMLPfRadioGroupElement;
+    };
     /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
@@ -1196,6 +1348,8 @@ declare global {
         "pf-pagination": HTMLPfPaginationElement;
         "pf-progress-bar": HTMLPfProgressBarElement;
         "pf-progress-circle": HTMLPfProgressCircleElement;
+        "pf-radio-button": HTMLPfRadioButtonElement;
+        "pf-radio-group": HTMLPfRadioGroupElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
         "pf-slider": HTMLPfSliderElement;
         "pf-switch": HTMLPfSwitchElement;
@@ -1673,6 +1827,91 @@ declare namespace LocalJSX {
         "value"?: number;
     }
     /**
+     * One choice inside a `pf-radio-group`.
+     * Not form-associated, and deliberately so: a form-associated custom element
+     * gets no radio grouping from the browser. Measured — checking a second one
+     * leaves the first checked and the form submits *both* values, where native
+     * radios submit one. So `pf-radio-group` owns the single-selection invariant
+     * and the form value, and this element only asks to be chosen.
+     * The control is a native `<input type="radio">` so the dot is the browser's,
+     * drawn from `accent-color` exactly as the React component's is. It carries
+     * `tabindex="-1"` and the host delegates focus, which means the group governs
+     * the tab order through the host while `:focus-visible` still lands on the
+     * input the user can see.
+     */
+    interface PfRadioButton {
+        /**
+          * Whether this is the chosen one. The group sets this — a consumer who sets it directly will have it overwritten the next time the group syncs.
+          * @default false
+         */
+        "checked"?: boolean;
+        /**
+          * Disable this choice alone. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Asks the group to select this choice. The group decides.
+         */
+        "onPfRadioSelect"?: (event: PfRadioButtonCustomEvent<{ value: string }>) => void;
+        /**
+          * Submitted by the group when this choice is the selected one.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
+     * A form-associated group of `pf-radio-button` children.
+     * The group is the control, not the radios: it holds the one `name` and the
+     * one `value`, because a form-associated custom element gets no radio grouping
+     * from the browser. Measured — three independent form-associated elements with
+     * the same name all stay checked and all submit. So single selection is this
+     * element's job, and it is the only one of the pair that touches the form.
+     * Keyboard follows the ARIA radiogroup pattern rather than the toolbar one:
+     * the group is a single tab stop, and the arrows both move and select.
+     */
+    interface PfRadioGroup {
+        /**
+          * Disable every choice. Reflected for the stylesheet.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message. Its presence is what marks the group invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * The group's heading.
+         */
+        "legend"?: string;
+        /**
+          * Submitted under this name. Reflected, because a form-associated element takes its submission name from the attribute, not this property.
+         */
+        "name"?: string;
+        /**
+          * Fires when the selection changes.
+         */
+        "onPfChange"?: (event: PfRadioGroupCustomEvent<{ value: string }>) => void;
+        /**
+          * Layout and arrow-key axis. Reflected for the stylesheet.
+          * @default 'vertical'
+         */
+        "orientation"?: PfRadioGroupOrientation;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * The selected choice's value. Empty means nothing is selected.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -2059,6 +2298,20 @@ declare namespace LocalJSX {
         "showValue": boolean;
         "label": string;
     }
+    interface PfRadioButtonAttributes {
+        "value": string;
+        "checked": boolean;
+        "disabled": boolean;
+    }
+    interface PfRadioGroupAttributes {
+        "name": string;
+        "value": string;
+        "legend": string;
+        "error": string;
+        "orientation": PfRadioGroupOrientation;
+        "required": boolean;
+        "disabled": boolean;
+    }
     interface PfScrollAreaAttributes {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
@@ -2140,6 +2393,8 @@ declare namespace LocalJSX {
         "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
+        "pf-radio-button": Omit<PfRadioButton, keyof PfRadioButtonAttributes> & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes]?: PfRadioButton[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `attr:${K}`]?: PfRadioButtonAttributes[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `prop:${K}`]?: PfRadioButton[K] };
+        "pf-radio-group": Omit<PfRadioGroup, keyof PfRadioGroupAttributes> & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes]?: PfRadioGroup[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `attr:${K}`]?: PfRadioGroupAttributes[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `prop:${K}`]?: PfRadioGroup[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
         "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
@@ -2238,6 +2493,31 @@ declare module "@stencil/core" {
              * A circular determinate progress track.
              */
             "pf-progress-circle": LocalJSX.IntrinsicElements["pf-progress-circle"] & JSXBase.HTMLAttributes<HTMLPfProgressCircleElement>;
+            /**
+             * One choice inside a `pf-radio-group`.
+             * Not form-associated, and deliberately so: a form-associated custom element
+             * gets no radio grouping from the browser. Measured — checking a second one
+             * leaves the first checked and the form submits *both* values, where native
+             * radios submit one. So `pf-radio-group` owns the single-selection invariant
+             * and the form value, and this element only asks to be chosen.
+             * The control is a native `<input type="radio">` so the dot is the browser's,
+             * drawn from `accent-color` exactly as the React component's is. It carries
+             * `tabindex="-1"` and the host delegates focus, which means the group governs
+             * the tab order through the host while `:focus-visible` still lands on the
+             * input the user can see.
+             */
+            "pf-radio-button": LocalJSX.IntrinsicElements["pf-radio-button"] & JSXBase.HTMLAttributes<HTMLPfRadioButtonElement>;
+            /**
+             * A form-associated group of `pf-radio-button` children.
+             * The group is the control, not the radios: it holds the one `name` and the
+             * one `value`, because a form-associated custom element gets no radio grouping
+             * from the browser. Measured — three independent form-associated elements with
+             * the same name all stay checked and all submit. So single selection is this
+             * element's job, and it is the only one of the pair that touches the form.
+             * Keyboard follows the ARIA radiogroup pattern rather than the toolbar one:
+             * the group is a single tab stop, and the arrows both move and select.
+             */
+            "pf-radio-group": LocalJSX.IntrinsicElements["pf-radio-group"] & JSXBase.HTMLAttributes<HTMLPfRadioGroupElement>;
             /**
              * A scrollable region with a styled, non-overlaying scrollbar.
              */

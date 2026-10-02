@@ -14,16 +14,36 @@ import { Component } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { beforeEach, expect, test } from 'vitest';
-import { NumericValueAccessor, PfSlider, PfTextarea, TextValueAccessor } from '../dist';
+import {
+  NumericValueAccessor,
+  PfRadioButton,
+  PfRadioGroup,
+  PfSlider,
+  PfTextarea,
+  TextValueAccessor,
+} from '../dist';
 
 @Component({
   selector: 'test-host',
   standalone: true,
-  imports: [ReactiveFormsModule, PfSlider, PfTextarea, TextValueAccessor, NumericValueAccessor],
+  imports: [
+    ReactiveFormsModule,
+    PfSlider,
+    PfTextarea,
+    PfRadioGroup,
+    PfRadioButton,
+    TextValueAccessor,
+    NumericValueAccessor,
+  ],
   template: `
     <form [formGroup]="form">
       <pf-textarea label="Notes" formControlName="notes"></pf-textarea>
       <pf-slider label="Volume" [min]="0" [max]="10" formControlName="volume"></pf-slider>
+      <pf-radio-group legend="Plan" formControlName="plan">
+        @for (option of plans; track option.value) {
+          <pf-radio-button [value]="option.value">{{ option.label }}</pf-radio-button>
+        }
+      </pf-radio-group>
     </form>
   `,
 })
@@ -31,7 +51,19 @@ class HostComponent {
   form = new FormGroup({
     notes: new FormControl('first draft'),
     volume: new FormControl(3, [Validators.min(5)]),
+    plan: new FormControl('', Validators.required),
   });
+
+  /*
+   * Rendered with @for rather than passed as an options array — the decision
+   * for every data-driven element in this layer. This is what that costs and
+   * what it buys: a loop in the template, and a child element whose content
+   * is a slot rather than a string.
+   */
+  plans = [
+    { value: 'free', label: 'Free' },
+    { value: 'pro', label: 'Pro' },
+  ];
 }
 
 const tick = () => new Promise((resolve) => requestAnimationFrame(resolve));
@@ -39,6 +71,7 @@ const tick = () => new Promise((resolve) => requestAnimationFrame(resolve));
 let host: HostComponent;
 let notes: HTMLElement & { value: string };
 let volume: HTMLElement & { value: number };
+let plan: HTMLElement & { value: string };
 
 /** What a real edit does: set the native control, then fire input + change. */
 const userEdits = async (host_: HTMLElement, next: string) => {
@@ -59,6 +92,7 @@ beforeEach(async () => {
   await tick();
   notes = document.querySelector('pf-textarea') as HTMLElement & { value: string };
   volume = document.querySelector('pf-slider') as HTMLElement & { value: number };
+  plan = document.querySelector('pf-radio-group') as HTMLElement & { value: string };
 });
 
 test('both elements are upgraded by the generated Angular components', () => {
@@ -117,4 +151,37 @@ test('disables both elements when their controls are disabled', async () => {
 
   expect(notes.shadowRoot!.querySelector('textarea')!.disabled).toBe(true);
   expect(volume.shadowRoot!.querySelector('input')!.disabled).toBe(true);
+});
+
+/*
+ * The group binds as one control through the text accessor: the radios inside
+ * it are children rendered by @for, and Angular never sees them.
+ */
+test('the radio group binds as a single control', async () => {
+  expect(plan.getAttribute('role')).toBe('radiogroup');
+  expect(plan.querySelectorAll('pf-radio-button')).toHaveLength(2);
+  expect(host.form.controls.plan.value).toBe('');
+  expect(host.form.controls.plan.valid).toBe(false);
+});
+
+test('pushes a programmatic setValue down to the chosen radio', async () => {
+  host.form.controls.plan.setValue('pro');
+  await tick();
+  await tick();
+
+  const chosen = [...plan.querySelectorAll('pf-radio-button')].filter(
+    (r) => (r as HTMLElement & { checked: boolean }).checked,
+  );
+  expect(chosen).toHaveLength(1);
+  expect((chosen[0] as HTMLElement & { value: string }).value).toBe('pro');
+});
+
+test('reads a user choice back into the form control', async () => {
+  const second = plan.querySelectorAll('pf-radio-button')[1];
+  (second.shadowRoot!.querySelector('input') as HTMLInputElement).click();
+  await tick();
+  await tick();
+
+  expect(host.form.controls.plan.value).toBe('pro');
+  expect(host.form.controls.plan.valid).toBe(true);
 });

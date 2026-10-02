@@ -67,6 +67,8 @@ const EXPECTED = [
   'pf-switch',
   'pf-textarea',
   'pf-slider',
+  'pf-radio-group',
+  'pf-radio-button',
 ];
 
 const TYPES = {
@@ -350,6 +352,55 @@ try {
      */
     const prefs = document.querySelector('[data-testid="prefs"]');
     if (prefs instanceof HTMLFormElement) {
+      /*
+       * The radio group's invariant, against a real build: one name, one
+       * value, however many children. A set of independent form-associated
+       * elements sharing a name would submit one entry each.
+       */
+      const group = prefs.querySelector('pf-radio-group');
+      if (group) {
+        const entries = [...new FormData(prefs).entries()].filter(([key]) => key === 'plan');
+        if (entries.length !== 1) {
+          result.unstyled.push(
+            `pf-radio-group submitted ${entries.length} values for one name, expected 1`,
+          );
+        }
+        const allRadios = [...group.querySelectorAll('pf-radio-button')];
+        const nativeChecked = () =>
+          allRadios.filter((radio) => radio.shadowRoot?.querySelector('input')?.checked);
+        if (nativeChecked().length !== 1) {
+          result.unstyled.push(
+            `pf-radio-group has ${nativeChecked().length} radios checked, expected exactly 1`,
+          );
+        }
+        /*
+         * Clicking a different choice is what makes the invariant observable:
+         * the initial state has one radio checked no matter what the group
+         * does, so only a selection change can show it failing to clear the
+         * previous one.
+         */
+        const unchecked = allRadios.find(
+          (radio) => !radio.shadowRoot?.querySelector('input')?.checked,
+        );
+        if (unchecked) {
+          /*
+           * The `value` *property*, not the attribute: the generated React and
+           * Angular wrappers set properties, so the attribute is absent — the
+           * first version of this check read the attribute, got null, and
+           * silently skipped itself.
+           */
+          result.radioBefore = nativeChecked().map((r) => r.value)[0] ?? '';
+          unchecked.shadowRoot.querySelector('input').click();
+          result.radioClickedValue = unchecked.value;
+        }
+        const stops = [...group.querySelectorAll('pf-radio-button')].filter(
+          (radio) => radio.getAttribute('tabindex') === '0',
+        );
+        if (stops.length !== 1) {
+          result.unstyled.push(`pf-radio-group has ${stops.length} tab stops, expected 1`);
+        }
+      }
+
       const names = [...new FormData(prefs).keys()].sort();
       /*
        * The two kinds of absence, in one check. `terms` is an unticked
@@ -358,10 +409,10 @@ try {
        * a distinction a server relies on, and one `setFormValue('')` would
        * erase for the checkbox.
        */
-      if (names.join(',') !== 'notes,notify,volume') {
+      if (names.join(',') !== 'notes,notify,plan,volume') {
         result.unstyled.push(
           `form sees [${names.join(', ')}] from the form controls, ` +
-            'expected notes,notify,volume (terms is unticked, so absent)',
+            'expected notes,notify,plan,volume (terms is unticked, so absent)',
         );
       }
       const box = prefs.querySelector('pf-checkbox');
@@ -435,6 +486,35 @@ try {
       'a form holding an unticked required pf-checkbox reports itself valid — ' +
         'setValidity is not reaching the form',
     );
+  }
+
+  if (report.radioClickedValue) {
+    const settled = await page
+      .waitForFunction(
+        (want) => {
+          const radios = [...document.querySelectorAll('pf-radio-group pf-radio-button')];
+          const checked = radios.filter((r) => r.shadowRoot?.querySelector('input')?.checked);
+          return checked.length === 1 && checked[0].value === want
+            ? { checked: checked.length }
+            : null;
+        },
+        report.radioClickedValue,
+        { timeout: 5_000 },
+      )
+      .then((handle) => handle.jsonValue())
+      .catch(() => null);
+
+    if (!settled) {
+      const state = await page.evaluate(() =>
+        [...document.querySelectorAll('pf-radio-group pf-radio-button')]
+          .filter((r) => r.shadowRoot?.querySelector('input')?.checked)
+          .map((r) => r.value),
+      );
+      problems.push(
+        `pf-radio-group: after clicking "${report.radioClickedValue}" the checked radios are ` +
+          `[${state.join(', ')}] (was "${report.radioBefore}") — expected exactly that one`,
+      );
+    }
   }
 
   for (const tag of report.missing) problems.push(`${tag} did not render`);
