@@ -76,7 +76,7 @@
 }
 
 .dialog[open] .panel {
-  animation: pf-modal-in var(--duration-medium) var(--easing-decelerate);
+  animation: pf-modal-in var(--pf-transition-enter);
 }
 
 /* Its own copy: @keyframes do not cross a shadow boundary. */

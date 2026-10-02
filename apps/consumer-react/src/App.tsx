@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   PfAvatar,
   PfBadge,
@@ -25,6 +25,7 @@ import {
   PfModalBody,
   PfModalFooter,
   PfModalHeader,
+  PfNotification,
   PfPagination,
   PfPopover,
   PfProgressBar,
@@ -32,10 +33,12 @@ import {
   PfRadioButton,
   PfRadioGroup,
   PfScrollArea,
+  PfSlideoutMenu,
   PfSlider,
   PfSwitch,
   PfTag,
   PfTextarea,
+  PfToaster,
   PfToolbar,
   PfTooltip,
   PfToolbarSeparator,
@@ -56,6 +59,8 @@ export function App() {
   const [volume] = useState(7);
   const [modalOpen, setModalOpen] = useState(false);
   const [menuChoice, setMenuChoice] = useState('');
+  const [slideoutOpen, setSlideoutOpen] = useState(false);
+  const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
     { value: 'free', label: 'Free' },
@@ -378,6 +383,74 @@ export function App() {
           Remove
         </PfMenuItem>
       </PfContextMenu>
+
+      {/*
+        A slideout is a modal dialog pinned to an edge, so showModal() supplies
+        the focus trap, Escape and the backdrop. Only the page-scroll lock is
+        ours, and it is reference-counted in core so a slideout over a modal
+        cannot leave the page stuck.
+      */}
+      <div className="row">
+        <PfButton variant="secondary" onClick={() => setSlideoutOpen(true)}>
+          Open slideout
+        </PfButton>
+
+        <PfButton
+          variant="primary"
+          onClick={() =>
+            void toaster.current?.toast({
+              variant: 'success',
+              heading: 'Saved',
+              description: 'Your changes are live.',
+            })
+          }
+        >
+          Toast
+        </PfButton>
+
+        <PfButton
+          variant="secondary"
+          onClick={() =>
+            void toaster.current?.toast({
+              variant: 'danger',
+              heading: 'Upload failed',
+              description: 'Announced assertively, unlike the success above.',
+              duration: 0,
+            })
+          }
+        >
+          Toast a failure
+        </PfButton>
+      </div>
+
+      <PfSlideoutMenu
+        open={slideoutOpen}
+        heading="Filters"
+        description="Narrow the list down"
+        onPfOpenChange={(event) => setSlideoutOpen(event.detail.open)}
+      >
+        <p style={{ marginTop: 0 }}>
+          The heading above is a prop rendered into the element&rsquo;s own shadow root, so this
+          dialog can name itself with <code>aria-labelledby</code> — which pf-modal cannot, because
+          its header is slotted light DOM.
+        </p>
+        <PfButton slot="footer" variant="secondary" onClick={() => setSlideoutOpen(false)}>
+          Cancel
+        </PfButton>
+        <PfButton slot="footer" variant="primary" onClick={() => setSlideoutOpen(false)}>
+          Apply
+        </PfButton>
+      </PfSlideoutMenu>
+
+      {/* A notification in the page, rather than in response to an action. */}
+      <PfNotification
+        variant="warning"
+        heading="Scheduled maintenance"
+        description="Saturday, 02:00–04:00 UTC."
+        data-testid="page-notification"
+      />
+
+      <PfToaster ref={toaster} placement="top-right" data-testid="toaster" />
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

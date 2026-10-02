@@ -41,25 +41,27 @@
   opacity: 0.5;
 }
 
-.icon,
-.shortcut {
-  display: inline-flex;
+/*
+ * The icon and the shortcut are styled through `::slotted()` rather than
+ * wrapped in a span each, because an *unassigned* slot generates no box at
+ * all -- it is `display: contents` -- so the row's `gap` does not open beside
+ * nothing.
+ *
+ * A wrapper cannot be collapsed from CSS. `.icon:not(:has(*))` reads as if it
+ * does exactly that and never matches, because the `<slot>` inside the
+ * wrapper is itself an element child -- measured. It was costing one
+ * `--space-2` in front of the label of every item with no icon, so the labels
+ * in a menu that mixed the two did not line up.
+ */
+slot[name='icon']::slotted(*) {
   flex-shrink: 0;
 }
 
-.shortcut {
+slot[name='shortcut']::slotted(*) {
   color: var(--pf-menu-text-muted);
+  flex-shrink: 0;
   font-size: var(--font-size-xs);
   margin-inline-start: auto;
-}
-
-/*
- * A slot is `display: contents`, so an unused icon or shortcut slot leaves its
- * wrapper empty — collapse it so the row's `gap` does not open beside nothing.
- */
-.icon:not(:has(*)),
-.shortcut:not(:has(*)) {
-  display: none;
 }
 
 .label {

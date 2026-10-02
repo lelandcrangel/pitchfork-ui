@@ -7,7 +7,7 @@ import { Notification, NotificationStack } from './Notification';
 describe('Notification', () => {
   // ─── Rendering ──────────────────────────────────────────────────────────
 
-  it('renders with role="status"', () => {
+  it('renders as a polite live region by default', () => {
     render(<Notification heading="Saved" />);
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
@@ -29,7 +29,7 @@ describe('Notification', () => {
 
   it('applies the variant class', () => {
     render(<Notification variant="danger" heading="Error" />);
-    expect(screen.getByRole('status')).toHaveClass('pf-notification--danger');
+    expect(screen.getByRole('alert')).toHaveClass('pf-notification--danger');
   });
 
   it('defaults to info variant', () => {
@@ -38,6 +38,11 @@ describe('Notification', () => {
   });
 
   // ─── Role per variant ────────────────────────────────────────────────────
+  //
+  // These four used to assert role="status" throughout, which is what the
+  // component did: it carried no variant-to-role map, while Alert next door
+  // carried one, so the same failure announced politely here and assertively
+  // there. The role now comes from core's liveRegionRole, which both use.
 
   it('has role="status" on info variant', () => {
     render(<Notification variant="info" heading="Info" />);
@@ -49,14 +54,17 @@ describe('Notification', () => {
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  it('has role="status" on warning variant', () => {
+  /* Assertive, because a warning that waits its turn can arrive too late. */
+  it('has role="alert" on warning variant', () => {
     render(<Notification variant="warning" heading="Warning" />);
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
-  it('has role="status" on danger variant', () => {
+  it('has role="alert" on danger variant', () => {
     render(<Notification variant="danger" heading="Error" />);
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   // ─── Icon slot ───────────────────────────────────────────────────────────

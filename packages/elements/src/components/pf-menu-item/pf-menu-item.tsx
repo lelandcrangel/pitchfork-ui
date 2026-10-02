@@ -14,9 +14,7 @@ import { Component, Event, EventEmitter, h, Host, Listen, Prop } from '@stencil/
  * @slot - the item's label.
  * @slot icon - a leading icon.
  * @slot shortcut - a trailing keyboard hint.
- * @part icon - the leading icon's wrapper.
- * @part label - the label's wrapper.
- * @part shortcut - the keyboard hint's wrapper.
+ * @part label - the label's box.
  */
 @Component({
   tag: 'pf-menu-item',
@@ -61,15 +59,11 @@ export class PfMenuItem {
   render() {
     return (
       <Host role="menuitem" aria-disabled={this.disabled ? 'true' : null}>
-        <span class="icon" part="icon">
-          <slot name="icon" />
-        </span>
+        <slot name="icon" />
         <span class="label" part="label">
           <slot />
         </span>
-        <span class="shortcut" part="shortcut">
-          <slot name="shortcut" />
-        </span>
+        <slot name="shortcut" />
       </Host>
     );
   }

@@ -15,9 +15,12 @@ import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 import { PfModalSize } from "./components/pf-modal/pf-modal";
+import { PfNotificationVariant } from "./components/pf-notification/pf-notification";
 import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
+import { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
+import { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 import { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
 import { Side } from "@pitchfork-ui/core";
@@ -32,9 +35,12 @@ export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 export { PfModalSize } from "./components/pf-modal/pf-modal";
+export { PfNotificationVariant } from "./components/pf-notification/pf-notification";
 export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
+export { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
+export { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 export { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
 export { Side } from "@pitchfork-ui/core";
@@ -571,6 +577,42 @@ export namespace Components {
     interface PfModalHeader {
     }
     /**
+     * A notification: an icon, a heading, a body and an optional dismiss button.
+     * The role comes from core's `liveRegionRole`, so `warning` and `danger`
+     * announce assertively and `info` and `success` wait their turn. The React
+     * component used to be `role="status"` for all four — the rule lived in
+     * `Alert` and nowhere else — which is why the mapping is now shared.
+     */
+    interface PfNotification {
+        /**
+          * The body, when nothing is slotted.
+         */
+        "description"?: string;
+        /**
+          * Starts the exit animation and resolves when it has finished, having emitted `pfDismiss`. Calling it twice is harmless.
+         */
+        "dismiss": () => Promise<void>;
+        /**
+          * Render the dismiss button.
+          * @default false
+         */
+        "dismissable": boolean;
+        /**
+          * Set while the exit animation plays. Reflected for the stylesheet.
+          * @default false
+         */
+        "exiting": boolean;
+        /**
+          * The bold first line.
+         */
+        "heading"?: string;
+        /**
+          * Severity. Reflected, because the stylesheet selects on it.
+          * @default 'info'
+         */
+        "variant": PfNotificationVariant;
+    }
+    /**
      * A pager: boundary pages pinned at each end, a window around the current
      * page, and an ellipsis wherever that leaves a gap.
      * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -811,6 +853,65 @@ export namespace Components {
         "orientation": PfScrollAreaOrientation;
     }
     /**
+     * A panel that slides in from the edge of the screen — a modal dialog that
+     * happens to be anchored to a side rather than centred.
+     * Which is why this is a native `<dialog>` opened with `showModal()`, exactly
+     * as `pf-modal` is. The React component hand-rolls the whole modal contract:
+     * a focus trap over `getFocusableElements`, a `focusin` listener to pull focus
+     * back, Escape handling, an overlay element, and focus restoration on close —
+     * about ninety lines. `showModal()` gives all of it, and the element needs
+     * none of core's `trapFocus`.
+     * The one thing it does not give is a page-scroll lock, so that comes from
+     * core's reference-counted `lockPageScroll`.
+     */
+    interface PfSlideoutMenu {
+        /**
+          * A supporting line under the heading.
+         */
+        "description"?: string;
+        /**
+          * Close on Escape or a click on the overlay. Defaults to true.
+          * @default true
+         */
+        "dismissable": boolean;
+        /**
+          * The heading shown in the header.
+         */
+        "heading"?: string;
+        /**
+          * Closes the panel.
+         */
+        "hide": () => Promise<void>;
+        /**
+          * Accessible name, for when there is no `heading` to name it.  With a heading, `aria-labelledby` is used instead and points at the heading's id. That works here and not in `pf-modal` because this heading is a prop rendered into this element's own shadow root, so the IDREF never crosses a boundary — `pf-modal`'s header is slotted light DOM, which is why it has to fall back to copying text into `aria-label`.
+         */
+        "label"?: string;
+        /**
+          * Whether the panel is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Which edge it slides in from. Reflected; the stylesheet positions on it.
+          * @default 'right'
+         */
+        "placement": PfSlideoutMenuPlacement;
+        /**
+          * Opens the panel.
+         */
+        "show": () => Promise<void>;
+        /**
+          * Render the corner close button. Defaults to true.
+          * @default true
+         */
+        "showCloseButton": boolean;
+        /**
+          * Panel width. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size": PfSlideoutMenuSize;
+    }
+    /**
      * A form-associated range slider.
      * A native `<input type="range">`, as the React component is — the drag, the
      * keyboard stepping and the touch handling are all the browser's, and nothing
@@ -998,6 +1099,45 @@ export namespace Components {
         "value": string;
     }
     /**
+     * The region toasts appear in, and the queue behind them.
+     * This is the one place the elements layer takes options rather than child
+     * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+     * toast is not data the consumer is rendering, it is an event that happened.
+     * React expresses that with a context provider and a module-level `toast()`;
+     * the equivalent for a custom element is a method on the region, since a
+     * consumer calling `toast()` three times from an event handler cannot
+     * reasonably be asked to maintain a list of children for it.
+     * Declarative use still works: anything slotted in is laid out in the stack
+     * alongside the queue, which is how a notification that is part of the page
+     * rather than a response to an action is placed here.
+     * The region itself is not a live region. Each `pf-notification` is one
+     * already, so marking the container as well would announce every toast twice.
+     */
+    interface PfToaster {
+        /**
+          * Dismisses one toast by the id `toast()` returned.
+         */
+        "dismiss": (id: string) => Promise<void>;
+        /**
+          * Dismisses everything currently showing.
+         */
+        "dismissAll": () => Promise<void>;
+        /**
+          * Auto-dismiss delay for toasts that do not set their own. `0` disables it.
+          * @default 4000
+         */
+        "duration": number;
+        /**
+          * Which corner the stack sits in. Reflected; the stylesheet positions on it.
+          * @default 'top-right'
+         */
+        "placement": PfToasterPlacement;
+        /**
+          * Shows a toast and returns its id.  Newest first, matching the React provider, so a stack in a top corner grows downwards away from the corner.
+         */
+        "toast": (options?: PfToastOptions) => Promise<string>;
+    }
+    /**
      * A group of controls that is one tab stop from outside and navigated
      * internally with the arrow keys.
      * Items are matched in the light DOM, so a native `button`, `a[href]` or form
@@ -1132,6 +1272,10 @@ export interface PfModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfModalElement;
 }
+export interface PfNotificationCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfNotificationElement;
+}
 export interface PfPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfPaginationElement;
@@ -1148,6 +1292,10 @@ export interface PfRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfRadioGroupElement;
 }
+export interface PfSlideoutMenuCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfSlideoutMenuElement;
+}
 export interface PfSliderCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfSliderElement;
@@ -1163,6 +1311,10 @@ export interface PfTagCustomEvent<T> extends CustomEvent<T> {
 export interface PfTextareaCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfTextareaElement;
+}
+export interface PfToasterCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfToasterElement;
 }
 declare global {
     interface HTMLPfAvatarElement extends Components.PfAvatar, HTMLStencilElement {
@@ -1490,6 +1642,30 @@ declare global {
         prototype: HTMLPfModalHeaderElement;
         new (): HTMLPfModalHeaderElement;
     };
+    interface HTMLPfNotificationElementEventMap {
+        "pfDismiss": void;
+    }
+    /**
+     * A notification: an icon, a heading, a body and an optional dismiss button.
+     * The role comes from core's `liveRegionRole`, so `warning` and `danger`
+     * announce assertively and `info` and `success` wait their turn. The React
+     * component used to be `role="status"` for all four — the rule lived in
+     * `Alert` and nowhere else — which is why the mapping is now shared.
+     */
+    interface HTMLPfNotificationElement extends Components.PfNotification, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfNotificationElementEventMap>(type: K, listener: (this: HTMLPfNotificationElement, ev: PfNotificationCustomEvent<HTMLPfNotificationElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfNotificationElementEventMap>(type: K, listener: (this: HTMLPfNotificationElement, ev: PfNotificationCustomEvent<HTMLPfNotificationElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfNotificationElement: {
+        prototype: HTMLPfNotificationElement;
+        new (): HTMLPfNotificationElement;
+    };
     interface HTMLPfPaginationElementEventMap {
         "pfPageChange": { page: number };
     }
@@ -1624,6 +1800,35 @@ declare global {
         prototype: HTMLPfScrollAreaElement;
         new (): HTMLPfScrollAreaElement;
     };
+    interface HTMLPfSlideoutMenuElementEventMap {
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * A panel that slides in from the edge of the screen — a modal dialog that
+     * happens to be anchored to a side rather than centred.
+     * Which is why this is a native `<dialog>` opened with `showModal()`, exactly
+     * as `pf-modal` is. The React component hand-rolls the whole modal contract:
+     * a focus trap over `getFocusableElements`, a `focusin` listener to pull focus
+     * back, Escape handling, an overlay element, and focus restoration on close —
+     * about ninety lines. `showModal()` gives all of it, and the element needs
+     * none of core's `trapFocus`.
+     * The one thing it does not give is a page-scroll lock, so that comes from
+     * core's reference-counted `lockPageScroll`.
+     */
+    interface HTMLPfSlideoutMenuElement extends Components.PfSlideoutMenu, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfSlideoutMenuElementEventMap>(type: K, listener: (this: HTMLPfSlideoutMenuElement, ev: PfSlideoutMenuCustomEvent<HTMLPfSlideoutMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfSlideoutMenuElementEventMap>(type: K, listener: (this: HTMLPfSlideoutMenuElement, ev: PfSlideoutMenuCustomEvent<HTMLPfSlideoutMenuElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfSlideoutMenuElement: {
+        prototype: HTMLPfSlideoutMenuElement;
+        new (): HTMLPfSlideoutMenuElement;
+    };
     interface HTMLPfSliderElementEventMap {
         "pfInput": { value: number };
         "pfChange": { value: number };
@@ -1711,6 +1916,38 @@ declare global {
     var HTMLPfTextareaElement: {
         prototype: HTMLPfTextareaElement;
         new (): HTMLPfTextareaElement;
+    };
+    interface HTMLPfToasterElementEventMap {
+        "pfToastDismiss": { id: string };
+    }
+    /**
+     * The region toasts appear in, and the queue behind them.
+     * This is the one place the elements layer takes options rather than child
+     * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+     * toast is not data the consumer is rendering, it is an event that happened.
+     * React expresses that with a context provider and a module-level `toast()`;
+     * the equivalent for a custom element is a method on the region, since a
+     * consumer calling `toast()` three times from an event handler cannot
+     * reasonably be asked to maintain a list of children for it.
+     * Declarative use still works: anything slotted in is laid out in the stack
+     * alongside the queue, which is how a notification that is part of the page
+     * rather than a response to an action is placed here.
+     * The region itself is not a live region. Each `pf-notification` is one
+     * already, so marking the container as well would announce every toast twice.
+     */
+    interface HTMLPfToasterElement extends Components.PfToaster, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfToasterElementEventMap>(type: K, listener: (this: HTMLPfToasterElement, ev: PfToasterCustomEvent<HTMLPfToasterElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfToasterElementEventMap>(type: K, listener: (this: HTMLPfToasterElement, ev: PfToasterCustomEvent<HTMLPfToasterElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfToasterElement: {
+        prototype: HTMLPfToasterElement;
+        new (): HTMLPfToasterElement;
     };
     /**
      * A group of controls that is one tab stop from outside and navigated
@@ -1806,6 +2043,7 @@ declare global {
         "pf-modal-body": HTMLPfModalBodyElement;
         "pf-modal-footer": HTMLPfModalFooterElement;
         "pf-modal-header": HTMLPfModalHeaderElement;
+        "pf-notification": HTMLPfNotificationElement;
         "pf-pagination": HTMLPfPaginationElement;
         "pf-popover": HTMLPfPopoverElement;
         "pf-progress-bar": HTMLPfProgressBarElement;
@@ -1813,10 +2051,12 @@ declare global {
         "pf-radio-button": HTMLPfRadioButtonElement;
         "pf-radio-group": HTMLPfRadioGroupElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
+        "pf-slideout-menu": HTMLPfSlideoutMenuElement;
         "pf-slider": HTMLPfSliderElement;
         "pf-switch": HTMLPfSwitchElement;
         "pf-tag": HTMLPfTagElement;
         "pf-textarea": HTMLPfTextareaElement;
+        "pf-toaster": HTMLPfToasterElement;
         "pf-toolbar": HTMLPfToolbarElement;
         "pf-toolbar-separator": HTMLPfToolbarSeparatorElement;
         "pf-tooltip": HTMLPfTooltipElement;
@@ -2354,6 +2594,42 @@ declare namespace LocalJSX {
     interface PfModalHeader {
     }
     /**
+     * A notification: an icon, a heading, a body and an optional dismiss button.
+     * The role comes from core's `liveRegionRole`, so `warning` and `danger`
+     * announce assertively and `info` and `success` wait their turn. The React
+     * component used to be `role="status"` for all four — the rule lived in
+     * `Alert` and nowhere else — which is why the mapping is now shared.
+     */
+    interface PfNotification {
+        /**
+          * The body, when nothing is slotted.
+         */
+        "description"?: string;
+        /**
+          * Render the dismiss button.
+          * @default false
+         */
+        "dismissable"?: boolean;
+        /**
+          * Set while the exit animation plays. Reflected for the stylesheet.
+          * @default false
+         */
+        "exiting"?: boolean;
+        /**
+          * The bold first line.
+         */
+        "heading"?: string;
+        /**
+          * Fires once the notification has finished leaving, which is the point at which its owner should remove it from the DOM.
+         */
+        "onPfDismiss"?: (event: PfNotificationCustomEvent<void>) => void;
+        /**
+          * Severity. Reflected, because the stylesheet selects on it.
+          * @default 'info'
+         */
+        "variant"?: PfNotificationVariant;
+    }
+    /**
      * A pager: boundary pages pinned at each end, a window around the current
      * page, and an ellipsis wherever that leaves a gap.
      * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -2594,6 +2870,61 @@ declare namespace LocalJSX {
         "orientation"?: PfScrollAreaOrientation;
     }
     /**
+     * A panel that slides in from the edge of the screen — a modal dialog that
+     * happens to be anchored to a side rather than centred.
+     * Which is why this is a native `<dialog>` opened with `showModal()`, exactly
+     * as `pf-modal` is. The React component hand-rolls the whole modal contract:
+     * a focus trap over `getFocusableElements`, a `focusin` listener to pull focus
+     * back, Escape handling, an overlay element, and focus restoration on close —
+     * about ninety lines. `showModal()` gives all of it, and the element needs
+     * none of core's `trapFocus`.
+     * The one thing it does not give is a page-scroll lock, so that comes from
+     * core's reference-counted `lockPageScroll`.
+     */
+    interface PfSlideoutMenu {
+        /**
+          * A supporting line under the heading.
+         */
+        "description"?: string;
+        /**
+          * Close on Escape or a click on the overlay. Defaults to true.
+          * @default true
+         */
+        "dismissable"?: boolean;
+        /**
+          * The heading shown in the header.
+         */
+        "heading"?: string;
+        /**
+          * Accessible name, for when there is no `heading` to name it.  With a heading, `aria-labelledby` is used instead and points at the heading's id. That works here and not in `pf-modal` because this heading is a prop rendered into this element's own shadow root, so the IDREF never crosses a boundary — `pf-modal`'s header is slotted light DOM, which is why it has to fall back to copying text into `aria-label`.
+         */
+        "label"?: string;
+        /**
+          * Fires whenever the panel opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfSlideoutMenuCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the panel is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Which edge it slides in from. Reflected; the stylesheet positions on it.
+          * @default 'right'
+         */
+        "placement"?: PfSlideoutMenuPlacement;
+        /**
+          * Render the corner close button. Defaults to true.
+          * @default true
+         */
+        "showCloseButton"?: boolean;
+        /**
+          * Panel width. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size"?: PfSlideoutMenuSize;
+    }
+    /**
      * A form-associated range slider.
      * A native `<input type="range">`, as the React component is — the drag, the
      * keyboard stepping and the touch handling are all the browser's, and nothing
@@ -2779,6 +3110,37 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    /**
+     * The region toasts appear in, and the queue behind them.
+     * This is the one place the elements layer takes options rather than child
+     * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+     * toast is not data the consumer is rendering, it is an event that happened.
+     * React expresses that with a context provider and a module-level `toast()`;
+     * the equivalent for a custom element is a method on the region, since a
+     * consumer calling `toast()` three times from an event handler cannot
+     * reasonably be asked to maintain a list of children for it.
+     * Declarative use still works: anything slotted in is laid out in the stack
+     * alongside the queue, which is how a notification that is part of the page
+     * rather than a response to an action is placed here.
+     * The region itself is not a live region. Each `pf-notification` is one
+     * already, so marking the container as well would announce every toast twice.
+     */
+    interface PfToaster {
+        /**
+          * Auto-dismiss delay for toasts that do not set their own. `0` disables it.
+          * @default 4000
+         */
+        "duration"?: number;
+        /**
+          * Fires when a toast has left, with the id `toast()` returned.
+         */
+        "onPfToastDismiss"?: (event: PfToasterCustomEvent<{ id: string }>) => void;
+        /**
+          * Which corner the stack sits in. Reflected; the stylesheet positions on it.
+          * @default 'top-right'
+         */
+        "placement"?: PfToasterPlacement;
     }
     /**
      * A group of controls that is one tab stop from outside and navigated
@@ -2995,6 +3357,13 @@ declare namespace LocalJSX {
         "dismissable": boolean;
         "showCloseButton": boolean;
     }
+    interface PfNotificationAttributes {
+        "variant": PfNotificationVariant;
+        "heading": string;
+        "description": string;
+        "dismissable": boolean;
+        "exiting": boolean;
+    }
     interface PfPaginationAttributes {
         "page": number;
         "totalPages": number;
@@ -3042,6 +3411,16 @@ declare namespace LocalJSX {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
     }
+    interface PfSlideoutMenuAttributes {
+        "open": boolean;
+        "placement": PfSlideoutMenuPlacement;
+        "size": PfSlideoutMenuSize;
+        "heading": string;
+        "description": string;
+        "label": string;
+        "dismissable": boolean;
+        "showCloseButton": boolean;
+    }
     interface PfSliderAttributes {
         "name": string;
         "value": number;
@@ -3079,6 +3458,10 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
         "readonly": boolean;
+    }
+    interface PfToasterAttributes {
+        "placement": PfToasterPlacement;
+        "duration": number;
     }
     interface PfToolbarAttributes {
         "orientation": PfToolbarOrientation;
@@ -3130,6 +3513,7 @@ declare namespace LocalJSX {
         "pf-modal-body": PfModalBody;
         "pf-modal-footer": PfModalFooter;
         "pf-modal-header": PfModalHeader;
+        "pf-notification": Omit<PfNotification, keyof PfNotificationAttributes> & { [K in keyof PfNotification & keyof PfNotificationAttributes]?: PfNotification[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `attr:${K}`]?: PfNotificationAttributes[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `prop:${K}`]?: PfNotification[K] };
         "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
         "pf-popover": Omit<PfPopover, keyof PfPopoverAttributes> & { [K in keyof PfPopover & keyof PfPopoverAttributes]?: PfPopover[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `attr:${K}`]?: PfPopoverAttributes[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `prop:${K}`]?: PfPopover[K] };
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
@@ -3137,10 +3521,12 @@ declare namespace LocalJSX {
         "pf-radio-button": Omit<PfRadioButton, keyof PfRadioButtonAttributes> & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes]?: PfRadioButton[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `attr:${K}`]?: PfRadioButtonAttributes[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `prop:${K}`]?: PfRadioButton[K] };
         "pf-radio-group": Omit<PfRadioGroup, keyof PfRadioGroupAttributes> & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes]?: PfRadioGroup[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `attr:${K}`]?: PfRadioGroupAttributes[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `prop:${K}`]?: PfRadioGroup[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
+        "pf-slideout-menu": Omit<PfSlideoutMenu, keyof PfSlideoutMenuAttributes> & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes]?: PfSlideoutMenu[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `attr:${K}`]?: PfSlideoutMenuAttributes[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `prop:${K}`]?: PfSlideoutMenu[K] };
         "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
         "pf-textarea": Omit<PfTextarea, keyof PfTextareaAttributes> & { [K in keyof PfTextarea & keyof PfTextareaAttributes]?: PfTextarea[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `attr:${K}`]?: PfTextareaAttributes[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `prop:${K}`]?: PfTextarea[K] };
+        "pf-toaster": Omit<PfToaster, keyof PfToasterAttributes> & { [K in keyof PfToaster & keyof PfToasterAttributes]?: PfToaster[K] } & { [K in keyof PfToaster & keyof PfToasterAttributes as `attr:${K}`]?: PfToasterAttributes[K] } & { [K in keyof PfToaster & keyof PfToasterAttributes as `prop:${K}`]?: PfToaster[K] };
         "pf-toolbar": Omit<PfToolbar, keyof PfToolbarAttributes> & { [K in keyof PfToolbar & keyof PfToolbarAttributes]?: PfToolbar[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `attr:${K}`]?: PfToolbarAttributes[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `prop:${K}`]?: PfToolbar[K] };
         "pf-toolbar-separator": Omit<PfToolbarSeparator, keyof PfToolbarSeparatorAttributes> & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes]?: PfToolbarSeparator[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `attr:${K}`]?: PfToolbarSeparatorAttributes[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `prop:${K}`]?: PfToolbarSeparator[K] };
         "pf-tooltip": Omit<PfTooltip, keyof PfTooltipAttributes> & { [K in keyof PfTooltip & keyof PfTooltipAttributes]?: PfTooltip[K] } & { [K in keyof PfTooltip & keyof PfTooltipAttributes as `attr:${K}`]?: PfTooltipAttributes[K] } & { [K in keyof PfTooltip & keyof PfTooltipAttributes as `prop:${K}`]?: PfTooltip[K] };
@@ -3284,6 +3670,14 @@ declare module "@stencil/core" {
              */
             "pf-modal-header": LocalJSX.IntrinsicElements["pf-modal-header"] & JSXBase.HTMLAttributes<HTMLPfModalHeaderElement>;
             /**
+             * A notification: an icon, a heading, a body and an optional dismiss button.
+             * The role comes from core's `liveRegionRole`, so `warning` and `danger`
+             * announce assertively and `info` and `success` wait their turn. The React
+             * component used to be `role="status"` for all four — the rule lived in
+             * `Alert` and nowhere else — which is why the mapping is now shared.
+             */
+            "pf-notification": LocalJSX.IntrinsicElements["pf-notification"] & JSXBase.HTMLAttributes<HTMLPfNotificationElement>;
+            /**
              * A pager: boundary pages pinned at each end, a window around the current
              * page, and an ellipsis wherever that leaves a gap.
              * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -3339,6 +3733,19 @@ declare module "@stencil/core" {
              */
             "pf-scroll-area": LocalJSX.IntrinsicElements["pf-scroll-area"] & JSXBase.HTMLAttributes<HTMLPfScrollAreaElement>;
             /**
+             * A panel that slides in from the edge of the screen — a modal dialog that
+             * happens to be anchored to a side rather than centred.
+             * Which is why this is a native `<dialog>` opened with `showModal()`, exactly
+             * as `pf-modal` is. The React component hand-rolls the whole modal contract:
+             * a focus trap over `getFocusableElements`, a `focusin` listener to pull focus
+             * back, Escape handling, an overlay element, and focus restoration on close —
+             * about ninety lines. `showModal()` gives all of it, and the element needs
+             * none of core's `trapFocus`.
+             * The one thing it does not give is a page-scroll lock, so that comes from
+             * core's reference-counted `lockPageScroll`.
+             */
+            "pf-slideout-menu": LocalJSX.IntrinsicElements["pf-slideout-menu"] & JSXBase.HTMLAttributes<HTMLPfSlideoutMenuElement>;
+            /**
              * A form-associated range slider.
              * A native `<input type="range">`, as the React component is — the drag, the
              * keyboard stepping and the touch handling are all the browser's, and nothing
@@ -3360,6 +3767,22 @@ declare module "@stencil/core" {
              * `<textarea>` rather than an `<input>`, so it takes `rows` and resizes.
              */
             "pf-textarea": LocalJSX.IntrinsicElements["pf-textarea"] & JSXBase.HTMLAttributes<HTMLPfTextareaElement>;
+            /**
+             * The region toasts appear in, and the queue behind them.
+             * This is the one place the elements layer takes options rather than child
+             * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+             * toast is not data the consumer is rendering, it is an event that happened.
+             * React expresses that with a context provider and a module-level `toast()`;
+             * the equivalent for a custom element is a method on the region, since a
+             * consumer calling `toast()` three times from an event handler cannot
+             * reasonably be asked to maintain a list of children for it.
+             * Declarative use still works: anything slotted in is laid out in the stack
+             * alongside the queue, which is how a notification that is part of the page
+             * rather than a response to an action is placed here.
+             * The region itself is not a live region. Each `pf-notification` is one
+             * already, so marking the container as well would announce every toast twice.
+             */
+            "pf-toaster": LocalJSX.IntrinsicElements["pf-toaster"] & JSXBase.HTMLAttributes<HTMLPfToasterElement>;
             /**
              * A group of controls that is one tab stop from outside and navigated
              * internally with the arrow keys.

@@ -83,7 +83,9 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(function
       VIEWPORT_PADDING,
     );
     setCoords({ left: x, top: y });
-  }, [isMounted, point.x, point.y]);
+    // `point` whole, not its members: it is replaced as an object by
+    // setPoint, so this runs exactly when the pointer position changes.
+  }, [isMounted, point]);
 
   const handleContextMenu: React.MouseEventHandler<HTMLDivElement> = (event) => {
     onContextMenu?.(event);

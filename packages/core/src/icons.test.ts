@@ -3,6 +3,7 @@ import {
   getIconPaths,
   getRegisteredIconNames,
   normalizeIconName,
+  severityIconName,
   registerIconGlyphs,
   resolveIconGlyph,
   type IconGlyph,
@@ -92,5 +93,24 @@ describe('getIconPaths', () => {
     const duotone: IconGlyph = { icon: [512, 512, [], 'f000', ['M1', 'M2']] };
 
     expect(getIconPaths(duotone).paths).toEqual(['M1', 'M2']);
+  });
+});
+
+describe('severityIconName', () => {
+  it('maps each severity to the icon that stands for it', () => {
+    expect(severityIconName('info')).toBe('circle-info');
+    expect(severityIconName('success')).toBe('circle-check');
+    expect(severityIconName('warning')).toBe('triangle-exclamation');
+    expect(severityIconName('danger')).toBe('circle-xmark');
+  });
+
+  /*
+   * Every name it can return has to be one Icon actually resolves, or the
+   * component renders nothing and warns. These four are in the bundled
+   * registry; `check:icons` guards the same thing across the workspace.
+   */
+  it('returns distinct names, one per severity', () => {
+    const names = (['info', 'success', 'warning', 'danger'] as const).map(severityIconName);
+    expect(new Set(names).size).toBe(4);
   });
 });

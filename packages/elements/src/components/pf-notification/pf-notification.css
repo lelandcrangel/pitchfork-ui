@@ -1,0 +1,200 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.notification {
+  align-items: flex-start;
+  background: var(--pf-notification-bg);
+  border: 1px solid var(--pf-notification-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--pf-notification-elevation-floating-shadow, var(--pf-elevation-floating-shadow));
+  color: var(--pf-notification-text);
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: var(--space-3);
+  width: 100%;
+  animation: pf-notification-in var(--pf-transition-enter);
+}
+
+@media (--md) {
+  .notification {
+    padding: var(--space-4);
+  }
+}
+
+/*
+ * Its own copies: @keyframes do not cross a shadow boundary, so the global
+ * sheet's `pf-notification-in` is invisible from in here.
+ */
+@keyframes pf-notification-in {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+/* Slides out and collapses, so the stack above closes the gap behind it. */
+:host([exiting]) .notification {
+  animation: pf-notification-out var(--duration-moderate) var(--easing-accelerate) forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@keyframes pf-notification-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    max-height: 480px;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+    max-height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notification,
+  :host([exiting]) .notification {
+    animation: none;
+  }
+}
+
+:host([variant='info']) .notification {
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-info-bg) 45%,
+    var(--pf-notification-mix-base)
+  );
+  border-color: var(--pf-notification-info-border);
+}
+
+:host([variant='success']) .notification {
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-success-bg) 45%,
+    var(--pf-notification-mix-base)
+  );
+  border-color: var(--pf-notification-success-border);
+}
+
+:host([variant='warning']) .notification {
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-warning-bg) 45%,
+    var(--pf-notification-mix-base)
+  );
+  border-color: var(--pf-notification-warning-border);
+}
+
+:host([variant='danger']) .notification {
+  background: color-mix(
+    in srgb,
+    var(--pf-notification-danger-bg) 45%,
+    var(--pf-notification-mix-base)
+  );
+  border-color: var(--pf-notification-danger-border);
+}
+
+.icon {
+  align-items: center;
+  display: inline-flex;
+  font-size: var(--font-size-lg);
+  height: 1em;
+  justify-content: center;
+  line-height: 1;
+  margin-top: 2px;
+  width: 1em;
+}
+
+:host([variant='info']) .icon {
+  color: var(--pf-notification-info-icon);
+}
+
+:host([variant='success']) .icon {
+  color: var(--pf-notification-success-icon);
+}
+
+:host([variant='warning']) .icon {
+  color: var(--pf-notification-warning-icon);
+}
+
+:host([variant='danger']) .icon {
+  color: var(--pf-notification-danger-icon);
+}
+
+.content {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.title {
+  color: var(--pf-notification-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.35;
+  margin: 0;
+}
+
+:host([variant='info']) .title {
+  color: var(--pf-notification-info-title);
+}
+
+.body {
+  color: var(--pf-notification-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+:host([variant='info']) .body {
+  color: var(--pf-notification-info-icon);
+}
+
+.body[hidden] {
+  display: none;
+}
+
+slot[name='action']::slotted(*) {
+  margin-top: var(--space-2);
+}
+
+.dismiss {
+  align-items: center;
+  align-self: flex-start;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-notification-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  width: 28px;
+}
+
+:host([variant='info']) .dismiss {
+  color: var(--pf-notification-info-icon);
+}
+
+.dismiss:hover,
+.dismiss:focus-visible {
+  background: var(--pf-notification-bg-subtle);
+  color: var(--pf-notification-text);
+  outline: none;
+}
+
+:host([variant='info']) .dismiss:hover,
+:host([variant='info']) .dismiss:focus-visible {
+  background: var(--pf-notification-info-hover-bg);
+  color: var(--pf-notification-info-hover-icon);
+}

@@ -79,6 +79,9 @@ const EXPECTED = [
   'pf-context-menu',
   'pf-menu-item',
   'pf-menu-separator',
+  'pf-slideout-menu',
+  'pf-notification',
+  'pf-toaster',
 ];
 
 const TYPES = {
@@ -561,6 +564,74 @@ try {
       }
     }
 
+    /*
+     * The notification's variant colours come through a `color-mix()` on top
+     * of the alias chain, which only resolves against a real stylesheet, and
+     * its role comes from core's liveRegionRole. A `warning` in the page is
+     * the one case that pins both at once.
+     */
+    const pageNotification = document.querySelector('pf-notification[variant="warning"]');
+    const notificationBox = pageNotification?.shadowRoot?.querySelector('[part="notification"]');
+    if (!notificationBox) {
+      result.unstyled.push('the consumer app has no warning pf-notification');
+    } else {
+      if (notificationBox.getAttribute('role') !== 'alert') {
+        result.unstyled.push(
+          `pf-notification[variant=warning] announces as ` +
+            `"${notificationBox.getAttribute('role')}", expected alert`,
+        );
+      }
+      const style = getComputedStyle(notificationBox);
+      if (transparent(style.backgroundColor)) {
+        result.unstyled.push('pf-notification has no background — the color-mix chain broke');
+      }
+      if (transparent(style.borderTopColor)) {
+        result.unstyled.push('pf-notification has no border colour');
+      }
+      const glyph = pageNotification.shadowRoot
+        ?.querySelector('pf-icon')
+        ?.shadowRoot?.querySelector('svg');
+      if (!glyph) {
+        result.unstyled.push('pf-notification did not render its variant icon');
+      }
+    }
+
+    /*
+     * Which edge the slideout lands on, and that its panel really animates.
+     * Neither is assertable in packages/elements: no `styleUrl` CSS is applied
+     * in either Vitest project, so there the panel has the UA's `margin: auto`
+     * and nothing animates at all.
+     *
+     * The animation check is `getAnimations()` rather than `animationName`,
+     * and it is here because of a bug it would have caught: pf-modal animated
+     * with `var(--duration-medium)`, a token that does not exist, which makes
+     * the whole shorthand invalid at computed-value time — `animation-name`
+     * computes to `none` and nothing runs. Measured.
+     */
+    const slideoutDialog = document
+      .querySelector('pf-slideout-menu')
+      ?.shadowRoot?.querySelector('dialog');
+    if (!slideoutDialog) {
+      result.unstyled.push('the consumer app has no pf-slideout-menu');
+    } else if (slideoutDialog.open) {
+      result.unstyled.push('pf-slideout-menu started open — the fixture is wrong');
+    }
+
+    /* The toaster is a fixed, corner-anchored column. */
+    const toaster = document.querySelector('pf-toaster');
+    const stack = toaster?.shadowRoot?.querySelector('[part="stack"]');
+    if (!stack) {
+      result.unstyled.push('the consumer app has no pf-toaster');
+    } else {
+      const style = getComputedStyle(stack);
+      if (style.position !== 'fixed') {
+        result.unstyled.push(`pf-toaster stack is position "${style.position}", expected fixed`);
+      }
+      if (style.display !== 'grid') {
+        result.unstyled.push(`pf-toaster stack is display "${style.display}", expected grid`);
+      }
+    }
+
     const rule = document.querySelector('pf-content-divider')?.shadowRoot?.querySelector('.line');
     if (rule) {
       const background = getComputedStyle(rule).backgroundColor;
@@ -652,10 +723,14 @@ try {
       .waitForFunction(
         () => {
           const dialog = document.querySelector('pf-modal')?.shadowRoot?.querySelector('dialog');
+          const panel = dialog?.querySelector('[part="panel"]');
           return dialog?.open && document.documentElement.style.overflow === 'hidden'
             ? {
                 backdrop: getComputedStyle(dialog, '::backdrop').backgroundColor,
                 focusInside: Boolean(document.querySelector('pf-modal')?.shadowRoot?.activeElement),
+                animations: panel ? panel.getAnimations().length : 0,
+                animationName: panel ? getComputedStyle(panel).animationName : 'no panel',
+                animationDuration: panel ? getComputedStyle(panel).animationDuration : '0s',
               }
             : null;
         },
@@ -681,6 +756,21 @@ try {
       if (!opened.focusInside) {
         problems.push('pf-modal did not move focus into the dialog');
       }
+      /*
+       * The regression guard for a bug this check was written after: the panel
+       * animated with `var(--duration-medium)`, a token that does not exist,
+       * which makes the whole `animation` shorthand invalid at computed-value
+       * time — `animation-name` computes to `none` and nothing ever ran.
+       * Nothing noticed, because no test asserted the animation.
+       */
+      if (opened.animations === 0) {
+        problems.push(
+          'pf-modal panel runs no animation ' +
+            `(animation-name "${opened.animationName}", duration ` +
+            `"${opened.animationDuration}") — a @keyframes copy or a motion ` +
+            'token is missing',
+        );
+      }
 
       // Closing has to give the page its scroll back.
       await page.evaluate(() => {
@@ -705,6 +795,191 @@ try {
         problems.push(
           `pf-modal left the page scroll locked after closing (overflow "${overflow}")`,
         );
+      }
+    }
+  }
+
+  /*
+   * The slideout, opened through the host app's own state: pinned to the edge
+   * its `placement` names, animating, scroll-locked, and giving the scroll back.
+   * Every one of these is a claim packages/elements cannot make — no component
+   * CSS is applied in either Vitest project.
+   */
+  {
+    const clicked = await page.evaluate(() => {
+      const opener = [...document.querySelectorAll('pf-button')].find(
+        (b) => b.textContent?.trim() === 'Open slideout',
+      );
+      opener?.shadowRoot?.querySelector('button')?.click();
+      return Boolean(opener);
+    });
+
+    if (!clicked) problems.push('the consumer app has no "Open slideout" button');
+
+    const opened = await page
+      .waitForFunction(
+        () => {
+          const el = document.querySelector('pf-slideout-menu');
+          const dialog = el?.shadowRoot?.querySelector('dialog');
+          const panel = el?.shadowRoot?.querySelector('[part="panel"]');
+          if (!dialog?.open || !panel) return null;
+          const box = panel.getBoundingClientRect();
+          return {
+            right: Math.round(box.right),
+            left: Math.round(box.left),
+            width: Math.round(box.width),
+            viewport: window.innerWidth,
+            animations: panel.getAnimations().length,
+            animationName: getComputedStyle(panel).animationName,
+            animationDuration: getComputedStyle(panel).animationDuration,
+            overflow: document.documentElement.style.overflow,
+            labelledby: dialog.getAttribute('aria-labelledby'),
+            named: Boolean(el.shadowRoot?.getElementById('title')?.textContent?.trim()),
+          };
+        },
+        undefined,
+        { timeout: 5_000 },
+      )
+      .then((handle) => handle.jsonValue())
+      .catch(() => null);
+
+    if (!opened && clicked) {
+      problems.push('pf-slideout-menu did not open after clicking its button');
+    } else if (opened) {
+      // placement="right": the panel's right edge is the viewport's right edge.
+      if (opened.right !== opened.viewport) {
+        problems.push(
+          `pf-slideout-menu panel right edge is ${opened.right}, expected the ` +
+            `viewport's ${opened.viewport} — it is not pinned to the right`,
+        );
+      }
+      if (opened.width <= 0 || opened.width >= opened.viewport) {
+        problems.push(`pf-slideout-menu panel width is ${opened.width}, expected a partial width`);
+      }
+      /*
+       * A missing @keyframes copy reports a perfectly good `animationName` and
+       * runs nothing, and an undefined motion token makes the whole shorthand
+       * invalid at computed-value time, which computes `animationName` to
+       * `none`. getAnimations() is the only check that sees both, so the
+       * computed values are reported alongside it rather than asserted.
+       */
+      if (opened.animations === 0) {
+        problems.push(
+          'pf-slideout-menu panel runs no animation ' +
+            `(animation-name "${opened.animationName}", duration ` +
+            `"${opened.animationDuration}") — a @keyframes copy or a motion ` +
+            'token is missing',
+        );
+      }
+      if (opened.overflow !== 'hidden') {
+        problems.push(`pf-slideout-menu did not lock page scroll (overflow "${opened.overflow}")`);
+      }
+      if (opened.labelledby !== 'title' || !opened.named) {
+        problems.push('pf-slideout-menu does not name itself from its heading');
+      }
+
+      await page.evaluate(() => {
+        const cancel = [...document.querySelectorAll('pf-slideout-menu pf-button')].find(
+          (b) => b.textContent?.trim() === 'Cancel',
+        );
+        cancel?.shadowRoot?.querySelector('button')?.click();
+      });
+
+      const released = await page
+        .waitForFunction(
+          () => {
+            const dialog = document
+              .querySelector('pf-slideout-menu')
+              ?.shadowRoot?.querySelector('dialog');
+            return !dialog?.open && document.documentElement.style.overflow === '';
+          },
+          undefined,
+          { timeout: 5_000 },
+        )
+        .catch(() => null);
+
+      if (!released) {
+        const state = await page.evaluate(() => document.documentElement.style.overflow);
+        problems.push(`pf-slideout-menu left the page scroll locked after closing ("${state}")`);
+      }
+    }
+  }
+
+  /*
+   * A toast round trip through the imperative API the region exposes, which is
+   * the whole point of pf-toaster: the method is called the way a consumer calls
+   * it, and the notification has to appear, be announced at the right level,
+   * and then leave.
+   */
+  {
+    const toasted = await page
+      .evaluate(async () => {
+        const toaster = document.querySelector('pf-toaster');
+        if (!toaster || typeof toaster.toast !== 'function') return null;
+        const id = await toaster.toast({
+          variant: 'danger',
+          heading: 'Smoke',
+          description: 'From the imperative API.',
+          duration: 0,
+        });
+        return typeof id === 'string' && id.length > 0 ? id : null;
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (!toasted || toasted.error) {
+      problems.push(`pf-toaster.toast() did not return an id (${toasted?.error ?? 'no id'})`);
+    } else {
+      const shown = await page
+        .waitForFunction(
+          () => {
+            const toast = document
+              .querySelector('pf-toaster')
+              ?.shadowRoot?.querySelector('pf-notification');
+            const box = toast?.shadowRoot?.querySelector('[part="notification"]');
+            if (!box) return null;
+            const style = getComputedStyle(box);
+            return {
+              role: box.getAttribute('role'),
+              heading: box.querySelector('[part="title"]')?.textContent,
+              background: style.backgroundColor,
+              animations: box.getAnimations().length,
+            };
+          },
+          undefined,
+          { timeout: 5_000 },
+        )
+        .then((handle) => handle.jsonValue())
+        .catch(() => null);
+
+      if (!shown) {
+        problems.push('pf-toaster.toast() returned an id but rendered no notification');
+      } else {
+        // danger is assertive: core's liveRegionRole, reaching the real DOM.
+        if (shown.role !== 'alert') {
+          problems.push(`a danger toast announces as "${shown.role}", expected alert`);
+        }
+        if (shown.heading !== 'Smoke') {
+          problems.push(`the toast heading is "${shown.heading}", expected "Smoke"`);
+        }
+        if (shown.background === 'rgba(0, 0, 0, 0)') {
+          problems.push('the toast has no background — the color-mix chain broke');
+        }
+        if (shown.animations === 0) {
+          problems.push('the toast runs no entrance animation');
+        }
+
+        await page.evaluate((id) => document.querySelector('pf-toaster')?.dismiss(id), toasted);
+
+        const gone = await page
+          .waitForFunction(
+            () =>
+              !document.querySelector('pf-toaster')?.shadowRoot?.querySelector('pf-notification'),
+            undefined,
+            { timeout: 5_000 },
+          )
+          .catch(() => null);
+
+        if (!gone) problems.push('pf-toaster.dismiss() left the notification in the stack');
       }
     }
   }

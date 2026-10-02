@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, signal, viewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   PfAvatar,
@@ -26,6 +26,7 @@ import {
   PfModalBody,
   PfModalFooter,
   PfModalHeader,
+  PfNotification,
   PfPagination,
   PfPopover,
   PfProgressBar,
@@ -33,10 +34,12 @@ import {
   PfRadioButton,
   PfRadioGroup,
   PfScrollArea,
+  PfSlideoutMenu,
   PfSlider,
   PfSwitch,
   PfTag,
   PfTextarea,
+  PfToaster,
   PfToolbar,
   PfTooltip,
   PfToolbarSeparator,
@@ -82,6 +85,7 @@ import {
     PfModalBody,
     PfModalFooter,
     PfModalHeader,
+    PfNotification,
     PfPagination,
     PfPopover,
     PfProgressBar,
@@ -89,10 +93,12 @@ import {
     PfRadioButton,
     PfRadioGroup,
     PfScrollArea,
+    PfSlideoutMenu,
     PfSlider,
     PfSwitch,
     PfTag,
     PfTextarea,
+    PfToaster,
     PfToolbar,
     PfTooltip,
     PfToolbarSeparator,
@@ -375,6 +381,43 @@ import {
         <pf-menu-item slot="menu" value="remove" destructive>Remove</pf-menu-item>
       </pf-context-menu>
 
+      <!--
+        A slideout is a modal dialog pinned to an edge: showModal() gives the
+        focus trap, Escape and the backdrop. Only the page-scroll lock is ours.
+      -->
+      <div class="row">
+        <pf-button variant="secondary" (click)="slideoutOpen.set(true)">Open slideout</pf-button>
+        <pf-button variant="primary" (click)="notify('success')">Toast</pf-button>
+        <pf-button variant="secondary" (click)="notify('danger')">Toast a failure</pf-button>
+      </div>
+
+      <pf-slideout-menu
+        [open]="slideoutOpen()"
+        heading="Filters"
+        description="Narrow the list down"
+        (pfOpenChange)="slideoutOpen.set($event.detail.open)"
+      >
+        <p style="margin-top: 0">
+          The heading is a prop rendered into the element's own shadow root, so this dialog names
+          itself with aria-labelledby.
+        </p>
+        <pf-button slot="footer" variant="secondary" (click)="slideoutOpen.set(false)">
+          Cancel
+        </pf-button>
+        <pf-button slot="footer" variant="primary" (click)="slideoutOpen.set(false)">
+          Apply
+        </pf-button>
+      </pf-slideout-menu>
+
+      <pf-notification
+        variant="warning"
+        heading="Scheduled maintenance"
+        description="Saturday, 02:00-04:00 UTC."
+        data-testid="page-notification"
+      ></pf-notification>
+
+      <pf-toaster #toaster placement="top-right" data-testid="toaster"></pf-toaster>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -392,6 +435,21 @@ export class AppComponent {
   page = signal(3);
   modalOpen = signal(false);
   menuChoice = signal('');
+  slideoutOpen = signal(false);
+  private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
+
+  notify(variant: 'success' | 'danger') {
+    void this.toaster()?.nativeElement.toast(
+      variant === 'success'
+        ? { variant, heading: 'Saved', description: 'Your changes are live.' }
+        : {
+            variant,
+            heading: 'Upload failed',
+            description: 'Announced assertively, unlike the success above.',
+            duration: 0,
+          },
+    );
+  }
   prefs = new FormGroup({
     terms: new FormControl(false, Validators.requiredTrue),
     notify: new FormControl(true),

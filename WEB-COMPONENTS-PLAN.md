@@ -129,6 +129,27 @@ those arrays as the thing that cannot cross the HTML boundary under any
 engine. It also means one pattern rather than two, and it matches Shoelace,
 which §2 already cites as the precedent for the engine choice.
 
+**The one exception: a toast is an event, not data.** `pf-toaster` takes an
+options object through a `@Method()`, which is the shape this section rejects
+everywhere else. The rule is about data the consumer is _rendering_: a select's
+options and a radio group's choices exist in their model, so expressing them as
+children costs a loop and buys arbitrary content in each label. A toast exists
+because something just happened. React expresses that with a context provider
+and a module-level `toast()` helper, and the custom-element equivalent is a
+method on the region — a consumer firing three toasts from an event handler
+cannot reasonably be asked to maintain a list of children for it, and the
+imperative call is what the React API already is.
+
+Declarative use is not given up for it: anything slotted into `pf-toaster` is
+laid out in the stack beside the queue, which is where a notification that
+belongs to the page rather than to an action goes.
+
+A global `toast()` helper is deliberately _not_ shipped. React's works off a
+module singleton, and the elements package exports only components — its
+`index.ts` re-exports the Stencil-generated barrel. `document.querySelector`
+inside a helper would be guessing which region the caller meant. The method on
+the element is honest about needing a reference.
+
 ### Angular output-target constraints, learned the hard way
 
 Two rules about `valueAccessorConfigs`, both found by a failing build:

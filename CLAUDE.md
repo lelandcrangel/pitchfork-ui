@@ -378,6 +378,45 @@ Things that differ from the React library, learned by porting the first two:
   hit-test at the panel's own centre hits the panel wherever it is. The
   assertion that does see it is the box landing at the coordinate it was
   given, which each overlay spec now makes.
+- **A wrapper around a `<slot>` cannot be collapsed from CSS.**
+  `.icon:not(:has(*))` reads as "hide this when nothing was slotted in" and
+  never matches, because the `<slot>` element is itself a child — measured.
+  `pf-menu-item` shipped that rule and it was costing one `--space-2` in front
+  of the label of every item with no icon, so labels in a menu that mixed the
+  two did not line up. Two ways out, and which one depends on whether the box
+  has to exist: style `::slotted(*)` and drop the wrapper, since an
+  _unassigned_ slot is `display: contents` and generates nothing (what
+  `pf-menu-item` does now), or ask the slot in JS and render accordingly (what
+  `pf-slideout-menu`'s footer does, because it carries a border and padding).
+  Taking the JS route, keep the slot in the tree and hide it — a slot that is
+  not rendered never fires `slotchange`, so omitting it means content added
+  later stays invisible for good.
+- **A `::part()` on a slot wrapper is not worth having.** The convention above
+  exists because a consumer cannot reach _shadow-internal_ nodes. Slotted
+  content is their own element, which their own stylesheet already selects, so
+  wrapping it in a part adds a hook for nothing and an obstacle to removing the
+  wrapper later.
+- **Assert an animation with `getAnimations()`, and assert it at all.**
+  `pf-modal` animated with `var(--duration-medium)`, which is not one of the
+  three duration tokens (`fast`, `moderate`, `slow`). An undefined custom
+  property makes the whole shorthand invalid at computed-value time, so
+  `animation-name` computes to `none` and nothing runs — its entrance animation
+  had never played, and nothing noticed because no test looked. The two failure
+  modes are told apart by what the computed values say, which is why
+  `getAnimations()` is the only check that sees both: an undefined token reads
+  `animation-name: none; duration: 0s`, while a missing `@keyframes` copy reads
+  a perfectly good name and duration and still runs nothing. Both measured, by
+  reintroducing each into a real build. Prefer the `--pf-transition-*` aliases
+  over raw duration and easing tokens — that is what the React layer uses, and
+  an alias cannot be half-right.
+- **Wait for an exit animation on `Animation.finished`, never `animationend`.**
+  An `animationend` listener never fires when no animation ever started, and
+  there are three ordinary ways for that to happen: `prefers-reduced-motion`
+  sets `animation: none`, neither Vitest project applies `styleUrl` CSS at all,
+  and a consumer may not have loaded the stylesheet. `pf-notification.dismiss()`
+  reads `getAnimations()` after a frame and resolves immediately when the list
+  is empty — measured both ways: swapping in the listener version hangs four of
+  its five browser tests to a 15s timeout.
 - **An overlay cannot describe its trigger with an IDREF.** `aria-describedby`
   does not cross a shadow boundary, and `ariaDescribedByElements` silently
   reads back empty when handed an element from a root the trigger does not own

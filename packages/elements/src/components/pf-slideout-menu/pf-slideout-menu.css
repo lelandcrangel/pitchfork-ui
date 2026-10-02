@@ -1,0 +1,179 @@
+:host {
+  display: contents;
+}
+
+/*
+ * The dialog is the overlay: it fills the viewport and pins the panel to one
+ * edge, so a click that lands on it rather than on the panel is an overlay
+ * click. The explicit sizing is what overrides the UA's `margin: auto` and
+ * `width: fit-content` for a `<dialog>`.
+ */
+.dialog {
+  background: none;
+  border: 0;
+  display: none;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  padding: 0;
+  width: 100%;
+}
+
+.dialog[open] {
+  display: flex;
+}
+
+:host([placement='right']) .dialog {
+  justify-content: flex-end;
+}
+
+:host([placement='left']) .dialog {
+  justify-content: flex-start;
+}
+
+.dialog::backdrop {
+  background: var(--pf-slideoutmenu-overlay-backdrop, var(--pf-overlay-backdrop));
+}
+
+.panel {
+  background: var(--pf-slideout-bg);
+  border-color: var(--pf-slideout-border);
+  border-style: solid;
+  border-width: 0;
+  box-shadow: var(--pf-slideoutmenu-elevation-overlay-shadow, var(--pf-elevation-overlay-shadow));
+  color: var(--pf-slideout-text);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  max-width: 100%;
+}
+
+:host([placement='right']) .panel {
+  border-left-width: 1px;
+}
+
+:host([placement='left']) .panel {
+  border-right-width: 1px;
+}
+
+:host([size='sm']) .panel {
+  width: min(420px, 100vw);
+}
+
+:host([size='md']) .panel {
+  width: min(520px, 100vw);
+}
+
+:host([size='lg']) .panel {
+  width: min(680px, 100vw);
+}
+
+/*
+ * Its own copy of each: @keyframes do not cross a shadow boundary, so the
+ * global sheet's definitions are invisible in here.
+ */
+:host([placement='right']) .dialog[open] .panel {
+  animation: pf-slideout-in-right var(--pf-transition-slow);
+}
+
+:host([placement='left']) .dialog[open] .panel {
+  animation: pf-slideout-in-left var(--pf-transition-slow);
+}
+
+@keyframes pf-slideout-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pf-slideout-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] .panel {
+    animation: none;
+  }
+}
+
+.header,
+.footer {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  padding: var(--space-3);
+}
+
+/* `hidden` has to beat the `display: flex` above, or an empty footer shows. */
+.footer[hidden] {
+  display: none;
+}
+
+.header {
+  border-bottom: 1px solid var(--pf-slideout-border);
+}
+
+.footer {
+  border-top: 1px solid var(--pf-slideout-border);
+  justify-content: flex-end;
+}
+
+.body {
+  overflow-y: auto;
+  padding: var(--space-3);
+}
+
+@media (--md) {
+  .header,
+  .body,
+  .footer {
+    padding: var(--space-4);
+  }
+}
+
+.headings {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.description {
+  color: var(--pf-slideout-text-muted);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.close {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-slideout-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: var(--space-8);
+  justify-content: center;
+  width: var(--space-8);
+}
+
+.close:hover {
+  background: var(--pf-slideout-bg-subtle);
+  color: var(--pf-slideout-text);
+}
+
+.close:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}

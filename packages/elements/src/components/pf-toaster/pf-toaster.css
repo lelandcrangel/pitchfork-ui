@@ -1,0 +1,56 @@
+:host {
+  display: contents;
+}
+
+/*
+ * Full-width on a phone, where a 420px card in a corner would be cropped;
+ * a corner-anchored column from --md up. Mirrors .pf-notification-stack.
+ */
+.stack {
+  display: grid;
+  gap: var(--space-3);
+  left: var(--space-2);
+  position: fixed;
+  right: var(--space-2);
+  width: auto;
+  z-index: 1000;
+}
+
+:host([placement='top-right']) .stack,
+:host([placement='top-left']) .stack {
+  top: var(--space-2);
+}
+
+:host([placement='bottom-right']) .stack,
+:host([placement='bottom-left']) .stack {
+  bottom: var(--space-2);
+}
+
+@media (--md) {
+  .stack {
+    left: auto;
+    right: auto;
+    width: min(420px, calc(100vw - (var(--space-4) * 2)));
+  }
+
+  :host([placement='top-right']) .stack,
+  :host([placement='top-left']) .stack {
+    top: var(--space-4);
+  }
+
+  :host([placement='bottom-right']) .stack,
+  :host([placement='bottom-left']) .stack {
+    bottom: var(--space-4);
+  }
+
+  :host([placement='top-right']) .stack,
+  :host([placement='bottom-right']) .stack {
+    justify-items: end;
+    right: var(--space-4);
+  }
+
+  :host([placement='top-left']) .stack,
+  :host([placement='bottom-left']) .stack {
+    left: var(--space-4);
+  }
+}

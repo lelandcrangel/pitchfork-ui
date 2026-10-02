@@ -99,3 +99,26 @@ export function getIconPaths(glyph: IconGlyph): IconPaths {
     paths: Array.isArray(pathData) ? pathData : [pathData],
   };
 }
+
+/**
+ * The icon that stands for each severity.
+ *
+ * Both `Alert` and `Notification` carried identical copies of this map, and
+ * `<pf-notification>` would have made a third. The name is returned rather
+ * than a glyph, so core still imports nothing and each layer resolves it
+ * through its own `Icon` / `<pf-icon>`.
+ */
+export function severityIconName(
+  variant: 'info' | 'success' | 'warning' | 'danger',
+): 'circle-info' | 'circle-check' | 'triangle-exclamation' | 'circle-xmark' {
+  switch (variant) {
+    case 'success':
+      return 'circle-check';
+    case 'warning':
+      return 'triangle-exclamation';
+    case 'danger':
+      return 'circle-xmark';
+    default:
+      return 'circle-info';
+  }
+}

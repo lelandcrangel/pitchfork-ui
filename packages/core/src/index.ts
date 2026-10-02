@@ -9,5 +9,6 @@ export * from './navigation';
 export * from './pagination';
 export * from './progress';
 export * from './roving';
+export * from './scroll-lock';
 export * from './state';
 export * from './text';

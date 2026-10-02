@@ -1,18 +1,12 @@
+import { liveRegionRole, severityIconName } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { useExitAnimation } from '../../hooks';
 import { cx } from '../../utils/cx';
-import { Icon, type IconName } from '../Icon';
+import { Icon } from '../Icon';
 import './Notification.css';
 
 export type NotificationVariant = 'info' | 'success' | 'warning' | 'danger';
 export type NotificationPlacement = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
-
-const variantIcon: Record<NotificationVariant, IconName> = {
-  info: 'circle-info',
-  success: 'circle-check',
-  warning: 'triangle-exclamation',
-  danger: 'circle-xmark',
-};
 
 export interface NotificationStackProps extends React.HTMLAttributes<HTMLDivElement> {
   placement?: NotificationPlacement;
@@ -55,7 +49,7 @@ export const Notification = forwardRef<HTMLDivElement, NotificationProps>(
     },
     ref,
   ) => {
-    const resolvedIcon = icon ?? <Icon name={variantIcon[variant]} aria-hidden />;
+    const resolvedIcon = icon ?? <Icon name={severityIconName(variant)} aria-hidden />;
     const body = children ?? description;
     const { isExiting, startExit } = useExitAnimation({ onExited: onDismiss });
 
@@ -68,7 +62,7 @@ export const Notification = forwardRef<HTMLDivElement, NotificationProps>(
           isExiting && 'pf-notification--exiting',
           className,
         )}
-        role="status"
+        role={liveRegionRole(variant)}
         {...props}
       >
         <span className="pf-notification__icon" aria-hidden>

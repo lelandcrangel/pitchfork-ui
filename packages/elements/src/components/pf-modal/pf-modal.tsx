@@ -1,3 +1,5 @@
+import { lockPageScroll } from '@pitchfork-ui/core';
+
 import {
   Component,
   Element,
@@ -61,8 +63,12 @@ export class PfModal {
   /** Fires whenever the modal opens or closes, whoever caused it. */
   @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
 
-  /** The page's own overflow, restored when the modal closes. */
-  private previousOverflow: string | null = null;
+  /**
+   * Releases the page-scroll lock, or null when this modal does not hold it.
+   * The lock is core's and reference-counted, so a slideout opening over a
+   * modal cannot leave the page unscrollable.
+   */
+  private releaseScroll: (() => void) | null = null;
 
   componentDidLoad() {
     if (this.open) this.showDialog();
@@ -106,15 +112,13 @@ export class PfModal {
   }
 
   private lockScroll() {
-    if (this.previousOverflow !== null) return;
-    this.previousOverflow = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = 'hidden';
+    if (this.releaseScroll) return;
+    this.releaseScroll = lockPageScroll();
   }
 
   private unlockScroll() {
-    if (this.previousOverflow === null) return;
-    document.documentElement.style.overflow = this.previousOverflow;
-    this.previousOverflow = null;
+    this.releaseScroll?.();
+    this.releaseScroll = null;
   }
 
   private showDialog() {
