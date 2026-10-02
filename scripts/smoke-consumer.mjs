@@ -70,6 +70,11 @@ const EXPECTED = [
   'pf-radio-group',
   'pf-radio-button',
   'pf-tooltip',
+  'pf-popover',
+  'pf-modal',
+  'pf-modal-header',
+  'pf-modal-body',
+  'pf-modal-footer',
 ];
 
 const TYPES = {
@@ -479,6 +484,32 @@ try {
       }
     }
 
+    /*
+     * pf-modal leans on the browser for the focus trap, Escape and the
+     * backdrop. The page-scroll lock is the one part it does itself —
+     * measured: `showModal()` does not stop the page scrolling behind it — so
+     * that is what a real build needs to confirm, as a full open/close round
+     * trip through the host app's own state.
+     */
+    const modal = document.querySelector('pf-modal');
+    const modalDialog = modal?.shadowRoot?.querySelector('dialog');
+    if (modalDialog) {
+      if (modalDialog.open) {
+        result.unstyled.push('pf-modal started open — the fixture is wrong');
+      } else {
+        result.modalBefore = document.documentElement.style.overflow;
+        const opener = [...document.querySelectorAll('pf-button')].find(
+          (b) => b.textContent?.trim() === 'Open modal',
+        );
+        if (!opener) {
+          result.unstyled.push('the consumer app has no "Open modal" button');
+        } else {
+          opener.shadowRoot?.querySelector('button')?.click();
+          result.modalClicked = true;
+        }
+      }
+    }
+
     const rule = document.querySelector('pf-content-divider')?.shadowRoot?.querySelector('.line');
     if (rule) {
       const background = getComputedStyle(rule).backgroundColor;
@@ -562,6 +593,68 @@ try {
         `pf-radio-group: after clicking "${report.radioClickedValue}" the checked radios are ` +
           `[${state.join(', ')}] (was "${report.radioBefore}") — expected exactly that one`,
       );
+    }
+  }
+
+  if (report.modalClicked) {
+    const opened = await page
+      .waitForFunction(
+        () => {
+          const dialog = document.querySelector('pf-modal')?.shadowRoot?.querySelector('dialog');
+          return dialog?.open && document.documentElement.style.overflow === 'hidden'
+            ? {
+                backdrop: getComputedStyle(dialog, '::backdrop').backgroundColor,
+                focusInside: Boolean(document.querySelector('pf-modal')?.shadowRoot?.activeElement),
+              }
+            : null;
+        },
+        undefined,
+        { timeout: 5_000 },
+      )
+      .then((handle) => handle.jsonValue())
+      .catch(() => null);
+
+    if (!opened) {
+      const state = await page.evaluate(() => ({
+        open: document.querySelector('pf-modal')?.shadowRoot?.querySelector('dialog')?.open,
+        overflow: document.documentElement.style.overflow,
+      }));
+      problems.push(
+        `pf-modal: after clicking open, dialog.open is ${state.open} and ` +
+          `documentElement overflow is "${state.overflow}" — expected true and "hidden"`,
+      );
+    } else {
+      if (!opened.backdrop || opened.backdrop === 'rgba(0, 0, 0, 0)') {
+        problems.push(`pf-modal ::backdrop has no background ("${opened.backdrop}")`);
+      }
+      if (!opened.focusInside) {
+        problems.push('pf-modal did not move focus into the dialog');
+      }
+
+      // Closing has to give the page its scroll back.
+      await page.evaluate(() => {
+        const cancel = [...document.querySelectorAll('pf-modal pf-button')].find(
+          (b) => b.textContent?.trim() === 'Cancel',
+        );
+        cancel?.shadowRoot?.querySelector('button')?.click();
+      });
+      const released = await page
+        .waitForFunction(
+          (before) => {
+            const dialog = document.querySelector('pf-modal')?.shadowRoot?.querySelector('dialog');
+            return !dialog?.open && document.documentElement.style.overflow === before;
+          },
+          report.modalBefore ?? '',
+          { timeout: 5_000 },
+        )
+        .catch(() => null);
+
+      if (!released) {
+        const overflow = await page.evaluate(() => document.documentElement.style.overflow);
+        problems.push(
+          `pf-modal left the page scroll locked after closing (overflow "${overflow}")`,
+        );
+      }
     }
   }
 

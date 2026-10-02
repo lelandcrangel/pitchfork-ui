@@ -17,7 +17,12 @@ import {
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfModal,
+  PfModalBody,
+  PfModalFooter,
+  PfModalHeader,
   PfPagination,
+  PfPopover,
   PfProgressBar,
   PfProgressCircle,
   PfRadioButton,
@@ -45,6 +50,7 @@ export function App() {
   const [page, setPage] = useState(3);
   const [submitted, setSubmitted] = useState('');
   const [volume] = useState(7);
+  const [modalOpen, setModalOpen] = useState(false);
   const [plan, setPlan] = useState('pro');
   const plans = [
     { value: 'free', label: 'Free' },
@@ -271,6 +277,42 @@ export function App() {
         </PfTooltip>
       </div>
       <div style={{ position: 'relative', zIndex: 999, height: '4px' }} />
+
+      <div className="row">
+        {/* Light-dismiss and Escape come from the browser, not from us. */}
+        <PfPopover label="Quick settings">
+          <PfButton variant="secondary">Settings</PfButton>
+          <div slot="content">
+            <p style={{ margin: 0 }}>Anchored, and dismissed by the browser.</p>
+          </div>
+        </PfPopover>
+
+        <PfButton variant="primary" onClick={() => setModalOpen(true)}>
+          Open modal
+        </PfButton>
+      </div>
+
+      <PfModal
+        open={modalOpen}
+        label="Confirm"
+        onPfOpenChange={(event) => setModalOpen(event.detail.open)}
+      >
+        <PfModalHeader>
+          <strong>Confirm</strong>
+        </PfModalHeader>
+        <PfModalBody>
+          A native dialog: the focus trap, Escape and the backdrop are the browser&rsquo;s. Only the
+          page-scroll lock is ours.
+        </PfModalBody>
+        <PfModalFooter>
+          <PfButton variant="secondary" onClick={() => setModalOpen(false)}>
+            Cancel
+          </PfButton>
+          <PfButton variant="primary" onClick={() => setModalOpen(false)}>
+            Confirm
+          </PfButton>
+        </PfModalFooter>
+      </PfModal>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

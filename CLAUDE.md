@@ -374,6 +374,28 @@ Things that differ from the React library, learned by porting the first two:
   `slotchange` fires when the assignment changes, not when text inside an
   already-assigned node is edited, so without it the visible tooltip updates
   while the accessible description goes stale.
+- **Let the browser dismiss it.** `popover="auto"` does light-dismiss and
+  Escape itself, from inside a shadow root — measured with trusted input: a
+  real outside click and a real Escape both close an `auto` popover while a
+  `manual` one stays open. So `pf-popover` has no outside-click listener, and
+  `dismissable="false"` is simply the `manual` switch (with an Escape handler
+  of its own, since `manual` gets no help). Likewise `<dialog>.showModal()`
+  gives the focus trap, Escape and the backdrop — measured: focus moves inside
+  and a light-DOM button cannot take it back — so `pf-modal` needs none of
+  core's `trapFocus`. The one thing `showModal()` does **not** do is lock page
+  scroll, also measured, so the element does that itself.
+- **Light-dismiss needs trusted input, so test it with `userEvent`.** A
+  synthetic `.click()` or `dispatchEvent(new KeyboardEvent(...))` does not
+  trigger it — measured — which makes a test written that way pass whether the
+  feature works or not. Import `userEvent` from `@vitest/browser/context` for
+  anything the browser itself dismisses.
+- **Emit the state change from `@Watch`, not from the DOM event.** Both
+  `pf-popover` and `pf-modal` first announced their change from the `toggle` /
+  `close` handler, and both fired for the browser-driven path and for none of
+  the user-driven ones: by the time the DOM event arrives the element has
+  already moved its own `open`, so the guard there sees no change. The watch is
+  the one place every path passes through. Mirror the DOM event back into
+  `open` and let the watch do the announcing.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

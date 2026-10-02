@@ -1,0 +1,44 @@
+:host {
+  display: inline-flex;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The UA stylesheet already gives a popover `position: fixed`, `margin: 0` and
+ * `inset: auto`; left/top come from the anchoring observer.
+ */
+.panel {
+  background: var(--pf-popover-bg);
+  border: 1px solid var(--pf-popover-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  color: var(--pf-popover-text);
+  max-width: min(320px, calc(100vw - 2 * var(--space-4)));
+  padding: var(--space-3);
+  width: max-content;
+}
+
+.panel:focus-visible {
+  outline: none;
+}
+
+.panel:popover-open {
+  animation: pf-popover-in var(--duration-fast) var(--easing-decelerate);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel:popover-open {
+    animation: none;
+  }
+}

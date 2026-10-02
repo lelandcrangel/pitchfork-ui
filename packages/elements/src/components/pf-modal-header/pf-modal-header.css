@@ -1,0 +1,10 @@
+:host {
+  border-bottom: 1px solid var(--pf-modal-border);
+  display: block;
+  /* Room for the close button, which is positioned over this corner. */
+  padding: var(--space-4) var(--space-10) var(--space-4) var(--space-4);
+}
+
+:host([hidden]) {
+  display: none;
+}

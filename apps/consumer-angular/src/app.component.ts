@@ -18,7 +18,12 @@ import {
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfModal,
+  PfModalBody,
+  PfModalFooter,
+  PfModalHeader,
   PfPagination,
+  PfPopover,
   PfProgressBar,
   PfProgressCircle,
   PfRadioButton,
@@ -65,7 +70,12 @@ import {
     PfLoadingDots,
     PfLoadingSkeleton,
     PfLoadingSpinner,
+    PfModal,
+    PfModalBody,
+    PfModalFooter,
+    PfModalHeader,
     PfPagination,
+    PfPopover,
     PfProgressBar,
     PfProgressCircle,
     PfRadioButton,
@@ -289,6 +299,32 @@ import {
       </div>
       <div style="position: relative; z-index: 999; height: 4px"></div>
 
+      <div class="row">
+        <!-- Light-dismiss and Escape come from the browser, not from us. -->
+        <pf-popover label="Quick settings">
+          <pf-button variant="secondary">Settings</pf-button>
+          <div slot="content"><p style="margin: 0">Anchored, and dismissed by the browser.</p></div>
+        </pf-popover>
+
+        <pf-button variant="primary" (click)="modalOpen.set(true)">Open modal</pf-button>
+      </div>
+
+      <pf-modal
+        [open]="modalOpen()"
+        label="Confirm"
+        (pfOpenChange)="modalOpen.set($event.detail.open)"
+      >
+        <pf-modal-header><strong>Confirm</strong></pf-modal-header>
+        <pf-modal-body>
+          A native dialog: the focus trap, Escape and the backdrop are the browser's. Only the
+          page-scroll lock is ours.
+        </pf-modal-body>
+        <pf-modal-footer>
+          <pf-button variant="secondary" (click)="modalOpen.set(false)">Cancel</pf-button>
+          <pf-button variant="primary" (click)="modalOpen.set(false)">Confirm</pf-button>
+        </pf-modal-footer>
+      </pf-modal>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -304,6 +340,7 @@ export class AppComponent {
   email = new FormControl('ada@example.com');
   tags = signal(['design', 'systems']);
   page = signal(3);
+  modalOpen = signal(false);
   prefs = new FormGroup({
     terms: new FormControl(false, Validators.requiredTrue),
     notify: new FormControl(true),

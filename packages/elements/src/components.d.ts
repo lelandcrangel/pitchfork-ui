@@ -14,6 +14,7 @@ import { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
+import { PfModalSize } from "./components/pf-modal/pf-modal";
 import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
@@ -30,6 +31,7 @@ export { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
+export { PfModalSize } from "./components/pf-modal/pf-modal";
 export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
@@ -399,6 +401,75 @@ export namespace Components {
         "size": number;
     }
     /**
+     * A modal dialog.
+     * A native `<dialog>` opened with `showModal()`, which from inside a shadow
+     * root gives the focus trap, Escape and the backdrop for nothing — all
+     * measured: focus moves inside on open and cannot be taken by a light-DOM
+     * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
+     * core is not needed here, unlike in the React component.
+     * What `showModal()` does *not* do is lock page scroll — measured: a real
+     * wheel still scrolled the page behind an open modal — so this element locks
+     * it, exactly as the React component does.
+     */
+    interface PfModal {
+        /**
+          * Close on Escape or a click on the overlay. Defaults to true.
+          * @default true
+         */
+        "dismissable": boolean;
+        /**
+          * Closes the modal.
+         */
+        "hide": () => Promise<void>;
+        /**
+          * Accessible name. Falls back to the text of whatever is slotted, which is usually the header — `aria-labelledby` cannot be used, because an IDREF does not cross a shadow boundary and the header is in the light DOM.
+         */
+        "label"?: string;
+        /**
+          * Whether the modal is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Opens the modal.
+         */
+        "show": () => Promise<void>;
+        /**
+          * Render the corner close button. Defaults to true.
+          * @default true
+         */
+        "showCloseButton": boolean;
+        /**
+          * Panel width. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size": PfModalSize;
+    }
+    /**
+     * The body section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface PfModalBody {
+    }
+    /**
+     * The footer section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface PfModalFooter {
+    }
+    /**
+     * The header section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface PfModalHeader {
+    }
+    /**
      * A pager: boundary pages pinned at each end, a window around the current
      * page, and an ellipsis wherever that leaves a gap.
      * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -441,6 +512,44 @@ export namespace Components {
           * @default 1
          */
         "totalPages": number;
+    }
+    /**
+     * An interactive panel anchored to its trigger.
+     * `popover="auto"` rather than `manual`, because the browser then does
+     * light-dismiss and Escape itself — measured from inside a shadow root with
+     * trusted input: a real outside click and a real Escape both close an `auto`
+     * popover while a `manual` one stays open. That is less code than
+     * `onOutsideInteraction` and it composes with the top-layer stack, so a
+     * popover inside a popover closes in the right order.
+     */
+    interface PfPopover {
+        /**
+          * Which edge of the trigger the panel lines up with.
+          * @default 'start'
+         */
+        "align": 'start' | 'end';
+        /**
+          * Close on an outside click or Escape. Defaults to true.  This is the `auto`/`manual` popover switch: turning it off hands the consumer responsibility for closing, which is what a popover holding an unfinished form wants.
+          * @default true
+         */
+        "dismissable": boolean;
+        /**
+          * Closes the panel.
+         */
+        "hide": () => Promise<void>;
+        /**
+          * Accessible name for the panel, which is a dialog.
+         */
+        "label"?: string;
+        /**
+          * Whether the panel is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Opens the panel.
+         */
+        "show": () => Promise<void>;
     }
     /**
      * A horizontal determinate progress track.
@@ -906,9 +1015,17 @@ export interface PfInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfInputElement;
 }
+export interface PfModalCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfModalElement;
+}
 export interface PfPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfPaginationElement;
+}
+export interface PfPopoverCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfPopoverElement;
 }
 export interface PfRadioButtonCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1110,6 +1227,70 @@ declare global {
         prototype: HTMLPfLoadingSpinnerElement;
         new (): HTMLPfLoadingSpinnerElement;
     };
+    interface HTMLPfModalElementEventMap {
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * A modal dialog.
+     * A native `<dialog>` opened with `showModal()`, which from inside a shadow
+     * root gives the focus trap, Escape and the backdrop for nothing — all
+     * measured: focus moves inside on open and cannot be taken by a light-DOM
+     * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
+     * core is not needed here, unlike in the React component.
+     * What `showModal()` does *not* do is lock page scroll — measured: a real
+     * wheel still scrolled the page behind an open modal — so this element locks
+     * it, exactly as the React component does.
+     */
+    interface HTMLPfModalElement extends Components.PfModal, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfModalElementEventMap>(type: K, listener: (this: HTMLPfModalElement, ev: PfModalCustomEvent<HTMLPfModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfModalElementEventMap>(type: K, listener: (this: HTMLPfModalElement, ev: PfModalCustomEvent<HTMLPfModalElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfModalElement: {
+        prototype: HTMLPfModalElement;
+        new (): HTMLPfModalElement;
+    };
+    /**
+     * The body section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface HTMLPfModalBodyElement extends Components.PfModalBody, HTMLStencilElement {
+    }
+    var HTMLPfModalBodyElement: {
+        prototype: HTMLPfModalBodyElement;
+        new (): HTMLPfModalBodyElement;
+    };
+    /**
+     * The footer section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface HTMLPfModalFooterElement extends Components.PfModalFooter, HTMLStencilElement {
+    }
+    var HTMLPfModalFooterElement: {
+        prototype: HTMLPfModalFooterElement;
+        new (): HTMLPfModalFooterElement;
+    };
+    /**
+     * The header section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface HTMLPfModalHeaderElement extends Components.PfModalHeader, HTMLStencilElement {
+    }
+    var HTMLPfModalHeaderElement: {
+        prototype: HTMLPfModalHeaderElement;
+        new (): HTMLPfModalHeaderElement;
+    };
     interface HTMLPfPaginationElementEventMap {
         "pfPageChange": { page: number };
     }
@@ -1133,6 +1314,32 @@ declare global {
     var HTMLPfPaginationElement: {
         prototype: HTMLPfPaginationElement;
         new (): HTMLPfPaginationElement;
+    };
+    interface HTMLPfPopoverElementEventMap {
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * An interactive panel anchored to its trigger.
+     * `popover="auto"` rather than `manual`, because the browser then does
+     * light-dismiss and Escape itself — measured from inside a shadow root with
+     * trusted input: a real outside click and a real Escape both close an `auto`
+     * popover while a `manual` one stays open. That is less code than
+     * `onOutsideInteraction` and it composes with the top-layer stack, so a
+     * popover inside a popover closes in the right order.
+     */
+    interface HTMLPfPopoverElement extends Components.PfPopover, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfPopoverElementEventMap>(type: K, listener: (this: HTMLPfPopoverElement, ev: PfPopoverCustomEvent<HTMLPfPopoverElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfPopoverElementEventMap>(type: K, listener: (this: HTMLPfPopoverElement, ev: PfPopoverCustomEvent<HTMLPfPopoverElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfPopoverElement: {
+        prototype: HTMLPfPopoverElement;
+        new (): HTMLPfPopoverElement;
     };
     /**
      * A horizontal determinate progress track.
@@ -1392,7 +1599,12 @@ declare global {
         "pf-loading-dots": HTMLPfLoadingDotsElement;
         "pf-loading-skeleton": HTMLPfLoadingSkeletonElement;
         "pf-loading-spinner": HTMLPfLoadingSpinnerElement;
+        "pf-modal": HTMLPfModalElement;
+        "pf-modal-body": HTMLPfModalBodyElement;
+        "pf-modal-footer": HTMLPfModalFooterElement;
+        "pf-modal-header": HTMLPfModalHeaderElement;
         "pf-pagination": HTMLPfPaginationElement;
+        "pf-popover": HTMLPfPopoverElement;
         "pf-progress-bar": HTMLPfProgressBarElement;
         "pf-progress-circle": HTMLPfProgressCircleElement;
         "pf-radio-button": HTMLPfRadioButtonElement;
@@ -1769,6 +1981,71 @@ declare namespace LocalJSX {
         "size"?: number;
     }
     /**
+     * A modal dialog.
+     * A native `<dialog>` opened with `showModal()`, which from inside a shadow
+     * root gives the focus trap, Escape and the backdrop for nothing — all
+     * measured: focus moves inside on open and cannot be taken by a light-DOM
+     * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
+     * core is not needed here, unlike in the React component.
+     * What `showModal()` does *not* do is lock page scroll — measured: a real
+     * wheel still scrolled the page behind an open modal — so this element locks
+     * it, exactly as the React component does.
+     */
+    interface PfModal {
+        /**
+          * Close on Escape or a click on the overlay. Defaults to true.
+          * @default true
+         */
+        "dismissable"?: boolean;
+        /**
+          * Accessible name. Falls back to the text of whatever is slotted, which is usually the header — `aria-labelledby` cannot be used, because an IDREF does not cross a shadow boundary and the header is in the light DOM.
+         */
+        "label"?: string;
+        /**
+          * Fires whenever the modal opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfModalCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the modal is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Render the corner close button. Defaults to true.
+          * @default true
+         */
+        "showCloseButton"?: boolean;
+        /**
+          * Panel width. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size"?: PfModalSize;
+    }
+    /**
+     * The body section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface PfModalBody {
+    }
+    /**
+     * The footer section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface PfModalFooter {
+    }
+    /**
+     * The header section of a `pf-modal`.
+     * A separate element rather than a named slot, for the reason `pf-card` gives:
+     * a named slot would need emptiness detection or leave a padded, bordered
+     * strip when nothing was slotted into it.
+     */
+    interface PfModalHeader {
+    }
+    /**
      * A pager: boundary pages pinned at each end, a window around the current
      * page, and an ellipsis wherever that leaves a gap.
      * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -1815,6 +2092,40 @@ declare namespace LocalJSX {
           * @default 1
          */
         "totalPages"?: number;
+    }
+    /**
+     * An interactive panel anchored to its trigger.
+     * `popover="auto"` rather than `manual`, because the browser then does
+     * light-dismiss and Escape itself — measured from inside a shadow root with
+     * trusted input: a real outside click and a real Escape both close an `auto`
+     * popover while a `manual` one stays open. That is less code than
+     * `onOutsideInteraction` and it composes with the top-layer stack, so a
+     * popover inside a popover closes in the right order.
+     */
+    interface PfPopover {
+        /**
+          * Which edge of the trigger the panel lines up with.
+          * @default 'start'
+         */
+        "align"?: 'start' | 'end';
+        /**
+          * Close on an outside click or Escape. Defaults to true.  This is the `auto`/`manual` popover switch: turning it off hands the consumer responsibility for closing, which is what a popover holding an unfinished form wants.
+          * @default true
+         */
+        "dismissable"?: boolean;
+        /**
+          * Accessible name for the panel, which is a dialog.
+         */
+        "label"?: string;
+        /**
+          * Fires whenever the panel opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfPopoverCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the panel is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open"?: boolean;
     }
     /**
      * A horizontal determinate progress track.
@@ -2353,6 +2664,13 @@ declare namespace LocalJSX {
         "size": number;
         "label": string;
     }
+    interface PfModalAttributes {
+        "open": boolean;
+        "size": PfModalSize;
+        "label": string;
+        "dismissable": boolean;
+        "showCloseButton": boolean;
+    }
     interface PfPaginationAttributes {
         "page": number;
         "totalPages": number;
@@ -2361,6 +2679,12 @@ declare namespace LocalJSX {
         "showPrevNext": boolean;
         "disabled": boolean;
         "label": string;
+    }
+    interface PfPopoverAttributes {
+        "open": boolean;
+        "align": 'start' | 'end';
+        "label": string;
+        "dismissable": boolean;
     }
     interface PfProgressBarAttributes {
         "value": number;
@@ -2474,7 +2798,12 @@ declare namespace LocalJSX {
         "pf-loading-dots": Omit<PfLoadingDots, keyof PfLoadingDotsAttributes> & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes]?: PfLoadingDots[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `attr:${K}`]?: PfLoadingDotsAttributes[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `prop:${K}`]?: PfLoadingDots[K] };
         "pf-loading-skeleton": Omit<PfLoadingSkeleton, keyof PfLoadingSkeletonAttributes> & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes]?: PfLoadingSkeleton[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `attr:${K}`]?: PfLoadingSkeletonAttributes[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `prop:${K}`]?: PfLoadingSkeleton[K] };
         "pf-loading-spinner": Omit<PfLoadingSpinner, keyof PfLoadingSpinnerAttributes> & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes]?: PfLoadingSpinner[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `attr:${K}`]?: PfLoadingSpinnerAttributes[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `prop:${K}`]?: PfLoadingSpinner[K] };
+        "pf-modal": Omit<PfModal, keyof PfModalAttributes> & { [K in keyof PfModal & keyof PfModalAttributes]?: PfModal[K] } & { [K in keyof PfModal & keyof PfModalAttributes as `attr:${K}`]?: PfModalAttributes[K] } & { [K in keyof PfModal & keyof PfModalAttributes as `prop:${K}`]?: PfModal[K] };
+        "pf-modal-body": PfModalBody;
+        "pf-modal-footer": PfModalFooter;
+        "pf-modal-header": PfModalHeader;
         "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
+        "pf-popover": Omit<PfPopover, keyof PfPopoverAttributes> & { [K in keyof PfPopover & keyof PfPopoverAttributes]?: PfPopover[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `attr:${K}`]?: PfPopoverAttributes[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `prop:${K}`]?: PfPopover[K] };
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
         "pf-radio-button": Omit<PfRadioButton, keyof PfRadioButtonAttributes> & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes]?: PfRadioButton[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `attr:${K}`]?: PfRadioButtonAttributes[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `prop:${K}`]?: PfRadioButton[K] };
@@ -2563,6 +2892,39 @@ declare module "@stencil/core" {
              */
             "pf-loading-spinner": LocalJSX.IntrinsicElements["pf-loading-spinner"] & JSXBase.HTMLAttributes<HTMLPfLoadingSpinnerElement>;
             /**
+             * A modal dialog.
+             * A native `<dialog>` opened with `showModal()`, which from inside a shadow
+             * root gives the focus trap, Escape and the backdrop for nothing — all
+             * measured: focus moves inside on open and cannot be taken by a light-DOM
+             * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
+             * core is not needed here, unlike in the React component.
+             * What `showModal()` does *not* do is lock page scroll — measured: a real
+             * wheel still scrolled the page behind an open modal — so this element locks
+             * it, exactly as the React component does.
+             */
+            "pf-modal": LocalJSX.IntrinsicElements["pf-modal"] & JSXBase.HTMLAttributes<HTMLPfModalElement>;
+            /**
+             * The body section of a `pf-modal`.
+             * A separate element rather than a named slot, for the reason `pf-card` gives:
+             * a named slot would need emptiness detection or leave a padded, bordered
+             * strip when nothing was slotted into it.
+             */
+            "pf-modal-body": LocalJSX.IntrinsicElements["pf-modal-body"] & JSXBase.HTMLAttributes<HTMLPfModalBodyElement>;
+            /**
+             * The footer section of a `pf-modal`.
+             * A separate element rather than a named slot, for the reason `pf-card` gives:
+             * a named slot would need emptiness detection or leave a padded, bordered
+             * strip when nothing was slotted into it.
+             */
+            "pf-modal-footer": LocalJSX.IntrinsicElements["pf-modal-footer"] & JSXBase.HTMLAttributes<HTMLPfModalFooterElement>;
+            /**
+             * The header section of a `pf-modal`.
+             * A separate element rather than a named slot, for the reason `pf-card` gives:
+             * a named slot would need emptiness detection or leave a padded, bordered
+             * strip when nothing was slotted into it.
+             */
+            "pf-modal-header": LocalJSX.IntrinsicElements["pf-modal-header"] & JSXBase.HTMLAttributes<HTMLPfModalHeaderElement>;
+            /**
              * A pager: boundary pages pinned at each end, a window around the current
              * page, and an ellipsis wherever that leaves a gap.
              * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -2570,6 +2932,16 @@ declare module "@stencil/core" {
              * keeps the consumer in charge.
              */
             "pf-pagination": LocalJSX.IntrinsicElements["pf-pagination"] & JSXBase.HTMLAttributes<HTMLPfPaginationElement>;
+            /**
+             * An interactive panel anchored to its trigger.
+             * `popover="auto"` rather than `manual`, because the browser then does
+             * light-dismiss and Escape itself — measured from inside a shadow root with
+             * trusted input: a real outside click and a real Escape both close an `auto`
+             * popover while a `manual` one stays open. That is less code than
+             * `onOutsideInteraction` and it composes with the top-layer stack, so a
+             * popover inside a popover closes in the right order.
+             */
+            "pf-popover": LocalJSX.IntrinsicElements["pf-popover"] & JSXBase.HTMLAttributes<HTMLPfPopoverElement>;
             /**
              * A horizontal determinate progress track.
              */
