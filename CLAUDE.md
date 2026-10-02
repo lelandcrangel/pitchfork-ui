@@ -365,6 +365,19 @@ Things that differ from the React library, learned by porting the first two:
   loses. `pf-tooltip` is the worked example, and
   `scripts/smoke-consumer.mjs` asserts it against a real build by putting the
   tooltip in a 120x40 clip box.
+- **A `popover` is centred until you opt out, so `left`/`top` lie.** The UA
+  stylesheet gives `[popover]` `inset: 0` and `margin: auto`, which centres it
+  in the viewport; setting `left` then offsets an inset that `margin: auto`
+  re-centres within. Measured: `left: 120px` on a 180px-wide popover in a
+  600px viewport lands at **263**. Every panel therefore goes through
+  `src/place-popover.ts`, which sets `inset: auto; margin: 0` inline alongside
+  the coordinates — inline as well as in the stylesheet, because the test
+  projects apply no `styleUrl` CSS. The bug survived three ported overlays
+  because the obvious assertions cannot see it: `top >= anchor.bottom` is true
+  of a viewport-centred panel whose trigger sits near the top, and a
+  hit-test at the panel's own centre hits the panel wherever it is. The
+  assertion that does see it is the box landing at the coordinate it was
+  given, which each overlay spec now makes.
 - **An overlay cannot describe its trigger with an IDREF.** `aria-describedby`
   does not cross a shadow boundary, and `ariaDescribedByElements` silently
   reads back empty when handed an element from a root the trigger does not own

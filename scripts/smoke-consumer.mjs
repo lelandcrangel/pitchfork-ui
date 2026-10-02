@@ -75,6 +75,10 @@ const EXPECTED = [
   'pf-modal-header',
   'pf-modal-body',
   'pf-modal-footer',
+  'pf-dropdown',
+  'pf-context-menu',
+  'pf-menu-item',
+  'pf-menu-separator',
 ];
 
 const TYPES = {
@@ -234,6 +238,53 @@ try {
         result.unstyled.push(
           `${tag} declares animation "${declared}" but runs none — its @keyframes copy is missing`,
         );
+      }
+    }
+
+    /*
+     * The --pf-menu-* inheritance bridge, which is the one claim about these
+     * menus that no test in packages/elements can make: neither Vitest project
+     * applies `styleUrl` CSS, so there a shared pf-menu-item has no computed
+     * colour at all. The item reads a generic set; each container maps that set
+     * to its own alias family; custom properties cross the shadow boundary by
+     * inheritance. If a container forgot a mapping, the item falls back to an
+     * unset variable and the text is left at the UA default rather than the
+     * menu's own colour -- visible here and nowhere else.
+     */
+    for (const container of ['pf-dropdown', 'pf-context-menu']) {
+      const item = document.querySelector(`${container} pf-menu-item`);
+      if (!item) {
+        result.unstyled.push(`${container} has no pf-menu-item child`);
+        continue;
+      }
+      const resolved = getComputedStyle(item).getPropertyValue('--pf-menu-text').trim();
+      if (!resolved) {
+        result.unstyled.push(`${container} does not pass --pf-menu-text down to its pf-menu-item`);
+      }
+      // The colour is declared on :host and inherited by the label, so the
+      // host is where to read it.
+      if (transparent(getComputedStyle(item).color)) {
+        result.unstyled.push(`${container} pf-menu-item has no text colour`);
+      }
+      // A destructive item must resolve to a *different* colour than a plain
+      // one, or the mapping is present but pointing at the same alias.
+      const destructive = document.querySelector(`${container} pf-menu-item[destructive]`);
+      if (destructive) {
+        const danger = getComputedStyle(destructive)
+          .getPropertyValue('--pf-menu-text-danger')
+          .trim();
+        if (!danger) {
+          result.unstyled.push(`${container} does not pass --pf-menu-text-danger down`);
+        } else if (danger === resolved) {
+          result.unstyled.push(
+            `${container} maps --pf-menu-text-danger to the same value as --pf-menu-text ` +
+              `("${danger}") -- a destructive item is indistinguishable`,
+          );
+        }
+      }
+      const separator = document.querySelector(`${container} pf-menu-separator`);
+      if (separator && transparent(getComputedStyle(separator).backgroundColor)) {
+        result.unstyled.push(`${container} pf-menu-separator has no background`);
       }
     }
 

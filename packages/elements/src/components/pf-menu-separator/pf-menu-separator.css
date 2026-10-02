@@ -1,0 +1,11 @@
+/* Reads the same generic set the items do; see pf-menu-item.css. */
+:host {
+  background: var(--pf-menu-separator);
+  display: block;
+  height: 1px;
+  margin: var(--space-1) 0;
+}
+
+:host([hidden]) {
+  display: none;
+}

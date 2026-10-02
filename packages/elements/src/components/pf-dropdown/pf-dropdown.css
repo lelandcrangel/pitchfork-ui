@@ -1,0 +1,57 @@
+:host {
+  display: inline-flex;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The generic set pf-menu-item and pf-menu-separator read, mapped to this
+ * menu's own alias family. They inherit through the shadow boundary, so a
+ * slotted item picks these up without knowing which menu it is in.
+ */
+:host {
+  --pf-menu-text: var(--pf-dropdown-text);
+  --pf-menu-text-muted: var(--pf-dropdown-text-muted);
+  --pf-menu-text-danger: var(--pf-dropdown-text-danger);
+  --pf-menu-item-active-bg: var(--pf-dropdown-surface-subtle, var(--pf-surface-subtle));
+  --pf-menu-separator: var(--pf-dropdown-surface-border, var(--pf-surface-border));
+}
+
+/*
+ * `inset: auto` and `margin: 0` are essential, not tidying -- see
+ * `src/place-popover.ts`, which sets the same two inline and explains the
+ * measurement. They are declared in both places deliberately: here so the
+ * cascade carries them for the whole life of the panel, and inline so a panel
+ * is still positioned where this stylesheet has not been applied.
+ */
+.menu {
+  inset: auto;
+  margin: 0;
+  background: var(--pf-dropdown-surface-bg, var(--pf-surface-bg));
+  border: 1px solid var(--pf-dropdown-surface-border, var(--pf-surface-border));
+  border-radius: var(--radius-md);
+  box-shadow: var(--pf-elevation-popover-shadow);
+  max-height: min(60vh, 420px);
+  overflow: auto;
+  padding: var(--space-1);
+}
+
+.menu:popover-open {
+  animation: pf-dropdown-in var(--duration-fast) var(--easing-decelerate);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu:popover-open {
+    animation: none;
+  }
+}

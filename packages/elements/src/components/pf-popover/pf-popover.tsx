@@ -1,4 +1,6 @@
 import { Keys, observeAnchoredPosition } from '@pitchfork-ui/core';
+
+import { placePopover } from '../../place-popover';
 import {
   Component,
   Element,
@@ -134,10 +136,7 @@ export class PfPopover {
       // flips above when there is no room below.
       matchAnchorWidth: false,
       flip: true,
-      onChange: ({ left, top }) => {
-        panel.style.left = `${left}px`;
-        panel.style.top = `${top}px`;
-      },
+      onChange: ({ left, top }) => placePopover(panel, left, top),
     });
 
     // The panel is a dialog, so focus belongs inside it once it is showing.

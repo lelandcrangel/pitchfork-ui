@@ -1,4 +1,6 @@
 import { Keys, observeSidePosition, type Side } from '@pitchfork-ui/core';
+
+import { placePopover } from '../../place-popover';
 import { Component, Element, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
 
 /**
@@ -131,8 +133,7 @@ export class PfTooltip {
       side: this.placement,
       onChange: ({ side, left, top }) => {
         this.resolvedSide = side;
-        panel.style.left = `${left}px`;
-        panel.style.top = `${top}px`;
+        placePopover(panel, left, top);
       },
     });
   }

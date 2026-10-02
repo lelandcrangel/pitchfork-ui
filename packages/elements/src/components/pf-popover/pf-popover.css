@@ -7,10 +7,15 @@
 }
 
 /*
- * The UA stylesheet already gives a popover `position: fixed`, `margin: 0` and
- * `inset: auto`; left/top come from the anchoring observer.
+ * `inset: auto` and `margin: 0` are essential, not tidying -- see
+ * `src/place-popover.ts`, which sets the same two inline and explains the
+ * measurement. They are declared in both places deliberately: here so the
+ * cascade carries them for the whole life of the panel, and inline so a panel
+ * is still positioned where this stylesheet has not been applied.
  */
 .panel {
+  inset: auto;
+  margin: 0;
   background: var(--pf-popover-bg);
   border: 1px solid var(--pf-popover-border);
   border-radius: var(--radius-md);

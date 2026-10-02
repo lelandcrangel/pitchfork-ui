@@ -242,3 +242,29 @@ test('keeps itself placed across a scroll', async () => {
   window.scrollBy(0, 120);
   await until(() => Math.abs(gap() - before) <= 1, 'the tooltip to follow the scroll');
 });
+
+/*
+ * The one assertion that distinguishes a positioned popover from a centred
+ * one: the box lands where the inline `left`/`top` say it should. The UA
+ * stylesheet gives `[popover]` `inset: 0; margin: auto`, under which those two
+ * declarations are offsets applied to a *centred* box, so the panel can sit
+ * hundreds of pixels from the coordinate the observer computed while every
+ * placement assertion above still passes -- `top >= anchor.bottom` is true of
+ * a viewport-centred panel whose trigger is near the top. See
+ * `src/place-popover.ts`.
+ */
+test('the box lands at the coordinates it was given', async () => {
+  const el = await mount(
+    `<div style="position:fixed;left:300px;top:300px">${FIXTURE('open')}</div>`,
+  );
+  await until(() => isOpen(el) && panel(el).style.top !== '');
+
+  const requested = {
+    left: Math.round(parseFloat(panel(el).style.left)),
+    top: Math.round(parseFloat(panel(el).style.top)),
+  };
+  const box = panel(el).getBoundingClientRect();
+
+  expect(Math.round(box.left)).toBe(requested.left);
+  expect(Math.round(box.top)).toBe(requested.top);
+});

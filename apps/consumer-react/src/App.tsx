@@ -10,13 +10,17 @@ import {
   PfCardHeader,
   PfCheckbox,
   PfContentDivider,
+  PfContextMenu,
   PfCreditCard,
+  PfDropdown,
   PfIcon,
   PfInput,
   PfKbd,
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfMenuItem,
+  PfMenuSeparator,
   PfModal,
   PfModalBody,
   PfModalFooter,
@@ -51,6 +55,7 @@ export function App() {
   const [submitted, setSubmitted] = useState('');
   const [volume] = useState(7);
   const [modalOpen, setModalOpen] = useState(false);
+  const [menuChoice, setMenuChoice] = useState('');
   const [plan, setPlan] = useState('pro');
   const plans = [
     { value: 'free', label: 'Free' },
@@ -313,6 +318,66 @@ export function App() {
           </PfButton>
         </PfModalFooter>
       </PfModal>
+
+      {/*
+        Both menus share pf-menu-item and pf-menu-separator. The item reads a
+        generic `--pf-menu-*` set which each container maps to its own alias
+        family, so the same element is themed by whichever menu it sits in --
+        an inheritance that only a real stylesheet exercises, which is why it
+        is asserted here and not in the browser project.
+      */}
+      <div className="row">
+        <PfDropdown
+          label="Document actions"
+          data-testid="dropdown"
+          onPfSelect={(event) => setMenuChoice(event.detail.value)}
+        >
+          <PfButton variant="secondary">Actions</PfButton>
+          <PfMenuItem slot="menu" value="rename">
+            Rename
+            <PfKbd slot="shortcut">F2</PfKbd>
+          </PfMenuItem>
+          <PfMenuItem slot="menu" value="duplicate">
+            Duplicate
+          </PfMenuItem>
+          <PfMenuItem slot="menu" value="archive" disabled>
+            Archive
+          </PfMenuItem>
+          <PfMenuSeparator slot="menu" />
+          <PfMenuItem slot="menu" value="delete" destructive>
+            Delete
+          </PfMenuItem>
+        </PfDropdown>
+
+        <output data-testid="menu-choice">{menuChoice || 'nothing chosen'}</output>
+      </div>
+
+      <PfContextMenu
+        label="Row actions"
+        data-testid="context-menu"
+        onPfSelect={(event) => setMenuChoice(event.detail.value)}
+      >
+        <div
+          style={{
+            border: '1px dashed var(--pf-surface-border)',
+            borderRadius: '8px',
+            padding: 'var(--space-4)',
+          }}
+        >
+          Right-click anywhere in this box.
+        </div>
+        <PfMenuItem slot="menu" value="open">
+          Open
+        </PfMenuItem>
+        <PfMenuItem slot="menu" value="copy">
+          Copy
+          <PfKbd slot="shortcut">Ctrl C</PfKbd>
+        </PfMenuItem>
+        <PfMenuSeparator slot="menu" />
+        <PfMenuItem slot="menu" value="remove" destructive>
+          Remove
+        </PfMenuItem>
+      </PfContextMenu>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

@@ -227,6 +227,37 @@ export namespace Components {
         "orientation": PfContentDividerOrientation;
     }
     /**
+     * A menu opened by right-clicking the region it wraps.
+     * Unlike `pf-dropdown` there is no anchor element — the menu opens at the
+     * pointer — so it is placed with core's `clampToViewport` rather than the
+     * anchoring observer. The same `pf-menu-item` children serve both.
+     */
+    interface PfContextMenu {
+        /**
+          * Let the browser's own context menu through instead. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Closes the menu.
+         */
+        "hide": () => Promise<void>;
+        /**
+          * Accessible name for the menu.
+          * @default 'Context menu'
+         */
+        "label": string;
+        /**
+          * Whether the menu is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Opens the menu at a point in client coordinates.
+         */
+        "showAt": (x: number, y: number) => Promise<void>;
+    }
+    /**
      * A card-shaped display of payment details. Presentational only — it stores
      * nothing and submits nothing.
      */
@@ -260,6 +291,44 @@ export namespace Components {
           * @default true
          */
         "masked": boolean;
+    }
+    /**
+     * A menu of actions, anchored to a trigger.
+     * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
+     * `pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
+     * roving module — its third consumer, after `pf-toolbar` and
+     * `pf-radio-group` — because the items are custom elements rather than native
+     * controls and have to be queried by tag.
+     */
+    interface PfDropdown {
+        /**
+          * Which edge of the trigger the menu lines up with.
+          * @default 'start'
+         */
+        "align": 'start' | 'end';
+        /**
+          * Prevent opening. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Closes the menu.
+         */
+        "hide": () => Promise<void>;
+        /**
+          * Accessible name for the menu.
+          * @default 'Actions'
+         */
+        "label": string;
+        /**
+          * Whether the menu is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Opens the menu.
+         */
+        "show": () => Promise<void>;
     }
     interface PfIcon {
         /**
@@ -399,6 +468,38 @@ export namespace Components {
           * @default 24
          */
         "size": number;
+    }
+    /**
+     * One action inside a `pf-dropdown` or a `pf-context-menu`.
+     * Shared by both, because the React library's `DropdownItem` and
+     * `ContextMenuItem` are the same shape and the two menus render them
+     * identically — one element rather than two that would drift.
+     * It only reports that it was chosen. The menu owns focus, closing and the
+     * keyboard pattern, exactly as `pf-radio-group` owns selection for its radios.
+     */
+    interface PfMenuItem {
+        /**
+          * Style as a destructive action. Reflected for the stylesheet.
+          * @default false
+         */
+        "destructive": boolean;
+        /**
+          * Reflected so the stylesheet and the menu's item query can select on it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Identifies the item in the menu's select event.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
+     * A rule between groups of menu items.
+     * Unlike `pf-toolbar-separator` this needs no orientation: a menu is always a
+     * column, so the rule is always horizontal.
+     */
+    interface PfMenuSeparator {
     }
     /**
      * A modal dialog.
@@ -1011,9 +1112,21 @@ export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCheckboxElement;
 }
+export interface PfContextMenuCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfContextMenuElement;
+}
+export interface PfDropdownCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfDropdownElement;
+}
 export interface PfInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfInputElement;
+}
+export interface PfMenuItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfMenuItemElement;
 }
 export interface PfModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -1153,6 +1266,30 @@ declare global {
         prototype: HTMLPfContentDividerElement;
         new (): HTMLPfContentDividerElement;
     };
+    interface HTMLPfContextMenuElementEventMap {
+        "pfOpenChange": { open: boolean };
+        "pfSelect": { value: string };
+    }
+    /**
+     * A menu opened by right-clicking the region it wraps.
+     * Unlike `pf-dropdown` there is no anchor element — the menu opens at the
+     * pointer — so it is placed with core's `clampToViewport` rather than the
+     * anchoring observer. The same `pf-menu-item` children serve both.
+     */
+    interface HTMLPfContextMenuElement extends Components.PfContextMenu, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfContextMenuElementEventMap>(type: K, listener: (this: HTMLPfContextMenuElement, ev: PfContextMenuCustomEvent<HTMLPfContextMenuElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfContextMenuElementEventMap>(type: K, listener: (this: HTMLPfContextMenuElement, ev: PfContextMenuCustomEvent<HTMLPfContextMenuElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfContextMenuElement: {
+        prototype: HTMLPfContextMenuElement;
+        new (): HTMLPfContextMenuElement;
+    };
     /**
      * A card-shaped display of payment details. Presentational only — it stores
      * nothing and submits nothing.
@@ -1162,6 +1299,32 @@ declare global {
     var HTMLPfCreditCardElement: {
         prototype: HTMLPfCreditCardElement;
         new (): HTMLPfCreditCardElement;
+    };
+    interface HTMLPfDropdownElementEventMap {
+        "pfOpenChange": { open: boolean };
+        "pfSelect": { value: string };
+    }
+    /**
+     * A menu of actions, anchored to a trigger.
+     * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
+     * `pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
+     * roving module — its third consumer, after `pf-toolbar` and
+     * `pf-radio-group` — because the items are custom elements rather than native
+     * controls and have to be queried by tag.
+     */
+    interface HTMLPfDropdownElement extends Components.PfDropdown, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfDropdownElementEventMap>(type: K, listener: (this: HTMLPfDropdownElement, ev: PfDropdownCustomEvent<HTMLPfDropdownElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfDropdownElementEventMap>(type: K, listener: (this: HTMLPfDropdownElement, ev: PfDropdownCustomEvent<HTMLPfDropdownElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfDropdownElement: {
+        prototype: HTMLPfDropdownElement;
+        new (): HTMLPfDropdownElement;
     };
     interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
     }
@@ -1226,6 +1389,42 @@ declare global {
     var HTMLPfLoadingSpinnerElement: {
         prototype: HTMLPfLoadingSpinnerElement;
         new (): HTMLPfLoadingSpinnerElement;
+    };
+    interface HTMLPfMenuItemElementEventMap {
+        "pfMenuSelect": { value: string };
+    }
+    /**
+     * One action inside a `pf-dropdown` or a `pf-context-menu`.
+     * Shared by both, because the React library's `DropdownItem` and
+     * `ContextMenuItem` are the same shape and the two menus render them
+     * identically — one element rather than two that would drift.
+     * It only reports that it was chosen. The menu owns focus, closing and the
+     * keyboard pattern, exactly as `pf-radio-group` owns selection for its radios.
+     */
+    interface HTMLPfMenuItemElement extends Components.PfMenuItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfMenuItemElementEventMap>(type: K, listener: (this: HTMLPfMenuItemElement, ev: PfMenuItemCustomEvent<HTMLPfMenuItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfMenuItemElementEventMap>(type: K, listener: (this: HTMLPfMenuItemElement, ev: PfMenuItemCustomEvent<HTMLPfMenuItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfMenuItemElement: {
+        prototype: HTMLPfMenuItemElement;
+        new (): HTMLPfMenuItemElement;
+    };
+    /**
+     * A rule between groups of menu items.
+     * Unlike `pf-toolbar-separator` this needs no orientation: a menu is always a
+     * column, so the rule is always horizontal.
+     */
+    interface HTMLPfMenuSeparatorElement extends Components.PfMenuSeparator, HTMLStencilElement {
+    }
+    var HTMLPfMenuSeparatorElement: {
+        prototype: HTMLPfMenuSeparatorElement;
+        new (): HTMLPfMenuSeparatorElement;
     };
     interface HTMLPfModalElementEventMap {
         "pfOpenChange": { open: boolean };
@@ -1592,13 +1791,17 @@ declare global {
         "pf-card-header": HTMLPfCardHeaderElement;
         "pf-checkbox": HTMLPfCheckboxElement;
         "pf-content-divider": HTMLPfContentDividerElement;
+        "pf-context-menu": HTMLPfContextMenuElement;
         "pf-credit-card": HTMLPfCreditCardElement;
+        "pf-dropdown": HTMLPfDropdownElement;
         "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
         "pf-kbd": HTMLPfKbdElement;
         "pf-loading-dots": HTMLPfLoadingDotsElement;
         "pf-loading-skeleton": HTMLPfLoadingSkeletonElement;
         "pf-loading-spinner": HTMLPfLoadingSpinnerElement;
+        "pf-menu-item": HTMLPfMenuItemElement;
+        "pf-menu-separator": HTMLPfMenuSeparatorElement;
         "pf-modal": HTMLPfModalElement;
         "pf-modal-body": HTMLPfModalBodyElement;
         "pf-modal-footer": HTMLPfModalFooterElement;
@@ -1807,6 +2010,37 @@ declare namespace LocalJSX {
         "orientation"?: PfContentDividerOrientation;
     }
     /**
+     * A menu opened by right-clicking the region it wraps.
+     * Unlike `pf-dropdown` there is no anchor element — the menu opens at the
+     * pointer — so it is placed with core's `clampToViewport` rather than the
+     * anchoring observer. The same `pf-menu-item` children serve both.
+     */
+    interface PfContextMenu {
+        /**
+          * Let the browser's own context menu through instead. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Accessible name for the menu.
+          * @default 'Context menu'
+         */
+        "label"?: string;
+        /**
+          * Fires whenever the menu opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfContextMenuCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Fires with the chosen item's value. The menu closes itself afterwards.
+         */
+        "onPfSelect"?: (event: PfContextMenuCustomEvent<{ value: string }>) => void;
+        /**
+          * Whether the menu is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open"?: boolean;
+    }
+    /**
      * A card-shaped display of payment details. Presentational only — it stores
      * nothing and submits nothing.
      */
@@ -1840,6 +2074,44 @@ declare namespace LocalJSX {
           * @default true
          */
         "masked"?: boolean;
+    }
+    /**
+     * A menu of actions, anchored to a trigger.
+     * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
+     * `pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
+     * roving module — its third consumer, after `pf-toolbar` and
+     * `pf-radio-group` — because the items are custom elements rather than native
+     * controls and have to be queried by tag.
+     */
+    interface PfDropdown {
+        /**
+          * Which edge of the trigger the menu lines up with.
+          * @default 'start'
+         */
+        "align"?: 'start' | 'end';
+        /**
+          * Prevent opening. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Accessible name for the menu.
+          * @default 'Actions'
+         */
+        "label"?: string;
+        /**
+          * Fires whenever the menu opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfDropdownCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Fires with the chosen item's value. The menu closes itself afterwards.
+         */
+        "onPfSelect"?: (event: PfDropdownCustomEvent<{ value: string }>) => void;
+        /**
+          * Whether the menu is showing. Reflected so the stylesheet can select on it.
+          * @default false
+         */
+        "open"?: boolean;
     }
     interface PfIcon {
         /**
@@ -1979,6 +2251,42 @@ declare namespace LocalJSX {
           * @default 24
          */
         "size"?: number;
+    }
+    /**
+     * One action inside a `pf-dropdown` or a `pf-context-menu`.
+     * Shared by both, because the React library's `DropdownItem` and
+     * `ContextMenuItem` are the same shape and the two menus render them
+     * identically — one element rather than two that would drift.
+     * It only reports that it was chosen. The menu owns focus, closing and the
+     * keyboard pattern, exactly as `pf-radio-group` owns selection for its radios.
+     */
+    interface PfMenuItem {
+        /**
+          * Style as a destructive action. Reflected for the stylesheet.
+          * @default false
+         */
+        "destructive"?: boolean;
+        /**
+          * Reflected so the stylesheet and the menu's item query can select on it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Asks the menu to act on this item. The menu decides and then closes.
+         */
+        "onPfMenuSelect"?: (event: PfMenuItemCustomEvent<{ value: string }>) => void;
+        /**
+          * Identifies the item in the menu's select event.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
+     * A rule between groups of menu items.
+     * Unlike `pf-toolbar-separator` this needs no orientation: a menu is always a
+     * column, so the rule is always horizontal.
+     */
+    interface PfMenuSeparator {
     }
     /**
      * A modal dialog.
@@ -2622,6 +2930,11 @@ declare namespace LocalJSX {
         "orientation": PfContentDividerOrientation;
         "inset": boolean;
     }
+    interface PfContextMenuAttributes {
+        "open": boolean;
+        "label": string;
+        "disabled": boolean;
+    }
     interface PfCreditCardAttributes {
         "brand": PfCreditCardBrand;
         "cardNumber": string;
@@ -2629,6 +2942,12 @@ declare namespace LocalJSX {
         "expiry": string;
         "cvc": string;
         "masked": boolean;
+    }
+    interface PfDropdownAttributes {
+        "open": boolean;
+        "align": 'start' | 'end';
+        "label": string;
+        "disabled": boolean;
     }
     interface PfIconAttributes {
         "name": string;
@@ -2663,6 +2982,11 @@ declare namespace LocalJSX {
     interface PfLoadingSpinnerAttributes {
         "size": number;
         "label": string;
+    }
+    interface PfMenuItemAttributes {
+        "value": string;
+        "disabled": boolean;
+        "destructive": boolean;
     }
     interface PfModalAttributes {
         "open": boolean;
@@ -2791,13 +3115,17 @@ declare namespace LocalJSX {
         "pf-card-header": PfCardHeader;
         "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
         "pf-content-divider": Omit<PfContentDivider, keyof PfContentDividerAttributes> & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes]?: PfContentDivider[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `attr:${K}`]?: PfContentDividerAttributes[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `prop:${K}`]?: PfContentDivider[K] };
+        "pf-context-menu": Omit<PfContextMenu, keyof PfContextMenuAttributes> & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes]?: PfContextMenu[K] } & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes as `attr:${K}`]?: PfContextMenuAttributes[K] } & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes as `prop:${K}`]?: PfContextMenu[K] };
         "pf-credit-card": Omit<PfCreditCard, keyof PfCreditCardAttributes> & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes]?: PfCreditCard[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `attr:${K}`]?: PfCreditCardAttributes[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `prop:${K}`]?: PfCreditCard[K] };
+        "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
         "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
         "pf-loading-dots": Omit<PfLoadingDots, keyof PfLoadingDotsAttributes> & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes]?: PfLoadingDots[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `attr:${K}`]?: PfLoadingDotsAttributes[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `prop:${K}`]?: PfLoadingDots[K] };
         "pf-loading-skeleton": Omit<PfLoadingSkeleton, keyof PfLoadingSkeletonAttributes> & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes]?: PfLoadingSkeleton[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `attr:${K}`]?: PfLoadingSkeletonAttributes[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `prop:${K}`]?: PfLoadingSkeleton[K] };
         "pf-loading-spinner": Omit<PfLoadingSpinner, keyof PfLoadingSpinnerAttributes> & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes]?: PfLoadingSpinner[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `attr:${K}`]?: PfLoadingSpinnerAttributes[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `prop:${K}`]?: PfLoadingSpinner[K] };
+        "pf-menu-item": Omit<PfMenuItem, keyof PfMenuItemAttributes> & { [K in keyof PfMenuItem & keyof PfMenuItemAttributes]?: PfMenuItem[K] } & { [K in keyof PfMenuItem & keyof PfMenuItemAttributes as `attr:${K}`]?: PfMenuItemAttributes[K] } & { [K in keyof PfMenuItem & keyof PfMenuItemAttributes as `prop:${K}`]?: PfMenuItem[K] };
+        "pf-menu-separator": PfMenuSeparator;
         "pf-modal": Omit<PfModal, keyof PfModalAttributes> & { [K in keyof PfModal & keyof PfModalAttributes]?: PfModal[K] } & { [K in keyof PfModal & keyof PfModalAttributes as `attr:${K}`]?: PfModalAttributes[K] } & { [K in keyof PfModal & keyof PfModalAttributes as `prop:${K}`]?: PfModal[K] };
         "pf-modal-body": PfModalBody;
         "pf-modal-footer": PfModalFooter;
@@ -2865,10 +3193,26 @@ declare module "@stencil/core" {
              */
             "pf-content-divider": LocalJSX.IntrinsicElements["pf-content-divider"] & JSXBase.HTMLAttributes<HTMLPfContentDividerElement>;
             /**
+             * A menu opened by right-clicking the region it wraps.
+             * Unlike `pf-dropdown` there is no anchor element — the menu opens at the
+             * pointer — so it is placed with core's `clampToViewport` rather than the
+             * anchoring observer. The same `pf-menu-item` children serve both.
+             */
+            "pf-context-menu": LocalJSX.IntrinsicElements["pf-context-menu"] & JSXBase.HTMLAttributes<HTMLPfContextMenuElement>;
+            /**
              * A card-shaped display of payment details. Presentational only — it stores
              * nothing and submits nothing.
              */
             "pf-credit-card": LocalJSX.IntrinsicElements["pf-credit-card"] & JSXBase.HTMLAttributes<HTMLPfCreditCardElement>;
+            /**
+             * A menu of actions, anchored to a trigger.
+             * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
+             * `pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
+             * roving module — its third consumer, after `pf-toolbar` and
+             * `pf-radio-group` — because the items are custom elements rather than native
+             * controls and have to be queried by tag.
+             */
+            "pf-dropdown": LocalJSX.IntrinsicElements["pf-dropdown"] & JSXBase.HTMLAttributes<HTMLPfDropdownElement>;
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
              * A form-associated text input.
@@ -2891,6 +3235,21 @@ declare module "@stencil/core" {
              * An indeterminate spinner.
              */
             "pf-loading-spinner": LocalJSX.IntrinsicElements["pf-loading-spinner"] & JSXBase.HTMLAttributes<HTMLPfLoadingSpinnerElement>;
+            /**
+             * One action inside a `pf-dropdown` or a `pf-context-menu`.
+             * Shared by both, because the React library's `DropdownItem` and
+             * `ContextMenuItem` are the same shape and the two menus render them
+             * identically — one element rather than two that would drift.
+             * It only reports that it was chosen. The menu owns focus, closing and the
+             * keyboard pattern, exactly as `pf-radio-group` owns selection for its radios.
+             */
+            "pf-menu-item": LocalJSX.IntrinsicElements["pf-menu-item"] & JSXBase.HTMLAttributes<HTMLPfMenuItemElement>;
+            /**
+             * A rule between groups of menu items.
+             * Unlike `pf-toolbar-separator` this needs no orientation: a menu is always a
+             * column, so the rule is always horizontal.
+             */
+            "pf-menu-separator": LocalJSX.IntrinsicElements["pf-menu-separator"] & JSXBase.HTMLAttributes<HTMLPfMenuSeparatorElement>;
             /**
              * A modal dialog.
              * A native `<dialog>` opened with `showModal()`, which from inside a shadow

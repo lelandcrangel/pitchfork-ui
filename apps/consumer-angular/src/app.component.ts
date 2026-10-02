@@ -11,13 +11,17 @@ import {
   PfCardHeader,
   PfCheckbox,
   PfContentDivider,
+  PfContextMenu,
   PfCreditCard,
+  PfDropdown,
   PfIcon,
   PfInput,
   PfKbd,
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfMenuItem,
+  PfMenuSeparator,
   PfModal,
   PfModalBody,
   PfModalFooter,
@@ -63,13 +67,17 @@ import {
     PfCardHeader,
     PfCheckbox,
     PfContentDivider,
+    PfContextMenu,
     PfCreditCard,
+    PfDropdown,
     PfIcon,
     PfInput,
     PfKbd,
     PfLoadingDots,
     PfLoadingSkeleton,
     PfLoadingSpinner,
+    PfMenuItem,
+    PfMenuSeparator,
     PfModal,
     PfModalBody,
     PfModalFooter,
@@ -325,6 +333,48 @@ import {
         </pf-modal-footer>
       </pf-modal>
 
+      <!--
+        Both menus share pf-menu-item and pf-menu-separator; each container maps
+        the generic --pf-menu-* set the item reads to its own alias family, so
+        the same element is themed by whichever menu it sits in.
+      -->
+      <div class="row">
+        <pf-dropdown
+          label="Document actions"
+          data-testid="dropdown"
+          (pfSelect)="menuChoice.set($event.detail.value)"
+        >
+          <pf-button variant="secondary">Actions</pf-button>
+          <pf-menu-item slot="menu" value="rename">
+            Rename
+            <pf-kbd slot="shortcut">F2</pf-kbd>
+          </pf-menu-item>
+          <pf-menu-item slot="menu" value="duplicate">Duplicate</pf-menu-item>
+          <pf-menu-item slot="menu" value="archive" disabled>Archive</pf-menu-item>
+          <pf-menu-separator slot="menu"></pf-menu-separator>
+          <pf-menu-item slot="menu" value="delete" destructive>Delete</pf-menu-item>
+        </pf-dropdown>
+
+        <output data-testid="menu-choice">{{ menuChoice() || 'nothing chosen' }}</output>
+      </div>
+
+      <pf-context-menu
+        label="Row actions"
+        data-testid="context-menu"
+        (pfSelect)="menuChoice.set($event.detail.value)"
+      >
+        <div style="border: 1px dashed var(--pf-surface-border); border-radius: 8px; padding: 16px">
+          Right-click anywhere in this box.
+        </div>
+        <pf-menu-item slot="menu" value="open">Open</pf-menu-item>
+        <pf-menu-item slot="menu" value="copy">
+          Copy
+          <pf-kbd slot="shortcut">Ctrl C</pf-kbd>
+        </pf-menu-item>
+        <pf-menu-separator slot="menu"></pf-menu-separator>
+        <pf-menu-item slot="menu" value="remove" destructive>Remove</pf-menu-item>
+      </pf-context-menu>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -341,6 +391,7 @@ export class AppComponent {
   tags = signal(['design', 'systems']);
   page = signal(3);
   modalOpen = signal(false);
+  menuChoice = signal('');
   prefs = new FormGroup({
     terms: new FormControl(false, Validators.requiredTrue),
     notify: new FormControl(true),

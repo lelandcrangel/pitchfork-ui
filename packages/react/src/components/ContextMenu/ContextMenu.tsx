@@ -1,3 +1,4 @@
+import { clampToViewport } from '@pitchfork-ui/core';
 import { forwardRef, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Keys } from '../../a11y';
@@ -70,16 +71,18 @@ export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(function
     onInteractOutside: () => setOpen(false),
   });
 
-  // Clamp the menu within the viewport once it has been measured.
+  // Clamp the menu within the viewport once it has been measured. The maths is
+  // core's, so `<pf-context-menu>` places a menu at the same point.
   useLayoutEffect(() => {
     if (!isMounted || !menuRef.current) return;
     const rect = menuRef.current.getBoundingClientRect();
-    const maxLeft = window.innerWidth - rect.width - VIEWPORT_PADDING;
-    const maxTop = window.innerHeight - rect.height - VIEWPORT_PADDING;
-    setCoords({
-      left: Math.max(VIEWPORT_PADDING, Math.min(point.x, maxLeft)),
-      top: Math.max(VIEWPORT_PADDING, Math.min(point.y, maxTop)),
-    });
+    const { x, y } = clampToViewport(
+      point,
+      rect,
+      { width: window.innerWidth, height: window.innerHeight },
+      VIEWPORT_PADDING,
+    );
+    setCoords({ left: x, top: y });
   }, [isMounted, point.x, point.y]);
 
   const handleContextMenu: React.MouseEventHandler<HTMLDivElement> = (event) => {

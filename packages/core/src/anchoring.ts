@@ -300,3 +300,32 @@ export function observeSidePosition({
     window.removeEventListener('scroll', updatePosition, true);
   };
 }
+
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export interface Size {
+  width: number;
+  height: number;
+}
+
+/**
+ * Keep a floating element of `size` inside the padded viewport when it is
+ * placed at `point` — a context menu opened under the pointer, which has no
+ * anchor element to flip around.
+ *
+ * Pinned to the padding rather than inverted: a right-click near the bottom
+ * edge should put the menu just above that edge, not jump it above the cursor,
+ * because the pointer is already where the user is looking.
+ */
+export function clampToViewport(point: Point, size: Size, viewport: Viewport, padding = 8): Point {
+  const clamp = (value: number, min: number, max: number) =>
+    Math.min(Math.max(value, min), Math.max(min, max));
+
+  return {
+    x: clamp(point.x, padding, viewport.width - size.width - padding),
+    y: clamp(point.y, padding, viewport.height - size.height - padding),
+  };
+}
