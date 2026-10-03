@@ -5,6 +5,7 @@ import {
   PfAccordionItem,
   PfAvatar,
   PfAvatarGroup,
+  PfBarChart,
   PfBadge,
   PfBadgeGroup,
   PfBreadcrumb,
@@ -19,6 +20,7 @@ import {
   PfCardContent,
   PfCardFooter,
   PfCardHeader,
+  PfChartSeries,
   PfCheckbox,
   PfCommandGroup,
   PfCommandItem,
@@ -48,6 +50,7 @@ import {
   PfMenuSeparator,
   PfMetricCard,
   PfMetricGrid,
+  PfLineChart,
   PfModal,
   PfNavItem,
   PfModalBody,
@@ -133,6 +136,12 @@ export function App() {
   const [split, setSplit] = useState(40);
   const [uploads, setUploads] = useState<File[]>([]);
   const [copiedCode, setCopiedCode] = useState('');
+  const traffic = [
+    { label: 'Jan', visits: 1200, signups: 320 },
+    { label: 'Feb', visits: 2400, signups: 540 },
+    { label: 'Mar', visits: 1800, signups: 410 },
+    { label: 'Apr', visits: 3200, signups: 760 },
+  ];
   // Two months, so the heatmap crosses a month boundary and the spring-forward
   // Sunday — the day a midnight-based step would lose or repeat.
   const activity = Array.from({ length: 61 }, (_, index) => {
@@ -1245,6 +1254,36 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        A line chart and a bar chart over the same rows. The rows are bulk
+        numbers in a property; the series are named and coloured and live in
+        the light DOM, which is the only place the legend can reach their
+        labels from.
+      */}
+      <PfLineChart
+        data={traffic}
+        area
+        yAxisLabel="Visits"
+        label="Traffic by month"
+        data-testid="line-chart"
+      >
+        <PfChartSeries seriesKey="visits" data-testid="line-series-1">
+          Visits
+        </PfChartSeries>
+        <PfChartSeries seriesKey="signups" dashed data-testid="line-series-2">
+          Signups
+        </PfChartSeries>
+      </PfLineChart>
+
+      <PfBarChart data={traffic} stacked yAxisLabel="Visits" data-testid="bar-chart">
+        <PfChartSeries seriesKey="visits" data-testid="bar-series-1">
+          Visits
+        </PfChartSeries>
+        <PfChartSeries seriesKey="signups" data-testid="bar-series-2">
+          Signups
+        </PfChartSeries>
+      </PfBarChart>
 
       {/*
         A radar chart. Its axis names are attributes rather than slotted

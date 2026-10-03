@@ -6,6 +6,7 @@ import {
   PfAccordionItem,
   PfAvatar,
   PfAvatarGroup,
+  PfBarChart,
   PfBadge,
   PfBadgeGroup,
   PfBreadcrumb,
@@ -20,6 +21,7 @@ import {
   PfCardContent,
   PfCardFooter,
   PfCardHeader,
+  PfChartSeries,
   PfCheckbox,
   PfCommandGroup,
   PfCommandItem,
@@ -50,6 +52,7 @@ import {
   PfMetricCard,
   PfMetricGrid,
   PfNavItem,
+  PfLineChart,
   PfModal,
   PfModalBody,
   PfModalFooter,
@@ -124,6 +127,7 @@ import {
     PfAccordionItem,
     PfAvatar,
     PfAvatarGroup,
+    PfBarChart,
     PfBadge,
     PfBadgeGroup,
     PfBreadcrumb,
@@ -138,6 +142,7 @@ import {
     PfCardContent,
     PfCardFooter,
     PfCardHeader,
+    PfChartSeries,
     PfCheckbox,
     PfCommandGroup,
     PfCommandItem,
@@ -168,6 +173,7 @@ import {
     PfMetricCard,
     PfMetricGrid,
     PfNavItem,
+    PfLineChart,
     PfModal,
     PfModalBody,
     PfModalFooter,
@@ -1040,6 +1046,25 @@ import {
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
 
+      <!-- A line chart and a bar chart over the same rows; see the React consumer. -->
+      <pf-line-chart
+        [data]="traffic"
+        [area]="true"
+        yAxisLabel="Visits"
+        label="Traffic by month"
+        data-testid="line-chart"
+      >
+        <pf-chart-series seriesKey="visits" data-testid="line-series-1"> Visits </pf-chart-series>
+        <pf-chart-series seriesKey="signups" [dashed]="true" data-testid="line-series-2">
+          Signups
+        </pf-chart-series>
+      </pf-line-chart>
+
+      <pf-bar-chart [data]="traffic" [stacked]="true" yAxisLabel="Visits" data-testid="bar-chart">
+        <pf-chart-series seriesKey="visits" data-testid="bar-series-1">Visits</pf-chart-series>
+        <pf-chart-series seriesKey="signups" data-testid="bar-series-2">Signups</pf-chart-series>
+      </pf-bar-chart>
+
       <!-- A radar chart, whose axis names are attributes; see the React consumer. -->
       <pf-radar-chart [size]="240" [max]="10" label="Vehicle profile" data-testid="radar">
         <pf-radar-axis label="Speed" [value]="9" data-testid="radar-axis-1"></pf-radar-axis>
@@ -1190,6 +1215,12 @@ export class AppComponent {
   split = signal(40);
   uploads = signal<File[]>([]);
   copiedCode = signal('');
+  traffic = [
+    { label: 'Jan', visits: 1200, signups: 320 },
+    { label: 'Feb', visits: 2400, signups: 540 },
+    { label: 'Mar', visits: 1800, signups: 410 },
+    { label: 'Apr', visits: 3200, signups: 760 },
+  ];
   // Two months, crossing a month boundary and the spring-forward Sunday.
   activity = Array.from({ length: 61 }, (_, index) => {
     const day = new Date(2024, 1, 15 + index, 12);

@@ -1093,6 +1093,34 @@ exceeded` pointing into the mock DOM's selector engine, which reads as a
   drawn outside the viewBox and clipped, so a value above `max` does not
   overshoot — it **disappears**. `radarValuePoints` clamps, and an explicit
   `max` wins over a larger value because a consumer who set a scale meant it.
+- **A chart's axis labels and its geometry must come from one tick scale.**
+  A chart whose gridlines say 40 while its line peaks at three-quarters
+  height is worse than one with no gridlines, so `niceAxisTicks` is the only
+  source of both in `cartesian.ts`. Three things the React version got wrong
+  inside it: a maximum that is not a number fell through its `<= 0` guard,
+  made the step `NaN` and produced an **empty** tick array — after which
+  `maxTick` was `undefined` and every coordinate came out `NaN`; the ticks
+  were accumulated with `v += step`, so a step of `0.1` printed
+  `0.30000000000000004` as a label; and `formatAxisTick` ended in
+  `String(Math.round(value))`, so **every** tick on an axis topping out below
+  1 printed as `0` — six gridlines all labelled zero on a chart of rates.
+- **A negative `width` or `height` on an SVG shape drops the shape.** Not an
+  error, not a clamp: the browser discards the element. The React `BarChart`'s
+  `(total - gap * (m - 1)) / m` goes negative with enough series, so a chart
+  of twenty series across six groups silently drew no bars at all;
+  `barGeometry` floors the width at 1. And the first test written for it
+  passed with the fix reverted, because one group of twelve still comes out
+  positive — the shape only goes negative once the groups are narrow too.
+- **Split chart data by what it is, not by one rule.** §2.1 says a consumer
+  nests, and that is right for the _series_ — they have names and colours, and
+  a legend built in the chart's shadow root could never reach a label in the
+  light DOM. The rows are bulk numbers with no identity, so they stay a
+  property (an array, or JSON for plain HTML). `pf-line-chart` and
+  `pf-bar-chart` share `pf-chart-series` for the same reason `pf-nav-item`
+  serves two navigations.
+- **A stacked bar chart scales to the tallest stack, not the tallest bar.**
+  Obvious once said and silent when wrong: scaling to the tallest single bar
+  draws the top of every stack above the plot, where the viewBox clips it.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

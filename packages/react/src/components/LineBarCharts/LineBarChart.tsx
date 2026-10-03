@@ -1,3 +1,18 @@
+import {
+  CHART_PADDING,
+  CHART_PLOT,
+  CHART_VIEW,
+  areaSeriesPath,
+  axisLabelStep,
+  barGeometry,
+  chartSeriesColor,
+  formatAxisTick,
+  niceAxisTicks,
+  plotX,
+  plotY,
+  smoothSeriesPath,
+  straightSeriesPath,
+} from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './LineBarChart.css';
@@ -18,20 +33,18 @@ export interface ChartSeries {
 
 // ─── Internal constants ───────────────────────────────────────────────────
 
-const CHART_COLORS = [
-  'var(--pf-chart-color-1)',
-  'var(--pf-chart-color-2)',
-  'var(--pf-chart-color-3)',
-  'var(--pf-chart-color-4)',
-  'var(--pf-chart-color-5)',
-  'var(--pf-chart-color-6)',
-];
-
-const PAD = { top: 24, right: 32, bottom: 40, left: 56 };
-const VIEW_W = 560;
-const VIEW_H = 240;
-const PLOT_W = VIEW_W - PAD.left - PAD.right;
-const PLOT_H = VIEW_H - PAD.top - PAD.bottom;
+/*
+ * Every number and every path below is core's, so `<pf-line-chart>` and
+ * `<pf-bar-chart>` draw the same scales. The axis labels and the geometry
+ * have to come from the same tick scale: a chart whose gridlines say 40 and
+ * whose line peaks at three-quarters height is worse than one with no
+ * gridlines at all.
+ */
+const PAD = CHART_PADDING;
+const VIEW_W = CHART_VIEW.width;
+const VIEW_H = CHART_VIEW.height;
+const PLOT_W = CHART_PLOT.width;
+const PLOT_H = CHART_PLOT.height;
 
 // The SVG scales to 100% width, so the plot area's left inset is a fixed
 // fraction of the rendered width. Exposed as a CSS var so the legend can
@@ -40,59 +53,16 @@ const PLOT_INSET_STYLE = {
   '--pf-chart-plot-inset-left': `${(PAD.left / VIEW_W) * 100}%`,
 } as React.CSSProperties;
 
-// ─── Utilities ────────────────────────────────────────────────────────────
-
 function resolveColor(series: ChartSeries, index: number): string {
-  return series.color ?? CHART_COLORS[index % CHART_COLORS.length];
-}
-
-function niceYTicks(maxVal: number, count = 5): number[] {
-  if (maxVal <= 0) return [0, 1, 2, 3, 4, 5];
-  const rough = maxVal / count;
-  const mag = Math.pow(10, Math.floor(Math.log10(rough)));
-  const step = ([1, 2, 2.5, 5, 10].find((s) => s * mag >= rough) ?? 10) * mag;
-  const ticks: number[] = [];
-  for (let v = 0; v <= maxVal * 1.001; v += step) ticks.push(v);
-  if (ticks[ticks.length - 1] < maxVal) ticks.push(ticks[ticks.length - 1] + step);
-  return ticks;
+  return chartSeriesColor(index, series.color);
 }
 
 function formatTick(value: number, formatter?: (v: number) => string): string {
-  if (formatter) return formatter(value);
-  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
-  if (value >= 1_000) return `${(value / 1_000).toFixed(value % 1_000 === 0 ? 0 : 1)}k`;
-  return String(Math.round(value));
+  return formatter ? formatter(value) : formatAxisTick(value);
 }
 
-function toY(value: number, maxTick: number): number {
-  return PAD.top + PLOT_H - (value / maxTick) * PLOT_H;
-}
-
-function toX(index: number, count: number): number {
-  if (count <= 1) return PAD.left + PLOT_W / 2;
-  return PAD.left + (index / (count - 1)) * PLOT_W;
-}
-
-// Catmull-Rom → cubic bezier conversion for smooth chart lines
-function smoothPath(points: Array<{ x: number; y: number }>): string {
-  if (points.length === 0) return '';
-  if (points.length === 1) return `M ${points[0].x},${points[0].y}`;
-  if (points.length === 2) return `M ${points[0].x},${points[0].y} L ${points[1].x},${points[1].y}`;
-
-  let d = `M ${points[0].x},${points[0].y}`;
-  for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[Math.max(0, i - 1)];
-    const p1 = points[i];
-    const p2 = points[i + 1];
-    const p3 = points[Math.min(points.length - 1, i + 2)];
-    const cp1x = p1.x + (p2.x - p0.x) / 6;
-    const cp1y = p1.y + (p2.y - p0.y) / 6;
-    const cp2x = p2.x - (p3.x - p1.x) / 6;
-    const cp2y = p2.y - (p3.y - p1.y) / 6;
-    d += ` C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2.x},${p2.y}`;
-  }
-  return d;
-}
+const toY = (value: number, maxTick: number) => plotY(value, maxTick);
+const toX = (index: number, count: number) => plotX(index, count);
 
 // ─── Shared internal components ───────────────────────────────────────────
 
@@ -126,7 +96,7 @@ interface AxesProps {
 
 function Axes({ yTicks, xLabels, xPositions, maxTick, yAxisLabel, valueFormatter }: AxesProps) {
   const n = xLabels.length;
-  const labelStep = Math.max(1, Math.ceil(n / 12));
+  const labelStep = axisLabelStep(n);
 
   return (
     <>
@@ -206,7 +176,7 @@ export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(function Lin
 
   const allValues = series.flatMap((s) => data.map((d) => Number(d[s.key] ?? 0)));
   const maxVal = Math.max(...allValues, 0);
-  const yTicks = niceYTicks(maxVal);
+  const yTicks = niceAxisTicks(maxVal);
   const maxTick = yTicks[yTicks.length - 1];
   const n = data.length;
 
@@ -242,13 +212,8 @@ export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(function Lin
             y: toY(Number(d[s.key] ?? 0), maxTick),
           }));
 
-          const linePath = curved
-            ? smoothPath(points)
-            : `M ${points.map((p) => `${p.x},${p.y}`).join(' L ')}`;
-
-          const areaPath = area
-            ? `${linePath} L ${points[n - 1].x},${PAD.top + PLOT_H} L ${points[0].x},${PAD.top + PLOT_H} Z`
-            : null;
+          const linePath = curved ? smoothSeriesPath(points) : straightSeriesPath(points);
+          const areaPath = area ? areaSeriesPath(linePath, points) : null;
 
           return (
             <g key={s.key}>
@@ -338,15 +303,21 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(function BarCh
     ? data.map((d) => series.reduce((sum, s) => sum + Number(d[s.key] ?? 0), 0))
     : series.flatMap((s) => data.map((d) => Number(d[s.key] ?? 0)));
   const maxVal = Math.max(...groupMaxValues, 0);
-  const yTicks = niceYTicks(maxVal);
+  const yTicks = niceAxisTicks(maxVal);
   const maxTick = yTicks[yTicks.length - 1];
 
-  const groupWidth = PLOT_W / n;
-  const totalBarW = groupWidth * 0.72;
-  const gap = Math.max(2, groupWidth * 0.06);
-  const barW = stacked ? totalBarW : (totalBarW - gap * (m - 1)) / m;
-
-  const barXPositions = data.map((_, i) => PAD.left + (i + 0.5) * groupWidth);
+  /*
+   * Core's, and `barWidth` is floored at 1 there: the old
+   * `(total - gap * (m - 1)) / m` goes negative with enough series, and a
+   * negative `width` on a `<rect>` is an error the browser drops the element
+   * for — a chart of twelve series silently lost its bars.
+   */
+  const {
+    barWidth: barW,
+    gap,
+    groupLefts,
+    groupCenters: barXPositions,
+  } = barGeometry(n, m, stacked);
 
   const resolvedSeries: ResolvedSeries[] = series.map((s, i) => ({
     ...s,
@@ -376,7 +347,7 @@ export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(function BarCh
         />
 
         {data.map((d, di) => {
-          const groupLeft = PAD.left + (di + 0.5) * groupWidth - totalBarW / 2;
+          const groupLeft = groupLefts[di];
           let stackBase = 0;
 
           return (

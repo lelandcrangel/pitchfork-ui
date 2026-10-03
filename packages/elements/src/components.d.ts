@@ -11,6 +11,7 @@ import { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 import { PfAvatarSize as PfAvatarSize1 } from "./components/pf-avatar/pf-avatar";
 import { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 import { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
+import { PfChartRow } from "./components/pf-line-chart/pf-line-chart";
 import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 import { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 import { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
@@ -19,6 +20,7 @@ import { HeatmapDatumLike, HourCycle, Side, SortDirection, SortState, StepStatus
 import { PfInlineCtaTone } from "./components/pf-inline-cta/pf-inline-cta";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
+import { PfChartRow as PfChartRow1 } from "./components/pf-line-chart/pf-line-chart";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 import { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 import { PfModalSize } from "./components/pf-modal/pf-modal";
@@ -48,6 +50,7 @@ export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfAvatarSize as PfAvatarSize1 } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 export { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
+export { PfChartRow } from "./components/pf-line-chart/pf-line-chart";
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 export { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 export { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
@@ -56,6 +59,7 @@ export { HeatmapDatumLike, HourCycle, Side, SortDirection, SortState, StepStatus
 export { PfInlineCtaTone } from "./components/pf-inline-cta/pf-inline-cta";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
+export { PfChartRow as PfChartRow1 } from "./components/pf-line-chart/pf-line-chart";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 export { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 export { PfModalSize } from "./components/pf-modal/pf-modal";
@@ -243,6 +247,31 @@ export namespace Components {
           * @default ''
          */
         "message": string;
+    }
+    /**
+     * A grouped or stacked bar chart over `pf-chart-series` children.
+     * The same split as `pf-line-chart`: the rows are bulk numbers in a property,
+     * the series are named and coloured and live in the light DOM so the legend
+     * can reach their labels.
+     */
+    interface PfBarChart {
+        /**
+          * The rows to plot. An array, or JSON for plain HTML.
+          * @default []
+         */
+        "data": PfChartRow[] | string;
+        "label"?: string;
+        "refresh": () => Promise<void>;
+        /**
+          * @default true
+         */
+        "showLegend": boolean;
+        /**
+          * Stack each group's series rather than standing them side by side.
+          * @default false
+         */
+        "stacked": boolean;
+        "yAxisLabel"?: string;
     }
     /**
      * One crumb in a `pf-breadcrumbs` trail.
@@ -584,6 +613,38 @@ export namespace Components {
           * @default 1
          */
         "total": number;
+    }
+    /**
+     * One series of a `pf-line-chart` or a `pf-bar-chart`, and its own row in the
+     * legend.
+     * The chart's data is a single array of rows keyed by series — bulk numbers,
+     * which belong in a property — while the series are the part with names and
+     * colours, which belong in the light DOM so a consumer can loop over them and
+     * so the legend can hold their labels. A legend built in the chart's shadow
+     * root could not reach a slotted label at all.
+     * `swatch` is the chart's to set: only it knows this series' place in the
+     * palette.
+     */
+    interface PfChartSeries {
+        /**
+          * Overrides the palette colour the chart would give it.
+         */
+        "color"?: string;
+        /**
+          * Draw this series' line dashed. Line charts only. Reflected.
+          * @default false
+         */
+        "dashed": boolean;
+        /**
+          * The property each data row carries this series' value under.  `seriesKey`, not `key`: `key` is the vdom's own prop name and reserved, the same family as `animate` shadowing `Element.prototype.animate`.
+          * @default ''
+         */
+        "seriesKey": string;
+        /**
+          * Set by the chart: the colour actually used, palette or override.
+          * @default ''
+         */
+        "swatch": string;
     }
     /**
      * A form-associated checkbox.
@@ -1480,6 +1541,49 @@ export namespace Components {
           * @default 'md'
          */
         "size": PfKbdSize;
+    }
+    /**
+     * A line or area chart over `pf-chart-series` children.
+     * The split follows what the data is: the rows are bulk numbers and live in a
+     * property, while the series are the part with names and colours and live in
+     * the light DOM, where a consumer can loop over them and where the legend can
+     * reach their labels.
+     * Every scale and path is core's, so this and the React `LineChart` draw the
+     * same chart — the axis labels and the geometry have to come from the same
+     * tick scale, or the gridlines say one thing and the line says another.
+     */
+    interface PfLineChart {
+        /**
+          * Fill under each line. Reflected.
+          * @default false
+         */
+        "area": boolean;
+        /**
+          * Curve the lines through their points rather than joining them straight.
+          * @default true
+         */
+        "curved": boolean;
+        /**
+          * The rows to plot.  An array for a framework consumer, or JSON for plain HTML, because Stencil coerces an attribute only for the primitive types it recognises.
+          * @default []
+         */
+        "data": PfChartRow1[] | string;
+        /**
+          * The chart's accessible name.
+         */
+        "label"?: string;
+        /**
+          * Re-reads the series, for a consumer who changed one through a property.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * @default true
+         */
+        "showLegend": boolean;
+        /**
+          * Printed down the y axis, and used as the chart's name when it has none.
+         */
+        "yAxisLabel"?: string;
     }
     /**
      * Three pulsing dots, for an indeterminate wait in a tight space.
@@ -3884,6 +3988,18 @@ declare global {
         new (): HTMLPfBadgeGroupElement;
     };
     /**
+     * A grouped or stacked bar chart over `pf-chart-series` children.
+     * The same split as `pf-line-chart`: the rows are bulk numbers in a property,
+     * the series are named and coloured and live in the light DOM so the legend
+     * can reach their labels.
+     */
+    interface HTMLPfBarChartElement extends Components.PfBarChart, HTMLStencilElement {
+    }
+    var HTMLPfBarChartElement: {
+        prototype: HTMLPfBarChartElement;
+        new (): HTMLPfBarChartElement;
+    };
+    /**
      * One crumb in a `pf-breadcrumbs` trail.
      * With an `href` it renders a link; without one it renders a plain span, which
      * is both what a current page wants and the way to use a framework's own
@@ -4086,6 +4202,23 @@ declare global {
     var HTMLPfCarouselSlideElement: {
         prototype: HTMLPfCarouselSlideElement;
         new (): HTMLPfCarouselSlideElement;
+    };
+    /**
+     * One series of a `pf-line-chart` or a `pf-bar-chart`, and its own row in the
+     * legend.
+     * The chart's data is a single array of rows keyed by series — bulk numbers,
+     * which belong in a property — while the series are the part with names and
+     * colours, which belong in the light DOM so a consumer can loop over them and
+     * so the legend can hold their labels. A legend built in the chart's shadow
+     * root could not reach a slotted label at all.
+     * `swatch` is the chart's to set: only it knows this series' place in the
+     * palette.
+     */
+    interface HTMLPfChartSeriesElement extends Components.PfChartSeries, HTMLStencilElement {
+    }
+    var HTMLPfChartSeriesElement: {
+        prototype: HTMLPfChartSeriesElement;
+        new (): HTMLPfChartSeriesElement;
     };
     interface HTMLPfCheckboxElementEventMap {
         "pfChange": { checked: boolean; value: string };
@@ -4564,6 +4697,22 @@ declare global {
     var HTMLPfKbdElement: {
         prototype: HTMLPfKbdElement;
         new (): HTMLPfKbdElement;
+    };
+    /**
+     * A line or area chart over `pf-chart-series` children.
+     * The split follows what the data is: the rows are bulk numbers and live in a
+     * property, while the series are the part with names and colours and live in
+     * the light DOM, where a consumer can loop over them and where the legend can
+     * reach their labels.
+     * Every scale and path is core's, so this and the React `LineChart` draw the
+     * same chart — the axis labels and the geometry have to come from the same
+     * tick scale, or the gridlines say one thing and the line says another.
+     */
+    interface HTMLPfLineChartElement extends Components.PfLineChart, HTMLStencilElement {
+    }
+    var HTMLPfLineChartElement: {
+        prototype: HTMLPfLineChartElement;
+        new (): HTMLPfLineChartElement;
     };
     /**
      * Three pulsing dots, for an indeterminate wait in a tight space.
@@ -5806,6 +5955,7 @@ declare global {
         "pf-avatar-group": HTMLPfAvatarGroupElement;
         "pf-badge": HTMLPfBadgeElement;
         "pf-badge-group": HTMLPfBadgeGroupElement;
+        "pf-bar-chart": HTMLPfBarChartElement;
         "pf-breadcrumb": HTMLPfBreadcrumbElement;
         "pf-breadcrumbs": HTMLPfBreadcrumbsElement;
         "pf-button": HTMLPfButtonElement;
@@ -5818,6 +5968,7 @@ declare global {
         "pf-card-header": HTMLPfCardHeaderElement;
         "pf-carousel": HTMLPfCarouselElement;
         "pf-carousel-slide": HTMLPfCarouselSlideElement;
+        "pf-chart-series": HTMLPfChartSeriesElement;
         "pf-checkbox": HTMLPfCheckboxElement;
         "pf-code-snippet": HTMLPfCodeSnippetElement;
         "pf-collapsible": HTMLPfCollapsibleElement;
@@ -5840,6 +5991,7 @@ declare global {
         "pf-inline-cta": HTMLPfInlineCtaElement;
         "pf-input": HTMLPfInputElement;
         "pf-kbd": HTMLPfKbdElement;
+        "pf-line-chart": HTMLPfLineChartElement;
         "pf-loading-dots": HTMLPfLoadingDotsElement;
         "pf-loading-skeleton": HTMLPfLoadingSkeletonElement;
         "pf-loading-spinner": HTMLPfLoadingSpinnerElement;
@@ -6071,6 +6223,30 @@ declare namespace LocalJSX {
           * @default ''
          */
         "message"?: string;
+    }
+    /**
+     * A grouped or stacked bar chart over `pf-chart-series` children.
+     * The same split as `pf-line-chart`: the rows are bulk numbers in a property,
+     * the series are named and coloured and live in the light DOM so the legend
+     * can reach their labels.
+     */
+    interface PfBarChart {
+        /**
+          * The rows to plot. An array, or JSON for plain HTML.
+          * @default []
+         */
+        "data"?: PfChartRow[] | string;
+        "label"?: string;
+        /**
+          * @default true
+         */
+        "showLegend"?: boolean;
+        /**
+          * Stack each group's series rather than standing them side by side.
+          * @default false
+         */
+        "stacked"?: boolean;
+        "yAxisLabel"?: string;
     }
     /**
      * One crumb in a `pf-breadcrumbs` trail.
@@ -6400,6 +6576,38 @@ declare namespace LocalJSX {
           * @default 1
          */
         "total"?: number;
+    }
+    /**
+     * One series of a `pf-line-chart` or a `pf-bar-chart`, and its own row in the
+     * legend.
+     * The chart's data is a single array of rows keyed by series — bulk numbers,
+     * which belong in a property — while the series are the part with names and
+     * colours, which belong in the light DOM so a consumer can loop over them and
+     * so the legend can hold their labels. A legend built in the chart's shadow
+     * root could not reach a slotted label at all.
+     * `swatch` is the chart's to set: only it knows this series' place in the
+     * palette.
+     */
+    interface PfChartSeries {
+        /**
+          * Overrides the palette colour the chart would give it.
+         */
+        "color"?: string;
+        /**
+          * Draw this series' line dashed. Line charts only. Reflected.
+          * @default false
+         */
+        "dashed"?: boolean;
+        /**
+          * The property each data row carries this series' value under.  `seriesKey`, not `key`: `key` is the vdom's own prop name and reserved, the same family as `animate` shadowing `Element.prototype.animate`.
+          * @default ''
+         */
+        "seriesKey"?: string;
+        /**
+          * Set by the chart: the colour actually used, palette or override.
+          * @default ''
+         */
+        "swatch"?: string;
     }
     /**
      * A form-associated checkbox.
@@ -7304,6 +7512,45 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: PfKbdSize;
+    }
+    /**
+     * A line or area chart over `pf-chart-series` children.
+     * The split follows what the data is: the rows are bulk numbers and live in a
+     * property, while the series are the part with names and colours and live in
+     * the light DOM, where a consumer can loop over them and where the legend can
+     * reach their labels.
+     * Every scale and path is core's, so this and the React `LineChart` draw the
+     * same chart — the axis labels and the geometry have to come from the same
+     * tick scale, or the gridlines say one thing and the line says another.
+     */
+    interface PfLineChart {
+        /**
+          * Fill under each line. Reflected.
+          * @default false
+         */
+        "area"?: boolean;
+        /**
+          * Curve the lines through their points rather than joining them straight.
+          * @default true
+         */
+        "curved"?: boolean;
+        /**
+          * The rows to plot.  An array for a framework consumer, or JSON for plain HTML, because Stencil coerces an attribute only for the primitive types it recognises.
+          * @default []
+         */
+        "data"?: PfChartRow1[] | string;
+        /**
+          * The chart's accessible name.
+         */
+        "label"?: string;
+        /**
+          * @default true
+         */
+        "showLegend"?: boolean;
+        /**
+          * Printed down the y axis, and used as the chart's name when it has none.
+         */
+        "yAxisLabel"?: string;
     }
     /**
      * Three pulsing dots, for an indeterminate wait in a tight space.
@@ -9460,6 +9707,13 @@ declare namespace LocalJSX {
         "appearance": PfBadgeGroupAppearance;
         "badgePosition": PfBadgeGroupBadgePosition;
     }
+    interface PfBarChartAttributes {
+        "data": PfChartRow[] | string;
+        "stacked": boolean;
+        "showLegend": boolean;
+        "yAxisLabel": string;
+        "label": string;
+    }
     interface PfBreadcrumbAttributes {
         "href": string;
         "current": boolean;
@@ -9516,6 +9770,12 @@ declare namespace LocalJSX {
         "active": boolean;
         "position": number;
         "total": number;
+    }
+    interface PfChartSeriesAttributes {
+        "seriesKey": string;
+        "color": string;
+        "dashed": boolean;
+        "swatch": string;
     }
     interface PfCheckboxAttributes {
         "name": string;
@@ -9692,6 +9952,14 @@ declare namespace LocalJSX {
     interface PfKbdAttributes {
         "size": PfKbdSize;
         "separator": string;
+    }
+    interface PfLineChartAttributes {
+        "data": PfChartRow[] | string;
+        "area": boolean;
+        "curved": boolean;
+        "showLegend": boolean;
+        "yAxisLabel": string;
+        "label": string;
     }
     interface PfLoadingDotsAttributes {
         "size": PfLoadingDotsSize;
@@ -10098,6 +10366,7 @@ declare namespace LocalJSX {
         "pf-avatar-group": Omit<PfAvatarGroup, keyof PfAvatarGroupAttributes> & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes]?: PfAvatarGroup[K] } & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes as `attr:${K}`]?: PfAvatarGroupAttributes[K] } & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes as `prop:${K}`]?: PfAvatarGroup[K] };
         "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
         "pf-badge-group": Omit<PfBadgeGroup, keyof PfBadgeGroupAttributes> & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes]?: PfBadgeGroup[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `attr:${K}`]?: PfBadgeGroupAttributes[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `prop:${K}`]?: PfBadgeGroup[K] };
+        "pf-bar-chart": Omit<PfBarChart, keyof PfBarChartAttributes> & { [K in keyof PfBarChart & keyof PfBarChartAttributes]?: PfBarChart[K] } & { [K in keyof PfBarChart & keyof PfBarChartAttributes as `attr:${K}`]?: PfBarChartAttributes[K] } & { [K in keyof PfBarChart & keyof PfBarChartAttributes as `prop:${K}`]?: PfBarChart[K] };
         "pf-breadcrumb": Omit<PfBreadcrumb, keyof PfBreadcrumbAttributes> & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes]?: PfBreadcrumb[K] } & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes as `attr:${K}`]?: PfBreadcrumbAttributes[K] } & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes as `prop:${K}`]?: PfBreadcrumb[K] };
         "pf-breadcrumbs": Omit<PfBreadcrumbs, keyof PfBreadcrumbsAttributes> & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes]?: PfBreadcrumbs[K] } & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes as `attr:${K}`]?: PfBreadcrumbsAttributes[K] } & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes as `prop:${K}`]?: PfBreadcrumbs[K] };
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
@@ -10110,6 +10379,7 @@ declare namespace LocalJSX {
         "pf-card-header": PfCardHeader;
         "pf-carousel": Omit<PfCarousel, keyof PfCarouselAttributes> & { [K in keyof PfCarousel & keyof PfCarouselAttributes]?: PfCarousel[K] } & { [K in keyof PfCarousel & keyof PfCarouselAttributes as `attr:${K}`]?: PfCarouselAttributes[K] } & { [K in keyof PfCarousel & keyof PfCarouselAttributes as `prop:${K}`]?: PfCarousel[K] };
         "pf-carousel-slide": Omit<PfCarouselSlide, keyof PfCarouselSlideAttributes> & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes]?: PfCarouselSlide[K] } & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes as `attr:${K}`]?: PfCarouselSlideAttributes[K] } & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes as `prop:${K}`]?: PfCarouselSlide[K] };
+        "pf-chart-series": Omit<PfChartSeries, keyof PfChartSeriesAttributes> & { [K in keyof PfChartSeries & keyof PfChartSeriesAttributes]?: PfChartSeries[K] } & { [K in keyof PfChartSeries & keyof PfChartSeriesAttributes as `attr:${K}`]?: PfChartSeriesAttributes[K] } & { [K in keyof PfChartSeries & keyof PfChartSeriesAttributes as `prop:${K}`]?: PfChartSeries[K] };
         "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
         "pf-code-snippet": Omit<PfCodeSnippet, keyof PfCodeSnippetAttributes> & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes]?: PfCodeSnippet[K] } & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes as `attr:${K}`]?: PfCodeSnippetAttributes[K] } & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes as `prop:${K}`]?: PfCodeSnippet[K] };
         "pf-collapsible": Omit<PfCollapsible, keyof PfCollapsibleAttributes> & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes]?: PfCollapsible[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `attr:${K}`]?: PfCollapsibleAttributes[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `prop:${K}`]?: PfCollapsible[K] };
@@ -10132,6 +10402,7 @@ declare namespace LocalJSX {
         "pf-inline-cta": Omit<PfInlineCta, keyof PfInlineCtaAttributes> & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes]?: PfInlineCta[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `attr:${K}`]?: PfInlineCtaAttributes[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `prop:${K}`]?: PfInlineCta[K] };
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
         "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
+        "pf-line-chart": Omit<PfLineChart, keyof PfLineChartAttributes> & { [K in keyof PfLineChart & keyof PfLineChartAttributes]?: PfLineChart[K] } & { [K in keyof PfLineChart & keyof PfLineChartAttributes as `attr:${K}`]?: PfLineChartAttributes[K] } & { [K in keyof PfLineChart & keyof PfLineChartAttributes as `prop:${K}`]?: PfLineChart[K] };
         "pf-loading-dots": Omit<PfLoadingDots, keyof PfLoadingDotsAttributes> & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes]?: PfLoadingDots[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `attr:${K}`]?: PfLoadingDotsAttributes[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `prop:${K}`]?: PfLoadingDots[K] };
         "pf-loading-skeleton": Omit<PfLoadingSkeleton, keyof PfLoadingSkeletonAttributes> & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes]?: PfLoadingSkeleton[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `attr:${K}`]?: PfLoadingSkeletonAttributes[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `prop:${K}`]?: PfLoadingSkeleton[K] };
         "pf-loading-spinner": Omit<PfLoadingSpinner, keyof PfLoadingSpinnerAttributes> & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes]?: PfLoadingSpinner[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `attr:${K}`]?: PfLoadingSpinnerAttributes[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `prop:${K}`]?: PfLoadingSpinner[K] };
@@ -10249,6 +10520,13 @@ declare module "@stencil/core" {
              */
             "pf-badge-group": LocalJSX.IntrinsicElements["pf-badge-group"] & JSXBase.HTMLAttributes<HTMLPfBadgeGroupElement>;
             /**
+             * A grouped or stacked bar chart over `pf-chart-series` children.
+             * The same split as `pf-line-chart`: the rows are bulk numbers in a property,
+             * the series are named and coloured and live in the light DOM so the legend
+             * can reach their labels.
+             */
+            "pf-bar-chart": LocalJSX.IntrinsicElements["pf-bar-chart"] & JSXBase.HTMLAttributes<HTMLPfBarChartElement>;
+            /**
              * One crumb in a `pf-breadcrumbs` trail.
              * With an `href` it renders a link; without one it renders a plain span, which
              * is both what a current page wants and the way to use a framework's own
@@ -10348,6 +10626,18 @@ declare module "@stencil/core" {
              * scrolled out of sight.
              */
             "pf-carousel-slide": LocalJSX.IntrinsicElements["pf-carousel-slide"] & JSXBase.HTMLAttributes<HTMLPfCarouselSlideElement>;
+            /**
+             * One series of a `pf-line-chart` or a `pf-bar-chart`, and its own row in the
+             * legend.
+             * The chart's data is a single array of rows keyed by series — bulk numbers,
+             * which belong in a property — while the series are the part with names and
+             * colours, which belong in the light DOM so a consumer can loop over them and
+             * so the legend can hold their labels. A legend built in the chart's shadow
+             * root could not reach a slotted label at all.
+             * `swatch` is the chart's to set: only it knows this series' place in the
+             * palette.
+             */
+            "pf-chart-series": LocalJSX.IntrinsicElements["pf-chart-series"] & JSXBase.HTMLAttributes<HTMLPfChartSeriesElement>;
             /**
              * A form-associated checkbox.
              */
@@ -10564,6 +10854,17 @@ declare module "@stencil/core" {
              */
             "pf-input": LocalJSX.IntrinsicElements["pf-input"] & JSXBase.HTMLAttributes<HTMLPfInputElement>;
             "pf-kbd": LocalJSX.IntrinsicElements["pf-kbd"] & JSXBase.HTMLAttributes<HTMLPfKbdElement>;
+            /**
+             * A line or area chart over `pf-chart-series` children.
+             * The split follows what the data is: the rows are bulk numbers and live in a
+             * property, while the series are the part with names and colours and live in
+             * the light DOM, where a consumer can loop over them and where the legend can
+             * reach their labels.
+             * Every scale and path is core's, so this and the React `LineChart` draw the
+             * same chart — the axis labels and the geometry have to come from the same
+             * tick scale, or the gridlines say one thing and the line says another.
+             */
+            "pf-line-chart": LocalJSX.IntrinsicElements["pf-line-chart"] & JSXBase.HTMLAttributes<HTMLPfLineChartElement>;
             /**
              * Three pulsing dots, for an indeterminate wait in a tight space.
              */

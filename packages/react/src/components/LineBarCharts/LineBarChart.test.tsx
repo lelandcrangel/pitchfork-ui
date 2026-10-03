@@ -147,3 +147,114 @@ describe('AreaChart', () => {
     expect(screen.getByTestId('area-chart')).toBeInTheDocument();
   });
 });
+
+/*
+ * The scales and paths are core's now, which fixed two things that were
+ * silent. The axis ticks used to be accumulated with `v += step`, so a
+ * fractional step printed `0.30000000000000004` as a label; and a maximum
+ * that is not a number fell through the `<= 0` guard and produced an *empty*
+ * tick array, after which `maxTick` was `undefined` and every coordinate came
+ * out `NaN`.
+ */
+describe('chart scales', () => {
+  const ticksOf = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll('.pf-chart__tick--y')).map((node) => node.textContent);
+  const pathsOf = (container: HTMLElement) =>
+    Array.from(container.querySelectorAll('path')).map((node) => node.getAttribute('d') ?? '');
+
+  it('prints clean fractional axis labels', () => {
+    const { container } = render(
+      <LineChart
+        data={[
+          { label: 'a', v: 0.1 },
+          { label: 'b', v: 0.5 },
+        ]}
+        series={[{ key: 'v', label: 'V' }]}
+      />,
+    );
+
+    expect(ticksOf(container)).toEqual(['0', '0.1', '0.2', '0.3', '0.4', '0.5']);
+  });
+
+  it('draws a usable chart when a value is not a number', () => {
+    const { container } = render(
+      <LineChart
+        data={[
+          { label: 'a', v: 'oops' },
+          { label: 'b', v: 'nope' },
+        ]}
+        series={[{ key: 'v', label: 'V' }]}
+      />,
+    );
+
+    expect(ticksOf(container).length).toBeGreaterThan(1);
+    expect(ticksOf(container).join()).not.toMatch(/NaN|undefined/);
+    for (const path of pathsOf(container)) {
+      expect(path).not.toMatch(/NaN|undefined/);
+    }
+  });
+
+  it('closes an area path back to the plot floor', () => {
+    const { container } = render(
+      <AreaChart
+        data={[
+          { label: 'a', v: 1 },
+          { label: 'b', v: 2 },
+        ]}
+        series={[{ key: 'v', label: 'V' }]}
+      />,
+    );
+    const area = pathsOf(container).find((path) => path.endsWith('Z'));
+
+    expect(area).toBeTruthy();
+    expect(area).not.toMatch(/NaN/);
+  });
+
+  /*
+   * A negative `width` on a `<rect>` is an error the browser drops the
+   * element for, so a chart of twelve series silently lost its bars.
+   */
+  it('keeps every bar wider than nothing with many series', () => {
+    /*
+     * Six groups and twenty series: that is where
+     * `(total - gap * (m - 1)) / m` actually goes negative. One group of
+     * twelve still comes out positive, which is how the first version of this
+     * test passed with the fix reverted.
+     */
+    const series = Array.from({ length: 20 }, (_, index) => ({
+      key: `s${index}`,
+      label: `S${index}`,
+    }));
+    const data = Array.from({ length: 6 }, (_, group) => {
+      const row = { label: `g${group}` } as Record<string, string | number>;
+      for (const item of series) row[item.key] = 5;
+      return row;
+    });
+
+    const { container } = render(<BarChart data={data as never} series={series} />);
+    const widths = Array.from(container.querySelectorAll('rect')).map((node) =>
+      Number(node.getAttribute('width')),
+    );
+
+    expect(widths).toHaveLength(120);
+    expect(widths.every((width) => width > 0)).toBe(true);
+  });
+
+  /* A single point has no span to spread across, so it goes in the middle. */
+  it('centres a single data point', () => {
+    const { container } = render(
+      <LineChart data={[{ label: 'only', v: 5 }]} series={[{ key: 'v', label: 'V' }]} />,
+    );
+    const dot = container.querySelector('.pf-chart__dot') as SVGCircleElement;
+
+    // 560 wide, 56 left and 32 right of padding: the middle of the plot is 292.
+    expect(Number(dot.getAttribute('cx'))).toBeCloseTo(292, 6);
+  });
+
+  it('thins the x labels out on a long series', () => {
+    const data = Array.from({ length: 40 }, (_, index) => ({ label: `d${index}`, v: index }));
+    const { container } = render(<LineChart data={data} series={[{ key: 'v', label: 'V' }]} />);
+
+    expect(container.querySelectorAll('.pf-chart__tick--x')).toHaveLength(10);
+  });
+});

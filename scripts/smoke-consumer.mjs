@@ -39,6 +39,7 @@ const root = isAbsolute(args.dir) ? args.dir : resolve(repoRoot, args.dir);
 /** Every element the app is expected to have upgraded. */
 const EXPECTED = [
   'pf-button',
+  'pf-bar-chart',
   'pf-badge',
   'pf-tag',
   'pf-avatar',
@@ -71,6 +72,7 @@ const EXPECTED = [
   'pf-toolbar',
   'pf-toolbar-separator',
   'pf-pagination',
+  'pf-chart-series',
   'pf-checkbox',
   'pf-sidebar-navigation',
   'pf-sparkline',
@@ -85,6 +87,7 @@ const EXPECTED = [
   'pf-pie-chart',
   'pf-pie-slice',
   'pf-popover',
+  'pf-line-chart',
   'pf-modal',
   'pf-nav-item',
   'pf-modal-header',
@@ -5092,6 +5095,155 @@ try {
       }
       if (state.legendValue !== '9') {
         problems.push(`the first legend row reads "${state.legendValue}"`);
+      }
+    }
+  }
+
+  /*
+   * The two cartesian charts. Their numbers are core's and the fast project
+   * checks them; what only a build shows is the layout — the SVG scaling to
+   * the host's width while the viewBox stays fixed, the legend's start edge
+   * lined up with the plot area through an inline custom property, the y-axis
+   * label drawn *outside* the plot and so needing `overflow: visible`, and
+   * the dots that appear only on hover.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const line = document.querySelector('pf-line-chart');
+        const bar = document.querySelector('pf-bar-chart');
+        if (!line || !bar) return { error: 'the consumer app is missing a cartesian chart' };
+
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const parts = (host, name) => [...host.shadowRoot.querySelectorAll(`[part="${name}"]`)];
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const svg = part(line, 'svg');
+        const legend = part(line, 'legend');
+        const axisLabel = line.shadowRoot.querySelector('.axis-label');
+        const dot = part(line, 'dot');
+
+        const hostBox = line.getBoundingClientRect();
+        const svgBox = svg.getBoundingClientRect();
+        const plotLeft = Number.parseFloat(
+          getComputedStyle(line).getPropertyValue('--pf-chart-plot-inset-left'),
+        );
+
+        return {
+          // The SVG fills the host and keeps its aspect from the viewBox.
+          svgWidth: svgBox.width,
+          hostWidth: hostBox.width,
+          viewBox: svg.getAttribute('viewBox'),
+          overflow: getComputedStyle(svg).overflow,
+          // The y-axis label is rotated outside the plot, so it must not clip.
+          axisLabelVisible: (() => {
+            const box = axisLabel.getBoundingClientRect();
+            return box.width > 0 && box.height > 0;
+          })(),
+          axisLabelLeftOfPlot:
+            axisLabel.getBoundingClientRect().left <
+            part(line, 'grid').getBoundingClientRect().left,
+          // The legend starts where the plot does.
+          legendInset: Number.parseFloat(getComputedStyle(legend).paddingInlineStart),
+          plotInsetPercent: plotLeft,
+          legendVisible: getComputedStyle(legend).display !== 'none',
+          legendRows: [...line.querySelectorAll('pf-chart-series')].map(
+            (row) => getComputedStyle(row).display,
+          ),
+          swatches: [...line.querySelectorAll('pf-chart-series')].map(
+            (row) => getComputedStyle(part(row, 'dot')).backgroundColor,
+          ),
+          // The dots are hidden until the chart is hovered.
+          dotOpacity: getComputedStyle(dot).opacity,
+          dashed: parts(line, 'line')[1].getAttribute('stroke-dasharray'),
+          areaCount: parts(line, 'area').length,
+          gridStroke: getComputedStyle(part(line, 'grid')).stroke,
+          tickFill: getComputedStyle(part(line, 'tick')).fill,
+          // The bars sit on the plot's floor and are stacked, not side by side.
+          barCount: parts(bar, 'bar').length,
+          barsStacked: (() => {
+            const bars = parts(bar, 'bar');
+            return bars[0].getAttribute('x') === bars[1].getAttribute('x');
+          })(),
+          barWidths: parts(bar, 'bar').map((rect) => Number(rect.getAttribute('width'))),
+          barHoverTransition: getComputedStyle(parts(bar, 'bar')[0]).transitionProperty,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`cartesian charts: ${state.error}`);
+    } else {
+      if (Math.abs(state.svgWidth - state.hostWidth) > 2) {
+        problems.push(
+          `the chart's svg measured ${state.svgWidth}px in a ${state.hostWidth}px host`,
+        );
+      }
+      if (state.viewBox !== '0 0 560 240') {
+        problems.push(`the chart's viewBox is "${state.viewBox}"`);
+      }
+      if (state.overflow !== 'visible') {
+        problems.push(
+          `the chart's svg overflow is "${state.overflow}" — the rotated y-axis label would be ` +
+            'clipped',
+        );
+      }
+      if (!state.axisLabelVisible) {
+        problems.push('the y-axis label measured nothing — it was clipped or never drawn');
+      }
+      if (!state.axisLabelLeftOfPlot) {
+        problems.push('the y-axis label is not outside the plot area');
+      }
+      if (!(state.plotInsetPercent > 0)) {
+        problems.push('--pf-chart-plot-inset-left resolved to nothing on the host');
+      }
+      if (!(state.legendInset > 0)) {
+        problems.push(
+          `the legend's start inset is ${state.legendInset}px — it does not line up with the plot`,
+        );
+      }
+      if (!state.legendVisible) {
+        problems.push('the legend is hidden with two series and showLegend on');
+      }
+      if (state.legendRows.some((display) => display === 'none')) {
+        problems.push('a legend row is hidden');
+      }
+      if (new Set(state.swatches).size !== state.swatches.length) {
+        problems.push(
+          `two series share a swatch colour (${JSON.stringify(state.swatches)}) — the palette ` +
+            'did not advance',
+        );
+      }
+      if (state.dotOpacity !== '0') {
+        problems.push(
+          `a data point's opacity is ${state.dotOpacity} at rest — the dots should appear on hover`,
+        );
+      }
+      if (state.dashed !== '6 4') {
+        problems.push(`the dashed series' stroke-dasharray is "${state.dashed}"`);
+      }
+      if (state.areaCount !== 2) {
+        problems.push(`the area variant drew ${state.areaCount} fills for two series`);
+      }
+      if (state.gridStroke === state.tickFill) {
+        problems.push('the gridlines and the tick labels are the same colour');
+      }
+      if (state.barCount !== 8) {
+        problems.push(`the bar chart drew ${state.barCount} bars for four groups of two`);
+      }
+      if (!state.barsStacked) {
+        problems.push("the stacked bar chart's bars are not in one column per group");
+      }
+      if (!state.barWidths.every((width) => width > 1)) {
+        problems.push(`a bar measured ${Math.min(...state.barWidths)}px wide`);
+      }
+      if (!state.barHoverTransition.includes('opacity')) {
+        problems.push(`a bar's transition-property is "${state.barHoverTransition}"`);
       }
     }
   }
