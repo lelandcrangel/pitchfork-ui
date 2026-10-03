@@ -549,7 +549,7 @@ asserts the part on a custom glyph, probed by removing the attribute.
 
 ---
 
-## `npm audit --audit-level=high` is red, and has been
+## `npm audit --audit-level=high` is red, and has been — fixed
 
 CI's last step is `npm audit --audit-level=high`, and it fails: 15
 vulnerabilities, 12 high and 2 critical. Checked against the committed
@@ -571,8 +571,19 @@ here reaches a published package, which is why it has gone unnoticed. But a CI
 step that is always red is a CI step nobody reads, and it is the step meant to
 catch a dependency that actually matters.
 
-**Fix:** take the non-breaking `brace-expansion` fix, then decide what the
-audit step should mean. The honest options are `--audit-level=critical` with
-the Angular chain explicitly excluded, `npm audit --omit=dev` (which is what
-"does a consumer of our packages inherit a vulnerability?" actually asks), or
-`--production`. Any of them is better than a step that fails on every run.
+**Fixed** in two parts. `brace-expansion` had a non-breaking fix (5.0.9 →
+5.0.12, one line of the lockfile), and it was the only one of the fifteen that
+reached anything outside devDependencies — it comes in through `minimatch`
+under `vite-plugin-dts`.
+
+The step is now two steps. `npm audit --omit=dev --audit-level=high` blocks,
+and is the question that matters for a published package: does anything a
+consumer installs carry a known vulnerability? It is clean. The whole-tree
+audit still runs, with `|| true`, so the fourteen Angular-toolchain and lint
+advisories stay visible in the log without failing every build.
+
+What is left, and why it stays: `piscina`, `@angular/build`, `undici`,
+`postcss` and the `sigstore` → `make-fetch-happen` → `http-cache-semantics`
+chain all come from `@angular/cli` 21, a devDependency of the Angular consumer
+app. `npm audit fix --force` offers `@angular/cli@7.2.4`. Revisit when Angular
+ships a toolchain that resolves them.
