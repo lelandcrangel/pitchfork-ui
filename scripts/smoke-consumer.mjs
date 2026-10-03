@@ -114,6 +114,7 @@ const EXPECTED = [
   'pf-page-header',
   'pf-section-header',
   'pf-section-footer',
+  'pf-avatar-group',
 ];
 
 const TYPES = {
@@ -2674,6 +2675,119 @@ try {
           `the page header's eyebrow computes text-transform: ${state.eyebrowTransform} — ` +
             '::slotted() is the only styling it gets, and it did not apply',
         );
+      }
+    }
+  }
+
+  /*
+   * The avatar group. Three claims that need a real stylesheet: the collapsed
+   * avatars are gone, the shown ones overlap, and the chip takes its colours
+   * through the --pf-avatar-* properties rather than from a rule reaching into
+   * pf-avatar's shadow root.
+   *
+   * The overlap also exercises `::slotted(pf-avatar:not(:first-child))` — a
+   * compound selector inside `::slotted()`, which is as far as that pseudo
+   * goes: a sibling combinator cannot be written there at all.
+   */
+  {
+    const state = await page
+      .evaluate(() => {
+        const group = document.querySelector('pf-avatar-group');
+        if (!group) return { error: 'the consumer app has no pf-avatar-group' };
+
+        const avatars = Array.from(group.querySelectorAll('pf-avatar'));
+        const chip = group.shadowRoot.querySelector('[part="overflow"]');
+        if (!chip) return { error: 'the group drew no overflow chip' };
+        const boxes = avatars.map((avatar) => avatar.getBoundingClientRect());
+
+        return {
+          name: group.getAttribute('aria-label'),
+          chipText: chip.textContent.trim(),
+          chipBackground: getComputedStyle(chip).backgroundColor,
+          plainBackground: getComputedStyle(avatars[0]).backgroundColor,
+          /*
+           * Read off the chip itself: this is the bridge, and the only
+           * unambiguous evidence it applied. Comparing the chip's background
+           * with a plain avatar's says nothing — both tokens resolve to
+           * --color-semantic-background-subtle, so they are the same colour by
+           * design, in this layer and in the React one.
+           */
+          chipBridge: getComputedStyle(chip).getPropertyValue('--pf-avatar-bg').trim(),
+          plainBridge: getComputedStyle(avatars[0]).getPropertyValue('--pf-avatar-bg').trim(),
+          chipRing: getComputedStyle(chip).boxShadow,
+          avatarRing: getComputedStyle(avatars[0]).boxShadow,
+          // The collapsed ones are gone; the shown ones overlap.
+          displays: avatars.map((avatar) => getComputedStyle(avatar).display),
+          firstRight: boxes[0].right,
+          secondLeft: boxes[1].left,
+          width: boxes[0].width,
+          chipLeft: chip.getBoundingClientRect().left,
+          secondRight: boxes[1].right,
+          // Earlier avatars stack above later ones.
+          zIndexes: avatars.map((avatar) => getComputedStyle(avatar).zIndex),
+          positions: avatars.map((avatar) => getComputedStyle(avatar).position),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-avatar-group: ${state.error}`);
+    } else {
+      if (state.name !== '40 people') {
+        problems.push(`pf-avatar-group is named "${state.name}", expected 40 people`);
+      }
+      if (state.chipText !== '+38') {
+        problems.push(`the chip reads "${state.chipText}", expected +38`);
+      }
+      /*
+       * Not `inline-flex`: the group is a flex container, so its children are
+       * blockified to `flex`. What matters is which ones are gone.
+       */
+      if (
+        state.displays[0] === 'none' ||
+        state.displays[1] === 'none' ||
+        state.displays[2] !== 'none' ||
+        state.displays[3] !== 'none'
+      ) {
+        problems.push(
+          `the avatars compute ${JSON.stringify(state.displays)} — ` +
+            'expected the two past the maximum to be collapsed and the rest shown',
+        );
+      }
+      if (!(state.secondLeft < state.firstRight)) {
+        problems.push(
+          `the second avatar starts at ${state.secondLeft}, right of the first's edge ` +
+            `at ${state.firstRight} — they are not overlapping`,
+        );
+      }
+      if (!(state.chipLeft < state.secondRight)) {
+        problems.push(
+          `the chip starts at ${state.chipLeft}, right of the last avatar's edge ` +
+            `at ${state.secondRight} — it is not overlapping`,
+        );
+      }
+      if (!state.chipBridge || state.chipBridge === state.plainBridge) {
+        problems.push(
+          `the chip's --pf-avatar-bg reads "${state.chipBridge}" against ` +
+            `"${state.plainBridge}" on a plain avatar — the bridge did not reach it`,
+        );
+      }
+      if (isTransparent(state.chipBackground)) {
+        problems.push('the chip has no background');
+      }
+      if (state.avatarRing === 'none' || state.chipRing === 'none') {
+        problems.push(
+          `the separating ring is missing (avatar ${state.avatarRing}, chip ${state.chipRing})`,
+        );
+      }
+      if (state.zIndexes.slice(0, 2).join(',') !== '2,1') {
+        problems.push(
+          `the shown avatars compute z-index ${JSON.stringify(state.zIndexes)}, ` +
+            'expected the earlier one above the later',
+        );
+      }
+      if (state.positions.slice(0, 2).some((position) => position === 'static')) {
+        problems.push('a shown avatar is statically positioned, so its z-index does nothing');
       }
     }
   }

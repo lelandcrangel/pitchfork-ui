@@ -693,6 +693,23 @@ Things that differ from the React library, learned by porting the first two:
   stylesheet; the consumer smoke caught it on the first run, as a bare metric
   card drawing all three of its empty boxes. Written as `.icon.empty,
 .action.empty { … }` now, which beats them whatever the order.
+- **`::slotted()` takes a compound selector, so reach for a pseudo-class.**
+  The limit has two sides. A combinator cannot be written at all —
+  `::slotted(pf-avatar) + ::slotted(pf-avatar)` matches nothing, measured: the
+  overlap in `pf-avatar-group` vanished and the smoke caught it — while a
+  pseudo-class _inside_ the parens is part of the compound selector and works,
+  so `::slotted(pf-avatar:not(:first-child))` is how that rule is written. The
+  same limit is why `pf-accordion`'s rule between sections lives in the child.
+- **Reach a nested element's colours through its own custom properties.**
+  `pf-avatar-group`'s `+N` chip is a `pf-avatar` in the shadow root — it needs
+  an avatar's shape, size and ring, and reusing the element is how it gets all
+  three — but a rule in the group's sheet cannot reach inside it. Setting the
+  `--pf-avatar-bg` and `--pf-avatar-text` that `pf-avatar` already reads does,
+  because custom properties inherit through the boundary. Assert the bridge by
+  reading the property off the element, not by comparing colours: the chip's
+  token and the avatar's own both resolve to
+  `--color-semantic-background-subtle`, so a colour comparison passes whether
+  the bridge applied or not.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

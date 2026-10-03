@@ -8,6 +8,7 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { PfAccordionHeadingLevel, PfAccordionType } from "./components/pf-accordion/pf-accordion";
 import { PfAccordionHeadingLevel as PfAccordionHeadingLevel1 } from "./components/pf-accordion/pf-accordion";
 import { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
+import { PfAvatarSize as PfAvatarSize1 } from "./components/pf-avatar/pf-avatar";
 import { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 import { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
 import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
@@ -42,6 +43,7 @@ import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-uti
 export { PfAccordionHeadingLevel, PfAccordionType } from "./components/pf-accordion/pf-accordion";
 export { PfAccordionHeadingLevel as PfAccordionHeadingLevel1 } from "./components/pf-accordion/pf-accordion";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
+export { PfAvatarSize as PfAvatarSize1 } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 export { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
@@ -163,6 +165,42 @@ export namespace Components {
           * Presence indicator. Decorative — convey it in text as well.
          */
         "status"?: PfAvatarStatus;
+    }
+    /**
+     * A stack of overlapping `pf-avatar` children, with a `+N` chip for the ones
+     * that did not fit.
+     * Children rather than an array of people, as everywhere else — a consumer
+     * loops in their own template, and each avatar keeps its own `src`, `name` and
+     * `status`.
+     * The chip is a `pf-avatar` of its own, in the shadow root: it needs an
+     * avatar's shape, size and ring, and reusing the element is how it gets them
+     * without a second copy of all three. Its colours come through the
+     * `--pf-avatar-*` properties the avatar already reads, which inherit through
+     * the shadow boundary.
+     */
+    interface PfAvatarGroup {
+        /**
+          * Overrides the generated name, which counts the people in the group.
+         */
+        "label"?: string;
+        /**
+          * How many avatars to show before collapsing the rest into the chip.
+          * @default 5
+         */
+        "max": number;
+        /**
+          * Re-reads the children, for a consumer who changed one through a property.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Applied to every avatar in the group. Reflected, and pushed down.
+          * @default 'md'
+         */
+        "size": PfAvatarSize1;
+        /**
+          * The group's real size, for a group that knows how many people there are without being handed an avatar for each: five faces and `+35`.
+         */
+        "total"?: number;
     }
     interface PfBadge {
         /**
@@ -2622,6 +2660,24 @@ declare global {
         prototype: HTMLPfAvatarElement;
         new (): HTMLPfAvatarElement;
     };
+    /**
+     * A stack of overlapping `pf-avatar` children, with a `+N` chip for the ones
+     * that did not fit.
+     * Children rather than an array of people, as everywhere else — a consumer
+     * loops in their own template, and each avatar keeps its own `src`, `name` and
+     * `status`.
+     * The chip is a `pf-avatar` of its own, in the shadow root: it needs an
+     * avatar's shape, size and ring, and reusing the element is how it gets them
+     * without a second copy of all three. Its colours come through the
+     * `--pf-avatar-*` properties the avatar already reads, which inherit through
+     * the shadow boundary.
+     */
+    interface HTMLPfAvatarGroupElement extends Components.PfAvatarGroup, HTMLStencilElement {
+    }
+    var HTMLPfAvatarGroupElement: {
+        prototype: HTMLPfAvatarGroupElement;
+        new (): HTMLPfAvatarGroupElement;
+    };
     interface HTMLPfBadgeElement extends Components.PfBadge, HTMLStencilElement {
     }
     var HTMLPfBadgeElement: {
@@ -3944,6 +4000,7 @@ declare global {
         "pf-accordion": HTMLPfAccordionElement;
         "pf-accordion-item": HTMLPfAccordionItemElement;
         "pf-avatar": HTMLPfAvatarElement;
+        "pf-avatar-group": HTMLPfAvatarGroupElement;
         "pf-badge": HTMLPfBadgeElement;
         "pf-badge-group": HTMLPfBadgeGroupElement;
         "pf-breadcrumb": HTMLPfBreadcrumbElement;
@@ -4115,6 +4172,38 @@ declare namespace LocalJSX {
           * Presence indicator. Decorative — convey it in text as well.
          */
         "status"?: PfAvatarStatus;
+    }
+    /**
+     * A stack of overlapping `pf-avatar` children, with a `+N` chip for the ones
+     * that did not fit.
+     * Children rather than an array of people, as everywhere else — a consumer
+     * loops in their own template, and each avatar keeps its own `src`, `name` and
+     * `status`.
+     * The chip is a `pf-avatar` of its own, in the shadow root: it needs an
+     * avatar's shape, size and ring, and reusing the element is how it gets them
+     * without a second copy of all three. Its colours come through the
+     * `--pf-avatar-*` properties the avatar already reads, which inherit through
+     * the shadow boundary.
+     */
+    interface PfAvatarGroup {
+        /**
+          * Overrides the generated name, which counts the people in the group.
+         */
+        "label"?: string;
+        /**
+          * How many avatars to show before collapsing the rest into the chip.
+          * @default 5
+         */
+        "max"?: number;
+        /**
+          * Applied to every avatar in the group. Reflected, and pushed down.
+          * @default 'md'
+         */
+        "size"?: PfAvatarSize1;
+        /**
+          * The group's real size, for a group that knows how many people there are without being handed an avatar for each: five faces and `+35`.
+         */
+        "total"?: number;
     }
     interface PfBadge {
         /**
@@ -6395,6 +6484,12 @@ declare namespace LocalJSX {
         "size": PfAvatarSize;
         "status": PfAvatarStatus;
     }
+    interface PfAvatarGroupAttributes {
+        "max": number;
+        "size": PfAvatarSize;
+        "total": number;
+        "label": string;
+    }
     interface PfBadgeAttributes {
         "variant": PfBadgeVariant;
     }
@@ -6837,6 +6932,7 @@ declare namespace LocalJSX {
         "pf-accordion": Omit<PfAccordion, keyof PfAccordionAttributes> & { [K in keyof PfAccordion & keyof PfAccordionAttributes]?: PfAccordion[K] } & { [K in keyof PfAccordion & keyof PfAccordionAttributes as `attr:${K}`]?: PfAccordionAttributes[K] } & { [K in keyof PfAccordion & keyof PfAccordionAttributes as `prop:${K}`]?: PfAccordion[K] };
         "pf-accordion-item": Omit<PfAccordionItem, keyof PfAccordionItemAttributes> & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes]?: PfAccordionItem[K] } & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes as `attr:${K}`]?: PfAccordionItemAttributes[K] } & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes as `prop:${K}`]?: PfAccordionItem[K] };
         "pf-avatar": Omit<PfAvatar, keyof PfAvatarAttributes> & { [K in keyof PfAvatar & keyof PfAvatarAttributes]?: PfAvatar[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `attr:${K}`]?: PfAvatarAttributes[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `prop:${K}`]?: PfAvatar[K] };
+        "pf-avatar-group": Omit<PfAvatarGroup, keyof PfAvatarGroupAttributes> & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes]?: PfAvatarGroup[K] } & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes as `attr:${K}`]?: PfAvatarGroupAttributes[K] } & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes as `prop:${K}`]?: PfAvatarGroup[K] };
         "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
         "pf-badge-group": Omit<PfBadgeGroup, keyof PfBadgeGroupAttributes> & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes]?: PfBadgeGroup[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `attr:${K}`]?: PfBadgeGroupAttributes[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `prop:${K}`]?: PfBadgeGroup[K] };
         "pf-breadcrumb": Omit<PfBreadcrumb, keyof PfBreadcrumbAttributes> & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes]?: PfBreadcrumb[K] } & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes as `attr:${K}`]?: PfBreadcrumbAttributes[K] } & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes as `prop:${K}`]?: PfBreadcrumb[K] };
@@ -6944,6 +7040,19 @@ declare module "@stencil/core" {
              */
             "pf-accordion-item": LocalJSX.IntrinsicElements["pf-accordion-item"] & JSXBase.HTMLAttributes<HTMLPfAccordionItemElement>;
             "pf-avatar": LocalJSX.IntrinsicElements["pf-avatar"] & JSXBase.HTMLAttributes<HTMLPfAvatarElement>;
+            /**
+             * A stack of overlapping `pf-avatar` children, with a `+N` chip for the ones
+             * that did not fit.
+             * Children rather than an array of people, as everywhere else — a consumer
+             * loops in their own template, and each avatar keeps its own `src`, `name` and
+             * `status`.
+             * The chip is a `pf-avatar` of its own, in the shadow root: it needs an
+             * avatar's shape, size and ring, and reusing the element is how it gets them
+             * without a second copy of all three. Its colours come through the
+             * `--pf-avatar-*` properties the avatar already reads, which inherit through
+             * the shadow boundary.
+             */
+            "pf-avatar-group": LocalJSX.IntrinsicElements["pf-avatar-group"] & JSXBase.HTMLAttributes<HTMLPfAvatarGroupElement>;
             "pf-badge": LocalJSX.IntrinsicElements["pf-badge"] & JSXBase.HTMLAttributes<HTMLPfBadgeElement>;
             /**
              * A badge joined to a line of text, sharing one rounded outline — the

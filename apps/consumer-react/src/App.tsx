@@ -3,6 +3,7 @@ import {
   PfAccordion,
   PfAccordionItem,
   PfAvatar,
+  PfAvatarGroup,
   PfBadge,
   PfBadgeGroup,
   PfBreadcrumb,
@@ -892,6 +893,20 @@ export function App() {
         <span slot="description">Nothing is blocked.</span>
         <PfButton slot="actions">Save</PfButton>
       </PfSectionFooter>
+
+      {/*
+        Four avatars, two shown: the group collapses the rest with a data
+        attribute of its own rather than `hidden`, which stays the consumer's.
+        The +N chip is a pf-avatar in the shadow root — it needs an avatar's
+        shape and ring, and its colours come through the --pf-avatar-*
+        properties, which inherit across the boundary.
+      */}
+      <PfAvatarGroup max={2} total={40} data-testid="avatar-group">
+        <PfAvatar name="Ada Lovelace" />
+        <PfAvatar name="Grace Hopper" />
+        <PfAvatar name="Alan Turing" />
+        <PfAvatar name="Katherine Johnson" />
+      </PfAvatarGroup>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

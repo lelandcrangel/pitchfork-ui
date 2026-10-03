@@ -1,5 +1,6 @@
 export * from './anchoring';
 export * from './aria';
+export * from './avatar-group';
 export * from './breadcrumbs';
 export * from './command';
 export * from './date';

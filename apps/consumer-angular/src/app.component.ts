@@ -4,6 +4,7 @@ import {
   PfAccordion,
   PfAccordionItem,
   PfAvatar,
+  PfAvatarGroup,
   PfBadge,
   PfBadgeGroup,
   PfBreadcrumb,
@@ -95,6 +96,7 @@ import {
     PfAccordion,
     PfAccordionItem,
     PfAvatar,
+    PfAvatarGroup,
     PfBadge,
     PfBadgeGroup,
     PfBreadcrumb,
@@ -777,6 +779,14 @@ import {
         <span slot="description">Nothing is blocked.</span>
         <pf-button slot="actions">Save</pf-button>
       </pf-section-footer>
+
+      <!-- Two of forty shown; see the React consumer. -->
+      <pf-avatar-group [max]="2" [total]="40" data-testid="avatar-group">
+        <pf-avatar name="Ada Lovelace"></pf-avatar>
+        <pf-avatar name="Grace Hopper"></pf-avatar>
+        <pf-avatar name="Alan Turing"></pf-avatar>
+        <pf-avatar name="Katherine Johnson"></pf-avatar>
+      </pf-avatar-group>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
