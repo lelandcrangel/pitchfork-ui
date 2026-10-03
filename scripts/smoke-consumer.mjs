@@ -67,6 +67,7 @@ const EXPECTED = [
   'pf-toolbar-separator',
   'pf-pagination',
   'pf-checkbox',
+  'pf-sidebar-navigation',
   'pf-switch',
   'pf-textarea',
   'pf-slider',
@@ -84,6 +85,7 @@ const EXPECTED = [
   'pf-menu-item',
   'pf-menu-separator',
   'pf-slideout-menu',
+  'pf-nav-section',
   'pf-notification',
   'pf-toaster',
   'pf-command-palette',
@@ -3715,6 +3717,175 @@ try {
               'list — an empty box is still taking a column',
           );
         }
+      }
+    }
+  }
+
+  /*
+   * The sidebar navigation, and the three things only a build shows: the
+   * `--pf-nav-item-*` bridge resolving to the *sidebar's* aliases rather than
+   * the header's on the very same element, the footer's rule not being drawn
+   * across an empty box, and the vertical layout — one item per row, each
+   * filling the list, with the badge pushed to the far edge by the label
+   * taking the slack.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const nav = document.querySelector('pf-sidebar-navigation');
+        if (!nav) return { error: 'the consumer app has no pf-sidebar-navigation' };
+
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const item = (testid) => document.querySelector(`[data-testid="${testid}"]`);
+        const box = (testid) => part(item(testid), 'link');
+        for (let i = 0; i < 4; i += 1) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+
+        const current = box('sidebar-nav-current');
+        const plain = box('sidebar-nav-plain');
+        const section = item('sidebar-section');
+        const untitled = item('sidebar-section-untitled');
+        const headerItem = item('header-nav-current');
+
+        const badge = item('sidebar-nav-current').querySelector('pf-badge');
+        const label = item('sidebar-nav-current').shadowRoot.querySelector('[part="label"]');
+
+        return {
+          footerDrawn: getComputedStyle(part(nav, 'footer')).display !== 'none',
+          headerDrawn: getComputedStyle(part(nav, 'header')).display !== 'none',
+          // The sections own the lists; the navigation renders none.
+          navLists: nav.shadowRoot.querySelectorAll('ul').length,
+          sectionList: part(section, 'list').tagName.toLowerCase(),
+          titleDrawn: getComputedStyle(part(section, 'title')).display !== 'none',
+          untitledDrawn: getComputedStyle(part(untitled, 'title')).display !== 'none',
+          /*
+           * The one measurement that really shows the orientation arriving:
+           * the *same element* is taller and more generously padded in the
+           * sidebar than in the header. Its width proves nothing — the link
+           * box is a block-level flex container either way, so it fills the
+           * list whatever the vertical rule says.
+           */
+          verticalHeight: current.getBoundingClientRect().height,
+          horizontalHeight: headerItem
+            ? part(headerItem, 'link').getBoundingClientRect().height
+            : null,
+          verticalPadding: getComputedStyle(current).paddingLeft,
+          horizontalPadding: headerItem
+            ? getComputedStyle(part(headerItem, 'link')).paddingLeft
+            : null,
+          onSeparateRows:
+            Math.round(item('sidebar-nav-plain').getBoundingClientRect().top) >
+            Math.round(item('sidebar-nav-current').getBoundingClientRect().bottom - 1),
+          // The label takes the slack, so the badge sits at the far edge.
+          badgeGap: current.getBoundingClientRect().right - badge.getBoundingClientRect().right,
+          labelFlex: getComputedStyle(label).flexGrow,
+          /*
+           * The bridge, read on the item itself. There is no `:root` default
+           * behind it, so a missing bridge resolves to nothing and kills the
+           * declaration at computed-value time — which is also what the
+           * colour comparison below then sees. The sidebar's and the header's
+           * aliases happen to resolve to the same token today, so comparing
+           * the two would prove nothing.
+           */
+          sidebarAlias: getComputedStyle(item('sidebar-nav-current'))
+            .getPropertyValue('--pf-nav-item-text')
+            .trim(),
+          headerPresent: headerItem !== null,
+          currentBackground: getComputedStyle(current).backgroundColor,
+          plainBackground: getComputedStyle(plain).backgroundColor,
+          announced: [...nav.querySelectorAll('pf-nav-item')].filter(
+            (node) => part(node, 'link').getAttribute('aria-current') === 'page',
+          ).length,
+          secondAsked: item('sidebar-nav-second').hasAttribute('current'),
+          // The same-root IDREF the section's title names its list with.
+          /*
+           * Read through the slot, because the title box holds only a
+           * `<slot>`: its own `textContent` is the empty fallback, while the
+           * accessibility tree names the list from the flattened tree.
+           */
+          namedBy: (() => {
+            const id = part(section, 'list').getAttribute('aria-labelledby');
+            if (!id) return null;
+            const target = section.shadowRoot.getElementById(id);
+            const slot = target?.querySelector('slot');
+            return slot
+              ?.assignedNodes()
+              .map((node) => node.textContent)
+              .join('')
+              .trim();
+          })(),
+          untitledNamedBy: part(untitled, 'list').getAttribute('aria-labelledby'),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-sidebar-navigation: ${state.error}`);
+    } else {
+      if (!state.footerDrawn || !state.headerDrawn) {
+        problems.push('the sidebar collapsed a box that had something slotted into it');
+      }
+      if (state.navLists !== 0 || state.sectionList !== 'ul') {
+        problems.push(
+          `the navigation rendered ${state.navLists} lists of its own and the section a ` +
+            `<${state.sectionList}> — the sections own the lists`,
+        );
+      }
+      if (!state.titleDrawn) {
+        problems.push('a section with a title did not draw it');
+      }
+      if (state.untitledDrawn) {
+        problems.push('a section with no title drew an empty title box');
+      }
+      if (state.untitledNamedBy !== null) {
+        problems.push(
+          `an untitled section named its list with "${state.untitledNamedBy}", which names it ` +
+            'with an empty string rather than not at all',
+        );
+      }
+      if (state.namedBy !== 'Main') {
+        problems.push(`the section's list is named "${state.namedBy}", expected Main`);
+      }
+      if (!(state.verticalHeight > state.horizontalHeight)) {
+        problems.push(
+          `the same item measured ${state.verticalHeight}px in the sidebar and ` +
+            `${state.horizontalHeight}px in the header — the orientation did not reach it`,
+        );
+      }
+      if (state.verticalPadding === state.horizontalPadding) {
+        problems.push(`the same item is padded ${state.verticalPadding} in both orientations`);
+      }
+      if (!state.onSeparateRows) {
+        problems.push('the sidebar items laid out on one row');
+      }
+      if (state.badgeGap > 24) {
+        problems.push(
+          `the badge sits ${state.badgeGap}px from the item's edge — the label is not taking ` +
+            'the slack',
+        );
+      }
+      if (state.labelFlex === '0') {
+        problems.push("the label's flex-grow is 0 in a vertical item");
+      }
+      if (!state.sidebarAlias) {
+        problems.push('--pf-nav-item-text resolved to nothing inside the sidebar');
+      }
+      if (!state.headerPresent) {
+        problems.push('the consumer app no longer shows the same item in a header navigation');
+      }
+      if (state.currentBackground === state.plainBackground) {
+        problems.push(
+          `the current item is the same colour as a plain one ("${state.plainBackground}")`,
+        );
+      }
+      if (state.announced !== 1) {
+        problems.push(
+          `${state.announced} sidebar items announced aria-current="page" — exactly one may`,
+        );
+      }
+      if (!state.secondAsked) {
+        problems.push('the sidebar cleared the second item’s current attribute');
       }
     }
   }

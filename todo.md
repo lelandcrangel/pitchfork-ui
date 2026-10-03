@@ -409,3 +409,21 @@ for a list of links (a navigation is not a composite widget) — but
 disabled item with an `onClick` as a `disabled` button, so the two disabled
 states are differently reachable. `<pf-nav-item>` has one rule: a disabled item
 renders no anchor at all.
+
+---
+
+## `<pf-sidebar-navigation>` has no collapsed state
+
+The React `SidebarNavigation` has none either, so nothing has been lost — but a
+sidebar that cannot narrow to icons only is the obvious gap in both layers. The
+element is the better place to add it: `pf-nav-item` already has the icon slot
+and a pushed-down `orientation`, so a `collapsed` prop on the navigation would
+push the same way and the item would hide its label and badge and keep the
+icon. The label still has to reach a screen reader, which means
+`aria-label` from the slotted text rather than `display: none` on it.
+
+**Not yet done because** it needs a decision on the tooltip a collapsed item
+should show, and `pf-tooltip` cannot describe a trigger across a shadow
+boundary with an IDREF — it copies the text onto the trigger as
+`aria-description`. Two elements each copying text onto the same node is the
+part to think about first.

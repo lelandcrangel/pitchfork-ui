@@ -1555,6 +1555,19 @@ export namespace Components {
         "target"?: string;
     }
     /**
+     * A titled group of `pf-nav-item` children inside a `pf-sidebar-navigation`.
+     * The React `SidebarNavigation` takes a `sections` array of `{ title, items }`.
+     * Grouping slotted children has to be structural — one `<slot>` renders every
+     * assigned child in source order, and a shadow root cannot wrap a subset of
+     * them in a box — so the consumer nests, which is the §2.1 idiom and the same
+     * answer `pf-command-group` gives.
+     * The title names the list with a **same-root** IDREF: both the title and the
+     * `<ul>` are in this shadow root, so the reference resolves. An
+     * `aria-labelledby` from the host could not point at either of them.
+     */
+    interface PfNavSection {
+    }
+    /**
      * A notification: an icon, a heading, a body and an optional dismiss button.
      * The role comes from core's `liveRegionRole`, so `warning` and `danger`
      * announce assertively and `info` and `success` wait their turn. The React
@@ -2152,6 +2165,35 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    /**
+     * A sidebar navigation over `pf-nav-item` children, optionally grouped into
+     * `pf-nav-section`s.
+     * The group owns the one thing an item cannot know: which item is the current
+     * page. Core's rule decides, so the React `SidebarNavigation` marks the same
+     * one — and the resolution runs across every section rather than within one,
+     * because `aria-current="page"` names the one page the reader is on and a
+     * sidebar with two marked sections would claim two.
+     * As with `pf-header-navigation`, the host is not a landmark of its own: the
+     * React component renders an `<aside>`, and an element cannot know whether it
+     * is the page's complementary region. Only the `<nav>` is rendered.
+     * Items are grouped: the default slot takes `pf-nav-section` children, each
+     * of which owns its own `<ul>`. A navigation with no section titles is one
+     * untitled section, which is exactly what the React `sections` array is — and
+     * it is also the only arrangement that keeps the list semantics honest, since
+     * a `<ul>` here would be a list whose children were sections rather than
+     * items.
+     */
+    interface PfSidebarNavigation {
+        /**
+          * The navigation's accessible name.
+          * @default 'Sidebar navigation'
+         */
+        "label": string;
+        /**
+          * Re-reads the items, for a consumer who marked one current through its *property* — which leaves no attribute and fires no `slotchange`.
+         */
+        "refresh": () => Promise<void>;
     }
     /**
      * A panel that slides in from the edge of the screen — a modal dialog that
@@ -3122,6 +3164,10 @@ export interface PfModalCustomEvent<T> extends CustomEvent<T> {
 export interface PfMultiSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfMultiSelectElement;
+}
+export interface PfNavSectionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfNavSectionElement;
 }
 export interface PfNotificationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4100,6 +4146,34 @@ declare global {
         prototype: HTMLPfNavItemElement;
         new (): HTMLPfNavItemElement;
     };
+    interface HTMLPfNavSectionElementEventMap {
+        "pfNavStructure": void;
+    }
+    /**
+     * A titled group of `pf-nav-item` children inside a `pf-sidebar-navigation`.
+     * The React `SidebarNavigation` takes a `sections` array of `{ title, items }`.
+     * Grouping slotted children has to be structural — one `<slot>` renders every
+     * assigned child in source order, and a shadow root cannot wrap a subset of
+     * them in a box — so the consumer nests, which is the §2.1 idiom and the same
+     * answer `pf-command-group` gives.
+     * The title names the list with a **same-root** IDREF: both the title and the
+     * `<ul>` are in this shadow root, so the reference resolves. An
+     * `aria-labelledby` from the host could not point at either of them.
+     */
+    interface HTMLPfNavSectionElement extends Components.PfNavSection, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfNavSectionElementEventMap>(type: K, listener: (this: HTMLPfNavSectionElement, ev: PfNavSectionCustomEvent<HTMLPfNavSectionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfNavSectionElementEventMap>(type: K, listener: (this: HTMLPfNavSectionElement, ev: PfNavSectionCustomEvent<HTMLPfNavSectionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfNavSectionElement: {
+        prototype: HTMLPfNavSectionElement;
+        new (): HTMLPfNavSectionElement;
+    };
     interface HTMLPfNotificationElementEventMap {
         "pfDismiss": void;
     }
@@ -4427,6 +4501,30 @@ declare global {
     var HTMLPfSelectElement: {
         prototype: HTMLPfSelectElement;
         new (): HTMLPfSelectElement;
+    };
+    /**
+     * A sidebar navigation over `pf-nav-item` children, optionally grouped into
+     * `pf-nav-section`s.
+     * The group owns the one thing an item cannot know: which item is the current
+     * page. Core's rule decides, so the React `SidebarNavigation` marks the same
+     * one — and the resolution runs across every section rather than within one,
+     * because `aria-current="page"` names the one page the reader is on and a
+     * sidebar with two marked sections would claim two.
+     * As with `pf-header-navigation`, the host is not a landmark of its own: the
+     * React component renders an `<aside>`, and an element cannot know whether it
+     * is the page's complementary region. Only the `<nav>` is rendered.
+     * Items are grouped: the default slot takes `pf-nav-section` children, each
+     * of which owns its own `<ul>`. A navigation with no section titles is one
+     * untitled section, which is exactly what the React `sections` array is — and
+     * it is also the only arrangement that keeps the list semantics honest, since
+     * a `<ul>` here would be a list whose children were sections rather than
+     * items.
+     */
+    interface HTMLPfSidebarNavigationElement extends Components.PfSidebarNavigation, HTMLStencilElement {
+    }
+    var HTMLPfSidebarNavigationElement: {
+        prototype: HTMLPfSidebarNavigationElement;
+        new (): HTMLPfSidebarNavigationElement;
     };
     interface HTMLPfSlideoutMenuElementEventMap {
         "pfOpenChange": { open: boolean };
@@ -4990,6 +5088,7 @@ declare global {
         "pf-modal-header": HTMLPfModalHeaderElement;
         "pf-multi-select": HTMLPfMultiSelectElement;
         "pf-nav-item": HTMLPfNavItemElement;
+        "pf-nav-section": HTMLPfNavSectionElement;
         "pf-notification": HTMLPfNotificationElement;
         "pf-number-input": HTMLPfNumberInputElement;
         "pf-option": HTMLPfOptionElement;
@@ -5008,6 +5107,7 @@ declare global {
         "pf-section-footer": HTMLPfSectionFooterElement;
         "pf-section-header": HTMLPfSectionHeaderElement;
         "pf-select": HTMLPfSelectElement;
+        "pf-sidebar-navigation": HTMLPfSidebarNavigationElement;
         "pf-slideout-menu": HTMLPfSlideoutMenuElement;
         "pf-slider": HTMLPfSliderElement;
         "pf-switch": HTMLPfSwitchElement;
@@ -6501,6 +6601,23 @@ declare namespace LocalJSX {
         "target"?: string;
     }
     /**
+     * A titled group of `pf-nav-item` children inside a `pf-sidebar-navigation`.
+     * The React `SidebarNavigation` takes a `sections` array of `{ title, items }`.
+     * Grouping slotted children has to be structural — one `<slot>` renders every
+     * assigned child in source order, and a shadow root cannot wrap a subset of
+     * them in a box — so the consumer nests, which is the §2.1 idiom and the same
+     * answer `pf-command-group` gives.
+     * The title names the list with a **same-root** IDREF: both the title and the
+     * `<ul>` are in this shadow root, so the reference resolves. An
+     * `aria-labelledby` from the host could not point at either of them.
+     */
+    interface PfNavSection {
+        /**
+          * Tells the navigation its items have moved.  `slotchange` is not composed, so the navigation never hears this section's own slot change — exactly the reason `pf-tree-item` emits `pfTreeStructure`. Without it an item appended to a section is never given an orientation or a place in the one-current resolution.
+         */
+        "onPfNavStructure"?: (event: PfNavSectionCustomEvent<void>) => void;
+    }
+    /**
      * A notification: an icon, a heading, a body and an optional dismiss button.
      * The role comes from core's `liveRegionRole`, so `warning` and `danger`
      * announce assertively and `info` and `success` wait their turn. The React
@@ -7093,6 +7210,31 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    /**
+     * A sidebar navigation over `pf-nav-item` children, optionally grouped into
+     * `pf-nav-section`s.
+     * The group owns the one thing an item cannot know: which item is the current
+     * page. Core's rule decides, so the React `SidebarNavigation` marks the same
+     * one — and the resolution runs across every section rather than within one,
+     * because `aria-current="page"` names the one page the reader is on and a
+     * sidebar with two marked sections would claim two.
+     * As with `pf-header-navigation`, the host is not a landmark of its own: the
+     * React component renders an `<aside>`, and an element cannot know whether it
+     * is the page's complementary region. Only the `<nav>` is rendered.
+     * Items are grouped: the default slot takes `pf-nav-section` children, each
+     * of which owns its own `<ul>`. A navigation with no section titles is one
+     * untitled section, which is exactly what the React `sections` array is — and
+     * it is also the only arrangement that keeps the list semantics honest, since
+     * a `<ul>` here would be a list whose children were sections rather than
+     * items.
+     */
+    interface PfSidebarNavigation {
+        /**
+          * The navigation's accessible name.
+          * @default 'Sidebar navigation'
+         */
+        "label"?: string;
     }
     /**
      * A panel that slides in from the edge of the screen — a modal dialog that
@@ -8389,6 +8531,9 @@ declare namespace LocalJSX {
         "disabled": boolean;
         "maxVisibleOptions": number;
     }
+    interface PfSidebarNavigationAttributes {
+        "label": string;
+    }
     interface PfSlideoutMenuAttributes {
         "open": boolean;
         "placement": PfSlideoutMenuPlacement;
@@ -8608,6 +8753,7 @@ declare namespace LocalJSX {
         "pf-modal-header": PfModalHeader;
         "pf-multi-select": Omit<PfMultiSelect, keyof PfMultiSelectAttributes> & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes]?: PfMultiSelect[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `attr:${K}`]?: PfMultiSelectAttributes[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `prop:${K}`]?: PfMultiSelect[K] };
         "pf-nav-item": Omit<PfNavItem, keyof PfNavItemAttributes> & { [K in keyof PfNavItem & keyof PfNavItemAttributes]?: PfNavItem[K] } & { [K in keyof PfNavItem & keyof PfNavItemAttributes as `attr:${K}`]?: PfNavItemAttributes[K] } & { [K in keyof PfNavItem & keyof PfNavItemAttributes as `prop:${K}`]?: PfNavItem[K] };
+        "pf-nav-section": PfNavSection;
         "pf-notification": Omit<PfNotification, keyof PfNotificationAttributes> & { [K in keyof PfNotification & keyof PfNotificationAttributes]?: PfNotification[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `attr:${K}`]?: PfNotificationAttributes[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `prop:${K}`]?: PfNotification[K] };
         "pf-number-input": Omit<PfNumberInput, keyof PfNumberInputAttributes> & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes]?: PfNumberInput[K] } & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes as `attr:${K}`]?: PfNumberInputAttributes[K] } & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes as `prop:${K}`]?: PfNumberInput[K] };
         "pf-option": Omit<PfOption, keyof PfOptionAttributes> & { [K in keyof PfOption & keyof PfOptionAttributes]?: PfOption[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `attr:${K}`]?: PfOptionAttributes[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `prop:${K}`]?: PfOption[K] };
@@ -8626,6 +8772,7 @@ declare namespace LocalJSX {
         "pf-section-footer": Omit<PfSectionFooter, keyof PfSectionFooterAttributes> & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes]?: PfSectionFooter[K] } & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes as `attr:${K}`]?: PfSectionFooterAttributes[K] } & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes as `prop:${K}`]?: PfSectionFooter[K] };
         "pf-section-header": Omit<PfSectionHeader, keyof PfSectionHeaderAttributes> & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes]?: PfSectionHeader[K] } & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes as `attr:${K}`]?: PfSectionHeaderAttributes[K] } & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes as `prop:${K}`]?: PfSectionHeader[K] };
         "pf-select": Omit<PfSelect, keyof PfSelectAttributes> & { [K in keyof PfSelect & keyof PfSelectAttributes]?: PfSelect[K] } & { [K in keyof PfSelect & keyof PfSelectAttributes as `attr:${K}`]?: PfSelectAttributes[K] } & { [K in keyof PfSelect & keyof PfSelectAttributes as `prop:${K}`]?: PfSelect[K] };
+        "pf-sidebar-navigation": Omit<PfSidebarNavigation, keyof PfSidebarNavigationAttributes> & { [K in keyof PfSidebarNavigation & keyof PfSidebarNavigationAttributes]?: PfSidebarNavigation[K] } & { [K in keyof PfSidebarNavigation & keyof PfSidebarNavigationAttributes as `attr:${K}`]?: PfSidebarNavigationAttributes[K] } & { [K in keyof PfSidebarNavigation & keyof PfSidebarNavigationAttributes as `prop:${K}`]?: PfSidebarNavigation[K] };
         "pf-slideout-menu": Omit<PfSlideoutMenu, keyof PfSlideoutMenuAttributes> & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes]?: PfSlideoutMenu[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `attr:${K}`]?: PfSlideoutMenuAttributes[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `prop:${K}`]?: PfSlideoutMenu[K] };
         "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
@@ -9071,6 +9218,18 @@ declare module "@stencil/core" {
              */
             "pf-nav-item": LocalJSX.IntrinsicElements["pf-nav-item"] & JSXBase.HTMLAttributes<HTMLPfNavItemElement>;
             /**
+             * A titled group of `pf-nav-item` children inside a `pf-sidebar-navigation`.
+             * The React `SidebarNavigation` takes a `sections` array of `{ title, items }`.
+             * Grouping slotted children has to be structural — one `<slot>` renders every
+             * assigned child in source order, and a shadow root cannot wrap a subset of
+             * them in a box — so the consumer nests, which is the §2.1 idiom and the same
+             * answer `pf-command-group` gives.
+             * The title names the list with a **same-root** IDREF: both the title and the
+             * `<ul>` are in this shadow root, so the reference resolves. An
+             * `aria-labelledby` from the host could not point at either of them.
+             */
+            "pf-nav-section": LocalJSX.IntrinsicElements["pf-nav-section"] & JSXBase.HTMLAttributes<HTMLPfNavSectionElement>;
+            /**
              * A notification: an icon, a heading, a body and an optional dismiss button.
              * The role comes from core's `liveRegionRole`, so `warning` and `danger`
              * announce assertively and `info` and `success` wait their turn. The React
@@ -9219,6 +9378,25 @@ declare module "@stencil/core" {
              * work, because the listbox itself is in this same root.
              */
             "pf-select": LocalJSX.IntrinsicElements["pf-select"] & JSXBase.HTMLAttributes<HTMLPfSelectElement>;
+            /**
+             * A sidebar navigation over `pf-nav-item` children, optionally grouped into
+             * `pf-nav-section`s.
+             * The group owns the one thing an item cannot know: which item is the current
+             * page. Core's rule decides, so the React `SidebarNavigation` marks the same
+             * one — and the resolution runs across every section rather than within one,
+             * because `aria-current="page"` names the one page the reader is on and a
+             * sidebar with two marked sections would claim two.
+             * As with `pf-header-navigation`, the host is not a landmark of its own: the
+             * React component renders an `<aside>`, and an element cannot know whether it
+             * is the page's complementary region. Only the `<nav>` is rendered.
+             * Items are grouped: the default slot takes `pf-nav-section` children, each
+             * of which owns its own `<ul>`. A navigation with no section titles is one
+             * untitled section, which is exactly what the React `sections` array is — and
+             * it is also the only arrangement that keeps the list semantics honest, since
+             * a `<ul>` here would be a list whose children were sections rather than
+             * items.
+             */
+            "pf-sidebar-navigation": LocalJSX.IntrinsicElements["pf-sidebar-navigation"] & JSXBase.HTMLAttributes<HTMLPfSidebarNavigationElement>;
             /**
              * A panel that slides in from the edge of the screen — a modal dialog that
              * happens to be anchored to a side rather than centred.

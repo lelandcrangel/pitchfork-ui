@@ -51,6 +51,7 @@ import {
   PfModalFooter,
   PfModalHeader,
   PfMultiSelect,
+  PfNavSection,
   PfNotification,
   PfNumberInput,
   PfPageHeader,
@@ -71,6 +72,7 @@ import {
   PfSelect,
   PfSlideoutMenu,
   PfSlider,
+  PfSidebarNavigation,
   PfSwitch,
   PfTab,
   PfTable,
@@ -156,6 +158,7 @@ import {
     PfModalFooter,
     PfModalHeader,
     PfMultiSelect,
+    PfNavSection,
     PfNotification,
     PfNumberInput,
     PfPageHeader,
@@ -176,6 +179,7 @@ import {
     PfSelect,
     PfSlideoutMenu,
     PfSlider,
+    PfSidebarNavigation,
     PfSwitch,
     PfTab,
     PfTable,
@@ -934,6 +938,32 @@ import {
         </pf-nav-item>
         <pf-button slot="actions" variant="secondary">Sign in</pf-button>
       </pf-header-navigation>
+
+      <!-- Grouped items, each section owning its own list; see the React consumer. -->
+      <pf-sidebar-navigation label="Workspace" data-testid="sidebar-navigation">
+        <span slot="header">Acme Inc.</span>
+        <pf-nav-section data-testid="sidebar-section">
+          <span slot="title">Main</span>
+          <pf-nav-item href="#home" [current]="true" data-testid="sidebar-nav-current">
+            <pf-icon slot="icon" name="folder-open" aria-hidden="true"></pf-icon>
+            Home
+            <pf-badge slot="badge" variant="brand">3</pf-badge>
+          </pf-nav-item>
+          <pf-nav-item href="#reports" data-testid="sidebar-nav-plain">
+            <pf-icon slot="icon" name="chart-bar" aria-hidden="true"></pf-icon>
+            Reports
+          </pf-nav-item>
+        </pf-nav-section>
+        <pf-nav-section data-testid="sidebar-section-untitled">
+          <pf-nav-item href="#users" [current]="true" data-testid="sidebar-nav-second">
+            Users
+          </pf-nav-item>
+          <pf-nav-item href="#audit" [disabled]="true" data-testid="sidebar-nav-disabled">
+            Audit log
+          </pf-nav-item>
+        </pf-nav-section>
+        <span slot="footer">v2.1.0</span>
+      </pf-sidebar-navigation>
 
       <!-- The same navigation with nothing slotted into either box; see the React consumer. -->
       <pf-header-navigation label="Sections" data-testid="header-navigation-bare">

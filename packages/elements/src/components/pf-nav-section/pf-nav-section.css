@@ -1,0 +1,39 @@
+:host {
+  display: grid;
+  gap: var(--space-1);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.title {
+  color: var(--pf-sidebar-nav-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  margin: 0;
+  padding: 0 var(--space-2);
+  text-transform: uppercase;
+}
+
+/*
+ * Both classes rather than a bare `.empty`, so the rule does not depend on
+ * sitting below the `display` the box sets on itself.
+ */
+.title.empty {
+  display: none;
+}
+
+.list {
+  display: grid;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* The items are grid children of the list, not of a box inside it. */
+.list slot {
+  display: contents;
+}

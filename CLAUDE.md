@@ -813,6 +813,33 @@ Things that differ from the React library, learned by porting the first two:
   bridge kills the declaration at computed-value time and shows up as an item
   with no colours at all. Both measured by deleting the bridge from the
   navigation's stylesheet.
+- **A list the consumer groups cannot also be a list the group renders.**
+  `pf-sidebar-navigation` renders no `<ul>` of its own: its children are
+  `pf-nav-section`s, and a list whose children are sections rather than items
+  is not a list. Each section owns its own `<ul>` and names it with a
+  **same-root** IDREF — the title and the list are both in the section's shadow
+  root, so the reference resolves, where an `aria-labelledby` from the host
+  could reach neither. An untitled section sets no `aria-labelledby` at all,
+  because pointing at an empty box names the list with an empty string rather
+  than leaving it unnamed.
+- **A slot's own `textContent` is the fallback, not what was slotted.** It bit
+  the smoke here, reading a section title through `aria-labelledby`: the title
+  box holds only a `<slot>`, so its `textContent` is `''` while the
+  accessibility tree names the list perfectly well from the flattened tree.
+  Read `assignedNodes()`/`assignedElements()` when checking what a reader would
+  get.
+- **Measure the thing a rule actually changes, not the thing nearby.** Three
+  assertions written for `pf-nav-item`'s vertical orientation were vacuous, and
+  each was only found by reverting the rule and watching the smoke stay green:
+  the item host's width (a grid child of the list stretches to it whatever the
+  item says), the link box's width (a block-level flex container fills its
+  container with or without `width: 100%`), and the `--pf-nav-item-*` value
+  compared between the two navigations (the sidebar's and the header's aliases
+  resolve to the same token today). What does bite is the same element being
+  taller and more generously padded in the sidebar than in the header, and the
+  label's `flex-grow` being what pushes a badge to the far edge. **Revert every
+  new assertion once.** A check that cannot fail is worse than no check: it
+  reads as cover.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

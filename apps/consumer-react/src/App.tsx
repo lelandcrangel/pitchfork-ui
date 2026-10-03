@@ -50,6 +50,7 @@ import {
   PfModalFooter,
   PfModalHeader,
   PfMultiSelect,
+  PfNavSection,
   PfNotification,
   PfNumberInput,
   PfPageHeader,
@@ -70,6 +71,7 @@ import {
   PfSelect,
   PfSlideoutMenu,
   PfSlider,
+  PfSidebarNavigation,
   PfSwitch,
   PfTab,
   PfTable,
@@ -1122,6 +1124,40 @@ export function App() {
           Sign in
         </PfButton>
       </PfHeaderNavigation>
+
+      {/*
+        The sidebar's items are grouped: a `<ul>` around the sections would be
+        a list whose children were not items, so each section owns its own
+        list and names it with a same-root IDREF. Both items below ask to be
+        the current page, and the resolution runs across the sections rather
+        than within one.
+      */}
+      <PfSidebarNavigation label="Workspace" data-testid="sidebar-navigation">
+        <span slot="header">Acme Inc.</span>
+        <PfNavSection data-testid="sidebar-section">
+          <span slot="title">Main</span>
+          <PfNavItem href="#home" current data-testid="sidebar-nav-current">
+            <PfIcon slot="icon" name="folder-open" aria-hidden="true" />
+            Home
+            <PfBadge slot="badge" variant="brand">
+              3
+            </PfBadge>
+          </PfNavItem>
+          <PfNavItem href="#reports" data-testid="sidebar-nav-plain">
+            <PfIcon slot="icon" name="chart-bar" aria-hidden="true" />
+            Reports
+          </PfNavItem>
+        </PfNavSection>
+        <PfNavSection data-testid="sidebar-section-untitled">
+          <PfNavItem href="#users" current data-testid="sidebar-nav-second">
+            Users
+          </PfNavItem>
+          <PfNavItem href="#audit" disabled data-testid="sidebar-nav-disabled">
+            Audit log
+          </PfNavItem>
+        </PfNavSection>
+        <span slot="footer">v2.1.0</span>
+      </PfSidebarNavigation>
 
       {/*
         The same navigation with nothing slotted into either box: both are
