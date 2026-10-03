@@ -1,11 +1,8 @@
+import { resolveSlideIndex, slidePositionLabel } from '@pitchfork-ui/core';
 import { forwardRef, useEffect, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Carousel.css';
-
-const clamp = (value: number, min: number, max: number) => {
-  return Math.min(Math.max(value, min), max);
-};
 
 export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   slides: React.ReactNode[];
@@ -33,18 +30,22 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
   ref,
 ) {
   const totalSlides = slides.length;
-  const boundedInitialIndex = clamp(initialIndex, 0, Math.max(totalSlides - 1, 0));
-  const [activeIndex, setActiveIndex] = useState(boundedInitialIndex);
-  const resolvedActiveIndex = clamp(activeIndex, 0, Math.max(totalSlides - 1, 0));
+  /*
+   * The index arithmetic is core's, so `<pf-carousel>` lands on the same slide
+   * — including the wrap backwards from the first, where a bare `%` would
+   * give -1 rather than the last slide.
+   */
+  const [activeIndex, setActiveIndex] = useState(() =>
+    Math.max(resolveSlideIndex(initialIndex, totalSlides), 0),
+  );
+  const resolvedActiveIndex = Math.max(resolveSlideIndex(activeIndex, totalSlides), 0);
 
   const goToIndex = (nextIndex: number) => {
     if (totalSlides === 0) {
       return;
     }
 
-    const resolvedIndex = loop
-      ? ((nextIndex % totalSlides) + totalSlides) % totalSlides
-      : clamp(nextIndex, 0, totalSlides - 1);
+    const resolvedIndex = resolveSlideIndex(nextIndex, totalSlides, loop);
 
     setActiveIndex(resolvedIndex);
     onIndexChange?.(resolvedIndex);
@@ -57,7 +58,7 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
 
     const interval = window.setInterval(() => {
       setActiveIndex((current) => {
-        const next = loop ? (current + 1) % totalSlides : Math.min(current + 1, totalSlides - 1);
+        const next = resolveSlideIndex(current + 1, totalSlides, loop);
         onIndexChange?.(next);
         return next;
       });
@@ -71,13 +72,11 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
   const isPrevDisabled = !loop && resolvedActiveIndex <= 0;
   const isNextDisabled = !loop && resolvedActiveIndex >= totalSlides - 1;
 
-  const slideLabel = useMemo(() => {
-    if (totalSlides === 0) {
-      return 'No slides';
-    }
-
-    return `Slide ${resolvedActiveIndex + 1} of ${totalSlides}`;
-  }, [resolvedActiveIndex, totalSlides]);
+  // Core's, so both layers announce the same carousel the same way.
+  const slideLabel = useMemo(
+    () => slidePositionLabel(resolvedActiveIndex, totalSlides),
+    [resolvedActiveIndex, totalSlides],
+  );
 
   return (
     <div

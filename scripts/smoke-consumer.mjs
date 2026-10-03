@@ -46,6 +46,8 @@ const EXPECTED = [
   'pf-input',
   'pf-icon',
   'pf-card',
+  'pf-carousel',
+  'pf-carousel-slide',
   'pf-card-header',
   'pf-card-content',
   'pf-card-footer',
@@ -3402,6 +3404,159 @@ try {
       }
       if (!state.echo?.startsWith('components')) {
         problems.push(`pf-tree-view reported "${state.echo}" to the host framework`);
+      }
+    }
+  }
+
+  /*
+   * The carousel, whose whole layout is the thing no test project can see:
+   * `flex: 0 0 100%` on the slides and a percentage transform on the track
+   * only agree when the stylesheet is loaded. So this measures the geometry —
+   * one slide fills the viewport, the next one sits outside the clip, and a
+   * step brings it to exactly where the first one was — plus the transition
+   * that carries it there and the dot that marks it.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const carousel = document.querySelector('pf-carousel');
+        if (!carousel) return { error: 'the consumer app has no pf-carousel' };
+
+        const part = (name) => carousel.shadowRoot.querySelector(`[part="${name}"]`);
+        const slides = () => [...carousel.querySelectorAll('pf-carousel-slide')];
+        const dots = () => [...carousel.shadowRoot.querySelectorAll('[part="indicator"]')];
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const viewport = part('viewport').getBoundingClientRect();
+        const first = slides()[0].getBoundingClientRect();
+        const second = slides()[1].getBoundingClientRect();
+
+        const read = {
+          // One slide per viewport, which is what the transform steps by.
+          slideWidth: first.width,
+          viewportWidth: viewport.width,
+          // The next slide is laid out past the clip, not stacked underneath.
+          secondLeftOffset: second.left - viewport.right,
+          clipped: getComputedStyle(part('viewport')).overflow,
+          activeDotWidth: dots()[0].getBoundingClientRect().width,
+          plainDotWidth: dots()[1].getBoundingClientRect().width,
+          activeDotBackground: getComputedStyle(dots()[0]).backgroundColor,
+          plainDotBackground: getComputedStyle(dots()[1]).backgroundColor,
+          dotCount: dots().length,
+          // A slide nobody can see must not be a tab stop nobody can see.
+          hiddenSlideTakesFocus: (() => {
+            const button = document.querySelector('[data-testid="carousel-slide-2-button"]');
+            button?.focus();
+            return document.activeElement === button;
+          })(),
+        };
+
+        part('next').click();
+
+        /*
+         * The transition is the point of the track, so wait for it rather
+         * than sampling: `getAnimations()` is empty before the browser has
+         * started it and empty again once it has finished.
+         */
+        const deadline = Date.now() + 3000;
+        let transitioned = false;
+        while (!transitioned) {
+          if (Date.now() > deadline) break;
+          transitioned = part('track')
+            .getAnimations()
+            .some((animation) => animation.transitionProperty === 'transform');
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        await Promise.all(
+          part('track')
+            .getAnimations()
+            .map((animation) => animation.finished),
+        );
+        await settle();
+
+        const echo = () =>
+          document.querySelector('[data-testid="carousel-index"]')?.textContent?.trim();
+        while (echo() !== '1') {
+          if (Date.now() > deadline) {
+            return { ...read, transitioned, echo: echo(), error: 'the step never echoed' };
+          }
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+
+        const movedSecond = slides()[1].getBoundingClientRect();
+        return {
+          ...read,
+          transitioned,
+          echo: echo(),
+          // It landed where the first slide was, which is what makes it the
+          // one on show rather than merely the one marked.
+          landedOffset: movedSecond.left - viewport.left,
+          activeNowSecond: slides()[1].hasAttribute('active'),
+          shownSlideTakesFocus: (() => {
+            const button = document.querySelector('[data-testid="carousel-slide-2-button"]');
+            button?.focus();
+            return document.activeElement === button;
+          })(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-carousel: ${state.error}`);
+    } else {
+      if (Math.abs(state.slideWidth - state.viewportWidth) > 1) {
+        problems.push(
+          `a slide measured ${state.slideWidth}px in a ${state.viewportWidth}px viewport — ` +
+            'the flex basis did not apply',
+        );
+      }
+      if (state.secondLeftOffset < -1) {
+        problems.push(
+          `the second slide starts ${-state.secondLeftOffset}px inside the viewport — the ` +
+            'slides are stacked rather than laid out in a strip',
+        );
+      }
+      if (state.clipped !== 'hidden') {
+        problems.push(`the viewport's overflow reads "${state.clipped}", expected hidden`);
+      }
+      if (!(state.activeDotWidth > state.plainDotWidth)) {
+        problems.push(
+          `the active dot measured ${state.activeDotWidth}px against a plain one's ` +
+            `${state.plainDotWidth}px — it is not marked`,
+        );
+      }
+      if (state.activeDotBackground === state.plainDotBackground) {
+        problems.push(
+          `the active dot is the same colour as a plain one ("${state.plainDotBackground}")`,
+        );
+      }
+      if (state.dotCount !== 3) {
+        problems.push(`the carousel drew ${state.dotCount} dots for 3 slides`);
+      }
+      if (state.hiddenSlideTakesFocus) {
+        problems.push('a button in an off-screen slide took focus — the slide is not inert');
+      }
+      if (!state.transitioned) {
+        problems.push('the track did not transition — the transform was applied without animating');
+      }
+      if (Math.abs(state.landedOffset) > 1) {
+        problems.push(
+          `the second slide came to rest ${state.landedOffset}px from the viewport's edge`,
+        );
+      }
+      if (!state.activeNowSecond) {
+        problems.push('the second slide was never marked active');
+      }
+      if (!state.shownSlideTakesFocus) {
+        problems.push('a button in the slide on show could not take focus — it is still inert');
+      }
+      if (state.echo !== '1') {
+        problems.push(`pf-carousel reported "${state.echo}" to the host framework`);
       }
     }
   }

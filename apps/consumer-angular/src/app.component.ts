@@ -14,6 +14,8 @@ import {
   PfButtonGroup,
   PfButtonGroupItem,
   PfCalendar,
+  PfCarousel,
+  PfCarouselSlide,
   PfCard,
   PfCardContent,
   PfCardFooter,
@@ -115,6 +117,8 @@ import {
     PfButtonGroup,
     PfButtonGroupItem,
     PfCalendar,
+    PfCarousel,
+    PfCarouselSlide,
     PfCard,
     PfCardContent,
     PfCardFooter,
@@ -911,6 +915,53 @@ import {
       </pf-tree-view>
       <output data-testid="tree-value">{{ file() }} / {{ openFolders() || 'none' }}</output>
 
+      <!-- A carousel is a region whose content changes; see the React consumer. -->
+      <pf-carousel
+        [index]="slide()"
+        label="Featured work"
+        [loop]="true"
+        data-testid="carousel"
+        (pfChange)="slide.set($event.detail.index)"
+      >
+        <pf-carousel-slide data-testid="carousel-slide-1">
+          <pf-card>
+            <pf-card-header>
+              <h3>First slide</h3>
+            </pf-card-header>
+            <pf-card-content>
+              <p>The track steps by one of its own widths per slide.</p>
+              <pf-button variant="secondary" data-testid="carousel-slide-1-button">
+                Open the first
+              </pf-button>
+            </pf-card-content>
+          </pf-card>
+        </pf-carousel-slide>
+        <pf-carousel-slide data-testid="carousel-slide-2">
+          <pf-card>
+            <pf-card-header>
+              <h3>Second slide</h3>
+            </pf-card-header>
+            <pf-card-content>
+              <p>Each slide names its place, so a reader is never lost.</p>
+              <pf-button variant="secondary" data-testid="carousel-slide-2-button">
+                Open the second
+              </pf-button>
+            </pf-card-content>
+          </pf-card>
+        </pf-carousel-slide>
+        <pf-carousel-slide data-testid="carousel-slide-3">
+          <pf-card>
+            <pf-card-header>
+              <h3>Third slide</h3>
+            </pf-card-header>
+            <pf-card-content>
+              <p>The dots jump straight to a slide, and mark the one on show.</p>
+            </pf-card-content>
+          </pf-card>
+        </pf-carousel-slide>
+      </pf-carousel>
+      <output data-testid="carousel-index">{{ slide() }}</output>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -938,6 +989,7 @@ export class AppComponent {
   quantity = signal('2');
   sort = signal<SortState>({ key: 'name', direction: 'asc' });
   file = signal('index.ts');
+  slide = signal(0);
   openFolders = signal('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.

@@ -1,0 +1,145 @@
+:host {
+  background: var(--pf-carousel-bg);
+  border: 1px solid var(--pf-carousel-border);
+  border-radius: var(--pf-carousel-radius, var(--radius-md));
+  display: grid;
+  gap: var(--pf-carousel-gap, var(--space-3));
+  overflow: hidden;
+  padding: var(--pf-carousel-padding, var(--space-3));
+  width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.viewport {
+  background: var(--pf-carousel-viewport-bg);
+  border-radius: var(--pf-carousel-viewport-radius, var(--radius-sm));
+  overflow: hidden;
+  width: 100%;
+}
+
+.track {
+  display: flex;
+  transition: transform var(--pf-carousel-transition-duration, var(--duration-moderate))
+    var(--easing-decelerate);
+  width: 100%;
+}
+
+/*
+ * The track stays in the tree with no slides in it — a slot that is not
+ * rendered never fires `slotchange` — and is simply not laid out. Two classes
+ * deep, because the track sets its own `display` above.
+ */
+.track.empty {
+  display: none;
+}
+
+.empty {
+  align-items: center;
+  color: var(--pf-carousel-empty-text);
+  display: flex;
+  font-size: var(--pf-carousel-empty-font-size, var(--font-size-sm));
+  justify-content: center;
+  min-height: var(--pf-carousel-empty-min-height, 180px);
+  padding: var(--pf-carousel-empty-padding, var(--space-4));
+  text-align: center;
+}
+
+/*
+ * Each element needs its own copy: `.pf-sr-only` is declared once in the React
+ * library's global sheet and does not cross a shadow boundary.
+ */
+.sr-only {
+  border: 0;
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.controls {
+  align-items: center;
+  display: grid;
+  gap: var(--pf-carousel-controls-gap, var(--space-2));
+  grid-template-columns:
+    var(--pf-carousel-nav-size, 28px) 1fr
+    var(--pf-carousel-nav-size, 28px);
+}
+
+.nav {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--pf-carousel-nav-radius, var(--radius-sm));
+  color: var(--pf-carousel-nav-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--pf-carousel-nav-font-size, var(--font-size-sm));
+  height: var(--pf-carousel-nav-size, 28px);
+  justify-content: center;
+  padding: 0;
+  width: var(--pf-carousel-nav-size, 28px);
+}
+
+.nav:hover:not(:disabled) {
+  background: var(--pf-carousel-nav-hover-bg);
+  color: var(--pf-carousel-nav-hover-text);
+}
+
+.nav:focus-visible {
+  box-shadow: var(--pf-carousel-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.nav:disabled {
+  color: var(--pf-carousel-nav-text);
+  cursor: not-allowed;
+  opacity: var(--pf-carousel-disabled-opacity, 0.45);
+}
+
+.indicators {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--pf-carousel-indicator-gap, var(--space-1));
+  justify-content: center;
+}
+
+.indicator {
+  background: var(--pf-carousel-indicator-bg);
+  border: 0;
+  border-radius: var(--pf-carousel-indicator-radius, var(--radius-full));
+  cursor: pointer;
+  height: var(--pf-carousel-indicator-size, 8px);
+  padding: 0;
+  transition: all var(--pf-carousel-indicator-transition-duration, var(--duration-fast))
+    var(--easing-decelerate);
+  width: var(--pf-carousel-indicator-size, 8px);
+}
+
+.indicator--active {
+  background: var(--pf-carousel-indicator-active-bg);
+  width: var(--pf-carousel-indicator-active-width, 20px);
+}
+
+.indicator:focus-visible {
+  box-shadow: var(--pf-carousel-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.indicator-spacer {
+  display: block;
+  min-height: var(--pf-carousel-indicator-size, 8px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .indicator {
+    transition: none;
+  }
+}

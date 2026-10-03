@@ -500,6 +500,92 @@ export namespace Components {
     interface PfCardHeader {
     }
     /**
+     * A carousel over `pf-carousel-slide` children.
+     * The group owns the index, the controls, the indicators and the live region
+     * that announces the move; each slide owns only whether it is the one on show.
+     * `role="region"` with `aria-roledescription="carousel"` rather than any of
+     * the tab or listbox patterns: a carousel is a region whose content changes,
+     * and the announcement is what tells a reader it has.
+     */
+    interface PfCarousel {
+        /**
+          * Step forward on a timer.
+          * @default false
+         */
+        "autoPlay": boolean;
+        /**
+          * How long between steps, in milliseconds.
+          * @default 5000
+         */
+        "autoPlayInterval": number;
+        /**
+          * The slide on show, counting from 0.
+          * @default 0
+         */
+        "index": number;
+        /**
+          * The carousel's accessible name.
+          * @default 'Carousel'
+         */
+        "label": string;
+        /**
+          * Wrap at both ends rather than stopping.
+          * @default true
+         */
+        "loop": boolean;
+        /**
+          * Steps one slide forward, as the button and the timer do.
+         */
+        "next": () => Promise<void>;
+        /**
+          * The step-forward button's accessible name.
+          * @default 'Next slide'
+         */
+        "nextLabel": string;
+        /**
+          * Steps one slide back.
+         */
+        "previous": () => Promise<void>;
+        /**
+          * The step-back button's accessible name.
+          * @default 'Previous slide'
+         */
+        "previousLabel": string;
+        /**
+          * Re-reads the slides, for a consumer who changed them imperatively.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Show the dots.
+          * @default true
+         */
+        "showIndicators": boolean;
+    }
+    /**
+     * One slide of a `pf-carousel`.
+     * The carousel tells it where it sits and whether it is the one on show; it
+     * owns only what that means for itself — chiefly that an off-screen slide is
+     * `inert`, so the focusable content inside it cannot be tabbed to while it is
+     * scrolled out of sight.
+     */
+    interface PfCarouselSlide {
+        /**
+          * Set by the carousel: the slide on show. Reflected for the stylesheet.
+          * @default false
+         */
+        "active": boolean;
+        /**
+          * Set by the carousel: this slide's place, counting from 1.
+          * @default 1
+         */
+        "position": number;
+        /**
+          * Set by the carousel: how many slides there are.
+          * @default 1
+         */
+        "total": number;
+    }
+    /**
      * A form-associated checkbox.
      */
     interface PfCheckbox {
@@ -2906,6 +2992,10 @@ export interface PfCalendarCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCalendarElement;
 }
+export interface PfCarouselCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfCarouselElement;
+}
 export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCheckboxElement;
@@ -3315,6 +3405,44 @@ declare global {
     var HTMLPfCardHeaderElement: {
         prototype: HTMLPfCardHeaderElement;
         new (): HTMLPfCardHeaderElement;
+    };
+    interface HTMLPfCarouselElementEventMap {
+        "pfChange": { index: number };
+    }
+    /**
+     * A carousel over `pf-carousel-slide` children.
+     * The group owns the index, the controls, the indicators and the live region
+     * that announces the move; each slide owns only whether it is the one on show.
+     * `role="region"` with `aria-roledescription="carousel"` rather than any of
+     * the tab or listbox patterns: a carousel is a region whose content changes,
+     * and the announcement is what tells a reader it has.
+     */
+    interface HTMLPfCarouselElement extends Components.PfCarousel, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfCarouselElementEventMap>(type: K, listener: (this: HTMLPfCarouselElement, ev: PfCarouselCustomEvent<HTMLPfCarouselElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfCarouselElementEventMap>(type: K, listener: (this: HTMLPfCarouselElement, ev: PfCarouselCustomEvent<HTMLPfCarouselElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfCarouselElement: {
+        prototype: HTMLPfCarouselElement;
+        new (): HTMLPfCarouselElement;
+    };
+    /**
+     * One slide of a `pf-carousel`.
+     * The carousel tells it where it sits and whether it is the one on show; it
+     * owns only what that means for itself — chiefly that an off-screen slide is
+     * `inert`, so the focusable content inside it cannot be tabbed to while it is
+     * scrolled out of sight.
+     */
+    interface HTMLPfCarouselSlideElement extends Components.PfCarouselSlide, HTMLStencilElement {
+    }
+    var HTMLPfCarouselSlideElement: {
+        prototype: HTMLPfCarouselSlideElement;
+        new (): HTMLPfCarouselSlideElement;
     };
     interface HTMLPfCheckboxElementEventMap {
         "pfChange": { checked: boolean; value: string };
@@ -4720,6 +4848,8 @@ declare global {
         "pf-card-content": HTMLPfCardContentElement;
         "pf-card-footer": HTMLPfCardFooterElement;
         "pf-card-header": HTMLPfCardHeaderElement;
+        "pf-carousel": HTMLPfCarouselElement;
+        "pf-carousel-slide": HTMLPfCarouselSlideElement;
         "pf-checkbox": HTMLPfCheckboxElement;
         "pf-collapsible": HTMLPfCollapsibleElement;
         "pf-combobox": HTMLPfComboboxElement;
@@ -5209,6 +5339,84 @@ declare namespace LocalJSX {
      * The top section of a `pf-card`, separated from what follows by a rule.
      */
     interface PfCardHeader {
+    }
+    /**
+     * A carousel over `pf-carousel-slide` children.
+     * The group owns the index, the controls, the indicators and the live region
+     * that announces the move; each slide owns only whether it is the one on show.
+     * `role="region"` with `aria-roledescription="carousel"` rather than any of
+     * the tab or listbox patterns: a carousel is a region whose content changes,
+     * and the announcement is what tells a reader it has.
+     */
+    interface PfCarousel {
+        /**
+          * Step forward on a timer.
+          * @default false
+         */
+        "autoPlay"?: boolean;
+        /**
+          * How long between steps, in milliseconds.
+          * @default 5000
+         */
+        "autoPlayInterval"?: number;
+        /**
+          * The slide on show, counting from 0.
+          * @default 0
+         */
+        "index"?: number;
+        /**
+          * The carousel's accessible name.
+          * @default 'Carousel'
+         */
+        "label"?: string;
+        /**
+          * Wrap at both ends rather than stopping.
+          * @default true
+         */
+        "loop"?: boolean;
+        /**
+          * The step-forward button's accessible name.
+          * @default 'Next slide'
+         */
+        "nextLabel"?: string;
+        /**
+          * Fires when the slide on show changes, however it changed.
+         */
+        "onPfChange"?: (event: PfCarouselCustomEvent<{ index: number }>) => void;
+        /**
+          * The step-back button's accessible name.
+          * @default 'Previous slide'
+         */
+        "previousLabel"?: string;
+        /**
+          * Show the dots.
+          * @default true
+         */
+        "showIndicators"?: boolean;
+    }
+    /**
+     * One slide of a `pf-carousel`.
+     * The carousel tells it where it sits and whether it is the one on show; it
+     * owns only what that means for itself — chiefly that an off-screen slide is
+     * `inert`, so the focusable content inside it cannot be tabbed to while it is
+     * scrolled out of sight.
+     */
+    interface PfCarouselSlide {
+        /**
+          * Set by the carousel: the slide on show. Reflected for the stylesheet.
+          * @default false
+         */
+        "active"?: boolean;
+        /**
+          * Set by the carousel: this slide's place, counting from 1.
+          * @default 1
+         */
+        "position"?: number;
+        /**
+          * Set by the carousel: how many slides there are.
+          * @default 1
+         */
+        "total"?: number;
     }
     /**
      * A form-associated checkbox.
@@ -7686,6 +7894,21 @@ declare namespace LocalJSX {
         "showOutsideDays": boolean;
         "label": string;
     }
+    interface PfCarouselAttributes {
+        "index": number;
+        "loop": boolean;
+        "showIndicators": boolean;
+        "autoPlay": boolean;
+        "autoPlayInterval": number;
+        "label": string;
+        "previousLabel": string;
+        "nextLabel": string;
+    }
+    interface PfCarouselSlideAttributes {
+        "active": boolean;
+        "position": number;
+        "total": number;
+    }
     interface PfCheckboxAttributes {
         "name": string;
         "checked": boolean;
@@ -8162,6 +8385,8 @@ declare namespace LocalJSX {
         "pf-card-content": PfCardContent;
         "pf-card-footer": PfCardFooter;
         "pf-card-header": PfCardHeader;
+        "pf-carousel": Omit<PfCarousel, keyof PfCarouselAttributes> & { [K in keyof PfCarousel & keyof PfCarouselAttributes]?: PfCarousel[K] } & { [K in keyof PfCarousel & keyof PfCarouselAttributes as `attr:${K}`]?: PfCarouselAttributes[K] } & { [K in keyof PfCarousel & keyof PfCarouselAttributes as `prop:${K}`]?: PfCarousel[K] };
+        "pf-carousel-slide": Omit<PfCarouselSlide, keyof PfCarouselSlideAttributes> & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes]?: PfCarouselSlide[K] } & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes as `attr:${K}`]?: PfCarouselSlideAttributes[K] } & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes as `prop:${K}`]?: PfCarouselSlide[K] };
         "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
         "pf-collapsible": Omit<PfCollapsible, keyof PfCollapsibleAttributes> & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes]?: PfCollapsible[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `attr:${K}`]?: PfCollapsibleAttributes[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `prop:${K}`]?: PfCollapsible[K] };
         "pf-combobox": Omit<PfCombobox, keyof PfComboboxAttributes> & { [K in keyof PfCombobox & keyof PfComboboxAttributes]?: PfCombobox[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `attr:${K}`]?: PfComboboxAttributes[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `prop:${K}`]?: PfCombobox[K] };
@@ -8368,6 +8593,23 @@ declare module "@stencil/core" {
              * The top section of a `pf-card`, separated from what follows by a rule.
              */
             "pf-card-header": LocalJSX.IntrinsicElements["pf-card-header"] & JSXBase.HTMLAttributes<HTMLPfCardHeaderElement>;
+            /**
+             * A carousel over `pf-carousel-slide` children.
+             * The group owns the index, the controls, the indicators and the live region
+             * that announces the move; each slide owns only whether it is the one on show.
+             * `role="region"` with `aria-roledescription="carousel"` rather than any of
+             * the tab or listbox patterns: a carousel is a region whose content changes,
+             * and the announcement is what tells a reader it has.
+             */
+            "pf-carousel": LocalJSX.IntrinsicElements["pf-carousel"] & JSXBase.HTMLAttributes<HTMLPfCarouselElement>;
+            /**
+             * One slide of a `pf-carousel`.
+             * The carousel tells it where it sits and whether it is the one on show; it
+             * owns only what that means for itself — chiefly that an off-screen slide is
+             * `inert`, so the focusable content inside it cannot be tabbed to while it is
+             * scrolled out of sight.
+             */
+            "pf-carousel-slide": LocalJSX.IntrinsicElements["pf-carousel-slide"] & JSXBase.HTMLAttributes<HTMLPfCarouselSlideElement>;
             /**
              * A form-associated checkbox.
              */

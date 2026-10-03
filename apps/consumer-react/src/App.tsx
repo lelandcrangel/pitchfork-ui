@@ -13,6 +13,8 @@ import {
   PfButtonGroup,
   PfButtonGroupItem,
   PfCalendar,
+  PfCarousel,
+  PfCarouselSlide,
   PfCard,
   PfCardContent,
   PfCardFooter,
@@ -112,6 +114,7 @@ export function App() {
   const [quantity, setQuantity] = useState('2');
   const [sort, setSort] = useState<SortState>({ key: 'name', direction: 'asc' });
   const [file, setFile] = useState('index.ts');
+  const [slide, setSlide] = useState(0);
   const [openFolders, setOpenFolders] = useState('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.
@@ -1092,6 +1095,59 @@ export function App() {
       <output data-testid="tree-value">
         {file} / {openFolders || 'none'}
       </output>
+
+      {/*
+        A carousel is a region whose content changes, not a tab list: the
+        announcement in its live region is what tells a reader it moved. The
+        off-screen slides are inert, so the button inside the next slide is
+        not a tab stop nobody can see — measured in the browser, where
+        `inert` refuses focus outright.
+      */}
+      <PfCarousel
+        index={slide}
+        label="Featured work"
+        loop
+        data-testid="carousel"
+        onPfChange={(event) => setSlide(event.detail.index)}
+      >
+        <PfCarouselSlide data-testid="carousel-slide-1">
+          <PfCard>
+            <PfCardHeader>
+              <h3>First slide</h3>
+            </PfCardHeader>
+            <PfCardContent>
+              <p>The track steps by one of its own widths per slide.</p>
+              <PfButton variant="secondary" data-testid="carousel-slide-1-button">
+                Open the first
+              </PfButton>
+            </PfCardContent>
+          </PfCard>
+        </PfCarouselSlide>
+        <PfCarouselSlide data-testid="carousel-slide-2">
+          <PfCard>
+            <PfCardHeader>
+              <h3>Second slide</h3>
+            </PfCardHeader>
+            <PfCardContent>
+              <p>Each slide names its place, so a reader is never lost.</p>
+              <PfButton variant="secondary" data-testid="carousel-slide-2-button">
+                Open the second
+              </PfButton>
+            </PfCardContent>
+          </PfCard>
+        </PfCarouselSlide>
+        <PfCarouselSlide data-testid="carousel-slide-3">
+          <PfCard>
+            <PfCardHeader>
+              <h3>Third slide</h3>
+            </PfCardHeader>
+            <PfCardContent>
+              <p>The dots jump straight to a slide, and mark the one on show.</p>
+            </PfCardContent>
+          </PfCard>
+        </PfCarouselSlide>
+      </PfCarousel>
+      <output data-testid="carousel-index">{slide}</output>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

@@ -755,6 +755,33 @@ Things that differ from the React library, learned by porting the first two:
   from its own `slotchange` and the tree listens for that — without it an item
   appended to a branch is never given a level, an id or a place in the
   keyboard order, which a browser test catches.
+- **A strip of slides is CSS the tests cannot see, so measure it in the
+  build.** `pf-carousel` moves one track with `transform: translateX(-N00%)`,
+  which only lands a slide in the viewport because each slide is
+  `flex: 0 0 100%` — a percentage transform resolves against the track's own
+  border box, so one step is exactly one of its widths. Neither Vitest project
+  applies `styleUrl` CSS, so both halves are invisible to them: with
+  `flex: 0 0 auto` the slides measured 436px in a 1190px viewport and stacked
+  inside the clip, and every unit assertion still passed. The browser spec can
+  at least read the matrix the browser laid out by (`DOMMatrixReadOnly` over
+  the computed `transform`, which is the inline style, not the sheet); the
+  geometry — slide width, the next slide sitting past the clip, and the one it
+  lands on coming to rest at the viewport's edge — is `scripts/smoke-consumer.mjs`'s
+  job. All three measured by reverting each declaration in a real build.
+- **`inert` is the only thing that keeps an off-screen slide out of the tab
+  order, and a unit test cannot tell.** The fast project can see the attribute;
+  it cannot see that the attribute does anything. Measured in Chromium and in
+  the real build: a button inside a scrolled-out `pf-carousel-slide` refuses
+  `element.focus()` outright, and the same button takes focus the moment its
+  slide is the one on show. `aria-hidden` alone leaves it focusable — removing
+  `inert` fails the browser spec and the consumer smoke and nothing else.
+- **One timer, restarted, not stacked.** An autoplaying carousel whose interval
+  a consumer changes mid-run will step twice as often for no visible reason if
+  `startTimer` does not clear first, and a stacked timer is indistinguishable
+  from a fast one in a screenshot. `pf-carousel.startTimer()` begins with
+  `stopTimer()`, and the browser spec steps on a 60ms interval, swaps it for
+  40ms, then turns autoplay off and asserts the index holds still for 200ms —
+  the one assertion a leaked interval fails.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

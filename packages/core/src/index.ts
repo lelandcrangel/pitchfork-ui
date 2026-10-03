@@ -2,6 +2,7 @@ export * from './anchoring';
 export * from './aria';
 export * from './avatar-group';
 export * from './breadcrumbs';
+export * from './carousel';
 export * from './command';
 export * from './date';
 export * from './date-range';
