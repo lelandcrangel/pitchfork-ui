@@ -2,7 +2,7 @@
  * The dismiss, which waits on a real animation, and `slotchange`, which the
  * mock DOM never fires.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-alert';
 

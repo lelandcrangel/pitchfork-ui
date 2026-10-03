@@ -4,7 +4,7 @@
  * is that a row is a box at all. The colours, the striping and the sticky
  * header need the stylesheet, so they are in `scripts/smoke-consumer.mjs`.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-table';
 import '../pf-table-row/pf-table-row';

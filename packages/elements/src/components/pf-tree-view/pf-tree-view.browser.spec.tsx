@@ -5,7 +5,7 @@
  * measurement the design rests on: a nested host cannot take a roving
  * tabindex, so the tree keeps the focus and names the active item instead.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-tree-view';
 import '../pf-tree-item/pf-tree-item';

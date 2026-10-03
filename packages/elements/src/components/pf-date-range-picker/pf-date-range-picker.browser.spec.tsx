@@ -3,7 +3,7 @@
  * claim worth making about its submission (two entries from one control) only
  * works against a real `ElementInternals`.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-date-range-picker';
 

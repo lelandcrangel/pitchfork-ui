@@ -5,7 +5,7 @@
  * this element's own listener, so a trusted event is not required — unlike
  * light-dismiss, which goes through `userEvent`.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { expect, test } from 'vitest';
 import './pf-context-menu';
 import '../pf-menu-item/pf-menu-item';

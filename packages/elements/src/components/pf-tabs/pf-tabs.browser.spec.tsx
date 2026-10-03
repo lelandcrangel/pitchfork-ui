@@ -8,7 +8,7 @@
  * claim is narrower and still worth making: the coordinates written onto it
  * are the selected tab's, measured from the strip.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-tabs';
 import '../pf-tab/pf-tab';

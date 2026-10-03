@@ -6,7 +6,7 @@
  * Escape and overlay clicks go through `userEvent`, because the dialog's own
  * Escape handling responds to trusted input only — measured.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-slideout-menu';
 import '../pf-modal/pf-modal';

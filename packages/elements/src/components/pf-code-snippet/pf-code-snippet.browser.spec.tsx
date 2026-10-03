@@ -2,7 +2,7 @@
  * The clipboard, which needs a real `navigator`, and `slotchange`, which the
  * mock DOM never fires.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test, vi } from 'vitest';
 import './pf-code-snippet';
 

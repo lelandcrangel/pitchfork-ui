@@ -4,7 +4,7 @@
  * lifecycle call. Escape and light dismiss go through `userEvent`, because the
  * browser only does them for trusted input.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-select';
 import '../pf-option/pf-option';

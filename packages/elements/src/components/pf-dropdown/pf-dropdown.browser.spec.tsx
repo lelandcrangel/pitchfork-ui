@@ -3,7 +3,7 @@
  * anchoring rects, real focus for the menu keyboard pattern, and
  * light-dismiss, which needs trusted input.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { expect, test } from 'vitest';
 import './pf-dropdown';
 import '../pf-menu-item/pf-menu-item';

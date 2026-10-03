@@ -7,7 +7,7 @@
  * measured — so those assertions go through `userEvent`, which drives the
  * browser itself.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { expect, test } from 'vitest';
 import './pf-popover';
 

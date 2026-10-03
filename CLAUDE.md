@@ -499,7 +499,7 @@ Things that differ from the React library, learned by porting the first two:
 - **Light-dismiss needs trusted input, so test it with `userEvent`.** A
   synthetic `.click()` or `dispatchEvent(new KeyboardEvent(...))` does not
   trigger it — measured — which makes a test written that way pass whether the
-  feature works or not. Import `userEvent` from `@vitest/browser/context` for
+  feature works or not. Import `userEvent` from `vitest/browser` for
   anything the browser itself dismisses.
 - **Emit the state change from `@Watch`, not from the DOM event.** Both
   `pf-popover` and `pf-modal` first announced their change from the `toggle` /

@@ -3,7 +3,7 @@
  * move from and `delegatesFocus` has somewhere to land; `slotchange`, which
  * the mock DOM never fires; and the panel animation, which needs layout.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-accordion';
 import '../pf-accordion-item/pf-accordion-item';

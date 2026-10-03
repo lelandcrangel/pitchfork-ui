@@ -6,7 +6,7 @@
  * Escape and overlay clicks go through `userEvent`, because light-dismiss and
  * the dialog's own Escape handling respond to trusted input only — measured.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-modal';
 import '../pf-modal-header/pf-modal-header';

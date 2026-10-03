@@ -3,7 +3,7 @@
  * stubs ElementInternals) nor jsdom (no `setFormValue`) gets past its first
  * lifecycle call.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-number-input';
 import '../pf-icon/pf-icon';

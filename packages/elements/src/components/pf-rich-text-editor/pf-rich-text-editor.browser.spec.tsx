@@ -4,7 +4,7 @@
  * markup — `document.execCommand`, a `contenteditable`'s own `input` event,
  * and a roving tabindex over real focus — are none of them in the mock DOM.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-rich-text-editor';
 

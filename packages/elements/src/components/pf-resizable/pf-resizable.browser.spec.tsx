@@ -3,7 +3,7 @@
  * `onKeyDown` is registered there under the name `keyDown` and never hears a
  * dispatched `keydown`, and a drag needs a real pointer with real capture.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-resizable';
 

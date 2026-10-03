@@ -3,7 +3,7 @@
  * laid out by, `inert` refusing real focus, a timer stepping on its own, and
  * `slotchange` firing when a consumer appends a slide.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-carousel';
 import '../pf-carousel-slide/pf-carousel-slide';

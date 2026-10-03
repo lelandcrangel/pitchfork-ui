@@ -2,7 +2,7 @@
  * What the fast project cannot see: Escape, which reads `composedPath()`;
  * `inert` refusing real focus; and the panel animation, which needs layout.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-collapsible';
 import '../pf-icon/pf-icon';

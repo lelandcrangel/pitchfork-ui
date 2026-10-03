@@ -7,7 +7,7 @@
  * Light dismiss and Escape go through `userEvent`, because the browser only
  * does them for trusted input — measured.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-date-picker';
 import '../pf-calendar/pf-calendar';

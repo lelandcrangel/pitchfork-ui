@@ -3,7 +3,7 @@
  * animation — declared inline here, since neither test project applies
  * `styleUrl` CSS — and `slotchange`, which the fast project never fires.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-inline-cta';
 import '../pf-icon/pf-icon';

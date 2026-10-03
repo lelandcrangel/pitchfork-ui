@@ -3,7 +3,7 @@
  * ElementInternals and jsdom has no `setFormValue`, so either one throws on
  * the first lifecycle call.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-time-picker';
 

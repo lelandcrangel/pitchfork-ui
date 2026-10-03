@@ -5,7 +5,7 @@
  * boundary — measured on pf-select, where leaving it off made every keyboard
  * assertion time out.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-combobox';
 import '../pf-option/pf-option';

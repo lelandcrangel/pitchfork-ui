@@ -4,7 +4,7 @@
  * of toggle buttons is not a roving-tabindex pattern, unlike the tab strip or
  * the toolbar next door.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-button-group';
 import '../pf-button-group-item/pf-button-group-item';

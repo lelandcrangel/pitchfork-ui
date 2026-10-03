@@ -5,7 +5,7 @@
  * `setValidity` — and the drag, the picker and the keys need a real DOM
  * besides.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-file-uploader';
 

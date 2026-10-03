@@ -3,7 +3,7 @@
  * — one entry per value from one control — needs a real `ElementInternals`.
  * Key events carry `composed: true`, or they never leave the shadow root.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test, vi } from 'vitest';
 import './pf-multi-select';
 import '../pf-option/pf-option';

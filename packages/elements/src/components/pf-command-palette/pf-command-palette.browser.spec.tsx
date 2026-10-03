@@ -3,7 +3,7 @@
  * native focus trap, the page-scroll lock, `slotchange` and ARIA element
  * reflection are none of them things the mock DOM has.
  */
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { afterEach, expect, test } from 'vitest';
 import './pf-command-palette';
 import '../pf-command-group/pf-command-group';
