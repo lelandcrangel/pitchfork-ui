@@ -77,6 +77,33 @@ import { PfInput } from '@pitchfork-ui/elements-angular';
 export class SignUpForm {}
 ```
 
+### Vue
+
+Generated as well. Vue renders a custom element directly without any wrapper,
+so these are a convenience rather than a necessity — what they add is typed
+props, `@pf-*` listeners instead of `addEventListener`, and `v-model` on the
+six form controls.
+
+```vue
+<script setup lang="ts">
+import { PfInput, PfSwitch } from '@pitchfork-ui/elements-vue';
+import { ref } from 'vue';
+
+const email = ref('');
+const dark = ref(false);
+</script>
+
+<template>
+  <PfInput v-model="email" label="Email" />
+  <PfSwitch v-model="dark" label="Dark mode" />
+</template>
+```
+
+`v-model` binds `value` on `pf-input`, `pf-textarea`, `pf-radio-group` and
+`pf-slider`, and `checked` on `pf-checkbox` and `pf-switch` — the same six
+controls the Angular `ControlValueAccessor`s cover. Everything else takes
+plain props and emits `pf-*` events.
+
 ## Styling
 
 Two mechanisms, and the difference matters.

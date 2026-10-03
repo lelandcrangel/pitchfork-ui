@@ -1,0 +1,23 @@
+{
+  "name": "@pitchfork-ui/consumer-vue",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Builds a real Vue application against the published @pitchfork-ui/elements-vue, to catch what unit tests cannot: resolution, bundling, v-model round-tripping and whether the tokens actually reach the page.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "smoke": "node ../../scripts/smoke-vue.mjs --dir apps/consumer-vue/dist"
+  },
+  "dependencies": {
+    "@pitchfork-ui/elements-vue": "*",
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "*",
+    "typescript": "*",
+    "vite": "*",
+    "vue-tsc": "*"
+  }
+}

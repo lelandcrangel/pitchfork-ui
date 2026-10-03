@@ -15,6 +15,7 @@
  *
  * Run this after building and before publishing.
  */
+import { builtinModules } from 'node:module';
 import { existsSync } from 'node:fs';
 import { readdir, readFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
@@ -27,6 +28,7 @@ const PACKAGES = [
   'packages/elements',
   'packages/elements-react',
   'packages/elements-angular',
+  'packages/elements-vue',
   'packages/react',
   'packages/tokens',
   'packages/mcp',
@@ -219,4 +221,75 @@ if (publicApi === null) {
       `@pitchfork-ui/elements-angular: all ${accessors.length} generated value accessors are exported`,
     );
   }
+}
+
+/*
+ * Every bare specifier a published bundle imports has to be a package the
+ * consumer will actually have. The generated wrapper packages are where this
+ * goes wrong, because the specifier is not in anything hand-written: the
+ * Stencil output targets emit `import { defineContainer } from
+ * '@stencil/<framework>-output-target/runtime'`, and the bundlers here keep
+ * `@stencil/*` external. @pitchfork-ui/elements-react declares that runtime as
+ * a dependency; @pitchfork-ui/elements-vue was generated the same way and
+ * declared nothing, so its published entry point would have failed to resolve
+ * on a consumer's first import -- with every build, test and smoke green,
+ * because inside the workspace the specifier resolves from the root
+ * node_modules whether the package asks for it or not.
+ */
+const BARE_SPECIFIER =
+  /\b(?:import|export)\s[^'"]*?from\s*['"]([^'"]+)['"]|\bimport\(\s*['"]([^'"]+)['"]\s*\)/g;
+
+/** `@scope/name/deep/path` -> `@scope/name`; `name/deep` -> `name`. */
+const packageOf = (specifier) => {
+  const parts = specifier.split('/');
+  return specifier.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
+};
+
+const undeclared = [];
+
+for (const packageDir of PACKAGES) {
+  const packageJsonPath = join(repoRoot, packageDir, 'package.json');
+  if (!existsSync(packageJsonPath)) continue;
+
+  const pkg = JSON.parse(await readFile(packageJsonPath, 'utf8'));
+  const dist = join(repoRoot, packageDir, 'dist');
+  if (!existsSync(dist)) continue;
+
+  const allowed = new Set([
+    pkg.name,
+    ...Object.keys(pkg.dependencies ?? {}),
+    ...Object.keys(pkg.peerDependencies ?? {}),
+    ...Object.keys(pkg.optionalDependencies ?? {}),
+  ]);
+
+  const files = (await readdir(dist, { recursive: true })).filter(
+    (name) => typeof name === 'string' && (name.endsWith('.js') || name.endsWith('.mjs')),
+  );
+
+  for (const name of files) {
+    const contents = await readFile(join(dist, name), 'utf8');
+    for (const match of contents.matchAll(BARE_SPECIFIER)) {
+      const specifier = match[1] ?? match[2];
+      if (!specifier || specifier.startsWith('.') || specifier.startsWith('/')) continue;
+      if (specifier.startsWith('node:') || builtinModules.includes(specifier)) continue;
+
+      const name = packageOf(specifier);
+      if (allowed.has(name)) continue;
+      undeclared.push(`${pkg.name} imports ${specifier} (${name} is not declared)`);
+    }
+  }
+}
+
+const uniqueUndeclared = [...new Set(undeclared)];
+
+if (uniqueUndeclared.length > 0) {
+  console.error(
+    `\n${uniqueUndeclared.length} undeclared runtime dependenc(ies) in the ` +
+      'published bundles. Each one resolves inside this workspace and fails for ' +
+      'a consumer:',
+  );
+  for (const entry of uniqueUndeclared) console.error(`  ${entry}`);
+  process.exitCode = 1;
+} else {
+  console.log('every bare specifier in the built bundles is a declared dependency');
 }

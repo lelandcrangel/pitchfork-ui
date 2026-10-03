@@ -499,3 +499,27 @@ move the percentage to `aria-valuetext`. Left alone here because a gauge that
 suddenly has no accessible name would be a regression for any consumer relying
 on the current one, so the default needs a decision: `"Gauge"`, as the element
 uses, or required.
+
+---
+
+## The published declarations of `elements-vue` reach for `vue-router`
+
+`StencilVueComponent` is typed in `@stencil/vue-output-target/runtime`, whose
+own declarations `import type { RouteLocationAsPathGeneric } from 'vue-router'`
+for the `routerLink` prop it adds to every wrapper. `vue-router` is not a
+dependency of anything here, so that import resolves to nothing — invisibly,
+because every tsconfig in this repo (and the node16 fixture) has
+`skipLibCheck: true`, which suppresses errors inside declaration files
+including unresolved imports.
+
+A consumer with `skipLibCheck: false` and no `vue-router` installed would get
+"Cannot find module 'vue-router'" from our package's types. Measured only as
+far as the import existing in the installed runtime's `types.d.ts`; the
+consumer failure is inferred from how `skipLibCheck` works, not reproduced.
+
+**Fix, if it proves real:** declare `vue-router` an optional peer dependency of
+`@pitchfork-ui/elements-vue` (`peerDependenciesMeta.optional`), which is what
+Ionic's Vue package does for the same prop. Checking it needs a fixture with
+`skipLibCheck: false` — the existing node16 probe cannot see it, and turning
+`skipLibCheck` off there would also surface every unrelated third-party
+declaration, so it wants a fixture of its own.

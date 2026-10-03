@@ -21,6 +21,7 @@ pitchfork-ui/
 │   ├── elements/       # Stencil custom elements (@pitchfork-ui/elements)
 │   ├── elements-react/ # Generated React bindings — never hand-edited
 │   ├── elements-angular/ # Generated Angular bindings — never hand-edited
+│   ├── elements-vue/   # Generated Vue bindings — never hand-edited
 │   └── tokens/         # Design tokens + theming contract (@pitchfork-ui/tokens)
 │       └── src/
 │           ├── tokens/   # color.json, shadow.json, size.json, typography.json
@@ -29,7 +30,8 @@ pitchfork-ui/
     ├── docs/           # Storybook site (@pitchfork-ui/docs)
     │   └── src/        # *.stories.tsx, *.examples.stories.tsx, *.mdx per component
     ├── consumer-react/   # Vite app that smoke-tests the React bindings
-    └── consumer-angular/ # Angular CLI app that smoke-tests the Angular bindings
+    ├── consumer-angular/ # Angular CLI app that smoke-tests the Angular bindings
+    └── consumer-vue/     # Vite app that smoke-tests the Vue bindings
 ```
 
 `theme.css` sits in `packages/tokens` rather than in a rendering layer because
@@ -1273,6 +1275,62 @@ Two things that bit while writing it:
 - **The generated pages are in `.prettierignore`**, because `--verify`
   compares the generator's own output. Formatting them afterwards would make
   every build report 108 stale pages.
+
+---
+
+## Framework bindings
+
+Three generated wrapper packages come off the same elements build, from three
+output targets configured in `packages/elements/stencil.config.ts`:
+`elements-react`, `elements-angular`, `elements-vue`. All three are generated
+on every build and **never hand-edited** — fix a wrapper by fixing the element.
+Each one is in `.prettierignore` and in `eslint.config.js`'s ignores for that
+reason; formatting a generated file only means the next build reports it
+changed.
+
+Vue can render a custom element without any wrapper, so `elements-vue` is a
+convenience rather than a necessity: what it adds is typed props, `@pf-*`
+listeners instead of `addEventListener`, and `v-model`. Its `componentModels`
+cover the same six controls as the Angular value accessors, bound the same way
+— `pf-checkbox` and `pf-switch` model `checked`, `pf-input`, `pf-textarea`,
+`pf-radio-group` and `pf-slider` model `value`, all on `pfChange` rather than
+`pfInput`, because `pfChange` is the moment a framework should see a new value.
+Keeping the two lists identical is deliberate: a control that models in one
+framework and not the other is a difference no test would report.
+
+**A generated wrapper imports its output target's runtime, and nothing
+hand-written mentions it.** The Vue proxies open with
+`import { defineContainer } from '@stencil/vue-output-target/runtime'`, and the
+bundler here keeps `@stencil/*` external, so the specifier survives into
+`dist/components.js`. `@pitchfork-ui/elements-vue` declared it nowhere — and
+every build, test and smoke passed, because inside the workspace the specifier
+resolves from the root `node_modules` whether the package asks for it or not.
+A consumer installing from npm would have got a package whose first import
+fails to resolve. `scripts/check-built-packages.mjs` now reads every bare
+specifier out of each built bundle and fails on any that is not in that
+package's own `dependencies`, `peerDependencies` or `optionalDependencies`.
+Adding it found two more of the same shape: `elements-angular`'s fesm bundle
+imports `fromEvent` from `rxjs`, and the `dist/collection` that
+`packages/elements` advertises through `collection:main` imports
+`@stencil/core`.
+
+### Smoke-testing them
+
+`scripts/smoke-consumer.mjs` renders all 108 elements and asserts their
+computed styles; `consumer-react` and `consumer-angular` both run it.
+`scripts/smoke-vue.mjs` is deliberately a different script rather than
+`smoke-consumer.mjs --label vue`: rendering all 108 a third time would prove
+nothing new about the _bindings_, which is what the package is. It renders ten
+elements and checks the three things only a Vue binding can get wrong:
+
+1. `@pitchfork-ui/elements-vue` resolves through its exports map and registers
+   the elements it imports — the path a workspace alias hides.
+2. `v-model` round-trips in **both** directions. A binding that only listens to
+   the element's events looks perfectly correct until the application writes to
+   the ref, which is why `consumer-vue` has one button that writes to every ref
+   at once.
+3. The token stylesheet reaches a Vue-rendered shadow root the same way it
+   reaches a React-rendered one.
 
 ---
 

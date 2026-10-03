@@ -22,6 +22,13 @@
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": false
     },
+    "packages/elements-vue": {
+      "release-type": "node",
+      "package-name": "@pitchfork-ui/elements-vue",
+      "changelog-path": "CHANGELOG.md",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false
+    },
     "packages/elements-angular": {
       "release-type": "node",
       "package-name": "@pitchfork-ui/elements-angular",

@@ -1,5 +1,6 @@
 import globalData from '@csstools/postcss-global-data';
 import { angularOutputTarget } from '@stencil/angular-output-target';
+import { vueOutputTarget } from '@stencil/vue-output-target';
 import { reactOutputTarget } from '@stencil/react-output-target';
 import { postcss } from '@stencil/postcss';
 import { Config } from '@stencil/core';
@@ -91,6 +92,31 @@ export const config: Config = {
           event: 'pfChange',
           targetAttr: 'checked',
           type: 'boolean',
+        },
+      ],
+    }),
+    // Vue components generated from the same elements. Vue can render a
+    // custom element directly, so these are a convenience rather than a
+    // necessity -- what they add is typed props, `@pf-*` listeners instead of
+    // `addEventListener`, and `v-model` on the form controls.
+    vueOutputTarget({
+      componentCorePackage: '@pitchfork-ui/elements',
+      proxiesFile: '../elements-vue/src/components.ts',
+      includeImportCustomElements: true,
+      // The same six controls the Angular value accessors cover, bound the
+      // same way: a checkbox and a switch model their `checked`, everything
+      // else its `value`. `pfChange` rather than `pfInput`, because that is
+      // the moment a framework should see a new value.
+      componentModels: [
+        {
+          elements: ['pf-input', 'pf-textarea', 'pf-radio-group', 'pf-slider'],
+          event: 'pfChange',
+          targetAttr: 'value',
+        },
+        {
+          elements: ['pf-checkbox', 'pf-switch'],
+          event: 'pfChange',
+          targetAttr: 'checked',
         },
       ],
     }),
