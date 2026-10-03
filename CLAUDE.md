@@ -1419,6 +1419,38 @@ typo it has not made.
 
 ---
 
+## Dependency specifiers
+
+Everything is a caret range on the version actually installed. Nothing is
+`latest` or `*` any more, with one deliberate exception: a workspace sibling
+(`"@pitchfork-ui/react": "*"`) stays `*`, which is the idiom and resolves to
+the local package rather than to the registry.
+
+**Pin to the version that workspace resolves, not the one at the root.**
+`apps/consumer-angular` nests TypeScript 5.9.3 and Vite 7.3.6 where the root
+has 6.0.3 and 8.2.2, because `@angular/build@21` peers `typescript >=5.9 <6.0`
+and Vite 7 — and it only does so because those two were `*`, which left npm
+free to pick a version the peers accept. Pinning them to the root's versions
+produced a range nothing can satisfy: the install stayed green off the
+existing lockfile, and `npm audit fix` was the thing that reported the
+conflict, because it is the command that re-resolves.
+
+**Regenerate the lockfile incrementally.** `npm install --package-lock-only` on
+top of the committed lockfile gives a 33-line diff of specifier strings.
+Deleting it first and letting npm rebuild it gives a 24,000-line diff with no
+version changes in it — and this repo's `engines` ask for npm 11 while a
+container may well have 10, so a wholesale rebuild is a rewrite by the wrong
+tool.
+
+The root `optionalDependencies` that pinned two OXC platform bindings are
+gone. They worked around npm omitting platform-specific optionals from the
+lockfile, which does not happen any more: the lockfile records every binding
+for every consumer, nested, with its `cpu` and `os`. Verified by removing
+them, regenerating, running a real `npm ci`, and confirming both modules load
+from the nested copies.
+
+---
+
 ## Known gaps
 
 See `todo.md` at the repo root.

@@ -58,7 +58,7 @@ Verified this way on 2026-09-21:
 
 ---
 
-## Root `optionalDependencies` pin OXC bindings nothing consumes
+## Root `optionalDependencies` pin OXC bindings nothing consumes — fixed
 
 `package.json` pins `@oxc-parser/binding-linux-x64-gnu` and
 `@oxc-resolver/binding-linux-x64-gnu` at exact versions in
@@ -77,10 +77,18 @@ unanchored to any consumer, and each bump is a change that cannot affect
 anything. Copilot flagged the drift on
 [#98](https://github.com/lelandcrangel/pitchfork-ui/pull/98).
 
-**Fix:** check whether the npm bug that prompted the pins is still live (it
-was fixed in npm 10.x for most cases). If it is, tie the pins to the
-consumers' versions and add a check that they match. If it isn't, drop both
-pins and the `optionalDependencies` block with them.
+**Fixed** by dropping both pins and the `optionalDependencies` block. The npm
+bug is not live: the committed lockfile already records every platform binding
+for every consumer of `oxc-parser` and `oxc-resolver`, nested, with its `cpu`
+and `os` fields — including the ones no root pin covers
+(`apps/consumer-angular/node_modules/@oxc-parser/binding-linux-x64-gnu`). So
+the pins were adding two top-level copies at versions nothing loads, which is
+what the drift above describes.
+
+Verified rather than assumed: removed the pins, regenerated the lockfile, ran
+a real `npm ci`, and confirmed both modules load and resolve their bindings
+from the nested gnu copies. Measured on npm 10.9.7; CI runs npm 11, which is
+newer, so the behaviour cannot regress there.
 
 ---
 
@@ -538,3 +546,33 @@ Fixed by the same change that moved the glyph geometry into
 `packages/core/src/custom-glyphs.ts`: one renderer per layer over shared data,
 so there is one `<svg>` per layer to get the part right on. A browser spec
 asserts the part on a custom glyph, probed by removing the attribute.
+
+---
+
+## `npm audit --audit-level=high` is red, and has been
+
+CI's last step is `npm audit --audit-level=high`, and it fails: 15
+vulnerabilities, 12 high and 2 critical. Checked against the committed
+lockfile at HEAD as well as a fresh install — the same 15 either way, so this
+predates the dependency pinning and is not a side effect of it.
+
+Two chains, and neither has a fix this repo can take:
+
+- **`@angular/cli` 21's toolchain** — `piscina` (critical), `@angular/build`
+  (critical), `undici`, `postcss`, and the `sigstore` →
+  `make-fetch-happen` → `http-cache-semantics` chain.
+  `npm audit fix --force` offers `@angular/cli@7.2.4`, fourteen majors back,
+  which would take the Angular consumer app with it.
+- **`brace-expansion`** via `eslint-plugin-jsx-a11y`. `npm audit fix` reports a
+  non-breaking fix for this one.
+
+All of it is devDependencies of the consumer apps and the lint setup: nothing
+here reaches a published package, which is why it has gone unnoticed. But a CI
+step that is always red is a CI step nobody reads, and it is the step meant to
+catch a dependency that actually matters.
+
+**Fix:** take the non-breaking `brace-expansion` fix, then decide what the
+audit step should mean. The honest options are `--audit-level=critical` with
+the Angular chain explicitly excluded, `npm audit --omit=dev` (which is what
+"does a consumer of our packages inherit a vulnerability?" actually asks), or
+`--production`. Any of them is better than a step that fails on every run.
