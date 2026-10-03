@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { cx } from '../../utils/cx';
-import { WEEKDAY_LABELS, buildCalendarDays, isSameDay, toMidday } from './dateUtils';
+import { WEEKDAY_LABELS, buildCalendarDays, isSameDay, toMidday } from '@pitchfork-ui/core';
 
 /* Shared month grid for Calendar (single date) and DateRangePicker (range).
    Internal — not part of the public package API. */

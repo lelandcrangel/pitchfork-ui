@@ -4,6 +4,7 @@ import {
   PfBadge,
   PfBadgeGroup,
   PfButton,
+  PfCalendar,
   PfCard,
   PfCardContent,
   PfCardFooter,
@@ -64,6 +65,7 @@ export function App() {
   const [menuChoice, setMenuChoice] = useState('');
   const [slideoutOpen, setSlideoutOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [day, setDay] = useState('2024-03-15');
   const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
@@ -491,6 +493,24 @@ export function App() {
           </PfCommandItem>
         </PfCommandGroup>
       </PfCommandPalette>
+
+      {/*
+        One tab stop and arrow-key movement, which the React Calendar does not
+        have — it renders 42 buttons and no key handling. The arithmetic is
+        core's, so both layers can agree once React adopts it.
+      */}
+      <div className="row">
+        <PfCalendar
+          value={day}
+          min="2024-03-05"
+          max="2024-03-26"
+          startYear={2020}
+          endYear={2030}
+          data-testid="calendar"
+          onPfChange={(event) => setDay(event.detail.value)}
+        />
+        <output data-testid="calendar-value">{day}</output>
+      </div>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

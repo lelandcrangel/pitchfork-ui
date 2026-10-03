@@ -85,6 +85,7 @@ const EXPECTED = [
   'pf-command-palette',
   'pf-command-group',
   'pf-command-item',
+  'pf-calendar',
 ];
 
 const TYPES = {
@@ -1177,6 +1178,122 @@ try {
               `overflow "${state.overflow}", output "${state.output}"`,
           );
         }
+      }
+    }
+  }
+
+  /*
+   * The calendar, keyboard first. The grid pattern is the thing the React
+   * component does not have, and the three claims here need a real build: the
+   * selected day's background and contrasting text come through the alias
+   * chain, the single tab stop has to survive a move, and today's cell has to
+   * be distinguishable from a plain one.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-calendar');
+        if (!el) return { error: 'no pf-calendar in the consumer app' };
+
+        const grid = el.shadowRoot.querySelector('[part="grid"]');
+        const day = (iso) => el.shadowRoot.querySelector(`button[data-day="${iso}"]`);
+        const stops = () =>
+          [...el.shadowRoot.querySelectorAll('button[data-day][tabindex="0"]')].map((b) =>
+            b.getAttribute('data-day'),
+          );
+
+        const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+        const pressKey = async (key) => {
+          grid.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+          await frame();
+          await frame();
+        };
+
+        const before = stops();
+        await pressKey('ArrowRight');
+        const after = stops();
+
+        const selected = el.shadowRoot.querySelector('.day--selected');
+        const plain = day('2024-03-13');
+        const disabled = day('2024-03-01');
+
+        return {
+          tabStopsBefore: before,
+          tabStopsAfter: after,
+          focusFollowed: el.shadowRoot.activeElement?.getAttribute('data-day'),
+          selected: selected
+            ? {
+                background: getComputedStyle(selected).backgroundColor,
+                colour: getComputedStyle(selected).color,
+              }
+            : null,
+          plainColour: plain ? getComputedStyle(plain).color : null,
+          plainBackground: plain ? getComputedStyle(plain).backgroundColor : null,
+          disabledOpacity: disabled ? getComputedStyle(disabled).opacity : null,
+          weekdayCount: el.shadowRoot.querySelectorAll('[role="columnheader"]').length,
+          gridColumns: getComputedStyle(grid).gridTemplateColumns.split(' ').length,
+          rowDisplay: getComputedStyle(el.shadowRoot.querySelector('.row')).display,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-calendar: ${state.error}`);
+    } else {
+      if (state.tabStopsBefore.length !== 1 || state.tabStopsAfter.length !== 1) {
+        problems.push(
+          `pf-calendar has ${state.tabStopsBefore.length} tab stops before a move and ` +
+            `${state.tabStopsAfter.length} after, expected exactly 1 each — ` +
+            'the whole grid should be one tab stop',
+        );
+      }
+      if (state.tabStopsAfter[0] === state.tabStopsBefore[0]) {
+        problems.push('pf-calendar did not move its tab stop on ArrowRight');
+      }
+      if (state.focusFollowed !== state.tabStopsAfter[0]) {
+        problems.push(
+          `pf-calendar moved its tab stop to ${state.tabStopsAfter[0]} but focus is on ` +
+            `${state.focusFollowed} — the keyboard would stop responding`,
+        );
+      }
+
+      // Seven columns, and the rows must not form boxes of their own or the
+      // cells would not line up under the weekday headers.
+      if (state.weekdayCount !== 7) {
+        problems.push(`pf-calendar has ${state.weekdayCount} weekday headers, expected 7`);
+      }
+      if (state.gridColumns !== 7) {
+        problems.push(`pf-calendar grid computes ${state.gridColumns} columns, expected 7`);
+      }
+      if (state.rowDisplay !== 'contents') {
+        problems.push(
+          `pf-calendar rows compute display "${state.rowDisplay}", expected contents — ` +
+            'a row that forms its own box breaks the seven-column alignment',
+        );
+      }
+
+      if (!state.selected) {
+        problems.push('pf-calendar renders no selected day');
+      } else {
+        if (isTransparent(state.selected.background)) {
+          problems.push(
+            'the selected day has no background — --pf-calendar-selected-bg did not resolve',
+          );
+        }
+        if (state.selected.colour === state.plainColour) {
+          problems.push(
+            `the selected day's text is the same colour as a plain one ` +
+              `("${state.selected.colour}") — --pf-calendar-selected-text did not apply`,
+          );
+        }
+      }
+
+      // min/max blocks the start of the month in the fixture.
+      if (state.disabledOpacity && Number(state.disabledOpacity) >= 1) {
+        problems.push(
+          `a day outside min/max computes opacity ${state.disabledOpacity}, ` +
+            'expected it to be dimmed',
+        );
       }
     }
   }

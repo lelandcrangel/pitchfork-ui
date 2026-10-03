@@ -1,6 +1,7 @@
 export * from './anchoring';
 export * from './aria';
 export * from './command';
+export * from './date';
 export * from './dismiss';
 export * from './focus';
 export * from './icons';

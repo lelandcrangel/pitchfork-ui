@@ -1,0 +1,151 @@
+:host {
+  display: inline-block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.calendar {
+  background: var(--pf-calendar-bg);
+  border: 1px solid var(--pf-calendar-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-calendar-text);
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+  justify-content: space-between;
+}
+
+.controls {
+  display: flex;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.select {
+  background: var(--pf-calendar-bg);
+  border: 1px solid var(--pf-calendar-border);
+  border-radius: var(--radius-sm);
+  color: var(--pf-calendar-text);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-2);
+}
+
+.select:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.nav {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-calendar-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  padding: var(--space-1);
+}
+
+.nav:hover:not(:disabled) {
+  background: var(--pf-calendar-bg-subtle);
+  color: var(--pf-calendar-text);
+}
+
+.nav:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.nav:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.grid {
+  display: grid;
+  gap: 2px;
+}
+
+/*
+ * `display: contents` so each row's seven cells join the grid's own columns
+ * rather than forming a nested box. The rows exist for the `role="row"` the
+ * grid pattern requires, not for layout.
+ */
+.row {
+  display: contents;
+}
+
+.grid {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.weekday {
+  color: var(--pf-calendar-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) 0;
+  text-align: center;
+}
+
+.day,
+.empty {
+  aspect-ratio: 1;
+  display: flex;
+  min-width: var(--space-8);
+}
+
+.day {
+  align-items: center;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--pf-calendar-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  justify-content: center;
+}
+
+.day:hover:not([aria-disabled='true']) {
+  background: var(--pf-calendar-bg-subtle);
+}
+
+.day:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.day--outside {
+  color: var(--pf-calendar-text-muted);
+}
+
+.day--today {
+  background: var(--pf-calendar-today-bg);
+  border-color: var(--pf-calendar-today-border);
+}
+
+/* After today, so a selected day that is also today reads as selected. */
+.day--selected {
+  background: var(--pf-calendar-selected-bg);
+  border-color: var(--pf-calendar-selected-bg);
+  color: var(--pf-calendar-selected-text);
+}
+
+.day--selected:hover {
+  background: var(--pf-calendar-selected-bg-hover);
+}
+
+.day[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}

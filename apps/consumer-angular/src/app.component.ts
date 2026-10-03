@@ -5,6 +5,7 @@ import {
   PfBadge,
   PfBadgeGroup,
   PfButton,
+  PfCalendar,
   PfCard,
   PfCardContent,
   PfCardFooter,
@@ -67,6 +68,7 @@ import {
     PfBadge,
     PfBadgeGroup,
     PfButton,
+    PfCalendar,
     PfCard,
     PfCardContent,
     PfCardFooter,
@@ -452,6 +454,20 @@ import {
         </pf-command-group>
       </pf-command-palette>
 
+      <!-- One tab stop, arrows to move; see the React consumer for why. -->
+      <div class="row">
+        <pf-calendar
+          [value]="day()"
+          min="2024-03-05"
+          max="2024-03-26"
+          [startYear]="2020"
+          [endYear]="2030"
+          data-testid="calendar"
+          (pfChange)="day.set($event.detail.value)"
+        ></pf-calendar>
+        <output data-testid="calendar-value">{{ day() }}</output>
+      </div>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -471,6 +487,7 @@ export class AppComponent {
   menuChoice = signal('');
   slideoutOpen = signal(false);
   paletteOpen = signal(false);
+  day = signal('2024-03-15');
   private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
 
   notify(variant: 'success' | 'danger') {

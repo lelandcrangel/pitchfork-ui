@@ -143,6 +143,60 @@ export namespace Components {
         "variant": PfButtonVariant;
     }
     /**
+     * A month grid for picking a date.
+     * **It has a keyboard, which the React component does not.** `Calendar`
+     * renders 42 buttons and no key handling, so reaching the end of a month means
+     * 42 presses of Tab and there is no way to move by week at all. This grid is
+     * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
+     * week, Home and End to the ends of the week, PageUp/PageDown a month. The
+     * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
+     * without the two disagreeing — recorded in `todo.md`.
+     * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
+     * range of a century would mean a hundred custom elements rendered into this
+     * shadow root for one control, and a `<select>` brings its own keyboard and
+     * its platform picker on a phone.
+     */
+    interface PfCalendar {
+        /**
+          * Last year offered in the year picker. Defaults to 50 years on.
+         */
+        "endYear"?: number;
+        /**
+          * Moves the grid to the month holding `date` (a `Date` or `YYYY-MM-DD`).
+         */
+        "goToMonth": (date: string | Date) => Promise<void>;
+        /**
+          * A predicate for days that cannot be chosen, beyond `min` and `max`.  A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a React or Angular consumer passes it as they would any other prop, and a plain-HTML consumer uses `min`/`max` or assigns it in script.
+         */
+        "isDateDisabled"?: (date: Date) => boolean;
+        /**
+          * Accessible name for the grid.
+          * @default 'Calendar'
+         */
+        "label": string;
+        /**
+          * Latest selectable date, as `YYYY-MM-DD`.
+         */
+        "max"?: string;
+        /**
+          * Earliest selectable date, as `YYYY-MM-DD`.
+         */
+        "min"?: string;
+        /**
+          * Render the days borrowed from the neighbouring months.
+          * @default true
+         */
+        "showOutsideDays": boolean;
+        /**
+          * First year offered in the year picker. Defaults to 50 years back.
+         */
+        "startYear"?: number;
+        /**
+          * The selected date, as `YYYY-MM-DD`. Reflected, so a selector can find it.
+         */
+        "value"?: string;
+    }
+    /**
      * A surface that groups related content.
      * The React library's `Card` / `CardHeader` / `CardContent` / `CardFooter` map
      * to four elements rather than to one element with named slots. Named slots
@@ -1342,6 +1396,10 @@ export namespace Components {
         "focusable": boolean;
     }
 }
+export interface PfCalendarCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfCalendarElement;
+}
 export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCheckboxElement;
@@ -1446,6 +1504,37 @@ declare global {
     var HTMLPfButtonElement: {
         prototype: HTMLPfButtonElement;
         new (): HTMLPfButtonElement;
+    };
+    interface HTMLPfCalendarElementEventMap {
+        "pfChange": { value: string };
+    }
+    /**
+     * A month grid for picking a date.
+     * **It has a keyboard, which the React component does not.** `Calendar`
+     * renders 42 buttons and no key handling, so reaching the end of a month means
+     * 42 presses of Tab and there is no way to move by week at all. This grid is
+     * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
+     * week, Home and End to the ends of the week, PageUp/PageDown a month. The
+     * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
+     * without the two disagreeing — recorded in `todo.md`.
+     * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
+     * range of a century would mean a hundred custom elements rendered into this
+     * shadow root for one control, and a `<select>` brings its own keyboard and
+     * its platform picker on a phone.
+     */
+    interface HTMLPfCalendarElement extends Components.PfCalendar, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfCalendarElementEventMap>(type: K, listener: (this: HTMLPfCalendarElement, ev: PfCalendarCustomEvent<HTMLPfCalendarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfCalendarElementEventMap>(type: K, listener: (this: HTMLPfCalendarElement, ev: PfCalendarCustomEvent<HTMLPfCalendarElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfCalendarElement: {
+        prototype: HTMLPfCalendarElement;
+        new (): HTMLPfCalendarElement;
     };
     /**
      * A surface that groups related content.
@@ -2198,6 +2287,7 @@ declare global {
         "pf-badge": HTMLPfBadgeElement;
         "pf-badge-group": HTMLPfBadgeGroupElement;
         "pf-button": HTMLPfButtonElement;
+        "pf-calendar": HTMLPfCalendarElement;
         "pf-card": HTMLPfCardElement;
         "pf-card-content": HTMLPfCardContentElement;
         "pf-card-footer": HTMLPfCardFooterElement;
@@ -2341,6 +2431,60 @@ declare namespace LocalJSX {
           * @default 'primary'
          */
         "variant"?: PfButtonVariant;
+    }
+    /**
+     * A month grid for picking a date.
+     * **It has a keyboard, which the React component does not.** `Calendar`
+     * renders 42 buttons and no key handling, so reaching the end of a month means
+     * 42 presses of Tab and there is no way to move by week at all. This grid is
+     * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
+     * week, Home and End to the ends of the week, PageUp/PageDown a month. The
+     * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
+     * without the two disagreeing — recorded in `todo.md`.
+     * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
+     * range of a century would mean a hundred custom elements rendered into this
+     * shadow root for one control, and a `<select>` brings its own keyboard and
+     * its platform picker on a phone.
+     */
+    interface PfCalendar {
+        /**
+          * Last year offered in the year picker. Defaults to 50 years on.
+         */
+        "endYear"?: number;
+        /**
+          * A predicate for days that cannot be chosen, beyond `min` and `max`.  A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a React or Angular consumer passes it as they would any other prop, and a plain-HTML consumer uses `min`/`max` or assigns it in script.
+         */
+        "isDateDisabled"?: (date: Date) => boolean;
+        /**
+          * Accessible name for the grid.
+          * @default 'Calendar'
+         */
+        "label"?: string;
+        /**
+          * Latest selectable date, as `YYYY-MM-DD`.
+         */
+        "max"?: string;
+        /**
+          * Earliest selectable date, as `YYYY-MM-DD`.
+         */
+        "min"?: string;
+        /**
+          * Fires with the chosen date, as `YYYY-MM-DD`.
+         */
+        "onPfChange"?: (event: PfCalendarCustomEvent<{ value: string }>) => void;
+        /**
+          * Render the days borrowed from the neighbouring months.
+          * @default true
+         */
+        "showOutsideDays"?: boolean;
+        /**
+          * First year offered in the year picker. Defaults to 50 years back.
+         */
+        "startYear"?: number;
+        /**
+          * The selected date, as `YYYY-MM-DD`. Reflected, so a selector can find it.
+         */
+        "value"?: string;
     }
     /**
      * A surface that groups related content.
@@ -3552,6 +3696,15 @@ declare namespace LocalJSX {
         "type": PfButtonType;
         "label": string;
     }
+    interface PfCalendarAttributes {
+        "value": string;
+        "min": string;
+        "max": string;
+        "startYear": number;
+        "endYear": number;
+        "showOutsideDays": boolean;
+        "label": string;
+    }
     interface PfCheckboxAttributes {
         "name": string;
         "checked": boolean;
@@ -3780,6 +3933,7 @@ declare namespace LocalJSX {
         "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
         "pf-badge-group": Omit<PfBadgeGroup, keyof PfBadgeGroupAttributes> & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes]?: PfBadgeGroup[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `attr:${K}`]?: PfBadgeGroupAttributes[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `prop:${K}`]?: PfBadgeGroup[K] };
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
+        "pf-calendar": Omit<PfCalendar, keyof PfCalendarAttributes> & { [K in keyof PfCalendar & keyof PfCalendarAttributes]?: PfCalendar[K] } & { [K in keyof PfCalendar & keyof PfCalendarAttributes as `attr:${K}`]?: PfCalendarAttributes[K] } & { [K in keyof PfCalendar & keyof PfCalendarAttributes as `prop:${K}`]?: PfCalendar[K] };
         "pf-card": PfCard;
         "pf-card-content": PfCardContent;
         "pf-card-footer": PfCardFooter;
@@ -3837,6 +3991,21 @@ declare module "@stencil/core" {
              */
             "pf-badge-group": LocalJSX.IntrinsicElements["pf-badge-group"] & JSXBase.HTMLAttributes<HTMLPfBadgeGroupElement>;
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
+            /**
+             * A month grid for picking a date.
+             * **It has a keyboard, which the React component does not.** `Calendar`
+             * renders 42 buttons and no key handling, so reaching the end of a month means
+             * 42 presses of Tab and there is no way to move by week at all. This grid is
+             * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
+             * week, Home and End to the ends of the week, PageUp/PageDown a month. The
+             * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
+             * without the two disagreeing — recorded in `todo.md`.
+             * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
+             * range of a century would mean a hundred custom elements rendered into this
+             * shadow root for one control, and a `<select>` brings its own keyboard and
+             * its platform picker on a phone.
+             */
+            "pf-calendar": LocalJSX.IntrinsicElements["pf-calendar"] & JSXBase.HTMLAttributes<HTMLPfCalendarElement>;
             /**
              * A surface that groups related content.
              * The React library's `Card` / `CardHeader` / `CardContent` / `CardFooter` map

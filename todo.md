@@ -156,3 +156,25 @@ That is the only pattern that needs no cross-root reference at all. Worth
 pairing with a decision about whether the React `CommandPalette`, which has no
 shadow boundary and so uses a plain IDREF, should adopt the same mode for
 consistency.
+
+---
+
+## The React Calendar has no keyboard
+
+`Calendar` and `DateRangePicker` render 42 day buttons through `CalendarGrid`
+and handle no keys at all. So the grid is 42 sequential tab stops, there is no
+way to move by week, and reaching the end of a month from its start takes 42
+presses of Tab. The ARIA grid pattern is one tab stop plus arrows.
+
+`<pf-calendar>` implements that pattern, and the arithmetic behind it —
+`moveCalendarDate` — is in `packages/core/src/date.ts` precisely so the React
+component can adopt it without the two layers disagreeing about what
+PageDown from the 31st of January means.
+
+**Fix:** give `CalendarGrid` a `focusedDate` of its own, a roving `tabIndex`
+(0 on the focused day, -1 on the other 41), and an `onKeyDown` that calls
+`moveCalendarDate` and moves DOM focus to the new cell. Both `Calendar` and
+`DateRangePicker` get it at once, since the grid is shared. `pf-calendar`'s
+browser spec is the behaviour to match, including the two decisions worth
+keeping: focus crosses a disabled day while activation refuses it, and
+focus leaving the month scrolls the grid with it.

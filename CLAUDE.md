@@ -480,6 +480,29 @@ Things that differ from the React library, learned by porting the first two:
   already moved its own `open`, so the guard there sees no change. The watch is
   the one place every path passes through. Mirror the DOM event back into
   `open` and let the watch do the announcing.
+- **Date arithmetic belongs at midday, and parsing is not `new Date()`.**
+  Everything in `packages/core/src/date.ts` pins to 12:00, because a date at
+  midnight is one DST shift from being the previous day and `addDays` across a
+  boundary then loses or repeats one. Day steps go through the `Date`
+  constructor rather than millisecond offsets for the same reason. Two further
+  traps the tests pin: `new Date('2024-03-15')` parses a bare `YYYY-MM-DD` as
+  **UTC**, so it is the 14th for anyone west of Greenwich — `parseISODate` is
+  local and rejects the 31st of February rather than rolling it forward — and
+  a month step from the 31st clamps into a shorter month instead of
+  overflowing, since `new Date(2024, 1, 31)` is the 2nd of March.
+- **A grid is one tab stop, not one per cell.** `pf-calendar` keeps `tabindex`
+  at 0 on the focused day and -1 on the other 41, moves with the arrows
+  through core's `moveCalendarDate`, and gives the new cell DOM focus in
+  `componentDidRender` — the old button may not exist after the month scrolls.
+  Focus crosses a disabled day while activation refuses it, which is the ARIA
+  pattern and the only way past a long blocked stretch. The React `Calendar`
+  has none of this and is 42 tab stops; `todo.md` has the fix.
+- **`display: contents` is what makes a semantic row work in a CSS grid.** The
+  grid pattern needs `role="row"` wrappers, and a row that forms a box of its
+  own takes its seven cells out of the grid's columns, so nothing lines up
+  under the weekday headers. `scripts/smoke-consumer.mjs` asserts the computed
+  `display` of a row and the grid's column count, because neither test project
+  applies the stylesheet that sets them.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

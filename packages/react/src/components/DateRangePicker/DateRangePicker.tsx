@@ -11,7 +11,7 @@ import { cx } from '../../utils/cx';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
 import { CalendarGrid } from '../Calendar/CalendarGrid';
-import { addMonths, isSameDay, startOfMonth, toMidday } from '../Calendar/dateUtils';
+import { addMonths, isSameDay, startOfMonth, toMidday } from '@pitchfork-ui/core';
 import './DateRangePicker.css';
 
 export interface DateRange {
