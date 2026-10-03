@@ -6,6 +6,7 @@ export * from './carousel';
 export * from './clipboard';
 export * from './cartesian';
 export * from './command';
+export * from './custom-glyphs';
 export * from './date';
 export * from './date-range';
 export * from './dismiss';

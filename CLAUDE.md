@@ -203,6 +203,32 @@ Icons come from `@fortawesome/free-regular-svg-icons` only (the free **regular**
 
 Custom SVGs (chevrons, `triangle-exclamation`) live in the `customIcons` map in the same file and take precedence over the FA lookup. Add new custom SVGs there when a needed icon isn't in the regular FA set.
 
+**The thirteen custom glyphs are data in core, not markup in either layer.**
+`packages/core/src/custom-glyphs.ts` holds each one as a viewBox, a stroke
+width and a list of `polyline`/`path`/`circle` shapes; `Icon` maps them to
+React's camelCase presentation attributes and `pf-icon` to the hyphenated
+spelling. That attribute-name difference is the whole reason core holds data
+rather than an `<svg>` — it has no vdom of its own, the same reason
+`getIconPaths` returns a viewBox and path strings. The geometry used to be
+written out in both places, and no test in either layer could have seen the
+two copies stop agreeing, because each only ever rendered its own. Moving it
+also surfaced a real defect: the Font Awesome branch of `pf-icon` set
+`part="svg"` and the custom branch did not, so `pf-icon::part(svg)` reached two
+thirds of the icons and silently missed every chevron.
+
+The Font Awesome glyphs cannot move, because each layer has to import them
+individually to keep a consumer's bundle to the icons in use. What moved is the
+**list of names**, as core's `BUNDLED_FA_ICON_NAMES`, and each layer has a test
+asserting its own map against it — otherwise an icon added in one place draws
+in React and renders nothing as an element, with every test in both layers
+passing. The equivalent assertion for the custom glyphs was written, probed and
+**deleted**: both layers now read the same list, so it compared a value with
+itself and could not fail.
+
+`scripts/build-metadata.mjs` parses these lists out of the source and throws a
+named error when it cannot find them, which is how the move was caught
+immediately rather than silently producing metadata with no custom icons in it.
+
 `getAvailableIconNames()` lists the canonical names. `Icon` also accepts a Font Awesome alias (`bar-chart` for `chart-bar`) and a camelCase spelling (`chartBar`, `circleInfo`), because it kebab-cases before looking up. `metadata.json` carries all of it under `icons`, which is how the MCP server's `validate_usage` checks a name without rejecting the working spellings.
 
 ```tsx

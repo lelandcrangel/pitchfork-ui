@@ -1,7 +1,7 @@
 import { describe, expect, it, render } from '@stencil/vitest';
-import { registerIconGlyphs } from '@pitchfork-ui/core';
+import { BUNDLED_FA_ICON_NAMES, CUSTOM_GLYPHS, registerIconGlyphs } from '@pitchfork-ui/core';
 import './pf-icon';
-import { getAvailableIconNames, getCustomIconNames } from './icon-names';
+import { bundledIconNames, getAvailableIconNames, getCustomIconNames } from './icon-names';
 
 const svg = (root: HTMLElement) => root.shadowRoot?.querySelector('svg') ?? null;
 
@@ -77,6 +77,59 @@ describe('pf-icon', () => {
     const { root } = await render(`<pf-icon name="star"></pf-icon>`);
 
     expect(root.shadowRoot?.querySelector('[part="svg"]')).not.toBeNull();
+  });
+
+  /*
+   * The Font Awesome branch always set this; the custom glyphs did not, so
+   * `pf-icon::part(svg)` reached two thirds of the icons and silently missed
+   * every chevron.
+   */
+  it('exposes a custom glyph as the same part', async () => {
+    const { root } = await render(`<pf-icon name="chevron-down"></pf-icon>`);
+
+    expect(root.shadowRoot?.querySelector('[part="svg"]')).not.toBeNull();
+  });
+
+  /*
+   * The geometry is core's, so this is where the element's rendering of it is
+   * pinned: the shapes, the viewBox, and the `fill="none"` without which SVG's
+   * initial black fill turns a stroked chevron into a blob.
+   */
+  it('renders a stroked custom glyph with the fill off', async () => {
+    const { root } = await render(`<pf-icon name="chevron-down"></pf-icon>`);
+    const node = svg(root);
+
+    expect(node?.getAttribute('viewBox')).toBe('0 0 24 24');
+    expect(node?.getAttribute('fill')).toBe('none');
+    expect(node?.getAttribute('stroke')).toBe('currentColor');
+    expect(node?.getAttribute('stroke-width')).toBe('3');
+    expect(node?.querySelector('polyline')?.getAttribute('points')).toBe(
+      (CUSTOM_GLYPHS['chevron-down'].shapes[0] as { points: string }).points,
+    );
+  });
+
+  it('renders a filled custom glyph with no stroke', async () => {
+    const { root } = await render(`<pf-icon name="ellipsis"></pf-icon>`);
+    const node = svg(root);
+
+    expect(node?.getAttribute('fill')).toBe('currentColor');
+    expect(node?.getAttribute('stroke')).toBeNull();
+    expect(node?.getAttribute('stroke-width')).toBeNull();
+    expect(node?.querySelectorAll('circle')).toHaveLength(3);
+  });
+
+  /*
+   * The custom glyphs need no such check any more -- both layers render core's
+   * data, so `getCustomIconNames()` against `getCustomGlyphNames()` compares a
+   * value with itself and cannot fail. (Written, probed by adding a glyph to
+   * core, and deleted when it stayed green.) The Font Awesome names are the
+   * part that is still per-layer, because each layer has to import the glyphs
+   * individually to keep a consumer's bundle to the icons in use. A name added
+   * to one layer and not the other would otherwise draw in React and render
+   * nothing here, with every test in both layers passing.
+   */
+  it('bundles exactly the Font Awesome names core lists', () => {
+    expect(bundledIconNames()).toEqual([...BUNDLED_FA_ICON_NAMES]);
   });
 
   it('lists the names it can draw, custom glyphs included', () => {

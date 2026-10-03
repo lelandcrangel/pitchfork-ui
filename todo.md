@@ -523,3 +523,18 @@ Ionic's Vue package does for the same prop. Checking it needs a fixture with
 `skipLibCheck: false` — the existing node16 probe cannot see it, and turning
 `skipLibCheck` off there would also surface every unrelated third-party
 declaration, so it wants a fixture of its own.
+
+---
+
+## `pf-icon::part(svg)` missed every custom glyph — fixed
+
+The Font Awesome branch of `pf-icon.render` set `part="svg"` on its `<svg>`;
+the thirteen hand-drawn glyphs, which were written out as Stencil JSX in a
+sibling module, did not. So a consumer styling `pf-icon::part(svg)` — the one
+hook a shadow root offers them — reached `star` and `circle-check` and silently
+missed every chevron, the search icon and the warning triangle.
+
+Fixed by the same change that moved the glyph geometry into
+`packages/core/src/custom-glyphs.ts`: one renderer per layer over shared data,
+so there is one `<svg>` per layer to get the part right on. A browser spec
+asserts the part on a custom glyph, probed by removing the attribute.

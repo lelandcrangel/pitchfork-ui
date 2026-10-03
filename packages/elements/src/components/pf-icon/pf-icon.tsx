@@ -1,7 +1,7 @@
 import { getIconPaths, normalizeIconName, resolveIconGlyph } from '@pitchfork-ui/core';
 import { Component, h, Host, Prop } from '@stencil/core';
 import { registerBundledIcons } from './bundled-icons';
-import { customIcons } from './custom-icons';
+import { renderCustomIcon } from './custom-icons';
 
 // Called rather than imported for its side effect: a side-effect-only
 // import is something a bundler may drop, and did.
@@ -47,7 +47,7 @@ export class PfIcon {
   @Prop() label?: string;
 
   render() {
-    const custom = customIcons[this.name] ?? customIcons[normalizeIconName(this.name)];
+    const custom = renderCustomIcon(this.name) ?? renderCustomIcon(normalizeIconName(this.name));
     const glyph = custom ? undefined : resolveIconGlyph(this.name);
 
     if (!custom && !glyph) {

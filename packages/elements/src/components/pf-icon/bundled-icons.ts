@@ -28,22 +28,31 @@ import {
  *
  * Anything outside the list is not "an icon the library lacks": register it
  * with `registerIconGlyphs()` from the peer dependency you already install.
+ *
+ * The *names* are core's `BUNDLED_FA_ICON_NAMES`, which the spec asserts this
+ * map against. Adding an icon to one layer and forgetting the other would
+ * otherwise leave a name that draws in React and nothing in `<pf-icon>`, with
+ * every test in both layers passing.
  */
-export const registerBundledIcons = () =>
-  registerIconGlyphs({
-    bell: faBell,
-    calendar: faCalendar,
-    'chart-bar': faBarChart,
-    'circle-check': faCircleCheck,
-    'circle-question': faCircleQuestion,
-    'circle-xmark': faCircleXmark,
-    copy: faCopy,
-    'credit-card': faCreditCard,
-    file: faFile,
-    'folder-open': faFolderOpen,
-    'square-caret-left': faSquareCaretLeft,
-    'square-caret-right': faSquareCaretRight,
-    'square-check': faSquareCheck,
-    star: faStar,
-    user: faUser,
-  });
+const bundled = {
+  bell: faBell,
+  calendar: faCalendar,
+  'chart-bar': faBarChart,
+  'circle-check': faCircleCheck,
+  'circle-question': faCircleQuestion,
+  'circle-xmark': faCircleXmark,
+  copy: faCopy,
+  'credit-card': faCreditCard,
+  file: faFile,
+  'folder-open': faFolderOpen,
+  'square-caret-left': faSquareCaretLeft,
+  'square-caret-right': faSquareCaretRight,
+  'square-check': faSquareCheck,
+  star: faStar,
+  user: faUser,
+};
+
+export const registerBundledIcons = () => registerIconGlyphs(bundled);
+
+/** The names this package bundles, for the spec that checks them against core. */
+export const getBundledIconNames = () => Object.keys(bundled).sort();

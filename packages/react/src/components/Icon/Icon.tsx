@@ -18,239 +18,55 @@ import {
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon, type FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import {
+  type CustomGlyph as CustomGlyphData,
+  type CustomGlyphName,
+  customGlyphAttributes,
+  getCustomGlyphNames,
   getRegisteredIconNames,
   normalizeIconName,
   registerIconGlyphs,
+  resolveCustomGlyph,
   resolveIconGlyph,
 } from '@pitchfork-ui/core';
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
-// Custom SVGs not available in the free-regular FA set
-const customIcons = {
-  'chevron-down': (
+/**
+ * The custom glyphs, rendered from the shared data in @pitchfork-ui/core.
+ *
+ * The geometry used to be written here as JSX and a second time as Stencil JSX
+ * in `pf-icon/custom-icons.tsx`. Two copies of a shape agree on the day they
+ * are written, and no test in either layer could have seen them stop agreeing,
+ * because each one only ever rendered its own. Core holds the shapes; this
+ * maps them to React's camelCase presentation attributes.
+ */
+function CustomGlyph({ glyph }: { glyph: CustomGlyphData }) {
+  const { viewBox, fill, stroke, strokeWidth, strokeLinecap, strokeLinejoin } =
+    customGlyphAttributes(glyph);
+
+  return (
     <svg
       width="1em"
       height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox={viewBox}
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      strokeLinecap={strokeLinecap}
+      strokeLinejoin={strokeLinejoin}
       focusable="false"
       aria-hidden="true"
     >
-      <polyline points="5 9 12 18 19 9" />
+      {glyph.shapes.map((shape, index) => {
+        if (shape.kind === 'polyline') return <polyline key={index} points={shape.points} />;
+        if (shape.kind === 'circle') {
+          return <circle key={index} cx={shape.cx} cy={shape.cy} r={shape.r} />;
+        }
+        return <path key={index} d={shape.d} />;
+      })}
     </svg>
-  ),
-  'chevron-up': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <polyline points="5 15 12 6 19 15" />
-    </svg>
-  ),
-  'chevron-left': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <polyline points="15 5 6 12 15 19" />
-    </svg>
-  ),
-  'chevron-right': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <polyline points="9 5 18 12 9 19" />
-    </svg>
-  ),
-  'circle-info': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4" />
-      <path d="M12 8h.01" />
-    </svg>
-  ),
-  'triangle-exclamation': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-      <path d="M12 9v4" />
-      <path d="M12 17h.01" />
-    </svg>
-  ),
-  // The mirror of file-arrow-up, for an export or download action. Neither is
-  // in the free-regular set.
-  'file-arrow-down': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-      <path d="M12 12v6" />
-      <path d="m9 15 3 3 3-3" />
-    </svg>
-  ),
-  // "More options". The free-regular set has no horizontal ellipsis.
-  ellipsis: (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <circle cx="5" cy="12" r="2" />
-      <circle cx="12" cy="12" r="2" />
-      <circle cx="19" cy="12" r="2" />
-    </svg>
-  ),
-  'file-arrow-up': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-      <path d="M12 12v6" />
-      <path d="m15 15-3-3-3 3" />
-    </svg>
-  ),
-  plus: (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M12 5v14" />
-      <path d="M5 12h14" />
-    </svg>
-  ),
-  clock: (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
-  ),
-  'magnifying-glass': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  ),
-  minus: (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14" />
-    </svg>
-  ),
-} satisfies Record<string, React.ReactNode>;
+  );
+}
 
 /**
  * The Font Awesome regular icons bundled with the library. This is an explicit
@@ -279,7 +95,7 @@ const bundledRegularIcons = {
   user: faUser,
 } satisfies Record<string, IconDefinition>;
 
-export type RegisteredIconName = keyof typeof customIcons | keyof typeof bundledRegularIcons;
+export type RegisteredIconName = CustomGlyphName | keyof typeof bundledRegularIcons;
 
 /**
  * A registered name, or any other string: `registerIcons()` can add names at
@@ -333,10 +149,10 @@ const warnUnknownIcon = (name: string) => {
 };
 
 export const getAvailableIconNames = () => {
-  return [...new Set([...getRegisteredIconNames(), ...Object.keys(customIcons)])].sort();
+  return [...new Set([...getRegisteredIconNames(), ...getCustomGlyphNames()])].sort();
 };
 
-export const getCustomIconNames = () => Object.keys(customIcons).sort();
+export const getCustomIconNames = () => getCustomGlyphNames();
 
 export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   name: IconName;
@@ -350,9 +166,8 @@ export function Icon({ name, label, className, style, ...props }: IconProps) {
   // `circle-info`, which is a custom SVG -- and a raw-only lookup here meant
   // that mapping never took effect. `circleInfo` and `magnifyingGlass`
   // rendered nothing.
-  const custom = customIcons as Record<string, React.ReactNode>;
-  const customIcon = custom[name] ?? custom[normalizedName];
-  if (customIcon !== undefined) {
+  const customGlyph = resolveCustomGlyph(name) ?? resolveCustomGlyph(normalizedName);
+  if (customGlyph !== undefined) {
     return (
       <span
         className={cx('pf-icon', className)}
@@ -361,7 +176,7 @@ export function Icon({ name, label, className, style, ...props }: IconProps) {
         style={style}
         {...(props as React.HTMLAttributes<HTMLSpanElement>)}
       >
-        {customIcon}
+        <CustomGlyph glyph={customGlyph} />
       </span>
     );
   }
