@@ -14,6 +14,7 @@ import {
   PfCheckbox,
   PfCommandGroup,
   PfCommandItem,
+  PfCollapsible,
   PfCommandPalette,
   PfCombobox,
   PfContentDivider,
@@ -80,6 +81,7 @@ export function App() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [tab, setTab] = useState('overview');
   const [sections, setSections] = useState('shipping');
+  const [details, setDetails] = useState(false);
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
@@ -718,6 +720,23 @@ export function App() {
         </PfAccordionItem>
       </PfAccordion>
       <output data-testid="accordion-value">{sections || 'none'}</output>
+
+      {/*
+        The same panel mechanics as a section of the accordion, with no group
+        above it — so Escape on the header closes it, which an accordion
+        section leaves to its group.
+      */}
+      <PfCollapsible
+        open={details}
+        data-testid="collapsible"
+        onPfOpenChange={(event) => setDetails(event.detail.open)}
+      >
+        <span slot="trigger">Advanced options</span>
+        <p>
+          <a href="#advanced-detail">A focusable link</a>, which is why the closed panel is inert.
+        </p>
+      </PfCollapsible>
+      <output data-testid="collapsible-value">{details ? 'open' : 'closed'}</output>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

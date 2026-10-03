@@ -15,6 +15,7 @@ import {
   PfCheckbox,
   PfCommandGroup,
   PfCommandItem,
+  PfCollapsible,
   PfCommandPalette,
   PfCombobox,
   PfContentDivider,
@@ -91,6 +92,7 @@ import {
     PfCheckbox,
     PfCommandGroup,
     PfCommandItem,
+    PfCollapsible,
     PfCommandPalette,
     PfCombobox,
     PfContentDivider,
@@ -633,6 +635,19 @@ import {
       </pf-accordion>
       <output data-testid="accordion-value">{{ sections() || 'none' }}</output>
 
+      <!-- One disclosure, no group; see the React consumer. -->
+      <pf-collapsible
+        [open]="details()"
+        data-testid="collapsible"
+        (pfOpenChange)="details.set($event.detail.open)"
+      >
+        <span slot="trigger">Advanced options</span>
+        <p>
+          <a href="#advanced-detail">A focusable link</a>, which is why the closed panel is inert.
+        </p>
+      </pf-collapsible>
+      <output data-testid="collapsible-value">{{ details() ? 'open' : 'closed' }}</output>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -654,6 +669,7 @@ export class AppComponent {
   paletteOpen = signal(false);
   tab = signal('overview');
   sections = signal('shipping');
+  details = signal(false);
   day = signal('2024-03-15');
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');

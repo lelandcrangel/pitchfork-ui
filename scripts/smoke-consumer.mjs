@@ -99,6 +99,7 @@ const EXPECTED = [
   'pf-tab-panel',
   'pf-accordion',
   'pf-accordion-item',
+  'pf-collapsible',
 ];
 
 const TYPES = {
@@ -1935,6 +1936,128 @@ try {
         problems.push(
           `pf-accordion reported "${state.echo}" to the host framework, ` +
             'expected "shipping,returns"',
+        );
+      }
+    }
+  }
+
+  /*
+   * The collapsible, which shares its panel mechanics with an accordion
+   * section but owns `open` itself. What a real stylesheet adds here is the
+   * closed panel measuring zero and the rule above the content, and what only
+   * a real build shows is Escape on the header reaching the host framework.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-collapsible');
+        if (!el) return { error: 'the consumer app has no pf-collapsible' };
+
+        const part = (name) => el.shadowRoot.querySelector(`[part="${name}"]`);
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        const waitFor = async (predicate) => {
+          const deadline = Date.now() + 3000;
+          while (!predicate()) {
+            if (Date.now() > deadline) return false;
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+          return true;
+        };
+
+        await settle();
+        const closedHeight = part('content').getBoundingClientRect().height;
+        const closedChevron = getComputedStyle(part('icon')).transform;
+
+        part('trigger').click();
+        if (!(await waitFor(() => el.open))) return { error: 'the header did not open it' };
+        /*
+         * `open` flips synchronously on the click, but the attribute it
+         * reflects — and so the transition the stylesheet starts — lands on
+         * the next render. Sampling here instead of waiting reported no
+         * animation at all.
+         */
+        const panel = part('panel');
+        await waitFor(() => panel.getAnimations().length > 0);
+        const animated = panel.getAnimations().map((animation) => ({
+          property: animation.transitionProperty ?? null,
+          duration: animation.effect?.getTiming().duration ?? 0,
+        }));
+        await Promise.all(panel.getAnimations().map((animation) => animation.finished));
+        await settle();
+
+        const read = {
+          closedHeight,
+          closedChevron,
+          animated,
+          openHeight: part('content').getBoundingClientRect().height,
+          openChevron: getComputedStyle(part('icon')).transform,
+          contentRule: getComputedStyle(part('inner')).borderTopWidth,
+          border: getComputedStyle(el).borderTopWidth,
+          echo: document.querySelector('[data-testid="collapsible-value"]')?.textContent?.trim(),
+        };
+
+        // Escape on the header, which is the one key this element claims.
+        part('trigger').focus();
+        part('trigger').dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, composed: true }),
+        );
+        const closedAgain = await waitFor(() => !el.open);
+        await settle();
+
+        return {
+          ...read,
+          closedAgain,
+          echoAfterEscape: document
+            .querySelector('[data-testid="collapsible-value"]')
+            ?.textContent?.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-collapsible: ${state.error}`);
+    } else {
+      if (state.closedHeight !== 0) {
+        problems.push(
+          `a closed pf-collapsible panel measured ${state.closedHeight}px — ` +
+            'the 0fr row is not collapsing',
+        );
+      }
+      if (!(state.openHeight > 0)) {
+        problems.push(`an open pf-collapsible panel measured ${state.openHeight}px`);
+      }
+      if (state.openChevron === state.closedChevron) {
+        problems.push(
+          `the chevron looks the same open and closed ("${state.openChevron}") — ` +
+            'the [open] rotation did not apply',
+        );
+      }
+      if (state.contentRule === '0px') {
+        problems.push('the pf-collapsible content has no rule above it');
+      }
+      if (state.border === '0px') {
+        problems.push('pf-collapsible has no border — a --pf-collapsible-* alias is missing');
+      }
+      const rows = state.animated.filter(
+        (animation) => animation.property === 'grid-template-rows' && animation.duration > 0,
+      );
+      if (rows.length === 0) {
+        problems.push(
+          'opening pf-collapsible ran no grid-template-rows animation — ' +
+            `it snaps open (${JSON.stringify(state.animated)})`,
+        );
+      }
+      if (state.echo !== 'open') {
+        problems.push(`pf-collapsible reported "${state.echo}" to the host framework on opening`);
+      }
+      if (!state.closedAgain || state.echoAfterEscape !== 'closed') {
+        problems.push(
+          `Escape on the pf-collapsible header left it ` +
+            `"${state.echoAfterEscape}" (closed: ${state.closedAgain})`,
         );
       }
     }

@@ -356,6 +356,41 @@ export namespace Components {
         "value": string;
     }
     /**
+     * One disclosure: a header that shows and hides the content below it.
+     * The same panel mechanics as `pf-accordion-item` — a `0fr` → `1fr` grid row
+     * so the height animates to the content's own, and `inert` on the closed panel
+     * because that height still holds focusable content — but no group above it,
+     * so this element owns `open` itself.
+     * Both IDREFs stay inside this one shadow root, which is where an IDREF
+     * resolves: the header names the panel with `aria-controls` and the panel
+     * names the header back with `aria-labelledby`.
+     */
+    interface PfCollapsible {
+        /**
+          * Reflected, so the stylesheet can mark the header.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Closes the content.
+         */
+        "hide": () => Promise<void>;
+        /**
+          * Whether the content is showing. Reflected so the stylesheet selects on it.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Opens the content.
+         */
+        "show": () => Promise<void>;
+        /**
+          * Show the rotating chevron. Defaults to true.
+          * @default true
+         */
+        "showChevron": boolean;
+    }
+    /**
      * A form-associated combobox: an editable field that filters `pf-option`
      * children.
      * It shares `pf-option` with `pf-select`, which is why the option reads a
@@ -2101,6 +2136,10 @@ export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCheckboxElement;
 }
+export interface PfCollapsibleCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfCollapsibleElement;
+}
 export interface PfComboboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfComboboxElement;
@@ -2395,6 +2434,33 @@ declare global {
     var HTMLPfCheckboxElement: {
         prototype: HTMLPfCheckboxElement;
         new (): HTMLPfCheckboxElement;
+    };
+    interface HTMLPfCollapsibleElementEventMap {
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * One disclosure: a header that shows and hides the content below it.
+     * The same panel mechanics as `pf-accordion-item` — a `0fr` → `1fr` grid row
+     * so the height animates to the content's own, and `inert` on the closed panel
+     * because that height still holds focusable content — but no group above it,
+     * so this element owns `open` itself.
+     * Both IDREFs stay inside this one shadow root, which is where an IDREF
+     * resolves: the header names the panel with `aria-controls` and the panel
+     * names the header back with `aria-labelledby`.
+     */
+    interface HTMLPfCollapsibleElement extends Components.PfCollapsible, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfCollapsibleElementEventMap>(type: K, listener: (this: HTMLPfCollapsibleElement, ev: PfCollapsibleCustomEvent<HTMLPfCollapsibleElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfCollapsibleElementEventMap>(type: K, listener: (this: HTMLPfCollapsibleElement, ev: PfCollapsibleCustomEvent<HTMLPfCollapsibleElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfCollapsibleElement: {
+        prototype: HTMLPfCollapsibleElement;
+        new (): HTMLPfCollapsibleElement;
     };
     interface HTMLPfComboboxElementEventMap {
         "pfChange": { value: string };
@@ -3409,6 +3475,7 @@ declare global {
         "pf-card-footer": HTMLPfCardFooterElement;
         "pf-card-header": HTMLPfCardHeaderElement;
         "pf-checkbox": HTMLPfCheckboxElement;
+        "pf-collapsible": HTMLPfCollapsibleElement;
         "pf-combobox": HTMLPfComboboxElement;
         "pf-command-group": HTMLPfCommandGroupElement;
         "pf-command-item": HTMLPfCommandItemElement;
@@ -3755,6 +3822,37 @@ declare namespace LocalJSX {
           * @default 'on'
          */
         "value"?: string;
+    }
+    /**
+     * One disclosure: a header that shows and hides the content below it.
+     * The same panel mechanics as `pf-accordion-item` — a `0fr` → `1fr` grid row
+     * so the height animates to the content's own, and `inert` on the closed panel
+     * because that height still holds focusable content — but no group above it,
+     * so this element owns `open` itself.
+     * Both IDREFs stay inside this one shadow root, which is where an IDREF
+     * resolves: the header names the panel with `aria-controls` and the panel
+     * names the header back with `aria-labelledby`.
+     */
+    interface PfCollapsible {
+        /**
+          * Reflected, so the stylesheet can mark the header.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Fires whenever the content opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfCollapsibleCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the content is showing. Reflected so the stylesheet selects on it.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Show the rotating chevron. Defaults to true.
+          * @default true
+         */
+        "showChevron"?: boolean;
     }
     /**
      * A form-associated combobox: an editable field that filters `pf-option`
@@ -5566,6 +5664,11 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
     }
+    interface PfCollapsibleAttributes {
+        "open": boolean;
+        "disabled": boolean;
+        "showChevron": boolean;
+    }
     interface PfComboboxAttributes {
         "name": string;
         "value": string;
@@ -5918,6 +6021,7 @@ declare namespace LocalJSX {
         "pf-card-footer": PfCardFooter;
         "pf-card-header": PfCardHeader;
         "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
+        "pf-collapsible": Omit<PfCollapsible, keyof PfCollapsibleAttributes> & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes]?: PfCollapsible[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `attr:${K}`]?: PfCollapsibleAttributes[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `prop:${K}`]?: PfCollapsible[K] };
         "pf-combobox": Omit<PfCombobox, keyof PfComboboxAttributes> & { [K in keyof PfCombobox & keyof PfComboboxAttributes]?: PfCombobox[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `attr:${K}`]?: PfComboboxAttributes[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `prop:${K}`]?: PfCombobox[K] };
         "pf-command-group": Omit<PfCommandGroup, keyof PfCommandGroupAttributes> & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes]?: PfCommandGroup[K] } & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes as `attr:${K}`]?: PfCommandGroupAttributes[K] } & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes as `prop:${K}`]?: PfCommandGroup[K] };
         "pf-command-item": Omit<PfCommandItem, keyof PfCommandItemAttributes> & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes]?: PfCommandItem[K] } & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes as `attr:${K}`]?: PfCommandItemAttributes[K] } & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes as `prop:${K}`]?: PfCommandItem[K] };
@@ -6051,6 +6155,17 @@ declare module "@stencil/core" {
              * A form-associated checkbox.
              */
             "pf-checkbox": LocalJSX.IntrinsicElements["pf-checkbox"] & JSXBase.HTMLAttributes<HTMLPfCheckboxElement>;
+            /**
+             * One disclosure: a header that shows and hides the content below it.
+             * The same panel mechanics as `pf-accordion-item` — a `0fr` → `1fr` grid row
+             * so the height animates to the content's own, and `inert` on the closed panel
+             * because that height still holds focusable content — but no group above it,
+             * so this element owns `open` itself.
+             * Both IDREFs stay inside this one shadow root, which is where an IDREF
+             * resolves: the header names the panel with `aria-controls` and the panel
+             * names the header back with `aria-labelledby`.
+             */
+            "pf-collapsible": LocalJSX.IntrinsicElements["pf-collapsible"] & JSXBase.HTMLAttributes<HTMLPfCollapsibleElement>;
             /**
              * A form-associated combobox: an editable field that filters `pf-option`
              * children.
