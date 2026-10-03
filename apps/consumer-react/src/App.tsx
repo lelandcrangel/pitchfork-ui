@@ -32,6 +32,7 @@ import {
   PfModalBody,
   PfModalFooter,
   PfModalHeader,
+  PfMultiSelect,
   PfNotification,
   PfPagination,
   PfPopover,
@@ -76,6 +77,7 @@ export function App() {
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
   const [fruit, setFruit] = useState('banana');
   const [city, setCity] = useState('');
+  const [colours, setColours] = useState('red,blue');
   const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
@@ -283,6 +285,25 @@ export function App() {
           data-testid="date-range-picker"
           onPfChange={(event) => setTrip(event.detail.value)}
         />
+        {/*
+          One control, one entry per value: setFormValue takes a FormData and a
+          repeated key submits once per value, so `colours` appears twice below.
+        */}
+        <PfMultiSelect
+          label="Colours"
+          name="colours"
+          value={colours}
+          data-testid="multi-select"
+          onPfChange={(event) => setColours(event.detail.value)}
+        >
+          <PfOption value="red">Red</PfOption>
+          <PfOption value="green">Green</PfOption>
+          <PfOption value="blue">Blue</PfOption>
+          <PfOption value="grey" disabled>
+            Grey
+          </PfOption>
+        </PfMultiSelect>
+
         {/*
           Shares pf-option with pf-select: the option reads a generic
           --pf-option-* set that each listbox maps to its own family, so one

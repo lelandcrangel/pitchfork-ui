@@ -340,6 +340,37 @@ test('submits two entries from one control', async () => {
   ]);
 });
 
+/*
+ * Set well after load, so this cannot pass on load-order luck the way an
+ * earlier version did: `name` is built into the FormData, so it needs a watch
+ * of its own to reach the submission.
+ */
+test('reflects a name assigned after load, and re-syncs the submission', async () => {
+  document.body.innerHTML = `
+    <form id="f">
+      <pf-date-range-picker value="2024-03-10/2024-03-20"></pf-date-range-picker>
+    </form>`;
+  await customElements.whenDefined('pf-date-range-picker');
+  const el = document.querySelector('pf-date-range-picker') as Picker & { name: string };
+  await until(() => el.shadowRoot?.querySelector('[part="trigger"]') !== null, 'it to render');
+  await new Promise((resolve) => setTimeout(resolve, 60));
+
+  expect([...new FormData(document.getElementById('f') as HTMLFormElement).entries()]).toEqual([]);
+
+  el.name = 'trip';
+  await until(() => el.getAttribute('name') === 'trip', 'name to reflect');
+  await until(
+    () => new FormData(document.getElementById('f') as HTMLFormElement).has('trip-start'),
+    'the submission to pick the name up',
+  );
+
+  const data = new FormData(document.getElementById('f') as HTMLFormElement);
+  expect([...data.entries()]).toEqual([
+    ['trip-start', '2024-03-10'],
+    ['trip-end', '2024-03-20'],
+  ]);
+});
+
 test('is absent from the submission without a complete range', async () => {
   document.body.innerHTML = `
     <form id="f"><pf-date-range-picker name="trip"></pf-date-range-picker></form>`;

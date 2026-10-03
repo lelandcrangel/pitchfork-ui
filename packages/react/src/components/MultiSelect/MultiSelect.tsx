@@ -1,3 +1,4 @@
+import { toggleValueInList } from '@pitchfork-ui/core';
 import { forwardRef, useEffect, useId, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, isActivationKey, Keys } from '../../a11y';
@@ -120,13 +121,9 @@ export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
       setSelectedValues(nextValue);
     };
 
+    // Core's, so `<pf-multi-select>` builds the same list in the same order.
     const toggleValue = (nextValue: string) => {
-      if (selectedSet.has(nextValue)) {
-        updateValue(selectedValues.filter((valueItem) => valueItem !== nextValue));
-        return;
-      }
-
-      updateValue([...selectedValues, nextValue]);
+      updateValue(toggleValueInList(selectedValues, nextValue));
     };
 
     const onTriggerKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (event) => {

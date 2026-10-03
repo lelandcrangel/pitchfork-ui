@@ -33,6 +33,7 @@ import {
   PfModalBody,
   PfModalFooter,
   PfModalHeader,
+  PfMultiSelect,
   PfNotification,
   PfPagination,
   PfPopover,
@@ -102,6 +103,7 @@ import {
     PfModalBody,
     PfModalFooter,
     PfModalHeader,
+    PfMultiSelect,
     PfNotification,
     PfPagination,
     PfPopover,
@@ -313,6 +315,20 @@ import {
           data-testid="date-range-picker"
           (pfChange)="trip.set($event.detail.value)"
         ></pf-date-range-picker>
+        <!-- One control, one submitted entry per value. -->
+        <pf-multi-select
+          label="Colours"
+          name="colours"
+          [value]="colours()"
+          data-testid="multi-select"
+          (pfChange)="colours.set($event.detail.value)"
+        >
+          <pf-option value="red">Red</pf-option>
+          <pf-option value="green">Green</pf-option>
+          <pf-option value="blue">Blue</pf-option>
+          <pf-option value="grey" disabled>Grey</pf-option>
+        </pf-multi-select>
+
         <!-- Shares pf-option with pf-select through the --pf-option-* bridge. -->
         <pf-combobox
           label="City"
@@ -562,6 +578,7 @@ export class AppComponent {
   trip = signal('2024-03-10/2024-03-20');
   fruit = signal('banana');
   city = signal('');
+  colours = signal('red,blue');
   private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
 
   notify(variant: 'success' | 'danger') {

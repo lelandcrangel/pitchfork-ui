@@ -17,3 +17,4 @@ export * from './state';
 export * from './text';
 export * from './time';
 export * from './typeahead';
+export * from './value-list';

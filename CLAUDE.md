@@ -569,6 +569,21 @@ Things that differ from the React library, learned by porting the first two:
   instead; nothing in this palette is pure black, so black is the fingerprint.
   The same goes for any `--pf-*` the smoke script asserts: compare against
   what an unresolved property actually leaves behind, not against a sibling.
+- **Watch `name` whenever the submission name is built into a `FormData`.**
+  A control that hands `setFormValue` a plain string takes its name from the
+  reflected attribute, so the platform notices a change by itself. One that
+  builds a `FormData` — `pf-multi-select` with a repeated key, and
+  `pf-date-range-picker` with its two — bakes the name in, so without a
+  `@Watch('name')` a name assigned after load never reaches the submission.
+  The range picker had that gap and its test passed anyway, because the
+  assignment happened to land before `componentWillLoad`; a version that sets
+  the name well after load fails without the watch and the old one still
+  passes, which is how the luck was visible.
+- **A repeated key in that `FormData` submits once per value.** Measured, and
+  it is what makes one multi-choice control behave like a native `multiple`
+  select: `data.getAll(name)` reads the values back as an array, in the order
+  they were appended. The React `MultiSelect` gets the same shape from
+  rendering one hidden `<input>` per selection.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

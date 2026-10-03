@@ -949,6 +949,64 @@ export namespace Components {
     interface PfModalHeader {
     }
     /**
+     * A form-associated multi-choice select over `pf-option` children.
+     * **It submits one entry per chosen value from a single control.**
+     * `setFormValue` takes a `FormData`, and a key repeated in it is submitted
+     * once per value — measured, and the same shape the React component gets from
+     * rendering one hidden `<input>` per selection. So a server reads
+     * `data.getAll(name)` exactly as it would from a native multiple select.
+     * `value` is one comma-separated string, because that is what an attribute can
+     * carry; `pfChange` also reports the parsed `values` array, which is what a
+     * framework consumer usually wants. A value containing a comma cannot survive
+     * that, so one is reported on the console rather than silently mangled.
+     * Shares `pf-option` with `pf-select` and `pf-combobox` through the generic
+     * `--pf-option-*` set.
+     */
+    interface PfMultiSelect {
+        "checkValidity": () => Promise<boolean>;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        "error"?: string;
+        "getValidationMessage": () => Promise<string>;
+        "hide": () => Promise<void>;
+        "label"?: string;
+        /**
+          * Options to show before the listbox scrolls.
+         */
+        "maxVisibleOptions"?: number;
+        /**
+          * Submitted under this name, once per chosen value. Reflected.
+         */
+        "name"?: string;
+        /**
+          * Whether the listbox is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default 'Select options'
+         */
+        "placeholder": string;
+        /**
+          * Re-reads the options, for a label edited in place.
+         */
+        "refresh": () => Promise<void>;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        "show": () => Promise<void>;
+        /**
+          * The chosen values, comma-separated. Reflected, so HTML can set it.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A notification: an icon, a heading, a body and an optional dismiss button.
      * The role comes from core's `liveRegionRole`, so `warning` and `danger`
      * announce assertively and `info` and `success` wait their turn. The React
@@ -1812,6 +1870,10 @@ export interface PfModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfModalElement;
 }
+export interface PfMultiSelectCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfMultiSelectElement;
+}
 export interface PfNotificationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfNotificationElement;
@@ -2395,6 +2457,38 @@ declare global {
         prototype: HTMLPfModalHeaderElement;
         new (): HTMLPfModalHeaderElement;
     };
+    interface HTMLPfMultiSelectElementEventMap {
+        "pfChange": { value: string; values: string[] };
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * A form-associated multi-choice select over `pf-option` children.
+     * **It submits one entry per chosen value from a single control.**
+     * `setFormValue` takes a `FormData`, and a key repeated in it is submitted
+     * once per value — measured, and the same shape the React component gets from
+     * rendering one hidden `<input>` per selection. So a server reads
+     * `data.getAll(name)` exactly as it would from a native multiple select.
+     * `value` is one comma-separated string, because that is what an attribute can
+     * carry; `pfChange` also reports the parsed `values` array, which is what a
+     * framework consumer usually wants. A value containing a comma cannot survive
+     * that, so one is reported on the console rather than silently mangled.
+     * Shares `pf-option` with `pf-select` and `pf-combobox` through the generic
+     * `--pf-option-*` set.
+     */
+    interface HTMLPfMultiSelectElement extends Components.PfMultiSelect, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfMultiSelectElementEventMap>(type: K, listener: (this: HTMLPfMultiSelectElement, ev: PfMultiSelectCustomEvent<HTMLPfMultiSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfMultiSelectElementEventMap>(type: K, listener: (this: HTMLPfMultiSelectElement, ev: PfMultiSelectCustomEvent<HTMLPfMultiSelectElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfMultiSelectElement: {
+        prototype: HTMLPfMultiSelectElement;
+        new (): HTMLPfMultiSelectElement;
+    };
     interface HTMLPfNotificationElementEventMap {
         "pfDismiss": void;
     }
@@ -2888,6 +2982,7 @@ declare global {
         "pf-modal-body": HTMLPfModalBodyElement;
         "pf-modal-footer": HTMLPfModalFooterElement;
         "pf-modal-header": HTMLPfModalHeaderElement;
+        "pf-multi-select": HTMLPfMultiSelectElement;
         "pf-notification": HTMLPfNotificationElement;
         "pf-option": HTMLPfOptionElement;
         "pf-pagination": HTMLPfPaginationElement;
@@ -3819,6 +3914,67 @@ declare namespace LocalJSX {
      * strip when nothing was slotted into it.
      */
     interface PfModalHeader {
+    }
+    /**
+     * A form-associated multi-choice select over `pf-option` children.
+     * **It submits one entry per chosen value from a single control.**
+     * `setFormValue` takes a `FormData`, and a key repeated in it is submitted
+     * once per value — measured, and the same shape the React component gets from
+     * rendering one hidden `<input>` per selection. So a server reads
+     * `data.getAll(name)` exactly as it would from a native multiple select.
+     * `value` is one comma-separated string, because that is what an attribute can
+     * carry; `pfChange` also reports the parsed `values` array, which is what a
+     * framework consumer usually wants. A value containing a comma cannot survive
+     * that, so one is reported on the console rather than silently mangled.
+     * Shares `pf-option` with `pf-select` and `pf-combobox` through the generic
+     * `--pf-option-*` set.
+     */
+    interface PfMultiSelect {
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        "label"?: string;
+        /**
+          * Options to show before the listbox scrolls.
+         */
+        "maxVisibleOptions"?: number;
+        /**
+          * Submitted under this name, once per chosen value. Reflected.
+         */
+        "name"?: string;
+        /**
+          * Fires when the chosen set changes, with both representations.
+         */
+        "onPfChange"?: (event: PfMultiSelectCustomEvent<{ value: string; values: string[] }>) => void;
+        /**
+          * Fires whenever the listbox opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfMultiSelectCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the listbox is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default 'Select options'
+         */
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * The chosen values, comma-separated. Reflected, so HTML can set it.
+          * @default ''
+         */
+        "value"?: string;
     }
     /**
      * A notification: an icon, a heading, a body and an optional dismiss button.
@@ -4813,6 +4969,18 @@ declare namespace LocalJSX {
         "dismissable": boolean;
         "showCloseButton": boolean;
     }
+    interface PfMultiSelectAttributes {
+        "name": string;
+        "value": string;
+        "open": boolean;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "required": boolean;
+        "disabled": boolean;
+        "maxVisibleOptions": number;
+    }
     interface PfNotificationAttributes {
         "variant": PfNotificationVariant;
         "heading": string;
@@ -5007,6 +5175,7 @@ declare namespace LocalJSX {
         "pf-modal-body": PfModalBody;
         "pf-modal-footer": PfModalFooter;
         "pf-modal-header": PfModalHeader;
+        "pf-multi-select": Omit<PfMultiSelect, keyof PfMultiSelectAttributes> & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes]?: PfMultiSelect[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `attr:${K}`]?: PfMultiSelectAttributes[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `prop:${K}`]?: PfMultiSelect[K] };
         "pf-notification": Omit<PfNotification, keyof PfNotificationAttributes> & { [K in keyof PfNotification & keyof PfNotificationAttributes]?: PfNotification[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `attr:${K}`]?: PfNotificationAttributes[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `prop:${K}`]?: PfNotification[K] };
         "pf-option": Omit<PfOption, keyof PfOptionAttributes> & { [K in keyof PfOption & keyof PfOptionAttributes]?: PfOption[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `attr:${K}`]?: PfOptionAttributes[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `prop:${K}`]?: PfOption[K] };
         "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
@@ -5262,6 +5431,21 @@ declare module "@stencil/core" {
              * strip when nothing was slotted into it.
              */
             "pf-modal-header": LocalJSX.IntrinsicElements["pf-modal-header"] & JSXBase.HTMLAttributes<HTMLPfModalHeaderElement>;
+            /**
+             * A form-associated multi-choice select over `pf-option` children.
+             * **It submits one entry per chosen value from a single control.**
+             * `setFormValue` takes a `FormData`, and a key repeated in it is submitted
+             * once per value — measured, and the same shape the React component gets from
+             * rendering one hidden `<input>` per selection. So a server reads
+             * `data.getAll(name)` exactly as it would from a native multiple select.
+             * `value` is one comma-separated string, because that is what an attribute can
+             * carry; `pfChange` also reports the parsed `values` array, which is what a
+             * framework consumer usually wants. A value containing a comma cannot survive
+             * that, so one is reported on the console rather than silently mangled.
+             * Shares `pf-option` with `pf-select` and `pf-combobox` through the generic
+             * `--pf-option-*` set.
+             */
+            "pf-multi-select": LocalJSX.IntrinsicElements["pf-multi-select"] & JSXBase.HTMLAttributes<HTMLPfMultiSelectElement>;
             /**
              * A notification: an icon, a heading, a body and an optional dismiss button.
              * The role comes from core's `liveRegionRole`, so `warning` and `danger`

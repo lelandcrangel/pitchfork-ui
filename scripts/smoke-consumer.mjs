@@ -92,6 +92,7 @@ const EXPECTED = [
   'pf-select',
   'pf-option',
   'pf-combobox',
+  'pf-multi-select',
 ];
 
 const TYPES = {
@@ -485,10 +486,13 @@ try {
        * a distinction a server relies on, and one `setFormValue('')` would
        * erase for the checkbox.
        */
-      if (names.join(',') !== 'at,due,fruit,notes,notify,plan,trip-end,trip-start,volume') {
+      if (
+        names.join(',') !==
+        'at,colours,colours,due,fruit,notes,notify,plan,trip-end,trip-start,volume'
+      ) {
         result.unstyled.push(
           `form sees [${names.join(', ')}] from the form controls, ` +
-            'expected at,due,fruit,notes,notify,plan,trip-end,trip-start,volume (terms is unticked, so absent)',
+            'expected at,colours,colours,due,fruit,notes,notify,plan,trip-end,trip-start,volume (colours twice, one entry per value) (terms is unticked, so absent)',
         );
       }
       /*

@@ -192,6 +192,14 @@ export class PfDateRangePicker {
     this.leftMonth = this.clamp(startOfMonth(start));
   }
 
+  /*
+   * `name` is watched here and not on the controls that pass a plain string to
+   * `setFormValue`: those take their submission name from the reflected
+   * attribute, so the platform picks a change up by itself. This one builds
+   * the name *into* a FormData, so without the watch a name assigned after
+   * load would never reach the submission.
+   */
+  @Watch('name')
   @Watch('value')
   @Watch('error')
   @Watch('required')
