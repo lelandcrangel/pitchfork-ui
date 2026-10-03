@@ -30,7 +30,14 @@ export class PfRadioButton {
   @Element() el!: HTMLElement;
 
   /** Submitted by the group when this choice is the selected one. */
-  @Prop() value = '';
+  /**
+   * Reflected because the generated bindings set props as properties, so
+   * without it a consumer selecting `pf-radio-button[value="..."]` in a React
+   * or Angular app finds nothing. The group reads the property, so this was
+   * never a live defect here -- it is the same trap that was one in
+   * `pf-command-item`.
+   */
+  @Prop({ reflect: true }) value = '';
 
   /**
    * Whether this is the chosen one. The group sets this — a consumer who sets

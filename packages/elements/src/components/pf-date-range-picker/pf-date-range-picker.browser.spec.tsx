@@ -186,16 +186,22 @@ test('previews a range from the hovered day', async () => {
   day(el, '2024-03-05')!.click();
   await until(() => el.value === '');
 
-  day(el, '2024-03-09')!.dispatchEvent(new MouseEvent('mouseenter', { bubbles: false }));
   /*
-   * Waited on the expected content, not on `length > 0`: the previous range's
-   * highlight is still on screen for a frame or two, so a length check passes
-   * against stale DOM and the assertion then reads it.
+   * Re-dispatched while polling, because a hover is an *edge*: one
+   * `mouseenter` that arrives before the click has been processed is simply
+   * dropped, and then no further event ever comes, so a one-shot dispatch
+   * followed by a wait can hang on a state that will never change. Rare, and
+   * it showed up once under load in a full-suite run. A longer deadline would
+   * not have helped.
+   *
+   * The condition is the expected days rather than `length > 0`, too: the
+   * previous range's highlight is still on screen for a frame or two, so a
+   * length check passes against stale DOM.
    */
-  await until(
-    () => insideDays(el).join(',') === '2024-03-06,2024-03-07,2024-03-08',
-    'the preview to follow the hover',
-  );
+  await until(() => {
+    day(el, '2024-03-09')!.dispatchEvent(new MouseEvent('mouseenter', { bubbles: false }));
+    return insideDays(el).join(',') === '2024-03-06,2024-03-07,2024-03-08';
+  }, 'the preview to follow the hover');
   expect(insideDays(el)).toEqual(['2024-03-06', '2024-03-07', '2024-03-08']);
   expect(classesOf(el, '2024-03-09')).toContain('day--end');
 });

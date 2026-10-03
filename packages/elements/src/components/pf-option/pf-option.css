@@ -1,0 +1,37 @@
+:host {
+  border-radius: var(--radius-sm);
+  color: var(--pf-select-input-text, var(--pf-input-text));
+  cursor: pointer;
+  display: block;
+  font-size: var(--font-size-sm);
+  padding: var(--space-2) var(--space-3);
+  user-select: none;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * `active` is the select's, not `:hover` alone: the keyboard and the pointer
+ * share one active option, and the select is what decides which.
+ */
+:host([active]),
+:host(:hover:not([disabled])) {
+  background: var(--pf-select-option-active-bg);
+  color: var(--pf-select-option-active-text);
+}
+
+:host([selected]) {
+  font-weight: var(--font-weight-medium);
+}
+
+:host([disabled]) {
+  background: transparent;
+  color: var(--pf-select-input-placeholder, var(--pf-input-placeholder));
+  cursor: not-allowed;
+}
+
+:host([disabled]:hover) {
+  background: transparent;
+}

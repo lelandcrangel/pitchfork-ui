@@ -915,6 +915,36 @@ export namespace Components {
         "variant": PfNotificationVariant;
     }
     /**
+     * One choice inside a `pf-select`.
+     * It only reports that it was chosen; the select owns the value, the active
+     * option and closing — the same division as `pf-radio-group` with its radios
+     * and `pf-dropdown` with its menu items. The select writes `selected` and
+     * `active` back onto it, so the stylesheet has reflected attributes to select
+     * on without the option knowing anything about its container.
+     */
+    interface PfOption {
+        /**
+          * Set by the select: the option the keyboard is on. Reflected likewise.
+          * @default false
+         */
+        "active": boolean;
+        /**
+          * Reflected; the stylesheet and the select's own query both read it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Set by the select. Reflected, so the stylesheet can mark the choice.
+          * @default false
+         */
+        "selected": boolean;
+        /**
+          * The value the select reports when this option is chosen.  Reflected, because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A pager: boundary pages pinned at each end, a window around the current
      * page, and an ellipsis wherever that leaves a gap.
      * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -1079,7 +1109,7 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
-          * Submitted by the group when this choice is the selected one.
+          * Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-radio-button[value="..."]` in a React or Angular app finds nothing. The group reads the property, so this was never a live defect here -- it is the same trap that was one in `pf-command-item`.
           * @default ''
          */
         "value": string;
@@ -1153,6 +1183,66 @@ export namespace Components {
           * @default 'vertical'
          */
         "orientation": PfScrollAreaOrientation;
+    }
+    /**
+     * A form-associated single-choice select over `pf-option` children.
+     * The first of Wave 5, and the worked example for §2.1: the options are child
+     * elements, so a label is a slot and can hold anything, where the React
+     * `Select`'s `options` array can only hold a string.
+     * **It has typeahead, which the React component does not.** Typing `b` jumps
+     * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
+     * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
+     * answers the same keystrokes. `todo.md` has the React fix.
+     * Form-associated, so the value submits by itself. The React component fakes
+     * that with a hidden `<input>` beside the trigger.
+     * The active option is set as an *element*, not an IDREF: the trigger is in
+     * this shadow root and the options are slotted light DOM, and a cross-root
+     * IDREF is absent from the accessibility tree — measured. `aria-controls` does
+     * work, because the listbox itself is in this same root.
+     */
+    interface PfSelect {
+        "checkValidity": () => Promise<boolean>;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        "error"?: string;
+        "getValidationMessage": () => Promise<string>;
+        "hide": () => Promise<void>;
+        "label"?: string;
+        /**
+          * Options to show before the listbox scrolls. Unset means it fits them all.
+         */
+        "maxVisibleOptions"?: number;
+        /**
+          * Submitted under this name. Reflected; the submission reads the attribute.
+         */
+        "name"?: string;
+        /**
+          * Whether the listbox is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default 'Select an option'
+         */
+        "placeholder": string;
+        /**
+          * Re-reads the options, for a label edited in place (which fires no slotchange).
+         */
+        "refresh": () => Promise<void>;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        "show": () => Promise<void>;
+        /**
+          * The chosen option's value, or empty.
+          * @default ''
+         */
+        "value": string;
     }
     /**
      * A panel that slides in from the edge of the screen — a modal dialog that
@@ -1652,6 +1742,10 @@ export interface PfNotificationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfNotificationElement;
 }
+export interface PfOptionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfOptionElement;
+}
 export interface PfPaginationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfPaginationElement;
@@ -1667,6 +1761,10 @@ export interface PfRadioButtonCustomEvent<T> extends CustomEvent<T> {
 export interface PfRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfRadioGroupElement;
+}
+export interface PfSelectCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfSelectElement;
 }
 export interface PfSlideoutMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2214,6 +2312,31 @@ declare global {
         prototype: HTMLPfNotificationElement;
         new (): HTMLPfNotificationElement;
     };
+    interface HTMLPfOptionElementEventMap {
+        "pfOptionSelect": { value: string };
+    }
+    /**
+     * One choice inside a `pf-select`.
+     * It only reports that it was chosen; the select owns the value, the active
+     * option and closing — the same division as `pf-radio-group` with its radios
+     * and `pf-dropdown` with its menu items. The select writes `selected` and
+     * `active` back onto it, so the stylesheet has reflected attributes to select
+     * on without the option knowing anything about its container.
+     */
+    interface HTMLPfOptionElement extends Components.PfOption, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfOptionElementEventMap>(type: K, listener: (this: HTMLPfOptionElement, ev: PfOptionCustomEvent<HTMLPfOptionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfOptionElementEventMap>(type: K, listener: (this: HTMLPfOptionElement, ev: PfOptionCustomEvent<HTMLPfOptionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfOptionElement: {
+        prototype: HTMLPfOptionElement;
+        new (): HTMLPfOptionElement;
+    };
     interface HTMLPfPaginationElementEventMap {
         "pfPageChange": { page: number };
     }
@@ -2347,6 +2470,40 @@ declare global {
     var HTMLPfScrollAreaElement: {
         prototype: HTMLPfScrollAreaElement;
         new (): HTMLPfScrollAreaElement;
+    };
+    interface HTMLPfSelectElementEventMap {
+        "pfChange": { value: string };
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * A form-associated single-choice select over `pf-option` children.
+     * The first of Wave 5, and the worked example for §2.1: the options are child
+     * elements, so a label is a slot and can hold anything, where the React
+     * `Select`'s `options` array can only hold a string.
+     * **It has typeahead, which the React component does not.** Typing `b` jumps
+     * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
+     * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
+     * answers the same keystrokes. `todo.md` has the React fix.
+     * Form-associated, so the value submits by itself. The React component fakes
+     * that with a hidden `<input>` beside the trigger.
+     * The active option is set as an *element*, not an IDREF: the trigger is in
+     * this shadow root and the options are slotted light DOM, and a cross-root
+     * IDREF is absent from the accessibility tree — measured. `aria-controls` does
+     * work, because the listbox itself is in this same root.
+     */
+    interface HTMLPfSelectElement extends Components.PfSelect, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfSelectElementEventMap>(type: K, listener: (this: HTMLPfSelectElement, ev: PfSelectCustomEvent<HTMLPfSelectElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfSelectElementEventMap>(type: K, listener: (this: HTMLPfSelectElement, ev: PfSelectCustomEvent<HTMLPfSelectElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfSelectElement: {
+        prototype: HTMLPfSelectElement;
+        new (): HTMLPfSelectElement;
     };
     interface HTMLPfSlideoutMenuElementEventMap {
         "pfOpenChange": { open: boolean };
@@ -2624,6 +2781,7 @@ declare global {
         "pf-modal-footer": HTMLPfModalFooterElement;
         "pf-modal-header": HTMLPfModalHeaderElement;
         "pf-notification": HTMLPfNotificationElement;
+        "pf-option": HTMLPfOptionElement;
         "pf-pagination": HTMLPfPaginationElement;
         "pf-popover": HTMLPfPopoverElement;
         "pf-progress-bar": HTMLPfProgressBarElement;
@@ -2631,6 +2789,7 @@ declare global {
         "pf-radio-button": HTMLPfRadioButtonElement;
         "pf-radio-group": HTMLPfRadioGroupElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
+        "pf-select": HTMLPfSelectElement;
         "pf-slideout-menu": HTMLPfSlideoutMenuElement;
         "pf-slider": HTMLPfSliderElement;
         "pf-switch": HTMLPfSwitchElement;
@@ -3517,6 +3676,40 @@ declare namespace LocalJSX {
         "variant"?: PfNotificationVariant;
     }
     /**
+     * One choice inside a `pf-select`.
+     * It only reports that it was chosen; the select owns the value, the active
+     * option and closing — the same division as `pf-radio-group` with its radios
+     * and `pf-dropdown` with its menu items. The select writes `selected` and
+     * `active` back onto it, so the stylesheet has reflected attributes to select
+     * on without the option knowing anything about its container.
+     */
+    interface PfOption {
+        /**
+          * Set by the select: the option the keyboard is on. Reflected likewise.
+          * @default false
+         */
+        "active"?: boolean;
+        /**
+          * Reflected; the stylesheet and the select's own query both read it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Asks the select to take this value. The select decides and closes.
+         */
+        "onPfOptionSelect"?: (event: PfOptionCustomEvent<{ value: string }>) => void;
+        /**
+          * Set by the select. Reflected, so the stylesheet can mark the choice.
+          * @default false
+         */
+        "selected"?: boolean;
+        /**
+          * The value the select reports when this option is chosen.  Reflected, because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
      * A pager: boundary pages pinned at each end, a window around the current
      * page, and an ellipsis wherever that leaves a gap.
      * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -3685,7 +3878,7 @@ declare namespace LocalJSX {
          */
         "onPfRadioSelect"?: (event: PfRadioButtonCustomEvent<{ value: string }>) => void;
         /**
-          * Submitted by the group when this choice is the selected one.
+          * Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-radio-button[value="..."]` in a React or Angular app finds nothing. The group reads the property, so this was never a live defect here -- it is the same trap that was one in `pf-command-item`.
           * @default ''
          */
         "value"?: string;
@@ -3755,6 +3948,69 @@ declare namespace LocalJSX {
           * @default 'vertical'
          */
         "orientation"?: PfScrollAreaOrientation;
+    }
+    /**
+     * A form-associated single-choice select over `pf-option` children.
+     * The first of Wave 5, and the worked example for §2.1: the options are child
+     * elements, so a label is a slot and can hold anything, where the React
+     * `Select`'s `options` array can only hold a string.
+     * **It has typeahead, which the React component does not.** Typing `b` jumps
+     * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
+     * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
+     * answers the same keystrokes. `todo.md` has the React fix.
+     * Form-associated, so the value submits by itself. The React component fakes
+     * that with a hidden `<input>` beside the trigger.
+     * The active option is set as an *element*, not an IDREF: the trigger is in
+     * this shadow root and the options are slotted light DOM, and a cross-root
+     * IDREF is absent from the accessibility tree — measured. `aria-controls` does
+     * work, because the listbox itself is in this same root.
+     */
+    interface PfSelect {
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        "label"?: string;
+        /**
+          * Options to show before the listbox scrolls. Unset means it fits them all.
+         */
+        "maxVisibleOptions"?: number;
+        /**
+          * Submitted under this name. Reflected; the submission reads the attribute.
+         */
+        "name"?: string;
+        /**
+          * Fires when the chosen value changes.
+         */
+        "onPfChange"?: (event: PfSelectCustomEvent<{ value: string }>) => void;
+        /**
+          * Fires whenever the listbox opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfSelectCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the listbox is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default 'Select an option'
+         */
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * The chosen option's value, or empty.
+          * @default ''
+         */
+        "value"?: string;
     }
     /**
      * A panel that slides in from the edge of the screen — a modal dialog that
@@ -4369,6 +4625,12 @@ declare namespace LocalJSX {
         "dismissable": boolean;
         "exiting": boolean;
     }
+    interface PfOptionAttributes {
+        "value": string;
+        "disabled": boolean;
+        "selected": boolean;
+        "active": boolean;
+    }
     interface PfPaginationAttributes {
         "page": number;
         "totalPages": number;
@@ -4415,6 +4677,18 @@ declare namespace LocalJSX {
     interface PfScrollAreaAttributes {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
+    }
+    interface PfSelectAttributes {
+        "name": string;
+        "value": string;
+        "open": boolean;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "required": boolean;
+        "disabled": boolean;
+        "maxVisibleOptions": number;
     }
     interface PfSlideoutMenuAttributes {
         "open": boolean;
@@ -4538,6 +4812,7 @@ declare namespace LocalJSX {
         "pf-modal-footer": PfModalFooter;
         "pf-modal-header": PfModalHeader;
         "pf-notification": Omit<PfNotification, keyof PfNotificationAttributes> & { [K in keyof PfNotification & keyof PfNotificationAttributes]?: PfNotification[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `attr:${K}`]?: PfNotificationAttributes[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `prop:${K}`]?: PfNotification[K] };
+        "pf-option": Omit<PfOption, keyof PfOptionAttributes> & { [K in keyof PfOption & keyof PfOptionAttributes]?: PfOption[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `attr:${K}`]?: PfOptionAttributes[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `prop:${K}`]?: PfOption[K] };
         "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
         "pf-popover": Omit<PfPopover, keyof PfPopoverAttributes> & { [K in keyof PfPopover & keyof PfPopoverAttributes]?: PfPopover[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `attr:${K}`]?: PfPopoverAttributes[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `prop:${K}`]?: PfPopover[K] };
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
@@ -4545,6 +4820,7 @@ declare namespace LocalJSX {
         "pf-radio-button": Omit<PfRadioButton, keyof PfRadioButtonAttributes> & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes]?: PfRadioButton[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `attr:${K}`]?: PfRadioButtonAttributes[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `prop:${K}`]?: PfRadioButton[K] };
         "pf-radio-group": Omit<PfRadioGroup, keyof PfRadioGroupAttributes> & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes]?: PfRadioGroup[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `attr:${K}`]?: PfRadioGroupAttributes[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `prop:${K}`]?: PfRadioGroup[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
+        "pf-select": Omit<PfSelect, keyof PfSelectAttributes> & { [K in keyof PfSelect & keyof PfSelectAttributes]?: PfSelect[K] } & { [K in keyof PfSelect & keyof PfSelectAttributes as `attr:${K}`]?: PfSelectAttributes[K] } & { [K in keyof PfSelect & keyof PfSelectAttributes as `prop:${K}`]?: PfSelect[K] };
         "pf-slideout-menu": Omit<PfSlideoutMenu, keyof PfSlideoutMenuAttributes> & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes]?: PfSlideoutMenu[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `attr:${K}`]?: PfSlideoutMenuAttributes[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `prop:${K}`]?: PfSlideoutMenu[K] };
         "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
@@ -4783,6 +5059,15 @@ declare module "@stencil/core" {
              */
             "pf-notification": LocalJSX.IntrinsicElements["pf-notification"] & JSXBase.HTMLAttributes<HTMLPfNotificationElement>;
             /**
+             * One choice inside a `pf-select`.
+             * It only reports that it was chosen; the select owns the value, the active
+             * option and closing — the same division as `pf-radio-group` with its radios
+             * and `pf-dropdown` with its menu items. The select writes `selected` and
+             * `active` back onto it, so the stylesheet has reflected attributes to select
+             * on without the option knowing anything about its container.
+             */
+            "pf-option": LocalJSX.IntrinsicElements["pf-option"] & JSXBase.HTMLAttributes<HTMLPfOptionElement>;
+            /**
              * A pager: boundary pages pinned at each end, a window around the current
              * page, and an ellipsis wherever that leaves a gap.
              * Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
@@ -4837,6 +5122,23 @@ declare module "@stencil/core" {
              * A scrollable region with a styled, non-overlaying scrollbar.
              */
             "pf-scroll-area": LocalJSX.IntrinsicElements["pf-scroll-area"] & JSXBase.HTMLAttributes<HTMLPfScrollAreaElement>;
+            /**
+             * A form-associated single-choice select over `pf-option` children.
+             * The first of Wave 5, and the worked example for §2.1: the options are child
+             * elements, so a label is a slot and can hold anything, where the React
+             * `Select`'s `options` array can only hold a string.
+             * **It has typeahead, which the React component does not.** Typing `b` jumps
+             * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
+             * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
+             * answers the same keystrokes. `todo.md` has the React fix.
+             * Form-associated, so the value submits by itself. The React component fakes
+             * that with a hidden `<input>` beside the trigger.
+             * The active option is set as an *element*, not an IDREF: the trigger is in
+             * this shadow root and the options are slotted light DOM, and a cross-root
+             * IDREF is absent from the accessibility tree — measured. `aria-controls` does
+             * work, because the listbox itself is in this same root.
+             */
+            "pf-select": LocalJSX.IntrinsicElements["pf-select"] & JSXBase.HTMLAttributes<HTMLPfSelectElement>;
             /**
              * A panel that slides in from the edge of the screen — a modal dialog that
              * happens to be anchored to a side rather than centred.

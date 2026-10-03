@@ -544,6 +544,21 @@ Things that differ from the React library, learned by porting the first two:
   with no start and, correctly, began a new one. Every second click restarted
   instead of closing the range. Three browser tests caught it; whatever holds
   the in-progress state is what the state machine has to be given.
+- **A synthetic key event needs `composed: true` to leave a shadow root.**
+  `bubbles: true` alone is not enough: bubbling stops at the boundary, so an
+  event dispatched on a shadow-internal trigger never reaches a `@Listen` on
+  the host. Real key events are composed, so a test written without it is
+  testing its own plumbing — every one of `pf-select`'s twelve keyboard
+  assertions timed out until it was added. `pf-dropdown`'s tests do not need
+  it, because its trigger is slotted light DOM and already outside the root.
+- **`observeAnchoredPosition` reports `width` or `minWidth`, never both.**
+  `matchAnchorWidth: true` (the default) gives a `width`; `false` gives a
+  `minWidth`. `pf-select` wants the listbox to match its trigger and its
+  `onChange` was copied from `pf-dropdown`, which wants the opposite — so it
+  read only `minWidth`, found it undefined, and left a 156px listbox under a
+  1216px trigger. Apply whichever is present. Neither Vitest project can see
+  this, since the width comes from a measured layout; the consumer smoke test
+  caught it.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

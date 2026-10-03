@@ -89,6 +89,8 @@ const EXPECTED = [
   'pf-date-picker',
   'pf-time-picker',
   'pf-date-range-picker',
+  'pf-select',
+  'pf-option',
 ];
 
 const TYPES = {
@@ -482,10 +484,10 @@ try {
        * a distinction a server relies on, and one `setFormValue('')` would
        * erase for the checkbox.
        */
-      if (names.join(',') !== 'at,due,notes,notify,plan,trip-end,trip-start,volume') {
+      if (names.join(',') !== 'at,due,fruit,notes,notify,plan,trip-end,trip-start,volume') {
         result.unstyled.push(
           `form sees [${names.join(', ')}] from the form controls, ` +
-            'expected at,due,notes,notify,plan,trip-end,trip-start,volume (terms is unticked, so absent)',
+            'expected at,due,fruit,notes,notify,plan,trip-end,trip-start,volume (terms is unticked, so absent)',
         );
       }
       /*
@@ -1400,6 +1402,105 @@ try {
       }
 
       await page.evaluate(() => document.querySelector('pf-date-picker')?.hide());
+    }
+  }
+
+  /*
+   * The select, against a real build. Three of these need one: that a disabled
+   * option is actually dimmed and the active one actually highlighted (the
+   * `--pf-select-option-active-*` chain), that the listbox is anchored to its
+   * trigger rather than centred, and that it matches the trigger's width — the
+   * one piece of `observeAnchoredPosition` no other element here exercises.
+   *
+   * Its form association is covered above: `fruit` is in the submitted key set.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-select');
+        if (!el) return { error: 'no pf-select in the consumer app' };
+
+        const trigger = el.shadowRoot.querySelector('[part="trigger"]');
+        const listbox = el.shadowRoot.querySelector('[part="listbox"]');
+        trigger.click();
+
+        const deadline = Date.now() + 2000;
+        while (!listbox.matches(':popover-open')) {
+          if (Date.now() > deadline) return { error: 'the listbox never opened' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+
+        const option = (value) => el.querySelector(`pf-option[value="${value}"]`);
+        const active = el.querySelector('pf-option[active]');
+        const triggerBox = trigger.getBoundingClientRect();
+        const listBox = listbox.getBoundingClientRect();
+
+        return {
+          triggerLeft: Math.round(triggerBox.left),
+          listLeft: Math.round(listBox.left),
+          triggerWidth: Math.round(triggerBox.width),
+          listWidth: Math.round(listBox.width),
+          activeValue: active?.getAttribute('value') ?? null,
+          activeBackground: active ? getComputedStyle(active).backgroundColor : null,
+          plainBackground: getComputedStyle(option('cherry')).backgroundColor,
+          disabledOpacityColour: getComputedStyle(option('blackberry')).color,
+          plainColour: getComputedStyle(option('cherry')).color,
+          // The label is a slot, so it can hold markup an options array cannot.
+          markupInLabel: Boolean(option('banana').querySelector('small')),
+          triggerText: trigger.textContent?.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-select: ${state.error}`);
+    } else {
+      // Anchored, not centred, and as wide as the trigger.
+      if (Math.abs(state.listLeft - state.triggerLeft) > 2) {
+        problems.push(
+          `pf-select listbox is at x=${state.listLeft} but its trigger is at ` +
+            `x=${state.triggerLeft} — it is not anchored`,
+        );
+      }
+      if (Math.abs(state.listWidth - state.triggerWidth) > 2) {
+        problems.push(
+          `pf-select listbox is ${state.listWidth}px wide and its trigger ` +
+            `${state.triggerWidth}px — matchAnchorWidth did not take effect`,
+        );
+      }
+
+      // Opens on the chosen option, which is `banana` in the fixture.
+      if (state.activeValue !== 'banana') {
+        problems.push(
+          `pf-select opened with "${state.activeValue}" active, expected the chosen banana`,
+        );
+      }
+      if (isTransparent(state.activeBackground)) {
+        problems.push(
+          'the active pf-option has no background — --pf-select-option-active-bg did not resolve',
+        );
+      }
+      if (state.activeBackground === state.plainBackground) {
+        problems.push(
+          `the active pf-option looks the same as a plain one ("${state.activeBackground}")`,
+        );
+      }
+      if (state.disabledOpacityColour === state.plainColour) {
+        problems.push(
+          `a disabled pf-option is the same colour as a selectable one ` +
+            `("${state.plainColour}")`,
+        );
+      }
+
+      if (!state.markupInLabel) {
+        problems.push('the pf-option fixture has no markup in a label — §2.1 is not demonstrated');
+      }
+      if (!state.triggerText?.includes('Banana')) {
+        problems.push(`pf-select trigger shows "${state.triggerText}", expected the chosen label`);
+      }
+
+      await page.evaluate(() => document.querySelector('pf-select')?.hide());
     }
   }
 

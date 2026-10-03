@@ -38,8 +38,10 @@ import {
   PfProgressBar,
   PfProgressCircle,
   PfRadioButton,
+  PfOption,
   PfRadioGroup,
   PfScrollArea,
+  PfSelect,
   PfSlideoutMenu,
   PfSlider,
   PfSwitch,
@@ -104,8 +106,10 @@ import {
     PfProgressBar,
     PfProgressCircle,
     PfRadioButton,
+    PfOption,
     PfRadioGroup,
     PfScrollArea,
+    PfSelect,
     PfSlideoutMenu,
     PfSlider,
     PfSwitch,
@@ -307,6 +311,20 @@ import {
           data-testid="date-range-picker"
           (pfChange)="trip.set($event.detail.value)"
         ></pf-date-range-picker>
+        <!-- Children, not an options array; and typeahead. -->
+        <pf-select
+          label="Fruit"
+          name="fruit"
+          [value]="fruit()"
+          data-testid="select"
+          (pfChange)="fruit.set($event.detail.value)"
+        >
+          <pf-option value="apple">Apple</pf-option>
+          <pf-option value="apricot">Apricot</pf-option>
+          <pf-option value="banana">Banana <small>(in season)</small></pf-option>
+          <pf-option value="blackberry" disabled>Blackberry</pf-option>
+          <pf-option value="cherry">Cherry</pf-option>
+        </pf-select>
         <!-- 12-hour display, 24-hour value. -->
         <pf-time-picker
           label="Start time"
@@ -526,6 +544,7 @@ export class AppComponent {
   day = signal('2024-03-15');
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');
+  fruit = signal('banana');
   private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
 
   notify(variant: 'success' | 'danger') {

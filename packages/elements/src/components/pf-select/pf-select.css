@@ -1,0 +1,118 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--pf-input-label-text, var(--pf-input-text));
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--pf-select-invalid-border);
+  margin-inline-start: var(--space-1);
+}
+
+.trigger {
+  align-items: center;
+  background: var(--pf-input-bg);
+  border: 1px solid var(--pf-input-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-input-text);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+  width: 100%;
+}
+
+.trigger:hover:not(:disabled) {
+  border-color: var(--pf-input-border-hover);
+}
+
+.trigger:focus-visible {
+  border-color: var(--pf-select-focus-border);
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.trigger--invalid {
+  border-color: var(--pf-select-invalid-border);
+}
+
+.value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.value--placeholder {
+  color: var(--pf-input-placeholder);
+}
+
+.chevron {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  transition: transform var(--pf-transition-fast);
+}
+
+:host([open]) .chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
+/*
+ * See src/place-popover.ts: `inset: auto; margin: 0` are what make the
+ * coordinates mean what they say, since the UA stylesheet centres a popover.
+ */
+.listbox {
+  inset: auto;
+  margin: 0;
+  background: var(--pf-select-menu-bg);
+  border: 1px solid var(--pf-select-menu-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--pf-elevation-popover-shadow);
+  padding: var(--space-1);
+}
+
+.listbox:popover-open {
+  animation: pf-select-in var(--pf-transition-enter);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-select-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .listbox:popover-open {
+    animation: none;
+  }
+}

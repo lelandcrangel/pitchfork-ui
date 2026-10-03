@@ -178,3 +178,30 @@ PageDown from the 31st of January means.
 browser spec is the behaviour to match, including the two decisions worth
 keeping: focus crosses a disabled day while activation refuses it, and
 focus leaving the month scrolls the grid with it.
+
+---
+
+## The React Select has no typeahead
+
+The ARIA listbox pattern expects printable-character typeahead: typing `b`
+moves to the next option beginning with `b`, `br` narrows, and pressing one
+letter repeatedly cycles through the options that match it. `Select` handles
+`ArrowUp`/`ArrowDown`/`Home`/`End`/`Enter`/`Escape` and no character keys at
+all, so a long list can only be walked one arrow at a time.
+
+`<pf-select>` implements it, and the matching is in
+`packages/core/src/typeahead.ts` — `isTypeaheadKey`, `nextTypeaheadBuffer` and
+`findTypeaheadMatch` — precisely so the two layers cannot disagree about what
+`bbb` means.
+
+**Fix:** hold a buffer and a `TYPEAHEAD_TIMEOUT_MS` timer in `Select` (core
+owns the matching, not the timer), and on a typeahead key move `activeIndex` to
+`findTypeaheadMatch`'s answer. Two decisions worth copying from the element:
+a disabled option is never matched, because the keyboard would land somewhere
+it cannot act; and with the listbox closed, typeahead _chooses_ rather than
+highlighting, which is what a native `<select>` does and the only feedback
+available when nothing is on screen. `pf-select`'s browser spec is the
+behaviour to match.
+
+The same applies to `Combobox`, `MultiSelect` and `TreeView` when their turn
+comes.

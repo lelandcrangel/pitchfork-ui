@@ -37,8 +37,10 @@ import {
   PfProgressBar,
   PfProgressCircle,
   PfRadioButton,
+  PfOption,
   PfRadioGroup,
   PfScrollArea,
+  PfSelect,
   PfSlideoutMenu,
   PfSlider,
   PfSwitch,
@@ -71,6 +73,7 @@ export function App() {
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
+  const [fruit, setFruit] = useState('banana');
   const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
@@ -278,6 +281,28 @@ export function App() {
           data-testid="date-range-picker"
           onPfChange={(event) => setTrip(event.detail.value)}
         />
+        {/*
+          Wave 5's first: options are child elements, so a label is a slot and
+          can hold markup — which an `options` array of strings cannot. It also
+          has typeahead, which the React Select does not.
+        */}
+        <PfSelect
+          label="Fruit"
+          name="fruit"
+          value={fruit}
+          data-testid="select"
+          onPfChange={(event) => setFruit(event.detail.value)}
+        >
+          <PfOption value="apple">Apple</PfOption>
+          <PfOption value="apricot">Apricot</PfOption>
+          <PfOption value="banana">
+            Banana <small>(in season)</small>
+          </PfOption>
+          <PfOption value="blackberry" disabled>
+            Blackberry
+          </PfOption>
+          <PfOption value="cherry">Cherry</PfOption>
+        </PfSelect>
         <PfTimePicker
           label="Start time"
           name="at"
