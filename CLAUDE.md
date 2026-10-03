@@ -971,6 +971,33 @@ subgrid` on each line rather than a table: the numbers only have to share a
   is the margin worth measuring. Same shape as the `.empty` boxes: a
   "different colour" check passes when the colour is _missing_, so assert
   both — not the same as the other box, **and** not transparent.
+- **`animate` is a reserved prop name.** `Element.prototype.animate` is the
+  Web Animations API, and Stencil refuses to build a `@Prop()` that shadows a
+  prototype member — with a warning that reads as advisory and a build that
+  fails. `pf-sparkline` takes `animated` where the React `Sparkline` takes
+  `animate`; a React component is a function taking props and has no such
+  collision. Check any prop name that is also a DOM method: `animate`,
+  `remove`, `before`, `after`, `replaceWith`, `scroll`, `focus`.
+- **An animation cannot be tested in either Vitest project, at all.** Neither
+  applies `styleUrl` CSS, so `getAnimations()` comes back empty whether the
+  shadow-root copy of the `@keyframes` exists or not — measured, by writing
+  three animation assertions and watching all three fail against a correct
+  element. They belong in `scripts/smoke-consumer.mjs`, which also happens to
+  be the only place the three failure modes are distinguishable, each
+  confirmed by reintroducing it into a real build: a missing `@keyframes` copy
+  reads a good name and duration and runs nothing; an undefined duration
+  token (`--duration-medium`, which does not exist) computes
+  `animation-name: none` and `0s`; and a fade whose `to` is `opacity: 1`
+  rather than the stylesheet's own tint finishes opaque.
+- **A chart's edge cases are its arithmetic's, so put them in core.** Three in
+  the React `Sparkline`, all of which the element would have inherited by
+  copying: one value divided by `data.length - 1` and rendered `cx="NaN"`; a
+  flat series fell to a `max - min || 1` guard and sat on the bottom edge,
+  which reads as a collapse rather than as "no change"; and a
+  `buildPath(points, close = false)` whose closing branch interpolated the
+  **boolean** into the `d` — unreachable, because every call site passed one
+  argument, so the broken code sat there looking fine while the area path was
+  written out again inline.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

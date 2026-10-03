@@ -23,6 +23,7 @@ export * from './rich-text';
 export * from './roving';
 export * from './scroll-lock';
 export * from './splitter';
+export * from './sparkline';
 export * from './state';
 export * from './steps';
 export * from './table';

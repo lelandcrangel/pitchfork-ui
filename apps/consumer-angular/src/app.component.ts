@@ -77,6 +77,7 @@ import {
   PfSlideoutMenu,
   PfSlider,
   PfSidebarNavigation,
+  PfSparkline,
   PfSwitch,
   PfTab,
   PfTable,
@@ -188,6 +189,7 @@ import {
     PfSlideoutMenu,
     PfSlider,
     PfSidebarNavigation,
+    PfSparkline,
     PfSwitch,
     PfTab,
     PfTable,
@@ -1026,6 +1028,28 @@ import {
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
 
+      <!-- Three sparklines; see the React consumer. -->
+      <div style="display: flex; gap: var(--space-4); align-items: center">
+        <pf-sparkline
+          [data]="trend"
+          label="Weekly signups"
+          [endDot]="true"
+          data-testid="sparkline"
+        ></pf-sparkline>
+        <pf-sparkline
+          [data]="trend"
+          variant="area"
+          [animated]="true"
+          data-testid="sparkline-area"
+        ></pf-sparkline>
+        <pf-sparkline
+          [data]="flat"
+          [width]="100"
+          [height]="40"
+          data-testid="sparkline-flat"
+        ></pf-sparkline>
+      </div>
+
       <!-- A form-associated rich-text field; see the React consumer. -->
       <pf-rich-text-editor
         name="notes"
@@ -1115,6 +1139,8 @@ export class AppComponent {
   split = signal(40);
   uploads = signal<File[]>([]);
   copiedCode = signal('');
+  trend = [4, 9, 6, 12, 10, 16];
+  flat = [7, 7, 7, 7];
   notes = signal('<p>A <strong>first</strong> note.</p><p>And a second.</p>');
   snippet = 'npm install @pitchfork-ui/elements\n\nnpm run build\n';
   openFolders = signal('src');

@@ -2542,6 +2542,56 @@ export namespace Components {
         "value": number;
     }
     /**
+     * A small line or area chart with no axes.
+     * All of the geometry is core's, so this and the React `Sparkline` put the
+     * same numbers in the same places — including the three edge cases that were
+     * wrong before the extraction: one value gave `NaN`, a flat series was pinned
+     * to an edge, and the closing branch of the old path builder interpolated a
+     * boolean.
+     */
+    interface PfSparkline {
+        /**
+          * Draw the line in on first paint. Off by default. Reflected.  `animated`, where the React prop is `animate`: `animate` is a **reserved public name** — `Element.prototype.animate` is the Web Animations API — and Stencil refuses to build a prop that shadows a prototype member. The React component is a function taking props and has no such collision.
+          * @default false
+         */
+        "animated": boolean;
+        /**
+          * Overrides the token colour, for a chart that has to match its data.
+         */
+        "color"?: string;
+        /**
+          * The values to plot.  A `number[]` for a framework consumer, and a comma-separated string for plain HTML — `data="1,4,2,8"` — because Stencil coerces an attribute only for the primitive types it recognises and would otherwise hand this the string verbatim. Read through `values` below, never directly: the same trap `pf-time-picker.hourCycle` hit, where a union-typed prop silently arrived as a string.
+          * @default []
+         */
+        "data": number[] | string;
+        /**
+          * Draw a dot at the last value.
+          * @default false
+         */
+        "endDot": boolean;
+        /**
+          * @default 36
+         */
+        "height": number;
+        /**
+          * The chart's accessible name.  Without one the chart is `presentation`: a sparkline with no name is decoration beside a number that already says what it means, and announcing an unnamed graphic is worse than skipping it.
+         */
+        "label"?: string;
+        /**
+          * @default 1.5
+         */
+        "strokeWidth": number;
+        /**
+          * `line` draws only the stroke; `area` fills under it too. Reflected.
+          * @default 'line'
+         */
+        "variant": 'line' | 'area';
+        /**
+          * @default 120
+         */
+        "width": number;
+    }
+    /**
      * A form-associated on/off switch.
      * Built on a native checkbox with `role="switch"`, exactly as the React
      * component is: a switch is a checkbox whose two states are "on" and "off"
@@ -4946,6 +4996,20 @@ declare global {
         prototype: HTMLPfSliderElement;
         new (): HTMLPfSliderElement;
     };
+    /**
+     * A small line or area chart with no axes.
+     * All of the geometry is core's, so this and the React `Sparkline` put the
+     * same numbers in the same places — including the three edge cases that were
+     * wrong before the extraction: one value gave `NaN`, a flat series was pinned
+     * to an edge, and the closing branch of the old path builder interpolated a
+     * boolean.
+     */
+    interface HTMLPfSparklineElement extends Components.PfSparkline, HTMLStencilElement {
+    }
+    var HTMLPfSparklineElement: {
+        prototype: HTMLPfSparklineElement;
+        new (): HTMLPfSparklineElement;
+    };
     interface HTMLPfSwitchElementEventMap {
         "pfChange": { checked: boolean; value: string };
     }
@@ -5481,6 +5545,7 @@ declare global {
         "pf-sidebar-navigation": HTMLPfSidebarNavigationElement;
         "pf-slideout-menu": HTMLPfSlideoutMenuElement;
         "pf-slider": HTMLPfSliderElement;
+        "pf-sparkline": HTMLPfSparklineElement;
         "pf-switch": HTMLPfSwitchElement;
         "pf-tab": HTMLPfTabElement;
         "pf-tab-panel": HTMLPfTabPanelElement;
@@ -7964,6 +8029,56 @@ declare namespace LocalJSX {
         "value"?: number;
     }
     /**
+     * A small line or area chart with no axes.
+     * All of the geometry is core's, so this and the React `Sparkline` put the
+     * same numbers in the same places — including the three edge cases that were
+     * wrong before the extraction: one value gave `NaN`, a flat series was pinned
+     * to an edge, and the closing branch of the old path builder interpolated a
+     * boolean.
+     */
+    interface PfSparkline {
+        /**
+          * Draw the line in on first paint. Off by default. Reflected.  `animated`, where the React prop is `animate`: `animate` is a **reserved public name** — `Element.prototype.animate` is the Web Animations API — and Stencil refuses to build a prop that shadows a prototype member. The React component is a function taking props and has no such collision.
+          * @default false
+         */
+        "animated"?: boolean;
+        /**
+          * Overrides the token colour, for a chart that has to match its data.
+         */
+        "color"?: string;
+        /**
+          * The values to plot.  A `number[]` for a framework consumer, and a comma-separated string for plain HTML — `data="1,4,2,8"` — because Stencil coerces an attribute only for the primitive types it recognises and would otherwise hand this the string verbatim. Read through `values` below, never directly: the same trap `pf-time-picker.hourCycle` hit, where a union-typed prop silently arrived as a string.
+          * @default []
+         */
+        "data"?: number[] | string;
+        /**
+          * Draw a dot at the last value.
+          * @default false
+         */
+        "endDot"?: boolean;
+        /**
+          * @default 36
+         */
+        "height"?: number;
+        /**
+          * The chart's accessible name.  Without one the chart is `presentation`: a sparkline with no name is decoration beside a number that already says what it means, and announcing an unnamed graphic is worse than skipping it.
+         */
+        "label"?: string;
+        /**
+          * @default 1.5
+         */
+        "strokeWidth"?: number;
+        /**
+          * `line` draws only the stroke; `area` fills under it too. Reflected.
+          * @default 'line'
+         */
+        "variant"?: 'line' | 'area';
+        /**
+          * @default 120
+         */
+        "width"?: number;
+    }
+    /**
      * A form-associated on/off switch.
      * Built on a native checkbox with `role="switch"`, exactly as the React
      * component is: a switch is a checkbox whose two states are "on" and "off"
@@ -9209,6 +9324,17 @@ declare namespace LocalJSX {
         "showValue": boolean;
         "disabled": boolean;
     }
+    interface PfSparklineAttributes {
+        "data": number[] | string;
+        "width": number;
+        "height": number;
+        "variant": 'line' | 'area';
+        "strokeWidth": number;
+        "color": string;
+        "endDot": boolean;
+        "animated": boolean;
+        "label": string;
+    }
     interface PfSwitchAttributes {
         "name": string;
         "checked": boolean;
@@ -9432,6 +9558,7 @@ declare namespace LocalJSX {
         "pf-sidebar-navigation": Omit<PfSidebarNavigation, keyof PfSidebarNavigationAttributes> & { [K in keyof PfSidebarNavigation & keyof PfSidebarNavigationAttributes]?: PfSidebarNavigation[K] } & { [K in keyof PfSidebarNavigation & keyof PfSidebarNavigationAttributes as `attr:${K}`]?: PfSidebarNavigationAttributes[K] } & { [K in keyof PfSidebarNavigation & keyof PfSidebarNavigationAttributes as `prop:${K}`]?: PfSidebarNavigation[K] };
         "pf-slideout-menu": Omit<PfSlideoutMenu, keyof PfSlideoutMenuAttributes> & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes]?: PfSlideoutMenu[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `attr:${K}`]?: PfSlideoutMenuAttributes[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `prop:${K}`]?: PfSlideoutMenu[K] };
         "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
+        "pf-sparkline": Omit<PfSparkline, keyof PfSparklineAttributes> & { [K in keyof PfSparkline & keyof PfSparklineAttributes]?: PfSparkline[K] } & { [K in keyof PfSparkline & keyof PfSparklineAttributes as `attr:${K}`]?: PfSparklineAttributes[K] } & { [K in keyof PfSparkline & keyof PfSparklineAttributes as `prop:${K}`]?: PfSparkline[K] };
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
         "pf-tab": Omit<PfTab, keyof PfTabAttributes> & { [K in keyof PfTab & keyof PfTabAttributes]?: PfTab[K] } & { [K in keyof PfTab & keyof PfTabAttributes as `attr:${K}`]?: PfTabAttributes[K] } & { [K in keyof PfTab & keyof PfTabAttributes as `prop:${K}`]?: PfTab[K] };
         "pf-tab-panel": Omit<PfTabPanel, keyof PfTabPanelAttributes> & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes]?: PfTabPanel[K] } & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes as `attr:${K}`]?: PfTabPanelAttributes[K] } & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes as `prop:${K}`]?: PfTabPanel[K] };
@@ -10134,6 +10261,15 @@ declare module "@stencil/core" {
              * here reimplements them.
              */
             "pf-slider": LocalJSX.IntrinsicElements["pf-slider"] & JSXBase.HTMLAttributes<HTMLPfSliderElement>;
+            /**
+             * A small line or area chart with no axes.
+             * All of the geometry is core's, so this and the React `Sparkline` put the
+             * same numbers in the same places — including the three edge cases that were
+             * wrong before the extraction: one value gave `NaN`, a flat series was pinned
+             * to an edge, and the closing branch of the old path builder interpolated a
+             * boolean.
+             */
+            "pf-sparkline": LocalJSX.IntrinsicElements["pf-sparkline"] & JSXBase.HTMLAttributes<HTMLPfSparklineElement>;
             /**
              * A form-associated on/off switch.
              * Built on a native checkbox with `role="switch"`, exactly as the React

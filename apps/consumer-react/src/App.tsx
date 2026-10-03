@@ -76,6 +76,7 @@ import {
   PfSlideoutMenu,
   PfSlider,
   PfSidebarNavigation,
+  PfSparkline,
   PfSwitch,
   PfTab,
   PfTable,
@@ -1229,6 +1230,27 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        Three sparklines: a still line, a filled area that draws itself in,
+        and a flat series — which core centres rather than pinning to an edge,
+        because an edge reads as a collapse rather than as "no change".
+      */}
+      <div style={{ display: 'flex', gap: 'var(--space-4)', alignItems: 'center' }}>
+        <PfSparkline
+          data={[4, 9, 6, 12, 10, 16]}
+          label="Weekly signups"
+          endDot
+          data-testid="sparkline"
+        />
+        <PfSparkline
+          data={[4, 9, 6, 12, 10, 16]}
+          variant="area"
+          animated
+          data-testid="sparkline-area"
+        />
+        <PfSparkline data={[7, 7, 7, 7]} width={100} height={40} data-testid="sparkline-flat" />
+      </div>
 
       {/*
         A form-associated rich-text field: a contenteditable is not a form

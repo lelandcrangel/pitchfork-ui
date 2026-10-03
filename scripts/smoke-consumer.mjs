@@ -71,6 +71,7 @@ const EXPECTED = [
   'pf-pagination',
   'pf-checkbox',
   'pf-sidebar-navigation',
+  'pf-sparkline',
   'pf-switch',
   'pf-textarea',
   'pf-slider',
@@ -4462,6 +4463,142 @@ try {
       }
       if (state.echo !== String('typed <strong>here</strong>'.length)) {
         problems.push(`pf-rich-text-editor reported "${state.echo}" to the host framework`);
+      }
+    }
+  }
+
+  /*
+   * The sparkline, and the two things no test project can see. Neither
+   * applies `styleUrl` CSS, so `getAnimations()` there is empty whether the
+   * shadow-root copy of the `@keyframes` exists or not — which is exactly the
+   * failure this check is for, since keyframes do not cross a shadow
+   * boundary. And the area's own opacity, which is what makes the fill read
+   * as a tint rather than as a block.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const chart = (testid) => document.querySelector(`[data-testid="${testid}"]`);
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const still = chart('sparkline');
+        const area = chart('sparkline-area');
+        const flat = chart('sparkline-flat');
+        if (!still || !area || !flat)
+          return { error: 'the consumer app is missing a pf-sparkline' };
+
+        const line = part(area, 'line');
+        const fill = part(area, 'area');
+
+        // Wait for the draw-in to start rather than sampling for it.
+        const deadline = Date.now() + 3000;
+        let running = line.getAnimations();
+        while (running.length === 0 && Date.now() < deadline) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          running = line.getAnimations();
+        }
+
+        const read = {
+          lineAnimationName: getComputedStyle(line).animationName,
+          lineAnimationDuration: getComputedStyle(line).animationDuration,
+          lineAnimationsRunning: running.length,
+          areaAnimationsRunning: fill.getAnimations().length,
+          stillAnimations: part(still, 'line').getAnimations().length,
+          // The stroke colour comes from the token, read on the path itself.
+          strokeColor: getComputedStyle(part(still, 'line')).stroke,
+          dotColor: getComputedStyle(part(still, 'dot')).fill,
+        };
+
+        await Promise.all([
+          ...line.getAnimations().map((animation) => animation.finished),
+          ...fill.getAnimations().map((animation) => animation.finished),
+        ]);
+        await settle();
+
+        return {
+          ...read,
+          // After the fade the fill sits at its own opacity, not at 1.
+          areaOpacity: Number(getComputedStyle(fill).opacity),
+          // The dash offset is back to zero, so the whole line is drawn.
+          dashOffset: getComputedStyle(line).strokeDashoffset,
+          // A flat series is centred: its box is a line across the middle.
+          flatBox: (() => {
+            const path = part(flat, 'line');
+            const box = path.getBBox();
+            const host = flat.getBoundingClientRect();
+            return { top: box.y, height: box.height, hostHeight: host.height };
+          })(),
+          named: part(still, 'svg').getAttribute('role'),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-sparkline: ${state.error}`);
+    } else {
+      if (state.lineAnimationName !== 'pf-sparkline-draw') {
+        problems.push(
+          `the line's animation-name computes to "${state.lineAnimationName}" — an undefined ` +
+            'duration token would make the whole shorthand invalid',
+        );
+      }
+      if (state.lineAnimationDuration === '0s') {
+        problems.push("the line's animation-duration computes to 0s");
+      }
+      /*
+       * The one check that sees a missing `@keyframes` copy: the name and the
+       * duration both read correctly in that case and nothing runs.
+       */
+      if (state.lineAnimationsRunning === 0) {
+        problems.push(
+          'the line declared an animation and ran none — the shadow root has no copy of the ' +
+            'keyframes',
+        );
+      }
+      if (state.areaAnimationsRunning === 0) {
+        problems.push('the area declared a fade and ran none');
+      }
+      if (state.stillAnimations !== 0) {
+        problems.push(
+          `a sparkline with no "animated" attribute ran ${state.stillAnimations} animations`,
+        );
+      }
+      if (!state.strokeColor || state.strokeColor === 'none') {
+        problems.push('the line has no stroke colour — the token did not resolve');
+      }
+      if (state.dotColor !== state.strokeColor) {
+        problems.push(
+          `the end dot is "${state.dotColor}" against the line's "${state.strokeColor}"`,
+        );
+      }
+      if (!(state.areaOpacity > 0 && state.areaOpacity < 1)) {
+        problems.push(
+          `the area settled at opacity ${state.areaOpacity} — the fade should end at the ` +
+            'tint the stylesheet gives it, not at 1',
+        );
+      }
+      if (Number.parseFloat(state.dashOffset) !== 0) {
+        problems.push(`the line settled at stroke-dashoffset ${state.dashOffset}`);
+      }
+      if (state.flatBox.height > 2) {
+        problems.push(
+          `a flat series drew a box ${state.flatBox.height}px tall — it is not one line`,
+        );
+      }
+      if (Math.abs(state.flatBox.top - state.flatBox.hostHeight / 2) > 2) {
+        problems.push(
+          `a flat series sits at y=${state.flatBox.top} in a ${state.flatBox.hostHeight}px box ` +
+            '— it is not centred',
+        );
+      }
+      if (state.named !== 'img') {
+        problems.push(`a named sparkline has role "${state.named}", expected img`);
       }
     }
   }
