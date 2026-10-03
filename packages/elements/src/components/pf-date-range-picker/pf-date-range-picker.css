@@ -1,0 +1,267 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--pf-daterange-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--pf-daterange-invalid-border);
+  margin-inline-start: var(--space-1);
+}
+
+.row-controls {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+}
+
+.trigger {
+  align-items: center;
+  background: var(--pf-daterange-bg);
+  border: 1px solid var(--pf-daterange-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-daterange-text);
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+  justify-content: space-between;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+}
+
+.trigger:focus-visible {
+  box-shadow: var(--pf-daterange-focus-ring);
+  outline: none;
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.trigger--invalid {
+  border-color: var(--pf-daterange-invalid-border);
+}
+
+.value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.value--placeholder {
+  color: var(--pf-daterange-text-muted);
+}
+
+.clear {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-daterange-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: var(--space-1);
+}
+
+.clear:hover:not(:disabled) {
+  color: var(--pf-daterange-text);
+}
+
+.clear:focus-visible {
+  box-shadow: var(--pf-daterange-focus-ring);
+  outline: none;
+}
+
+.description {
+  color: var(--pf-daterange-text-muted);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+.error {
+  color: var(--pf-daterange-invalid-border);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+/* See src/place-popover.ts: the UA stylesheet centres a popover otherwise. */
+.panel {
+  inset: auto;
+  margin: 0;
+  background: var(--pf-daterange-menu-bg);
+  border: 1px solid var(--pf-daterange-menu-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--pf-elevation-popover-shadow);
+  color: var(--pf-daterange-text);
+  padding: var(--space-3);
+}
+
+.panel:popover-open {
+  animation: pf-date-range-in var(--pf-transition-enter);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-date-range-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel:popover-open {
+    animation: none;
+  }
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.step {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-daterange-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  padding: var(--space-1);
+}
+
+.step:hover {
+  background: var(--pf-daterange-bg-subtle);
+  color: var(--pf-daterange-text);
+}
+
+.step:focus-visible {
+  box-shadow: var(--pf-daterange-focus-ring);
+  outline: none;
+}
+
+/* One month on a phone, two side by side from --md up. */
+.months {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (--md) {
+  .months {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.month-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--space-2);
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+/*
+ * `display: contents`, so each row's seven cells join the grid's own columns.
+ * The rows exist for the `role="row"` the grid pattern needs, not for layout.
+ */
+.row {
+  display: contents;
+}
+
+.weekday {
+  color: var(--pf-daterange-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  padding: var(--space-1) 0;
+  text-align: center;
+}
+
+.day,
+.empty {
+  aspect-ratio: 1;
+  display: flex;
+  min-width: var(--space-7);
+}
+
+.day {
+  align-items: center;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--pf-daterange-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  justify-content: center;
+}
+
+.day:hover:not([aria-disabled='true']) {
+  background: var(--pf-daterange-bg-subtle);
+}
+
+.day:focus-visible {
+  box-shadow: var(--pf-daterange-focus-ring);
+  outline: none;
+}
+
+.day--today {
+  border-color: var(--pf-calendar-today-border);
+}
+
+/*
+ * The inside of the range is square and the ends are rounded on their outer
+ * side only, so the run reads as one band rather than a row of pills.
+ */
+.day--inside {
+  background: var(--pf-daterange-range-bg);
+  border-radius: 0;
+  color: var(--pf-daterange-range-text);
+}
+
+.day--endpoint {
+  background: var(--pf-calendar-selected-bg);
+  border-color: var(--pf-calendar-selected-bg);
+  color: var(--pf-calendar-selected-text);
+}
+
+.day--start:not(.day--end) {
+  border-end-end-radius: 0;
+  border-start-end-radius: 0;
+}
+
+.day--end:not(.day--start) {
+  border-end-start-radius: 0;
+  border-start-start-radius: 0;
+}
+
+.day[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.4;
+}

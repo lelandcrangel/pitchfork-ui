@@ -16,6 +16,7 @@ import {
   PfCommandPalette,
   PfContentDivider,
   PfDatePicker,
+  PfDateRangePicker,
   PfContextMenu,
   PfCreditCard,
   PfDropdown,
@@ -81,6 +82,7 @@ import {
     PfCommandPalette,
     PfContentDivider,
     PfDatePicker,
+    PfDateRangePicker,
     PfContextMenu,
     PfCreditCard,
     PfDropdown,
@@ -296,6 +298,15 @@ import {
           formControlName="volume"
         ></pf-slider>
         <!-- Form-associated, unlike the React DatePicker. -->
+        <!-- One control, two submitted entries. -->
+        <pf-date-range-picker
+          label="Trip dates"
+          name="trip"
+          [value]="trip()"
+          allow-clear
+          data-testid="date-range-picker"
+          (pfChange)="trip.set($event.detail.value)"
+        ></pf-date-range-picker>
         <!-- 12-hour display, 24-hour value. -->
         <pf-time-picker
           label="Start time"
@@ -514,6 +525,7 @@ export class AppComponent {
   paletteOpen = signal(false);
   day = signal('2024-03-15');
   at = signal('14:30');
+  trip = signal('2024-03-10/2024-03-20');
   private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
 
   notify(variant: 'success' | 'danger') {

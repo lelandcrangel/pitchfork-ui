@@ -88,6 +88,7 @@ const EXPECTED = [
   'pf-calendar',
   'pf-date-picker',
   'pf-time-picker',
+  'pf-date-range-picker',
 ];
 
 const TYPES = {
@@ -481,10 +482,10 @@ try {
        * a distinction a server relies on, and one `setFormValue('')` would
        * erase for the checkbox.
        */
-      if (names.join(',') !== 'at,due,notes,notify,plan,volume') {
+      if (names.join(',') !== 'at,due,notes,notify,plan,trip-end,trip-start,volume') {
         result.unstyled.push(
           `form sees [${names.join(', ')}] from the form controls, ` +
-            'expected at,due,notes,notify,plan,volume (terms is unticked, so absent)',
+            'expected at,due,notes,notify,plan,trip-end,trip-start,volume (terms is unticked, so absent)',
         );
       }
       /*

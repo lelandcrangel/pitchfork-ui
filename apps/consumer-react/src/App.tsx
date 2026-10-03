@@ -15,6 +15,7 @@ import {
   PfCommandPalette,
   PfContentDivider,
   PfDatePicker,
+  PfDateRangePicker,
   PfContextMenu,
   PfCreditCard,
   PfDropdown,
@@ -69,6 +70,7 @@ export function App() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
+  const [trip, setTrip] = useState('2024-03-10/2024-03-20');
   const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
@@ -263,6 +265,19 @@ export function App() {
           cycle is read through a getter, because an attribute of a
           union-literal type arrives as a string.
         */}
+        {/*
+          One control, two submitted entries: setFormValue accepts a FormData
+          and submits every entry in it, so `trip-start` and `trip-end` both
+          appear below.
+        */}
+        <PfDateRangePicker
+          label="Trip dates"
+          name="trip"
+          value={trip}
+          allowClear
+          data-testid="date-range-picker"
+          onPfChange={(event) => setTrip(event.detail.value)}
+        />
         <PfTimePicker
           label="Start time"
           name="at"

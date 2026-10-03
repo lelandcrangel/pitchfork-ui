@@ -538,6 +538,69 @@ export namespace Components {
         "value": string;
     }
     /**
+     * A form-associated date-range field: two month grids in a popover, with a
+     * preview that follows the pointer while the range is half-made.
+     * **It submits two entries from one control.** `setFormValue` accepts a
+     * `FormData`, and every entry in it is submitted — measured, along with the
+     * fact that the element's own `name` attribute is then ignored entirely. So a
+     * range goes in as `${name}-start` and `${name}-end`, which is what a server
+     * handling a form actually wants, rather than one field a handler has to split.
+     * The `value` property stays a single round-trippable `start/end` string.
+     * The grids are rendered here rather than composed from two `pf-calendar`s:
+     * the range preview spans both months, so one element has to own the hover and
+     * the selection for both. The day-state and selection rules are core's, shared
+     * with the React component.
+     */
+    interface PfDateRangePicker {
+        /**
+          * Offer a button that empties the range.
+          * @default false
+         */
+        "allowClear": boolean;
+        "checkValidity": () => Promise<boolean>;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        "endYear"?: number;
+        "error"?: string;
+        "getValidationMessage": () => Promise<string>;
+        "hide": () => Promise<void>;
+        /**
+          * A predicate for days that cannot be chosen; see `pf-calendar`.
+         */
+        "isDateDisabled"?: (date: Date) => boolean;
+        "label"?: string;
+        "max"?: string;
+        "min"?: string;
+        /**
+          * The base name for the two submitted entries, `${name}-start` and `${name}-end`. Reflected for selectors; the submission reads the property, because a `FormData` value carries its own keys.
+         */
+        "name"?: string;
+        /**
+          * Whether the panel is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default 'Select dates'
+         */
+        "placeholder": string;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        "show": () => Promise<void>;
+        "startYear"?: number;
+        /**
+          * The range as `YYYY-MM-DD/YYYY-MM-DD`, or empty.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A menu of actions, anchored to a trigger.
      * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
      * `pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
@@ -1565,6 +1628,10 @@ export interface PfDatePickerCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfDatePickerElement;
 }
+export interface PfDateRangePickerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfDateRangePickerElement;
+}
 export interface PfDropdownCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfDropdownElement;
@@ -1900,6 +1967,38 @@ declare global {
     var HTMLPfDatePickerElement: {
         prototype: HTMLPfDatePickerElement;
         new (): HTMLPfDatePickerElement;
+    };
+    interface HTMLPfDateRangePickerElementEventMap {
+        "pfChange": { value: string; start: string; end: string };
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * A form-associated date-range field: two month grids in a popover, with a
+     * preview that follows the pointer while the range is half-made.
+     * **It submits two entries from one control.** `setFormValue` accepts a
+     * `FormData`, and every entry in it is submitted — measured, along with the
+     * fact that the element's own `name` attribute is then ignored entirely. So a
+     * range goes in as `${name}-start` and `${name}-end`, which is what a server
+     * handling a form actually wants, rather than one field a handler has to split.
+     * The `value` property stays a single round-trippable `start/end` string.
+     * The grids are rendered here rather than composed from two `pf-calendar`s:
+     * the range preview spans both months, so one element has to own the hover and
+     * the selection for both. The day-state and selection rules are core's, shared
+     * with the React component.
+     */
+    interface HTMLPfDateRangePickerElement extends Components.PfDateRangePicker, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfDateRangePickerElementEventMap>(type: K, listener: (this: HTMLPfDateRangePickerElement, ev: PfDateRangePickerCustomEvent<HTMLPfDateRangePickerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfDateRangePickerElementEventMap>(type: K, listener: (this: HTMLPfDateRangePickerElement, ev: PfDateRangePickerCustomEvent<HTMLPfDateRangePickerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfDateRangePickerElement: {
+        prototype: HTMLPfDateRangePickerElement;
+        new (): HTMLPfDateRangePickerElement;
     };
     interface HTMLPfDropdownElementEventMap {
         "pfOpenChange": { open: boolean };
@@ -2510,6 +2609,7 @@ declare global {
         "pf-context-menu": HTMLPfContextMenuElement;
         "pf-credit-card": HTMLPfCreditCardElement;
         "pf-date-picker": HTMLPfDatePickerElement;
+        "pf-date-range-picker": HTMLPfDateRangePickerElement;
         "pf-dropdown": HTMLPfDropdownElement;
         "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
@@ -3028,6 +3128,76 @@ declare namespace LocalJSX {
         "startYear"?: number;
         /**
           * The selected date as `YYYY-MM-DD`, or empty.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
+     * A form-associated date-range field: two month grids in a popover, with a
+     * preview that follows the pointer while the range is half-made.
+     * **It submits two entries from one control.** `setFormValue` accepts a
+     * `FormData`, and every entry in it is submitted — measured, along with the
+     * fact that the element's own `name` attribute is then ignored entirely. So a
+     * range goes in as `${name}-start` and `${name}-end`, which is what a server
+     * handling a form actually wants, rather than one field a handler has to split.
+     * The `value` property stays a single round-trippable `start/end` string.
+     * The grids are rendered here rather than composed from two `pf-calendar`s:
+     * the range preview spans both months, so one element has to own the hover and
+     * the selection for both. The day-state and selection rules are core's, shared
+     * with the React component.
+     */
+    interface PfDateRangePicker {
+        /**
+          * Offer a button that empties the range.
+          * @default false
+         */
+        "allowClear"?: boolean;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        "endYear"?: number;
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * A predicate for days that cannot be chosen; see `pf-calendar`.
+         */
+        "isDateDisabled"?: (date: Date) => boolean;
+        "label"?: string;
+        "max"?: string;
+        "min"?: string;
+        /**
+          * The base name for the two submitted entries, `${name}-start` and `${name}-end`. Reflected for selectors; the submission reads the property, because a `FormData` value carries its own keys.
+         */
+        "name"?: string;
+        /**
+          * Fires when the range changes or is cleared, with the `start/end` string.
+         */
+        "onPfChange"?: (event: PfDateRangePickerCustomEvent<{ value: string; start: string; end: string }>) => void;
+        /**
+          * Fires whenever the panel opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfDateRangePickerCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the panel is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default 'Select dates'
+         */
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        "startYear"?: number;
+        /**
+          * The range as `YYYY-MM-DD/YYYY-MM-DD`, or empty.
           * @default ''
          */
         "value"?: string;
@@ -4124,6 +4294,22 @@ declare namespace LocalJSX {
         "endYear": number;
         "showOutsideDays": boolean;
     }
+    interface PfDateRangePickerAttributes {
+        "name": string;
+        "value": string;
+        "open": boolean;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "required": boolean;
+        "disabled": boolean;
+        "allowClear": boolean;
+        "min": string;
+        "max": string;
+        "startYear": number;
+        "endYear": number;
+    }
     interface PfDropdownAttributes {
         "open": boolean;
         "align": 'start' | 'end';
@@ -4337,6 +4523,7 @@ declare namespace LocalJSX {
         "pf-context-menu": Omit<PfContextMenu, keyof PfContextMenuAttributes> & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes]?: PfContextMenu[K] } & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes as `attr:${K}`]?: PfContextMenuAttributes[K] } & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes as `prop:${K}`]?: PfContextMenu[K] };
         "pf-credit-card": Omit<PfCreditCard, keyof PfCreditCardAttributes> & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes]?: PfCreditCard[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `attr:${K}`]?: PfCreditCardAttributes[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `prop:${K}`]?: PfCreditCard[K] };
         "pf-date-picker": Omit<PfDatePicker, keyof PfDatePickerAttributes> & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes]?: PfDatePicker[K] } & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes as `attr:${K}`]?: PfDatePickerAttributes[K] } & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes as `prop:${K}`]?: PfDatePicker[K] };
+        "pf-date-range-picker": Omit<PfDateRangePicker, keyof PfDateRangePickerAttributes> & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes]?: PfDateRangePicker[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `attr:${K}`]?: PfDateRangePickerAttributes[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `prop:${K}`]?: PfDateRangePicker[K] };
         "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
@@ -4493,6 +4680,21 @@ declare module "@stencil/core" {
              * is the one case that works, measured.
              */
             "pf-date-picker": LocalJSX.IntrinsicElements["pf-date-picker"] & JSXBase.HTMLAttributes<HTMLPfDatePickerElement>;
+            /**
+             * A form-associated date-range field: two month grids in a popover, with a
+             * preview that follows the pointer while the range is half-made.
+             * **It submits two entries from one control.** `setFormValue` accepts a
+             * `FormData`, and every entry in it is submitted — measured, along with the
+             * fact that the element's own `name` attribute is then ignored entirely. So a
+             * range goes in as `${name}-start` and `${name}-end`, which is what a server
+             * handling a form actually wants, rather than one field a handler has to split.
+             * The `value` property stays a single round-trippable `start/end` string.
+             * The grids are rendered here rather than composed from two `pf-calendar`s:
+             * the range preview spans both months, so one element has to own the hover and
+             * the selection for both. The day-state and selection rules are core's, shared
+             * with the React component.
+             */
+            "pf-date-range-picker": LocalJSX.IntrinsicElements["pf-date-range-picker"] & JSXBase.HTMLAttributes<HTMLPfDateRangePickerElement>;
             /**
              * A menu of actions, anchored to a trigger.
              * `popover="auto"`, so light-dismiss and Escape are the browser's, as in

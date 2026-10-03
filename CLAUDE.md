@@ -528,6 +528,22 @@ Things that differ from the React library, learned by porting the first two:
   the type verbatim as `12 | 24`, which is the tell. Keep the union, because
   it is the useful type for a framework consumer who really does set the
   number, and read it through a getter that coerces (`Number(x) === 12`).
+- **One form control can submit several entries.** `setFormValue` accepts a
+  `FormData`, and every entry in it reaches the submission — measured, along
+  with the fact that the element's own `name` attribute is then **ignored
+  entirely**, so the keys have to be built into the `FormData` itself.
+  `pf-date-range-picker` uses it to submit `${name}-start` and `${name}-end`,
+  which is what a server handling a form wants, rather than one field a
+  handler has to split. Its `value` property stays a single round-trippable
+  `start/end` string.
+- **Keep a half-made selection out of `value`, and then remember to read it.**
+  `value` is what gets submitted, so a range with only one end does not belong
+  in it — a form read mid-selection would see a start with no end. The trap is
+  the other half: `pf-date-range-picker` held the pending start beside `value`
+  and still fed `value` to the selection state machine, which then saw a range
+  with no start and, correctly, began a new one. Every second click restarted
+  instead of closing the range. Three browser tests caught it; whatever holds
+  the in-progress state is what the state machine has to be given.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.
