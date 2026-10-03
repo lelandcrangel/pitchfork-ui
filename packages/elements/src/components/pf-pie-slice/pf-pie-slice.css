@@ -1,0 +1,37 @@
+:host {
+  align-items: center;
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: 10px 1fr auto;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * A slice the chart did not draw is not a legend row either: a legend listing
+ * a colour that appears nowhere in the chart is worse than a shorter legend.
+ */
+:host(:not([drawn])) {
+  display: none;
+}
+
+.dot {
+  border-radius: var(--radius-full);
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+}
+
+.label {
+  color: var(--pf-piechart-text);
+  font-size: var(--font-size-sm);
+  min-width: 0;
+}
+
+.value {
+  color: var(--pf-piechart-text-muted);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}

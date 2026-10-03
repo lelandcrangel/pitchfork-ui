@@ -1237,6 +1237,48 @@ export namespace Components {
         "required": boolean;
     }
     /**
+     * A single value drawn as a filled arc, with a label in the middle.
+     * The geometry is `getProgressCircleGeometry`, which `pf-progress-circle` and
+     * the React `ProgressCircle` already share: the dash offset only lands on the
+     * right angle if it and the circumference came from the same radius, and the
+     * radius has to be inset by half the stroke or half of it paints outside the
+     * viewBox.
+     * It names itself with `label` where the React `GaugeChart` puts the
+     * percentage in `aria-label`. A meter's name should say what is being
+     * measured; the value belongs in `aria-valuetext`, which is where a reader
+     * looks for it, and announcing "73%" as the name of a thing leaves a reader
+     * with no idea what is 73% full.
+     */
+    interface PfGaugeChart {
+        /**
+          * Overrides the token colour.
+         */
+        "color"?: string;
+        /**
+          * What is being measured. The meter's accessible name.
+          * @default 'Gauge'
+         */
+        "label": string;
+        /**
+          * @default 100
+         */
+        "max": number;
+        /**
+          * Diameter, in pixels.
+          * @default 200
+         */
+        "size": number;
+        /**
+          * The arc's thickness, in pixels.
+          * @default 16
+         */
+        "strokeWidth": number;
+        /**
+          * @default 0
+         */
+        "value": number;
+    }
+    /**
      * A header navigation over `pf-nav-item` children.
      * The group owns the one thing an item cannot know: which item is the current
      * page. Core's rule decides, so the React `HeaderNavigation` marks the same
@@ -1884,6 +1926,78 @@ export namespace Components {
           * @default 1
          */
         "totalPages": number;
+    }
+    /**
+     * A pie or donut over `pf-pie-slice` children.
+     * The chart owns the two things a slice cannot know: its share of the total
+     * and its colour. Both go to the slice, which draws its own legend row —
+     * a slot renders its assigned content once and in one place, so a legend
+     * built in the shadow root could never reach labels that live in the light
+     * DOM.
+     * All of the arithmetic is core's, so this and the React `PieChart` show the
+     * same breakdown, down to the legend's percentages summing to 100.
+     */
+    interface PfPieChart {
+        /**
+          * The hole in the middle, as a fraction of the diameter.
+          * @default 0.58
+         */
+        "cutout": number;
+        /**
+          * The chart's accessible name.
+          * @default 'Pie chart'
+         */
+        "label": string;
+        /**
+          * Re-reads the slices, for a consumer who changed a value through its *property* — which leaves no attribute and fires no `slotchange`.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Show the legend the slices make up. Reflected.
+          * @default true
+         */
+        "showLegend": boolean;
+        /**
+          * Diameter, in pixels. Never below 120, where the ring stops reading.
+          * @default 192
+         */
+        "size": number;
+    }
+    /**
+     * One slice of a `pf-pie-chart`, and its own row in the legend.
+     * The React `PieChart` takes a `data` array of `{ label, value, color }`; a
+     * slot renders its assigned content once and in one place, so there is no way
+     * for the chart's shadow root to build a legend out of labels that live in the
+     * light DOM. The slice renders its own row instead, which is the §2.1 idiom
+     * and lets a consumer put anything in a label.
+     * `swatch`, `share` and `drawn` are the chart's to set: only it can see the
+     * total.
+     */
+    interface PfPieSlice {
+        /**
+          * Overrides the palette colour the chart would give it.
+         */
+        "color"?: string;
+        /**
+          * Set by the chart: whether this slice is in the drawing at all.  A slice of zero is not a wedge, so it is not a legend row either — otherwise the legend lists colours that appear nowhere in the chart. Reflected, because that is what the stylesheet hides it with.
+          * @default false
+         */
+        "drawn": boolean;
+        /**
+          * Set by the chart: this slice's share, as a whole percentage.
+          * @default 0
+         */
+        "share": number;
+        /**
+          * Set by the chart: the colour actually used, palette or override.
+          * @default ''
+         */
+        "swatch": string;
+        /**
+          * How big the slice is, in whatever unit the chart's slices share.
+          * @default 0
+         */
+        "value": number;
     }
     /**
      * An interactive panel anchored to its trigger.
@@ -4214,6 +4328,25 @@ declare global {
         new (): HTMLPfFileUploaderElement;
     };
     /**
+     * A single value drawn as a filled arc, with a label in the middle.
+     * The geometry is `getProgressCircleGeometry`, which `pf-progress-circle` and
+     * the React `ProgressCircle` already share: the dash offset only lands on the
+     * right angle if it and the circumference came from the same radius, and the
+     * radius has to be inset by half the stroke or half of it paints outside the
+     * viewBox.
+     * It names itself with `label` where the React `GaugeChart` puts the
+     * percentage in `aria-label`. A meter's name should say what is being
+     * measured; the value belongs in `aria-valuetext`, which is where a reader
+     * looks for it, and announcing "73%" as the name of a thing leaves a reader
+     * with no idea what is 73% full.
+     */
+    interface HTMLPfGaugeChartElement extends Components.PfGaugeChart, HTMLStencilElement {
+    }
+    var HTMLPfGaugeChartElement: {
+        prototype: HTMLPfGaugeChartElement;
+        new (): HTMLPfGaugeChartElement;
+    };
+    /**
      * A header navigation over `pf-nav-item` children.
      * The group owns the one thing an item cannot know: which item is the current
      * page. Core's rule decides, so the React `HeaderNavigation` marks the same
@@ -4639,6 +4772,38 @@ declare global {
     var HTMLPfPaginationElement: {
         prototype: HTMLPfPaginationElement;
         new (): HTMLPfPaginationElement;
+    };
+    /**
+     * A pie or donut over `pf-pie-slice` children.
+     * The chart owns the two things a slice cannot know: its share of the total
+     * and its colour. Both go to the slice, which draws its own legend row —
+     * a slot renders its assigned content once and in one place, so a legend
+     * built in the shadow root could never reach labels that live in the light
+     * DOM.
+     * All of the arithmetic is core's, so this and the React `PieChart` show the
+     * same breakdown, down to the legend's percentages summing to 100.
+     */
+    interface HTMLPfPieChartElement extends Components.PfPieChart, HTMLStencilElement {
+    }
+    var HTMLPfPieChartElement: {
+        prototype: HTMLPfPieChartElement;
+        new (): HTMLPfPieChartElement;
+    };
+    /**
+     * One slice of a `pf-pie-chart`, and its own row in the legend.
+     * The React `PieChart` takes a `data` array of `{ label, value, color }`; a
+     * slot renders its assigned content once and in one place, so there is no way
+     * for the chart's shadow root to build a legend out of labels that live in the
+     * light DOM. The slice renders its own row instead, which is the §2.1 idiom
+     * and lets a consumer put anything in a label.
+     * `swatch`, `share` and `drawn` are the chart's to set: only it can see the
+     * total.
+     */
+    interface HTMLPfPieSliceElement extends Components.PfPieSlice, HTMLStencilElement {
+    }
+    var HTMLPfPieSliceElement: {
+        prototype: HTMLPfPieSliceElement;
+        new (): HTMLPfPieSliceElement;
     };
     interface HTMLPfPopoverElementEventMap {
         "pfOpenChange": { open: boolean };
@@ -5503,6 +5668,7 @@ declare global {
         "pf-dropdown": HTMLPfDropdownElement;
         "pf-empty-state": HTMLPfEmptyStateElement;
         "pf-file-uploader": HTMLPfFileUploaderElement;
+        "pf-gauge-chart": HTMLPfGaugeChartElement;
         "pf-header-navigation": HTMLPfHeaderNavigationElement;
         "pf-icon": HTMLPfIconElement;
         "pf-inline-cta": HTMLPfInlineCtaElement;
@@ -5527,6 +5693,8 @@ declare global {
         "pf-option": HTMLPfOptionElement;
         "pf-page-header": HTMLPfPageHeaderElement;
         "pf-pagination": HTMLPfPaginationElement;
+        "pf-pie-chart": HTMLPfPieChartElement;
+        "pf-pie-slice": HTMLPfPieSliceElement;
         "pf-popover": HTMLPfPopoverElement;
         "pf-progress-bar": HTMLPfProgressBarElement;
         "pf-progress-circle": HTMLPfProgressCircleElement;
@@ -6729,6 +6897,48 @@ declare namespace LocalJSX {
         "required"?: boolean;
     }
     /**
+     * A single value drawn as a filled arc, with a label in the middle.
+     * The geometry is `getProgressCircleGeometry`, which `pf-progress-circle` and
+     * the React `ProgressCircle` already share: the dash offset only lands on the
+     * right angle if it and the circumference came from the same radius, and the
+     * radius has to be inset by half the stroke or half of it paints outside the
+     * viewBox.
+     * It names itself with `label` where the React `GaugeChart` puts the
+     * percentage in `aria-label`. A meter's name should say what is being
+     * measured; the value belongs in `aria-valuetext`, which is where a reader
+     * looks for it, and announcing "73%" as the name of a thing leaves a reader
+     * with no idea what is 73% full.
+     */
+    interface PfGaugeChart {
+        /**
+          * Overrides the token colour.
+         */
+        "color"?: string;
+        /**
+          * What is being measured. The meter's accessible name.
+          * @default 'Gauge'
+         */
+        "label"?: string;
+        /**
+          * @default 100
+         */
+        "max"?: number;
+        /**
+          * Diameter, in pixels.
+          * @default 200
+         */
+        "size"?: number;
+        /**
+          * The arc's thickness, in pixels.
+          * @default 16
+         */
+        "strokeWidth"?: number;
+        /**
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
      * A header navigation over `pf-nav-item` children.
      * The group owns the one thing an item cannot know: which item is the current
      * page. Core's rule decides, so the React `HeaderNavigation` marks the same
@@ -7379,6 +7589,74 @@ declare namespace LocalJSX {
           * @default 1
          */
         "totalPages"?: number;
+    }
+    /**
+     * A pie or donut over `pf-pie-slice` children.
+     * The chart owns the two things a slice cannot know: its share of the total
+     * and its colour. Both go to the slice, which draws its own legend row —
+     * a slot renders its assigned content once and in one place, so a legend
+     * built in the shadow root could never reach labels that live in the light
+     * DOM.
+     * All of the arithmetic is core's, so this and the React `PieChart` show the
+     * same breakdown, down to the legend's percentages summing to 100.
+     */
+    interface PfPieChart {
+        /**
+          * The hole in the middle, as a fraction of the diameter.
+          * @default 0.58
+         */
+        "cutout"?: number;
+        /**
+          * The chart's accessible name.
+          * @default 'Pie chart'
+         */
+        "label"?: string;
+        /**
+          * Show the legend the slices make up. Reflected.
+          * @default true
+         */
+        "showLegend"?: boolean;
+        /**
+          * Diameter, in pixels. Never below 120, where the ring stops reading.
+          * @default 192
+         */
+        "size"?: number;
+    }
+    /**
+     * One slice of a `pf-pie-chart`, and its own row in the legend.
+     * The React `PieChart` takes a `data` array of `{ label, value, color }`; a
+     * slot renders its assigned content once and in one place, so there is no way
+     * for the chart's shadow root to build a legend out of labels that live in the
+     * light DOM. The slice renders its own row instead, which is the §2.1 idiom
+     * and lets a consumer put anything in a label.
+     * `swatch`, `share` and `drawn` are the chart's to set: only it can see the
+     * total.
+     */
+    interface PfPieSlice {
+        /**
+          * Overrides the palette colour the chart would give it.
+         */
+        "color"?: string;
+        /**
+          * Set by the chart: whether this slice is in the drawing at all.  A slice of zero is not a wedge, so it is not a legend row either — otherwise the legend lists colours that appear nowhere in the chart. Reflected, because that is what the stylesheet hides it with.
+          * @default false
+         */
+        "drawn"?: boolean;
+        /**
+          * Set by the chart: this slice's share, as a whole percentage.
+          * @default 0
+         */
+        "share"?: number;
+        /**
+          * Set by the chart: the colour actually used, palette or override.
+          * @default ''
+         */
+        "swatch"?: string;
+        /**
+          * How big the slice is, in whatever unit the chart's slices share.
+          * @default 0
+         */
+        "value"?: number;
     }
     /**
      * An interactive panel anchored to its trigger.
@@ -9080,6 +9358,14 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
     }
+    interface PfGaugeChartAttributes {
+        "value": number;
+        "max": number;
+        "size": number;
+        "strokeWidth": number;
+        "color": string;
+        "label": string;
+    }
     interface PfHeaderNavigationAttributes {
         "label": string;
     }
@@ -9197,6 +9483,19 @@ declare namespace LocalJSX {
         "showPrevNext": boolean;
         "disabled": boolean;
         "label": string;
+    }
+    interface PfPieChartAttributes {
+        "size": number;
+        "cutout": number;
+        "showLegend": boolean;
+        "label": string;
+    }
+    interface PfPieSliceAttributes {
+        "value": number;
+        "color": string;
+        "swatch": string;
+        "share": number;
+        "drawn": boolean;
     }
     interface PfPopoverAttributes {
         "open": boolean;
@@ -9516,6 +9815,7 @@ declare namespace LocalJSX {
         "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
         "pf-empty-state": Omit<PfEmptyState, keyof PfEmptyStateAttributes> & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes]?: PfEmptyState[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `attr:${K}`]?: PfEmptyStateAttributes[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `prop:${K}`]?: PfEmptyState[K] };
         "pf-file-uploader": Omit<PfFileUploader, keyof PfFileUploaderAttributes> & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes]?: PfFileUploader[K] } & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes as `attr:${K}`]?: PfFileUploaderAttributes[K] } & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes as `prop:${K}`]?: PfFileUploader[K] };
+        "pf-gauge-chart": Omit<PfGaugeChart, keyof PfGaugeChartAttributes> & { [K in keyof PfGaugeChart & keyof PfGaugeChartAttributes]?: PfGaugeChart[K] } & { [K in keyof PfGaugeChart & keyof PfGaugeChartAttributes as `attr:${K}`]?: PfGaugeChartAttributes[K] } & { [K in keyof PfGaugeChart & keyof PfGaugeChartAttributes as `prop:${K}`]?: PfGaugeChart[K] };
         "pf-header-navigation": Omit<PfHeaderNavigation, keyof PfHeaderNavigationAttributes> & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes]?: PfHeaderNavigation[K] } & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes as `attr:${K}`]?: PfHeaderNavigationAttributes[K] } & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes as `prop:${K}`]?: PfHeaderNavigation[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-inline-cta": Omit<PfInlineCta, keyof PfInlineCtaAttributes> & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes]?: PfInlineCta[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `attr:${K}`]?: PfInlineCtaAttributes[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `prop:${K}`]?: PfInlineCta[K] };
@@ -9540,6 +9840,8 @@ declare namespace LocalJSX {
         "pf-option": Omit<PfOption, keyof PfOptionAttributes> & { [K in keyof PfOption & keyof PfOptionAttributes]?: PfOption[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `attr:${K}`]?: PfOptionAttributes[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `prop:${K}`]?: PfOption[K] };
         "pf-page-header": PfPageHeader;
         "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
+        "pf-pie-chart": Omit<PfPieChart, keyof PfPieChartAttributes> & { [K in keyof PfPieChart & keyof PfPieChartAttributes]?: PfPieChart[K] } & { [K in keyof PfPieChart & keyof PfPieChartAttributes as `attr:${K}`]?: PfPieChartAttributes[K] } & { [K in keyof PfPieChart & keyof PfPieChartAttributes as `prop:${K}`]?: PfPieChart[K] };
+        "pf-pie-slice": Omit<PfPieSlice, keyof PfPieSliceAttributes> & { [K in keyof PfPieSlice & keyof PfPieSliceAttributes]?: PfPieSlice[K] } & { [K in keyof PfPieSlice & keyof PfPieSliceAttributes as `attr:${K}`]?: PfPieSliceAttributes[K] } & { [K in keyof PfPieSlice & keyof PfPieSliceAttributes as `prop:${K}`]?: PfPieSlice[K] };
         "pf-popover": Omit<PfPopover, keyof PfPopoverAttributes> & { [K in keyof PfPopover & keyof PfPopoverAttributes]?: PfPopover[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `attr:${K}`]?: PfPopoverAttributes[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `prop:${K}`]?: PfPopover[K] };
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
@@ -9891,6 +10193,20 @@ declare module "@stencil/core" {
              */
             "pf-file-uploader": LocalJSX.IntrinsicElements["pf-file-uploader"] & JSXBase.HTMLAttributes<HTMLPfFileUploaderElement>;
             /**
+             * A single value drawn as a filled arc, with a label in the middle.
+             * The geometry is `getProgressCircleGeometry`, which `pf-progress-circle` and
+             * the React `ProgressCircle` already share: the dash offset only lands on the
+             * right angle if it and the circumference came from the same radius, and the
+             * radius has to be inset by half the stroke or half of it paints outside the
+             * viewBox.
+             * It names itself with `label` where the React `GaugeChart` puts the
+             * percentage in `aria-label`. A meter's name should say what is being
+             * measured; the value belongs in `aria-valuetext`, which is where a reader
+             * looks for it, and announcing "73%" as the name of a thing leaves a reader
+             * with no idea what is 73% full.
+             */
+            "pf-gauge-chart": LocalJSX.IntrinsicElements["pf-gauge-chart"] & JSXBase.HTMLAttributes<HTMLPfGaugeChartElement>;
+            /**
              * A header navigation over `pf-nav-item` children.
              * The group owns the one thing an item cannot know: which item is the current
              * page. Core's rule decides, so the React `HeaderNavigation` marks the same
@@ -10085,6 +10401,28 @@ declare module "@stencil/core" {
              * keeps the consumer in charge.
              */
             "pf-pagination": LocalJSX.IntrinsicElements["pf-pagination"] & JSXBase.HTMLAttributes<HTMLPfPaginationElement>;
+            /**
+             * A pie or donut over `pf-pie-slice` children.
+             * The chart owns the two things a slice cannot know: its share of the total
+             * and its colour. Both go to the slice, which draws its own legend row —
+             * a slot renders its assigned content once and in one place, so a legend
+             * built in the shadow root could never reach labels that live in the light
+             * DOM.
+             * All of the arithmetic is core's, so this and the React `PieChart` show the
+             * same breakdown, down to the legend's percentages summing to 100.
+             */
+            "pf-pie-chart": LocalJSX.IntrinsicElements["pf-pie-chart"] & JSXBase.HTMLAttributes<HTMLPfPieChartElement>;
+            /**
+             * One slice of a `pf-pie-chart`, and its own row in the legend.
+             * The React `PieChart` takes a `data` array of `{ label, value, color }`; a
+             * slot renders its assigned content once and in one place, so there is no way
+             * for the chart's shadow root to build a legend out of labels that live in the
+             * light DOM. The slice renders its own row instead, which is the §2.1 idiom
+             * and lets a consumer put anything in a label.
+             * `swatch`, `share` and `drawn` are the chart's to set: only it can see the
+             * total.
+             */
+            "pf-pie-slice": LocalJSX.IntrinsicElements["pf-pie-slice"] & JSXBase.HTMLAttributes<HTMLPfPieSliceElement>;
             /**
              * An interactive panel anchored to its trigger.
              * `popover="auto"` rather than `manual`, because the browser then does

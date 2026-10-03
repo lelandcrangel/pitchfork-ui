@@ -17,6 +17,7 @@ export * from './nav';
 export * from './navigation';
 export * from './number-field';
 export * from './pagination';
+export * from './pie';
 export * from './progress';
 export * from './rating';
 export * from './rich-text';

@@ -1,17 +1,12 @@
+import {
+  clampPieCutout,
+  pieConicGradient,
+  preparePieSegments,
+  roundPercentages,
+} from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './PieChart.css';
-
-/* Shared data-viz series palette from theme.css — keeps PieChart consistent
-   with the line/bar/area charts and picks up their dark-mode shifts. */
-const fallbackColors = [
-  'var(--pf-chart-color-1)',
-  'var(--pf-chart-color-2)',
-  'var(--pf-chart-color-3)',
-  'var(--pf-chart-color-4)',
-  'var(--pf-chart-color-5)',
-  'var(--pf-chart-color-6)',
-] as const;
 
 export interface PieChartDatum {
   label: React.ReactNode;
@@ -28,48 +23,6 @@ export interface PieChartProps extends React.HTMLAttributes<HTMLDivElement> {
   emptyLabel?: React.ReactNode;
 }
 
-interface PreparedSegment extends PieChartDatum {
-  color: string;
-  value: number;
-  percentage: number;
-}
-
-function clampCutout(value: number): number {
-  return Math.min(Math.max(value, 0), 0.88);
-}
-
-function prepareSegments(data: PieChartDatum[]): PreparedSegment[] {
-  const normalized = data.map((item, index) => ({
-    ...item,
-    value: Math.max(item.value, 0),
-    color: item.color ?? fallbackColors[index % fallbackColors.length],
-  }));
-  const total = normalized.reduce((sum, item) => sum + item.value, 0);
-
-  if (total <= 0) {
-    return [];
-  }
-
-  return normalized
-    .filter((item) => item.value > 0)
-    .map((item) => ({
-      ...item,
-      percentage: (item.value / total) * 100,
-    }));
-}
-
-function toConicGradient(segments: PreparedSegment[]): string {
-  let cursor = 0;
-  const stops = segments.map((segment) => {
-    const start = cursor;
-    const end = cursor + segment.percentage;
-    cursor = end;
-    return `${segment.color} ${start}% ${end}%`;
-  });
-
-  return `conic-gradient(${stops.join(', ')})`;
-}
-
 export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(function PieChart(
   {
     className,
@@ -83,13 +36,22 @@ export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(function PieCh
   },
   ref,
 ) {
-  const segments = prepareSegments(data);
+  /*
+   * All of it is core's, so `<pf-pie-chart>` draws the same wedges and prints
+   * the same legend — including the two things this got wrong. The total was
+   * taken *before* the non-positive values were filtered out, so one `NaN`
+   * made the total `NaN`, slipped past a `total <= 0` guard, and left every
+   * surviving slice at `NaN%`: an invalid gradient and a blank chart. And
+   * each legend percentage was rounded on its own, so three equal thirds read
+   * "33%, 33%, 33%".
+   */
+  const segments = preparePieSegments(data);
   const hasData = segments.length > 0;
+  const shares = roundPercentages(segments.map((segment) => segment.percentage));
   const chartSize = Math.max(size, 120);
-  const safeCutout = clampCutout(cutout);
-  const centerSize = Math.round(chartSize * safeCutout);
+  const centerSize = Math.round(chartSize * clampPieCutout(cutout));
   const conicGradient = hasData
-    ? toConicGradient(segments)
+    ? pieConicGradient(segments)
     : 'conic-gradient(var(--pf-piechart-empty) 0% 100%)';
 
   return (
@@ -113,15 +75,15 @@ export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(function PieCh
 
       {showLegend && hasData ? (
         <ul className="pf-pie-chart__legend">
-          {segments.map((segment, index) => (
-            <li className="pf-pie-chart__legend-item" key={`${index}-${segment.value}`}>
+          {segments.map((segment, position) => (
+            <li className="pf-pie-chart__legend-item" key={`${segment.index}-${segment.value}`}>
               <span
                 className="pf-pie-chart__legend-dot"
                 style={{ background: segment.color }}
                 aria-hidden
               />
-              <span className="pf-pie-chart__legend-label">{segment.label}</span>
-              <span className="pf-pie-chart__legend-value">{Math.round(segment.percentage)}%</span>
+              <span className="pf-pie-chart__legend-label">{data[segment.index].label}</span>
+              <span className="pf-pie-chart__legend-value">{shares[position]}%</span>
             </li>
           ))}
         </ul>

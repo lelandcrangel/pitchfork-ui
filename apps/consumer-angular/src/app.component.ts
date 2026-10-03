@@ -36,6 +36,7 @@ import {
   PfEmptyState,
   PfHeaderNavigation,
   PfFileUploader,
+  PfGaugeChart,
   PfIcon,
   PfInlineCta,
   PfInput,
@@ -58,6 +59,8 @@ import {
   PfNumberInput,
   PfPageHeader,
   PfPagination,
+  PfPieChart,
+  PfPieSlice,
   PfPopover,
   PfProgressBar,
   PfProgressCircle,
@@ -148,6 +151,7 @@ import {
     PfEmptyState,
     PfHeaderNavigation,
     PfFileUploader,
+    PfGaugeChart,
     PfIcon,
     PfInlineCta,
     PfInput,
@@ -170,6 +174,8 @@ import {
     PfNumberInput,
     PfPageHeader,
     PfPagination,
+    PfPieChart,
+    PfPieSlice,
     PfPopover,
     PfProgressBar,
     PfProgressCircle,
@@ -1027,6 +1033,27 @@ import {
         </pf-carousel-slide>
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
+
+      <!-- A gauge and a pie; see the React consumer. -->
+      <div style="display: flex; gap: var(--space-6); align-items: center">
+        <pf-gauge-chart
+          [value]="73"
+          [size]="140"
+          [strokeWidth]="12"
+          label="Disk used"
+          data-testid="gauge"
+        >
+          <span slot="sub">of 500 GB</span>
+        </pf-gauge-chart>
+
+        <pf-pie-chart [size]="160" label="Traffic sources" data-testid="pie-chart">
+          <span slot="center">8.4k</span>
+          <pf-pie-slice [value]="1" data-testid="pie-slice-1">Direct</pf-pie-slice>
+          <pf-pie-slice [value]="1" data-testid="pie-slice-2">Search</pf-pie-slice>
+          <pf-pie-slice [value]="1" data-testid="pie-slice-3">Social</pf-pie-slice>
+          <pf-pie-slice [value]="0" data-testid="pie-slice-empty">Referral</pf-pie-slice>
+        </pf-pie-chart>
+      </div>
 
       <!-- Three sparklines; see the React consumer. -->
       <div style="display: flex; gap: var(--space-4); align-items: center">

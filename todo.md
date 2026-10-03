@@ -491,3 +491,19 @@ Two gaps, both of which `<pf-rich-text-editor>` closes:
 
 Both were left alone because they change the public behaviour of a shipped
 component rather than being part of the port.
+
+---
+
+## The React `GaugeChart`'s accessible name is its value
+
+`aria-label={`${pct}%`}` on `role="meter"`, so a reader is told "73%" with no
+idea what is 73% full — and `aria-valuenow` already carries the number, so the
+name is pure duplication. `<pf-gauge-chart>` takes a `label` for what is being
+measured and puts the percentage in `aria-valuetext`, which is where a reader
+looks for it.
+
+**Fix:** add a `label` prop defaulting to nothing, use it for `aria-label`, and
+move the percentage to `aria-valuetext`. Left alone here because a gauge that
+suddenly has no accessible name would be a regression for any consumer relying
+on the current one, so the default needs a decision: `"Gauge"`, as the element
+uses, or required.

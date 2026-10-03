@@ -998,6 +998,50 @@ subgrid` on each line rather than a table: the numbers only have to share a
   **boolean** into the `d` — unreachable, because every call site passed one
   argument, so the broken code sat there looking fine while the area path was
   written out again inline.
+- **`getAnimations()` reports nothing for a finished animation with no fill
+  mode.** Both chart entrance animations run correctly on load and are long
+  over by the time a consumer-smoke block reaches them, so waiting for them
+  waits forever — while the sparkline's survives the same check only because
+  it is declared `both`, which keeps a finished animation in effect. Restart
+  it to observe it: clear the inline `animation`, let a frame pass, restore
+  it. **Not** `void node.offsetWidth`: `offsetWidth` is `undefined` on an SVG
+  element, so the usual force-a-reflow idiom is a no-op there and the two
+  assignments collapse into one with no restart. Measured by watching the
+  check report "ran none" against an element whose `@keyframes` were
+  demonstrably present in its adopted stylesheet and whose
+  `animation-duration` computed to `0.28s`.
+- **`@property` registers from inside a shadow root.** Measured: the pie's
+  sweep mask interpolates a `<percentage>` custom property, which an
+  unregistered custom property cannot do, and declaring `@property` in the
+  element's own `styleUrl` CSS is enough — the registration is
+  document-global, so the element does not have to rely on the React library's
+  copy being loaded. Deleting it fails the smoke, which is how it was
+  confirmed rather than assumed.
+- **Filter, then total.** The React `PieChart` took the total of the
+  _unfiltered_ values, so one `NaN` made the total `NaN`, slipped past a
+  `total <= 0` guard that `NaN` does not satisfy, and left every **surviving**
+  slice at `NaN%` — an invalid `conic-gradient` and a chart that drew blank.
+  The order is the fix; a `Number.isFinite` guard on the values changes
+  nothing, which is how the order was identified rather than guessed.
+- **Round a set of percentages together, not one at a time.** Largest
+  remainder, in `roundPercentages`: floor everything, then give the leftover
+  points to the slices that lost the most. Rounding each on its own shows
+  three equal thirds as "33%, 33%, 33%", which invites a reader to notice that
+  the breakdown does not add up. Ties break on position so the same data
+  always rounds the same way.
+- **A legend of slotted labels has to be built from the slices.** A slot
+  renders its assigned content once and in one place, so a legend in the
+  chart's shadow root could never reach labels that live in the light DOM.
+  `pf-pie-slice` renders its own legend row and the chart pushes down the two
+  things only it knows — the colour and the share — which is the
+  `pf-breadcrumb` arrangement again. The index of the slice in the original
+  children is what carries the answer back to the right one, because the
+  drawable slices are filtered and their own positions no longer line up.
+- **A meter's name says what is measured; the value goes in
+  `aria-valuetext`.** The React `GaugeChart` puts the percentage in
+  `aria-label`, which leaves a reader told "73%" with no idea what is 73%
+  full. `pf-gauge-chart` takes a `label` and reports the percentage
+  separately.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

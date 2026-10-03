@@ -35,6 +35,7 @@ import {
   PfEmptyState,
   PfHeaderNavigation,
   PfFileUploader,
+  PfGaugeChart,
   PfIcon,
   PfInlineCta,
   PfInput,
@@ -57,6 +58,8 @@ import {
   PfNumberInput,
   PfPageHeader,
   PfPagination,
+  PfPieChart,
+  PfPieSlice,
   PfPopover,
   PfProgressBar,
   PfProgressCircle,
@@ -1230,6 +1233,36 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        A gauge and a pie. The gauge names what it measures and reports the
+        percentage in `aria-valuetext`, where a reader looks for it; the
+        React `GaugeChart` puts the percentage in `aria-label`. The pie's
+        legend is made of its slices, because a slot renders its content once
+        and in one place — a legend built in the shadow root could never
+        reach labels that live in the light DOM.
+      */}
+      <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'center' }}>
+        <PfGaugeChart value={73} size={140} strokeWidth={12} label="Disk used" data-testid="gauge">
+          <span slot="sub">of 500 GB</span>
+        </PfGaugeChart>
+
+        <PfPieChart size={160} label="Traffic sources" data-testid="pie-chart">
+          <span slot="center">8.4k</span>
+          <PfPieSlice value={1} data-testid="pie-slice-1">
+            Direct
+          </PfPieSlice>
+          <PfPieSlice value={1} data-testid="pie-slice-2">
+            Search
+          </PfPieSlice>
+          <PfPieSlice value={1} data-testid="pie-slice-3">
+            Social
+          </PfPieSlice>
+          <PfPieSlice value={0} data-testid="pie-slice-empty">
+            Referral
+          </PfPieSlice>
+        </PfPieChart>
+      </div>
 
       {/*
         Three sparklines: a still line, a filled area that draws itself in,

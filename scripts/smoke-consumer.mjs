@@ -46,6 +46,7 @@ const EXPECTED = [
   'pf-input',
   'pf-header-navigation',
   'pf-file-uploader',
+  'pf-gauge-chart',
   'pf-icon',
   'pf-card',
   'pf-carousel',
@@ -78,6 +79,8 @@ const EXPECTED = [
   'pf-radio-group',
   'pf-radio-button',
   'pf-tooltip',
+  'pf-pie-chart',
+  'pf-pie-slice',
   'pf-popover',
   'pf-modal',
   'pf-nav-item',
@@ -4599,6 +4602,203 @@ try {
       }
       if (state.named !== 'img') {
         problems.push(`a named sparkline has role "${state.named}", expected img`);
+      }
+    }
+  }
+
+  /*
+   * The gauge and the pie. Both are almost entirely CSS that no test project
+   * applies: the gauge's arc fills in from a `@keyframes` copy that has to
+   * exist inside its shadow root, and the pie's wedges are a
+   * `conic-gradient` masked by a **registered** custom property — without
+   * `@property` the mask cannot interpolate and the sweep jumps rather than
+   * sweeping. Whether `@property` registers from inside a shadow root at all
+   * is the measurement this block exists for.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const gauge = document.querySelector('pf-gauge-chart');
+        const pie = document.querySelector('pf-pie-chart');
+        if (!gauge || !pie) return { error: 'the consumer app is missing a chart' };
+
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const slice = (testid) => document.querySelector(`[data-testid="${testid}"]`);
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const fill = part(gauge, 'fill');
+        const layer = part(pie, 'gradient');
+
+        /*
+         * Both of these are *entrance* animations with no fill mode, and by
+         * the time the smoke reaches this block they finished seconds ago —
+         * `getAnimations()` reports nothing for a finished animation that is
+         * no longer in effect, so waiting for them here would wait forever.
+         * Restarting them is the only way to observe them: clearing and
+         * restoring the inline `animation`, with a forced reflow between,
+         * makes the browser run them again. (The sparkline's survived the
+         * same check only because it is declared `both`, which keeps a
+         * finished animation in effect.)
+         */
+        const restart = async (node) => {
+          node.style.animation = 'none';
+          /*
+           * A frame between the two assignments, not `void node.offsetWidth`:
+           * `offsetWidth` is `undefined` on an SVG element, so the usual
+           * force-a-reflow idiom reads as a no-op there and the browser never
+           * sees the intermediate state — measured, by watching this check
+           * report "ran none" against an element whose keyframes were
+           * demonstrably present and whose duration computed to 0.28s.
+           */
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          node.style.animation = '';
+        };
+        await restart(fill);
+        await restart(layer);
+
+        const deadline = Date.now() + 3000;
+        let fillRunning = fill.getAnimations();
+        let sweepRunning = layer.getAnimations();
+        while ((fillRunning.length === 0 || sweepRunning.length === 0) && Date.now() < deadline) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          fillRunning = fill.getAnimations();
+          sweepRunning = layer.getAnimations();
+        }
+
+        const read = {
+          fillAnimationName: getComputedStyle(fill).animationName,
+          fillAnimationsRunning: fillRunning.length,
+          sweepAnimationName: getComputedStyle(layer).animationName,
+          sweepAnimationsRunning: sweepRunning.length,
+          /*
+           * The registered property: an unregistered custom property computes
+           * to its token stream verbatim and cannot interpolate, so this
+           * reading is how we know `@property` took effect from a shadow
+           * stylesheet.
+           */
+          sweepComputed: getComputedStyle(layer).getPropertyValue('--pf-pie-sweep').trim(),
+          gaugeTrack: getComputedStyle(part(gauge, 'track')).stroke,
+          gaugeFill: getComputedStyle(fill).stroke,
+          // The arc is rotated to start at twelve o'clock.
+          gaugeTransform: getComputedStyle(fill).transform,
+          // The label sits over the arc, not beside it.
+          labelCentred: (() => {
+            const host = gauge.getBoundingClientRect();
+            const centre = part(gauge, 'center').getBoundingClientRect();
+            return (
+              Math.abs(centre.left + centre.width / 2 - (host.left + host.width / 2)) < 2 &&
+              Math.abs(centre.top + centre.height / 2 - (host.top + host.height / 2)) < 2
+            );
+          })(),
+          // The sub-label is slotted with no wrapper, so it costs no gap.
+          subLabelColour: getComputedStyle(gauge.querySelector('[slot="sub"]')).color,
+          labelColour: getComputedStyle(part(gauge, 'label')).color,
+        };
+
+        await Promise.all([
+          ...fill.getAnimations().map((animation) => animation.finished),
+          ...layer.getAnimations().map((animation) => animation.finished),
+        ]);
+        await settle();
+
+        return {
+          ...read,
+          gradientImage: getComputedStyle(layer).backgroundImage,
+          sweepSettled: getComputedStyle(layer).getPropertyValue('--pf-pie-sweep').trim(),
+          // A slice of zero is not a legend row.
+          emptySliceDisplay: getComputedStyle(slice('pie-slice-empty')).display,
+          drawnSliceDisplay: getComputedStyle(slice('pie-slice-1')).display,
+          // The three drawn slices print shares that add up.
+          shares: ['pie-slice-1', 'pie-slice-2', 'pie-slice-3'].map((id) =>
+            Number.parseInt(part(slice(id), 'value').textContent, 10),
+          ),
+          swatches: ['pie-slice-1', 'pie-slice-2', 'pie-slice-3'].map(
+            (id) => getComputedStyle(part(slice(id), 'dot')).backgroundColor,
+          ),
+          // The hole is a real hole: its own background over the gradient.
+          holeBackground: getComputedStyle(part(pie, 'center')).backgroundColor,
+          holeSize: part(pie, 'center').getBoundingClientRect().width,
+          chartSize: part(pie, 'visual').getBoundingClientRect().width,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`charts: ${state.error}`);
+    } else {
+      if (state.fillAnimationName !== 'pf-gauge-fill') {
+        problems.push(`the gauge's animation-name computes to "${state.fillAnimationName}"`);
+      }
+      if (state.fillAnimationsRunning === 0) {
+        problems.push(
+          'the gauge declared an animation and ran none — its shadow root has no copy of the ' +
+            'keyframes',
+        );
+      }
+      if (state.sweepAnimationName !== 'pf-pie-sweep') {
+        problems.push(`the pie's animation-name computes to "${state.sweepAnimationName}"`);
+      }
+      if (state.sweepAnimationsRunning === 0) {
+        problems.push('the pie declared a sweep and ran none');
+      }
+      if (!state.sweepComputed.endsWith('%')) {
+        problems.push(
+          `--pf-pie-sweep computed to "${state.sweepComputed}" — @property did not register ` +
+            'from the shadow stylesheet, so the mask cannot interpolate',
+        );
+      }
+      if (state.sweepSettled !== '100%') {
+        problems.push(`the sweep settled at ${state.sweepSettled}, expected 100%`);
+      }
+      if (state.gaugeTrack === state.gaugeFill) {
+        problems.push(`the gauge's track and fill are both "${state.gaugeFill}"`);
+      }
+      if (!state.gaugeTransform || state.gaugeTransform === 'none') {
+        problems.push('the gauge arc is not rotated, so it starts at three o’clock');
+      }
+      if (!state.labelCentred) {
+        problems.push('the gauge label is not over the middle of the arc');
+      }
+      if (state.subLabelColour === state.labelColour) {
+        problems.push(
+          `the slotted sub-label is the same colour as the big number ` +
+            `("${state.labelColour}") — the ::slotted rule did not reach it`,
+        );
+      }
+      if (!state.gradientImage.includes('conic-gradient')) {
+        problems.push(`the pie's background-image is "${state.gradientImage}"`);
+      }
+      if (state.gradientImage.includes('NaN')) {
+        problems.push('the pie gradient has a NaN stop in it');
+      }
+      if (state.emptySliceDisplay !== 'none') {
+        problems.push(
+          `a slice of zero computes to display "${state.emptySliceDisplay}" — it is a legend ` +
+            'row for a wedge that does not exist',
+        );
+      }
+      if (state.drawnSliceDisplay === 'none') {
+        problems.push('a drawn slice is hidden from the legend');
+      }
+      if (state.shares.reduce((sum, value) => sum + value, 0) !== 100) {
+        problems.push(`the legend shares ${JSON.stringify(state.shares)} do not add up to 100`);
+      }
+      if (new Set(state.swatches).size !== state.swatches.length) {
+        problems.push(
+          `two slices share a swatch colour (${JSON.stringify(state.swatches)}) — the palette ` +
+            'did not advance',
+        );
+      }
+      if (!state.holeBackground || state.holeBackground === 'rgba(0, 0, 0, 0)') {
+        problems.push('the pie has no hole — its centre is transparent over the gradient');
+      }
+      if (!(state.holeSize > 0 && state.holeSize < state.chartSize)) {
+        problems.push(`the hole measured ${state.holeSize}px in a ${state.chartSize}px chart`);
       }
     }
   }
