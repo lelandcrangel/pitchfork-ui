@@ -19,6 +19,7 @@ export * from './number-field';
 export * from './pagination';
 export * from './progress';
 export * from './rating';
+export * from './rich-text';
 export * from './roving';
 export * from './scroll-lock';
 export * from './splitter';

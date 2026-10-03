@@ -60,6 +60,7 @@ const EXPECTED = [
   'pf-loading-skeleton',
   'pf-utility-button',
   'pf-resizable',
+  'pf-rich-text-editor',
   'pf-scroll-area',
   'pf-badge-group',
   'pf-progress-bar',
@@ -4284,6 +4285,183 @@ try {
       }
       if (state.copyLabel !== 'Copy') {
         problems.push(`the copy button reads "${state.copyLabel}"`);
+      }
+    }
+  }
+
+  /*
+   * The editor, and the four things only a real build shows: the placeholder,
+   * which is a `::before` on `:empty` and so needs both the stylesheet and a
+   * genuinely empty box; `min-height` reaching the editable area through a
+   * custom property set inline on it; the focus ring landing on the *box*
+   * rather than on the editable area, via `:focus-within`; and the browser's
+   * own paragraph margins, which are styled by a plain descendant selector
+   * because the content lives in the shadow root rather than being slotted.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-rich-text-editor');
+        if (!el) return { error: 'the consumer app has no pf-rich-text-editor' };
+
+        const part = (name) => el.shadowRoot.querySelector(`[part="${name}"]`);
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const editor = part('editor');
+        const box = editor.parentElement;
+        const tools = [...el.shadowRoot.querySelectorAll('[part="tool"]')];
+
+        const read = {
+          minHeight: getComputedStyle(editor).minHeight,
+          /*
+           * The consumer's value is two paragraphs, which core keeps — a
+           * single wrapping one is stripped, and would leave no `<p>` here at
+           * all. The first run of this check used one and found exactly that.
+           */
+          paragraphMargins: (() => {
+            const all = [...editor.querySelectorAll('p')];
+            if (all.length < 2) return null;
+            /*
+             * The *last* paragraph's margin is the one we own: `p` has a
+             * margin in the UA stylesheet, so checking the first one passes
+             * with our rule deleted. `p:last-child { margin-bottom: 0 }` has
+             * no UA equivalent.
+             */
+            return {
+              first: getComputedStyle(all[0]).marginBottom,
+              last: getComputedStyle(all[all.length - 1]).marginBottom,
+            };
+          })(),
+          toolbarBelowNothing:
+            Math.round(part('toolbar').getBoundingClientRect().bottom) <=
+            Math.round(editor.getBoundingClientRect().top) + 1,
+          toolbarTinted: getComputedStyle(part('toolbar')).backgroundColor,
+          boxBg: getComputedStyle(box).backgroundColor,
+          dividerWidth: el.shadowRoot.querySelector('.divider')?.getBoundingClientRect().width,
+          tabStops: tools.filter((button) => button.tabIndex === 0).length,
+          countAlignment: getComputedStyle(part('count')).textAlign,
+          ringWhenBlurred: getComputedStyle(box).boxShadow,
+        };
+
+        tools[0].focus();
+        await settle();
+        const ringWhenFocused = getComputedStyle(box).boxShadow;
+
+        /*
+         * The placeholder: a `::before` on `:empty`, so the box has to be
+         * emptied for real before it can be measured. Its width is the only
+         * way to see it, since pseudo-element content has no box of its own
+         * to query.
+         */
+        editor.innerHTML = '';
+        editor.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }));
+        await settle();
+        const placeholder = getComputedStyle(editor, '::before').content;
+        const emptyWidth = editor.getBoundingClientRect().width;
+
+        // Type something and watch it reach the host framework.
+        editor.innerHTML = 'typed <strong>here</strong>';
+        editor.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }));
+
+        const echo = () =>
+          document.querySelector('[data-testid="rich-text-length"]')?.textContent?.trim();
+        const deadline = Date.now() + 3000;
+        while (echo() !== String('typed <strong>here</strong>'.length)) {
+          if (Date.now() > deadline)
+            return { ...read, echo: echo(), error: 'the edit never echoed' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        await settle();
+
+        return {
+          ...read,
+          ringWhenFocused,
+          placeholder,
+          emptyWidth,
+          echo: echo(),
+          count: part('count').textContent.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-rich-text-editor: ${state.error}`);
+    } else {
+      if (state.minHeight !== '120px') {
+        problems.push(
+          `the editable area's min-height is "${state.minHeight}", expected the 120px the ` +
+            'consumer asked for',
+        );
+      }
+      if (state.paragraphMargins === null) {
+        problems.push("the consumer's two-paragraph value left fewer than two in the editor");
+      } else {
+        if (state.paragraphMargins.first === '0px') {
+          problems.push(
+            "the browser's own paragraphs have no margin — the descendant rule did not apply",
+          );
+        }
+        if (state.paragraphMargins.last !== '0px') {
+          problems.push(
+            `the last paragraph still has ${state.paragraphMargins.last} below it — the ` +
+              'p:last-child rule did not apply',
+          );
+        }
+      }
+      if (!state.toolbarBelowNothing) {
+        problems.push('the toolbar is not above the editable area');
+      }
+      if (state.toolbarTinted === state.boxBg) {
+        problems.push(
+          `the toolbar is the same colour as the field ("${state.boxBg}") — the subtle ` +
+            'background did not resolve',
+        );
+      }
+      // And the other half: transparent is not "different", it is missing.
+      if (!state.toolbarTinted || state.toolbarTinted === 'rgba(0, 0, 0, 0)') {
+        problems.push('the toolbar has no background of its own');
+      }
+      if (!(state.dividerWidth > 0)) {
+        problems.push(`the toolbar divider measured ${state.dividerWidth}px`);
+      }
+      if (state.tabStops !== 1) {
+        problems.push(
+          `the toolbar has ${state.tabStops} tab stops — the roving tabindex did not apply`,
+        );
+      }
+      if (state.countAlignment !== 'end' && state.countAlignment !== 'right') {
+        problems.push(`the counter is aligned "${state.countAlignment}"`);
+      }
+      if (state.ringWhenBlurred !== 'none') {
+        problems.push(`the field has a ring before anything inside it is focused`);
+      }
+      if (state.ringWhenFocused === 'none') {
+        problems.push(
+          'focusing a toolbar button drew no ring on the field — :focus-within or the ring ' +
+            'alias did not resolve',
+        );
+      }
+      if (!state.placeholder || state.placeholder === 'none') {
+        problems.push(
+          `an emptied editor shows no placeholder (content: ${state.placeholder}) — the ` +
+            ':empty::before rule did not apply',
+        );
+      }
+      if (!(state.emptyWidth > 0)) {
+        problems.push('the emptied editor collapsed to nothing');
+      }
+      // The counter follows the *text*, so 'typed here' is 10, not the 27 of
+      // the markup that carries it.
+      if (state.count !== '10/200') {
+        problems.push(`the counter reads "${state.count}" after typing 10 characters of text`);
+      }
+      if (state.echo !== String('typed <strong>here</strong>'.length)) {
+        problems.push(`pf-rich-text-editor reported "${state.echo}" to the host framework`);
       }
     }
   }

@@ -470,3 +470,24 @@ who already has Shiki or Prism wires it once at startup — exactly what
 then set that markup rather than text, which is the only place in either layer
 that would need `innerHTML`, so the decision to make is whose escaping is
 trusted.
+
+---
+
+## The React `RichTextEditor` is six tab stops, and reaches no form
+
+Two gaps, both of which `<pf-rich-text-editor>` closes:
+
+- Its toolbar is `role="toolbar"` with six focusable buttons inside, so
+  tabbing past the field walks every one. The ARIA toolbar pattern is one tab
+  stop with the arrows moving inside, which is what `pf-toolbar` and the
+  element's own toolbar do. Core already has `getRovingItems`,
+  `resolveRovingKey`, `resolveListMove` and `syncRovingTabIndex`, so the fix
+  is a `ref` on the toolbar and the same three handlers the element has — no
+  new logic at all.
+- A `contenteditable` is not a form control, so a `<form>` around the React
+  editor submits nothing. Same shape as the `FileUploader` entry above, and the
+  same fix: a hidden input the component writes its value to. Simpler here,
+  because the value is a string.
+
+Both were left alone because they change the public behaviour of a shipped
+component rather than being part of the port.

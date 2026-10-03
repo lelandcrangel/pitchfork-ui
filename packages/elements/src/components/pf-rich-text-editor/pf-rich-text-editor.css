@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.label {
+  color: var(--pf-field-label);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--pf-field-required);
+  margin-inline-start: var(--space-1);
+}
+
+.description {
+  color: var(--pf-field-description);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.error {
+  color: var(--pf-field-error);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.box {
+  background: var(--pf-rte-bg);
+  border: 1px solid var(--pf-rte-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.box:focus-within {
+  border-color: var(--pf-rte-focus-border);
+  box-shadow: var(--pf-rte-focus-ring, var(--pf-focus-ring));
+}
+
+.box--invalid {
+  border-color: var(--pf-rte-invalid-border);
+}
+
+.box--disabled {
+  opacity: var(--pf-rte-disabled-opacity, 0.75);
+}
+
+.toolbar {
+  align-items: center;
+  background: var(--pf-rte-bg-subtle);
+  border-bottom: 1px solid var(--pf-rte-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-2);
+}
+
+.tool {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--pf-rte-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  min-height: 28px;
+  padding: 0 var(--space-2);
+}
+
+.tool:hover:not(:disabled) {
+  background: var(--pf-rte-bg);
+  border-color: var(--pf-rte-border);
+}
+
+.tool:focus-visible {
+  box-shadow: var(--pf-rte-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.tool:disabled {
+  cursor: not-allowed;
+  opacity: var(--pf-rte-disabled-opacity, 0.55);
+}
+
+.divider {
+  background: var(--pf-rte-border);
+  height: 18px;
+  margin: 0 var(--space-1);
+  width: 1px;
+}
+
+.editor {
+  color: var(--pf-rte-text);
+  font: inherit;
+  line-height: 1.5;
+  min-height: var(--pf-rte-min-height, 140px);
+  outline: none;
+  overflow-wrap: anywhere;
+  padding: var(--space-3);
+}
+
+/*
+ * The browser's own paragraphs, which `execCommand` and Enter both produce.
+ * There is no `::slotted` involved: this content is in the shadow root,
+ * written there imperatively, so a plain descendant selector reaches it.
+ */
+.editor p {
+  margin: 0 0 0.75em;
+}
+
+.editor p:last-child {
+  margin-bottom: 0;
+}
+
+.editor:empty::before {
+  color: var(--pf-rte-text-muted);
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
+.count {
+  color: var(--pf-rte-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  text-align: end;
+}

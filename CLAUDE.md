@@ -947,6 +947,30 @@ subgrid` on each line rather than a table: the numbers only have to share a
   the element had reached for a `--font-family-mono` token that does not
   exist, the declaration died at computed-value time, and the code rendered in
   the sans-serif body font with every test still green.
+- **A `contenteditable` and a vdom cannot both own the content.** The person
+  types, the DOM changes under the renderer, and the next render puts the old
+  content back with the caret at the start. `pf-rich-text-editor` renders the
+  editable box **empty, once** and writes `innerHTML` imperatively, only when
+  the value it holds and the value in the box differ. It is the one place in
+  this package where the render function is deliberately not the source of
+  truth.
+- **A `label[for]` cannot name a `contenteditable`.** `for` must point at a
+  labelable element and a `div` is not one, however convincing its
+  `role="textbox"` is. The name comes from an `aria-labelledby` IDREF to a
+  label in the **same shadow root**, which is the kind that resolves.
+- **"Filled" for a rich-text field means text, not markup.** A browser left to
+  itself puts `<br>` or an empty `<p>` into an emptied `contenteditable`, so a
+  `required` check against the value would call an empty field filled.
+  `applyControlValidity` is given `textContent.trim().length > 0`; a browser
+  test types `<p><br></p>` and expects it to still be invalid, and swapping in
+  `Boolean(this.value)` fails exactly that.
+- **Assert the rule you own, not the one the UA also has.** The smoke's first
+  attempt checked a paragraph's `margin-bottom` inside the editor, which the
+  UA stylesheet supplies anyway — deleting `.editor p { margin }` kept the
+  check green. `p:last-child { margin-bottom: 0 }` has no UA equivalent, so it
+  is the margin worth measuring. Same shape as the `.empty` boxes: a
+  "different colour" check passes when the colour is _missing_, so assert
+  both — not the same as the other box, **and** not transparent.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

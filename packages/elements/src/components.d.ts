@@ -2213,6 +2213,70 @@ export namespace Components {
         "step": number;
     }
     /**
+     * A form-associated rich-text field over a `contenteditable`.
+     * The toolbar is core's list, so this and the React `RichTextEditor` cannot
+     * offer different buttons, and the value is normalised with core's
+     * `stripOuterParagraph`, so they cannot disagree about what a round trip
+     * looks like.
+     * Two things differ from the React component, both deliberate:
+     * - **The toolbar is one tab stop**, with the arrows moving inside it, which
+     *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
+     *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
+     *   field walks every button; `todo.md` has that.
+     * - **It is a real form control.** `formAssociated` with `ElementInternals` is
+     *   what puts the value in `FormData`; a `contenteditable` is not a form
+     *   control in any framework, and the React component's value reaches a form
+     *   only if the consumer wires it there themselves.
+     * `document.execCommand` is deprecated and is still the only way to apply
+     * formatting inside a `contenteditable` without a dependency, which is the
+     * same trade the React component makes.
+     */
+    interface PfRichTextEditor {
+        /**
+          * The most characters of text the field will hold.
+         */
+        "characterMax"?: number;
+        "checkValidity": () => Promise<boolean>;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message from the consumer. Its presence marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * Applies one of the toolbar's commands, as pressing its button does.
+         */
+        "format": (command: string) => Promise<void>;
+        "getValidationMessage": () => Promise<string>;
+        "label"?: string;
+        /**
+          * The editable area's smallest height, in pixels.
+          * @default 140
+         */
+        "minHeight": number;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` content attribute rather than from this property.
+         */
+        "name"?: string;
+        /**
+          * @default 'Start typing...'
+         */
+        "placeholder": string;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * The field's value, as HTML.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -3369,6 +3433,10 @@ export interface PfRadioGroupCustomEvent<T> extends CustomEvent<T> {
 export interface PfResizableCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfResizableElement;
+}
+export interface PfRichTextEditorCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfRichTextEditorElement;
 }
 export interface PfSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4694,6 +4762,42 @@ declare global {
         prototype: HTMLPfResizableElement;
         new (): HTMLPfResizableElement;
     };
+    interface HTMLPfRichTextEditorElementEventMap {
+        "pfChange": { value: string };
+    }
+    /**
+     * A form-associated rich-text field over a `contenteditable`.
+     * The toolbar is core's list, so this and the React `RichTextEditor` cannot
+     * offer different buttons, and the value is normalised with core's
+     * `stripOuterParagraph`, so they cannot disagree about what a round trip
+     * looks like.
+     * Two things differ from the React component, both deliberate:
+     * - **The toolbar is one tab stop**, with the arrows moving inside it, which
+     *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
+     *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
+     *   field walks every button; `todo.md` has that.
+     * - **It is a real form control.** `formAssociated` with `ElementInternals` is
+     *   what puts the value in `FormData`; a `contenteditable` is not a form
+     *   control in any framework, and the React component's value reaches a form
+     *   only if the consumer wires it there themselves.
+     * `document.execCommand` is deprecated and is still the only way to apply
+     * formatting inside a `contenteditable` without a dependency, which is the
+     * same trade the React component makes.
+     */
+    interface HTMLPfRichTextEditorElement extends Components.PfRichTextEditor, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfRichTextEditorElementEventMap>(type: K, listener: (this: HTMLPfRichTextEditorElement, ev: PfRichTextEditorCustomEvent<HTMLPfRichTextEditorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfRichTextEditorElementEventMap>(type: K, listener: (this: HTMLPfRichTextEditorElement, ev: PfRichTextEditorCustomEvent<HTMLPfRichTextEditorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfRichTextEditorElement: {
+        prototype: HTMLPfRichTextEditorElement;
+        new (): HTMLPfRichTextEditorElement;
+    };
     /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
@@ -5369,6 +5473,7 @@ declare global {
         "pf-rating-badge": HTMLPfRatingBadgeElement;
         "pf-rating-stars": HTMLPfRatingStarsElement;
         "pf-resizable": HTMLPfResizableElement;
+        "pf-rich-text-editor": HTMLPfRichTextEditorElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
         "pf-section-footer": HTMLPfSectionFooterElement;
         "pf-section-header": HTMLPfSectionHeaderElement;
@@ -7534,6 +7639,71 @@ declare namespace LocalJSX {
         "step"?: number;
     }
     /**
+     * A form-associated rich-text field over a `contenteditable`.
+     * The toolbar is core's list, so this and the React `RichTextEditor` cannot
+     * offer different buttons, and the value is normalised with core's
+     * `stripOuterParagraph`, so they cannot disagree about what a round trip
+     * looks like.
+     * Two things differ from the React component, both deliberate:
+     * - **The toolbar is one tab stop**, with the arrows moving inside it, which
+     *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
+     *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
+     *   field walks every button; `todo.md` has that.
+     * - **It is a real form control.** `formAssociated` with `ElementInternals` is
+     *   what puts the value in `FormData`; a `contenteditable` is not a form
+     *   control in any framework, and the React component's value reaches a form
+     *   only if the consumer wires it there themselves.
+     * `document.execCommand` is deprecated and is still the only way to apply
+     * formatting inside a `contenteditable` without a dependency, which is the
+     * same trade the React component makes.
+     */
+    interface PfRichTextEditor {
+        /**
+          * The most characters of text the field will hold.
+         */
+        "characterMax"?: number;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message from the consumer. Its presence marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        "label"?: string;
+        /**
+          * The editable area's smallest height, in pixels.
+          * @default 140
+         */
+        "minHeight"?: number;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` content attribute rather than from this property.
+         */
+        "name"?: string;
+        /**
+          * Fires when the value changes, however it changed.
+         */
+        "onPfChange"?: (event: PfRichTextEditorCustomEvent<{ value: string }>) => void;
+        /**
+          * @default 'Start typing...'
+         */
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * The field's value, as HTML.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -8978,6 +9148,18 @@ declare namespace LocalJSX {
         "step": number;
         "handleLabel": string;
     }
+    interface PfRichTextEditorAttributes {
+        "name": string;
+        "value": string;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "minHeight": number;
+        "characterMax": number;
+        "required": boolean;
+        "disabled": boolean;
+    }
     interface PfScrollAreaAttributes {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
@@ -9242,6 +9424,7 @@ declare namespace LocalJSX {
         "pf-rating-badge": Omit<PfRatingBadge, keyof PfRatingBadgeAttributes> & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes]?: PfRatingBadge[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `attr:${K}`]?: PfRatingBadgeAttributes[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `prop:${K}`]?: PfRatingBadge[K] };
         "pf-rating-stars": Omit<PfRatingStars, keyof PfRatingStarsAttributes> & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes]?: PfRatingStars[K] } & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes as `attr:${K}`]?: PfRatingStarsAttributes[K] } & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes as `prop:${K}`]?: PfRatingStars[K] };
         "pf-resizable": Omit<PfResizable, keyof PfResizableAttributes> & { [K in keyof PfResizable & keyof PfResizableAttributes]?: PfResizable[K] } & { [K in keyof PfResizable & keyof PfResizableAttributes as `attr:${K}`]?: PfResizableAttributes[K] } & { [K in keyof PfResizable & keyof PfResizableAttributes as `prop:${K}`]?: PfResizable[K] };
+        "pf-rich-text-editor": Omit<PfRichTextEditor, keyof PfRichTextEditorAttributes> & { [K in keyof PfRichTextEditor & keyof PfRichTextEditorAttributes]?: PfRichTextEditor[K] } & { [K in keyof PfRichTextEditor & keyof PfRichTextEditorAttributes as `attr:${K}`]?: PfRichTextEditorAttributes[K] } & { [K in keyof PfRichTextEditor & keyof PfRichTextEditorAttributes as `prop:${K}`]?: PfRichTextEditor[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
         "pf-section-footer": Omit<PfSectionFooter, keyof PfSectionFooterAttributes> & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes]?: PfSectionFooter[K] } & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes as `attr:${K}`]?: PfSectionFooterAttributes[K] } & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes as `prop:${K}`]?: PfSectionFooter[K] };
         "pf-section-header": Omit<PfSectionHeader, keyof PfSectionHeaderAttributes> & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes]?: PfSectionHeader[K] } & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes as `attr:${K}`]?: PfSectionHeaderAttributes[K] } & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes as `prop:${K}`]?: PfSectionHeader[K] };
@@ -9853,6 +10036,26 @@ declare module "@stencil/core" {
              * size outside the bounds becomes.
              */
             "pf-resizable": LocalJSX.IntrinsicElements["pf-resizable"] & JSXBase.HTMLAttributes<HTMLPfResizableElement>;
+            /**
+             * A form-associated rich-text field over a `contenteditable`.
+             * The toolbar is core's list, so this and the React `RichTextEditor` cannot
+             * offer different buttons, and the value is normalised with core's
+             * `stripOuterParagraph`, so they cannot disagree about what a round trip
+             * looks like.
+             * Two things differ from the React component, both deliberate:
+             * - **The toolbar is one tab stop**, with the arrows moving inside it, which
+             *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
+             *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
+             *   field walks every button; `todo.md` has that.
+             * - **It is a real form control.** `formAssociated` with `ElementInternals` is
+             *   what puts the value in `FormData`; a `contenteditable` is not a form
+             *   control in any framework, and the React component's value reaches a form
+             *   only if the consumer wires it there themselves.
+             * `document.execCommand` is deprecated and is still the only way to apply
+             * formatting inside a `contenteditable` without a dependency, which is the
+             * same trade the React component makes.
+             */
+            "pf-rich-text-editor": LocalJSX.IntrinsicElements["pf-rich-text-editor"] & JSXBase.HTMLAttributes<HTMLPfRichTextEditorElement>;
             /**
              * A scrollable region with a styled, non-overlaying scrollbar.
              */

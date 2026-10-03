@@ -69,6 +69,7 @@ import {
   PfRatingBadge,
   PfRatingStars,
   PfResizable,
+  PfRichTextEditor,
   PfScrollArea,
   PfSectionFooter,
   PfSectionHeader,
@@ -179,6 +180,7 @@ import {
     PfRatingBadge,
     PfRatingStars,
     PfResizable,
+    PfRichTextEditor,
     PfScrollArea,
     PfSectionFooter,
     PfSectionHeader,
@@ -1024,6 +1026,19 @@ import {
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
 
+      <!-- A form-associated rich-text field; see the React consumer. -->
+      <pf-rich-text-editor
+        name="notes"
+        label="Notes"
+        description="Formatting is kept."
+        [characterMax]="200"
+        [minHeight]="120"
+        [value]="notes()"
+        data-testid="rich-text-editor"
+        (pfChange)="notes.set($event.detail.value)"
+      ></pf-rich-text-editor>
+      <output data-testid="rich-text-length">{{ notes().length }}</output>
+
       <!-- No syntax highlighting, deliberately; see the React consumer. -->
       <pf-code-snippet
         heading="install.sh"
@@ -1100,6 +1115,7 @@ export class AppComponent {
   split = signal(40);
   uploads = signal<File[]>([]);
   copiedCode = signal('');
+  notes = signal('<p>A <strong>first</strong> note.</p><p>And a second.</p>');
   snippet = 'npm install @pitchfork-ui/elements\n\nnpm run build\n';
   openFolders = signal('src');
   // Sorted with core's own comparison, which is what makes the element's

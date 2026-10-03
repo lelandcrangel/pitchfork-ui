@@ -68,6 +68,7 @@ import {
   PfRatingBadge,
   PfRatingStars,
   PfResizable,
+  PfRichTextEditor,
   PfScrollArea,
   PfSectionFooter,
   PfSectionHeader,
@@ -125,6 +126,7 @@ export function App() {
   const [split, setSplit] = useState(40);
   const [uploads, setUploads] = useState<File[]>([]);
   const [copiedCode, setCopiedCode] = useState('');
+  const [notes, setNotes] = useState('<p>A <strong>first</strong> note.</p><p>And a second.</p>');
   const [openFolders, setOpenFolders] = useState('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.
@@ -1227,6 +1229,24 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        A form-associated rich-text field: a contenteditable is not a form
+        control in any framework, so the value reaches a form through
+        `ElementInternals`. Its toolbar is one tab stop with the arrows moving
+        inside, which is the ARIA toolbar pattern; the React editor is six.
+      */}
+      <PfRichTextEditor
+        name="notes"
+        label="Notes"
+        description="Formatting is kept."
+        characterMax={200}
+        minHeight={120}
+        value={notes}
+        data-testid="rich-text-editor"
+        onPfChange={(event) => setNotes(event.detail.value)}
+      />
+      <output data-testid="rich-text-length">{notes.length}</output>
 
       {/*
         No syntax highlighting, deliberately: `prism-react-renderer` is a React
