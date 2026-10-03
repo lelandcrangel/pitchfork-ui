@@ -44,6 +44,8 @@ import {
   PfPopover,
   PfProgressBar,
   PfProgressCircle,
+  PfProgressStep,
+  PfProgressSteps,
   PfRadioButton,
   PfOption,
   PfRadioGroup,
@@ -123,6 +125,8 @@ import {
     PfPopover,
     PfProgressBar,
     PfProgressCircle,
+    PfProgressStep,
+    PfProgressSteps,
     PfRadioButton,
     PfOption,
     PfRadioGroup,
@@ -658,6 +662,20 @@ import {
         <pf-breadcrumb href="#products">Products</pf-breadcrumb>
         <pf-breadcrumb>Shoes</pf-breadcrumb>
       </pf-breadcrumbs>
+
+      <!-- One step asks, the group infers the rest; see the React consumer. -->
+      <pf-progress-steps data-testid="progress-steps">
+        <pf-progress-step>
+          <span slot="title">Account</span>
+        </pf-progress-step>
+        <pf-progress-step status="current">
+          <span slot="title">Details</span>
+          <span slot="description">Fill in your details.</span>
+        </pf-progress-step>
+        <pf-progress-step>
+          <span slot="title">Confirm</span>
+        </pf-progress-step>
+      </pf-progress-steps>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>

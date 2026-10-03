@@ -15,6 +15,7 @@ export * from './progress';
 export * from './roving';
 export * from './scroll-lock';
 export * from './state';
+export * from './steps';
 export * from './tabs';
 export * from './text';
 export * from './time';

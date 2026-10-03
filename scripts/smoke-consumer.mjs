@@ -102,6 +102,8 @@ const EXPECTED = [
   'pf-collapsible',
   'pf-breadcrumbs',
   'pf-breadcrumb',
+  'pf-progress-steps',
+  'pf-progress-step',
 ];
 
 const TYPES = {
@@ -2150,6 +2152,110 @@ try {
               'a --pf-breadcrumbs-* alias did not resolve',
           );
         }
+      }
+    }
+  }
+
+  /*
+   * The step indicator. The claim worth a real build is the ring around the
+   * current step: the React component asked for `--focus-ring-shadow`, which
+   * is defined nowhere, and an undefined custom property makes the declaration
+   * invalid at computed-value time — measured in Chromium, it computes to
+   * `none`, so the ring had never been drawn in either layer. The rest is the
+   * layout: the steps are grid items of the host, and a step with no
+   * description generates no box for one.
+   */
+  {
+    const state = await page
+      .evaluate(() => {
+        const indicator = document.querySelector('pf-progress-steps');
+        if (!indicator) return { error: 'the consumer app has no pf-progress-steps' };
+
+        const steps = Array.from(indicator.querySelectorAll('pf-progress-step'));
+        if (steps.length < 3) return { error: `only ${steps.length} steps in the fixture` };
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const boxes = steps.map((step) => step.getBoundingClientRect());
+        const descriptionSlot = (step) => step.shadowRoot.querySelector('slot[name="description"]');
+
+        return {
+          states: steps.map((step) => step.getAttribute('state')),
+          currentRing: getComputedStyle(part(steps[1], 'marker')).boxShadow,
+          upcomingRing: getComputedStyle(part(steps[2], 'marker')).boxShadow,
+          completeMarker: getComputedStyle(part(steps[0], 'marker')).backgroundColor,
+          upcomingMarker: getComputedStyle(part(steps[2], 'marker')).backgroundColor,
+          completeConnector: getComputedStyle(part(steps[0], 'connector')).backgroundColor,
+          upcomingConnector: getComputedStyle(part(steps[1], 'connector')).backgroundColor,
+          currentTitle: getComputedStyle(part(steps[1], 'title')).color,
+          plainTitle: getComputedStyle(part(steps[0], 'title')).color,
+          // A row of grid items: each starts right of the one before it.
+          inARow: boxes.every((box, index) => index === 0 || box.left > boxes[index - 1].left),
+          slotDisplay: getComputedStyle(indicator.shadowRoot.querySelector('slot')).display,
+          // The description's box exists only where there is a description.
+          withDescription: descriptionSlot(steps[1]).assignedElements().length,
+          withoutDescription: descriptionSlot(steps[0]).getBoundingClientRect().height,
+          /*
+           * The *content* boxes, not the steps': the steps are grid items in
+           * one row, so the grid stretches them to a common height and the
+           * description makes no difference to it. Measured — 79.59px for both
+           * — which made the first version of this check vacuous.
+           */
+          describedHeight: part(steps[1], 'content').getBoundingClientRect().height,
+          plainHeight: part(steps[0], 'content').getBoundingClientRect().height,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-progress-steps: ${state.error}`);
+    } else {
+      if (state.states.join(',') !== 'complete,current,upcoming') {
+        problems.push(
+          `the steps resolved to ${JSON.stringify(state.states)}, ` +
+            'expected complete, current, upcoming',
+        );
+      }
+      if (state.currentRing === 'none') {
+        problems.push(
+          'the current step has no ring — an undefined custom property computes ' +
+            'box-shadow away, which is what --focus-ring-shadow did',
+        );
+      }
+      if (state.upcomingRing !== 'none') {
+        problems.push(`an upcoming step has a ring ("${state.upcomingRing}")`);
+      }
+      if (state.completeMarker === state.upcomingMarker) {
+        problems.push(
+          `a complete marker is the same colour as an upcoming one ` +
+            `("${state.upcomingMarker}")`,
+        );
+      }
+      if (state.completeConnector === state.upcomingConnector) {
+        problems.push(
+          `a complete connector is the same colour as an upcoming one ` +
+            `("${state.upcomingConnector}")`,
+        );
+      }
+      if (state.currentTitle === state.plainTitle) {
+        problems.push(`the current step's title is the same colour as the others`);
+      }
+      if (state.slotDisplay !== 'contents' || !state.inARow) {
+        problems.push(
+          `the steps did not lay out as a row of grid items ` +
+            `(slot display ${state.slotDisplay}, in order: ${state.inARow})`,
+        );
+      }
+      if (state.withDescription !== 1 || state.withoutDescription !== 0) {
+        problems.push(
+          `the description slot generated a box where there is no description ` +
+            `(${state.withoutDescription}px)`,
+        );
+      }
+      if (!(state.describedHeight > state.plainHeight)) {
+        problems.push(
+          `the step with a description is no taller than the one without ` +
+            `(${state.describedHeight} vs ${state.plainHeight}) — ` +
+            'the ::slotted description styling did not apply',
+        );
       }
     }
   }

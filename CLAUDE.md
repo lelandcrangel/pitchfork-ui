@@ -658,6 +658,16 @@ Things that differ from the React library, learned by porting the first two:
   pair of children has no slot form — `pf-breadcrumbs` takes the separator as
   a _string_ where the React `Breadcrumbs` takes a `ReactNode`, and pushes it
   down for each crumb to draw its own.
+- **An undefined custom property computes the whole declaration away.**
+  Measured in Chromium: `box-shadow: var(--focus-ring-shadow)` computes to
+  `none` where that property is defined nowhere, while a defined one or a
+  `var(…, fallback)` computes normally. The React `ProgressSteps` asked for
+  exactly that name, which existed in no stylesheet, so the ring around the
+  current step had never been drawn in either layer — the same shape as
+  `pf-modal`'s `--duration-medium`, and invisible for the same reason: nothing
+  looked. Both are fixed, and `scripts/smoke-consumer.mjs` now reads the
+  computed `box-shadow` of the current step's marker, probed by putting the
+  undefined name back.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

@@ -43,6 +43,8 @@ import {
   PfPopover,
   PfProgressBar,
   PfProgressCircle,
+  PfProgressStep,
+  PfProgressSteps,
   PfRadioButton,
   PfOption,
   PfRadioGroup,
@@ -752,6 +754,25 @@ export function App() {
         <PfBreadcrumb href="#products">Products</PfBreadcrumb>
         <PfBreadcrumb>Shoes</PfBreadcrumb>
       </PfBreadcrumbs>
+
+      {/*
+        One step says it is current and the group infers the rest, writing the
+        answer to `state` rather than back onto the `status` that asked.
+        `aria-current="step"` is the only thing in the accessibility tree that
+        says where the trail has got to — the markers are decorative.
+      */}
+      <PfProgressSteps data-testid="progress-steps">
+        <PfProgressStep>
+          <span slot="title">Account</span>
+        </PfProgressStep>
+        <PfProgressStep status="current">
+          <span slot="title">Details</span>
+          <span slot="description">Fill in your details.</span>
+        </PfProgressStep>
+        <PfProgressStep>
+          <span slot="title">Confirm</span>
+        </PfProgressStep>
+      </PfProgressSteps>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

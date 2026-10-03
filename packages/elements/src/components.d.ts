@@ -18,6 +18,9 @@ import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 import { PfModalSize } from "./components/pf-modal/pf-modal";
 import { PfNotificationVariant } from "./components/pf-notification/pf-notification";
+import { HourCycle, Side, StepStatus } from "@pitchfork-ui/core";
+import { PfProgressStepsOrientation } from "./components/pf-progress-steps/pf-progress-steps";
+import { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./components/pf-progress-steps/pf-progress-steps";
 import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
@@ -26,7 +29,6 @@ import { PfTabPlacement } from "./components/pf-tab/pf-tab";
 import { PfTabsSize as PfTabsSize1, PfTabsVariant as PfTabsVariant1 } from "./components/pf-tabs/pf-tabs";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
 import { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
-import { HourCycle, Side } from "@pitchfork-ui/core";
 import { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 import { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
@@ -44,6 +46,9 @@ export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 export { PfModalSize } from "./components/pf-modal/pf-modal";
 export { PfNotificationVariant } from "./components/pf-notification/pf-notification";
+export { HourCycle, Side, StepStatus } from "@pitchfork-ui/core";
+export { PfProgressStepsOrientation } from "./components/pf-progress-steps/pf-progress-steps";
+export { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./components/pf-progress-steps/pf-progress-steps";
 export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
@@ -52,7 +57,6 @@ export { PfTabPlacement } from "./components/pf-tab/pf-tab";
 export { PfTabsSize as PfTabsSize1, PfTabsVariant as PfTabsVariant1 } from "./components/pf-tabs/pf-tabs";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
 export { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
-export { HourCycle, Side } from "@pitchfork-ui/core";
 export { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 export { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
@@ -1388,6 +1392,52 @@ export namespace Components {
           * @default 0
          */
         "value": number;
+    }
+    /**
+     * One step inside a `pf-progress-steps`.
+     */
+    interface PfProgressStep {
+        /**
+          * Set by the group: the last step draws no connector.
+          * @default false
+         */
+        "last": boolean;
+        /**
+          * Set by the group from its own `orientation`. Reflected for the stylesheet.
+          * @default 'horizontal'
+         */
+        "orientation": PfProgressStepsOrientation;
+        /**
+          * Set by the group: the step's number, counting from 1.
+          * @default 1
+         */
+        "position": number;
+        /**
+          * Set by the group: the resolved status, which is what the stylesheet reads and what carries `aria-current="step"` for the one current step.
+          * @default 'upcoming'
+         */
+        "state": StepStatus;
+        /**
+          * Set it to say where the trail has got to — usually `current` on one step, and the group infers the rest.  This is the *asking* half, which the group never writes; `state` below is the answer. Keeping them apart is what lets the trail change: if the answer were written back here, the first step of a trail that said nothing would look explicitly `current`, and prepending a step would leave the mark behind on it.
+         */
+        "status"?: StepStatus;
+    }
+    /**
+     * A step indicator over `pf-progress-step` children.
+     * The group owns everything a step cannot see on its own: its number, whether
+     * it is last — so only the others draw a connector — the orientation, and the
+     * status inference, which depends on where the current step is.
+     */
+    interface PfProgressSteps {
+        /**
+          * Layout. Reflected, and pushed down onto every step.
+          * @default 'horizontal'
+         */
+        "orientation": PfProgressStepsOrientation1;
+        /**
+          * Re-reads the children, for a consumer who set a step's status through its *property* — which leaves no attribute and fires no `slotchange`.
+         */
+        "refresh": () => Promise<void>;
     }
     /**
      * One choice inside a `pf-radio-group`.
@@ -3108,6 +3158,27 @@ declare global {
         prototype: HTMLPfProgressCircleElement;
         new (): HTMLPfProgressCircleElement;
     };
+    /**
+     * One step inside a `pf-progress-steps`.
+     */
+    interface HTMLPfProgressStepElement extends Components.PfProgressStep, HTMLStencilElement {
+    }
+    var HTMLPfProgressStepElement: {
+        prototype: HTMLPfProgressStepElement;
+        new (): HTMLPfProgressStepElement;
+    };
+    /**
+     * A step indicator over `pf-progress-step` children.
+     * The group owns everything a step cannot see on its own: its number, whether
+     * it is last — so only the others draw a connector — the orientation, and the
+     * status inference, which depends on where the current step is.
+     */
+    interface HTMLPfProgressStepsElement extends Components.PfProgressSteps, HTMLStencilElement {
+    }
+    var HTMLPfProgressStepsElement: {
+        prototype: HTMLPfProgressStepsElement;
+        new (): HTMLPfProgressStepsElement;
+    };
     interface HTMLPfRadioButtonElementEventMap {
         "pfRadioSelect": { value: string };
     }
@@ -3601,6 +3672,8 @@ declare global {
         "pf-popover": HTMLPfPopoverElement;
         "pf-progress-bar": HTMLPfProgressBarElement;
         "pf-progress-circle": HTMLPfProgressCircleElement;
+        "pf-progress-step": HTMLPfProgressStepElement;
+        "pf-progress-steps": HTMLPfProgressStepsElement;
         "pf-radio-button": HTMLPfRadioButtonElement;
         "pf-radio-group": HTMLPfRadioGroupElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
@@ -4964,6 +5037,48 @@ declare namespace LocalJSX {
         "value"?: number;
     }
     /**
+     * One step inside a `pf-progress-steps`.
+     */
+    interface PfProgressStep {
+        /**
+          * Set by the group: the last step draws no connector.
+          * @default false
+         */
+        "last"?: boolean;
+        /**
+          * Set by the group from its own `orientation`. Reflected for the stylesheet.
+          * @default 'horizontal'
+         */
+        "orientation"?: PfProgressStepsOrientation;
+        /**
+          * Set by the group: the step's number, counting from 1.
+          * @default 1
+         */
+        "position"?: number;
+        /**
+          * Set by the group: the resolved status, which is what the stylesheet reads and what carries `aria-current="step"` for the one current step.
+          * @default 'upcoming'
+         */
+        "state"?: StepStatus;
+        /**
+          * Set it to say where the trail has got to — usually `current` on one step, and the group infers the rest.  This is the *asking* half, which the group never writes; `state` below is the answer. Keeping them apart is what lets the trail change: if the answer were written back here, the first step of a trail that said nothing would look explicitly `current`, and prepending a step would leave the mark behind on it.
+         */
+        "status"?: StepStatus;
+    }
+    /**
+     * A step indicator over `pf-progress-step` children.
+     * The group owns everything a step cannot see on its own: its number, whether
+     * it is last — so only the others draw a connector — the orientation, and the
+     * status inference, which depends on where the current step is.
+     */
+    interface PfProgressSteps {
+        /**
+          * Layout. Reflected, and pushed down onto every step.
+          * @default 'horizontal'
+         */
+        "orientation"?: PfProgressStepsOrientation1;
+    }
+    /**
      * One choice inside a `pf-radio-group`.
      * Not form-associated, and deliberately so: a form-associated custom element
      * gets no radio grouping from the browser. Measured — checking a second one
@@ -6019,6 +6134,16 @@ declare namespace LocalJSX {
         "showValue": boolean;
         "label": string;
     }
+    interface PfProgressStepAttributes {
+        "status": StepStatus;
+        "state": StepStatus;
+        "position": number;
+        "last": boolean;
+        "orientation": PfProgressStepsOrientation;
+    }
+    interface PfProgressStepsAttributes {
+        "orientation": PfProgressStepsOrientation;
+    }
     interface PfRadioButtonAttributes {
         "value": string;
         "checked": boolean;
@@ -6218,6 +6343,8 @@ declare namespace LocalJSX {
         "pf-popover": Omit<PfPopover, keyof PfPopoverAttributes> & { [K in keyof PfPopover & keyof PfPopoverAttributes]?: PfPopover[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `attr:${K}`]?: PfPopoverAttributes[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `prop:${K}`]?: PfPopover[K] };
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
+        "pf-progress-step": Omit<PfProgressStep, keyof PfProgressStepAttributes> & { [K in keyof PfProgressStep & keyof PfProgressStepAttributes]?: PfProgressStep[K] } & { [K in keyof PfProgressStep & keyof PfProgressStepAttributes as `attr:${K}`]?: PfProgressStepAttributes[K] } & { [K in keyof PfProgressStep & keyof PfProgressStepAttributes as `prop:${K}`]?: PfProgressStep[K] };
+        "pf-progress-steps": Omit<PfProgressSteps, keyof PfProgressStepsAttributes> & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes]?: PfProgressSteps[K] } & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes as `attr:${K}`]?: PfProgressStepsAttributes[K] } & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes as `prop:${K}`]?: PfProgressSteps[K] };
         "pf-radio-button": Omit<PfRadioButton, keyof PfRadioButtonAttributes> & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes]?: PfRadioButton[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `attr:${K}`]?: PfRadioButtonAttributes[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `prop:${K}`]?: PfRadioButton[K] };
         "pf-radio-group": Omit<PfRadioGroup, keyof PfRadioGroupAttributes> & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes]?: PfRadioGroup[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `attr:${K}`]?: PfRadioGroupAttributes[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `prop:${K}`]?: PfRadioGroup[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
@@ -6589,6 +6716,17 @@ declare module "@stencil/core" {
              * A circular determinate progress track.
              */
             "pf-progress-circle": LocalJSX.IntrinsicElements["pf-progress-circle"] & JSXBase.HTMLAttributes<HTMLPfProgressCircleElement>;
+            /**
+             * One step inside a `pf-progress-steps`.
+             */
+            "pf-progress-step": LocalJSX.IntrinsicElements["pf-progress-step"] & JSXBase.HTMLAttributes<HTMLPfProgressStepElement>;
+            /**
+             * A step indicator over `pf-progress-step` children.
+             * The group owns everything a step cannot see on its own: its number, whether
+             * it is last — so only the others draw a connector — the orientation, and the
+             * status inference, which depends on where the current step is.
+             */
+            "pf-progress-steps": LocalJSX.IntrinsicElements["pf-progress-steps"] & JSXBase.HTMLAttributes<HTMLPfProgressStepsElement>;
             /**
              * One choice inside a `pf-radio-group`.
              * Not form-associated, and deliberately so: a form-associated custom element

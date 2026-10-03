@@ -291,3 +291,27 @@ fails against the old expression.
 `?? isLast` is the shape to look for: the same reading would be wrong in
 `ProgressSteps` and in `Timeline`, both of which have a "current" of their own
 and are still to be ported.
+
+---
+
+## The React `ProgressSteps` said nothing about where the trail had got to — fixed
+
+Two gaps, both found porting it to `<pf-progress-steps>`.
+
+The marker is `aria-hidden` and `complete`/`current`/`upcoming` were conveyed
+by colour alone, so nothing in the accessibility tree said which step the user
+was on. Both layers now put `aria-current="step"` on the current step, and only
+on that one. Two React tests cover it.
+
+The ring around the current marker asked for `--focus-ring-shadow`, which is
+defined in no stylesheet in this repository — and an undefined custom property
+makes the declaration invalid at computed-value time, so `box-shadow` computed
+to `none` and the ring had never been drawn. Measured in Chromium, and fixed to
+`--pf-focus-ring` in both layers; `scripts/smoke-consumer.mjs` reads the
+computed value now.
+
+**What is left:** the three statuses are still only colour and a ring, so a
+screen reader is told which step is current but not which are done. The usual
+remedy is visually-hidden text in each step ("Completed: ", "Current step: "),
+which changes every step's accessible name — worth doing deliberately, with the
+docs examples updated, rather than folded into a port.
