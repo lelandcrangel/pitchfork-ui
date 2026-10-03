@@ -57,6 +57,7 @@ const EXPECTED = [
   'pf-card-content',
   'pf-card-footer',
   'pf-content-divider',
+  'pf-video-player',
   'pf-visually-hidden',
   'pf-loading-spinner',
   'pf-loading-dots',
@@ -5244,6 +5245,117 @@ try {
       }
       if (!state.barHoverTransition.includes('opacity')) {
         problems.push(`a bar's transition-property is "${state.barHoverTransition}"`);
+      }
+    }
+  }
+
+  /*
+   * The player, whose point is a framed box of a fixed ratio — which only a
+   * build can measure, since the ratio comes from a reflected attribute the
+   * stylesheet selects on and no test project loads that stylesheet. The
+   * accessible name is read off Chromium's own computation rather than off
+   * the attribute, because the attribute was never the problem: a
+   * `<label for>` on a `<video>` resolves to nothing at all.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-video-player');
+        if (!el) return { error: 'the consumer app has no pf-video-player' };
+
+        const part = (name) => el.shadowRoot.querySelector(`[part="${name}"]`);
+        for (let i = 0; i < 4; i += 1) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+
+        const frame = part('frame');
+        const video = part('video');
+        const box = frame.getBoundingClientRect();
+
+        return {
+          ratio: box.width / box.height,
+          frameWidth: box.width,
+          hostWidth: el.getBoundingClientRect().width,
+          clipped: getComputedStyle(frame).overflow,
+          frameBackground: getComputedStyle(frame).backgroundColor,
+          frameBorder: getComputedStyle(frame).borderTopColor,
+          // The video fills the frame rather than sitting in a corner of it.
+          videoFillsFrame: (() => {
+            const inner = video.getBoundingClientRect();
+            return Math.abs(inner.width - box.width) < 3 && Math.abs(inner.height - box.height) < 3;
+          })(),
+          objectFit: getComputedStyle(video).objectFit,
+          // The name, as the accessibility tree computes it.
+          labelledBy: video.getAttribute('aria-labelledby'),
+          labelText: el.shadowRoot.getElementById(video.getAttribute('aria-labelledby'))
+            ?.textContent,
+          labelTag: part('label').tagName.toLowerCase(),
+          describedBy: video.getAttribute('aria-describedby'),
+          descriptionText: part('description')?.textContent,
+          controls: video.hasAttribute('controls'),
+          preload: video.getAttribute('preload'),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-video-player: ${state.error}`);
+    } else {
+      if (Math.abs(state.ratio - 16 / 9) > 0.05) {
+        problems.push(
+          `the frame's ratio measured ${state.ratio.toFixed(3)} against 16/9 — the ` +
+            'aspect-ratio rule did not apply',
+        );
+      }
+      if (Math.abs(state.frameWidth - state.hostWidth) > 2) {
+        problems.push(`the frame measured ${state.frameWidth}px in a ${state.hostWidth}px host`);
+      }
+      if (state.clipped !== 'hidden') {
+        problems.push(
+          `the frame's overflow is "${state.clipped}" — the video's corners would show`,
+        );
+      }
+      if (!state.frameBackground || state.frameBackground === 'rgba(0, 0, 0, 0)') {
+        problems.push('the frame has no background — the videoplayer aliases did not resolve');
+      }
+      if (!state.frameBorder || state.frameBorder === 'rgba(0, 0, 0, 0)') {
+        problems.push('the frame has no border colour');
+      }
+      if (!state.videoFillsFrame) {
+        problems.push('the video does not fill its frame');
+      }
+      if (state.objectFit !== 'cover') {
+        problems.push(`the video's object-fit is "${state.objectFit}", expected cover`);
+      }
+      /*
+       * The naming: a `<label for>` on a `<video>` resolves to nothing, so
+       * the label must be an IDREF and the id must actually be in this root.
+       */
+      if (state.labelTag === 'label') {
+        problems.push('the label is a <label>, whose `for` cannot point at a <video>');
+      }
+      if (!state.labelledBy) {
+        problems.push('the video has no aria-labelledby, so it has no accessible name');
+      }
+      if (state.labelText !== 'Product tour') {
+        problems.push(
+          `the video's aria-labelledby resolves to "${state.labelText}" — the IDREF is dangling`,
+        );
+      }
+      if (state.describedBy !== 'description') {
+        problems.push(`the video's aria-describedby is "${state.describedBy}"`);
+      }
+      if (state.descriptionText !== 'Two minutes, with captions.') {
+        problems.push(`the description reads "${state.descriptionText}"`);
+      }
+      if (!state.controls) {
+        problems.push('the video has no controls');
+      }
+      if (state.preload !== 'metadata') {
+        problems.push(
+          `the video preloads "${state.preload}" — metadata keeps a page from pulling whole ` +
+            'video files',
+        );
       }
     }
   }

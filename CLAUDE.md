@@ -1121,6 +1121,26 @@ exceeded` pointing into the mock DOM's selector engine, which reads as a
 - **A stacked bar chart scales to the tallest stack, not the tallest bar.**
   Obvious once said and silent when wrong: scaling to the tallest single bar
   draws the top of every stack above the plot, where the viewBox clips it.
+- **`<label for>` works on a labelable element and nothing else.** A `<video>`
+  is not one, any more than a `contenteditable` div is, so the React
+  `VideoPlayer`'s `htmlFor` was silently naming nothing and the video had no
+  accessible name at all. Both layers use `aria-labelledby` now, and in the
+  element it is a same-root IDREF — the kind that resolves. The smoke reads
+  the name back through the reference rather than checking the attribute,
+  because the attribute was never the part that was wrong.
+- **A `<source>` has to be a child of the `<video>` itself**, so slotted
+  children cannot work: a slotted `<source>` is a child of the _host_ and the
+  video never looks at it. `pf-video-player` takes `sources` and `tracks` as
+  properties and renders them inside its shadow `<video>` — one of the few
+  places where a property beats the §2.1 nesting idiom, and the browser spec
+  proves it by putting a stray `<source>` in the light DOM and watching the
+  video ignore it.
+- **`safeCall` hides a throw by leaving the last render on screen**, which
+  makes "did it survive bad input?" a trap: asserting that the element is
+  still there passes whether the guard exists or not, because the _previous_
+  render is what you are looking at. Set something else in the same breath —
+  `pf-video-player`'s test sets a new `label` alongside the bad `sources` —
+  so the assertion only holds if the render actually completed.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

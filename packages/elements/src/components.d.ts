@@ -44,6 +44,7 @@ import { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-t
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 import { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
 import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
+import { PfVideoSource, PfVideoTrack } from "./components/pf-video-player/pf-video-player";
 export { PfAccordionHeadingLevel, PfAccordionType } from "./components/pf-accordion/pf-accordion";
 export { PfAccordionHeadingLevel as PfAccordionHeadingLevel1 } from "./components/pf-accordion/pf-accordion";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
@@ -83,6 +84,7 @@ export { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-t
 export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 export { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
 export { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
+export { PfVideoSource, PfVideoTrack } from "./components/pf-video-player/pf-video-player";
 export namespace Components {
     /**
      * A stack of `pf-accordion-item` children, of which either one or several can
@@ -3683,6 +3685,85 @@ export namespace Components {
         "variant": PfUtilityButtonVariant;
     }
     /**
+     * A `<video>` in a framed, fixed-ratio box, with a label, a description and
+     * an error message.
+     * `sources` and `tracks` are **properties**, not slotted children, and this
+     * is one of the few places where that is forced rather than chosen: a
+     * `<source>` has to be a child of the `<video>` itself, and slotted content
+     * stays in the light DOM — a slotted `<source>` would be a child of this
+     * element, which the video would never look at. They are rendered into the
+     * shadow `<video>` instead.
+     * The label names the video with an IDREF rather than a `<label for>`:
+     * `for` must point at a *labelable* element and a `<video>` is not one, so
+     * the React `VideoPlayer`'s `htmlFor` was silently doing nothing and the
+     * video had no accessible name at all. Both layers use `aria-labelledby`
+     * now, and here it is a same-root reference, which is the kind that
+     * resolves.
+     */
+    interface PfVideoPlayer {
+        /**
+          * Reflected, because the stylesheet selects on it for the box's ratio.
+          * @default '16/9'
+         */
+        "aspectRatio": '16/9' | '4/3' | '1/1';
+        /**
+          * @default false
+         */
+        "autoplay": boolean;
+        /**
+          * @default true
+         */
+        "controls": boolean;
+        "description"?: string;
+        /**
+          * Error message. Its presence is what marks the frame invalid.
+         */
+        "error"?: string;
+        /**
+          * The video element itself, for anything these methods do not cover.
+         */
+        "getVideoElement": () => Promise<HTMLVideoElement | undefined>;
+        /**
+          * Drawn above the frame, and what names the video.
+         */
+        "label"?: string;
+        /**
+          * @default false
+         */
+        "loop": boolean;
+        /**
+          * @default false
+         */
+        "muted": boolean;
+        /**
+          * Pauses it.
+         */
+        "pause": () => Promise<void>;
+        /**
+          * Starts playback, which a consumer cannot do through the shadow root.
+         */
+        "play": () => Promise<void>;
+        "poster"?: string;
+        /**
+          * @default 'metadata'
+         */
+        "preload": 'none' | 'metadata' | 'auto';
+        /**
+          * Several encodings of the same video, best first.
+          * @default []
+         */
+        "sources": PfVideoSource[];
+        /**
+          * A single source. Use `sources` for several encodings.
+         */
+        "src"?: string;
+        /**
+          * Captions and subtitles. A video without them is not finished.
+          * @default []
+         */
+        "tracks": PfVideoTrack[];
+    }
+    /**
      * Hides content visually while keeping it available to screen readers and
      * other assistive technology. Use for labels, instructions and status text
      * that are implied visually but need to be announced.
@@ -5934,6 +6015,28 @@ declare global {
         new (): HTMLPfUtilityButtonElement;
     };
     /**
+     * A `<video>` in a framed, fixed-ratio box, with a label, a description and
+     * an error message.
+     * `sources` and `tracks` are **properties**, not slotted children, and this
+     * is one of the few places where that is forced rather than chosen: a
+     * `<source>` has to be a child of the `<video>` itself, and slotted content
+     * stays in the light DOM — a slotted `<source>` would be a child of this
+     * element, which the video would never look at. They are rendered into the
+     * shadow `<video>` instead.
+     * The label names the video with an IDREF rather than a `<label for>`:
+     * `for` must point at a *labelable* element and a `<video>` is not one, so
+     * the React `VideoPlayer`'s `htmlFor` was silently doing nothing and the
+     * video had no accessible name at all. Both layers use `aria-labelledby`
+     * now, and here it is a same-root reference, which is the kind that
+     * resolves.
+     */
+    interface HTMLPfVideoPlayerElement extends Components.PfVideoPlayer, HTMLStencilElement {
+    }
+    var HTMLPfVideoPlayerElement: {
+        prototype: HTMLPfVideoPlayerElement;
+        new (): HTMLPfVideoPlayerElement;
+    };
+    /**
      * Hides content visually while keeping it available to screen readers and
      * other assistive technology. Use for labels, instructions and status text
      * that are implied visually but need to be announced.
@@ -6054,6 +6157,7 @@ declare global {
         "pf-tree-item": HTMLPfTreeItemElement;
         "pf-tree-view": HTMLPfTreeViewElement;
         "pf-utility-button": HTMLPfUtilityButtonElement;
+        "pf-video-player": HTMLPfVideoPlayerElement;
         "pf-visually-hidden": HTMLPfVisuallyHiddenElement;
     }
 }
@@ -9657,6 +9761,73 @@ declare namespace LocalJSX {
         "variant"?: PfUtilityButtonVariant;
     }
     /**
+     * A `<video>` in a framed, fixed-ratio box, with a label, a description and
+     * an error message.
+     * `sources` and `tracks` are **properties**, not slotted children, and this
+     * is one of the few places where that is forced rather than chosen: a
+     * `<source>` has to be a child of the `<video>` itself, and slotted content
+     * stays in the light DOM — a slotted `<source>` would be a child of this
+     * element, which the video would never look at. They are rendered into the
+     * shadow `<video>` instead.
+     * The label names the video with an IDREF rather than a `<label for>`:
+     * `for` must point at a *labelable* element and a `<video>` is not one, so
+     * the React `VideoPlayer`'s `htmlFor` was silently doing nothing and the
+     * video had no accessible name at all. Both layers use `aria-labelledby`
+     * now, and here it is a same-root reference, which is the kind that
+     * resolves.
+     */
+    interface PfVideoPlayer {
+        /**
+          * Reflected, because the stylesheet selects on it for the box's ratio.
+          * @default '16/9'
+         */
+        "aspectRatio"?: '16/9' | '4/3' | '1/1';
+        /**
+          * @default false
+         */
+        "autoplay"?: boolean;
+        /**
+          * @default true
+         */
+        "controls"?: boolean;
+        "description"?: string;
+        /**
+          * Error message. Its presence is what marks the frame invalid.
+         */
+        "error"?: string;
+        /**
+          * Drawn above the frame, and what names the video.
+         */
+        "label"?: string;
+        /**
+          * @default false
+         */
+        "loop"?: boolean;
+        /**
+          * @default false
+         */
+        "muted"?: boolean;
+        "poster"?: string;
+        /**
+          * @default 'metadata'
+         */
+        "preload"?: 'none' | 'metadata' | 'auto';
+        /**
+          * Several encodings of the same video, best first.
+          * @default []
+         */
+        "sources"?: PfVideoSource[];
+        /**
+          * A single source. Use `sources` for several encodings.
+         */
+        "src"?: string;
+        /**
+          * Captions and subtitles. A video without them is not finished.
+          * @default []
+         */
+        "tracks"?: PfVideoTrack[];
+    }
+    /**
      * Hides content visually while keeping it available to screen readers and
      * other assistive technology. Use for labels, instructions and status text
      * that are implied visually but need to be announced.
@@ -10355,6 +10526,19 @@ declare namespace LocalJSX {
         "label": string;
         "tooltip": string;
     }
+    interface PfVideoPlayerAttributes {
+        "src": string;
+        "label": string;
+        "description": string;
+        "error": string;
+        "aspectRatio": '16/9' | '4/3' | '1/1';
+        "controls": boolean;
+        "poster": string;
+        "preload": 'none' | 'metadata' | 'auto';
+        "muted": boolean;
+        "loop": boolean;
+        "autoplay": boolean;
+    }
     interface PfVisuallyHiddenAttributes {
         "focusable": boolean;
     }
@@ -10465,6 +10649,7 @@ declare namespace LocalJSX {
         "pf-tree-item": Omit<PfTreeItem, keyof PfTreeItemAttributes> & { [K in keyof PfTreeItem & keyof PfTreeItemAttributes]?: PfTreeItem[K] } & { [K in keyof PfTreeItem & keyof PfTreeItemAttributes as `attr:${K}`]?: PfTreeItemAttributes[K] } & { [K in keyof PfTreeItem & keyof PfTreeItemAttributes as `prop:${K}`]?: PfTreeItem[K] };
         "pf-tree-view": Omit<PfTreeView, keyof PfTreeViewAttributes> & { [K in keyof PfTreeView & keyof PfTreeViewAttributes]?: PfTreeView[K] } & { [K in keyof PfTreeView & keyof PfTreeViewAttributes as `attr:${K}`]?: PfTreeViewAttributes[K] } & { [K in keyof PfTreeView & keyof PfTreeViewAttributes as `prop:${K}`]?: PfTreeView[K] };
         "pf-utility-button": Omit<PfUtilityButton, keyof PfUtilityButtonAttributes> & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes]?: PfUtilityButton[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `attr:${K}`]?: PfUtilityButtonAttributes[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `prop:${K}`]?: PfUtilityButton[K] };
+        "pf-video-player": Omit<PfVideoPlayer, keyof PfVideoPlayerAttributes> & { [K in keyof PfVideoPlayer & keyof PfVideoPlayerAttributes]?: PfVideoPlayer[K] } & { [K in keyof PfVideoPlayer & keyof PfVideoPlayerAttributes as `attr:${K}`]?: PfVideoPlayerAttributes[K] } & { [K in keyof PfVideoPlayer & keyof PfVideoPlayerAttributes as `prop:${K}`]?: PfVideoPlayer[K] };
         "pf-visually-hidden": Omit<PfVisuallyHidden, keyof PfVisuallyHiddenAttributes> & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes]?: PfVisuallyHidden[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `attr:${K}`]?: PfVisuallyHiddenAttributes[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `prop:${K}`]?: PfVisuallyHidden[K] };
     }
 }
@@ -11458,6 +11643,23 @@ declare module "@stencil/core" {
              * an icon alone.
              */
             "pf-utility-button": LocalJSX.IntrinsicElements["pf-utility-button"] & JSXBase.HTMLAttributes<HTMLPfUtilityButtonElement>;
+            /**
+             * A `<video>` in a framed, fixed-ratio box, with a label, a description and
+             * an error message.
+             * `sources` and `tracks` are **properties**, not slotted children, and this
+             * is one of the few places where that is forced rather than chosen: a
+             * `<source>` has to be a child of the `<video>` itself, and slotted content
+             * stays in the light DOM — a slotted `<source>` would be a child of this
+             * element, which the video would never look at. They are rendered into the
+             * shadow `<video>` instead.
+             * The label names the video with an IDREF rather than a `<label for>`:
+             * `for` must point at a *labelable* element and a `<video>` is not one, so
+             * the React `VideoPlayer`'s `htmlFor` was silently doing nothing and the
+             * video had no accessible name at all. Both layers use `aria-labelledby`
+             * now, and here it is a same-root reference, which is the kind that
+             * resolves.
+             */
+            "pf-video-player": LocalJSX.IntrinsicElements["pf-video-player"] & JSXBase.HTMLAttributes<HTMLPfVideoPlayerElement>;
             /**
              * Hides content visually while keeping it available to screen readers and
              * other assistive technology. Use for labels, instructions and status text

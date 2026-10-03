@@ -14,11 +14,27 @@ describe('VideoPlayer', () => {
     expect(screen.getByText('Add a video src to display playback.')).toBeInTheDocument();
   });
 
-  it('renders a label and associates it with the video via htmlFor', () => {
+  /*
+   * `label[for]` must point at a labelable element and a `<video>` is not
+   * one, so the old `htmlFor` was silently doing nothing — the video had no
+   * accessible name at all. `aria-labelledby` is the association that works.
+   */
+  it('renders a label and names the video with it', () => {
     render(<VideoPlayer src="/v.mp4" label="Demo video" />);
     const label = screen.getByText('Demo video');
-    const video = document.querySelector('video')!;
-    expect(label).toHaveAttribute('for', video.id);
+    const video = document.querySelector('video') as HTMLVideoElement;
+
+    expect(label.tagName).not.toBe('LABEL');
+    expect(video.getAttribute('aria-labelledby')).toBe(label.id);
+    expect(label.id).toBeTruthy();
+  });
+
+  it('leaves a consumer\u2019s own aria-label alone when it has no label', () => {
+    render(<VideoPlayer src="/v.mp4" aria-label="Product tour" />);
+    const video = document.querySelector('video') as HTMLVideoElement;
+
+    expect(video.getAttribute('aria-label')).toBe('Product tour');
+    expect(video.hasAttribute('aria-labelledby')).toBe(false);
   });
 
   it('renders the description', () => {

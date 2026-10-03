@@ -107,6 +107,7 @@ import {
   PfTreeView,
   PfToolbarSeparator,
   PfUtilityButton,
+  PfVideoPlayer,
   PfVisuallyHidden,
   TextValueAccessor,
   BooleanValueAccessor,
@@ -228,6 +229,7 @@ import {
     PfTreeView,
     PfToolbarSeparator,
     PfUtilityButton,
+    PfVideoPlayer,
     PfVisuallyHidden,
     TextValueAccessor,
     BooleanValueAccessor,
@@ -1045,6 +1047,17 @@ import {
         </pf-carousel-slide>
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
+
+      <!-- The video's name is an IDREF, not a label for; see the React consumer. -->
+      <pf-video-player
+        src="/missing.mp4"
+        label="Product tour"
+        description="Two minutes, with captions."
+        aspectRatio="16/9"
+        [muted]="true"
+        style="max-width: 320px"
+        data-testid="video-player"
+      ></pf-video-player>
 
       <!-- A line chart and a bar chart over the same rows; see the React consumer. -->
       <pf-line-chart

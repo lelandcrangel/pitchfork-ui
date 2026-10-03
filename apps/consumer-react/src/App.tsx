@@ -106,6 +106,7 @@ import {
   PfTreeView,
   PfToolbarSeparator,
   PfUtilityButton,
+  PfVideoPlayer,
   PfVisuallyHidden,
 } from '@pitchfork-ui/elements-react';
 
@@ -1254,6 +1255,23 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        The video's name is an IDREF, not a `<label for>`: `for` has to point
+        at a labelable element and a `<video>` is not one, so the React
+        component's `htmlFor` was silently naming nothing. There is no real
+        media behind the src — the point is the frame, the ratio and the
+        naming.
+      */}
+      <PfVideoPlayer
+        src="/missing.mp4"
+        label="Product tour"
+        description="Two minutes, with captions."
+        aspectRatio="16/9"
+        muted
+        style={{ maxWidth: '320px' }}
+        data-testid="video-player"
+      />
 
       {/*
         A line chart and a bar chart over the same rows. The rows are bulk
