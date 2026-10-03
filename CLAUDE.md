@@ -255,9 +255,11 @@ Form components (`Input`, `Select`, `Textarea`, etc.) wrap the control in a `.pf
 
 Prefer `useControllableState` (from `hooks/`) for any component that supports both controlled and uncontrolled usage.
 
-For a listbox, menu or tree, two hooks over core's arithmetic do the keyboard:
-`useListNavigation` (arrows, Home, End, wrapping, skipping disabled items) and
-`useTypeahead` (printable-character jumping). Reach for both rather than
+For a listbox, menu or tree, three hooks over core's arithmetic do the
+keyboard: `useListNavigation` (arrows, Home, End, wrapping, skipping disabled
+items), `useTypeahead` (printable-character jumping) and `useRovingTabIndex`
+(one tab stop for a group of controls, which `Toolbar` and
+`RichTextEditor`'s toolbar share). Reach for both rather than
 writing key handling by hand — `Combobox` clamped with `Math.min`/`Math.max`
 and so stopped where `Select` next door wrapped, and `Select` had no typeahead
 at all while `<pf-select>` did. `useTypeahead` holds its buffer in a **ref**,

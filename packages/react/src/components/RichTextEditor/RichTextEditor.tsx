@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react';
 import { composeDescribedBy } from '../../a11y';
+import { useRovingTabIndex } from '../../hooks';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import './RichTextEditor.css';
@@ -66,6 +67,8 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
     const countId = typeof characterMax === 'number' ? `${editorId}-count` : undefined;
     const describedBy = composeDescribedBy(ariaDescribedBy, descriptionId, errorId, countId);
     const editorRef = useRef<HTMLDivElement>(null);
+    const toolbarRef = useRef<HTMLDivElement>(null);
+    const roving = useRovingTabIndex({ ref: toolbarRef });
     const lastValidHtmlRef = useRef('');
     const [characterCount, setCharacterCount] = useState(0);
     const isControlled = value !== undefined;
@@ -142,8 +145,20 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
           {/*
             The buttons are core's list, so `<pf-rich-text-editor>` cannot
             offer a different set or different names for the same set.
+
+            One tab stop with the arrows moving inside, which is the ARIA
+            toolbar pattern and what the element's own toolbar does. Six
+            focusable buttons meant tabbing past the field walked every one
+            before reaching the text.
           */}
-          <div className="pf-rte__toolbar" role="toolbar" aria-label="Formatting options">
+          <div
+            ref={toolbarRef}
+            className="pf-rte__toolbar"
+            role="toolbar"
+            aria-label="Formatting options"
+            onFocus={roving.onFocus}
+            onKeyDown={roving.onKeyDown}
+          >
             {RICH_TEXT_COMMANDS.map((tool) => (
               <Fragment key={tool.command}>
                 {tool.separatorBefore ? <span className="pf-rte__divider" aria-hidden /> : null}

@@ -524,7 +524,7 @@ trusted.
 
 ---
 
-## The React `RichTextEditor` is six tab stops, and reaches no form
+## The React `RichTextEditor` is six tab stops, and reaches no form — half fixed
 
 Two gaps, both of which `<pf-rich-text-editor>` closes:
 
@@ -540,8 +540,16 @@ Two gaps, both of which `<pf-rich-text-editor>` closes:
   same fix: a hidden input the component writes its value to. Simpler here,
   because the value is a string.
 
-Both were left alone because they change the public behaviour of a shipped
-component rather than being part of the port.
+**The toolbar is fixed**, and not the way this entry proposed. Copying the
+element's three handlers would have been the third place in the repo with the
+same five lines, because the React `Toolbar` already had them inline. They are
+now `packages/react/src/hooks/useRovingTabIndex.ts`, which `Toolbar` and the
+editor's toolbar both use — the editor keeps its own `.pf-rte__toolbar`
+styling, which reusing the `Toolbar` component outright would have changed.
+
+**The form half is still open**, and stays open for the reason the
+`FileUploader` entry gives: what a `<form>` sees is a decision about the
+public API rather than a port, and the element covers the case today.
 
 ---
 
