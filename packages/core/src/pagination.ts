@@ -23,13 +23,24 @@ export function clampPage(page: number, totalPages: number): number {
 /**
  * The run of items to render: `boundaryCount` pages pinned at each end,
  * `siblingCount` pages either side of the current one, and an ellipsis
- * wherever that leaves a gap.
+ * wherever that leaves pages genuinely hidden.
  *
- * The `[1]` fallback at the end is insurance, not a path: an exhaustive sweep
- * of total -3..12 x current -3..15 x sibling -2..4 x boundary -2..4 never
- * produces an empty run, and `pagination.test.ts` re-runs that sweep. It stays
- * because a pager with no buttons would read as broken, and the loops below
- * are the kind of thing an edit could leave empty.
+ * Built by collecting the pages to show and then walking them, rather than by
+ * placing gaps from the window's indexes. The index version got two cases
+ * wrong, both of which this shape cannot express:
+ *
+ * - **A gap standing for nothing.** At 1 of 6 with `boundaryCount: 3` the two
+ *   boundaries meet in the middle, and it still emitted `1 2 3 … 4 5 6` — an
+ *   ellipsis between two consecutive pages, because it compared the window
+ *   against the boundary edges rather than asking which pages were actually
+ *   missing.
+ * - **A gap hiding exactly one page.** An ellipsis costs the same room as the
+ *   page it stands for and says less, so `1 … 3 4 5 … 7` is strictly worse
+ *   than `1 2 3 4 5 6 7`. A single-page hole is filled instead.
+ *
+ * The `[1]` fallback at the end is insurance, not a path: the window always
+ * contains the clamped current page, so `shown` is never empty. It stays
+ * because a pager with no buttons would read as broken.
  */
 export function getPaginationItems(
   currentPage: number,
@@ -42,34 +53,54 @@ export function getPaginationItems(
   const safeSiblingCount = Math.max(siblingCount, 0);
   const safeBoundaryCount = Math.max(boundaryCount, 0);
 
-  const leftBoundaryEnd = Math.min(safeBoundaryCount, safeTotal);
-  const rightBoundaryStart = Math.max(safeTotal - safeBoundaryCount + 1, 1);
+  const shown = new Set<number>();
+  const add = (page: number) => {
+    if (page >= 1 && page <= safeTotal) shown.add(page);
+  };
 
-  const start = Math.max(safeCurrent - safeSiblingCount, leftBoundaryEnd + 1);
-  const end = Math.min(safeCurrent + safeSiblingCount, rightBoundaryStart - 1);
+  for (let page = 1; page <= Math.min(safeBoundaryCount, safeTotal); page += 1) add(page);
+  for (let page = safeTotal - safeBoundaryCount + 1; page <= safeTotal; page += 1) add(page);
+  for (
+    let page = safeCurrent - safeSiblingCount;
+    page <= safeCurrent + safeSiblingCount;
+    page += 1
+  ) {
+    add(page);
+  }
 
+  const pages = [...shown].sort((a, b) => a - b);
+
+  // Fill every hole of exactly one page, before deciding where the gaps are.
+  for (let index = 0; index < pages.length - 1; index += 1) {
+    if (pages[index + 1] - pages[index] === 2) add(pages[index] + 1);
+  }
+  if (pages[0] === 2) add(1);
+  if (pages[pages.length - 1] === safeTotal - 1) add(safeTotal);
+
+  const finalPages = [...shown].sort((a, b) => a - b);
   const items: PaginationItem[] = [];
 
-  for (let page = 1; page <= leftBoundaryEnd; page += 1) {
-    items.push(page);
+  /*
+   * Which side a gap is labelled is about where it sits relative to the
+   * current page, not about the window: with `boundaryCount: 0` there is no
+   * page 1 to the left of it at all, and `['ellipsis-left', 5,
+   * 'ellipsis-right']` is still the right answer.
+   */
+  const gapFor = (nextPage: number): PaginationItem =>
+    nextPage <= safeCurrent ? 'ellipsis-left' : 'ellipsis-right';
+
+  if (finalPages.length > 0 && finalPages[0] > 1) {
+    items.push(gapFor(finalPages[0]));
   }
 
-  if (start > leftBoundaryEnd + 1) {
-    items.push('ellipsis-left');
+  for (let index = 0; index < finalPages.length; index += 1) {
+    items.push(finalPages[index]);
+    const next = finalPages[index + 1];
+    if (next !== undefined && next - finalPages[index] > 1) items.push(gapFor(next));
   }
 
-  for (let page = start; page <= end; page += 1) {
-    items.push(page);
-  }
-
-  if (end < rightBoundaryStart - 1) {
+  if (finalPages.length > 0 && finalPages[finalPages.length - 1] < safeTotal) {
     items.push('ellipsis-right');
-  }
-
-  for (let page = rightBoundaryStart; page <= safeTotal; page += 1) {
-    if (page > leftBoundaryEnd) {
-      items.push(page);
-    }
   }
 
   return items.length > 0 ? items : [1];

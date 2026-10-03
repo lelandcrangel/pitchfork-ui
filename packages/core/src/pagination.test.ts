@@ -49,9 +49,80 @@ describe('getPaginationItems', () => {
    * and both layers now share this code, so changing it is a design call for
    * the system rather than a detail of the port. Recorded in todo.md.
    */
-  it('opens a gap even where it stands in for a single page', () => {
-    expect(items(4, 7)).toEqual([1, 'ellipsis-left', 3, 4, 5, 'ellipsis-right', 7]);
-    expect(items(1, 4)).toEqual([1, 2, 'ellipsis-right', 4]);
+  /*
+   * An ellipsis costs the same room as the page it stands for and says less,
+   * so a gap hiding exactly one page shows the page. Both of these used to
+   * open gaps: `1 … 3 4 5 … 7` for the first, where each ellipsis hid a single
+   * page, and `1 2 … 4` for the second.
+   */
+  it('shows the page rather than a gap that would hide one', () => {
+    expect(items(4, 7)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    expect(items(1, 4)).toEqual([1, 2, 3, 4]);
+  });
+
+  /*
+   * Found while fixing the single-page gap, and older than it: at 1 of 6 with
+   * `boundaryCount: 3` the two boundaries meet in the middle, and the run was
+   * `1 2 3 … 4 5 6` — an ellipsis standing between two consecutive pages,
+   * because the old arithmetic compared the window against the boundary edges
+   * rather than asking which pages were actually missing.
+   */
+  it('never opens a gap that hides nothing', () => {
+    expect(items(1, 6, 0, 3)).toEqual([1, 2, 3, 4, 5, 6]);
+
+    for (let total = 1; total <= 14; total += 1) {
+      for (let current = 1; current <= total; current += 1) {
+        for (let sibling = 0; sibling <= 3; sibling += 1) {
+          for (let boundary = 0; boundary <= 3; boundary += 1) {
+            const run = items(current, total, sibling, boundary);
+            const where = `${current}/${total} s${sibling} b${boundary}`;
+
+            for (let index = 0; index < run.length; index += 1) {
+              const item = run[index];
+              if (typeof item === 'number') continue;
+
+              const before = run[index - 1];
+              const after = run[index + 1];
+              // A gap has to hide at least one page: either it sits between
+              // two pages at least two apart, or it runs off an end.
+              const hides =
+                typeof before === 'number' && typeof after === 'number'
+                  ? after - before > 1
+                  : typeof after === 'number'
+                    ? after > 1
+                    : typeof before === 'number' && before < total;
+              expect(hides, `${where}: ${JSON.stringify(run)}`).toBe(true);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  it('still opens a gap that hides two pages or more', () => {
+    expect(items(5, 9)).toEqual([1, 'ellipsis-left', 4, 5, 6, 'ellipsis-right', 9]);
+    expect(items(4, 8)).toEqual([1, 2, 3, 4, 5, 'ellipsis-right', 8]);
+  });
+
+  /*
+   * The run can get one item longer on each side, never more: collapsing adds
+   * exactly the one page the gap stood for, in place of the gap itself. Worth
+   * pinning, because the widest run is what a pager has to lay out.
+   */
+  it('grows a collapsed run by at most one item per side', () => {
+    for (let total = 1; total <= 14; total += 1) {
+      for (let current = 1; current <= total; current += 1) {
+        for (let sibling = 0; sibling <= 3; sibling += 1) {
+          for (let boundary = 0; boundary <= 3; boundary += 1) {
+            const run = items(current, total, sibling, boundary);
+            const widest = Math.min(total, 2 * boundary + 2 * sibling + 3);
+            expect(run.length, `${current}/${total} s${sibling} b${boundary}`).toBeLessThanOrEqual(
+              widest,
+            );
+          }
+        }
+      }
+    }
   });
 
   it('never repeats a boundary page that is also a sibling', () => {
@@ -62,7 +133,10 @@ describe('getPaginationItems', () => {
   });
 
   it('widens the window with siblingCount', () => {
-    expect(items(5, 20, 2)).toEqual([1, 'ellipsis-left', 3, 4, 5, 6, 7, 'ellipsis-right', 20]);
+    // The left gap would have hidden only page 2, so it collapses; the right
+    // one hides 8..19 and stays.
+    expect(items(5, 20, 2)).toEqual([1, 2, 3, 4, 5, 6, 7, 'ellipsis-right', 20]);
+    expect(items(6, 20, 2)).toEqual([1, 'ellipsis-left', 4, 5, 6, 7, 8, 'ellipsis-right', 20]);
   });
 
   it('pins more pages at each end with boundaryCount', () => {

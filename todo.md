@@ -108,7 +108,7 @@ anything sets it.
 
 ---
 
-## An ellipsis can stand in for a single page
+## An ellipsis can stand in for a single page — fixed
 
 `getPaginationItems` in `packages/core/src/pagination.ts` opens a gap wherever
 the sibling window does not reach the boundary — even when exactly one page is
@@ -127,10 +127,22 @@ when the maths moved into core, and both layers now share the one
 implementation. It is asserted in `pagination.test.ts` so the port is
 faithful, not so the behaviour is blessed.
 
-**Fix:** collapse a gap that would hide fewer than two pages into the page
-itself — in core, which changes `Pagination` and `<pf-pagination>` together.
-Update the two assertions in `pagination.test.ts` that pin the current run, and
-check the Pagination stories still read sensibly at small totals.
+**Fixed** in core, so `Pagination` and `<pf-pagination>` changed together —
+and both layers' tests passed unchanged, which is the signal the fix was in
+the right place.
+
+Not by special-casing the gap, in the end. `getPaginationItems` now collects
+the pages to show and walks them, emitting a gap wherever pages are genuinely
+missing, rather than placing gaps from the window's indexes. That turned up a
+second defect, older than this one: at 1 of 6 with `boundaryCount: 3` the two
+boundaries meet in the middle and the run was `1 2 3 … 4 5 6` — an ellipsis
+standing between two consecutive pages, because the arithmetic compared the
+window against the boundary edges rather than asking which pages were actually
+missing. Neither shape can express that.
+
+Two exhaustive sweeps over total 1..14 x current x sibling 0..3 x boundary 0..3
+now pin it: every gap hides at least one page, and a run is never longer than
+`2·boundary + 2·sibling + 3` items, which is what a pager has to lay out.
 
 ---
 
