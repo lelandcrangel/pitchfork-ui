@@ -678,6 +678,13 @@ Things that differ from the React library, learned by porting the first two:
   can arrive later — and puts a class on the marker. Probed by swapping the
   class for `.marker:has(*)`: both markers then measure 28px in a real build,
   and `scripts/smoke-consumer.mjs` catches it.
+- **Coerce a number a loop counts with.** The attribute-coercion trap has a
+  second shape beside the union-literal one: `max="5"` on `pf-rating-stars`
+  arrives as a number because the prop is typed `number`, but anything built
+  from `Number(x)` by hand — or read off an element rather than a prop — is a
+  string, and `Array.from({ length: "5" })` is **empty** rather than five long.
+  Read such a value through a getter that coerces and clamps, so a nonsense
+  value renders nothing rather than throwing.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

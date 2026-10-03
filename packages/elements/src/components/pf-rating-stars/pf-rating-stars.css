@@ -1,0 +1,54 @@
+:host {
+  align-items: center;
+  color: var(--pf-rating-text);
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.track {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.star {
+  display: inline-flex;
+  height: var(--pf-rating-size, var(--font-size-lg));
+  position: relative;
+  width: var(--pf-rating-size, var(--font-size-lg));
+}
+
+.icon {
+  font-size: var(--pf-rating-size, var(--font-size-lg));
+  height: 1em;
+  width: 1em;
+}
+
+.base {
+  color: var(--pf-rating-star-empty);
+}
+
+/*
+ * The filled star is the same glyph clipped to the fraction, which is what
+ * makes a half star look like half a star rather than a different icon.
+ */
+.fill {
+  display: inline-flex;
+  inset: 0;
+  overflow: hidden;
+  position: absolute;
+  width: var(--pf-rating-fill, 0%);
+}
+
+.filled {
+  color: var(--pf-rating-star-fill);
+}
+
+.value {
+  color: var(--pf-rating-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}

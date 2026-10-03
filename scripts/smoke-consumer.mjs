@@ -106,6 +106,8 @@ const EXPECTED = [
   'pf-progress-step',
   'pf-timeline',
   'pf-timeline-item',
+  'pf-rating-stars',
+  'pf-rating-badge',
 ];
 
 const TYPES = {
@@ -2354,6 +2356,88 @@ try {
       }
       if (state.slotDisplay !== 'contents') {
         problems.push(`the pf-timeline slot computes display: ${state.slotDisplay}`);
+      }
+    }
+  }
+
+  /*
+   * The rating. The claim that needs a real stylesheet is the half star: the
+   * filled glyph is the same glyph clipped to a percentage width, so the
+   * fourth star of a 3.5 rating has to measure half the width of a full one.
+   * The inline `--pf-rating-fill` the unit tests read says nothing about
+   * whether the clip resolves.
+   */
+  {
+    const state = await page
+      .evaluate(() => {
+        const row = document.querySelector('pf-rating-stars');
+        const badge = document.querySelector('pf-rating-badge');
+        if (!row || !badge) return { error: 'the consumer app is missing one of them' };
+
+        const stars = Array.from(row.shadowRoot.querySelectorAll('[part="star"]'));
+        if (stars.length !== 5) return { error: `${stars.length} stars in the fixture` };
+        const clip = (index) => stars[index].querySelector('.fill').getBoundingClientRect().width;
+        const starWidth = stars[0].getBoundingClientRect().width;
+
+        return {
+          starWidth,
+          fullClip: clip(2),
+          halfClip: clip(3),
+          emptyClip: clip(4),
+          emptyColour: getComputedStyle(stars[0].querySelector('.base')).color,
+          fillColour: getComputedStyle(stars[0].querySelector('.filled')).color,
+          valueText: row.shadowRoot.querySelector('[part="value"]')?.textContent?.trim(),
+          badgeBackground: getComputedStyle(badge).backgroundColor,
+          badgeBorder: getComputedStyle(badge).borderTopWidth,
+          badgeRadius: getComputedStyle(badge).borderTopLeftRadius,
+          badgeText: badge.shadowRoot.querySelector('[part="value"]')?.textContent?.trim(),
+          reviewsColour: getComputedStyle(badge.shadowRoot.querySelector('[part="reviews"]')).color,
+          badgeTextColour: getComputedStyle(badge).color,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-rating-stars: ${state.error}`);
+    } else {
+      if (!(state.starWidth > 0)) {
+        problems.push(`a star measured ${state.starWidth}px wide`);
+      }
+      if (Math.abs(state.fullClip - state.starWidth) > 1) {
+        problems.push(`a full star's fill is ${state.fullClip}px of a ${state.starWidth}px star`);
+      }
+      if (Math.abs(state.halfClip - state.starWidth / 2) > 1) {
+        problems.push(
+          `the half star's fill is ${state.halfClip}px of a ${state.starWidth}px star, ` +
+            'expected half — the percentage clip did not resolve',
+        );
+      }
+      if (state.emptyClip !== 0) {
+        problems.push(`an empty star's fill measured ${state.emptyClip}px`);
+      }
+      if (state.emptyColour === state.fillColour) {
+        problems.push(
+          `a filled star is the same colour as an empty one ("${state.fillColour}") — ` +
+            'a --pf-rating-* alias did not resolve',
+        );
+      }
+      if (state.valueText !== '3.5') {
+        problems.push(`pf-rating-stars wrote "${state.valueText}", expected 3.5`);
+      }
+      if (isTransparent(state.badgeBackground) || state.badgeBorder === '0px') {
+        problems.push(
+          `pf-rating-badge has no pill (background "${state.badgeBackground}", ` +
+            `border ${state.badgeBorder})`,
+        );
+      }
+      if (parseFloat(state.badgeRadius) < 12) {
+        problems.push(`pf-rating-badge is not a pill (radius ${state.badgeRadius})`);
+      }
+      if (state.badgeText !== '4.5/5.0') {
+        problems.push(`pf-rating-badge wrote "${state.badgeText}", expected 4.5/5.0`);
+      }
+      if (state.reviewsColour === state.badgeTextColour) {
+        problems.push('the review count is the same colour as the rating');
       }
     }
   }

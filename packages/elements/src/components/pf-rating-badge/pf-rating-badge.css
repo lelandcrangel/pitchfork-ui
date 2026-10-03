@@ -1,0 +1,48 @@
+:host {
+  align-items: center;
+  background: var(--pf-rating-badge-bg);
+  border: 1px solid var(--pf-rating-badge-border);
+  border-radius: var(--radius-full);
+  color: var(--pf-rating-badge-text);
+  display: inline-flex;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  gap: var(--space-2);
+  line-height: 1;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([size='sm']) {
+  min-height: 24px;
+  padding: 0 var(--space-2);
+}
+
+:host([size='md']) {
+  min-height: 28px;
+  padding: 0 var(--space-3);
+}
+
+.icon {
+  display: block;
+  fill: currentColor;
+  height: 14px;
+  width: 14px;
+}
+
+.value {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.separator {
+  opacity: 0.65;
+}
+
+.reviews {
+  color: var(--pf-rating-badge-reviews);
+  font-weight: var(--font-weight-medium);
+}

@@ -48,6 +48,8 @@ import {
   PfRadioButton,
   PfOption,
   PfRadioGroup,
+  PfRatingBadge,
+  PfRatingStars,
   PfScrollArea,
   PfSelect,
   PfSlideoutMenu,
@@ -798,6 +800,17 @@ export function App() {
           <span slot="title">Opened</span>
         </PfTimelineItem>
       </PfTimeline>
+
+      {/*
+        3.5 of 5: the fourth star is the same glyph clipped to half its width,
+        which is what makes a fraction look like a fraction. The arithmetic is
+        core's, so the React RatingStars fills the same star by the same
+        amount.
+      */}
+      <div className="row">
+        <PfRatingStars value={3.5} showValue data-testid="rating-stars" />
+        <PfRatingBadge value={4.5} reviews={1234} data-testid="rating-badge" />
+      </div>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

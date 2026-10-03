@@ -22,6 +22,7 @@ import { HourCycle, Side, StepStatus } from "@pitchfork-ui/core";
 import { PfProgressStepsOrientation } from "./components/pf-progress-steps/pf-progress-steps";
 import { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./components/pf-progress-steps/pf-progress-steps";
 import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
+import { PfRatingBadgeSize } from "./components/pf-rating-badge/pf-rating-badge";
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 import { PfTabsSize, PfTabsVariant } from "./components/pf-tabs/pf-tabs";
@@ -51,6 +52,7 @@ export { HourCycle, Side, StepStatus } from "@pitchfork-ui/core";
 export { PfProgressStepsOrientation } from "./components/pf-progress-steps/pf-progress-steps";
 export { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./components/pf-progress-steps/pf-progress-steps";
 export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
+export { PfRatingBadgeSize } from "./components/pf-rating-badge/pf-rating-badge";
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 export { PfTabsSize, PfTabsVariant } from "./components/pf-tabs/pf-tabs";
@@ -1525,6 +1527,63 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    /**
+     * A rating as a compact pill: one star, the number out of the maximum, and
+     * optionally how many reviews it came from.
+     */
+    interface PfRatingBadge {
+        /**
+          * The top of the scale.
+          * @default 5
+         */
+        "max": number;
+        /**
+          * How many reviews the rating came from. Omit it to show no count at all — which is different from `0`, a product nobody has reviewed yet.
+         */
+        "reviews"?: number;
+        /**
+          * Padding and height. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size": PfRatingBadgeSize;
+        /**
+          * The rating. Clamped into 0..max.
+          * @default 0
+         */
+        "value": number;
+    }
+    /**
+     * A row of stars showing a rating, filled to the fraction.
+     * One `role="img"` with a name rather than a star-by-star reading: the stars
+     * are an image of the rating, and the number is the thing worth announcing.
+     * Every star inside is therefore `aria-hidden`.
+     */
+    interface PfRatingStars {
+        /**
+          * Overrides the generated name, for a rating that means something else.
+         */
+        "label"?: string;
+        /**
+          * How many stars there are.
+          * @default 5
+         */
+        "max": number;
+        /**
+          * Write the rating out beside the stars.
+          * @default false
+         */
+        "showValue": boolean;
+        /**
+          * Star size in pixels.
+          * @default 18
+         */
+        "size": number;
+        /**
+          * The rating. Clamped into 0..max, so it cannot overfill the row.
+          * @default 0
+         */
+        "value": number;
     }
     /**
      * A scrollable region with a styled, non-overlaying scrollbar.
@@ -3270,6 +3329,28 @@ declare global {
         new (): HTMLPfRadioGroupElement;
     };
     /**
+     * A rating as a compact pill: one star, the number out of the maximum, and
+     * optionally how many reviews it came from.
+     */
+    interface HTMLPfRatingBadgeElement extends Components.PfRatingBadge, HTMLStencilElement {
+    }
+    var HTMLPfRatingBadgeElement: {
+        prototype: HTMLPfRatingBadgeElement;
+        new (): HTMLPfRatingBadgeElement;
+    };
+    /**
+     * A row of stars showing a rating, filled to the fraction.
+     * One `role="img"` with a name rather than a star-by-star reading: the stars
+     * are an image of the rating, and the number is the thing worth announcing.
+     * Every star inside is therefore `aria-hidden`.
+     */
+    interface HTMLPfRatingStarsElement extends Components.PfRatingStars, HTMLStencilElement {
+    }
+    var HTMLPfRatingStarsElement: {
+        prototype: HTMLPfRatingStarsElement;
+        new (): HTMLPfRatingStarsElement;
+    };
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface HTMLPfScrollAreaElement extends Components.PfScrollArea, HTMLStencilElement {
@@ -3730,6 +3811,8 @@ declare global {
         "pf-progress-steps": HTMLPfProgressStepsElement;
         "pf-radio-button": HTMLPfRadioButtonElement;
         "pf-radio-group": HTMLPfRadioGroupElement;
+        "pf-rating-badge": HTMLPfRatingBadgeElement;
+        "pf-rating-stars": HTMLPfRatingStarsElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
         "pf-select": HTMLPfSelectElement;
         "pf-slideout-menu": HTMLPfSlideoutMenuElement;
@@ -5220,6 +5303,63 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     /**
+     * A rating as a compact pill: one star, the number out of the maximum, and
+     * optionally how many reviews it came from.
+     */
+    interface PfRatingBadge {
+        /**
+          * The top of the scale.
+          * @default 5
+         */
+        "max"?: number;
+        /**
+          * How many reviews the rating came from. Omit it to show no count at all — which is different from `0`, a product nobody has reviewed yet.
+         */
+        "reviews"?: number;
+        /**
+          * Padding and height. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size"?: PfRatingBadgeSize;
+        /**
+          * The rating. Clamped into 0..max.
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
+     * A row of stars showing a rating, filled to the fraction.
+     * One `role="img"` with a name rather than a star-by-star reading: the stars
+     * are an image of the rating, and the number is the thing worth announcing.
+     * Every star inside is therefore `aria-hidden`.
+     */
+    interface PfRatingStars {
+        /**
+          * Overrides the generated name, for a rating that means something else.
+         */
+        "label"?: string;
+        /**
+          * How many stars there are.
+          * @default 5
+         */
+        "max"?: number;
+        /**
+          * Write the rating out beside the stars.
+          * @default false
+         */
+        "showValue"?: boolean;
+        /**
+          * Star size in pixels.
+          * @default 18
+         */
+        "size"?: number;
+        /**
+          * The rating. Clamped into 0..max, so it cannot overfill the row.
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -6241,6 +6381,19 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
     }
+    interface PfRatingBadgeAttributes {
+        "value": number;
+        "max": number;
+        "reviews": number;
+        "size": PfRatingBadgeSize;
+    }
+    interface PfRatingStarsAttributes {
+        "value": number;
+        "max": number;
+        "size": number;
+        "showValue": boolean;
+        "label": string;
+    }
     interface PfScrollAreaAttributes {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
@@ -6437,6 +6590,8 @@ declare namespace LocalJSX {
         "pf-progress-steps": Omit<PfProgressSteps, keyof PfProgressStepsAttributes> & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes]?: PfProgressSteps[K] } & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes as `attr:${K}`]?: PfProgressStepsAttributes[K] } & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes as `prop:${K}`]?: PfProgressSteps[K] };
         "pf-radio-button": Omit<PfRadioButton, keyof PfRadioButtonAttributes> & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes]?: PfRadioButton[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `attr:${K}`]?: PfRadioButtonAttributes[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `prop:${K}`]?: PfRadioButton[K] };
         "pf-radio-group": Omit<PfRadioGroup, keyof PfRadioGroupAttributes> & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes]?: PfRadioGroup[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `attr:${K}`]?: PfRadioGroupAttributes[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `prop:${K}`]?: PfRadioGroup[K] };
+        "pf-rating-badge": Omit<PfRatingBadge, keyof PfRatingBadgeAttributes> & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes]?: PfRatingBadge[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `attr:${K}`]?: PfRatingBadgeAttributes[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `prop:${K}`]?: PfRatingBadge[K] };
+        "pf-rating-stars": Omit<PfRatingStars, keyof PfRatingStarsAttributes> & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes]?: PfRatingStars[K] } & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes as `attr:${K}`]?: PfRatingStarsAttributes[K] } & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes as `prop:${K}`]?: PfRatingStars[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
         "pf-select": Omit<PfSelect, keyof PfSelectAttributes> & { [K in keyof PfSelect & keyof PfSelectAttributes]?: PfSelect[K] } & { [K in keyof PfSelect & keyof PfSelectAttributes as `attr:${K}`]?: PfSelectAttributes[K] } & { [K in keyof PfSelect & keyof PfSelectAttributes as `prop:${K}`]?: PfSelect[K] };
         "pf-slideout-menu": Omit<PfSlideoutMenu, keyof PfSlideoutMenuAttributes> & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes]?: PfSlideoutMenu[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `attr:${K}`]?: PfSlideoutMenuAttributes[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `prop:${K}`]?: PfSlideoutMenu[K] };
@@ -6844,6 +6999,18 @@ declare module "@stencil/core" {
              * the group is a single tab stop, and the arrows both move and select.
              */
             "pf-radio-group": LocalJSX.IntrinsicElements["pf-radio-group"] & JSXBase.HTMLAttributes<HTMLPfRadioGroupElement>;
+            /**
+             * A rating as a compact pill: one star, the number out of the maximum, and
+             * optionally how many reviews it came from.
+             */
+            "pf-rating-badge": LocalJSX.IntrinsicElements["pf-rating-badge"] & JSXBase.HTMLAttributes<HTMLPfRatingBadgeElement>;
+            /**
+             * A row of stars showing a rating, filled to the fraction.
+             * One `role="img"` with a name rather than a star-by-star reading: the stars
+             * are an image of the rating, and the number is the thing worth announcing.
+             * Every star inside is therefore `aria-hidden`.
+             */
+            "pf-rating-stars": LocalJSX.IntrinsicElements["pf-rating-stars"] & JSXBase.HTMLAttributes<HTMLPfRatingStarsElement>;
             /**
              * A scrollable region with a styled, non-overlaying scrollbar.
              */

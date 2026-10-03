@@ -49,6 +49,8 @@ import {
   PfRadioButton,
   PfOption,
   PfRadioGroup,
+  PfRatingBadge,
+  PfRatingStars,
   PfScrollArea,
   PfSelect,
   PfSlideoutMenu,
@@ -132,6 +134,8 @@ import {
     PfRadioButton,
     PfOption,
     PfRadioGroup,
+    PfRatingBadge,
+    PfRatingStars,
     PfScrollArea,
     PfSelect,
     PfSlideoutMenu,
@@ -697,6 +701,13 @@ import {
           <span slot="title">Opened</span>
         </pf-timeline-item>
       </pf-timeline>
+
+      <!-- 3.5 of 5, the fourth star clipped to half; see the React consumer. -->
+      <div class="row">
+        <pf-rating-stars [value]="3.5" showValue data-testid="rating-stars"></pf-rating-stars>
+        <pf-rating-badge [value]="4.5" [reviews]="1234" data-testid="rating-badge">
+        </pf-rating-badge>
+      </div>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
