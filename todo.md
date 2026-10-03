@@ -638,3 +638,23 @@ What is left, and why it stays: `piscina`, `@angular/build`, `undici`,
 chain all come from `@angular/cli` 21, a devDependency of the Angular consumer
 app. `npm audit fix --force` offers `@angular/cli@7.2.4`. Revisit when Angular
 ships a toolchain that resolves them.
+
+---
+
+## The React `Dropdown`'s arrows stopped at the ends — fixed
+
+The third component found with the same defect as `Combobox`: `onMenuKeyDown`
+clamped with `Math.min`/`Math.max` over a `querySelectorAll` of enabled items,
+so the arrows stopped at the first and last item where `<pf-dropdown>` and
+`ContextMenu` next door wrapped. One design system with two menu behaviours.
+
+Fixed with the same pair the element uses — `resolveRovingKey(key,
+'vertical')` for the key and the `useListNavigation` hook's `move` for the
+index — which also puts DOM focus and the `--active` highlight on one path.
+They were two before, and agreed only because every `.focus()` fires the
+item's own `onFocus`; true, but by accident.
+
+Found by sweeping the library rather than by a report: the three
+`aria-disabled` fixes made it worth asking which other components navigate a
+list by hand. `ContextMenu`, `Select`, `MultiSelect` and `CommandPalette` were
+all already on the core helpers; `Dropdown` was the only one left.
