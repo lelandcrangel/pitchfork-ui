@@ -190,4 +190,78 @@ describe('Tabs', () => {
     expect(screen.getByRole('tab', { name: 'Starred' })).toBeInTheDocument();
     expect(container.querySelector('.pf-tabs__tab-icon')).toBeInTheDocument();
   });
+
+  /* ─── One tab stop ─────────────────────────────────────────────────────── *
+   *
+   * Every tab was tabbable, so a six-tab strip was six stops in the page's tab
+   * order. The ARIA tabs pattern is one stop on the *selected* tab with the
+   * arrows moving inside the group — the arrows were already there, so only
+   * the tabindex was wrong.
+   */
+
+  it('puts the only tab stop on the selected tab', () => {
+    render(<Tabs items={items} />);
+    const tabs = screen.getAllByRole('tab');
+
+    expect(tabs.filter((tab) => tab.getAttribute('tabindex') === '0')).toHaveLength(1);
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute('tabindex', '0');
+  });
+
+  it('moves the tab stop with the selection', async () => {
+    const user = userEvent.setup();
+    render(<Tabs items={items} />);
+
+    await user.click(screen.getByRole('tab', { name: 'Details' }));
+
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveAttribute('tabindex', '0');
+    expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('tabs in from outside onto the selection, not onto the first tab', async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">Before</button>
+        <Tabs items={items} defaultValue="details" />
+      </>,
+    );
+
+    screen.getByRole('button', { name: 'Before' }).focus();
+    await user.tab();
+
+    expect(screen.getByRole('tab', { name: 'Details' })).toHaveFocus();
+  });
+
+  /*
+   * With nothing set, `resolveSelectedTab` already shows the first enabled
+   * tab, so clicking it used to report a change from `undefined` to its own
+   * value -- a change for a selection that never moved. A native `<select>`
+   * does not fire `change` for the option already chosen either.
+   */
+  it('does not report a change for the tab already selected', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Tabs items={items} onValueChange={onValueChange} />);
+
+    await user.click(screen.getByRole('tab', { name: 'Overview' }));
+    expect(onValueChange).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole('tab', { name: 'Details' }));
+    expect(onValueChange).toHaveBeenCalledExactlyOnceWith('details');
+
+    // And re-clicking the new selection is silent too.
+    await user.click(screen.getByRole('tab', { name: 'Details' }));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('still reports a change when the arrows move the selection', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Tabs items={items} onValueChange={onValueChange} />);
+
+    screen.getByRole('tab', { name: 'Overview' }).focus();
+    await user.keyboard('{ArrowRight}');
+
+    expect(onValueChange).toHaveBeenCalledWith('details');
+  });
 });

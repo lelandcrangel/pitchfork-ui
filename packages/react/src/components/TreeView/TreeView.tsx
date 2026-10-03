@@ -74,6 +74,36 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
 
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
+  /*
+   * One tab stop, not one per visible node.
+   *
+   * Every visible item was tabbable, so a tree of thirty open nodes was thirty
+   * stops in the page's tab order. The ARIA tree pattern is a single stop with
+   * the arrows moving inside — which this already implemented, so only the
+   * focus management was missing.
+   *
+   * The focused item is its own piece of state: the ARIA pattern lets focus
+   * move without selecting, so it is not the same thing as the selection.
+   * `<pf-tree-view>` names its active item with `aria-activedescendant`
+   * instead, because a `tabindex="0"` host slotted into another host's shadow
+   * tree is skipped by sequential navigation — measured in its browser spec.
+   * Either variant is the pattern; here the nesting is one tree, so the
+   * roving tabindex is the smaller change.
+   */
+  const [storedActiveValue, setStoredActiveValue] = useState<string | undefined>(undefined);
+
+  /*
+   * Derived against the *visible* list rather than stored outright: collapsing
+   * a branch takes its children off screen, and a tab stop on a node that is
+   * no longer rendered leaves the tree with none at all — reachable by mouse
+   * and by nothing else. Same reason `CalendarGrid` derives its focused day.
+   */
+  const activeValue =
+    storedActiveValue && flattenedNodes.some((item) => item.node.value === storedActiveValue)
+      ? storedActiveValue
+      : (flattenedNodes.find((item) => item.node.value === resolvedSelectedValue)?.node.value ??
+        flattenedNodes[0]?.node.value);
+
   const updateExpandedValues = useCallback(
     (nextValues: string[]) => {
       if (!isExpandedControlled) {
@@ -128,6 +158,7 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
     if (!value) {
       return;
     }
+    setStoredActiveValue(value);
     itemRefs.current[value]?.focus();
   };
 
@@ -209,12 +240,28 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
                   aria-level={item.level}
                   aria-expanded={hasChildren ? isExpanded : undefined}
                   aria-selected={isSelected}
-                  disabled={item.node.disabled}
+                  /*
+                   * `aria-disabled`, not `disabled`. Core's `resolveTreeKey`
+                   * returns a focus intent for a disabled node — the ARIA
+                   * pattern is that focus moves freely while activation
+                   * refuses — and a `disabled` button cannot take focus, so
+                   * arrowing onto one dropped focus out of the tree entirely.
+                   * `pf-tree-item` has always used `aria-disabled`, and the
+                   * stylesheet keys off the row's class rather than the
+                   * pseudo-class, so nothing about the look changes.
+                   */
+                  aria-disabled={item.node.disabled || undefined}
+                  tabIndex={item.node.value === activeValue ? 0 : -1}
                   onClick={() => {
+                    setStoredActiveValue(item.node.value);
+                    // An `aria-disabled` button still fires a click.
                     if (!item.node.disabled) {
                       setSelectedValue(item.node.value);
                     }
                   }}
+                  // Tabbing or clicking in moves the tab stop to where focus
+                  // actually landed, so the arrows carry on from there.
+                  onFocus={() => setStoredActiveValue(item.node.value)}
                   onKeyDown={(event) => onItemKeyDown(item, event)}
                 >
                   {item.node.icon ? (

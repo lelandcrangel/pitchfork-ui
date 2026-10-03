@@ -133,7 +133,18 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
     if (!isControlled) {
       setInternalValue(nextValue);
     }
-    onValueChange?.(nextValue);
+
+    /*
+     * Against the tab actually on show, not against `selectedValue`: with
+     * nothing set, `resolveSelectedTab` already shows the first enabled tab,
+     * so clicking it would report a change from `undefined` to its value — an
+     * `onValueChange` for a selection that never moved. A native `<select>`
+     * does not fire `change` for the option already chosen either.
+     * `<pf-tabs>` has had this guard since the port.
+     */
+    if (nextValue !== selectedItem?.value) {
+      onValueChange?.(nextValue);
+    }
   };
 
   const enabledIndexes = getEnabledIndexes(items, (item) => Boolean(item.disabled));
@@ -223,7 +234,15 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
               )}
               aria-controls={panelId}
               aria-selected={isSelected}
-              tabIndex={item.disabled ? -1 : 0}
+              /*
+               * One tab stop for the strip, on the selected tab. Every tab
+               * being tabbable made a six-tab strip six stops in the page's
+               * tab order, where the ARIA tabs pattern is a single stop with
+               * the arrows moving inside the group — which this already did,
+               * so only the tabindex was wrong. `<pf-tabs>` does the same
+               * through core's `syncRovingTabIndex`.
+               */
+              tabIndex={isSelected ? 0 : -1}
               disabled={item.disabled}
               onClick={() => {
                 if (!item.disabled) {

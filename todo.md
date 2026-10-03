@@ -285,7 +285,7 @@ shaped like that one.
 
 ---
 
-## The React `Tabs` is one tab stop per tab, and reports an unchanged selection
+## The React `Tabs` is one tab stop per tab, and reports an unchanged selection — fixed
 
 Two gaps, both found porting it to `<pf-tabs>`.
 
@@ -304,11 +304,13 @@ option. `<pf-tabs>` compares against the tab actually on show — not against
 `value`, which is still `''` while the first enabled tab is selected by
 fallback — and a unit test pins it.
 
-**Fix:** set `tabIndex` from `item.value === selectedItem?.value` (falling back
-to the first enabled tab when nothing matches, which `resolveSelectedTab`
-already works out), and guard the click on `item.value !== selectedItem?.value`.
-Both are small; they are here rather than done because changing which element
-is tabbable is a behaviour change for consumers' own tests.
+**Fixed**, both as described. The guard goes in `setSelectedValue`, so the
+arrows and a click are covered by one check — and it compares against
+`selectedItem`, the tab on show, not against `selectedValue`, which is still
+`undefined` while the first enabled tab is selected by fallback.
+
+Five tests, including the one that matters most for the tabindex: tabbing in
+from a button outside the strip lands on the _selection_, not on the first tab.
 
 ---
 
@@ -399,7 +401,7 @@ case the shape to reach for is a `rows` property of plain data on the element
 
 ---
 
-## The React `TreeView` is one tab stop per visible item
+## The React `TreeView` is one tab stop per visible item — fixed
 
 `TreeView` renders every visible node as a `<button role="treeitem">` with no
 tabindex management, so a tree of thirty open nodes is thirty tab stops and
@@ -413,11 +415,25 @@ sequential navigation when the outer host's tabindex is negative, which is
 measured in its browser spec. It holds the tab stop itself and names the active
 item with `aria-activedescendant`.
 
-**Fix:** either of the two ARIA variants works in React, where the nesting is
-in one tree. The smaller change is a roving tabindex — `tabIndex={isActive ? 0
-: -1}` over the flattened list, with the active value in state beside the
-selected one, since the two are not the same thing. Core's `resolveTreeKey`
-already returns focus intents, so the handler does not change.
+**Fixed** with the roving tabindex, and the handler did not change. Two things
+the change needed that the entry did not foresee:
+
+- **The items were `disabled`, so focus could not cross them.**
+  `resolveTreeKey` returns a focus intent for a disabled node — the ARIA
+  pattern is that focus moves freely while activation refuses — and a
+  `disabled` button cannot take focus, so arrowing onto one dropped focus out
+  of the tree entirely. `pf-tree-item` has always used `aria-disabled`, and
+  the stylesheet keys off the row's class rather than the pseudo-class, so
+  nothing about the look changed. The same defect as the Calendar's, found the
+  same way.
+- **The active item is derived against the visible list**, not stored outright.
+  Collapsing a branch takes its children off screen, and a tab stop on a node
+  that is no longer rendered leaves the tree with none at all.
+
+That second one took two attempts to test. Walking out of a branch with
+ArrowLeft moves focus to the parent first, so the stored value is never stale
+on that path and the test passed with the fix reverted; `collapseAll()` while
+a child is focused is the case that is stale.
 
 ---
 
