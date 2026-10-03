@@ -1432,6 +1432,86 @@ export namespace Components {
         "variant": PfNotificationVariant;
     }
     /**
+     * A form-associated stepper field.
+     * The value is a **string** rather than a number, because that is what an
+     * attribute can carry and what a form submits; `pfChange` reports the parsed
+     * number beside it, which is what a framework consumer wants. An empty string
+     * is an empty field — not zero, which is a value someone chose.
+     * All of the arithmetic is core's, so this and the React `NumberInput` step,
+     * round and clamp identically: ten steps of `0.1` reach exactly 1 in both.
+     */
+    interface PfNumberInput {
+        /**
+          * A form-associated custom element does not inherit this.
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * The step-down button's accessible name.
+          * @default 'Decrease'
+         */
+        "decrementLabel": string;
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The message explaining why the control is invalid, or an empty string.
+         */
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * The step-up button's accessible name.
+          * @default 'Increase'
+         */
+        "incrementLabel": string;
+        /**
+          * Visible label. Rendered in the same root as the input, so `for` works.
+         */
+        "label"?: string;
+        /**
+          * The highest value the field accepts.
+         */
+        "max"?: number;
+        /**
+          * The lowest value the field accepts.
+         */
+        "min"?: number;
+        /**
+          * Submitted under this name. Reflected, because a form-associated element takes its submission name from the attribute, not this property.
+         */
+        "name"?: string;
+        "placeholder"?: string;
+        /**
+          * As `checkValidity`, but also shows the browser's validation message.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * How far one step moves, and what the result is rounded to.
+          * @default 1
+         */
+        "step": number;
+        /**
+          * Steps the value up or down, as the buttons and the arrows do.
+         */
+        "stepBy": (direction: 1 | -1) => Promise<void>;
+        /**
+          * The value, as a string. Empty means an empty field.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * One choice inside a `pf-select`.
      * It only reports that it was chosen; the select owns the value, the active
      * option and closing — the same division as `pf-radio-group` with its radios
@@ -2658,6 +2738,10 @@ export interface PfNotificationCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfNotificationElement;
 }
+export interface PfNumberInputCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfNumberInputElement;
+}
 export interface PfOptionCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfOptionElement;
@@ -3559,6 +3643,32 @@ declare global {
         prototype: HTMLPfNotificationElement;
         new (): HTMLPfNotificationElement;
     };
+    interface HTMLPfNumberInputElementEventMap {
+        "pfChange": { value: string; number: number | null };
+    }
+    /**
+     * A form-associated stepper field.
+     * The value is a **string** rather than a number, because that is what an
+     * attribute can carry and what a form submits; `pfChange` reports the parsed
+     * number beside it, which is what a framework consumer wants. An empty string
+     * is an empty field — not zero, which is a value someone chose.
+     * All of the arithmetic is core's, so this and the React `NumberInput` step,
+     * round and clamp identically: ten steps of `0.1` reach exactly 1 in both.
+     */
+    interface HTMLPfNumberInputElement extends Components.PfNumberInput, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfNumberInputElementEventMap>(type: K, listener: (this: HTMLPfNumberInputElement, ev: PfNumberInputCustomEvent<HTMLPfNumberInputElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfNumberInputElementEventMap>(type: K, listener: (this: HTMLPfNumberInputElement, ev: PfNumberInputCustomEvent<HTMLPfNumberInputElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfNumberInputElement: {
+        prototype: HTMLPfNumberInputElement;
+        new (): HTMLPfNumberInputElement;
+    };
     interface HTMLPfOptionElementEventMap {
         "pfOptionSelect": { value: string };
     }
@@ -4253,6 +4363,7 @@ declare global {
         "pf-modal-header": HTMLPfModalHeaderElement;
         "pf-multi-select": HTMLPfMultiSelectElement;
         "pf-notification": HTMLPfNotificationElement;
+        "pf-number-input": HTMLPfNumberInputElement;
         "pf-option": HTMLPfOptionElement;
         "pf-page-header": HTMLPfPageHeaderElement;
         "pf-pagination": HTMLPfPaginationElement;
@@ -5646,6 +5757,78 @@ declare namespace LocalJSX {
           * @default 'info'
          */
         "variant"?: PfNotificationVariant;
+    }
+    /**
+     * A form-associated stepper field.
+     * The value is a **string** rather than a number, because that is what an
+     * attribute can carry and what a form submits; `pfChange` reports the parsed
+     * number beside it, which is what a framework consumer wants. An empty string
+     * is an empty field — not zero, which is a value someone chose.
+     * All of the arithmetic is core's, so this and the React `NumberInput` step,
+     * round and clamp identically: ten steps of `0.1` reach exactly 1 in both.
+     */
+    interface PfNumberInput {
+        /**
+          * The step-down button's accessible name.
+          * @default 'Decrease'
+         */
+        "decrementLabel"?: string;
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * The step-up button's accessible name.
+          * @default 'Increase'
+         */
+        "incrementLabel"?: string;
+        /**
+          * Visible label. Rendered in the same root as the input, so `for` works.
+         */
+        "label"?: string;
+        /**
+          * The highest value the field accepts.
+         */
+        "max"?: number;
+        /**
+          * The lowest value the field accepts.
+         */
+        "min"?: number;
+        /**
+          * Submitted under this name. Reflected, because a form-associated element takes its submission name from the attribute, not this property.
+         */
+        "name"?: string;
+        /**
+          * Fires when the value changes, with the parsed number beside the string.
+         */
+        "onPfChange"?: (event: PfNumberInputCustomEvent<{ value: string; number: number | null }>) => void;
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * How far one step moves, and what the result is rounded to.
+          * @default 1
+         */
+        "step"?: number;
+        /**
+          * The value, as a string. Empty means an empty field.
+          * @default ''
+         */
+        "value"?: string;
     }
     /**
      * One choice inside a `pf-select`.
@@ -7052,6 +7235,21 @@ declare namespace LocalJSX {
         "dismissable": boolean;
         "exiting": boolean;
     }
+    interface PfNumberInputAttributes {
+        "name": string;
+        "value": string;
+        "min": number;
+        "max": number;
+        "step": number;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "required": boolean;
+        "disabled": boolean;
+        "decrementLabel": string;
+        "incrementLabel": string;
+    }
     interface PfOptionAttributes {
         "value": string;
         "disabled": boolean;
@@ -7326,6 +7524,7 @@ declare namespace LocalJSX {
         "pf-modal-header": PfModalHeader;
         "pf-multi-select": Omit<PfMultiSelect, keyof PfMultiSelectAttributes> & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes]?: PfMultiSelect[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `attr:${K}`]?: PfMultiSelectAttributes[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `prop:${K}`]?: PfMultiSelect[K] };
         "pf-notification": Omit<PfNotification, keyof PfNotificationAttributes> & { [K in keyof PfNotification & keyof PfNotificationAttributes]?: PfNotification[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `attr:${K}`]?: PfNotificationAttributes[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `prop:${K}`]?: PfNotification[K] };
+        "pf-number-input": Omit<PfNumberInput, keyof PfNumberInputAttributes> & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes]?: PfNumberInput[K] } & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes as `attr:${K}`]?: PfNumberInputAttributes[K] } & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes as `prop:${K}`]?: PfNumberInput[K] };
         "pf-option": Omit<PfOption, keyof PfOptionAttributes> & { [K in keyof PfOption & keyof PfOptionAttributes]?: PfOption[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `attr:${K}`]?: PfOptionAttributes[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `prop:${K}`]?: PfOption[K] };
         "pf-page-header": PfPageHeader;
         "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
@@ -7744,6 +7943,16 @@ declare module "@stencil/core" {
              * `Alert` and nowhere else — which is why the mapping is now shared.
              */
             "pf-notification": LocalJSX.IntrinsicElements["pf-notification"] & JSXBase.HTMLAttributes<HTMLPfNotificationElement>;
+            /**
+             * A form-associated stepper field.
+             * The value is a **string** rather than a number, because that is what an
+             * attribute can carry and what a form submits; `pfChange` reports the parsed
+             * number beside it, which is what a framework consumer wants. An empty string
+             * is an empty field — not zero, which is a value someone chose.
+             * All of the arithmetic is core's, so this and the React `NumberInput` step,
+             * round and clamp identically: ten steps of `0.1` reach exactly 1 in both.
+             */
+            "pf-number-input": LocalJSX.IntrinsicElements["pf-number-input"] & JSXBase.HTMLAttributes<HTMLPfNumberInputElement>;
             /**
              * One choice inside a `pf-select`.
              * It only reports that it was chosen; the select owns the value, the active

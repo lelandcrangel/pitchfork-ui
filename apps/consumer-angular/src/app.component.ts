@@ -47,6 +47,7 @@ import {
   PfModalHeader,
   PfMultiSelect,
   PfNotification,
+  PfNumberInput,
   PfPageHeader,
   PfPagination,
   PfPopover,
@@ -142,6 +143,7 @@ import {
     PfModalHeader,
     PfMultiSelect,
     PfNotification,
+    PfNumberInput,
     PfPageHeader,
     PfPagination,
     PfPopover,
@@ -418,6 +420,17 @@ import {
           <pf-option value="cherry">Cherry</pf-option>
         </pf-select>
         <!-- 12-hour display, 24-hour value. -->
+        <!-- Form-associated, and the value is a string; see the React consumer. -->
+        <pf-number-input
+          label="Quantity"
+          name="quantity"
+          [value]="quantity()"
+          [min]="0"
+          [max]="10"
+          [step]="0.5"
+          data-testid="number-input"
+          (pfChange)="quantity.set($event.detail.value)"
+        ></pf-number-input>
         <pf-time-picker
           label="Start time"
           name="at"
@@ -850,6 +863,7 @@ export class AppComponent {
   details = signal(false);
   range = signal('week');
   cta = signal(true);
+  quantity = signal('2');
   day = signal('2024-03-15');
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');

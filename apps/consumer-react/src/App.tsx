@@ -46,6 +46,7 @@ import {
   PfModalHeader,
   PfMultiSelect,
   PfNotification,
+  PfNumberInput,
   PfPageHeader,
   PfPagination,
   PfPopover,
@@ -102,6 +103,7 @@ export function App() {
   const [details, setDetails] = useState(false);
   const [range, setRange] = useState('week');
   const [cta, setCta] = useState(true);
+  const [quantity, setQuantity] = useState('2');
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
@@ -390,6 +392,23 @@ export function App() {
           </PfOption>
           <PfOption value="cherry">Cherry</PfOption>
         </PfSelect>
+        {/*
+          A form control, so form-associated: the value reaches FormData and
+          the submission below shows it. The value is a string — an empty one
+          is an empty field, not zero, which a form reading one as the other
+          would get wrong. All the arithmetic is core's, so ten steps of 0.1
+          reach exactly 1 here and in the React NumberInput.
+        */}
+        <PfNumberInput
+          label="Quantity"
+          name="quantity"
+          value={quantity}
+          min={0}
+          max={10}
+          step={0.5}
+          data-testid="number-input"
+          onPfChange={(event) => setQuantity(event.detail.value)}
+        />
         <PfTimePicker
           label="Start time"
           name="at"

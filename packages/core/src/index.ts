@@ -11,6 +11,7 @@ export * from './icons';
 export * from './keys';
 export * from './motion';
 export * from './navigation';
+export * from './number-field';
 export * from './pagination';
 export * from './progress';
 export * from './rating';

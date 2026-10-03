@@ -118,6 +118,7 @@ const EXPECTED = [
   'pf-button-group',
   'pf-button-group-item',
   'pf-inline-cta',
+  'pf-number-input',
 ];
 
 const TYPES = {
@@ -521,13 +522,14 @@ try {
        * a distinction a server relies on, and one `setFormValue('')` would
        * erase for the checkbox.
        */
-      if (
-        names.join(',') !==
-        'at,colours,colours,due,fruit,notes,notify,plan,topics,topics,trip-end,trip-start,volume'
-      ) {
+      const expectedNames =
+        'at,colours,colours,due,fruit,notes,notify,plan,quantity,topics,topics,' +
+        'trip-end,trip-start,volume';
+      if (names.join(',') !== expectedNames) {
         result.unstyled.push(
           `form sees [${names.join(', ')}] from the form controls, ` +
-            'expected at,colours,colours,due,fruit,notes,notify,plan,topics,topics,trip-end,trip-start,volume (colours and topics twice each, one entry per value) (terms is unticked, so absent)',
+            `expected ${expectedNames} (colours and topics twice each, one entry per ` +
+            'value) (terms is unticked, so absent)',
         );
       }
       /*
@@ -538,6 +540,17 @@ try {
        * value is the same kind of claim.
        */
       const submitted = new FormData(prefs);
+      /*
+       * The stepper submits its value as a string, which is what a form
+       * carries. An *empty* field submits an empty string rather than "0" —
+       * the distinction `parseNumberValue` exists for — and the browser spec
+       * covers that case, since clearing the field here would cost the
+       * submission check its value.
+       */
+      const quantity = submitted.get('quantity');
+      if (quantity !== '2') {
+        result.unstyled.push(`pf-number-input submitted "${quantity}", expected 2`);
+      }
       const at = submitted.get('at');
       if (at !== '14:30') {
         result.unstyled.push(
@@ -2994,6 +3007,98 @@ try {
         problems.push(
           `the host framework did not take the prompt off the page ` +
             `(gone: ${state.gone}, echo: "${state.echo}")`,
+        );
+      }
+    }
+  }
+
+  /*
+   * The stepper's own claims that need a real build: the two buttons sit
+   * either side of the input with the shared borders drawn once, and the
+   * button that cannot move is dimmed. Stepping also has to reach the host
+   * framework, which is the pf-command-item class of bug.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const field = document.querySelector('pf-number-input');
+        if (!field) return { error: 'the consumer app has no pf-number-input' };
+
+        const part = (name) => field.shadowRoot.querySelector(`[part="${name}"]`);
+        const boxes = ['decrement', 'input', 'increment'].map((name) =>
+          part(name).getBoundingClientRect(),
+        );
+
+        const read = {
+          // Left to right, with the input between the two steppers.
+          inOrder: boxes[0].right <= boxes[1].left + 1 && boxes[1].right <= boxes[2].left + 1,
+          control: getComputedStyle(part('control')).borderTopWidth,
+          stepBackground: getComputedStyle(part('decrement')).backgroundColor,
+          inputBackground: getComputedStyle(part('input')).backgroundColor,
+          dividers: [
+            getComputedStyle(part('decrement')).borderInlineEndWidth,
+            getComputedStyle(part('increment')).borderInlineStartWidth,
+          ],
+          centred: getComputedStyle(part('input')).textAlign,
+        };
+
+        // Step to the maximum and watch the button dim and the echo follow.
+        part('increment').click();
+        const deadline = Date.now() + 3000;
+        while (field.value !== '2.5') {
+          if (Date.now() > deadline) return { ...read, error: 'stepping did not take' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        /*
+         * Clicked up to the maximum rather than assigned: the host framework
+         * holds `value` and writes it back on every pfChange, so an assignment
+         * from out here is overwritten by the next render — measured, as a
+         * value that stayed at 2.5. Fifteen steps of 0.5 is the real path a
+         * user takes anyway.
+         */
+        for (let click = 0; click < 40 && !part('increment').disabled; click += 1) {
+          part('increment').click();
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        if (!part('increment').disabled) {
+          return { ...read, error: `the top button never dimmed (value ${field.value})` };
+        }
+
+        return {
+          ...read,
+          disabledOpacity: getComputedStyle(part('increment')).opacity,
+          plainOpacity: getComputedStyle(part('decrement')).opacity,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-number-input: ${state.error}`);
+    } else {
+      if (!state.inOrder) {
+        problems.push('the stepper buttons are not laid out either side of the input');
+      }
+      if (state.control === '0px') {
+        problems.push('pf-number-input has no border — a --pf-numberinput-* alias is missing');
+      }
+      if (state.stepBackground === state.inputBackground) {
+        problems.push(
+          `the stepper buttons are the same colour as the field ` + `("${state.inputBackground}")`,
+        );
+      }
+      if (state.dividers.some((width) => width === '0px')) {
+        problems.push(
+          `the stepper dividers read ${JSON.stringify(state.dividers)}, expected one each`,
+        );
+      }
+      if (state.centred !== 'center') {
+        problems.push(`the stepper's value is ${state.centred}, expected centred`);
+      }
+      if (state.disabledOpacity === state.plainOpacity) {
+        problems.push(
+          `the button that cannot move looks the same as the one that can ` +
+            `(opacity ${state.plainOpacity})`,
         );
       }
     }

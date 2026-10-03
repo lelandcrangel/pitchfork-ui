@@ -710,6 +710,13 @@ Things that differ from the React library, learned by porting the first two:
   token and the avatar's own both resolve to
   `--color-semantic-background-subtle`, so a colour comparison passes whether
   the bridge applied or not.
+- **A controlled consumer overwrites what you assign from outside.** Setting
+  `el.value` from a test or a script is undone by the host framework's next
+  render, because it holds the value and writes it back on every event —
+  measured in the consumer smoke, where a stepper assigned `10` was back at
+  `2.5` a frame later. Drive such an element the way a user does (click the
+  button, press the key) and let the framework follow; assignment is only
+  reliable on an element nothing else owns.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.
