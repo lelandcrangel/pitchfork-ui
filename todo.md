@@ -182,7 +182,7 @@ focus leaving the month scrolls the grid with it.
 
 ---
 
-## The React Select has no typeahead
+## The React Select has no typeahead — fixed
 
 The ARIA listbox pattern expects printable-character typeahead: typing `b`
 moves to the next option beginning with `b`, `br` narrows, and pressing one
@@ -195,17 +195,20 @@ all, so a long list can only be walked one arrow at a time.
 `findTypeaheadMatch` — precisely so the two layers cannot disagree about what
 `bbb` means.
 
-**Fix:** hold a buffer and a `TYPEAHEAD_TIMEOUT_MS` timer in `Select` (core
-owns the matching, not the timer), and on a typeahead key move `activeIndex` to
-`findTypeaheadMatch`'s answer. Two decisions worth copying from the element:
-a disabled option is never matched, because the keyboard would land somewhere
-it cannot act; and with the listbox closed, typeahead _chooses_ rather than
-highlighting, which is what a native `<select>` does and the only feedback
-available when nothing is on screen. `pf-select`'s browser spec is the
-behaviour to match.
+**Fixed**, and the buffer went into a hook rather than into the component:
+`packages/react/src/hooks/useTypeahead.ts` owns the buffer and its timer and
+delegates the matching to core, which is the shape every other hook here
+takes. `MultiSelect`, `Combobox` and `TreeView` can take it as it stands.
 
-The same applies to `Combobox`, `MultiSelect` and `TreeView` when their turn
-comes.
+The buffer is a **ref, not state**. It never reaches the DOM — what renders is
+the active index the caller sets from the match — so holding it in state would
+re-render on every keystroke to produce identical markup.
+
+Both of the element's decisions came across, each with a test: a disabled
+option is never matched, and with the listbox closed typeahead _chooses_
+rather than highlighting. One more the port needed: the typeahead branch has
+to come **after** the activation branch, or a space goes into the buffer
+instead of selecting. Probed by reordering them, which breaks two tests.
 
 ---
 

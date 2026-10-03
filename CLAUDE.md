@@ -255,6 +255,19 @@ Form components (`Input`, `Select`, `Textarea`, etc.) wrap the control in a `.pf
 
 Prefer `useControllableState` (from `hooks/`) for any component that supports both controlled and uncontrolled usage.
 
+For a listbox, menu or tree, two hooks over core's arithmetic do the keyboard:
+`useListNavigation` (arrows, Home, End, wrapping, skipping disabled items) and
+`useTypeahead` (printable-character jumping). Reach for both rather than
+writing key handling by hand — `Combobox` clamped with `Math.min`/`Math.max`
+and so stopped where `Select` next door wrapped, and `Select` had no typeahead
+at all while `<pf-select>` did. `useTypeahead` holds its buffer in a **ref**,
+because the buffer never reaches the DOM: what renders is the active index the
+caller sets from the match.
+
+**The typeahead branch goes after the activation branch.** A space is an
+activation key in a listbox and is deliberately not a typeahead character, so
+checking typeahead first puts a space into the buffer instead of selecting.
+
 ---
 
 ## Where behaviour lives
