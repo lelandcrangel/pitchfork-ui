@@ -31,6 +31,7 @@ import {
   PfDropdown,
   PfEmptyState,
   PfIcon,
+  PfInlineCta,
   PfInput,
   PfKbd,
   PfLoadingDots,
@@ -125,6 +126,7 @@ import {
     PfDropdown,
     PfEmptyState,
     PfIcon,
+    PfInlineCta,
     PfInput,
     PfKbd,
     PfLoadingDots,
@@ -807,6 +809,23 @@ import {
         <output data-testid="button-group-value">{{ range() }}</output>
       </div>
 
+      <!-- Dismissal waits on the animation, not a timeout; see the React consumer. -->
+      @if (cta()) {
+        <pf-inline-cta
+          tone="info"
+          icon="circle-info"
+          dismissible
+          data-testid="inline-cta"
+          (pfDismiss)="cta.set(false)"
+        >
+          Finish setting up your account
+          <span slot="description">Two steps left, and they are quick ones.</span>
+          <pf-button slot="action" variant="secondary">Continue</pf-button>
+        </pf-inline-cta>
+      } @else {
+        <p data-testid="inline-cta-echo">dismissed</p>
+      }
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -830,6 +849,7 @@ export class AppComponent {
   sections = signal('shipping');
   details = signal(false);
   range = signal('week');
+  cta = signal(true);
   day = signal('2024-03-15');
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');

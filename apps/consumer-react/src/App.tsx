@@ -30,6 +30,7 @@ import {
   PfDropdown,
   PfEmptyState,
   PfIcon,
+  PfInlineCta,
   PfInput,
   PfKbd,
   PfLoadingDots,
@@ -100,6 +101,7 @@ export function App() {
   const [sections, setSections] = useState('shipping');
   const [details, setDetails] = useState(false);
   const [range, setRange] = useState('week');
+  const [cta, setCta] = useState(true);
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
@@ -937,6 +939,31 @@ export function App() {
         </PfButtonGroup>
         <output data-testid="button-group-value">{range}</output>
       </div>
+
+      {/*
+        Dismissal waits on Animation.finished rather than a timeout, so the
+        event lands when the animation is actually over — and resolves at once
+        when nothing animates, which is prefers-reduced-motion and a consumer
+        who has not loaded the stylesheet. The React useExitAnimation guesses
+        220ms and fires then either way.
+      */}
+      {cta ? (
+        <PfInlineCta
+          tone="info"
+          icon="circle-info"
+          dismissible
+          data-testid="inline-cta"
+          onPfDismiss={() => setCta(false)}
+        >
+          Finish setting up your account
+          <span slot="description">Two steps left, and they are quick ones.</span>
+          <PfButton slot="action" variant="secondary">
+            Continue
+          </PfButton>
+        </PfInlineCta>
+      ) : (
+        <p data-testid="inline-cta-echo">dismissed</p>
+      )}
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

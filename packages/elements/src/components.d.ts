@@ -15,6 +15,7 @@ import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-but
 import { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 import { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 import { PfEmptyStateSize } from "./components/pf-empty-state/pf-empty-state";
+import { PfInlineCtaTone } from "./components/pf-inline-cta/pf-inline-cta";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
@@ -50,6 +51,7 @@ export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-but
 export { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 export { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 export { PfEmptyStateSize } from "./components/pf-empty-state/pf-empty-state";
+export { PfInlineCtaTone } from "./components/pf-inline-cta/pf-inline-cta";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
@@ -1037,6 +1039,49 @@ export namespace Components {
           * A registered Font Awesome name, one of its aliases, or a custom glyph.
          */
         "name": string;
+    }
+    /**
+     * A prompt in the flow of a page: an icon, a line or two, something to do, and
+     * optionally a way to send it away.
+     * Dismissal waits on `Animation.finished` rather than a timeout. The React
+     * `useExitAnimation` guesses 220ms and calls back then, which is wrong twice
+     * over: it fires too early or too late if the stylesheet's duration changes,
+     * and it fires at all when nothing animated. Reading `getAnimations()` after a
+     * frame answers both — the same arrangement `pf-notification.dismiss()` uses,
+     * and for the same measured reason: an `animationend` listener never fires
+     * when no animation started, which is the ordinary case under
+     * `prefers-reduced-motion` or with the stylesheet unloaded.
+     */
+    interface PfInlineCta {
+        /**
+          * Plays the exit animation and resolves once it has finished, then reports.  `getAnimations()` read after a frame, so the class the stylesheet animates has landed; an empty list resolves at once, which is what makes this correct with no stylesheet, under `prefers-reduced-motion`, and in both test projects.
+         */
+        "dismiss": () => Promise<void>;
+        /**
+          * The dismiss button's accessible name.
+          * @default 'Dismiss'
+         */
+        "dismissLabel": string;
+        /**
+          * Offer a dismiss button. Reflected: it changes the padding.
+          * @default false
+         */
+        "dismissible": boolean;
+        /**
+          * Whether the exit animation is running. Reflected for the stylesheet.
+          * @default false
+         */
+        "exiting": boolean;
+        /**
+          * An icon name from the same registry as `pf-icon`.
+          * @default 'circle-question'
+         */
+        "icon": string;
+        /**
+          * Colour treatment. Reflected so the stylesheet can select on it.
+          * @default 'default'
+         */
+        "tone": PfInlineCtaTone;
     }
     /**
      * A form-associated text input.
@@ -2589,6 +2634,10 @@ export interface PfDropdownCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfDropdownElement;
 }
+export interface PfInlineCtaCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfInlineCtaElement;
+}
 export interface PfInputCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfInputElement;
@@ -3243,6 +3292,35 @@ declare global {
     var HTMLPfIconElement: {
         prototype: HTMLPfIconElement;
         new (): HTMLPfIconElement;
+    };
+    interface HTMLPfInlineCtaElementEventMap {
+        "pfDismiss": void;
+    }
+    /**
+     * A prompt in the flow of a page: an icon, a line or two, something to do, and
+     * optionally a way to send it away.
+     * Dismissal waits on `Animation.finished` rather than a timeout. The React
+     * `useExitAnimation` guesses 220ms and calls back then, which is wrong twice
+     * over: it fires too early or too late if the stylesheet's duration changes,
+     * and it fires at all when nothing animated. Reading `getAnimations()` after a
+     * frame answers both — the same arrangement `pf-notification.dismiss()` uses,
+     * and for the same measured reason: an `animationend` listener never fires
+     * when no animation started, which is the ordinary case under
+     * `prefers-reduced-motion` or with the stylesheet unloaded.
+     */
+    interface HTMLPfInlineCtaElement extends Components.PfInlineCta, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfInlineCtaElementEventMap>(type: K, listener: (this: HTMLPfInlineCtaElement, ev: PfInlineCtaCustomEvent<HTMLPfInlineCtaElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfInlineCtaElementEventMap>(type: K, listener: (this: HTMLPfInlineCtaElement, ev: PfInlineCtaCustomEvent<HTMLPfInlineCtaElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfInlineCtaElement: {
+        prototype: HTMLPfInlineCtaElement;
+        new (): HTMLPfInlineCtaElement;
     };
     interface HTMLPfInputElementEventMap {
         "pfInput": { value: string };
@@ -4159,6 +4237,7 @@ declare global {
         "pf-dropdown": HTMLPfDropdownElement;
         "pf-empty-state": HTMLPfEmptyStateElement;
         "pf-icon": HTMLPfIconElement;
+        "pf-inline-cta": HTMLPfInlineCtaElement;
         "pf-input": HTMLPfInputElement;
         "pf-kbd": HTMLPfKbdElement;
         "pf-loading-dots": HTMLPfLoadingDotsElement;
@@ -5173,6 +5252,49 @@ declare namespace LocalJSX {
           * A registered Font Awesome name, one of its aliases, or a custom glyph.
          */
         "name": string;
+    }
+    /**
+     * A prompt in the flow of a page: an icon, a line or two, something to do, and
+     * optionally a way to send it away.
+     * Dismissal waits on `Animation.finished` rather than a timeout. The React
+     * `useExitAnimation` guesses 220ms and calls back then, which is wrong twice
+     * over: it fires too early or too late if the stylesheet's duration changes,
+     * and it fires at all when nothing animated. Reading `getAnimations()` after a
+     * frame answers both — the same arrangement `pf-notification.dismiss()` uses,
+     * and for the same measured reason: an `animationend` listener never fires
+     * when no animation started, which is the ordinary case under
+     * `prefers-reduced-motion` or with the stylesheet unloaded.
+     */
+    interface PfInlineCta {
+        /**
+          * The dismiss button's accessible name.
+          * @default 'Dismiss'
+         */
+        "dismissLabel"?: string;
+        /**
+          * Offer a dismiss button. Reflected: it changes the padding.
+          * @default false
+         */
+        "dismissible"?: boolean;
+        /**
+          * Whether the exit animation is running. Reflected for the stylesheet.
+          * @default false
+         */
+        "exiting"?: boolean;
+        /**
+          * An icon name from the same registry as `pf-icon`.
+          * @default 'circle-question'
+         */
+        "icon"?: string;
+        /**
+          * Fires once the prompt has finished leaving.
+         */
+        "onPfDismiss"?: (event: PfInlineCtaCustomEvent<void>) => void;
+        /**
+          * Colour treatment. Reflected so the stylesheet can select on it.
+          * @default 'default'
+         */
+        "tone"?: PfInlineCtaTone;
     }
     /**
      * A form-associated text input.
@@ -6858,6 +6980,13 @@ declare namespace LocalJSX {
         "name": string;
         "label": string;
     }
+    interface PfInlineCtaAttributes {
+        "tone": PfInlineCtaTone;
+        "icon": string;
+        "dismissible": boolean;
+        "dismissLabel": string;
+        "exiting": boolean;
+    }
     interface PfInputAttributes {
         "name": string;
         "value": string;
@@ -7181,6 +7310,7 @@ declare namespace LocalJSX {
         "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
         "pf-empty-state": Omit<PfEmptyState, keyof PfEmptyStateAttributes> & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes]?: PfEmptyState[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `attr:${K}`]?: PfEmptyStateAttributes[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `prop:${K}`]?: PfEmptyState[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
+        "pf-inline-cta": Omit<PfInlineCta, keyof PfInlineCtaAttributes> & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes]?: PfInlineCta[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `attr:${K}`]?: PfInlineCtaAttributes[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `prop:${K}`]?: PfInlineCta[K] };
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
         "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
         "pf-loading-dots": Omit<PfLoadingDots, keyof PfLoadingDotsAttributes> & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes]?: PfLoadingDots[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `attr:${K}`]?: PfLoadingDotsAttributes[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `prop:${K}`]?: PfLoadingDots[K] };
@@ -7496,6 +7626,19 @@ declare module "@stencil/core" {
              */
             "pf-empty-state": LocalJSX.IntrinsicElements["pf-empty-state"] & JSXBase.HTMLAttributes<HTMLPfEmptyStateElement>;
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
+            /**
+             * A prompt in the flow of a page: an icon, a line or two, something to do, and
+             * optionally a way to send it away.
+             * Dismissal waits on `Animation.finished` rather than a timeout. The React
+             * `useExitAnimation` guesses 220ms and calls back then, which is wrong twice
+             * over: it fires too early or too late if the stylesheet's duration changes,
+             * and it fires at all when nothing animated. Reading `getAnimations()` after a
+             * frame answers both — the same arrangement `pf-notification.dismiss()` uses,
+             * and for the same measured reason: an `animationend` listener never fires
+             * when no animation started, which is the ordinary case under
+             * `prefers-reduced-motion` or with the stylesheet unloaded.
+             */
+            "pf-inline-cta": LocalJSX.IntrinsicElements["pf-inline-cta"] & JSXBase.HTMLAttributes<HTMLPfInlineCtaElement>;
             /**
              * A form-associated text input.
              * `formAssociated` plus `ElementInternals` is what makes this participate in a

@@ -1,0 +1,167 @@
+:host {
+  align-items: flex-start;
+  background: var(--pf-inline-cta-bg);
+  border: 1px solid var(--pf-inline-cta-border);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: auto 1fr;
+  padding: var(--space-3);
+  position: relative;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* Room for the centred dismiss button, so the content does not crowd it. */
+:host([dismissible]) {
+  padding-inline-end: var(--space-12);
+}
+
+@media (--md) {
+  :host {
+    align-items: center;
+    grid-template-columns: auto 1fr auto;
+  }
+}
+
+/* Two classes deep, because the box sets its own `display` below. */
+.action.empty {
+  display: none;
+}
+
+.icon {
+  align-items: center;
+  color: var(--pf-inline-cta-text-muted);
+  display: inline-flex;
+  font-size: var(--font-size-md);
+  justify-content: center;
+}
+
+.content {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.heading {
+  color: var(--pf-inline-cta-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+slot[name='description']::slotted(*) {
+  color: var(--pf-inline-cta-text-muted);
+  display: block;
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.action {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+  grid-column: 1 / -1;
+  justify-content: flex-start;
+}
+
+@media (--md) {
+  .action {
+    grid-column: auto;
+    justify-content: initial;
+  }
+}
+
+.dismiss {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-inline-cta-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  height: 28px;
+  inset-inline-end: var(--space-3);
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+}
+
+.dismiss:hover,
+.dismiss:focus-visible {
+  background: var(--pf-inline-cta-bg-subtle);
+  color: var(--pf-inline-cta-text);
+  outline: none;
+}
+
+/*
+ * The exit fades and collapses, so the page reflows as it goes. Each element
+ * needs its own copy of the keyframes: they do not cross a shadow boundary.
+ */
+:host([exiting]) {
+  animation: pf-inline-cta-out var(--duration-moderate) var(--easing-accelerate) forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@keyframes pf-inline-cta-out {
+  from {
+    opacity: 1;
+    max-height: 480px;
+  }
+  to {
+    margin-bottom: 0;
+    margin-top: 0;
+    max-height: 0;
+    opacity: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host([exiting]) {
+    animation: none;
+  }
+}
+
+:host([tone='info']) {
+  background: color-mix(in srgb, var(--pf-inline-cta-info-bg) 70%, var(--pf-mix-base));
+  border-color: var(--pf-inline-cta-info-border);
+}
+
+/*
+ * Only `info` tints its text in the React component, so only `info` does here
+ * -- faithful rather than tidied, because changing the other three is a design
+ * decision and not part of a port.
+ */
+:host([tone='info']) .icon {
+  color: var(--pf-inline-cta-info-icon);
+}
+
+:host([tone='info']) .heading {
+  color: var(--pf-inline-cta-info-heading);
+}
+
+:host([tone='info']) slot[name='description']::slotted(*) {
+  color: var(--pf-inline-cta-info-description);
+}
+
+:host([tone='success']) {
+  background: color-mix(in srgb, var(--pf-inline-cta-success-bg) 55%, var(--pf-mix-base));
+  border-color: var(--pf-inline-cta-success-border);
+}
+
+:host([tone='warning']) {
+  background: color-mix(in srgb, var(--pf-inline-cta-warning-bg) 60%, var(--pf-mix-base));
+  border-color: var(--pf-inline-cta-warning-border);
+}
+
+:host([tone='danger']) {
+  background: color-mix(in srgb, var(--pf-inline-cta-danger-bg) 55%, var(--pf-mix-base));
+  border-color: var(--pf-inline-cta-danger-border);
+}

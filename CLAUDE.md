@@ -745,6 +745,12 @@ What each project cannot do, measured rather than assumed:
   disabled state is untestable in the `unit` project — put those assertions in
   a browser spec. Core's own tests do cover it, because they run on jsdom,
   which honours the selector; `pf-toolbar` is the worked example.
+- **The mock DOM has no `getAnimations` either.** It fails differently from
+  the missing `toggleAttribute` above, and more usefully: a `TypeError` thrown
+  inside an `@Method` rejects the promise that method returned, where one
+  thrown from a lifecycle method is swallowed by `safeCall`. So
+  `pf-inline-cta.dismiss()` reported its own bug, with a stack. Guard the call
+  with `typeof`, which also covers a consumer on an older browser.
 - **The mock DOM has no `toggleAttribute`.** Measured, and worth knowing how
   it fails rather than just that it does: Stencil's `safeCall` swallows the
   `TypeError`, so the lifecycle method carries on as if nothing happened. The

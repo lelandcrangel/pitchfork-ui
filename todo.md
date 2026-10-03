@@ -315,3 +315,25 @@ screen reader is told which step is current but not which are done. The usual
 remedy is visually-hidden text in each step ("Completed: ", "Current step: "),
 which changes every step's accessible name — worth doing deliberately, with the
 docs examples updated, rather than folded into a port.
+
+---
+
+## The React `useExitAnimation` waits on a guess
+
+`useExitAnimation` sets a class and then calls back after a fixed 220ms, which
+is wrong in both directions: too early or too late if the stylesheet's duration
+changes, and it fires at all when nothing animated — under
+`prefers-reduced-motion`, or for a consumer who has not loaded the CSS.
+
+`<pf-inline-cta>` and `<pf-notification>` both read `getAnimations()` after a
+frame and await `Animation.finished`, resolving at once when the list is empty.
+Measured in the browser spec: swapping the element's version for a 220ms
+timeout makes the no-animation case take 220ms instead of a frame, which is the
+test that fails.
+
+**Fix:** have `useExitAnimation` take the element and await its animations
+rather than a duration — `const animations = el.getAnimations(); if
+(animations.length === 0) { onExited(); return; }` and otherwise
+`Promise.all(animations.map((a) => a.finished))`. `InlineCTA` is the only
+caller, which is what makes this a small change; the hook's `duration` option
+goes away with it.

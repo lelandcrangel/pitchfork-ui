@@ -117,6 +117,7 @@ const EXPECTED = [
   'pf-avatar-group',
   'pf-button-group',
   'pf-button-group-item',
+  'pf-inline-cta',
 ];
 
 const TYPES = {
@@ -2893,6 +2894,106 @@ try {
       if (state.echo !== 'day') {
         problems.push(
           `pf-button-group reported "${state.echo}" to the host framework, expected day`,
+        );
+      }
+    }
+  }
+
+  /*
+   * The inline prompt, and specifically its exit. The stylesheet's own
+   * animation is the thing no test project can see: `getAnimations()` is the
+   * only check that tells a working animation from a declared one, because an
+   * undefined duration token computes the whole shorthand away — pf-modal's
+   * mistake. Dismissing it also has to reach the host framework, which is what
+   * removes it from the page.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const cta = document.querySelector('pf-inline-cta');
+        if (!cta) return { error: 'the consumer app has no pf-inline-cta' };
+
+        const part = (name) => cta.shadowRoot.querySelector(`[part="${name}"]`);
+        const read = {
+          background: getComputedStyle(cta).backgroundColor,
+          border: getComputedStyle(cta).borderTopWidth,
+          iconColour: getComputedStyle(part('icon')).color,
+          headingWeight: getComputedStyle(part('heading')).fontWeight,
+          actionDisplay: getComputedStyle(part('action')).display,
+          // The dismiss button is centred in the padding the tone reserves.
+          dismissRight: part('dismiss').getBoundingClientRect().right,
+          ctaRight: cta.getBoundingClientRect().right,
+        };
+
+        // Dismiss it, and watch the animation actually run.
+        part('dismiss').click();
+        const deadline = Date.now() + 3000;
+        while (!cta.hasAttribute('exiting')) {
+          if (Date.now() > deadline) return { ...read, error: 'the exit never started' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        const animations = cta.getAnimations().map((animation) => ({
+          name: animation.animationName ?? null,
+          duration: animation.effect?.getTiming().duration ?? 0,
+        }));
+
+        // And watch the host framework take it off the page.
+        const gone = await new Promise((resolve) => {
+          const since = Date.now();
+          const tick = () => {
+            if (!document.querySelector('pf-inline-cta')) return resolve(true);
+            if (Date.now() - since > 3000) return resolve(false);
+            requestAnimationFrame(tick);
+          };
+          tick();
+        });
+
+        return {
+          ...read,
+          animations,
+          gone,
+          echo: document.querySelector('[data-testid="inline-cta-echo"]')?.textContent?.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-inline-cta: ${state.error}`);
+    } else {
+      if (isTransparent(state.background) || state.border === '0px') {
+        problems.push(
+          `pf-inline-cta has no surface (background "${state.background}", ` +
+            `border ${state.border})`,
+        );
+      }
+      if (state.iconColour === 'rgb(0, 0, 0)') {
+        problems.push(
+          `the icon computes colour ${state.iconColour}, the initial value — ` +
+            'a --pf-inline-cta-* alias did not resolve',
+        );
+      }
+      if (state.actionDisplay === 'none') {
+        problems.push('the action box is hidden although something is slotted into it');
+      }
+      if (!(state.dismissRight < state.ctaRight)) {
+        problems.push(
+          `the dismiss button's right edge is ${state.dismissRight} against the ` +
+            `prompt's ${state.ctaRight} — it is outside the padding reserved for it`,
+        );
+      }
+      const running = state.animations.filter(
+        (animation) => animation.name && animation.duration > 0,
+      );
+      if (running.length === 0) {
+        problems.push(
+          'dismissing pf-inline-cta ran no animation — it vanishes rather than leaving ' +
+            `(${JSON.stringify(state.animations)})`,
+        );
+      }
+      if (!state.gone || state.echo !== 'dismissed') {
+        problems.push(
+          `the host framework did not take the prompt off the page ` +
+            `(gone: ${state.gone}, echo: "${state.echo}")`,
         );
       }
     }
