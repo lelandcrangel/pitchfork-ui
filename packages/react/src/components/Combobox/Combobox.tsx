@@ -1,11 +1,12 @@
 import { matchesCommandQuery, queryIsEchoedSelection } from '@pitchfork-ui/core';
-import { forwardRef, useId, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
 import {
   useAnchoredPosition,
   useComposedRefs,
   useControllableState,
+  useListNavigation,
   useOutsideInteraction,
   usePresence,
 } from '../../hooks';
@@ -81,7 +82,6 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
 
   const [query, setQuery] = useState(() => selectedOption?.label ?? '');
   const [isOpen, setIsOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -105,6 +105,30 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     return options.filter((option) => matchesCommandQuery({ label: option.label }, query));
   }, [options, query, selectedOption]);
 
+  /*
+   * The same navigation core gives `<pf-combobox>` and `Select`. It replaces
+   * `Math.min`/`Math.max` clamping, which stopped at the ends where `Select`
+   * next door wrapped -- two arrow behaviours in neighbouring controls of one
+   * design system -- and which could leave a *disabled* option active, where
+   * Enter then did nothing at all.
+   */
+  const { activeIndex, firstEnabledIndex, move, setActiveIndex } = useListNavigation({
+    items: filtered,
+    isDisabled: (option: ComboboxOption) => Boolean(option.disabled),
+  });
+
+  /*
+   * `filtered` changes with every keystroke, so the active option has to be
+   * re-established against the new list rather than against the one the
+   * keystroke was typed into -- a `setActiveIndex` in the change handler still
+   * sees the previous render's options, and index 0 of those may not even
+   * exist in these.
+   */
+  useEffect(() => {
+    if (!isOpen) return;
+    setActiveIndex(firstEnabledIndex);
+  }, [filtered, firstEnabledIndex, isOpen, setActiveIndex]);
+
   useOutsideInteraction({
     refs: [rootRef, listboxRef],
     enabled: isOpen,
@@ -114,7 +138,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
   const open = () => {
     if (disabled) return;
     setIsOpen(true);
-    setActiveIndex(0);
+    setActiveIndex(firstEnabledIndex);
   };
 
   const closeAndRevert = () => {
@@ -134,7 +158,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
   const clear = () => {
     setSelectedValue('');
     setQuery('');
-    setActiveIndex(0);
+    setActiveIndex(firstEnabledIndex);
     setIsOpen(true);
     inputRef.current?.focus();
   };
@@ -150,14 +174,23 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
         open();
         return;
       }
-      setActiveIndex((index) => Math.min(index + 1, filtered.length - 1));
+      move('next');
       return;
     }
 
     if (event.key === Keys.ArrowUp) {
       event.preventDefault();
       if (isOpen) {
-        setActiveIndex((index) => Math.max(index - 1, 0));
+        move('previous');
+      }
+      return;
+    }
+
+    // Home and End did nothing at all, while `Select` answered both.
+    if (event.key === Keys.Home || event.key === Keys.End) {
+      if (isOpen) {
+        event.preventDefault();
+        move(event.key === Keys.Home ? 'first' : 'last');
       }
       return;
     }
@@ -212,7 +245,6 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
             aria-describedby={describedBy}
             onChange={(event) => {
               setQuery(event.target.value);
-              setActiveIndex(0);
               if (!isOpen) setIsOpen(true);
             }}
             onClick={open}

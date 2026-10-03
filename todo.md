@@ -209,7 +209,7 @@ comes.
 
 ---
 
-## The React Combobox has no Home or End, and its arrows stop at the ends
+## The React Combobox has no Home or End, and its arrows stop at the ends — fixed
 
 `Combobox` handles `ArrowDown`/`ArrowUp` with `Math.min`/`Math.max`, so the
 active option stops at the first and last match rather than wrapping, and
@@ -220,10 +220,21 @@ controls is the actual problem; which way they both go matters less.
 `<pf-combobox>` and `<pf-select>` both use `resolveListMove`, so they wrap and
 both answer `Home`/`End`.
 
-**Fix:** replace the clamping arithmetic in `Combobox` with
-`resolveListMove(action, getEnabledIndexes(filtered, …), activeIndex)` and add
-the two keys. `MultiSelect` and `TagInput` have the same gap and the same
-remedy.
+**Fixed** by putting `Combobox` on `useListNavigation`, the hook over
+`resolveListMove` that `Select` and `MultiSelect` already used, and adding the
+two keys. A third defect came with it: the clamping could leave a _disabled_
+option active, and Enter on one did nothing at all — the arrows now skip it,
+as the ARIA pattern and both elements do.
+
+One more thing the swap needed. `filtered` changes with every keystroke, so
+the active option has to be re-established against the new list in an effect:
+the `setActiveIndex(0)` in the change handler still saw the previous render's
+options, so index 0 of those might not exist in these.
+
+Two claims in the original entry were wrong, and are worth recording as
+wrong: `MultiSelect` was already on `useListNavigation` with both keys, and
+`TagInput` has no list of any kind — no suggestions, no listbox — so there is
+nothing in it to navigate.
 
 ---
 
