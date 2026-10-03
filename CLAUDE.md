@@ -668,6 +668,16 @@ Things that differ from the React library, learned by porting the first two:
   looked. Both are fixed, and `scripts/smoke-consumer.mjs` now reads the
   computed `box-shadow` of the current step's marker, probed by putting the
   undefined name back.
+- **Asking a slot in JS is the only way to size a box _around_ it.** The
+  `:has(*)` half of the `pf-menu-item` rule above is worth stating on its own,
+  because it keeps coming back: a marker, a footer or a badge wrapper that has
+  to change when something is slotted in cannot be selected in CSS, and
+  `::slotted()` reaches the content rather than the wrapper. `pf-timeline-item`
+  reads its icon slot in `componentWillLoad` _and_ on `slotchange` — the first
+  so the marker is the right size at first paint, the second because an icon
+  can arrive later — and puts a class on the marker. Probed by swapping the
+  class for `.marker:has(*)`: both markers then measure 28px in a real build,
+  and `scripts/smoke-consumer.mjs` catches it.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

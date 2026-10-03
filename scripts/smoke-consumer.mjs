@@ -104,6 +104,8 @@ const EXPECTED = [
   'pf-breadcrumb',
   'pf-progress-steps',
   'pf-progress-step',
+  'pf-timeline',
+  'pf-timeline-item',
 ];
 
 const TYPES = {
@@ -2256,6 +2258,102 @@ try {
             `(${state.describedHeight} vs ${state.plainHeight}) — ` +
             'the ::slotted description styling did not apply',
         );
+      }
+    }
+  }
+
+  /*
+   * The timeline. Three claims that need a real stylesheet: the marker grows
+   * for the entry that carries an icon (a class from JS, because `:has(*)` on
+   * a wrapper around a slot always matches), the three tones are three
+   * colours, and an entry with no timestamp or description takes no space for
+   * them — which is why neither has a wrapper.
+   */
+  {
+    const state = await page
+      .evaluate(() => {
+        const timeline = document.querySelector('pf-timeline');
+        if (!timeline) return { error: 'the consumer app has no pf-timeline' };
+
+        const entries = Array.from(timeline.querySelectorAll('pf-timeline-item'));
+        if (entries.length < 3) return { error: `only ${entries.length} entries in the fixture` };
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const slot = (host, name) => host.shadowRoot.querySelector(`slot[name="${name}"]`);
+        const marker = (index) => part(entries[index], 'marker').getBoundingClientRect();
+
+        return {
+          lasts: entries.map((entry) => entry.hasAttribute('last')),
+          connectors: entries.map((entry) => Boolean(part(entry, 'connector'))),
+          iconMarkerSize: marker(0).width,
+          plainMarkerSize: marker(1).width,
+          tones: entries.map((entry) => getComputedStyle(part(entry, 'marker')).borderTopColor),
+          connectorColour: getComputedStyle(part(entries[0], 'connector')).backgroundColor,
+          // The rail and the content are two columns of one grid.
+          railRight: part(entries[0], 'rail').getBoundingClientRect().right,
+          contentLeft: part(entries[0], 'content').getBoundingClientRect().left,
+          // Space below every entry's content but the last.
+          contentPadding: entries.map(
+            (entry) => getComputedStyle(part(entry, 'content')).paddingBottom,
+          ),
+          // The slots with nothing in them take no space.
+          emptyTimestamp: slot(entries[2], 'timestamp').getBoundingClientRect().height,
+          filledTimestamp: slot(entries[1], 'timestamp')
+            .assignedElements()[0]
+            .getBoundingClientRect().height,
+          slotDisplay: getComputedStyle(timeline.shadowRoot.querySelector('slot:not([name])'))
+            .display,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-timeline: ${state.error}`);
+    } else {
+      if (state.lasts.join(',') !== 'false,false,true') {
+        problems.push(`the timeline marked ${JSON.stringify(state.lasts)} as last`);
+      }
+      if (state.connectors.join(',') !== 'true,true,false') {
+        problems.push(
+          `the connectors read ${JSON.stringify(state.connectors)}, ` +
+            'expected one after all but the last entry',
+        );
+      }
+      if (!(state.iconMarkerSize > state.plainMarkerSize)) {
+        problems.push(
+          `the marker carrying an icon is ${state.iconMarkerSize}px against ` +
+            `${state.plainMarkerSize}px for a plain one — it did not grow, so the ` +
+            'icon is being asked for in CSS rather than in JS',
+        );
+      }
+      if (new Set(state.tones).size !== 3) {
+        problems.push(
+          `the three tones produced ${JSON.stringify(state.tones)} — ` +
+            'a --pf-timeline-* alias did not resolve',
+        );
+      }
+      if (isTransparent(state.connectorColour)) {
+        problems.push('the timeline connector has no colour');
+      }
+      if (!(state.contentLeft > state.railRight - 1)) {
+        problems.push(
+          `the content starts at ${state.contentLeft}, left of the rail's right ` +
+            `edge at ${state.railRight} — the two columns are not laid out`,
+        );
+      }
+      if (state.contentPadding[2] !== '0px' || state.contentPadding[0] === '0px') {
+        problems.push(
+          `the content padding reads ${JSON.stringify(state.contentPadding)}, ` +
+            'expected space below all but the last entry',
+        );
+      }
+      if (state.emptyTimestamp !== 0 || !(state.filledTimestamp > 0)) {
+        problems.push(
+          `an empty timestamp slot measured ${state.emptyTimestamp}px and a filled ` +
+            `one ${state.filledTimestamp}px`,
+        );
+      }
+      if (state.slotDisplay !== 'contents') {
+        problems.push(`the pf-timeline slot computes display: ${state.slotDisplay}`);
       }
     }
   }

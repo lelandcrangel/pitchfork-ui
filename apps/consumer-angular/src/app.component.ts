@@ -60,6 +60,8 @@ import {
   PfTag,
   PfTagInput,
   PfTextarea,
+  PfTimeline,
+  PfTimelineItem,
   PfTimePicker,
   PfToaster,
   PfToolbar,
@@ -141,6 +143,8 @@ import {
     PfTag,
     PfTagInput,
     PfTextarea,
+    PfTimeline,
+    PfTimelineItem,
     PfTimePicker,
     PfToaster,
     PfToolbar,
@@ -676,6 +680,23 @@ import {
           <span slot="title">Confirm</span>
         </pf-progress-step>
       </pf-progress-steps>
+
+      <!-- One entry carries an icon, one a timestamp, one neither; see the React consumer. -->
+      <pf-timeline label="Release history" data-testid="timeline">
+        <pf-timeline-item tone="success">
+          <span slot="title">Deployed</span>
+          <span slot="timestamp">2 hours ago</span>
+          <span slot="description">Version 1.4.0 went out.</span>
+          <pf-icon slot="icon" name="circle-check" aria-hidden="true"></pf-icon>
+        </pf-timeline-item>
+        <pf-timeline-item>
+          <span slot="title">Reviewed</span>
+          <span slot="timestamp">Yesterday</span>
+        </pf-timeline-item>
+        <pf-timeline-item tone="danger">
+          <span slot="title">Opened</span>
+        </pf-timeline-item>
+      </pf-timeline>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>

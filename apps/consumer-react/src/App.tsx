@@ -59,6 +59,8 @@ import {
   PfTag,
   PfTagInput,
   PfTextarea,
+  PfTimeline,
+  PfTimelineItem,
   PfTimePicker,
   PfToaster,
   PfToolbar,
@@ -773,6 +775,29 @@ export function App() {
           <span slot="title">Confirm</span>
         </PfProgressStep>
       </PfProgressSteps>
+
+      {/*
+        The marker grows when something is slotted into it, which is asked in
+        JS rather than selected in CSS: `:has(*)` on a wrapper around a slot
+        always matches, because the slot is itself a child. The timestamp and
+        description have no wrapper at all, so an entry without them has no
+        stray space — an unassigned slot generates nothing.
+      */}
+      <PfTimeline label="Release history" data-testid="timeline">
+        <PfTimelineItem tone="success">
+          <span slot="title">Deployed</span>
+          <span slot="timestamp">2 hours ago</span>
+          <span slot="description">Version 1.4.0 went out.</span>
+          <PfIcon slot="icon" name="circle-check" aria-hidden="true" />
+        </PfTimelineItem>
+        <PfTimelineItem>
+          <span slot="title">Reviewed</span>
+          <span slot="timestamp">Yesterday</span>
+        </PfTimelineItem>
+        <PfTimelineItem tone="danger">
+          <span slot="title">Opened</span>
+        </PfTimelineItem>
+      </PfTimeline>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

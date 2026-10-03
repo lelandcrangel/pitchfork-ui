@@ -1,0 +1,118 @@
+:host {
+  /* The title's line height, which the marker centres itself on. */
+  --pf-timeline-line: 1.375rem;
+  --pf-timeline-marker-size: 16px;
+  column-gap: var(--space-3);
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.rail {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.marker {
+  align-items: center;
+  border-radius: var(--radius-full);
+  border-style: solid;
+  border-width: 2px;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: var(--pf-timeline-marker-size);
+  justify-content: center;
+  /* Centred on the title's first line. */
+  margin-top: calc((var(--pf-timeline-line) - var(--pf-timeline-marker-size)) / 2);
+  width: var(--pf-timeline-marker-size);
+}
+
+/*
+ * A marker carrying an icon is larger to fit it. The class comes from JS,
+ * because `:has(*)` on a wrapper around a slot always matches -- the slot is
+ * itself a child.
+ */
+.marker.with-icon {
+  --pf-timeline-marker-size: 28px;
+}
+
+slot[name='icon']::slotted(*) {
+  align-items: center;
+  display: inline-flex;
+  font-size: 0.8rem;
+  justify-content: center;
+}
+
+:host([tone='default']) .marker {
+  background: var(--pf-timeline-default-bg);
+  border-color: var(--pf-timeline-default-border);
+  color: var(--pf-timeline-default-icon);
+}
+
+:host([tone='success']) .marker {
+  background: var(--pf-timeline-success-bg);
+  border-color: var(--pf-timeline-success-border);
+  color: var(--pf-timeline-success-icon);
+}
+
+:host([tone='warning']) .marker {
+  background: var(--pf-timeline-warning-bg);
+  border-color: var(--pf-timeline-warning-border);
+  color: var(--pf-timeline-warning-icon);
+}
+
+:host([tone='danger']) .marker {
+  background: var(--pf-timeline-danger-bg);
+  border-color: var(--pf-timeline-danger-border);
+  color: var(--pf-timeline-danger-icon);
+}
+
+.connector {
+  background: var(--pf-timeline-connector);
+  flex: 1;
+  margin: var(--space-1) 0;
+  min-height: var(--space-4);
+  width: 2px;
+}
+
+.content {
+  padding-bottom: var(--space-5);
+}
+
+:host([last]) .content {
+  padding-bottom: 0;
+}
+
+.header {
+  align-items: baseline;
+  column-gap: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.title {
+  color: var(--pf-timeline-title);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--pf-timeline-line);
+  margin: 0;
+}
+
+slot[name='timestamp']::slotted(*) {
+  color: var(--pf-timeline-timestamp);
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+}
+
+slot[name='description']::slotted(*) {
+  color: var(--pf-timeline-description);
+  display: block;
+  font-size: var(--font-size-sm);
+  margin-top: var(--space-1);
+}

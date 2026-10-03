@@ -29,6 +29,7 @@ import { PfTabPlacement } from "./components/pf-tab/pf-tab";
 import { PfTabsSize as PfTabsSize1, PfTabsVariant as PfTabsVariant1 } from "./components/pf-tabs/pf-tabs";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
 import { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
+import { PfTimelineTone } from "./components/pf-timeline-item/pf-timeline-item";
 import { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 import { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
@@ -57,6 +58,7 @@ export { PfTabPlacement } from "./components/pf-tab/pf-tab";
 export { PfTabsSize as PfTabsSize1, PfTabsVariant as PfTabsVariant1 } from "./components/pf-tabs/pf-tabs";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
 export { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
+export { PfTimelineTone } from "./components/pf-timeline-item/pf-timeline-item";
 export { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 export { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
@@ -2083,6 +2085,37 @@ export namespace Components {
         "value": string;
     }
     /**
+     * A vertical timeline over `pf-timeline-item` children.
+     * The group owns the one thing an entry cannot see: whether it is the last,
+     * which decides both the connector running down to the next entry and the
+     * space below the content.
+     */
+    interface PfTimeline {
+        /**
+          * The timeline's accessible name. A list of entries is worth naming, and a consumer can only do it from out here.
+         */
+        "label"?: string;
+        /**
+          * Re-reads the children, for a consumer who moved them imperatively.
+         */
+        "refresh": () => Promise<void>;
+    }
+    /**
+     * One entry in a `pf-timeline`.
+     */
+    interface PfTimelineItem {
+        /**
+          * Set by the group: the last entry has no connector and no space below.
+          * @default false
+         */
+        "last": boolean;
+        /**
+          * Marker colour. Reflected so the stylesheet can select on it.
+          * @default 'default'
+         */
+        "tone": PfTimelineTone;
+    }
+    /**
      * The region toasts appear in, and the queue behind them.
      * This is the one place the elements layer takes options rather than child
      * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
@@ -3527,6 +3560,27 @@ declare global {
         prototype: HTMLPfTimePickerElement;
         new (): HTMLPfTimePickerElement;
     };
+    /**
+     * A vertical timeline over `pf-timeline-item` children.
+     * The group owns the one thing an entry cannot see: whether it is the last,
+     * which decides both the connector running down to the next entry and the
+     * space below the content.
+     */
+    interface HTMLPfTimelineElement extends Components.PfTimeline, HTMLStencilElement {
+    }
+    var HTMLPfTimelineElement: {
+        prototype: HTMLPfTimelineElement;
+        new (): HTMLPfTimelineElement;
+    };
+    /**
+     * One entry in a `pf-timeline`.
+     */
+    interface HTMLPfTimelineItemElement extends Components.PfTimelineItem, HTMLStencilElement {
+    }
+    var HTMLPfTimelineItemElement: {
+        prototype: HTMLPfTimelineItemElement;
+        new (): HTMLPfTimelineItemElement;
+    };
     interface HTMLPfToasterElementEventMap {
         "pfToastDismiss": { id: string };
     }
@@ -3688,6 +3742,8 @@ declare global {
         "pf-tag-input": HTMLPfTagInputElement;
         "pf-textarea": HTMLPfTextareaElement;
         "pf-time-picker": HTMLPfTimePickerElement;
+        "pf-timeline": HTMLPfTimelineElement;
+        "pf-timeline-item": HTMLPfTimelineItemElement;
         "pf-toaster": HTMLPfToasterElement;
         "pf-toolbar": HTMLPfToolbarElement;
         "pf-toolbar-separator": HTMLPfToolbarSeparatorElement;
@@ -5737,6 +5793,33 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     /**
+     * A vertical timeline over `pf-timeline-item` children.
+     * The group owns the one thing an entry cannot see: whether it is the last,
+     * which decides both the connector running down to the next entry and the
+     * space below the content.
+     */
+    interface PfTimeline {
+        /**
+          * The timeline's accessible name. A list of entries is worth naming, and a consumer can only do it from out here.
+         */
+        "label"?: string;
+    }
+    /**
+     * One entry in a `pf-timeline`.
+     */
+    interface PfTimelineItem {
+        /**
+          * Set by the group: the last entry has no connector and no space below.
+          * @default false
+         */
+        "last"?: boolean;
+        /**
+          * Marker colour. Reflected so the stylesheet can select on it.
+          * @default 'default'
+         */
+        "tone"?: PfTimelineTone;
+    }
+    /**
      * The region toasts appear in, and the queue behind them.
      * This is the one place the elements layer takes options rather than child
      * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
@@ -6270,6 +6353,13 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
     }
+    interface PfTimelineAttributes {
+        "label": string;
+    }
+    interface PfTimelineItemAttributes {
+        "tone": PfTimelineTone;
+        "last": boolean;
+    }
     interface PfToasterAttributes {
         "placement": PfToasterPlacement;
         "duration": number;
@@ -6359,6 +6449,8 @@ declare namespace LocalJSX {
         "pf-tag-input": Omit<PfTagInput, keyof PfTagInputAttributes> & { [K in keyof PfTagInput & keyof PfTagInputAttributes]?: PfTagInput[K] } & { [K in keyof PfTagInput & keyof PfTagInputAttributes as `attr:${K}`]?: PfTagInputAttributes[K] } & { [K in keyof PfTagInput & keyof PfTagInputAttributes as `prop:${K}`]?: PfTagInput[K] };
         "pf-textarea": Omit<PfTextarea, keyof PfTextareaAttributes> & { [K in keyof PfTextarea & keyof PfTextareaAttributes]?: PfTextarea[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `attr:${K}`]?: PfTextareaAttributes[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `prop:${K}`]?: PfTextarea[K] };
         "pf-time-picker": Omit<PfTimePicker, keyof PfTimePickerAttributes> & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes]?: PfTimePicker[K] } & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes as `attr:${K}`]?: PfTimePickerAttributes[K] } & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes as `prop:${K}`]?: PfTimePicker[K] };
+        "pf-timeline": Omit<PfTimeline, keyof PfTimelineAttributes> & { [K in keyof PfTimeline & keyof PfTimelineAttributes]?: PfTimeline[K] } & { [K in keyof PfTimeline & keyof PfTimelineAttributes as `attr:${K}`]?: PfTimelineAttributes[K] } & { [K in keyof PfTimeline & keyof PfTimelineAttributes as `prop:${K}`]?: PfTimeline[K] };
+        "pf-timeline-item": Omit<PfTimelineItem, keyof PfTimelineItemAttributes> & { [K in keyof PfTimelineItem & keyof PfTimelineItemAttributes]?: PfTimelineItem[K] } & { [K in keyof PfTimelineItem & keyof PfTimelineItemAttributes as `attr:${K}`]?: PfTimelineItemAttributes[K] } & { [K in keyof PfTimelineItem & keyof PfTimelineItemAttributes as `prop:${K}`]?: PfTimelineItem[K] };
         "pf-toaster": Omit<PfToaster, keyof PfToasterAttributes> & { [K in keyof PfToaster & keyof PfToasterAttributes]?: PfToaster[K] } & { [K in keyof PfToaster & keyof PfToasterAttributes as `attr:${K}`]?: PfToasterAttributes[K] } & { [K in keyof PfToaster & keyof PfToasterAttributes as `prop:${K}`]?: PfToaster[K] };
         "pf-toolbar": Omit<PfToolbar, keyof PfToolbarAttributes> & { [K in keyof PfToolbar & keyof PfToolbarAttributes]?: PfToolbar[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `attr:${K}`]?: PfToolbarAttributes[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `prop:${K}`]?: PfToolbar[K] };
         "pf-toolbar-separator": Omit<PfToolbarSeparator, keyof PfToolbarSeparatorAttributes> & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes]?: PfToolbarSeparator[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `attr:${K}`]?: PfToolbarSeparatorAttributes[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `prop:${K}`]?: PfToolbarSeparator[K] };
@@ -6869,6 +6961,17 @@ declare module "@stencil/core" {
              * and nothing more — all of that arithmetic is core's.
              */
             "pf-time-picker": LocalJSX.IntrinsicElements["pf-time-picker"] & JSXBase.HTMLAttributes<HTMLPfTimePickerElement>;
+            /**
+             * A vertical timeline over `pf-timeline-item` children.
+             * The group owns the one thing an entry cannot see: whether it is the last,
+             * which decides both the connector running down to the next entry and the
+             * space below the content.
+             */
+            "pf-timeline": LocalJSX.IntrinsicElements["pf-timeline"] & JSXBase.HTMLAttributes<HTMLPfTimelineElement>;
+            /**
+             * One entry in a `pf-timeline`.
+             */
+            "pf-timeline-item": LocalJSX.IntrinsicElements["pf-timeline-item"] & JSXBase.HTMLAttributes<HTMLPfTimelineItemElement>;
             /**
              * The region toasts appear in, and the queue behind them.
              * This is the one place the elements layer takes options rather than child
