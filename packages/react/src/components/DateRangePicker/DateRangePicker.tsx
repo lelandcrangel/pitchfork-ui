@@ -66,6 +66,9 @@ interface RangeCalendarProps {
   isNextDisabled?: boolean;
   onPrev?: () => void;
   onNext?: () => void;
+  /** The grid's arrows walked out of this month. */
+  onMonthChange?: (month: Date) => void;
+  initialFocusedDate?: Date;
   /** Hide nav on desktop only (right panel — left panel controls both on wide screens). */
   hideNavDesktop?: boolean;
 }
@@ -83,6 +86,8 @@ function RangeCalendar({
   isNextDisabled,
   onPrev,
   onNext,
+  onMonthChange,
+  initialFocusedDate,
   hideNavDesktop = false,
 }: RangeCalendarProps) {
   const monthLabel = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(
@@ -137,6 +142,8 @@ function RangeCalendar({
         onDayHover={onDayHover}
         disabledDates={disabledDates}
         showOutsideDays={showOutsideDays}
+        onMonthChange={onMonthChange}
+        initialFocusedDate={initialFocusedDate}
       />
     </div>
   );
@@ -395,6 +402,10 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                       isNextDisabled={false}
                       onPrev={() => setLeftMonth((m) => clampMonth(addMonths(m, -1)))}
                       onNext={() => setLeftMonth((m) => clampMonth(addMonths(m, 1)))}
+                      // Both panels scroll together, so the left month is what
+                      // moves whichever grid the keyboard walked out of.
+                      onMonthChange={(month) => setLeftMonth(clampMonth(month))}
+                      initialFocusedDate={range.start ?? undefined}
                     />
 
                     {/* Right month — hides its nav on desktop (left controls both);
@@ -412,6 +423,8 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                       isNextDisabled={isNextDisabled}
                       onPrev={() => setLeftMonth((m) => clampMonth(addMonths(m, -1)))}
                       onNext={() => setLeftMonth((m) => clampMonth(addMonths(m, 1)))}
+                      onMonthChange={(month) => setLeftMonth(clampMonth(addMonths(month, -1)))}
+                      initialFocusedDate={range.end ?? undefined}
                       hideNavDesktop
                     />
                   </div>

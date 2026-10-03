@@ -204,6 +204,10 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
           onDayClick={selectDate}
           disabledDates={disabledDates}
           showOutsideDays={showOutsideDays}
+          // The grid's arrows move one tab stop through 42 cells; walking off
+          // either end has to bring the month with it.
+          onMonthChange={(month) => setDisplayMonth(clampToYearRange(month))}
+          initialFocusedDate={selectedDate}
         />
       </div>
 

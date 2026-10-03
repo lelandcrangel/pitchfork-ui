@@ -268,6 +268,27 @@ caller sets from the match.
 activation key in a listbox and is deliberately not a typeahead character, so
 checking typeahead first puts a space into the buffer instead of selecting.
 
+For a roving tab stop, three rules the `Calendar` port established:
+
+- **`aria-disabled`, never `disabled`, on an item the focus must cross.** The
+  ARIA pattern for a grid or a list is that focus moves freely while
+  activation refuses, and a `disabled` button cannot take focus at all — so a
+  long blocked stretch becomes uncrossable. Style on
+  `[aria-disabled='true']` and refuse in the handler, because an
+  `aria-disabled` button still fires a click.
+- **Derive the focused item from the visible range; never synchronise it in an
+  effect.** `CalendarGrid` reads its stored day through `monthDate` at render
+  time, so the two cannot disagree. An effect that re-seated it worked but
+  left one render where the focused day was not rendered — which means no item
+  carries `tabIndex={0}` and the widget drops out of the tab order entirely.
+  `react-hooks/set-state-in-effect` flags it.
+- **Put the key handler on the items, not on their container.** A
+  `role="grid"`/`role="listbox"` wrapper that never takes focus should not
+  carry one (`jsx-a11y/interactive-supports-focus` says so), and the key
+  always arrives at an item. This changes how the tests drive it: a synthetic
+  event on the container never reaches the items, because React events bubble
+  up, not down.
+
 ---
 
 ## Where behaviour lives

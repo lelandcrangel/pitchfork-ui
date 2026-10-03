@@ -9,6 +9,7 @@ import {
   Keys,
   moveCalendarDate,
   parseISODate,
+  resolveCalendarKey,
   startOfMonth,
   toMidday,
   WEEKDAY_LABELS,
@@ -27,18 +28,6 @@ import {
   State,
   Watch,
 } from '@stencil/core';
-
-/** Which key moves the focused day where. */
-const MOVES: Record<string, CalendarMove> = {
-  [Keys.ArrowRight]: 'day-next',
-  [Keys.ArrowLeft]: 'day-previous',
-  [Keys.ArrowDown]: 'week-next',
-  [Keys.ArrowUp]: 'week-previous',
-  [Keys.Home]: 'week-start',
-  [Keys.End]: 'week-end',
-  PageDown: 'month-next',
-  PageUp: 'month-previous',
-};
 
 /**
  * A month grid for picking a date.
@@ -209,7 +198,9 @@ export class PfCalendar {
   }
 
   private onKeyDown = (event: KeyboardEvent) => {
-    const move = MOVES[event.key];
+    // The key map is core's, so the React `Calendar` cannot disagree with this
+    // grid about what PageUp means.
+    const move = resolveCalendarKey(event.key);
     if (move) {
       event.preventDefault();
       this.moveFocus(move);

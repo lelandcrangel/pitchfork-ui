@@ -102,6 +102,42 @@ export const clampMonthToYearRange = (date: Date, startYear: number, endYear: nu
  * 2nd of March, which is not what "a month after the 31st of January" means
  * in a date picker.
  */
+/**
+ * The move a keypress means in a date grid, or null for a key it does not
+ * handle — so Tab, Escape and the activation keys fall through to the caller.
+ *
+ * Lived as a `MOVES` record inside `pf-calendar` until the React `Calendar`
+ * needed the same eight keys. Two copies of a key map agree until one of them
+ * gains a key, and the two layers disagreeing about what PageUp does is
+ * exactly the drift `moveCalendarDate` is here to prevent.
+ *
+ * `PageUp`/`PageDown` are not in `Keys`, which carries only the keys every
+ * widget uses; they are spelt out, as `resolveSplitterKey` spells out Home and
+ * End.
+ */
+export const resolveCalendarKey = (key: string): CalendarMove | null => {
+  switch (key) {
+    case 'ArrowRight':
+      return 'day-next';
+    case 'ArrowLeft':
+      return 'day-previous';
+    case 'ArrowDown':
+      return 'week-next';
+    case 'ArrowUp':
+      return 'week-previous';
+    case 'Home':
+      return 'week-start';
+    case 'End':
+      return 'week-end';
+    case 'PageDown':
+      return 'month-next';
+    case 'PageUp':
+      return 'month-previous';
+    default:
+      return null;
+  }
+};
+
 export const moveCalendarDate = (date: Date, move: CalendarMove): Date => {
   switch (move) {
     case 'day-next':

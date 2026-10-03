@@ -95,11 +95,19 @@ describe('Calendar', () => {
 
   // ─── Disabled dates ───────────────────────────────────────────────────────
 
-  it('disables days matching the disabledDates predicate', () => {
+  /*
+   * `aria-disabled`, not `disabled`. The ARIA grid pattern is that focus
+   * crosses a blocked day while activation refuses it, and a `disabled`
+   * button cannot take focus at all -- so a blocked stretch was uncrossable by
+   * keyboard. `pf-calendar` has always done it this way.
+   */
+  it('marks days matching the disabledDates predicate as aria-disabled', () => {
     const disabledDates = (date: Date) => date.getDate() === 20;
     render(<Calendar value={JUNE_2024} disabledDates={disabledDates} />);
-    expect(getDayCell(20)).toBeDisabled();
-    expect(getDayCell(21)).not.toBeDisabled();
+    expect(getDayCell(20)).toHaveAttribute('aria-disabled', 'true');
+    expect(getDayCell(21)).not.toHaveAttribute('aria-disabled');
+    // Still focusable, which is the whole point.
+    expect(getDayCell(20)).not.toBeDisabled();
   });
 
   it('does not call onValueChange when a disabled date is clicked', async () => {
@@ -138,5 +146,169 @@ describe('Calendar', () => {
   it('shows an error message', () => {
     render(<Calendar label="Date" error="Date required" value={JUNE_2024} />);
     expect(screen.getByText('Date required')).toBeInTheDocument();
+  });
+
+  /* ─── Keyboard ─────────────────────────────────────────────────────────── *
+   *
+   * This grid rendered 42 buttons and handled no keys at all: reaching the end
+   * of a month from its start took 42 presses of Tab, and there was no way to
+   * move by week. These mirror `pf-calendar`'s browser spec, and the
+   * arithmetic underneath both is core's `moveCalendarDate` and
+   * `resolveCalendarKey`.
+   */
+
+  const focusedCell = () =>
+    screen.getAllByRole('gridcell').find((cell) => cell.getAttribute('tabindex') === '0');
+
+  it('is one tab stop, not forty-two', () => {
+    render(<Calendar value={JUNE_15_2024} />);
+    const cells = screen.getAllByRole('gridcell');
+
+    expect(cells.length).toBeGreaterThan(28);
+    expect(cells.filter((cell) => cell.getAttribute('tabindex') === '0')).toHaveLength(1);
+    expect(focusedCell()).toBe(getDayCell(15));
+  });
+
+  it('moves a day with the left and right arrows', async () => {
+    const user = userEvent.setup();
+    render(<Calendar value={JUNE_15_2024} />);
+    getDayCell(15).focus();
+
+    await user.keyboard('{ArrowRight}');
+    expect(focusedCell()).toBe(getDayCell(16));
+    expect(getDayCell(16)).toHaveFocus();
+
+    await user.keyboard('{ArrowLeft}{ArrowLeft}');
+    expect(focusedCell()).toBe(getDayCell(14));
+  });
+
+  it('moves a week with the up and down arrows', async () => {
+    const user = userEvent.setup();
+    render(<Calendar value={JUNE_15_2024} />);
+    getDayCell(15).focus();
+
+    await user.keyboard('{ArrowDown}');
+    expect(focusedCell()).toBe(getDayCell(22));
+
+    await user.keyboard('{ArrowUp}{ArrowUp}');
+    expect(focusedCell()).toBe(getDayCell(8));
+  });
+
+  it('answers Home and End with the ends of the week', async () => {
+    const user = userEvent.setup();
+    // 15 June 2024 is a Saturday, so its week runs Sunday the 9th to it.
+    render(<Calendar value={JUNE_15_2024} />);
+    getDayCell(15).focus();
+
+    await user.keyboard('{Home}');
+    expect(focusedCell()).toBe(getDayCell(9));
+
+    await user.keyboard('{End}');
+    expect(focusedCell()).toBe(getDayCell(15));
+  });
+
+  /*
+   * Walking off either end has to bring the month with it. Moving the month
+   * alone would leave the focused day on a date no longer rendered, so no cell
+   * would carry `tabIndex={0}` and the grid would drop out of the tab order
+   * altogether — `pf-calendar`'s year picker shipped exactly that.
+   */
+  it('scrolls the month when the arrows walk out of it', async () => {
+    const user = userEvent.setup();
+    render(<Calendar value={new Date(2024, 5, 30, 12)} />);
+    getDayCell(30).focus();
+
+    await user.keyboard('{ArrowRight}');
+
+    expect(screen.getByRole('grid')).toHaveAccessibleName('July 2024');
+    expect(focusedCell()).toBe(getDayCell(1));
+    expect(getDayCell(1)).toHaveFocus();
+  });
+
+  it('moves a month with PageUp and PageDown', async () => {
+    const user = userEvent.setup();
+    render(<Calendar value={JUNE_15_2024} />);
+    getDayCell(15).focus();
+
+    await user.keyboard('{PageDown}');
+    expect(screen.getByRole('grid')).toHaveAccessibleName('July 2024');
+    expect(focusedCell()).toBe(getDayCell(15));
+
+    await user.keyboard('{PageUp}{PageUp}');
+    expect(screen.getByRole('grid')).toHaveAccessibleName('May 2024');
+  });
+
+  it('selects the focused day on Enter and on Space', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Calendar value={JUNE_15_2024} onValueChange={onValueChange} />);
+    getDayCell(15).focus();
+
+    await user.keyboard('{ArrowRight}{Enter}');
+    expect(onValueChange.mock.calls.at(-1)?.[0].getDate()).toBe(16);
+
+    await user.keyboard('{ArrowRight}{ }');
+    expect(onValueChange.mock.calls.at(-1)?.[0].getDate()).toBe(17);
+  });
+
+  /*
+   * Focus crosses a disabled day while activation refuses it. Skipping it
+   * would make a long blocked stretch impossible to cross, and that is the
+   * ARIA pattern: focus moves freely, activation does not.
+   */
+  it('focuses a disabled day but will not select it', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <Calendar
+        value={JUNE_15_2024}
+        onValueChange={onValueChange}
+        disabledDates={(date) => date.getDate() === 16}
+      />,
+    );
+    getDayCell(15).focus();
+
+    await user.keyboard('{ArrowRight}');
+    expect(focusedCell()).toBe(getDayCell(16));
+
+    await user.keyboard('{Enter}');
+    expect(onValueChange).not.toHaveBeenCalled();
+
+    // And the keyboard can keep going past it.
+    await user.keyboard('{ArrowRight}{Enter}');
+    expect(onValueChange.mock.calls.at(-1)?.[0].getDate()).toBe(17);
+  });
+
+  /*
+   * The month buttons move `displayMonth`; the grid has to bring its tab stop
+   * along or nothing in it is focusable.
+   */
+  it('keeps a tab stop after the month buttons change the month', async () => {
+    const user = userEvent.setup();
+    render(<Calendar value={JUNE_15_2024} />);
+
+    await user.click(screen.getByRole('button', { name: 'Next month' }));
+
+    expect(screen.getByRole('grid')).toHaveAccessibleName('July 2024');
+    expect(
+      screen.getAllByRole('gridcell').filter((c) => c.getAttribute('tabindex') === '0'),
+    ).toHaveLength(1);
+    expect(focusedCell()).toBe(getDayCell(15));
+  });
+
+  /*
+   * A month step from the 31st lands on a shorter month's last day rather than
+   * overflowing into the month after — `new Date(2024, 1, 31)` is the 2nd of
+   * March, and core's `moveCalendarDate` clamps instead.
+   */
+  it('clamps a month step from the 31st into a shorter month', async () => {
+    const user = userEvent.setup();
+    render(<Calendar value={new Date(2024, 0, 31, 12)} />);
+    getDayCell(31).focus();
+
+    await user.keyboard('{PageDown}');
+
+    expect(screen.getByRole('grid')).toHaveAccessibleName('February 2024');
+    expect(focusedCell()).toBe(getDayCell(29));
   });
 });

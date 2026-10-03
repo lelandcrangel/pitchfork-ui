@@ -160,7 +160,7 @@ consistency.
 
 ---
 
-## The React Calendar has no keyboard
+## The React Calendar has no keyboard — fixed
 
 `Calendar` and `DateRangePicker` render 42 day buttons through `CalendarGrid`
 and handle no keys at all. So the grid is 42 sequential tab stops, there is no
@@ -172,13 +172,34 @@ presses of Tab. The ARIA grid pattern is one tab stop plus arrows.
 component can adopt it without the two layers disagreeing about what
 PageDown from the 31st of January means.
 
-**Fix:** give `CalendarGrid` a `focusedDate` of its own, a roving `tabIndex`
-(0 on the focused day, -1 on the other 41), and an `onKeyDown` that calls
-`moveCalendarDate` and moves DOM focus to the new cell. Both `Calendar` and
-`DateRangePicker` get it at once, since the grid is shared. `pf-calendar`'s
-browser spec is the behaviour to match, including the two decisions worth
-keeping: focus crosses a disabled day while activation refuses it, and
-focus leaving the month scrolls the grid with it.
+**Fixed**, in `CalendarGrid`, so `Calendar` and `DateRangePicker` both have it.
+`resolveCalendarKey` moved into core on the way through — `pf-calendar` held
+the key map in a private `MOVES` record, and two copies of a key map agree
+until one of them gains a key.
+
+Four things the port turned up that the element's version did not have to
+face:
+
+- **The blocked days were `disabled`, so focus could not cross them.** The
+  ARIA pattern is that focus moves freely while activation refuses, which is
+  why `pf-calendar` uses `aria-disabled` — and a `disabled` button cannot take
+  focus at all, so a long blocked stretch was uncrossable. The React grid now
+  uses `aria-disabled` too, both stylesheets select on it, and the click
+  handler refuses (an `aria-disabled` button still fires a click). Found by
+  writing the element's test and watching focus vanish from the grid.
+- **The focused day is _derived_, not synchronised.** An effect that re-seated
+  it when `monthDate` changed worked, but `react-hooks/set-state-in-effect`
+  objected and was right: reading the stored day through `monthDate` at render
+  time makes the two impossible to disagree, where the effect left one render
+  in between where they did.
+- **The key handler is on the cells, not on the grid container.** A
+  `role="grid"` that never takes focus should not carry a key handler
+  (`jsx-a11y/interactive-supports-focus`), and the thing a key arrives at here
+  is always a day button. This changes how a test has to drive it: a synthetic
+  event on the container never reaches the cells, since React events bubble up.
+- **The right panel of `DateRangePicker` moves `leftMonth` by one**, not to the
+  month the keyboard landed in — it is always one month ahead. Getting that
+  backwards scrolls two months at a time.
 
 ---
 
