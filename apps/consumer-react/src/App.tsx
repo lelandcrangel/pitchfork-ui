@@ -14,6 +14,7 @@ import {
   PfCommandItem,
   PfCommandPalette,
   PfContentDivider,
+  PfDatePicker,
   PfContextMenu,
   PfCreditCard,
   PfDropdown,
@@ -249,6 +250,22 @@ export function App() {
           rows={3}
         />
         <PfSlider name="volume" label="Volume" min={0} max={10} value={volume} />
+        {/*
+          Form-associated, which the React DatePicker is not — its value only
+          reaches a form if the consumer wires it there. In the form on
+          purpose: the submission assertion is what caught an unreflected
+          `name` on the other controls.
+        */}
+        <PfDatePicker
+          label="Due date"
+          name="due"
+          value={day}
+          min="2024-03-05"
+          max="2024-03-26"
+          allowClear
+          data-testid="date-picker"
+          onPfChange={(event) => setDay(event.detail.value)}
+        />
         {/*
           Children, not an options array — the decision for every data-driven
           element in this layer. The cost is the map; the gain is that a

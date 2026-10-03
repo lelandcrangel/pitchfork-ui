@@ -147,6 +147,19 @@ export class PfCalendar {
     this.focusedDate = target;
   }
 
+  /**
+   * Puts focus on the grid's single tab stop.
+   *
+   * A method rather than something a container does for itself: the tab stop
+   * is inside this shadow root, and reaching into another component's shadow
+   * root to find it is exactly the coupling `::part()` and `@Method()` exist
+   * to avoid. `pf-date-picker` calls this when its popover opens.
+   */
+  @Method()
+  async focusSelectedDay(): Promise<void> {
+    this.el.shadowRoot?.querySelector<HTMLButtonElement>('button[data-day][tabindex="0"]')?.focus();
+  }
+
   private selectedDate(): Date | null {
     return parseISODate(this.value);
   }

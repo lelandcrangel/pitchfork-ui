@@ -503,6 +503,22 @@ Things that differ from the React library, learned by porting the first two:
   under the weekday headers. `scripts/smoke-consumer.mjs` asserts the computed
   `display` of a row and the grid's column count, because neither test project
   applies the stylesheet that sets them.
+- **Catch a child element's event on the child, not on the host.** A Stencil
+  event is composed, so by the time it reaches a `@Listen` on the host it has
+  been retargeted _to_ the host — a wrapper that re-emits its child's event
+  cannot tell the two apart by `event.target`, since both read as the host.
+  `composedPath()[0]` can, but the real problem is worse:
+  `stopPropagation()` on a host listener does not stop the consumer's listener
+  on that same node, so every pick from `pf-date-picker` reported twice until
+  a test counted them. Attaching the listener to the child in a `ref` stops
+  the event before it reaches the host at all, and does not depend on
+  listener registration order the way `stopImmediatePropagation` would.
+- **A same-root IDREF is the one that works, so use it where you have one.**
+  `pf-dropdown` cannot set `aria-controls`, because its trigger is slotted
+  light DOM and its panel is in the shadow root. `pf-date-picker` renders
+  both into its own shadow root, so the reference resolves and is worth
+  having — the same measurement that showed a cross-root IDREF absent from
+  the accessibility tree showed a same-root one resolving.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

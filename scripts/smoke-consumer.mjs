@@ -86,6 +86,7 @@ const EXPECTED = [
   'pf-command-group',
   'pf-command-item',
   'pf-calendar',
+  'pf-date-picker',
 ];
 
 const TYPES = {
@@ -479,10 +480,10 @@ try {
        * a distinction a server relies on, and one `setFormValue('')` would
        * erase for the checkbox.
        */
-      if (names.join(',') !== 'notes,notify,plan,volume') {
+      if (names.join(',') !== 'due,notes,notify,plan,volume') {
         result.unstyled.push(
           `form sees [${names.join(', ')}] from the form controls, ` +
-            'expected notes,notify,plan,volume (terms is unticked, so absent)',
+            'expected due,notes,notify,plan,volume (terms is unticked, so absent)',
         );
       }
       const box = prefs.querySelector('pf-checkbox');
@@ -1295,6 +1296,79 @@ try {
             'expected it to be dimmed',
         );
       }
+    }
+  }
+
+  /*
+   * The date picker's panel, against a real build: anchored to its trigger
+   * rather than centred (the UA stylesheet centres a popover, so this is the
+   * `placePopover` claim where it matters), and styled.
+   *
+   * Its form association is already covered — `due` is in the submitted key set
+   * above, which is the assertion that caught an unreflected `name` on the
+   * other controls.
+   */
+  {
+    const anchored = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-date-picker');
+        if (!el) return { error: 'no pf-date-picker in the consumer app' };
+
+        const trigger = el.shadowRoot.querySelector('[part="trigger"]');
+        const panel = el.shadowRoot.querySelector('[part="panel"]');
+        trigger.click();
+
+        const deadline = Date.now() + 2000;
+        while (!panel.matches(':popover-open')) {
+          if (Date.now() > deadline) return { error: 'the panel never opened' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+
+        const triggerBox = trigger.getBoundingClientRect();
+        const panelBox = panel.getBoundingClientRect();
+        const calendar = el.shadowRoot.querySelector('pf-calendar');
+
+        return {
+          triggerLeft: Math.round(triggerBox.left),
+          panelLeft: Math.round(panelBox.left),
+          panelTop: Math.round(panelBox.top),
+          triggerBottom: Math.round(triggerBox.bottom),
+          viewportWidth: window.innerWidth,
+          calendarBackground: getComputedStyle(
+            calendar.shadowRoot.querySelector('[part="calendar"]'),
+          ).backgroundColor,
+          focusedDay: calendar.shadowRoot.activeElement?.getAttribute('data-day'),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (anchored.error) {
+      problems.push(`pf-date-picker: ${anchored.error}`);
+    } else {
+      // Aligned with the trigger, not centred in the viewport.
+      if (Math.abs(anchored.panelLeft - anchored.triggerLeft) > 2) {
+        problems.push(
+          `pf-date-picker panel is at x=${anchored.panelLeft} but its trigger is at ` +
+            `x=${anchored.triggerLeft} — it is not anchored (a popover is centred ` +
+            'until `inset: auto; margin: 0` opt out of it)',
+        );
+      }
+      if (anchored.panelTop < anchored.triggerBottom - 2) {
+        problems.push(
+          `pf-date-picker panel opens at y=${anchored.panelTop}, above its trigger's ` +
+            `bottom edge at ${anchored.triggerBottom}`,
+        );
+      }
+      if (isTransparent(anchored.calendarBackground)) {
+        problems.push('the calendar inside pf-date-picker has no background');
+      }
+      // The grid takes focus, which is what makes the keyboard usable at all.
+      if (!anchored.focusedDay) {
+        problems.push('pf-date-picker did not move focus into the calendar grid');
+      }
+
+      await page.evaluate(() => document.querySelector('pf-date-picker')?.hide());
     }
   }
 

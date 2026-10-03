@@ -15,6 +15,7 @@ import {
   PfCommandItem,
   PfCommandPalette,
   PfContentDivider,
+  PfDatePicker,
   PfContextMenu,
   PfCreditCard,
   PfDropdown,
@@ -78,6 +79,7 @@ import {
     PfCommandItem,
     PfCommandPalette,
     PfContentDivider,
+    PfDatePicker,
     PfContextMenu,
     PfCreditCard,
     PfDropdown,
@@ -291,6 +293,17 @@ import {
           [max]="10"
           formControlName="volume"
         ></pf-slider>
+        <!-- Form-associated, unlike the React DatePicker. -->
+        <pf-date-picker
+          label="Due date"
+          name="due"
+          [value]="day()"
+          min="2024-03-05"
+          max="2024-03-26"
+          allow-clear
+          data-testid="date-picker"
+          (pfChange)="day.set($event.detail.value)"
+        ></pf-date-picker>
         <!--
           Children rendered with @for, not an options array. The group is the
           one form control; Angular never sees the radios inside it.

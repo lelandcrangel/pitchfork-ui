@@ -162,6 +162,10 @@ export namespace Components {
          */
         "endYear"?: number;
         /**
+          * Puts focus on the grid's single tab stop.  A method rather than something a container does for itself: the tab stop is inside this shadow root, and reaching into another component's shadow root to find it is exactly the coupling `::part()` and `@Method()` exist to avoid. `pf-date-picker` calls this when its popover opens.
+         */
+        "focusSelectedDay": () => Promise<void>;
+        /**
           * Moves the grid to the month holding `date` (a `Date` or `YYYY-MM-DD`).
          */
         "goToMonth": (date: string | Date) => Promise<void>;
@@ -445,6 +449,93 @@ export namespace Components {
           * @default true
          */
         "masked": boolean;
+    }
+    /**
+     * A form-associated date field: a trigger that opens `pf-calendar` in a
+     * popover.
+     * Form-associated, which the React `DatePicker` is not — it is a button and a
+     * portal, so its value reaches a surrounding `<form>` only if the consumer
+     * wires it there themselves. Here the value is submitted as `YYYY-MM-DD`,
+     * constraint validation works, and Angular's generated accessor has something
+     * to bind to.
+     * The panel is a `popover`, so light dismiss and Escape are the browser's.
+     * Unlike `pf-dropdown`, the trigger and the panel are both in *this* shadow
+     * root, so `aria-controls` resolves and is worth setting — a same-root IDREF
+     * is the one case that works, measured.
+     */
+    interface PfDatePicker {
+        /**
+          * Offer a button that empties the field.
+          * @default false
+         */
+        "allowClear": boolean;
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        "endYear"?: number;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * Closes the calendar.
+         */
+        "hide": () => Promise<void>;
+        /**
+          * A predicate for days that cannot be chosen; see `pf-calendar`.
+         */
+        "isDateDisabled"?: (date: Date) => boolean;
+        /**
+          * Visible label. In the same root as the trigger, so `for` works.
+         */
+        "label"?: string;
+        /**
+          * Latest selectable date, as `YYYY-MM-DD`.
+         */
+        "max"?: string;
+        /**
+          * Earliest selectable date, as `YYYY-MM-DD`.
+         */
+        "min"?: string;
+        /**
+          * Submitted under this name. Reflected, because the submission name comes from the content attribute and the generated bindings set properties.
+         */
+        "name"?: string;
+        /**
+          * Whether the calendar is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default 'Select a date'
+         */
+        "placeholder": string;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * Opens the calendar.
+         */
+        "show": () => Promise<void>;
+        /**
+          * @default true
+         */
+        "showOutsideDays": boolean;
+        "startYear"?: number;
+        /**
+          * The selected date as `YYYY-MM-DD`, or empty.
+          * @default ''
+         */
+        "value": string;
     }
     /**
      * A menu of actions, anchored to a trigger.
@@ -1416,6 +1507,10 @@ export interface PfContextMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfContextMenuElement;
 }
+export interface PfDatePickerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfDatePickerElement;
+}
 export interface PfDropdownCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfDropdownElement;
@@ -1716,6 +1811,37 @@ declare global {
     var HTMLPfCreditCardElement: {
         prototype: HTMLPfCreditCardElement;
         new (): HTMLPfCreditCardElement;
+    };
+    interface HTMLPfDatePickerElementEventMap {
+        "pfChange": { value: string };
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * A form-associated date field: a trigger that opens `pf-calendar` in a
+     * popover.
+     * Form-associated, which the React `DatePicker` is not — it is a button and a
+     * portal, so its value reaches a surrounding `<form>` only if the consumer
+     * wires it there themselves. Here the value is submitted as `YYYY-MM-DD`,
+     * constraint validation works, and Angular's generated accessor has something
+     * to bind to.
+     * The panel is a `popover`, so light dismiss and Escape are the browser's.
+     * Unlike `pf-dropdown`, the trigger and the panel are both in *this* shadow
+     * root, so `aria-controls` resolves and is worth setting — a same-root IDREF
+     * is the one case that works, measured.
+     */
+    interface HTMLPfDatePickerElement extends Components.PfDatePicker, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfDatePickerElementEventMap>(type: K, listener: (this: HTMLPfDatePickerElement, ev: PfDatePickerCustomEvent<HTMLPfDatePickerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfDatePickerElementEventMap>(type: K, listener: (this: HTMLPfDatePickerElement, ev: PfDatePickerCustomEvent<HTMLPfDatePickerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfDatePickerElement: {
+        prototype: HTMLPfDatePickerElement;
+        new (): HTMLPfDatePickerElement;
     };
     interface HTMLPfDropdownElementEventMap {
         "pfOpenChange": { open: boolean };
@@ -2299,6 +2425,7 @@ declare global {
         "pf-content-divider": HTMLPfContentDividerElement;
         "pf-context-menu": HTMLPfContextMenuElement;
         "pf-credit-card": HTMLPfCreditCardElement;
+        "pf-date-picker": HTMLPfDatePickerElement;
         "pf-dropdown": HTMLPfDropdownElement;
         "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
@@ -2731,6 +2858,94 @@ declare namespace LocalJSX {
           * @default true
          */
         "masked"?: boolean;
+    }
+    /**
+     * A form-associated date field: a trigger that opens `pf-calendar` in a
+     * popover.
+     * Form-associated, which the React `DatePicker` is not — it is a button and a
+     * portal, so its value reaches a surrounding `<form>` only if the consumer
+     * wires it there themselves. Here the value is submitted as `YYYY-MM-DD`,
+     * constraint validation works, and Angular's generated accessor has something
+     * to bind to.
+     * The panel is a `popover`, so light dismiss and Escape are the browser's.
+     * Unlike `pf-dropdown`, the trigger and the panel are both in *this* shadow
+     * root, so `aria-controls` resolves and is worth setting — a same-root IDREF
+     * is the one case that works, measured.
+     */
+    interface PfDatePicker {
+        /**
+          * Offer a button that empties the field.
+          * @default false
+         */
+        "allowClear"?: boolean;
+        /**
+          * Hint text below the control.
+         */
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        "endYear"?: number;
+        /**
+          * Error message. Its presence is what marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * A predicate for days that cannot be chosen; see `pf-calendar`.
+         */
+        "isDateDisabled"?: (date: Date) => boolean;
+        /**
+          * Visible label. In the same root as the trigger, so `for` works.
+         */
+        "label"?: string;
+        /**
+          * Latest selectable date, as `YYYY-MM-DD`.
+         */
+        "max"?: string;
+        /**
+          * Earliest selectable date, as `YYYY-MM-DD`.
+         */
+        "min"?: string;
+        /**
+          * Submitted under this name. Reflected, because the submission name comes from the content attribute and the generated bindings set properties.
+         */
+        "name"?: string;
+        /**
+          * Fires when a date is chosen or cleared.
+         */
+        "onPfChange"?: (event: PfDatePickerCustomEvent<{ value: string }>) => void;
+        /**
+          * Fires whenever the calendar opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfDatePickerCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the calendar is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default 'Select a date'
+         */
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * @default true
+         */
+        "showOutsideDays"?: boolean;
+        "startYear"?: number;
+        /**
+          * The selected date as `YYYY-MM-DD`, or empty.
+          * @default ''
+         */
+        "value"?: string;
     }
     /**
      * A menu of actions, anchored to a trigger.
@@ -3746,6 +3961,23 @@ declare namespace LocalJSX {
         "cvc": string;
         "masked": boolean;
     }
+    interface PfDatePickerAttributes {
+        "name": string;
+        "value": string;
+        "open": boolean;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "required": boolean;
+        "disabled": boolean;
+        "allowClear": boolean;
+        "min": string;
+        "max": string;
+        "startYear": number;
+        "endYear": number;
+        "showOutsideDays": boolean;
+    }
     interface PfDropdownAttributes {
         "open": boolean;
         "align": 'start' | 'end';
@@ -3945,6 +4177,7 @@ declare namespace LocalJSX {
         "pf-content-divider": Omit<PfContentDivider, keyof PfContentDividerAttributes> & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes]?: PfContentDivider[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `attr:${K}`]?: PfContentDividerAttributes[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `prop:${K}`]?: PfContentDivider[K] };
         "pf-context-menu": Omit<PfContextMenu, keyof PfContextMenuAttributes> & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes]?: PfContextMenu[K] } & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes as `attr:${K}`]?: PfContextMenuAttributes[K] } & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes as `prop:${K}`]?: PfContextMenu[K] };
         "pf-credit-card": Omit<PfCreditCard, keyof PfCreditCardAttributes> & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes]?: PfCreditCard[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `attr:${K}`]?: PfCreditCardAttributes[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `prop:${K}`]?: PfCreditCard[K] };
+        "pf-date-picker": Omit<PfDatePicker, keyof PfDatePickerAttributes> & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes]?: PfDatePicker[K] } & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes as `attr:${K}`]?: PfDatePickerAttributes[K] } & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes as `prop:${K}`]?: PfDatePicker[K] };
         "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
@@ -4086,6 +4319,20 @@ declare module "@stencil/core" {
              * nothing and submits nothing.
              */
             "pf-credit-card": LocalJSX.IntrinsicElements["pf-credit-card"] & JSXBase.HTMLAttributes<HTMLPfCreditCardElement>;
+            /**
+             * A form-associated date field: a trigger that opens `pf-calendar` in a
+             * popover.
+             * Form-associated, which the React `DatePicker` is not — it is a button and a
+             * portal, so its value reaches a surrounding `<form>` only if the consumer
+             * wires it there themselves. Here the value is submitted as `YYYY-MM-DD`,
+             * constraint validation works, and Angular's generated accessor has something
+             * to bind to.
+             * The panel is a `popover`, so light dismiss and Escape are the browser's.
+             * Unlike `pf-dropdown`, the trigger and the panel are both in *this* shadow
+             * root, so `aria-controls` resolves and is worth setting — a same-root IDREF
+             * is the one case that works, measured.
+             */
+            "pf-date-picker": LocalJSX.IntrinsicElements["pf-date-picker"] & JSXBase.HTMLAttributes<HTMLPfDatePickerElement>;
             /**
              * A menu of actions, anchored to a trigger.
              * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
