@@ -115,6 +115,8 @@ const EXPECTED = [
   'pf-section-header',
   'pf-section-footer',
   'pf-avatar-group',
+  'pf-button-group',
+  'pf-button-group-item',
 ];
 
 const TYPES = {
@@ -2788,6 +2790,110 @@ try {
       }
       if (state.positions.slice(0, 2).some((position) => position === 'static')) {
         problems.push('a shown avatar is statically positioned, so its z-index does nothing');
+      }
+    }
+  }
+
+  /*
+   * The button group, which is joined borders: each button laps one pixel over
+   * the last, only the ends are rounded, and the rounding comes from
+   * `:host(:first-child)` in the child's own sheet because `::slotted()` takes
+   * no combinator. None of that is visible without a real stylesheet.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const group = document.querySelector('pf-button-group');
+        if (!group) return { error: 'the consumer app has no pf-button-group' };
+
+        const items = Array.from(group.querySelectorAll('pf-button-group-item'));
+        if (items.length < 4) return { error: `only ${items.length} buttons in the fixture` };
+        const button = (index) => items[index].shadowRoot.querySelector('[part="button"]');
+        const box = (index) => button(index).getBoundingClientRect();
+        const radius = (index) => getComputedStyle(button(index)).borderTopLeftRadius;
+
+        const read = {
+          pressed: items.map((node) =>
+            node.shadowRoot.querySelector('[part="button"]').getAttribute('aria-pressed'),
+          ),
+          // Joined: each button's left edge is a pixel inside the last one's
+          // right edge, so the shared border is drawn once.
+          overlaps: items.slice(1).map((_, index) => box(index + 1).left - box(index).right),
+          firstRadius: radius(0),
+          middleRadius: radius(1),
+          lastRadius: getComputedStyle(button(3)).borderTopRightRadius,
+          selectedBackground: getComputedStyle(button(1)).backgroundColor,
+          plainBackground: getComputedStyle(button(0)).backgroundColor,
+          selectedText: getComputedStyle(button(1)).color,
+          disabledOpacity: getComputedStyle(button(3)).opacity,
+          plainOpacity: getComputedStyle(button(0)).opacity,
+          dotBackground: getComputedStyle(items[2].shadowRoot.querySelector('[part="dot"]'))
+            .backgroundColor,
+        };
+
+        // Choosing another button has to reach the host framework.
+        button(0).click();
+        const deadline = Date.now() + 3000;
+        while (group.value !== 'day') {
+          if (Date.now() > deadline) return { ...read, error: 'the click did not take' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+
+        return {
+          ...read,
+          echo: document.querySelector('[data-testid="button-group-value"]')?.textContent?.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-button-group: ${state.error}`);
+    } else {
+      if (state.pressed.join(',') !== 'false,true,false,false') {
+        problems.push(
+          `the buttons report aria-pressed ${JSON.stringify(state.pressed)}, ` +
+            'expected the second one alone',
+        );
+      }
+      if (!state.overlaps.every((gap) => Math.abs(gap + 1) < 0.5)) {
+        problems.push(
+          `the buttons are ${JSON.stringify(state.overlaps)} apart, expected -1 — ` +
+            'they are not sharing a border',
+        );
+      }
+      if (parseFloat(state.firstRadius) < 4 || parseFloat(state.lastRadius) < 4) {
+        problems.push(
+          `the group's ends are not rounded (${state.firstRadius} / ${state.lastRadius}) — ` +
+            ':host(:first-child) did not match',
+        );
+      }
+      if (state.middleRadius !== '0px') {
+        problems.push(`a middle button is rounded (${state.middleRadius})`);
+      }
+      if (state.selectedBackground === state.plainBackground) {
+        problems.push(
+          `the chosen button looks the same as the others ("${state.plainBackground}")`,
+        );
+      }
+      if (isTransparent(state.selectedText) || state.selectedText === 'rgb(0, 0, 0)') {
+        problems.push(
+          `the chosen button's text computes ${state.selectedText} — ` +
+            'a --pf-buttongroup-* alias did not resolve',
+        );
+      }
+      if (state.disabledOpacity === state.plainOpacity) {
+        problems.push(
+          `a disabled button looks the same as an enabled one (opacity ${state.plainOpacity})`,
+        );
+      }
+      if (isTransparent(state.dotBackground)) {
+        problems.push('the dot has no colour');
+      }
+      if (state.echo !== 'day') {
+        problems.push(
+          `pf-button-group reported "${state.echo}" to the host framework, expected day`,
+        );
       }
     }
   }

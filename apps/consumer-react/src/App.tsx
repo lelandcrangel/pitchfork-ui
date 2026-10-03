@@ -9,6 +9,8 @@ import {
   PfBreadcrumb,
   PfBreadcrumbs,
   PfButton,
+  PfButtonGroup,
+  PfButtonGroupItem,
   PfCalendar,
   PfCard,
   PfCardContent,
@@ -97,6 +99,7 @@ export function App() {
   const [tab, setTab] = useState('overview');
   const [sections, setSections] = useState('shipping');
   const [details, setDetails] = useState(false);
+  const [range, setRange] = useState('week');
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
@@ -907,6 +910,33 @@ export function App() {
         <PfAvatar name="Alan Turing" />
         <PfAvatar name="Katherine Johnson" />
       </PfAvatarGroup>
+
+      {/*
+        Toggle buttons, so aria-pressed and one tab stop each — not the roving
+        tabindex a tab strip or a toolbar uses. The rounded ends come from
+        :host(:first-child) in the child's own sheet, because ::slotted() takes
+        no combinator; the group's disabled state is a prop of its own, so
+        enabling the group leaves a button disabled on its own alone.
+      */}
+      <div className="row">
+        <PfButtonGroup
+          value={range}
+          data-testid="button-group"
+          onPfChange={(event) => setRange(event.detail.value)}
+        >
+          <PfButtonGroupItem value="day">Day</PfButtonGroupItem>
+          <PfButtonGroupItem value="week" icon="calendar">
+            Week
+          </PfButtonGroupItem>
+          <PfButtonGroupItem value="month" dot>
+            Month
+          </PfButtonGroupItem>
+          <PfButtonGroupItem value="year" disabled>
+            Year
+          </PfButtonGroupItem>
+        </PfButtonGroup>
+        <output data-testid="button-group-value">{range}</output>
+      </div>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

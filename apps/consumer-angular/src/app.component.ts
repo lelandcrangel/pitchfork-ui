@@ -10,6 +10,8 @@ import {
   PfBreadcrumb,
   PfBreadcrumbs,
   PfButton,
+  PfButtonGroup,
+  PfButtonGroupItem,
   PfCalendar,
   PfCard,
   PfCardContent,
@@ -102,6 +104,8 @@ import {
     PfBreadcrumb,
     PfBreadcrumbs,
     PfButton,
+    PfButtonGroup,
+    PfButtonGroupItem,
     PfCalendar,
     PfCard,
     PfCardContent,
@@ -788,6 +792,21 @@ import {
         <pf-avatar name="Katherine Johnson"></pf-avatar>
       </pf-avatar-group>
 
+      <!-- Toggle buttons, one tab stop each; see the React consumer. -->
+      <div class="row">
+        <pf-button-group
+          [value]="range()"
+          data-testid="button-group"
+          (pfChange)="range.set($event.detail.value)"
+        >
+          <pf-button-group-item value="day">Day</pf-button-group-item>
+          <pf-button-group-item value="week" icon="calendar">Week</pf-button-group-item>
+          <pf-button-group-item value="month" dot>Month</pf-button-group-item>
+          <pf-button-group-item value="year" disabled>Year</pf-button-group-item>
+        </pf-button-group>
+        <output data-testid="button-group-value">{{ range() }}</output>
+      </div>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -810,6 +829,7 @@ export class AppComponent {
   tab = signal('overview');
   sections = signal('shipping');
   details = signal(false);
+  range = signal('week');
   day = signal('2024-03-15');
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');

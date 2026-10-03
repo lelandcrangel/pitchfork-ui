@@ -339,6 +339,77 @@ export namespace Components {
         "variant": PfButtonVariant;
     }
     /**
+     * A row of joined toggle buttons: pick one, or several.
+     * The group owns the selection, because "one at a time" is not a thing a
+     * button can decide for itself — the same division as `pf-radio-group`. Each
+     * `pf-button-group-item` renders a real `<button>` in its own shadow root, so
+     * every one of them is an ordinary tab stop: a group of toggle buttons is not
+     * a roving-tabindex pattern, unlike a toolbar or a tab strip.
+     * `value` is one comma-separated string, because that is what an attribute
+     * can carry; `pfChange` also reports the parsed array, which is what a
+     * framework consumer usually wants.
+     */
+    interface PfButtonGroup {
+        /**
+          * Disable every button. Reflected, and pushed down.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Allow several at once. Reflected for the stylesheet.
+          * @default false
+         */
+        "multiple": boolean;
+        /**
+          * Re-reads the children, for a consumer who changed one through a property.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * The chosen value, or values, as one comma-separated string.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
+     * One button inside a `pf-button-group`.
+     * It only reports that it was pressed; the group owns the selection, exactly
+     * as `pf-radio-group` does for its radios. The group writes `selected` and
+     * `groupDisabled` back onto it.
+     * `aria-pressed` rather than `aria-checked`: these are toggle buttons, not
+     * radios, which is also why every one of them is a tab stop.
+     */
+    interface PfButtonGroupItem {
+        /**
+          * Disable this button alone. Reflected for the stylesheet.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Draw a leading dot — a status light rather than an icon.
+          * @default false
+         */
+        "dot": boolean;
+        /**
+          * Set by the group when the whole group is disabled, kept apart from `disabled` so that enabling the group does not enable a button the consumer disabled on its own.
+          * @default false
+         */
+        "groupDisabled": boolean;
+        /**
+          * A leading icon's name, from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Set by the group. Reflected, so the stylesheet can mark the choice.
+          * @default false
+         */
+        "selected": boolean;
+        /**
+          * The value the group reports when this button is chosen.  Reflected, because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A month grid for picking a date.
      * **It has a keyboard, which the React component does not.** `Calendar`
      * renders 42 buttons and no key handling, so reaching the end of a month means
@@ -2470,6 +2541,14 @@ export interface PfAccordionItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfAccordionItemElement;
 }
+export interface PfButtonGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfButtonGroupElement;
+}
+export interface PfButtonGroupItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfButtonGroupItemElement;
+}
 export interface PfCalendarCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCalendarElement;
@@ -2731,6 +2810,59 @@ declare global {
     var HTMLPfButtonElement: {
         prototype: HTMLPfButtonElement;
         new (): HTMLPfButtonElement;
+    };
+    interface HTMLPfButtonGroupElementEventMap {
+        "pfChange": { value: string; values: string[] };
+    }
+    /**
+     * A row of joined toggle buttons: pick one, or several.
+     * The group owns the selection, because "one at a time" is not a thing a
+     * button can decide for itself — the same division as `pf-radio-group`. Each
+     * `pf-button-group-item` renders a real `<button>` in its own shadow root, so
+     * every one of them is an ordinary tab stop: a group of toggle buttons is not
+     * a roving-tabindex pattern, unlike a toolbar or a tab strip.
+     * `value` is one comma-separated string, because that is what an attribute
+     * can carry; `pfChange` also reports the parsed array, which is what a
+     * framework consumer usually wants.
+     */
+    interface HTMLPfButtonGroupElement extends Components.PfButtonGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfButtonGroupElementEventMap>(type: K, listener: (this: HTMLPfButtonGroupElement, ev: PfButtonGroupCustomEvent<HTMLPfButtonGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfButtonGroupElementEventMap>(type: K, listener: (this: HTMLPfButtonGroupElement, ev: PfButtonGroupCustomEvent<HTMLPfButtonGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfButtonGroupElement: {
+        prototype: HTMLPfButtonGroupElement;
+        new (): HTMLPfButtonGroupElement;
+    };
+    interface HTMLPfButtonGroupItemElementEventMap {
+        "pfButtonGroupSelect": { value: string };
+    }
+    /**
+     * One button inside a `pf-button-group`.
+     * It only reports that it was pressed; the group owns the selection, exactly
+     * as `pf-radio-group` does for its radios. The group writes `selected` and
+     * `groupDisabled` back onto it.
+     * `aria-pressed` rather than `aria-checked`: these are toggle buttons, not
+     * radios, which is also why every one of them is a tab stop.
+     */
+    interface HTMLPfButtonGroupItemElement extends Components.PfButtonGroupItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfButtonGroupItemElementEventMap>(type: K, listener: (this: HTMLPfButtonGroupItemElement, ev: PfButtonGroupItemCustomEvent<HTMLPfButtonGroupItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfButtonGroupItemElementEventMap>(type: K, listener: (this: HTMLPfButtonGroupItemElement, ev: PfButtonGroupItemCustomEvent<HTMLPfButtonGroupItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfButtonGroupItemElement: {
+        prototype: HTMLPfButtonGroupItemElement;
+        new (): HTMLPfButtonGroupItemElement;
     };
     interface HTMLPfCalendarElementEventMap {
         "pfChange": { value: string };
@@ -4006,6 +4138,8 @@ declare global {
         "pf-breadcrumb": HTMLPfBreadcrumbElement;
         "pf-breadcrumbs": HTMLPfBreadcrumbsElement;
         "pf-button": HTMLPfButtonElement;
+        "pf-button-group": HTMLPfButtonGroupElement;
+        "pf-button-group-item": HTMLPfButtonGroupItemElement;
         "pf-calendar": HTMLPfCalendarElement;
         "pf-card": HTMLPfCardElement;
         "pf-card-content": HTMLPfCardContentElement;
@@ -4336,6 +4470,81 @@ declare namespace LocalJSX {
           * @default 'primary'
          */
         "variant"?: PfButtonVariant;
+    }
+    /**
+     * A row of joined toggle buttons: pick one, or several.
+     * The group owns the selection, because "one at a time" is not a thing a
+     * button can decide for itself — the same division as `pf-radio-group`. Each
+     * `pf-button-group-item` renders a real `<button>` in its own shadow root, so
+     * every one of them is an ordinary tab stop: a group of toggle buttons is not
+     * a roving-tabindex pattern, unlike a toolbar or a tab strip.
+     * `value` is one comma-separated string, because that is what an attribute
+     * can carry; `pfChange` also reports the parsed array, which is what a
+     * framework consumer usually wants.
+     */
+    interface PfButtonGroup {
+        /**
+          * Disable every button. Reflected, and pushed down.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Allow several at once. Reflected for the stylesheet.
+          * @default false
+         */
+        "multiple"?: boolean;
+        /**
+          * Fires when the selection changes, however it was changed.
+         */
+        "onPfChange"?: (event: PfButtonGroupCustomEvent<{ value: string; values: string[] }>) => void;
+        /**
+          * The chosen value, or values, as one comma-separated string.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
+     * One button inside a `pf-button-group`.
+     * It only reports that it was pressed; the group owns the selection, exactly
+     * as `pf-radio-group` does for its radios. The group writes `selected` and
+     * `groupDisabled` back onto it.
+     * `aria-pressed` rather than `aria-checked`: these are toggle buttons, not
+     * radios, which is also why every one of them is a tab stop.
+     */
+    interface PfButtonGroupItem {
+        /**
+          * Disable this button alone. Reflected for the stylesheet.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Draw a leading dot — a status light rather than an icon.
+          * @default false
+         */
+        "dot"?: boolean;
+        /**
+          * Set by the group when the whole group is disabled, kept apart from `disabled` so that enabling the group does not enable a button the consumer disabled on its own.
+          * @default false
+         */
+        "groupDisabled"?: boolean;
+        /**
+          * A leading icon's name, from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Asks the group to choose this button. The group decides.
+         */
+        "onPfButtonGroupSelect"?: (event: PfButtonGroupItemCustomEvent<{ value: string }>) => void;
+        /**
+          * Set by the group. Reflected, so the stylesheet can mark the choice.
+          * @default false
+         */
+        "selected"?: boolean;
+        /**
+          * The value the group reports when this button is chosen.  Reflected, because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing.
+          * @default ''
+         */
+        "value"?: string;
     }
     /**
      * A month grid for picking a date.
@@ -6520,6 +6729,19 @@ declare namespace LocalJSX {
         "type": PfButtonType;
         "label": string;
     }
+    interface PfButtonGroupAttributes {
+        "value": string;
+        "multiple": boolean;
+        "disabled": boolean;
+    }
+    interface PfButtonGroupItemAttributes {
+        "value": string;
+        "disabled": boolean;
+        "groupDisabled": boolean;
+        "selected": boolean;
+        "icon": string;
+        "dot": boolean;
+    }
     interface PfCalendarAttributes {
         "value": string;
         "min": string;
@@ -6938,6 +7160,8 @@ declare namespace LocalJSX {
         "pf-breadcrumb": Omit<PfBreadcrumb, keyof PfBreadcrumbAttributes> & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes]?: PfBreadcrumb[K] } & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes as `attr:${K}`]?: PfBreadcrumbAttributes[K] } & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes as `prop:${K}`]?: PfBreadcrumb[K] };
         "pf-breadcrumbs": Omit<PfBreadcrumbs, keyof PfBreadcrumbsAttributes> & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes]?: PfBreadcrumbs[K] } & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes as `attr:${K}`]?: PfBreadcrumbsAttributes[K] } & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes as `prop:${K}`]?: PfBreadcrumbs[K] };
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
+        "pf-button-group": Omit<PfButtonGroup, keyof PfButtonGroupAttributes> & { [K in keyof PfButtonGroup & keyof PfButtonGroupAttributes]?: PfButtonGroup[K] } & { [K in keyof PfButtonGroup & keyof PfButtonGroupAttributes as `attr:${K}`]?: PfButtonGroupAttributes[K] } & { [K in keyof PfButtonGroup & keyof PfButtonGroupAttributes as `prop:${K}`]?: PfButtonGroup[K] };
+        "pf-button-group-item": Omit<PfButtonGroupItem, keyof PfButtonGroupItemAttributes> & { [K in keyof PfButtonGroupItem & keyof PfButtonGroupItemAttributes]?: PfButtonGroupItem[K] } & { [K in keyof PfButtonGroupItem & keyof PfButtonGroupItemAttributes as `attr:${K}`]?: PfButtonGroupItemAttributes[K] } & { [K in keyof PfButtonGroupItem & keyof PfButtonGroupItemAttributes as `prop:${K}`]?: PfButtonGroupItem[K] };
         "pf-calendar": Omit<PfCalendar, keyof PfCalendarAttributes> & { [K in keyof PfCalendar & keyof PfCalendarAttributes]?: PfCalendar[K] } & { [K in keyof PfCalendar & keyof PfCalendarAttributes as `attr:${K}`]?: PfCalendarAttributes[K] } & { [K in keyof PfCalendar & keyof PfCalendarAttributes as `prop:${K}`]?: PfCalendar[K] };
         "pf-card": PfCard;
         "pf-card-content": PfCardContent;
@@ -7082,6 +7306,27 @@ declare module "@stencil/core" {
              */
             "pf-breadcrumbs": LocalJSX.IntrinsicElements["pf-breadcrumbs"] & JSXBase.HTMLAttributes<HTMLPfBreadcrumbsElement>;
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
+            /**
+             * A row of joined toggle buttons: pick one, or several.
+             * The group owns the selection, because "one at a time" is not a thing a
+             * button can decide for itself — the same division as `pf-radio-group`. Each
+             * `pf-button-group-item` renders a real `<button>` in its own shadow root, so
+             * every one of them is an ordinary tab stop: a group of toggle buttons is not
+             * a roving-tabindex pattern, unlike a toolbar or a tab strip.
+             * `value` is one comma-separated string, because that is what an attribute
+             * can carry; `pfChange` also reports the parsed array, which is what a
+             * framework consumer usually wants.
+             */
+            "pf-button-group": LocalJSX.IntrinsicElements["pf-button-group"] & JSXBase.HTMLAttributes<HTMLPfButtonGroupElement>;
+            /**
+             * One button inside a `pf-button-group`.
+             * It only reports that it was pressed; the group owns the selection, exactly
+             * as `pf-radio-group` does for its radios. The group writes `selected` and
+             * `groupDisabled` back onto it.
+             * `aria-pressed` rather than `aria-checked`: these are toggle buttons, not
+             * radios, which is also why every one of them is a tab stop.
+             */
+            "pf-button-group-item": LocalJSX.IntrinsicElements["pf-button-group-item"] & JSXBase.HTMLAttributes<HTMLPfButtonGroupItemElement>;
             /**
              * A month grid for picking a date.
              * **It has a keyboard, which the React component does not.** `Calendar`
