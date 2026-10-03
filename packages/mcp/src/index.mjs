@@ -16,6 +16,10 @@ import { z } from 'zod';
 
 import {
   componentsByName,
+  elementForComponent,
+  elementMetadata,
+  elementsByName,
+  elementsByTag,
   iconNames,
   iconRegistryAvailable,
   metadata,
@@ -34,7 +38,9 @@ const text = (body) => ({ content: [{ type: 'text', text: body }] });
  * equivalent object and models act on it more reliably.
  * ------------------------------------------------------------------ */
 const summaryOf = (component) => {
-  const description = component.description ?? `Part of ${component.folder}.`;
+  const description =
+    component.description ||
+    (component.folder ? `Part of ${component.folder}.` : `The \`${component.tag}\` element.`);
   const match = description.match(/^.*?[.!?](?=\s|$)/);
   return (match ? match[0] : description).trim();
 };
@@ -43,6 +49,13 @@ function renderComponent(component) {
   const lines = [`# ${component.name}`, ''];
   lines.push(`Category: ${component.category}`);
   lines.push(`Import: \`import { ${component.name} } from '${metadata.name}';\``);
+  const coverage = elementForComponent.get(component.name);
+  if (coverage) {
+    lines.push(
+      `Custom element: \`<${coverage.tag}>\`` +
+        (coverage.absorbed ? ` — ${coverage.how}` : ' (`get_element` for its API).'),
+    );
+  }
   if (component.forwardsRef) lines.push('Forwards its ref to the underlying element.');
   lines.push('');
 
@@ -96,6 +109,91 @@ function renderComponent(component) {
   return lines.join('\n');
 }
 
+function renderElement(element) {
+  const lines = [`# <${element.tag}>`, ''];
+  lines.push(`Category: ${element.category ?? 'uncategorised'}`);
+  lines.push(`Import: \`import '${elementMetadata.name}/components/${element.tag}.js';\``);
+  lines.push(
+    `Bindings: \`${element.name}\` from \`${elementMetadata.bindings.react}\`, ` +
+      `\`${elementMetadata.bindings.angular}\` or \`${elementMetadata.bindings.vue}\`.`,
+  );
+  if (element.reactCounterpart) {
+    lines.push(`React counterpart: \`${element.reactCounterpart}\` — \`get_component\` for it.`);
+  }
+  if (element.childOf) {
+    lines.push(`Goes inside \`<${element.childOf}>\`.`);
+  }
+  if (element.formAssociated) {
+    lines.push('Form-associated: it submits with a surrounding `<form>` under its `name`.');
+  }
+  lines.push('');
+
+  if (element.description) lines.push(element.description, '');
+
+  lines.push('## Props', '');
+  if (element.props.length) {
+    lines.push('| Prop | Attribute | Type | Default |', '| --- | --- | --- | --- |');
+    for (const prop of element.props) {
+      const type = prop.type.replace(/\|/g, '\\|');
+      lines.push(
+        `| \`${prop.name}\` | ${prop.attr ? `\`${prop.attr}\`` : '_property only_'} | ` +
+          `\`${type}\` | ${prop.default ? `\`${prop.default}\`` : '—'} |`,
+      );
+    }
+    const propertyOnly = element.props.filter((prop) => !prop.attr);
+    if (propertyOnly.length) {
+      lines.push(
+        '',
+        `\`${propertyOnly.map((p) => p.name).join('`, `')}\` have no attribute — ` +
+          'set them as properties, or as props through a binding. Writing them in ' +
+          'markup does nothing.',
+      );
+    }
+  } else {
+    lines.push('_No props._');
+  }
+  lines.push('');
+
+  if (element.events.length) {
+    lines.push('## Events', '');
+    for (const event of element.events) {
+      lines.push(
+        `- \`${event.name}\`${event.detail ? ` — detail \`${event.detail}\`` : ''}` +
+          `${event.description ? `: ${event.description.split('\n')[0]}` : ''}`,
+      );
+    }
+    lines.push(
+      '',
+      'In the React bindings these are `on` + the event name (`pfChange` → `onPfChange`).',
+      '',
+    );
+  }
+
+  if (element.methods.length) {
+    lines.push('## Methods', '');
+    for (const method of element.methods) lines.push(`- \`${method.signature}\``);
+    lines.push('', 'Every method is async — a custom element resolves them off its queue.', '');
+  }
+
+  if (element.slots.length) {
+    lines.push('## Slots', '');
+    for (const slot of element.slots) {
+      lines.push(`- ${slot.name ? `\`${slot.name}\`` : '_default_'}: ${slot.description}`);
+    }
+    lines.push('');
+  }
+
+  if (element.parts.length) {
+    lines.push('## Parts', '');
+    lines.push(`Style these with \`${element.tag}::part(name)\`; selectors do not cross a`);
+    lines.push('shadow boundary, so these are the only reachable internals.', '');
+    for (const part of element.parts) lines.push(`- \`${part.name}\`: ${part.description}`);
+    lines.push('');
+  }
+
+  return lines.join('\n');
+}
+
 const notFound = (name) => {
   const names = [...componentsByName.keys()];
   const suggestion = closest(name, names);
@@ -114,6 +212,29 @@ const notFound = (name) => {
 /* ------------------------------------------------------------------ *
  * Server
  * ------------------------------------------------------------------ */
+const elementNotFound = (name) => {
+  const tags = [...elementsByTag.keys()];
+  const suggestion = closest(name.toLowerCase().startsWith('pf-') ? name : `pf-${name}`, tags);
+  const component = componentsByName.get(name);
+
+  if (component) {
+    const coverage = elementForComponent.get(name);
+    return text(
+      `\`${name}\` is a React component, not an element.` +
+        (coverage
+          ? ` The element for it is \`<${coverage.tag}>\`` +
+            (coverage.absorbed ? ` — ${coverage.how}` : '.')
+          : ''),
+    );
+  }
+
+  return text(
+    `No element named \`${name}\`.` +
+      (suggestion ? ` Did you mean \`${suggestion}\`?` : '') +
+      ' Use `list_elements` to see them all.',
+  );
+};
+
 const server = new McpServer({ name: 'pitchfork-ui', version: metadata.version });
 
 server.registerTool(
@@ -249,6 +370,72 @@ server.registerTool(
 );
 
 server.registerTool(
+  'list_elements',
+  {
+    title: 'List custom elements',
+    description:
+      'List every custom element in @pitchfork-ui/elements, the framework-free ' +
+      'half of the library. Use these in Angular, Vue, plain HTML, or anywhere ' +
+      'the React components do not fit — they are a first-class layer, not ' +
+      'wrappers around the React components.',
+    inputSchema: { category: z.enum(elementMetadata.categories).optional() },
+  },
+  async ({ category }) => {
+    const matches = category
+      ? elementMetadata.elements.filter((e) => e.category === category)
+      : elementMetadata.elements;
+
+    if (!matches.length) return text(`No elements in category \`${category}\`.`);
+
+    const grouped = new Map();
+    for (const element of matches) {
+      const key = element.category ?? 'uncategorised';
+      if (!grouped.has(key)) grouped.set(key, []);
+      grouped.get(key).push(element);
+    }
+
+    const lines = [
+      `${matches.length} elements (${elementMetadata.name}@${elementMetadata.version}).`,
+      '',
+    ];
+    for (const [group, members] of grouped) {
+      lines.push(`## ${group}`, '');
+      for (const element of members) {
+        const notes = [
+          element.childOf ? `inside \`<${element.childOf}>\`` : null,
+          element.formAssociated ? 'form control' : null,
+        ].filter(Boolean);
+        lines.push(
+          `- **<${element.tag}>** — ${summaryOf(element)}` +
+            (notes.length ? ` _(${notes.join(', ')})_` : ''),
+        );
+      }
+      lines.push('');
+    }
+    lines.push('Use `get_element` for the full API of one.');
+    return text(lines.join('\n'));
+  },
+);
+
+server.registerTool(
+  'get_element',
+  {
+    title: 'Get a custom element API',
+    description:
+      'The full API for one custom element: props with their attributes and ' +
+      'defaults, events, async methods, slots and `::part()` names, plus its ' +
+      'React counterpart. Read this before writing markup that uses the element.',
+    inputSchema: {
+      name: z.string().describe('Element tag or binding name, e.g. "pf-button" or "PfButton"'),
+    },
+  },
+  async ({ name }) => {
+    const element = elementsByTag.get(name) ?? elementsByName.get(name);
+    return element ? text(renderElement(element)) : elementNotFound(name);
+  },
+);
+
+server.registerTool(
   'get_tokens',
   {
     title: 'Get design tokens',
@@ -297,16 +484,23 @@ server.registerTool(
     description:
       'Check a JSX snippet against the real component API. Reports unknown ' +
       'components, invalid variant values, missing required props, likely prop ' +
-      'typos and hardcoded colours. Run this on code you generated before ' +
-      'presenting it.',
+      'typos and hardcoded colours. Also checks `<pf-*>` element markup: ' +
+      'unknown tags, attributes that do not exist, and props that have no ' +
+      'attribute at all and so cannot be set from markup. Run this on code you ' +
+      'generated before presenting it.',
     inputSchema: { code: z.string().min(1).describe('The JSX snippet to check') },
   },
   async ({ code }) => {
-    const findings = validateUsage(code, componentsByName, {
-      available: iconRegistryAvailable,
-      resolves: resolvesIconName,
-      names: iconNames,
-    });
+    const findings = validateUsage(
+      code,
+      componentsByName,
+      {
+        available: iconRegistryAvailable,
+        resolves: resolvesIconName,
+        names: iconNames,
+      },
+      elementsByTag,
+    );
     if (!findings.length) {
       return text('No problems found. Components, props and values all check out.');
     }
@@ -330,5 +524,7 @@ await server.connect(transport);
 // stdout is the protocol channel; anything informational has to go to stderr.
 console.error(
   `pitchfork-ui MCP server ready — ${metadata.components.length} components ` +
-    `from ${metadata.name}@${metadata.version} (${metadataPath})`,
+    `from ${metadata.name}@${metadata.version} (${metadataPath}) and ` +
+    `${elementMetadata.elements.length} elements from ` +
+    `${elementMetadata.name}@${elementMetadata.version}`,
 );

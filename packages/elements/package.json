@@ -91,6 +91,7 @@
       "default": "./dist/components/index.js"
     },
     "./components/*": "./dist/components/*",
-    "./styles.css": "./dist/pitchfork/pitchfork.css"
+    "./styles.css": "./dist/pitchfork/pitchfork.css",
+    "./metadata": "./dist/elements.json"
   }
 }

@@ -71,12 +71,19 @@ jobs:
       - name: Validate component metadata
         run: npm run build:metadata -- --strict
 
+      # The element metadata the MCP server and llms.txt answer from. --strict
+      # fails on an element with no doc comment, one whose category cannot be
+      # derived, and -- the guard that matters -- a React component that no
+      # element answers for, by counterpart or by absorption.
+      - name: Validate element metadata
+        run: npm run build:elements-metadata -- --strict
+
       # `validate_usage` checks the code an agent writes; nothing checked ours.
       # EmptyState's published examples used three icons the registry does not
       # have, so the docs site demonstrated broken usage.
       - name: Check every icon name this repository uses resolves
         run: npm run check:icons
-      - name: Validate llms.txt (every component linked, every link resolves)
+      - name: Validate llms.txt (every component and element linked, every link resolves)
         run: npm run build:llms -- --strict --verify
 
       # The 108 element reference pages are generated from Stencil's own

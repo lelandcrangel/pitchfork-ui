@@ -1334,6 +1334,65 @@ elements and checks the three things only a Vue binding can get wrong:
 
 ---
 
+## What the agent-facing artifacts know
+
+Three artifacts exist so an agent can build with this library from its real API
+rather than from guesswork, and all three now cover both layers:
+
+| Artifact                | Built by                      | Source                          |
+| ----------------------- | ----------------------------- | ------------------------------- |
+| `metadata.json`         | `build-metadata.mjs`          | the React TypeScript, docs, CSS |
+| `elements.json`         | `build-elements-metadata.mjs` | Stencil's `docs.json`           |
+| `llms.txt`, `-full.txt` | `build-llms-txt.mjs`          | both of the above               |
+
+The React metadata is _parsed_, because nothing else records that API. The
+element metadata is _read_: Stencil writes every prop, attribute, event,
+method, slot and part into `docs.json` at build time, so the only judgement the
+builder adds is the category — Stencil has no concept of one, and an agent
+asking "what is there for navigation?" needs both layers to answer the same
+way. Three tables carry that judgement, and `--strict` checks each:
+
+- **`CHILD_OF`** maps a child element to its parent _tag_, not to a category,
+  so moving a parent between categories takes its children with it.
+- **`COUNTERPART`** covers the two names pascal-casing does not find
+  (`pf-inline-cta` → `InlineCTA`, `pf-toaster` → `ToastProvider`).
+- **`ABSORBED`** records the four React components an element took in rather
+  than mirrored, with how to get the same thing: `AreaChart` is `area` on
+  `pf-line-chart`, `PageHeaderMeta` is a slot. Without it the metadata would
+  answer "there is no element for `AreaChart`", which is wrong in the way that
+  matters. `--strict` fails on a React component in neither table nor a
+  counterpart, which is what keeps "every React component has an element
+  answer" true as components are added.
+
+**A new check that catches nothing is the failure mode here, and two of them
+were shipping.** Both were found by writing the test that should fail and
+watching it pass:
+
+- **Stencil normalises a union to double quotes.** `docs.json` records
+  `variant` as `"ghost" | "primary"` where the React extractor reproduces this
+  repo's single quotes. `unionMembers` accepted only single quotes, so every
+  variant check on every element passed — `validate_usage` reported
+  `<pf-button variant="ghostly">` as clean, which is the one thing it exists to
+  catch.
+- **A framework binding's attribute sigils have to be part of the name.** The
+  attribute scanner's name pattern started at `[A-Za-z_]`, so it stepped over
+  the punctuation and read the bare word: `[formControl]="email"` arrived as an
+  attribute called `formControl` and then one called `email`, and
+  `(pfChange)="onChange($event)"` added `event`. Four invented-attribute errors
+  on entirely correct Angular markup.
+
+The element-specific finding worth knowing about is **a prop with no
+attribute**. A prop typed as an array or a function (`sources`,
+`isDateDisabled`, `files` — eight of them across the library) gets no attribute
+from Stencil at all, so writing it in markup parses, renders, and never
+delivers the value. `validate_usage` reports it as an error, `get_element`
+marks it _property only_, and `llms.txt` says so in its preamble.
+`<PfButton>` in JSX is reported as a binding rather than as an unknown
+component, because "not exported by the library" would send an agent hunting a
+typo it has not made.
+
+---
+
 ## Known gaps
 
 See `todo.md` at the repo root.

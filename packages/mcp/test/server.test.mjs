@@ -41,9 +41,11 @@ test('exposes every documented tool', async () => {
   assert.deepEqual(names, [
     'get_component',
     'get_conventions',
+    'get_element',
     'get_examples',
     'get_tokens',
     'list_components',
+    'list_elements',
     'search_components',
     'validate_usage',
   ]);
@@ -262,4 +264,154 @@ test('get_examples includes stories whose args use shorthand properties', async 
   // shorthand property. Dropping those leaves it with no usable example.
   const out = await call('get_examples', { name: 'Carousel' });
   assert.match(out, /slides=\{slides\}/);
+});
+
+/* ------------------------------------------------------------------ *
+ * The elements
+ *
+ * A second first-class layer, so every question an agent can ask about a
+ * component it can ask about an element. Before these tools the server knew
+ * only the 91 React components: `validate_usage` reported `<pf-button>` as
+ * nothing at all, and an agent writing Angular or Vue had no grounding.
+ * ------------------------------------------------------------------ */
+
+test('list_elements lists every element, grouped by the same categories', async () => {
+  const out = await call('list_elements');
+  assert.match(out, /108 elements/);
+  assert.match(out, /<pf-button>/);
+  assert.match(out, /## navigation/);
+});
+
+test('list_elements can filter by category', async () => {
+  const out = await call('list_elements', { category: 'forms' });
+  assert.match(out, /<pf-input>/);
+  assert.doesNotMatch(out, /<pf-button>/);
+});
+
+test('list_elements marks a child element and a form control', async () => {
+  const out = await call('list_elements');
+  assert.match(out, /<pf-option>.*inside `<pf-select>`/);
+  assert.match(out, /<pf-input>.*form control/);
+});
+
+test('get_element returns props with their attributes, events, slots and parts', async () => {
+  const out = await call('get_element', { name: 'pf-input' });
+  assert.match(out, /# <pf-input>/);
+  assert.match(out, /`pfChange`/, 'events should be listed');
+  assert.match(out, /pf-input::part\(/, 'parts should name how to style them');
+  assert.match(out, /Form-associated/, 'a control that submits should say so');
+  assert.match(out, /checkValidity/, 'its async methods should be listed');
+});
+
+test('get_element takes the binding name as well as the tag', async () => {
+  const byTag = await call('get_element', { name: 'pf-button' });
+  const byName = await call('get_element', { name: 'PfButton' });
+  assert.equal(byTag, byName);
+});
+
+/*
+ * The property-only props are the elements' one genuinely surprising API
+ * detail: an array or a function prop has no attribute, so markup cannot set
+ * it. The element renders perfectly and the value never arrives.
+ */
+test('get_element says which props have no attribute', async () => {
+  const out = await call('get_element', { name: 'pf-video-player' });
+  assert.match(out, /_property only_/);
+  assert.match(out, /Writing them in markup does nothing/);
+});
+
+test('get_element points at the React counterpart, and get_component back', async () => {
+  const element = await call('get_element', { name: 'pf-button' });
+  assert.match(element, /React counterpart: `Button`/);
+
+  const component = await call('get_component', { name: 'Button' });
+  assert.match(component, /Custom element: `<pf-button>`/);
+});
+
+/*
+ * Four React components were absorbed into an element rather than ported one
+ * for one. "There is no element for AreaChart" is wrong in the way that
+ * matters: there is, it is a prop.
+ */
+test('get_component says how an absorbed component maps to an element', async () => {
+  const out = await call('get_component', { name: 'AreaChart' });
+  assert.match(out, /`<pf-line-chart>`/);
+  assert.match(out, /set `area`/);
+});
+
+test('get_element redirects a React component name to its element', async () => {
+  const out = await call('get_element', { name: 'Button' });
+  assert.match(out, /is a React component, not an element/);
+  assert.match(out, /`<pf-button>`/);
+});
+
+test('get_element suggests a near match for a typo', async () => {
+  const out = await call('get_element', { name: 'pf-buton' });
+  assert.match(out, /Did you mean `pf-button`\?/);
+});
+
+test('validate_usage accepts correct element markup', async () => {
+  const out = await call('validate_usage', {
+    code: '<pf-button variant="primary" size="lg" aria-label="Save">Save</pf-button>',
+  });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage rejects an unknown element and an invalid value', async () => {
+  const unknown = await call('validate_usage', { code: '<pf-buton>x</pf-buton>' });
+  assert.match(unknown, /is not an element in this library/);
+
+  const invalid = await call('validate_usage', {
+    code: '<pf-button variant="ghostly">x</pf-button>',
+  });
+  assert.match(invalid, /not valid on `<pf-button>`/);
+});
+
+/*
+ * Stencil normalises a union to double quotes ("ghost" | "primary") where the
+ * React extractor reproduces the source's single ones. The union check
+ * accepted only single quotes, so every variant check on every element passed
+ * silently -- a validator that cannot fail is worse than none.
+ */
+test('validate_usage checks a union written with double quotes', async () => {
+  const out = await call('validate_usage', { code: '<pf-badge variant="primary">x</pf-badge>' });
+  assert.match(out, /Expected one of: "brand", "danger", "neutral", "success", "warning"/);
+});
+
+test('validate_usage flags an attribute the element does not have', async () => {
+  const out = await call('validate_usage', { code: '<pf-button tone="loud">x</pf-button>' });
+  assert.match(out, /has no attribute `tone`/);
+});
+
+test('validate_usage flags a prop that has no attribute, written as one', async () => {
+  const out = await call('validate_usage', {
+    code: '<pf-video-player sources="clip.mp4"></pf-video-player>',
+  });
+  assert.match(out, /has no attribute — setting it in markup does nothing/);
+});
+
+test('validate_usage warns about the property name where the attribute is kebab-case', async () => {
+  const out = await call('validate_usage', {
+    code: '<pf-time-picker hourCycle="12"></pf-time-picker>',
+  });
+  assert.match(out, /the attribute is `hour-cycle`/);
+});
+
+test('validate_usage passes a framework binding syntax it cannot judge', async () => {
+  const out = await call('validate_usage', {
+    code:
+      '<pf-input :value="email" @pf-change="onChange" v-if="ready" />\n' +
+      '<pf-input [formControl]="email" (pfChange)="onChange($event)" />',
+  });
+  assert.match(out, /No problems found/);
+});
+
+/*
+ * `<PfButton>` is a real component, from a bindings package. Reporting it as
+ * "not exported by the library" sends an agent hunting a typo it has not made.
+ */
+test('validate_usage recognises a generated binding used in JSX', async () => {
+  const out = await call('validate_usage', { code: '<PfButton variant="primary">Go</PfButton>' });
+  assert.match(out, /generated binding for `<pf-button>`/);
+  assert.match(out, /elements-react/);
 });
