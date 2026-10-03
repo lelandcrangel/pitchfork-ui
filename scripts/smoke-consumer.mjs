@@ -94,6 +94,9 @@ const EXPECTED = [
   'pf-combobox',
   'pf-multi-select',
   'pf-tag-input',
+  'pf-tabs',
+  'pf-tab',
+  'pf-tab-panel',
 ];
 
 const TYPES = {
@@ -157,7 +160,7 @@ try {
     timeout: 15_000,
   });
 
-  const report = await page.evaluate((expected) => {
+  const report = await page.evaluate(async (expected) => {
     const result = { missing: [], notUpgraded: [], unstyled: [], tokens: {} };
 
     const rootStyle = getComputedStyle(document.documentElement);
@@ -334,6 +337,16 @@ try {
       if (transparent(getComputedStyle(barTrack).backgroundColor)) {
         result.unstyled.push('pf-progress-bar track has no background');
       }
+      /*
+       * The fill's width is transitioned, and Angular sets `value` as a
+       * property after hydration — so the bar animates from empty and a
+       * straight read here lands mid-transition. Measured: 1 run in 3 came
+       * back at 84-86 of an expected 90, which read as a broken percentage
+       * rather than as the flake it was. `Animation.finished` resolves at once
+       * when nothing is running, so this costs the React app nothing.
+       */
+      await Promise.all(barFill.getAnimations().map((animation) => animation.finished));
+
       // value=30 max=60 is half drawn; the fill is set as a percentage width.
       const drawn = barFill.getBoundingClientRect().width;
       const whole = barTrack.getBoundingClientRect().width;
@@ -1611,6 +1624,181 @@ try {
           `a disabled pf-option is the same colour as a selectable one ` +
             `("${state.comboPlain}")`,
         );
+      }
+    }
+  }
+
+  /*
+   * The tab set, and specifically where the indicator lands. The strip is
+   * `position: relative` and the indicator `position: absolute` only once the
+   * real stylesheet is applied, so neither Vitest project can see the painted
+   * box at all — there the assertion is on the coordinates written onto it.
+   *
+   * Also the measurement the element is built around: `offsetLeft` on a
+   * slotted tab is resolved against an offsetParent in the *document* tree,
+   * so it reports a different number from the tab's offset within the strip.
+   * The gap is what an offsetLeft-based implementation would be out by.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const tabs = document.querySelector('pf-tabs');
+        if (!tabs) return { error: 'the consumer app has no pf-tabs' };
+
+        const strip = tabs.shadowRoot.querySelector('[part="list"]');
+        const indicator = tabs.shadowRoot.querySelector('[part="indicator"]');
+        const tabFor = (value) => tabs.querySelector(`pf-tab[value="${value}"]`);
+        const panelFor = (value) => tabs.querySelector(`pf-tab-panel[value="${value}"]`);
+
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+
+        await settle();
+        const first = tabFor('overview').getBoundingClientRect();
+        const indicatorBox = indicator.getBoundingClientRect();
+        const stripBox = strip.getBoundingClientRect();
+
+        const read = {
+          stripPosition: getComputedStyle(strip).position,
+          indicatorPosition: getComputedStyle(indicator).position,
+          indicatorBackground: getComputedStyle(indicator).backgroundColor,
+          // Where the indicator actually painted, against the selected tab.
+          indicatorLeft: indicatorBox.left,
+          indicatorWidth: indicatorBox.width,
+          selectedLeft: first.left,
+          selectedWidth: first.width,
+          // The indicator sits inside the strip, under the tabs.
+          indicatorBottom: indicatorBox.bottom,
+          stripBottom: stripBox.bottom,
+          // The two kinds of offset, for the same tab.
+          offsetLeft: tabFor('overview').offsetLeft,
+          stripOffset: first.left - stripBox.left + strip.scrollLeft,
+          offsetParent: tabFor('overview').offsetParent?.tagName.toLowerCase() ?? null,
+          // One panel on show, the rest removed from the layout.
+          shownDisplay: getComputedStyle(panelFor('overview')).display,
+          hiddenDisplay: getComputedStyle(panelFor('issues')).display,
+          // The tabs render inside the strip, above the panel.
+          tabsAbovePanel: first.bottom <= panelFor('overview').getBoundingClientRect().top,
+          disabledOpacity: getComputedStyle(tabFor('archive')).opacity,
+          plainOpacity: getComputedStyle(tabFor('issues')).opacity,
+          countBackground: getComputedStyle(
+            tabFor('issues').shadowRoot.querySelector('[part="count"]'),
+          ).backgroundColor,
+        };
+
+        // Then move the selection, and watch the indicator follow.
+        tabFor('issues').click();
+        const deadline = Date.now() + 3000;
+        while (tabFor('issues').getAttribute('aria-selected') !== 'true') {
+          if (Date.now() > deadline) return { ...read, error: 'the second tab never selected' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        // The indicator slides, so wait for the transition rather than sample.
+        await Promise.all(indicator.getAnimations().map((animation) => animation.finished));
+        await settle();
+
+        const second = tabFor('issues').getBoundingClientRect();
+        return {
+          ...read,
+          echo: document.querySelector('[data-testid="tabs-value"]')?.textContent?.trim(),
+          movedIndicatorLeft: indicator.getBoundingClientRect().left,
+          movedSelectedLeft: second.left,
+          movedIndicatorWidth: indicator.getBoundingClientRect().width,
+          movedSelectedWidth: second.width,
+          movedShownDisplay: getComputedStyle(panelFor('issues')).display,
+          movedHiddenDisplay: getComputedStyle(panelFor('overview')).display,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-tabs: ${state.error}`);
+    } else {
+      if (state.stripPosition !== 'relative') {
+        problems.push(
+          `the pf-tabs strip computes position: ${state.stripPosition} — ` +
+            'the indicator would be placed against something else',
+        );
+      }
+      if (state.indicatorPosition !== 'absolute') {
+        problems.push(`the pf-tabs indicator computes position: ${state.indicatorPosition}`);
+      }
+      if (isTransparent(state.indicatorBackground)) {
+        problems.push('the pf-tabs indicator has no background — a --pf-tabs-* alias is missing');
+      }
+      for (const [label, box, tab] of [
+        ['at rest', state, 'overview'],
+        [
+          'after moving',
+          {
+            indicatorLeft: state.movedIndicatorLeft,
+            indicatorWidth: state.movedIndicatorWidth,
+            selectedLeft: state.movedSelectedLeft,
+            selectedWidth: state.movedSelectedWidth,
+          },
+          'issues',
+        ],
+      ]) {
+        if (Math.abs(box.indicatorLeft - box.selectedLeft) > 1) {
+          problems.push(
+            `the pf-tabs indicator ${label} painted at ${box.indicatorLeft} ` +
+              `while the ${tab} tab starts at ${box.selectedLeft}`,
+          );
+        }
+        if (Math.abs(box.indicatorWidth - box.selectedWidth) > 1) {
+          problems.push(
+            `the pf-tabs indicator ${label} is ${box.indicatorWidth}px wide ` +
+              `while the ${tab} tab is ${box.selectedWidth}px`,
+          );
+        }
+      }
+      if (state.indicatorBottom > state.stripBottom + 1) {
+        problems.push('the pf-tabs indicator painted below the strip');
+      }
+      /*
+       * The measurement the element is built around. If these two ever agree
+       * the comparison has stopped meaning anything — most likely because the
+       * app no longer has a positioned ancestor around the tab set — and the
+       * offsetLeft trap would go unnoticed.
+       */
+      if (Math.abs(state.offsetLeft - state.stripOffset) < 1) {
+        problems.push(
+          `a slotted pf-tab reports offsetLeft ${state.offsetLeft}, the same as its ` +
+            `offset within the strip (${state.stripOffset}) — this app no longer ` +
+            'demonstrates why the indicator is placed from rects',
+        );
+      }
+      if (state.offsetParent === 'pf-tabs' || state.offsetParent === null) {
+        problems.push(`a slotted pf-tab reports offsetParent ${state.offsetParent}`);
+      }
+      if (state.shownDisplay === 'none') {
+        problems.push('the shown pf-tab-panel computes display: none');
+      }
+      if (state.hiddenDisplay !== 'none') {
+        problems.push(
+          `a hidden pf-tab-panel computes display: ${state.hiddenDisplay} — ` +
+            'every panel is on show at once',
+        );
+      }
+      if (state.movedShownDisplay === 'none' || state.movedHiddenDisplay !== 'none') {
+        problems.push('the shown pf-tab-panel did not change with the selection');
+      }
+      if (!state.tabsAbovePanel) {
+        problems.push('the pf-tabs strip did not render above its panels');
+      }
+      if (state.disabledOpacity === state.plainOpacity) {
+        problems.push(
+          `a disabled pf-tab looks the same as a selectable one (opacity ${state.plainOpacity})`,
+        );
+      }
+      if (isTransparent(state.countBackground)) {
+        problems.push('the pf-tab count badge has no background');
+      }
+      if (state.echo !== 'issues') {
+        problems.push(`pf-tabs reported "${state.echo}" to the host framework, expected "issues"`);
       }
     }
   }

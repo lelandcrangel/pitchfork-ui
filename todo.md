@@ -246,3 +246,30 @@ fail against the old handler.
 setters over closed-over state is the failure mode to look for in the
 remaining ports: `MultiSelect`, `Combobox` and `TreeView` all have handlers
 shaped like that one.
+
+---
+
+## The React `Tabs` is one tab stop per tab, and reports an unchanged selection
+
+Two gaps, both found porting it to `<pf-tabs>`.
+
+`Tabs` renders `tabIndex={item.disabled ? -1 : 0}`, so a six-tab strip is six
+tab stops and tabbing through the page walks every one. The ARIA tabs pattern
+is a single stop on the _selected_ tab, with the arrows moving inside the
+group — which `Tabs` already implements, so the keyboard half is there and
+only the tabindex is wrong. `<pf-tabs>` does it with core's
+`syncRovingTabIndex`, the same call `pf-toolbar` and `pf-radio-group` make, and
+its browser spec asserts that tabbing in from outside lands on the selection.
+
+`onClick` then calls `setSelectedValue(item.value)` unconditionally, so
+clicking the tab that is already selected calls `onValueChange` with a value
+that did not change. A native `<select>` does not fire `change` for the same
+option. `<pf-tabs>` compares against the tab actually on show — not against
+`value`, which is still `''` while the first enabled tab is selected by
+fallback — and a unit test pins it.
+
+**Fix:** set `tabIndex` from `item.value === selectedItem?.value` (falling back
+to the first enabled tab when nothing matches, which `resolveSelectedTab`
+already works out), and guard the click on `item.value !== selectedItem?.value`.
+Both are small; they are here rather than done because changing which element
+is tabbable is a behaviour change for consumers' own tests.

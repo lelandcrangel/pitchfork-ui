@@ -1,0 +1,88 @@
+/*
+ * The host is the tab: it carries `role="tab"`, takes the focus the group
+ * hands it, and is the box the group measures for the indicator. So the
+ * padding and the type scale live on `:host`, selected on the `variant` and
+ * `size` attributes the group writes down.
+ */
+:host {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--pf-tabs-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  gap: var(--space-2);
+  min-width: 0;
+  position: relative;
+  transition: color var(--pf-transition-medium);
+  user-select: none;
+  white-space: nowrap;
+  /* Above the shared indicator, which is a sibling inside the strip. */
+  z-index: 1;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([size='sm']) {
+  padding: var(--space-2) var(--space-3);
+}
+
+:host([size='md']) {
+  padding: var(--pf-tabs-tab-padding-y-md) var(--pf-tabs-tab-padding-x-md);
+}
+
+:host([full-width]) {
+  flex: 1;
+  justify-content: center;
+}
+
+/* The indicator draws the underline; the transparent border holds the space. */
+:host([variant='underline']) {
+  border-bottom: var(--pf-tabs-underline-width) solid transparent;
+  margin-bottom: -1px;
+}
+
+:host([variant='pills']) {
+  border-radius: var(--radius-sm);
+}
+
+:host(:hover:not([disabled])),
+:host([selected]),
+:host(:focus-visible) {
+  color: var(--pf-tabs-text);
+}
+
+:host([disabled]) {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+:host(:focus-visible) {
+  outline: 2px solid color-mix(in srgb, var(--pf-tabs-text) 32%, transparent);
+  outline-offset: 2px;
+}
+
+/* Decorative, and inherits the tab's colour. */
+.icon {
+  flex-shrink: 0;
+  font-size: 1em;
+}
+
+/* Smaller than a default badge, and colour-neutral so it reads in both states. */
+.count {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  min-height: 18px;
+  padding: 0 var(--space-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    transition: none;
+  }
+}

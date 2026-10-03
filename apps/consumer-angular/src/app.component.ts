@@ -47,6 +47,9 @@ import {
   PfSlideoutMenu,
   PfSlider,
   PfSwitch,
+  PfTab,
+  PfTabPanel,
+  PfTabs,
   PfTag,
   PfTagInput,
   PfTextarea,
@@ -118,6 +121,9 @@ import {
     PfSlideoutMenu,
     PfSlider,
     PfSwitch,
+    PfTab,
+    PfTabPanel,
+    PfTabs,
     PfTag,
     PfTagInput,
     PfTextarea,
@@ -566,6 +572,33 @@ import {
         <output data-testid="calendar-value">{{ day() }}</output>
       </div>
 
+      <!--
+        Interleaved children, one pair per item, with no "slot" set anywhere:
+        each pf-tab assigns itself to the strip. Angular writes props as
+        properties, so "count" arrives as a number and "value" only has an
+        attribute because the element reflects it.
+      -->
+      <pf-tabs
+        [value]="tab()"
+        variant="underline"
+        data-testid="tabs"
+        (pfChange)="tab.set($event.detail.value)"
+      >
+        <pf-tab value="overview" icon="circle-info">Overview</pf-tab>
+        <pf-tab-panel value="overview">
+          <p>An overview of the thing, with rather a lot of words in it.</p>
+        </pf-tab-panel>
+        <pf-tab value="issues" [count]="12">Issues</pf-tab>
+        <pf-tab-panel value="issues">
+          <p>Twelve issues, counted in the badge beside the label.</p>
+        </pf-tab-panel>
+        <pf-tab value="archive" disabled>Archive</pf-tab>
+        <pf-tab-panel value="archive">
+          <p>Nothing here; the tab is disabled.</p>
+        </pf-tab-panel>
+      </pf-tabs>
+      <output data-testid="tabs-value">{{ tab() }}</output>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -585,6 +618,7 @@ export class AppComponent {
   menuChoice = signal('');
   slideoutOpen = signal(false);
   paletteOpen = signal(false);
+  tab = signal('overview');
   day = signal('2024-03-15');
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');

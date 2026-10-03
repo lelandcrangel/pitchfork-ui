@@ -46,6 +46,9 @@ import {
   PfSlideoutMenu,
   PfSlider,
   PfSwitch,
+  PfTab,
+  PfTabPanel,
+  PfTabs,
   PfTag,
   PfTagInput,
   PfTextarea,
@@ -73,6 +76,7 @@ export function App() {
   const [menuChoice, setMenuChoice] = useState('');
   const [slideoutOpen, setSlideoutOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [tab, setTab] = useState('overview');
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
@@ -642,6 +646,44 @@ export function App() {
         />
         <output data-testid="calendar-value">{day}</output>
       </div>
+
+      {/*
+        Interleaved children — one pf-tab and one pf-tab-panel per item, which
+        is what a loop over data produces. Each tab assigns itself to the strip
+        and the panels fall to the default slot, so nothing here sets `slot`.
+
+        The indicator is placed from rect measurements: a slotted tab's
+        offsetParent is the nearest positioned ancestor in *this* tree, not the
+        strip inside the shadow root, so offsetLeft would place it elsewhere.
+        Only a real stylesheet makes that visible, which is what the smoke
+        script checks.
+      */}
+      <PfTabs
+        value={tab}
+        variant="underline"
+        data-testid="tabs"
+        onPfChange={(event) => setTab(event.detail.value)}
+      >
+        <PfTab value="overview" icon="circle-info">
+          Overview
+        </PfTab>
+        <PfTabPanel value="overview">
+          <p>An overview of the thing, with rather a lot of words in it.</p>
+        </PfTabPanel>
+        <PfTab value="issues" count={12}>
+          Issues
+        </PfTab>
+        <PfTabPanel value="issues">
+          <p>Twelve issues, counted in the badge beside the label.</p>
+        </PfTabPanel>
+        <PfTab value="archive" disabled>
+          Archive
+        </PfTab>
+        <PfTabPanel value="archive">
+          <p>Nothing here; the tab is disabled.</p>
+        </PfTabPanel>
+      </PfTabs>
+      <output data-testid="tabs-value">{tab}</output>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

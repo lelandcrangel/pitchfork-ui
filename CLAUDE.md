@@ -592,6 +592,40 @@ Things that differ from the React library, learned by porting the first two:
   blind. Both layers fold now: each candidate is added to the _result_ of the
   previous one. Three React tests cover it and fail against the old handler.
   Worth looking for wherever a handler adds several things at once.
+- **`offsetLeft` cannot measure a slotted child.** `offsetParent` is resolved
+  in the element's _own_ node tree, so for a slotted child it is the nearest
+  positioned ancestor in the consumer's document and never the shadow box the
+  child is actually laid out in. Measured twice: inside a `position: relative`
+  wrapper a `pf-tab` reported `offsetParent: #wrapper` and `offsetLeft: 196`
+  where its offset within the strip was 186, and placing `pf-tabs`' sliding
+  indicator from `offsetLeft` in a real build painted it at 64 against a tab
+  starting at 32. Measure with rect deltas plus the container's `scrollLeft`
+  instead — which is also what makes the result scroll-invariant, since both
+  rects move together when the container scrolls. The React `Tabs` _can_ use
+  `offsetLeft`, because nothing is slotted there; that is the asymmetry to
+  remember.
+- **A child can assign itself to a slot.** `pf-tab` sets `slot="tab"` on itself
+  in `connectedCallback`, which is what lets a consumer write one `pf-tab` and
+  one `pf-tab-panel` per item — interleaved, as a loop over data produces — and
+  still have the tabs land in the strip and the panels in the stack. Assigning
+  `slot` moves the node between slots and fires `slotchange` on both, but
+  writing the same value again is not a mutation, so it does not loop. Leave a
+  `slot` the consumer set alone, so the explicit spelling keeps working.
+- **Playwright will not click an `aria-disabled` element.** Its actionability
+  check reads `aria-disabled="true"` as "not enabled" and waits for it to
+  clear until the test times out — measured, 15s. The browser has no such
+  scruple, since `aria-disabled` is not `pointer-events: none`, so a real click
+  does arrive and swallowing it is the element's job. Dispatch the click for
+  that one assertion; `userEvent` is still right for everything the browser
+  itself does.
+- **A transitioned length has to be read after `Animation.finished` too.** The
+  rule above is about an animation existing; this is about measuring one. The
+  consumer smoke read `pf-progress-bar`'s fill width straight after load and
+  failed 1 run in 3 at 84–86 of an expected 90 — a flake that reads exactly
+  like a broken percentage. Angular sets `value` as a property after
+  hydration, so the bar animates up from empty, where React's is set at
+  creation and never moves. Awaiting the fill's animations costs the React app
+  nothing, because the list is empty there.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

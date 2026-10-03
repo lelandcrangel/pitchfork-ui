@@ -1,4 +1,12 @@
+import {
+  getEnabledIndexes,
+  type ListNavigationAction,
+  resolveListMove,
+  resolveRovingKey,
+  resolveSelectedTab,
+} from '@pitchfork-ui/core';
 import { forwardRef, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { isActivationKey } from '../../a11y';
 import { cx } from '../../utils/cx';
 import { Badge } from '../Badge';
 import { Icon, type IconName } from '../Icon';
@@ -47,10 +55,6 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'o
   fullWidth?: boolean;
 }
 
-function getFirstEnabledValue(items: TabsItem[]): string | undefined {
-  return items.find((item) => !item.disabled)?.value;
-}
-
 export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   {
     className,
@@ -68,13 +72,13 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   const baseId = useId();
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<string | undefined>(
-    defaultValue ?? getFirstEnabledValue(items),
+    defaultValue ?? resolveSelectedTab(items)?.value,
   );
   const selectedValue = isControlled ? value : internalValue;
+  // Core's, so `<pf-tabs>` falls back to the same tab for a value no tab
+  // carries, or one belonging to a disabled tab.
   const selectedItem = useMemo(
-    () =>
-      items.find((item) => item.value === selectedValue && !item.disabled) ??
-      items.find((item) => !item.disabled),
+    () => resolveSelectedTab(items, selectedValue),
     [items, selectedValue],
   );
   const buttonRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -132,36 +136,19 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
     onValueChange?.(nextValue);
   };
 
-  const enabledIndexes = items
-    .map((item, index) => ({ item, index }))
-    .filter(({ item }) => !item.disabled)
-    .map(({ index }) => index);
+  const enabledIndexes = getEnabledIndexes(items, (item) => Boolean(item.disabled));
 
-  const moveSelection = (
-    currentIndex: number,
-    direction: 'next' | 'previous' | 'first' | 'last',
-  ) => {
-    if (enabledIndexes.length === 0) {
-      return;
-    }
-
-    const targetIndex =
-      direction === 'first'
-        ? (enabledIndexes[0] ?? currentIndex)
-        : direction === 'last'
-          ? (enabledIndexes[enabledIndexes.length - 1] ?? currentIndex)
-          : (() => {
-              const currentEnabledPosition = enabledIndexes.indexOf(currentIndex);
-              const fallbackPosition = direction === 'next' ? 0 : enabledIndexes.length - 1;
-              const safePosition =
-                currentEnabledPosition === -1 ? fallbackPosition : currentEnabledPosition;
-              const offset = direction === 'next' ? 1 : -1;
-              const wrappedPosition =
-                (safePosition + offset + enabledIndexes.length) % enabledIndexes.length;
-              return enabledIndexes[wrappedPosition] ?? currentIndex;
-            })();
-
-    const nextItem = items[targetIndex];
+  /*
+   * The index maths is core's — the same `resolveListMove` that drives
+   * `<pf-tabs>`, `pf-toolbar` and `pf-radio-group` — so a disabled tab is
+   * skipped and both ends wrap identically in every one of them.
+   *
+   * Arrows move *and* select here, which the ARIA tabs pattern calls automatic
+   * activation and allows for a tab set whose panels are already rendered.
+   */
+  const moveSelection = (currentIndex: number, action: ListNavigationAction) => {
+    const targetIndex = resolveListMove(action, enabledIndexes, currentIndex);
+    const nextItem = targetIndex >= 0 ? items[targetIndex] : undefined;
     if (!nextItem || nextItem.disabled) {
       return;
     }
@@ -244,19 +231,15 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
                 }
               }}
               onKeyDown={(event) => {
-                if (event.key === 'ArrowRight') {
+                // One horizontal axis for all four navigation keys, so the tab
+                // strip answers the arrows exactly as every other roving group.
+                const action = resolveRovingKey(event.key, 'horizontal');
+                if (action) {
                   event.preventDefault();
-                  moveSelection(index, 'next');
-                } else if (event.key === 'ArrowLeft') {
-                  event.preventDefault();
-                  moveSelection(index, 'previous');
-                } else if (event.key === 'Home') {
-                  event.preventDefault();
-                  moveSelection(index, 'first');
-                } else if (event.key === 'End') {
-                  event.preventDefault();
-                  moveSelection(index, 'last');
-                } else if (event.key === 'Enter' || event.key === ' ') {
+                  moveSelection(index, action);
+                  return;
+                }
+                if (isActivationKey(event.key)) {
                   event.preventDefault();
                   if (!item.disabled) {
                     setSelectedValue(item.value);

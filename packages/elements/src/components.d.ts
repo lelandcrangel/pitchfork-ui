@@ -19,6 +19,9 @@ import { PfNotificationVariant } from "./components/pf-notification/pf-notificat
 import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
+import { PfTabsSize, PfTabsVariant } from "./components/pf-tabs/pf-tabs";
+import { PfTabPlacement } from "./components/pf-tab/pf-tab";
+import { PfTabsSize as PfTabsSize1, PfTabsVariant as PfTabsVariant1 } from "./components/pf-tabs/pf-tabs";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
 import { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
 import { HourCycle, Side } from "@pitchfork-ui/core";
@@ -40,6 +43,9 @@ export { PfNotificationVariant } from "./components/pf-notification/pf-notificat
 export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
+export { PfTabsSize, PfTabsVariant } from "./components/pf-tabs/pf-tabs";
+export { PfTabPlacement } from "./components/pf-tab/pf-tab";
+export { PfTabsSize as PfTabsSize1, PfTabsVariant as PfTabsVariant1 } from "./components/pf-tabs/pf-tabs";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
 export { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
 export { HourCycle, Side } from "@pitchfork-ui/core";
@@ -1546,6 +1552,128 @@ export namespace Components {
          */
         "value": string;
     }
+    /**
+     * One tab inside a `pf-tabs`.
+     * It only reports that it was chosen; the group owns the selection, the single
+     * tab stop and the id wiring — the same division as `pf-radio-group` with its
+     * radios and `pf-select` with its options. The group writes `selected`,
+     * `variant`, `size` and `full-width` back onto it, so the stylesheet has
+     * reflected attributes to select on without the tab knowing anything about its
+     * container.
+     * The host is the `tab` itself rather than a wrapper around a button, so it is
+     * the element the group focuses and the one `aria-controls` points from.
+     */
+    interface PfTab {
+        /**
+          * Which side of the label the count badge sits on.
+          * @default 'end'
+         */
+        "badgePlacement": PfTabPlacement;
+        /**
+          * A count rendered as a badge beside the label (GitHub-style, "Issues 12"). It is left in the tab's accessible name, so a screen reader announces it. `0` shows a zero; omitting the prop shows no badge at all.
+         */
+        "count"?: number;
+        /**
+          * Reflected; the stylesheet and the group's own filtering both read it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Set by the group from its own `fullWidth`. Reflected for the stylesheet.
+          * @default false
+         */
+        "fullWidth": boolean;
+        /**
+          * A decorative icon's name, from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Which side of the label the icon sits on.
+          * @default 'start'
+         */
+        "iconPlacement": PfTabPlacement;
+        /**
+          * Set by the group. Reflected, so the stylesheet can mark the tab.
+          * @default false
+         */
+        "selected": boolean;
+        /**
+          * Set by the group from its own `size`. Reflected for the stylesheet.
+          * @default 'md'
+         */
+        "size": PfTabsSize;
+        /**
+          * Identifies the tab, and pairs it with the `pf-tab-panel` carrying the same value.  Reflected because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing.
+          * @default ''
+         */
+        "value": string;
+        /**
+          * Set by the group from its own `variant`. Reflected for the stylesheet.
+          * @default 'underline'
+         */
+        "variant": PfTabsVariant;
+    }
+    /**
+     * One panel inside a `pf-tabs`, shown when the `pf-tab` carrying the same
+     * `value` is selected.
+     * A sibling of its tab rather than a child of it, so that both live in the
+     * consumer's tree: that is what lets the group point `aria-controls` at this
+     * panel and `aria-labelledby` back at the tab, since a same-root IDREF is the
+     * one that resolves.
+     */
+    interface PfTabPanel {
+        /**
+          * Set by the group: whether this is the panel on show. Reflected.
+          * @default false
+         */
+        "active": boolean;
+        /**
+          * Pairs the panel with its tab.  Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-tab-panel[value="..."]` in a React or Angular app finds nothing. The group reads the property.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
+     * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
+     * children.
+     * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+     * the React `TabsItem` carries a `label` and a `content` that are both
+     * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
+     * and loops in their own template.
+     * A `pf-tab` puts itself in the `tab` slot, so the two kinds of child can be
+     * written interleaved — one `pf-tab` and one `pf-tab-panel` per item, which is
+     * what a loop over data wants — and still land in the right box.
+     * The group owns everything the children cannot see on their own: which one is
+     * selected, the single tab stop, the id wiring in both directions, and the
+     * sliding indicator. Each `pf-tab` only reports that it was chosen, as
+     * `pf-radio-button` does to its group.
+     */
+    interface PfTabs {
+        /**
+          * Stretch the tabs to fill the strip. Reflected, and pushed down.
+          * @default false
+         */
+        "fullWidth": boolean;
+        /**
+          * Re-reads the children.  Needed because a consumer can change a tab through its *property* — `tab.disabled = true` — which leaves no attribute, moves no node and so fires neither `slotchange` nor any watcher here.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Tab padding and type scale. Reflected, and pushed down onto every tab.
+          * @default 'md'
+         */
+        "size": PfTabsSize1;
+        /**
+          * The selected tab's value.  Left exactly as the consumer set it, as the React component leaves its state: a value no tab carries still *shows* the first enabled tab, but it is not silently rewritten here, so a consumer holding `value` sees only the changes they made.
+          * @default ''
+         */
+        "value": string;
+        /**
+          * Underline or pills. Reflected, and pushed down onto every tab.
+          * @default 'underline'
+         */
+        "variant": PfTabsVariant1;
+    }
     interface PfTag {
         /**
           * Accessible name for the remove button.
@@ -1976,6 +2104,14 @@ export interface PfSliderCustomEvent<T> extends CustomEvent<T> {
 export interface PfSwitchCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfSwitchElement;
+}
+export interface PfTabCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTabElement;
+}
+export interface PfTabsCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTabsElement;
 }
 export interface PfTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2850,6 +2986,80 @@ declare global {
         prototype: HTMLPfSwitchElement;
         new (): HTMLPfSwitchElement;
     };
+    interface HTMLPfTabElementEventMap {
+        "pfTabSelect": { value: string };
+    }
+    /**
+     * One tab inside a `pf-tabs`.
+     * It only reports that it was chosen; the group owns the selection, the single
+     * tab stop and the id wiring — the same division as `pf-radio-group` with its
+     * radios and `pf-select` with its options. The group writes `selected`,
+     * `variant`, `size` and `full-width` back onto it, so the stylesheet has
+     * reflected attributes to select on without the tab knowing anything about its
+     * container.
+     * The host is the `tab` itself rather than a wrapper around a button, so it is
+     * the element the group focuses and the one `aria-controls` points from.
+     */
+    interface HTMLPfTabElement extends Components.PfTab, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTabElementEventMap>(type: K, listener: (this: HTMLPfTabElement, ev: PfTabCustomEvent<HTMLPfTabElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTabElementEventMap>(type: K, listener: (this: HTMLPfTabElement, ev: PfTabCustomEvent<HTMLPfTabElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTabElement: {
+        prototype: HTMLPfTabElement;
+        new (): HTMLPfTabElement;
+    };
+    /**
+     * One panel inside a `pf-tabs`, shown when the `pf-tab` carrying the same
+     * `value` is selected.
+     * A sibling of its tab rather than a child of it, so that both live in the
+     * consumer's tree: that is what lets the group point `aria-controls` at this
+     * panel and `aria-labelledby` back at the tab, since a same-root IDREF is the
+     * one that resolves.
+     */
+    interface HTMLPfTabPanelElement extends Components.PfTabPanel, HTMLStencilElement {
+    }
+    var HTMLPfTabPanelElement: {
+        prototype: HTMLPfTabPanelElement;
+        new (): HTMLPfTabPanelElement;
+    };
+    interface HTMLPfTabsElementEventMap {
+        "pfChange": { value: string };
+    }
+    /**
+     * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
+     * children.
+     * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+     * the React `TabsItem` carries a `label` and a `content` that are both
+     * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
+     * and loops in their own template.
+     * A `pf-tab` puts itself in the `tab` slot, so the two kinds of child can be
+     * written interleaved — one `pf-tab` and one `pf-tab-panel` per item, which is
+     * what a loop over data wants — and still land in the right box.
+     * The group owns everything the children cannot see on their own: which one is
+     * selected, the single tab stop, the id wiring in both directions, and the
+     * sliding indicator. Each `pf-tab` only reports that it was chosen, as
+     * `pf-radio-button` does to its group.
+     */
+    interface HTMLPfTabsElement extends Components.PfTabs, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTabsElementEventMap>(type: K, listener: (this: HTMLPfTabsElement, ev: PfTabsCustomEvent<HTMLPfTabsElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTabsElementEventMap>(type: K, listener: (this: HTMLPfTabsElement, ev: PfTabsCustomEvent<HTMLPfTabsElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTabsElement: {
+        prototype: HTMLPfTabsElement;
+        new (): HTMLPfTabsElement;
+    };
     interface HTMLPfTagElementEventMap {
         "pfDismiss": void;
     }
@@ -3094,6 +3304,9 @@ declare global {
         "pf-slideout-menu": HTMLPfSlideoutMenuElement;
         "pf-slider": HTMLPfSliderElement;
         "pf-switch": HTMLPfSwitchElement;
+        "pf-tab": HTMLPfTabElement;
+        "pf-tab-panel": HTMLPfTabPanelElement;
+        "pf-tabs": HTMLPfTabsElement;
         "pf-tag": HTMLPfTagElement;
         "pf-tag-input": HTMLPfTagInputElement;
         "pf-textarea": HTMLPfTextareaElement;
@@ -4612,6 +4825,132 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    /**
+     * One tab inside a `pf-tabs`.
+     * It only reports that it was chosen; the group owns the selection, the single
+     * tab stop and the id wiring — the same division as `pf-radio-group` with its
+     * radios and `pf-select` with its options. The group writes `selected`,
+     * `variant`, `size` and `full-width` back onto it, so the stylesheet has
+     * reflected attributes to select on without the tab knowing anything about its
+     * container.
+     * The host is the `tab` itself rather than a wrapper around a button, so it is
+     * the element the group focuses and the one `aria-controls` points from.
+     */
+    interface PfTab {
+        /**
+          * Which side of the label the count badge sits on.
+          * @default 'end'
+         */
+        "badgePlacement"?: PfTabPlacement;
+        /**
+          * A count rendered as a badge beside the label (GitHub-style, "Issues 12"). It is left in the tab's accessible name, so a screen reader announces it. `0` shows a zero; omitting the prop shows no badge at all.
+         */
+        "count"?: number;
+        /**
+          * Reflected; the stylesheet and the group's own filtering both read it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Set by the group from its own `fullWidth`. Reflected for the stylesheet.
+          * @default false
+         */
+        "fullWidth"?: boolean;
+        /**
+          * A decorative icon's name, from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Which side of the label the icon sits on.
+          * @default 'start'
+         */
+        "iconPlacement"?: PfTabPlacement;
+        /**
+          * Asks the group to select this tab. The group decides.
+         */
+        "onPfTabSelect"?: (event: PfTabCustomEvent<{ value: string }>) => void;
+        /**
+          * Set by the group. Reflected, so the stylesheet can mark the tab.
+          * @default false
+         */
+        "selected"?: boolean;
+        /**
+          * Set by the group from its own `size`. Reflected for the stylesheet.
+          * @default 'md'
+         */
+        "size"?: PfTabsSize;
+        /**
+          * Identifies the tab, and pairs it with the `pf-tab-panel` carrying the same value.  Reflected because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing.
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * Set by the group from its own `variant`. Reflected for the stylesheet.
+          * @default 'underline'
+         */
+        "variant"?: PfTabsVariant;
+    }
+    /**
+     * One panel inside a `pf-tabs`, shown when the `pf-tab` carrying the same
+     * `value` is selected.
+     * A sibling of its tab rather than a child of it, so that both live in the
+     * consumer's tree: that is what lets the group point `aria-controls` at this
+     * panel and `aria-labelledby` back at the tab, since a same-root IDREF is the
+     * one that resolves.
+     */
+    interface PfTabPanel {
+        /**
+          * Set by the group: whether this is the panel on show. Reflected.
+          * @default false
+         */
+        "active"?: boolean;
+        /**
+          * Pairs the panel with its tab.  Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-tab-panel[value="..."]` in a React or Angular app finds nothing. The group reads the property.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
+     * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
+     * children.
+     * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+     * the React `TabsItem` carries a `label` and a `content` that are both
+     * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
+     * and loops in their own template.
+     * A `pf-tab` puts itself in the `tab` slot, so the two kinds of child can be
+     * written interleaved — one `pf-tab` and one `pf-tab-panel` per item, which is
+     * what a loop over data wants — and still land in the right box.
+     * The group owns everything the children cannot see on their own: which one is
+     * selected, the single tab stop, the id wiring in both directions, and the
+     * sliding indicator. Each `pf-tab` only reports that it was chosen, as
+     * `pf-radio-button` does to its group.
+     */
+    interface PfTabs {
+        /**
+          * Stretch the tabs to fill the strip. Reflected, and pushed down.
+          * @default false
+         */
+        "fullWidth"?: boolean;
+        /**
+          * Fires when the selected tab changes, however it was chosen.
+         */
+        "onPfChange"?: (event: PfTabsCustomEvent<{ value: string }>) => void;
+        /**
+          * Tab padding and type scale. Reflected, and pushed down onto every tab.
+          * @default 'md'
+         */
+        "size"?: PfTabsSize1;
+        /**
+          * The selected tab's value.  Left exactly as the consumer set it, as the React component leaves its state: a value no tab carries still *shows* the first enabled tab, but it is not silently rewritten here, so a consumer holding `value` sees only the changes they made.
+          * @default ''
+         */
+        "value"?: string;
+        /**
+          * Underline or pills. Reflected, and pushed down onto every tab.
+          * @default 'underline'
+         */
+        "variant"?: PfTabsVariant1;
+    }
     interface PfTag {
         /**
           * Accessible name for the remove button.
@@ -5249,6 +5588,28 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
     }
+    interface PfTabAttributes {
+        "value": string;
+        "disabled": boolean;
+        "selected": boolean;
+        "variant": PfTabsVariant;
+        "size": PfTabsSize;
+        "fullWidth": boolean;
+        "icon": string;
+        "iconPlacement": PfTabPlacement;
+        "count": number;
+        "badgePlacement": PfTabPlacement;
+    }
+    interface PfTabPanelAttributes {
+        "value": string;
+        "active": boolean;
+    }
+    interface PfTabsAttributes {
+        "value": string;
+        "variant": PfTabsVariant;
+        "size": PfTabsSize;
+        "fullWidth": boolean;
+    }
     interface PfTagAttributes {
         "variant": PfTagVariant;
         "dismissible": boolean;
@@ -5367,6 +5728,9 @@ declare namespace LocalJSX {
         "pf-slideout-menu": Omit<PfSlideoutMenu, keyof PfSlideoutMenuAttributes> & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes]?: PfSlideoutMenu[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `attr:${K}`]?: PfSlideoutMenuAttributes[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `prop:${K}`]?: PfSlideoutMenu[K] };
         "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
+        "pf-tab": Omit<PfTab, keyof PfTabAttributes> & { [K in keyof PfTab & keyof PfTabAttributes]?: PfTab[K] } & { [K in keyof PfTab & keyof PfTabAttributes as `attr:${K}`]?: PfTabAttributes[K] } & { [K in keyof PfTab & keyof PfTabAttributes as `prop:${K}`]?: PfTab[K] };
+        "pf-tab-panel": Omit<PfTabPanel, keyof PfTabPanelAttributes> & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes]?: PfTabPanel[K] } & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes as `attr:${K}`]?: PfTabPanelAttributes[K] } & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes as `prop:${K}`]?: PfTabPanel[K] };
+        "pf-tabs": Omit<PfTabs, keyof PfTabsAttributes> & { [K in keyof PfTabs & keyof PfTabsAttributes]?: PfTabs[K] } & { [K in keyof PfTabs & keyof PfTabsAttributes as `attr:${K}`]?: PfTabsAttributes[K] } & { [K in keyof PfTabs & keyof PfTabsAttributes as `prop:${K}`]?: PfTabs[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
         "pf-tag-input": Omit<PfTagInput, keyof PfTagInputAttributes> & { [K in keyof PfTagInput & keyof PfTagInputAttributes]?: PfTagInput[K] } & { [K in keyof PfTagInput & keyof PfTagInputAttributes as `attr:${K}`]?: PfTagInputAttributes[K] } & { [K in keyof PfTagInput & keyof PfTagInputAttributes as `prop:${K}`]?: PfTagInput[K] };
         "pf-textarea": Omit<PfTextarea, keyof PfTextareaAttributes> & { [K in keyof PfTextarea & keyof PfTextareaAttributes]?: PfTextarea[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `attr:${K}`]?: PfTextareaAttributes[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `prop:${K}`]?: PfTextarea[K] };
@@ -5742,6 +6106,43 @@ declare module "@stencil/core" {
              * difference assistive technology needs.
              */
             "pf-switch": LocalJSX.IntrinsicElements["pf-switch"] & JSXBase.HTMLAttributes<HTMLPfSwitchElement>;
+            /**
+             * One tab inside a `pf-tabs`.
+             * It only reports that it was chosen; the group owns the selection, the single
+             * tab stop and the id wiring — the same division as `pf-radio-group` with its
+             * radios and `pf-select` with its options. The group writes `selected`,
+             * `variant`, `size` and `full-width` back onto it, so the stylesheet has
+             * reflected attributes to select on without the tab knowing anything about its
+             * container.
+             * The host is the `tab` itself rather than a wrapper around a button, so it is
+             * the element the group focuses and the one `aria-controls` points from.
+             */
+            "pf-tab": LocalJSX.IntrinsicElements["pf-tab"] & JSXBase.HTMLAttributes<HTMLPfTabElement>;
+            /**
+             * One panel inside a `pf-tabs`, shown when the `pf-tab` carrying the same
+             * `value` is selected.
+             * A sibling of its tab rather than a child of it, so that both live in the
+             * consumer's tree: that is what lets the group point `aria-controls` at this
+             * panel and `aria-labelledby` back at the tab, since a same-root IDREF is the
+             * one that resolves.
+             */
+            "pf-tab-panel": LocalJSX.IntrinsicElements["pf-tab-panel"] & JSXBase.HTMLAttributes<HTMLPfTabPanelElement>;
+            /**
+             * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
+             * children.
+             * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+             * the React `TabsItem` carries a `label` and a `content` that are both
+             * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
+             * and loops in their own template.
+             * A `pf-tab` puts itself in the `tab` slot, so the two kinds of child can be
+             * written interleaved — one `pf-tab` and one `pf-tab-panel` per item, which is
+             * what a loop over data wants — and still land in the right box.
+             * The group owns everything the children cannot see on their own: which one is
+             * selected, the single tab stop, the id wiring in both directions, and the
+             * sliding indicator. Each `pf-tab` only reports that it was chosen, as
+             * `pf-radio-button` does to its group.
+             */
+            "pf-tabs": LocalJSX.IntrinsicElements["pf-tabs"] & JSXBase.HTMLAttributes<HTMLPfTabsElement>;
             "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
             /**
              * A form-associated field that collects free-text tags.
