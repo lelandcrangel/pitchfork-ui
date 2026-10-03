@@ -449,3 +449,24 @@ late one historically.
 
 **Not done here** because it changes what a form sees, which is a decision
 about the public API rather than a port, and the element covers the case today.
+
+---
+
+## `<pf-code-snippet>` does not highlight
+
+Deliberate, and documented on the element: `prism-react-renderer` is a React
+renderer, and every framework-free highlighter is a large runtime dependency
+that an element in a design system should not force into a consumer's bundle.
+A consumer who already highlights slots the markup their highlighter produced
+into the default slot and keeps the frame, header, copy button, scroll box and
+announcement; line numbers are then withheld, because aligning a gutter with
+someone else's markup needs to know where their lines break.
+
+**If this is ever wanted built in**, the shape to reach for is a registry
+rather than a dependency: a `registerHighlighter(fn)` in core taking
+`(code, language) => string` of markup, defaulting to identity, so a consumer
+who already has Shiki or Prism wires it once at startup — exactly what
+`registerIcons` does for glyphs, and for the same reason. The element would
+then set that markup rather than text, which is the only place in either layer
+that would need `innerHTML`, so the decision to make is whose escaping is
+trusted.

@@ -914,6 +914,39 @@ Things that differ from the React library, learned by porting the first two:
   would store `[object File]`. An Angular consumer binds `[files]` and
   `(pfChange)`, and the submission still works, because that goes through
   `ElementInternals` rather than through the accessor.
+- **`vi.useFakeTimers()` wedges every browser test after it.** It replaces
+  `requestAnimationFrame`, which Stencil's render queue runs on, so every
+  `await frame()` poll stops resolving — measured: one fake-timer test took
+  four others down with it, each to the 15s timeout, and `useRealTimers()` in
+  a `finally` did not recover them. Give the component a prop for the delay
+  and use real time with a short value. `pf-code-snippet.feedbackDuration` is
+  that prop, and it is a real knob anyway: a live region still holding
+  "Copied" when the next copy happens announces nothing.
+- **A copy button's label is a claim, so read what the clipboard reported.**
+  The React `CodeSnippet` wrote
+  `if (navigator.clipboard?.writeText) await …writeText(code)` and then set
+  `copied` unconditionally, so wherever the API is missing — every insecure
+  context, and any iframe without clipboard permission — nothing was copied
+  and the button said "Copied". `copyText` in core resolves to a boolean and
+  both layers read it. There is deliberately no `execCommand` fallback: it is
+  deprecated, needs a focused selection, and fails in most of the same places,
+  so it would only be a second silent path to the same false claim.
+- **Highlighting is the consumer's, and saying so is the design.**
+  `prism-react-renderer` is a React renderer with no framework-free
+  equivalent, and every alternative is a large runtime dependency, so
+  `pf-code-snippet` renders plain text and shows **slotted markup instead**
+  when a consumer provides their own. Line numbers are then withheld, because
+  aligning a gutter with someone else's markup needs to know where their lines
+  break. The gutter for the plain path is a grid with `grid-template-columns:
+subgrid` on each line rather than a table: the numbers only have to share a
+  column, and a row here needs no box of its own — the opposite of
+  `pf-table`, where the row does.
+- **Two copies of a font stack diverge.** Both layers set code in the same
+  seven-family monospace list, written out twice. It is now
+  `--pf-code-font-family` in `theme.css`, which is where the smoke found it:
+  the element had reached for a `--font-family-mono` token that does not
+  exist, the declaration died at computed-value time, and the code rendered in
+  the sans-serif body font with every test still green.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

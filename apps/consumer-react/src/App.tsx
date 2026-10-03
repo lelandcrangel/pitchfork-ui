@@ -22,6 +22,7 @@ import {
   PfCheckbox,
   PfCommandGroup,
   PfCommandItem,
+  PfCodeSnippet,
   PfCollapsible,
   PfCommandPalette,
   PfCombobox,
@@ -123,6 +124,7 @@ export function App() {
   const [slide, setSlide] = useState(0);
   const [split, setSplit] = useState(40);
   const [uploads, setUploads] = useState<File[]>([]);
+  const [copiedCode, setCopiedCode] = useState('');
   const [openFolders, setOpenFolders] = useState('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.
@@ -1225,6 +1227,24 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        No syntax highlighting, deliberately: `prism-react-renderer` is a React
+        renderer with no framework-free equivalent, and an element should not
+        make a consumer's bundle choose a highlighter. A consumer who already
+        highlights slots the markup in; this keeps the frame, the header, the
+        copy button and the announcement.
+      */}
+      <PfCodeSnippet
+        heading="install.sh"
+        language="bash"
+        showLineNumbers
+        maxHeight={160}
+        code={'npm install @pitchfork-ui/elements\n\nnpm run build\n'}
+        data-testid="code-snippet"
+        onPfCopy={(event) => setCopiedCode(event.detail.code)}
+      />
+      <output data-testid="code-snippet-copied">{copiedCode.length}</output>
 
       {/*
         A form-associated file picker: the input inside the shadow root

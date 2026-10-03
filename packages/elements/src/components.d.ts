@@ -633,6 +633,63 @@ export namespace Components {
         "value": string;
     }
     /**
+     * A code block with a copy button.
+     * **No syntax highlighting, deliberately.** The React `CodeSnippet` uses
+     * `prism-react-renderer`, which is a React renderer and has no equivalent
+     * here; the alternatives are all large runtime dependencies, and an element in
+     * a design system should not make a consumer's bundle choose one. A consumer
+     * who already highlights code slots the markup their highlighter produced into
+     * the default slot, and this renders that instead of the plain text — it still
+     * owns the frame, the header, the copy button and the announcement.
+     * Line numbers are offered only for the plain-text path. Aligning a gutter
+     * with someone else's markup needs to know where their lines break, which only
+     * they know.
+     */
+    interface PfCodeSnippet {
+        /**
+          * The code, as plain text.
+          * @default ''
+         */
+        "code": string;
+        /**
+          * @default 'Copied'
+         */
+        "copiedLabel": string;
+        /**
+          * Copies the snippet, as pressing the button does.
+         */
+        "copy": () => Promise<boolean>;
+        /**
+          * @default 'Copy failed'
+         */
+        "copyFailedLabel": string;
+        /**
+          * @default 'Copy'
+         */
+        "copyLabel": string;
+        /**
+          * How long the button keeps saying what the last press did, in milliseconds.  A prop rather than a constant because a live region that still holds "Copied" when the next copy happens announces nothing, so how long it holds is a real decision — and because a test cannot use fake timers here: `vi.useFakeTimers()` replaces `requestAnimationFrame`, which Stencil's render queue runs on, and wedges every test after it.
+          * @default 1600
+         */
+        "feedbackDuration": number;
+        /**
+          * Shown in the header.
+         */
+        "heading"?: string;
+        /**
+          * Shown as a tag in the header, and not used for anything else.
+         */
+        "language"?: string;
+        /**
+          * Scrolls past this height, in pixels.
+         */
+        "maxHeight"?: number;
+        /**
+          * @default false
+         */
+        "showLineNumbers": boolean;
+    }
+    /**
      * One disclosure: a header that shows and hides the content below it.
      * The same panel mechanics as `pf-accordion-item` — a `0fr` → `1fr` grid row
      * so the height animates to the content's own, and `inert` on the closed panel
@@ -3217,6 +3274,10 @@ export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCheckboxElement;
 }
+export interface PfCodeSnippetCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfCodeSnippetElement;
+}
 export interface PfCollapsibleCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCollapsibleElement;
@@ -3692,6 +3753,37 @@ declare global {
     var HTMLPfCheckboxElement: {
         prototype: HTMLPfCheckboxElement;
         new (): HTMLPfCheckboxElement;
+    };
+    interface HTMLPfCodeSnippetElementEventMap {
+        "pfCopy": { code: string };
+        "pfCopyError": { message: string };
+    }
+    /**
+     * A code block with a copy button.
+     * **No syntax highlighting, deliberately.** The React `CodeSnippet` uses
+     * `prism-react-renderer`, which is a React renderer and has no equivalent
+     * here; the alternatives are all large runtime dependencies, and an element in
+     * a design system should not make a consumer's bundle choose one. A consumer
+     * who already highlights code slots the markup their highlighter produced into
+     * the default slot, and this renders that instead of the plain text — it still
+     * owns the frame, the header, the copy button and the announcement.
+     * Line numbers are offered only for the plain-text path. Aligning a gutter
+     * with someone else's markup needs to know where their lines break, which only
+     * they know.
+     */
+    interface HTMLPfCodeSnippetElement extends Components.PfCodeSnippet, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfCodeSnippetElementEventMap>(type: K, listener: (this: HTMLPfCodeSnippetElement, ev: PfCodeSnippetCustomEvent<HTMLPfCodeSnippetElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfCodeSnippetElementEventMap>(type: K, listener: (this: HTMLPfCodeSnippetElement, ev: PfCodeSnippetCustomEvent<HTMLPfCodeSnippetElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfCodeSnippetElement: {
+        prototype: HTMLPfCodeSnippetElement;
+        new (): HTMLPfCodeSnippetElement;
     };
     interface HTMLPfCollapsibleElementEventMap {
         "pfOpenChange": { open: boolean };
@@ -5229,6 +5321,7 @@ declare global {
         "pf-carousel": HTMLPfCarouselElement;
         "pf-carousel-slide": HTMLPfCarouselSlideElement;
         "pf-checkbox": HTMLPfCheckboxElement;
+        "pf-code-snippet": HTMLPfCodeSnippetElement;
         "pf-collapsible": HTMLPfCollapsibleElement;
         "pf-combobox": HTMLPfComboboxElement;
         "pf-command-group": HTMLPfCommandGroupElement;
@@ -5844,6 +5937,67 @@ declare namespace LocalJSX {
           * @default 'on'
          */
         "value"?: string;
+    }
+    /**
+     * A code block with a copy button.
+     * **No syntax highlighting, deliberately.** The React `CodeSnippet` uses
+     * `prism-react-renderer`, which is a React renderer and has no equivalent
+     * here; the alternatives are all large runtime dependencies, and an element in
+     * a design system should not make a consumer's bundle choose one. A consumer
+     * who already highlights code slots the markup their highlighter produced into
+     * the default slot, and this renders that instead of the plain text — it still
+     * owns the frame, the header, the copy button and the announcement.
+     * Line numbers are offered only for the plain-text path. Aligning a gutter
+     * with someone else's markup needs to know where their lines break, which only
+     * they know.
+     */
+    interface PfCodeSnippet {
+        /**
+          * The code, as plain text.
+          * @default ''
+         */
+        "code"?: string;
+        /**
+          * @default 'Copied'
+         */
+        "copiedLabel"?: string;
+        /**
+          * @default 'Copy failed'
+         */
+        "copyFailedLabel"?: string;
+        /**
+          * @default 'Copy'
+         */
+        "copyLabel"?: string;
+        /**
+          * How long the button keeps saying what the last press did, in milliseconds.  A prop rather than a constant because a live region that still holds "Copied" when the next copy happens announces nothing, so how long it holds is a real decision — and because a test cannot use fake timers here: `vi.useFakeTimers()` replaces `requestAnimationFrame`, which Stencil's render queue runs on, and wedges every test after it.
+          * @default 1600
+         */
+        "feedbackDuration"?: number;
+        /**
+          * Shown in the header.
+         */
+        "heading"?: string;
+        /**
+          * Shown as a tag in the header, and not used for anything else.
+         */
+        "language"?: string;
+        /**
+          * Scrolls past this height, in pixels.
+         */
+        "maxHeight"?: number;
+        /**
+          * Fires with the text that reached the clipboard. Not fired on a failure.
+         */
+        "onPfCopy"?: (event: PfCodeSnippetCustomEvent<{ code: string }>) => void;
+        /**
+          * Fires when the copy could not be made, with the reason shown.
+         */
+        "onPfCopyError"?: (event: PfCodeSnippetCustomEvent<{ message: string }>) => void;
+        /**
+          * @default false
+         */
+        "showLineNumbers"?: boolean;
     }
     /**
      * One disclosure: a header that shows and hides the content below it.
@@ -8524,6 +8678,17 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
     }
+    interface PfCodeSnippetAttributes {
+        "code": string;
+        "language": string;
+        "heading": string;
+        "showLineNumbers": boolean;
+        "maxHeight": number;
+        "copyLabel": string;
+        "copiedLabel": string;
+        "copyFailedLabel": string;
+        "feedbackDuration": number;
+    }
     interface PfCollapsibleAttributes {
         "open": boolean;
         "disabled": boolean;
@@ -9029,6 +9194,7 @@ declare namespace LocalJSX {
         "pf-carousel": Omit<PfCarousel, keyof PfCarouselAttributes> & { [K in keyof PfCarousel & keyof PfCarouselAttributes]?: PfCarousel[K] } & { [K in keyof PfCarousel & keyof PfCarouselAttributes as `attr:${K}`]?: PfCarouselAttributes[K] } & { [K in keyof PfCarousel & keyof PfCarouselAttributes as `prop:${K}`]?: PfCarousel[K] };
         "pf-carousel-slide": Omit<PfCarouselSlide, keyof PfCarouselSlideAttributes> & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes]?: PfCarouselSlide[K] } & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes as `attr:${K}`]?: PfCarouselSlideAttributes[K] } & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes as `prop:${K}`]?: PfCarouselSlide[K] };
         "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
+        "pf-code-snippet": Omit<PfCodeSnippet, keyof PfCodeSnippetAttributes> & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes]?: PfCodeSnippet[K] } & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes as `attr:${K}`]?: PfCodeSnippetAttributes[K] } & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes as `prop:${K}`]?: PfCodeSnippet[K] };
         "pf-collapsible": Omit<PfCollapsible, keyof PfCollapsibleAttributes> & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes]?: PfCollapsible[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `attr:${K}`]?: PfCollapsibleAttributes[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `prop:${K}`]?: PfCollapsible[K] };
         "pf-combobox": Omit<PfCombobox, keyof PfComboboxAttributes> & { [K in keyof PfCombobox & keyof PfComboboxAttributes]?: PfCombobox[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `attr:${K}`]?: PfComboboxAttributes[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `prop:${K}`]?: PfCombobox[K] };
         "pf-command-group": Omit<PfCommandGroup, keyof PfCommandGroupAttributes> & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes]?: PfCommandGroup[K] } & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes as `attr:${K}`]?: PfCommandGroupAttributes[K] } & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes as `prop:${K}`]?: PfCommandGroup[K] };
@@ -9261,6 +9427,20 @@ declare module "@stencil/core" {
              * A form-associated checkbox.
              */
             "pf-checkbox": LocalJSX.IntrinsicElements["pf-checkbox"] & JSXBase.HTMLAttributes<HTMLPfCheckboxElement>;
+            /**
+             * A code block with a copy button.
+             * **No syntax highlighting, deliberately.** The React `CodeSnippet` uses
+             * `prism-react-renderer`, which is a React renderer and has no equivalent
+             * here; the alternatives are all large runtime dependencies, and an element in
+             * a design system should not make a consumer's bundle choose one. A consumer
+             * who already highlights code slots the markup their highlighter produced into
+             * the default slot, and this renders that instead of the plain text — it still
+             * owns the frame, the header, the copy button and the announcement.
+             * Line numbers are offered only for the plain-text path. Aligning a gutter
+             * with someone else's markup needs to know where their lines break, which only
+             * they know.
+             */
+            "pf-code-snippet": LocalJSX.IntrinsicElements["pf-code-snippet"] & JSXBase.HTMLAttributes<HTMLPfCodeSnippetElement>;
             /**
              * One disclosure: a header that shows and hides the content below it.
              * The same panel mechanics as `pf-accordion-item` — a `0fr` → `1fr` grid row

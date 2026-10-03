@@ -597,6 +597,15 @@
   --pf-loading-bg-subtle: var(--color-semantic-background-subtle);
 
   /* CodeSnippet aliases — the snippet surface stays dark in both themes */
+  /*
+   * The monospace stack both layers set code in. An alias rather than a token
+   * because it is a platform font list rather than a design decision -- and
+   * rather than a literal in each stylesheet, because two copies of a font
+   * stack diverge the first time one is extended.
+   */
+  --pf-code-font-family:
+    ui-monospace, sfmono-regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   --pf-code-snippet-bg: var(--color-gray-900);
   --pf-code-snippet-text: var(--color-gray-100);
   --pf-code-snippet-title: var(--color-base-white);

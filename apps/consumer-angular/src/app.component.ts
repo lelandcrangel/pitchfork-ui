@@ -23,6 +23,7 @@ import {
   PfCheckbox,
   PfCommandGroup,
   PfCommandItem,
+  PfCodeSnippet,
   PfCollapsible,
   PfCommandPalette,
   PfCombobox,
@@ -132,6 +133,7 @@ import {
     PfCheckbox,
     PfCommandGroup,
     PfCommandItem,
+    PfCodeSnippet,
     PfCollapsible,
     PfCommandPalette,
     PfCombobox,
@@ -1022,6 +1024,18 @@ import {
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
 
+      <!-- No syntax highlighting, deliberately; see the React consumer. -->
+      <pf-code-snippet
+        heading="install.sh"
+        language="bash"
+        [showLineNumbers]="true"
+        [maxHeight]="160"
+        [code]="snippet"
+        data-testid="code-snippet"
+        (pfCopy)="copiedCode.set($event.detail.code)"
+      ></pf-code-snippet>
+      <output data-testid="code-snippet-copied">{{ copiedCode().length }}</output>
+
       <!-- A form-associated file picker; see the React consumer. -->
       <pf-file-uploader
         name="docs"
@@ -1085,6 +1099,8 @@ export class AppComponent {
   slide = signal(0);
   split = signal(40);
   uploads = signal<File[]>([]);
+  copiedCode = signal('');
+  snippet = 'npm install @pitchfork-ui/elements\n\nnpm run build\n';
   openFolders = signal('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.

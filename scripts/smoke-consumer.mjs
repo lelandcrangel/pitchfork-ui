@@ -107,6 +107,7 @@ const EXPECTED = [
   'pf-tab-panel',
   'pf-accordion',
   'pf-accordion-item',
+  'pf-code-snippet',
   'pf-collapsible',
   'pf-breadcrumbs',
   'pf-breadcrumb',
@@ -4180,6 +4181,109 @@ try {
       }
       if (state.echo !== '1') {
         problems.push(`pf-file-uploader reported "${state.echo}" files to the host framework`);
+      }
+    }
+  }
+
+  /*
+   * The snippet, whose layout is the thing: a gutter that lines up under
+   * itself, a code block that really scrolls at its maximum height, and the
+   * `color-mix` chain that tints the header and borders from the one
+   * `--pf-code-snippet-bg` — none of which a test project can see, because
+   * `color-mix` has to resolve against a real background.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-code-snippet');
+        if (!el) return { error: 'the consumer app has no pf-code-snippet' };
+
+        const part = (name) => el.shadowRoot.querySelector(`[part="${name}"]`);
+        const numbers = () => [...el.shadowRoot.querySelectorAll('[part="line-number"]')];
+        for (let i = 0; i < 4; i += 1) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+
+        const pre = part('pre');
+        const header = part('header');
+        const figure = part('figure');
+        const gutter = numbers();
+
+        return {
+          lineCount: gutter.length,
+          // The gutter is one column: every number's right edge is the same.
+          gutterAligned:
+            new Set(gutter.map((node) => Math.round(node.getBoundingClientRect().right))).size ===
+            1,
+          // The numbers sit left of the code they number.
+          numberBeforeContent: (() => {
+            const content = el.shadowRoot.querySelector('.line-content');
+            return (
+              gutter[0].getBoundingClientRect().right <= content.getBoundingClientRect().left + 1
+            );
+          })(),
+          maxHeight: getComputedStyle(pre).maxHeight,
+          mono: getComputedStyle(pre).fontFamily,
+          // The color-mix chain: header and border tinted from the one bg.
+          figureBg: getComputedStyle(figure).backgroundColor,
+          headerBg: getComputedStyle(header).backgroundColor,
+          borderColor: getComputedStyle(figure).borderTopColor,
+          numberColor: getComputedStyle(gutter[0]).color,
+          codeColor: getComputedStyle(el.shadowRoot.querySelector('.line-content')).color,
+          // The live region is present and silent until something happens.
+          status: el.shadowRoot.getElementById('status')?.textContent,
+          statusHidden: el.shadowRoot.getElementById('status')?.getBoundingClientRect().width <= 1,
+          copyLabel: part('copy').textContent.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-code-snippet: ${state.error}`);
+    } else {
+      if (state.lineCount !== 3) {
+        problems.push(`the gutter numbered ${state.lineCount} lines, expected 3`);
+      }
+      if (!state.gutterAligned) {
+        problems.push('the line numbers are not in one column');
+      }
+      if (!state.numberBeforeContent) {
+        problems.push('a line number is not left of the code it numbers');
+      }
+      if (state.maxHeight !== '160px') {
+        problems.push(`the code block's max-height is "${state.maxHeight}", expected 160px`);
+      }
+      if (!state.mono.toLowerCase().includes('mono')) {
+        problems.push(`the code is set in "${state.mono}" — the mono token did not resolve`);
+      }
+      /*
+       * Both halves: the same colour means the mix did not tint, and no
+       * colour at all means the declaration died — which is what an
+       * unresolved `color-mix` or a missing `--pf-mix-base` looks like.
+       */
+      if (state.figureBg === state.headerBg) {
+        problems.push(
+          `the header is the same colour as the block ("${state.headerBg}") — the color-mix ` +
+            'chain did not tint it',
+        );
+      }
+      if (!state.headerBg || state.headerBg === 'rgba(0, 0, 0, 0)') {
+        problems.push('the header has no background — the color-mix chain did not resolve');
+      }
+      if (!state.borderColor || state.borderColor === 'rgba(0, 0, 0, 0)') {
+        problems.push('the frame has no border colour — the color-mix chain did not resolve');
+      }
+      if (state.numberColor === state.codeColor) {
+        problems.push(`the line numbers are the same colour as the code ("${state.codeColor}")`);
+      }
+      if (state.status !== '') {
+        problems.push(`the live region already says "${state.status}"`);
+      }
+      if (!state.statusHidden) {
+        problems.push('the live region takes up layout — its .sr-only copy is missing');
+      }
+      if (state.copyLabel !== 'Copy') {
+        problems.push(`the copy button reads "${state.copyLabel}"`);
       }
     }
   }
