@@ -361,3 +361,25 @@ asserts the round trip — header reports, app sorts, first row changes.
 **Nothing to do unless** a sorted-for-you element is wanted later, in which
 case the shape to reach for is a `rows` property of plain data on the element
 (no slotted rows at all) — a different component, not a change to this one.
+
+---
+
+## The React `TreeView` is one tab stop per visible item
+
+`TreeView` renders every visible node as a `<button role="treeitem">` with no
+tabindex management, so a tree of thirty open nodes is thirty tab stops and
+tabbing through the page walks every one. The ARIA tree pattern is a single tab
+stop with the arrows moving inside — which `TreeView` already implements, so
+the keyboard half is there and only the focus management is wrong.
+
+`<pf-tree-view>` could not use a roving tabindex even if it wanted to: a
+`tabindex="0"` host slotted into another host's shadow tree is skipped by
+sequential navigation when the outer host's tabindex is negative, which is
+measured in its browser spec. It holds the tab stop itself and names the active
+item with `aria-activedescendant`.
+
+**Fix:** either of the two ARIA variants works in React, where the nesting is
+in one tree. The smaller change is a roving tabindex — `tabIndex={isActive ? 0
+: -1}` over the flattened list, with the active value in state beside the
+selected one, since the two are not the same thing. Core's `resolveTreeKey`
+already returns focus intents, so the handler does not change.

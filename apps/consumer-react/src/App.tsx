@@ -82,6 +82,8 @@ import {
   PfToaster,
   PfToolbar,
   PfTooltip,
+  PfTreeItem,
+  PfTreeView,
   PfToolbarSeparator,
   PfUtilityButton,
   PfVisuallyHidden,
@@ -109,6 +111,8 @@ export function App() {
   const [cta, setCta] = useState(true);
   const [quantity, setQuantity] = useState('2');
   const [sort, setSort] = useState<SortState>({ key: 'name', direction: 'asc' });
+  const [file, setFile] = useState('index.ts');
+  const [openFolders, setOpenFolders] = useState('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.
   const orders = useMemo(
@@ -1045,6 +1049,48 @@ export function App() {
       </PfTable>
       <output data-testid="table-sort">
         {sort.key} {sort.direction}
+      </output>
+
+      {/*
+        The tree is the tab stop, not the items: a tabindex="0" host slotted
+        into another host's shadow tree is skipped by sequential navigation
+        when the outer host's tabindex is negative — measured — which is
+        exactly a nested item under a roving tabindex. So the keyboard's place
+        is an aria-activedescendant IDREF, which resolves because the items are
+        the tree's own light-DOM descendants.
+      */}
+      <PfTreeView
+        value={file}
+        expanded={openFolders}
+        label="Project files"
+        data-testid="tree-view"
+        onPfChange={(event) => setFile(event.detail.value)}
+        onPfExpandedChange={(event) => setOpenFolders(event.detail.value)}
+      >
+        <PfTreeItem value="src" icon="folder-open">
+          <span slot="label">src</span>
+          <PfTreeItem value="index.ts">
+            <span slot="label">index.ts</span>
+            <PfBadge slot="badge" variant="brand">
+              new
+            </PfBadge>
+          </PfTreeItem>
+          <PfTreeItem value="components">
+            <span slot="label">components</span>
+            <PfTreeItem value="Button.tsx">
+              <span slot="label">Button.tsx</span>
+            </PfTreeItem>
+          </PfTreeItem>
+        </PfTreeItem>
+        <PfTreeItem value="package.json">
+          <span slot="label">package.json</span>
+        </PfTreeItem>
+        <PfTreeItem value="node_modules" disabled>
+          <span slot="label">node_modules</span>
+        </PfTreeItem>
+      </PfTreeView>
+      <output data-testid="tree-value">
+        {file} / {openFolders || 'none'}
       </output>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>

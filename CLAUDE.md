@@ -736,6 +736,25 @@ Things that differ from the React library, learned by porting the first two:
   breaks on the way. `compareSortValues` and `sortRowsBy` are in core so the
   order a consumer produces matches the React `Table`, which does sort for
   itself.
+- **A nested host cannot take a roving tabindex.** Measured in Chromium: a
+  `tabindex="0"` host slotted into another host's shadow tree is skipped by
+  sequential focus navigation **entirely** when the outer host's tabindex is
+  negative — Tab goes straight past it to the next element, while
+  `element.focus()` still works, which is what makes the trap subtle. That is
+  exactly a nested `pf-tree-item` under a roving tabindex, so the first version
+  of `pf-tree-view` was unreachable by Tab. The tree holds the tab stop itself
+  and names the active item with `aria-activedescendant`, which resolves
+  because the items are its own light-DOM descendants — the same-root IDREF
+  rule again. Both the minimal case and the elements themselves are asserted
+  in the browser spec, and the smoke checks the real build. A flat group
+  (`pf-tabs`, `pf-toolbar`, `pf-radio-group`) is unaffected: its items are
+  children of the group, not of each other.
+- **`slotchange` does not cross a shadow boundary, so a grandchild arrives
+  unannounced.** It is not composed: a tree hears its own slot change, never
+  its children's. `pf-tree-item` therefore emits a `pfTreeStructure` event
+  from its own `slotchange` and the tree listens for that — without it an item
+  appended to a branch is never given a level, an id or a place in the
+  keyboard order, which a browser test catches.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

@@ -2736,6 +2736,106 @@ export namespace Components {
         "placement": Side;
     }
     /**
+     * One item in a `pf-tree-view`, with its own items nested inside it.
+     * The host is the `treeitem`, and it is never focused: the tree keeps the
+     * focus and names the active item with `aria-activedescendant`, because a
+     * nested host cannot take a roving tabindex at all — measured, and explained
+     * on `pf-tree-view`. So the row inside is a plain box rather than a button,
+     * and the twisty is the only focusable thing in here, kept out of the tab
+     * order.
+     * `level`, `selected`, `expanded` and `hasChildren` are the group's to set:
+     * only it can see the whole tree.
+     */
+    interface PfTreeItem {
+        /**
+          * Set by the tree: the item the keyboard is on, which is not always the selected one. Reflected, because the ring is drawn from it.
+          * @default false
+         */
+        "active": boolean;
+        /**
+          * Reflected; the stylesheet and the tree's own filtering both read it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Set by the tree: whether this branch is open. Reflected.
+          * @default false
+         */
+        "expanded": boolean;
+        /**
+          * Set by the tree: whether there is anything to open. Reflected.
+          * @default false
+         */
+        "hasChildren": boolean;
+        /**
+          * An icon name from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Set by the tree: how deep this item sits, counting from 1.
+          * @default 1
+         */
+        "level": number;
+        /**
+          * Set by the tree. Reflected, so the stylesheet can mark the item.
+          * @default false
+         */
+        "selected": boolean;
+        /**
+          * Identifies the item in the tree's selection and open set.  Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-tree-item[value="..."]` finds nothing. The tree reads the property.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
+     * A tree over nested `pf-tree-item` children.
+     * Nesting rather than a `nodes` array, which is what a tree looks like in a
+     * consumer's template anyway — and the labels are nodes, so they could not
+     * cross the HTML boundary.
+     * The group owns what no single item can see: which one is selected, which
+     * are open, the one tab stop, and the keyboard. Every rule the keyboard
+     * follows is core's `resolveTreeKey`, so this and the React `TreeView` answer
+     * the arrows identically.
+     * **The tree itself is the tab stop, not the items.** The ARIA tree pattern
+     * allows either a roving tabindex or a managed `aria-activedescendant`, and
+     * here only the second one works: measured in Chromium, a `tabindex="0"` host
+     * slotted into another host's shadow tree is skipped by sequential navigation
+     * entirely when the outer host's tabindex is negative — which is exactly a
+     * nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
+     * and tracks the active item with an IDREF, which resolves because the items
+     * are its own light-DOM descendants.
+     * The React `TreeView` makes every visible item a tab stop, which is a gap
+     * recorded in `todo.md`.
+     */
+    interface PfTreeView {
+        /**
+          * Closes every branch.
+         */
+        "collapseAll": () => Promise<void>;
+        /**
+          * Opens every branch.
+         */
+        "expandAll": () => Promise<void>;
+        /**
+          * The open branches, as one comma-separated string.
+          * @default ''
+         */
+        "expanded": string;
+        /**
+          * The tree's accessible name.
+         */
+        "label"?: string;
+        /**
+          * Re-reads the tree, for a consumer who changed an item through a property.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * The selected item's value.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
      */
@@ -2941,6 +3041,14 @@ export interface PfTimePickerCustomEvent<T> extends CustomEvent<T> {
 export interface PfToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfToasterElement;
+}
+export interface PfTreeItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTreeItemElement;
+}
+export interface PfTreeViewCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTreeViewElement;
 }
 declare global {
     interface HTMLPfAccordionElementEventMap {
@@ -4502,6 +4610,74 @@ declare global {
         prototype: HTMLPfTooltipElement;
         new (): HTMLPfTooltipElement;
     };
+    interface HTMLPfTreeItemElementEventMap {
+        "pfTreeSelect": { value: string };
+        "pfTreeToggle": { value: string };
+        "pfTreeStructure": void;
+    }
+    /**
+     * One item in a `pf-tree-view`, with its own items nested inside it.
+     * The host is the `treeitem`, and it is never focused: the tree keeps the
+     * focus and names the active item with `aria-activedescendant`, because a
+     * nested host cannot take a roving tabindex at all — measured, and explained
+     * on `pf-tree-view`. So the row inside is a plain box rather than a button,
+     * and the twisty is the only focusable thing in here, kept out of the tab
+     * order.
+     * `level`, `selected`, `expanded` and `hasChildren` are the group's to set:
+     * only it can see the whole tree.
+     */
+    interface HTMLPfTreeItemElement extends Components.PfTreeItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTreeItemElementEventMap>(type: K, listener: (this: HTMLPfTreeItemElement, ev: PfTreeItemCustomEvent<HTMLPfTreeItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTreeItemElementEventMap>(type: K, listener: (this: HTMLPfTreeItemElement, ev: PfTreeItemCustomEvent<HTMLPfTreeItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTreeItemElement: {
+        prototype: HTMLPfTreeItemElement;
+        new (): HTMLPfTreeItemElement;
+    };
+    interface HTMLPfTreeViewElementEventMap {
+        "pfChange": { value: string };
+        "pfExpandedChange": { value: string; values: string[] };
+    }
+    /**
+     * A tree over nested `pf-tree-item` children.
+     * Nesting rather than a `nodes` array, which is what a tree looks like in a
+     * consumer's template anyway — and the labels are nodes, so they could not
+     * cross the HTML boundary.
+     * The group owns what no single item can see: which one is selected, which
+     * are open, the one tab stop, and the keyboard. Every rule the keyboard
+     * follows is core's `resolveTreeKey`, so this and the React `TreeView` answer
+     * the arrows identically.
+     * **The tree itself is the tab stop, not the items.** The ARIA tree pattern
+     * allows either a roving tabindex or a managed `aria-activedescendant`, and
+     * here only the second one works: measured in Chromium, a `tabindex="0"` host
+     * slotted into another host's shadow tree is skipped by sequential navigation
+     * entirely when the outer host's tabindex is negative — which is exactly a
+     * nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
+     * and tracks the active item with an IDREF, which resolves because the items
+     * are its own light-DOM descendants.
+     * The React `TreeView` makes every visible item a tab stop, which is a gap
+     * recorded in `todo.md`.
+     */
+    interface HTMLPfTreeViewElement extends Components.PfTreeView, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTreeViewElementEventMap>(type: K, listener: (this: HTMLPfTreeViewElement, ev: PfTreeViewCustomEvent<HTMLPfTreeViewElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTreeViewElementEventMap>(type: K, listener: (this: HTMLPfTreeViewElement, ev: PfTreeViewCustomEvent<HTMLPfTreeViewElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTreeViewElement: {
+        prototype: HTMLPfTreeViewElement;
+        new (): HTMLPfTreeViewElement;
+    };
     /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
@@ -4610,6 +4786,8 @@ declare global {
         "pf-toolbar": HTMLPfToolbarElement;
         "pf-toolbar-separator": HTMLPfToolbarSeparatorElement;
         "pf-tooltip": HTMLPfTooltipElement;
+        "pf-tree-item": HTMLPfTreeItemElement;
+        "pf-tree-view": HTMLPfTreeViewElement;
         "pf-utility-button": HTMLPfUtilityButtonElement;
         "pf-visually-hidden": HTMLPfVisuallyHiddenElement;
     }
@@ -7274,6 +7452,114 @@ declare namespace LocalJSX {
         "placement"?: Side;
     }
     /**
+     * One item in a `pf-tree-view`, with its own items nested inside it.
+     * The host is the `treeitem`, and it is never focused: the tree keeps the
+     * focus and names the active item with `aria-activedescendant`, because a
+     * nested host cannot take a roving tabindex at all — measured, and explained
+     * on `pf-tree-view`. So the row inside is a plain box rather than a button,
+     * and the twisty is the only focusable thing in here, kept out of the tab
+     * order.
+     * `level`, `selected`, `expanded` and `hasChildren` are the group's to set:
+     * only it can see the whole tree.
+     */
+    interface PfTreeItem {
+        /**
+          * Set by the tree: the item the keyboard is on, which is not always the selected one. Reflected, because the ring is drawn from it.
+          * @default false
+         */
+        "active"?: boolean;
+        /**
+          * Reflected; the stylesheet and the tree's own filtering both read it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Set by the tree: whether this branch is open. Reflected.
+          * @default false
+         */
+        "expanded"?: boolean;
+        /**
+          * Set by the tree: whether there is anything to open. Reflected.
+          * @default false
+         */
+        "hasChildren"?: boolean;
+        /**
+          * An icon name from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Set by the tree: how deep this item sits, counting from 1.
+          * @default 1
+         */
+        "level"?: number;
+        /**
+          * Asks the tree to select this item. The tree decides.
+         */
+        "onPfTreeSelect"?: (event: PfTreeItemCustomEvent<{ value: string }>) => void;
+        /**
+          * Tells the tree that the items inside this one have changed.  `slotchange` does not cross a shadow boundary — it is not composed — so a tree cannot hear its grandchildren arrive. Without this, an item appended to a branch is never given a level, an id or a place in the keyboard order; a browser test adds one.
+         */
+        "onPfTreeStructure"?: (event: PfTreeItemCustomEvent<void>) => void;
+        /**
+          * Asks the tree to open or close this branch.
+         */
+        "onPfTreeToggle"?: (event: PfTreeItemCustomEvent<{ value: string }>) => void;
+        /**
+          * Set by the tree. Reflected, so the stylesheet can mark the item.
+          * @default false
+         */
+        "selected"?: boolean;
+        /**
+          * Identifies the item in the tree's selection and open set.  Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-tree-item[value="..."]` finds nothing. The tree reads the property.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
+     * A tree over nested `pf-tree-item` children.
+     * Nesting rather than a `nodes` array, which is what a tree looks like in a
+     * consumer's template anyway — and the labels are nodes, so they could not
+     * cross the HTML boundary.
+     * The group owns what no single item can see: which one is selected, which
+     * are open, the one tab stop, and the keyboard. Every rule the keyboard
+     * follows is core's `resolveTreeKey`, so this and the React `TreeView` answer
+     * the arrows identically.
+     * **The tree itself is the tab stop, not the items.** The ARIA tree pattern
+     * allows either a roving tabindex or a managed `aria-activedescendant`, and
+     * here only the second one works: measured in Chromium, a `tabindex="0"` host
+     * slotted into another host's shadow tree is skipped by sequential navigation
+     * entirely when the outer host's tabindex is negative — which is exactly a
+     * nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
+     * and tracks the active item with an IDREF, which resolves because the items
+     * are its own light-DOM descendants.
+     * The React `TreeView` makes every visible item a tab stop, which is a gap
+     * recorded in `todo.md`.
+     */
+    interface PfTreeView {
+        /**
+          * The open branches, as one comma-separated string.
+          * @default ''
+         */
+        "expanded"?: string;
+        /**
+          * The tree's accessible name.
+         */
+        "label"?: string;
+        /**
+          * Fires when the selection changes.
+         */
+        "onPfChange"?: (event: PfTreeViewCustomEvent<{ value: string }>) => void;
+        /**
+          * Fires when a branch opens or closes, with the open set.
+         */
+        "onPfExpandedChange"?: (event: PfTreeViewCustomEvent<{ value: string; values: string[] }>) => void;
+        /**
+          * The selected item's value.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
      * A compact button for toolbars and table rows, where the affordance is often
      * an icon alone.
      */
@@ -7832,6 +8118,21 @@ declare namespace LocalJSX {
         "open": boolean;
         "disabled": boolean;
     }
+    interface PfTreeItemAttributes {
+        "value": string;
+        "disabled": boolean;
+        "icon": string;
+        "level": number;
+        "selected": boolean;
+        "expanded": boolean;
+        "hasChildren": boolean;
+        "active": boolean;
+    }
+    interface PfTreeViewAttributes {
+        "value": string;
+        "expanded": string;
+        "label": string;
+    }
     interface PfUtilityButtonAttributes {
         "variant": PfUtilityButtonVariant;
         "size": PfUtilityButtonSize;
@@ -7927,6 +8228,8 @@ declare namespace LocalJSX {
         "pf-toolbar": Omit<PfToolbar, keyof PfToolbarAttributes> & { [K in keyof PfToolbar & keyof PfToolbarAttributes]?: PfToolbar[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `attr:${K}`]?: PfToolbarAttributes[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `prop:${K}`]?: PfToolbar[K] };
         "pf-toolbar-separator": Omit<PfToolbarSeparator, keyof PfToolbarSeparatorAttributes> & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes]?: PfToolbarSeparator[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `attr:${K}`]?: PfToolbarSeparatorAttributes[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `prop:${K}`]?: PfToolbarSeparator[K] };
         "pf-tooltip": Omit<PfTooltip, keyof PfTooltipAttributes> & { [K in keyof PfTooltip & keyof PfTooltipAttributes]?: PfTooltip[K] } & { [K in keyof PfTooltip & keyof PfTooltipAttributes as `attr:${K}`]?: PfTooltipAttributes[K] } & { [K in keyof PfTooltip & keyof PfTooltipAttributes as `prop:${K}`]?: PfTooltip[K] };
+        "pf-tree-item": Omit<PfTreeItem, keyof PfTreeItemAttributes> & { [K in keyof PfTreeItem & keyof PfTreeItemAttributes]?: PfTreeItem[K] } & { [K in keyof PfTreeItem & keyof PfTreeItemAttributes as `attr:${K}`]?: PfTreeItemAttributes[K] } & { [K in keyof PfTreeItem & keyof PfTreeItemAttributes as `prop:${K}`]?: PfTreeItem[K] };
+        "pf-tree-view": Omit<PfTreeView, keyof PfTreeViewAttributes> & { [K in keyof PfTreeView & keyof PfTreeViewAttributes]?: PfTreeView[K] } & { [K in keyof PfTreeView & keyof PfTreeViewAttributes as `attr:${K}`]?: PfTreeViewAttributes[K] } & { [K in keyof PfTreeView & keyof PfTreeViewAttributes as `prop:${K}`]?: PfTreeView[K] };
         "pf-utility-button": Omit<PfUtilityButton, keyof PfUtilityButtonAttributes> & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes]?: PfUtilityButton[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `attr:${K}`]?: PfUtilityButtonAttributes[K] } & { [K in keyof PfUtilityButton & keyof PfUtilityButtonAttributes as `prop:${K}`]?: PfUtilityButton[K] };
         "pf-visually-hidden": Omit<PfVisuallyHidden, keyof PfVisuallyHiddenAttributes> & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes]?: PfVisuallyHidden[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `attr:${K}`]?: PfVisuallyHiddenAttributes[K] } & { [K in keyof PfVisuallyHidden & keyof PfVisuallyHiddenAttributes as `prop:${K}`]?: PfVisuallyHidden[K] };
     }
@@ -8643,6 +8946,39 @@ declare module "@stencil/core" {
              * the same place loses.
              */
             "pf-tooltip": LocalJSX.IntrinsicElements["pf-tooltip"] & JSXBase.HTMLAttributes<HTMLPfTooltipElement>;
+            /**
+             * One item in a `pf-tree-view`, with its own items nested inside it.
+             * The host is the `treeitem`, and it is never focused: the tree keeps the
+             * focus and names the active item with `aria-activedescendant`, because a
+             * nested host cannot take a roving tabindex at all — measured, and explained
+             * on `pf-tree-view`. So the row inside is a plain box rather than a button,
+             * and the twisty is the only focusable thing in here, kept out of the tab
+             * order.
+             * `level`, `selected`, `expanded` and `hasChildren` are the group's to set:
+             * only it can see the whole tree.
+             */
+            "pf-tree-item": LocalJSX.IntrinsicElements["pf-tree-item"] & JSXBase.HTMLAttributes<HTMLPfTreeItemElement>;
+            /**
+             * A tree over nested `pf-tree-item` children.
+             * Nesting rather than a `nodes` array, which is what a tree looks like in a
+             * consumer's template anyway — and the labels are nodes, so they could not
+             * cross the HTML boundary.
+             * The group owns what no single item can see: which one is selected, which
+             * are open, the one tab stop, and the keyboard. Every rule the keyboard
+             * follows is core's `resolveTreeKey`, so this and the React `TreeView` answer
+             * the arrows identically.
+             * **The tree itself is the tab stop, not the items.** The ARIA tree pattern
+             * allows either a roving tabindex or a managed `aria-activedescendant`, and
+             * here only the second one works: measured in Chromium, a `tabindex="0"` host
+             * slotted into another host's shadow tree is skipped by sequential navigation
+             * entirely when the outer host's tabindex is negative — which is exactly a
+             * nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
+             * and tracks the active item with an IDREF, which resolves because the items
+             * are its own light-DOM descendants.
+             * The React `TreeView` makes every visible item a tab stop, which is a gap
+             * recorded in `todo.md`.
+             */
+            "pf-tree-view": LocalJSX.IntrinsicElements["pf-tree-view"] & JSXBase.HTMLAttributes<HTMLPfTreeViewElement>;
             /**
              * A compact button for toolbars and table rows, where the affordance is often
              * an icon alone.

@@ -83,6 +83,8 @@ import {
   PfToaster,
   PfToolbar,
   PfTooltip,
+  PfTreeItem,
+  PfTreeView,
   PfToolbarSeparator,
   PfUtilityButton,
   PfVisuallyHidden,
@@ -182,6 +184,8 @@ import {
     PfToaster,
     PfToolbar,
     PfTooltip,
+    PfTreeItem,
+    PfTreeView,
     PfToolbarSeparator,
     PfUtilityButton,
     PfVisuallyHidden,
@@ -876,6 +880,37 @@ import {
       </pf-table>
       <output data-testid="table-sort">{{ sort().key }} {{ sort().direction }}</output>
 
+      <!-- The tree is the tab stop, not the items; see the React consumer. -->
+      <pf-tree-view
+        [value]="file()"
+        [expanded]="openFolders()"
+        label="Project files"
+        data-testid="tree-view"
+        (pfChange)="file.set($event.detail.value)"
+        (pfExpandedChange)="openFolders.set($event.detail.value)"
+      >
+        <pf-tree-item value="src" icon="folder-open">
+          <span slot="label">src</span>
+          <pf-tree-item value="index.ts">
+            <span slot="label">index.ts</span>
+            <pf-badge slot="badge" variant="brand">new</pf-badge>
+          </pf-tree-item>
+          <pf-tree-item value="components">
+            <span slot="label">components</span>
+            <pf-tree-item value="Button.tsx">
+              <span slot="label">Button.tsx</span>
+            </pf-tree-item>
+          </pf-tree-item>
+        </pf-tree-item>
+        <pf-tree-item value="package.json">
+          <span slot="label">package.json</span>
+        </pf-tree-item>
+        <pf-tree-item value="node_modules" disabled>
+          <span slot="label">node_modules</span>
+        </pf-tree-item>
+      </pf-tree-view>
+      <output data-testid="tree-value">{{ file() }} / {{ openFolders() || 'none' }}</output>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -902,6 +937,8 @@ export class AppComponent {
   cta = signal(true);
   quantity = signal('2');
   sort = signal<SortState>({ key: 'name', direction: 'asc' });
+  file = signal('index.ts');
+  openFolders = signal('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.
   orders = computed(() =>

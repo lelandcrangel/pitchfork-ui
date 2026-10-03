@@ -1,3 +1,10 @@
+import {
+  expandableTreeValues,
+  firstEnabledTreeValue,
+  type FlatTreeNode,
+  flattenVisibleTree,
+  resolveTreeKey,
+} from '@pitchfork-ui/core';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './TreeView.css';
@@ -26,61 +33,6 @@ export interface TreeViewHandle {
   collapseAll: () => void;
 }
 
-interface FlattenedTreeNode {
-  node: TreeViewNode;
-  level: number;
-  parentValue?: string;
-}
-
-function flattenVisibleNodes(
-  nodes: TreeViewNode[],
-  expandedSet: Set<string>,
-  level = 1,
-  parentValue?: string,
-): FlattenedTreeNode[] {
-  const flattened: FlattenedTreeNode[] = [];
-
-  for (const node of nodes) {
-    flattened.push({ node, level, parentValue });
-
-    if (node.children && node.children.length > 0 && expandedSet.has(node.value)) {
-      flattened.push(...flattenVisibleNodes(node.children, expandedSet, level + 1, node.value));
-    }
-  }
-
-  return flattened;
-}
-
-function findFirstEnabledValue(nodes: TreeViewNode[]): string | undefined {
-  for (const node of nodes) {
-    if (!node.disabled) {
-      return node.value;
-    }
-
-    if (node.children && node.children.length > 0) {
-      const childValue = findFirstEnabledValue(node.children);
-      if (childValue) {
-        return childValue;
-      }
-    }
-  }
-
-  return undefined;
-}
-
-function collectExpandableNodeValues(nodes: TreeViewNode[]): string[] {
-  const values: string[] = [];
-
-  for (const node of nodes) {
-    if (node.children && node.children.length > 0) {
-      values.push(node.value);
-      values.push(...collectExpandableNodeValues(node.children));
-    }
-  }
-
-  return values;
-}
-
 export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeView(
   {
     className,
@@ -99,7 +51,7 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
   const isExpandedControlled = expandedValues !== undefined;
 
   const [internalSelectedValue, setInternalSelectedValue] = useState<string | undefined>(
-    defaultSelectedValue ?? findFirstEnabledValue(nodes),
+    defaultSelectedValue ?? firstEnabledTreeValue(nodes),
   );
   const [internalExpandedValues, setInternalExpandedValues] =
     useState<string[]>(defaultExpandedValues);
@@ -109,8 +61,14 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
 
   const expandedSet = useMemo(() => new Set(resolvedExpandedValues), [resolvedExpandedValues]);
 
+  /*
+   * The visible list, the keyboard rules and the "expand all" sweep are all
+   * core's, so `<pf-tree-view>` walks the same tree the same way — including
+   * the two horizontal rules, which are the ARIA pattern rather than anything
+   * either layer should decide for itself.
+   */
   const flattenedNodes = useMemo(
-    () => flattenVisibleNodes(nodes, expandedSet),
+    () => flattenVisibleTree(nodes, expandedSet),
     [expandedSet, nodes],
   );
 
@@ -127,7 +85,7 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
   );
 
   const expandAll = useCallback(() => {
-    updateExpandedValues(collectExpandableNodeValues(nodes));
+    updateExpandedValues(expandableTreeValues(nodes));
   }, [nodes, updateExpandedValues]);
 
   const collapseAll = useCallback(() => {
@@ -173,73 +131,35 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
     itemRefs.current[value]?.focus();
   };
 
-  const onItemKeyDown = (current: FlattenedTreeNode, event: React.KeyboardEvent) => {
+  /*
+   * Core decides what the key means; this only carries the intent out. The
+   * keys it does not claim are left to the browser, which is what `null`
+   * means.
+   */
+  const onItemKeyDown = (current: FlatTreeNode<TreeViewNode>, event: React.KeyboardEvent) => {
     const currentIndex = flattenedNodes.findIndex((item) => item.node.value === current.node.value);
-
-    if (currentIndex === -1) {
+    const intent = resolveTreeKey(event.key, flattenedNodes, currentIndex);
+    if (!intent) {
       return;
     }
 
-    const hasChildren = !!(current.node.children && current.node.children.length > 0);
-    const isExpanded = expandedSet.has(current.node.value);
+    event.preventDefault();
 
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      focusNodeByValue(flattenedNodes[currentIndex + 1]?.node.value);
+    if (intent.type === 'focus') {
+      focusNodeByValue(intent.value);
+      return;
+    }
+    if (intent.type === 'expand' || intent.type === 'collapse') {
+      setExpandedState(intent.value, intent.type === 'expand');
       return;
     }
 
-    if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      focusNodeByValue(flattenedNodes[currentIndex - 1]?.node.value);
-      return;
+    // Activation both selects and toggles, as a click on each half would.
+    if (!current.node.disabled) {
+      setSelectedValue(intent.value);
     }
-
-    if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      if (hasChildren && !isExpanded) {
-        setExpandedState(current.node.value, true);
-        return;
-      }
-      if (hasChildren && isExpanded) {
-        const nextNode = flattenedNodes[currentIndex + 1];
-        if (nextNode && nextNode.parentValue === current.node.value) {
-          focusNodeByValue(nextNode.node.value);
-        }
-      }
-      return;
-    }
-
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      if (hasChildren && isExpanded) {
-        setExpandedState(current.node.value, false);
-        return;
-      }
-      focusNodeByValue(current.parentValue);
-      return;
-    }
-
-    if (event.key === 'Home') {
-      event.preventDefault();
-      focusNodeByValue(flattenedNodes[0]?.node.value);
-      return;
-    }
-
-    if (event.key === 'End') {
-      event.preventDefault();
-      focusNodeByValue(flattenedNodes[flattenedNodes.length - 1]?.node.value);
-      return;
-    }
-
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      if (!current.node.disabled) {
-        setSelectedValue(current.node.value);
-      }
-      if (hasChildren) {
-        toggleExpanded(current.node.value);
-      }
+    if (current.hasChildren) {
+      toggleExpanded(intent.value);
     }
   };
 
@@ -247,8 +167,7 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
     <div className={cx('pf-tree-view', className)} role="tree" {...props}>
       <ul className="pf-tree-view__list" role="presentation">
         {flattenedNodes.map((item) => {
-          const hasChildren = !!(item.node.children && item.node.children.length > 0);
-          const isExpanded = expandedSet.has(item.node.value);
+          const { hasChildren, expanded: isExpanded } = item;
           const isSelected = resolvedSelectedValue === item.node.value;
 
           return (

@@ -1,0 +1,26 @@
+:host {
+  background: var(--pf-treeview-bg);
+  border: 1px solid var(--pf-treeview-border);
+  border-radius: var(--radius-md);
+  display: block;
+  padding: var(--space-2);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The tree is the tab stop, so the ring belongs to whichever item the keyboard
+ * is on — and only while the tree itself has focus. A custom property is how
+ * that reaches the item: it inherits through the shadow boundary, where
+ * `:host-context()` would not work in Firefox or Safari.
+ */
+:host {
+  --pf-tree-active-ring: none;
+  outline: none;
+}
+
+:host(:focus-visible) {
+  --pf-tree-active-ring: var(--pf-treeview-focus-ring, var(--pf-focus-ring));
+}

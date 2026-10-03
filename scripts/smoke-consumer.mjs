@@ -122,6 +122,8 @@ const EXPECTED = [
   'pf-table',
   'pf-table-row',
   'pf-table-cell',
+  'pf-tree-view',
+  'pf-tree-item',
 ];
 
 const TYPES = {
@@ -3248,6 +3250,158 @@ try {
       }
       if (state.indicator !== '^') {
         problems.push(`the sort indicator reads "${state.indicator}", expected ^`);
+      }
+    }
+  }
+
+  /*
+   * The tree, and the measurement it is built on: the tree holds the tab stop
+   * and names the active item with an IDREF, because a `tabindex="0"` host
+   * slotted into another host's shadow tree is skipped by sequential
+   * navigation when the outer host's tabindex is negative. Asserted here in a
+   * real build, and with it the indent, which comes from the nesting rather
+   * than from a level pushed into a custom property.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const tree = document.querySelector('pf-tree-view');
+        if (!tree) return { error: 'the consumer app has no pf-tree-view' };
+
+        const item = (value) => tree.querySelector(`pf-tree-item[value="${value}"]`);
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const activeValue = () =>
+          [...tree.querySelectorAll('pf-tree-item')]
+            .find((node) => node.hasAttribute('active'))
+            ?.getAttribute('value') ?? null;
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const read = {
+          treeTabindex: tree.getAttribute('tabindex'),
+          itemTabStops: [...tree.querySelectorAll('pf-tree-item')].filter(
+            (node) => node.getAttribute('tabindex') === '0',
+          ).length,
+          pointsAt: (() => {
+            const id = tree.getAttribute('aria-activedescendant');
+            return id ? (tree.querySelector(`#${id}`)?.getAttribute('value') ?? null) : null;
+          })(),
+          // The indent: a nested row starts to the right of its parent's.
+          rootRowLeft: part(item('src'), 'row').getBoundingClientRect().left,
+          childRowLeft: part(item('index.ts'), 'row').getBoundingClientRect().left,
+          grandchildIndent: (() => {
+            const components = part(item('components'), 'row').getBoundingClientRect().left;
+            return components - part(item('src'), 'row').getBoundingClientRect().left;
+          })(),
+          // A closed branch's children take no space at all.
+          closedBranchHeight: part(item('components'), 'children').getBoundingClientRect().height,
+          openBranchHeight: part(item('src'), 'children').getBoundingClientRect().height,
+          selectedBackground: getComputedStyle(part(item('index.ts'), 'row')).backgroundColor,
+          plainBackground: getComputedStyle(part(item('package.json'), 'row')).backgroundColor,
+          disabledOpacity: getComputedStyle(part(item('node_modules'), 'row')).opacity,
+          plainOpacity: getComputedStyle(part(item('package.json'), 'row')).opacity,
+          // The ring is drawn only while the tree itself has focus.
+          ringWhenBlurred: getComputedStyle(part(item('index.ts'), 'row')).boxShadow,
+        };
+
+        tree.focus();
+        await settle();
+        const ringWhenFocused = getComputedStyle(part(item('index.ts'), 'row')).boxShadow;
+
+        // Selecting from the keyboard has to reach the host framework.
+        tree.dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, composed: true }),
+        );
+        const deadline = Date.now() + 3000;
+        while (activeValue() !== 'components') {
+          if (Date.now() > deadline) {
+            return { ...read, ringWhenFocused, error: `the arrow did not move (${activeValue()})` };
+          }
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        tree.dispatchEvent(
+          new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, composed: true }),
+        );
+        const echo = () =>
+          document.querySelector('[data-testid="tree-value"]')?.textContent?.trim();
+        while (!echo()?.startsWith('components')) {
+          if (Date.now() > deadline) {
+            return { ...read, ringWhenFocused, echo: echo(), error: 'the selection never echoed' };
+          }
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+
+        return {
+          ...read,
+          ringWhenFocused,
+          focusedTree: document.activeElement === tree,
+          echo: echo(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-tree-view: ${state.error}`);
+    } else {
+      if (state.treeTabindex !== '0' || state.itemTabStops !== 0) {
+        problems.push(
+          `the tree has tabindex ${state.treeTabindex} and ${state.itemTabStops} item tab ` +
+            'stops, expected the tree to hold the only one',
+        );
+      }
+      if (state.pointsAt !== 'index.ts') {
+        problems.push(
+          `aria-activedescendant points at "${state.pointsAt}", expected the selected item`,
+        );
+      }
+      if (!(state.childRowLeft > state.rootRowLeft)) {
+        problems.push(
+          `a nested row starts at ${state.childRowLeft} against its parent's ` +
+            `${state.rootRowLeft} — the indent did not apply`,
+        );
+      }
+      if (Math.abs(state.grandchildIndent - (state.childRowLeft - state.rootRowLeft)) > 1) {
+        problems.push('the indent is not one step per level of nesting');
+      }
+      if (state.closedBranchHeight !== 0) {
+        problems.push(
+          `a closed branch measured ${state.closedBranchHeight}px — its children are still laid out`,
+        );
+      }
+      if (!(state.openBranchHeight > 0)) {
+        problems.push(`an open branch measured ${state.openBranchHeight}px`);
+      }
+      if (state.selectedBackground === state.plainBackground) {
+        problems.push(
+          `the selected row is the same colour as a plain one ("${state.plainBackground}")`,
+        );
+      }
+      if (state.disabledOpacity === state.plainOpacity) {
+        problems.push(
+          `a disabled row looks the same as an enabled one (opacity ${state.plainOpacity})`,
+        );
+      }
+      if (state.ringWhenBlurred !== 'none') {
+        problems.push(
+          `the active row has a ring while the tree is not focused ` +
+            `("${state.ringWhenBlurred}")`,
+        );
+      }
+      if (state.ringWhenFocused === 'none') {
+        problems.push(
+          'the active row has no ring while the tree is focused — the ' +
+            '--pf-tree-active-ring bridge did not reach it',
+        );
+      }
+      if (!state.focusedTree) {
+        problems.push('the keyboard moved the focus off the tree');
+      }
+      if (!state.echo?.startsWith('components')) {
+        problems.push(`pf-tree-view reported "${state.echo}" to the host framework`);
       }
     }
   }

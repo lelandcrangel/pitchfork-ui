@@ -23,5 +23,6 @@ export * from './table';
 export * from './tabs';
 export * from './text';
 export * from './time';
+export * from './tree';
 export * from './typeahead';
 export * from './value-list';

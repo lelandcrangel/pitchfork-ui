@@ -1,0 +1,115 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The indent comes from the nesting rather than from a level pushed into a
+ * custom property: the items are nested in the DOM, so one rule here indents
+ * every depth, and there is no number to keep in step with the markup.
+ */
+.children {
+  padding-inline-start: var(--space-4);
+}
+
+.children[hidden] {
+  display: none;
+}
+
+.row {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--pf-treeview-text-muted);
+  cursor: pointer;
+  display: grid;
+  gap: var(--space-2);
+  grid-template-columns: 24px auto 1fr auto;
+  min-height: 34px;
+  min-width: 0;
+  padding-inline-end: var(--space-2);
+}
+
+/* No icon slotted in, no column for one: the grid closes up. */
+:host(:not([icon])) .row {
+  grid-template-columns: 24px 1fr auto;
+}
+
+.row:hover {
+  background: var(--pf-treeview-bg-subtle);
+  color: var(--pf-treeview-text);
+}
+
+/*
+ * The ring marks the item the keyboard is on, and the tree decides whether to
+ * draw one at all: it is the thing with the focus, and it turns the ring on
+ * through `--pf-tree-active-ring` only while it is focused.
+ */
+:host([active]) .row {
+  box-shadow: var(--pf-tree-active-ring, none);
+}
+
+:host([selected]) .row {
+  background: var(--pf-treeview-bg-subtle);
+  color: var(--pf-treeview-text);
+  font-weight: var(--font-weight-semibold);
+}
+
+:host([disabled]) .row {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.twisty {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  width: 24px;
+}
+
+.toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-treeview-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--font-size-xs);
+  height: 24px;
+  justify-content: center;
+  padding: 0;
+  width: 24px;
+}
+
+.toggle:hover {
+  background: var(--pf-treeview-bg-subtle);
+  color: var(--pf-treeview-text);
+}
+
+.icon {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+}
+
+/* Two classes deep, because the box sets its own `display` above. */
+.badge.empty {
+  display: none;
+}
