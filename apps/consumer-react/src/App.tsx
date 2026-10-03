@@ -33,6 +33,7 @@ import {
   PfDropdown,
   PfEmptyState,
   PfHeaderNavigation,
+  PfFileUploader,
   PfIcon,
   PfInlineCta,
   PfInput,
@@ -121,6 +122,7 @@ export function App() {
   const [file, setFile] = useState('index.ts');
   const [slide, setSlide] = useState(0);
   const [split, setSplit] = useState(40);
+  const [uploads, setUploads] = useState<File[]>([]);
   const [openFolders, setOpenFolders] = useState('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.
@@ -1223,6 +1225,26 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        A form-associated file picker: the input inside the shadow root
+        reaches no surrounding form, so the submission comes from
+        `setFormValue` — one entry per file, which is how a native multi-file
+        input submits. `accept` filters the picker and nothing else, so the
+        element checks a dropped file itself.
+      */}
+      <PfFileUploader
+        name="docs"
+        label="Attachments"
+        description="Anything the team should see."
+        accept=".pdf,image/*"
+        maxFiles={3}
+        maxFileSize={1024 * 1024}
+        files={uploads}
+        data-testid="file-uploader"
+        onPfChange={(event) => setUploads(event.detail.files)}
+      />
+      <output data-testid="file-uploader-count">{uploads.length}</output>
 
       {/*
         The panels are slotted by name rather than taken as the first two

@@ -34,6 +34,7 @@ import {
   PfDropdown,
   PfEmptyState,
   PfHeaderNavigation,
+  PfFileUploader,
   PfIcon,
   PfInlineCta,
   PfInput,
@@ -142,6 +143,7 @@ import {
     PfDropdown,
     PfEmptyState,
     PfHeaderNavigation,
+    PfFileUploader,
     PfIcon,
     PfInlineCta,
     PfInput,
@@ -1020,6 +1022,20 @@ import {
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
 
+      <!-- A form-associated file picker; see the React consumer. -->
+      <pf-file-uploader
+        name="docs"
+        label="Attachments"
+        description="Anything the team should see."
+        accept=".pdf,image/*"
+        [maxFiles]="3"
+        [maxFileSize]="1048576"
+        [files]="uploads()"
+        data-testid="file-uploader"
+        (pfChange)="uploads.set($event.detail.files)"
+      ></pf-file-uploader>
+      <output data-testid="file-uploader-count">{{ uploads().length }}</output>
+
       <!-- The panels are slotted by name; see the React consumer. -->
       <pf-resizable
         [size]="split()"
@@ -1068,6 +1084,7 @@ export class AppComponent {
   file = signal('index.ts');
   slide = signal(0);
   split = signal(40);
+  uploads = signal<File[]>([]);
   openFolders = signal('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.

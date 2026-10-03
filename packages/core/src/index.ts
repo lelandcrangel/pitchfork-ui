@@ -7,6 +7,7 @@ export * from './command';
 export * from './date';
 export * from './date-range';
 export * from './dismiss';
+export * from './files';
 export * from './focus';
 export * from './icons';
 export * from './keys';

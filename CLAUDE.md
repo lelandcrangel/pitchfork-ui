@@ -870,6 +870,50 @@ Things that differ from the React library, learned by porting the first two:
   width, because neither project applies `styleUrl` CSS and an inline box
   ignores `width` — the first attempt measured the content and clamped to
   `min` instead.
+- **`accept` filters the picker, never a drop.** A dropped file passes no
+  filter at all, so a dropzone that trusts the attribute accepts whatever is
+  dragged onto it — which both layers did. `fileMatchesAccept` in core handles
+  the three forms a file input takes (`.pdf`, `image/png`, `image/*`) and
+  nothing else, and `validateFileSelection` reports the wrong kind before the
+  wrong size, because the kind is the more specific complaint.
+- **Merge, then validate; never truncate in between.** The React
+  `FileUploader` cut the selection to `maxFiles` and then checked the cut
+  list, which made its own "You can upload up to N files" message
+  **unreachable**: the extra files were simply gone with nothing said. The
+  test that pinned it was called "silently truncates to maxFiles", which is
+  the shape of this mistake — the behaviour was written down rather than
+  questioned. Core keeps the two steps apart so a caller can refuse a
+  selection instead of quietly losing part of it.
+- **Clear a file input after _any_ selection, accepted or refused.** A file
+  input fires no `change` for an identical selection, so a rejected value left
+  in place means picking the same file again does nothing and the error stands
+  with no way to retry. And test it through the **picker**, not a drop: a drop
+  never populates the input, so the same assertion after a drop passes whether
+  the clearing happens or not — measured, by removing the line and watching
+  the drop-based test stay green. `input.files` is settable from a
+  `DataTransfer`, which is how to drive the picker without one.
+- **Count drag depth; a boolean flickers.** `dragenter` and `dragleave` both
+  bubble from the dropzone's own children, so moving the pointer from the icon
+  to the title fires a leave and then an enter, and a boolean drops the
+  highlight in between. A counter incremented on enter and decremented on
+  leave does not, and a drop resets it to zero rather than decrementing, since
+  the matching leaves never come.
+- **One control, one entry per file.** `setFormValue` takes a `FormData`, and
+  the element's own `name` attribute is then ignored entirely, so
+  `pf-file-uploader` appends every file under its own `name` — which is how a
+  native multi-file input submits. Nothing chosen sets `null`, not `''`: a
+  file input with no file is absent from the submission, the same distinction
+  `pf-checkbox` depends on.
+- **The uploader's own complaint is a constraint failure, not just a
+  message.** `@Watch` the `@State` holding it as well as the consumer's
+  `error` prop, or `checkValidity()` reports a control that is visibly
+  showing an error as valid. Two browser tests caught it.
+- **Some controls have no Angular `ControlValueAccessor`, and that is the
+  answer.** The generator offers accessors that write `value`, a number or
+  `checked`; `pf-file-uploader`'s value is a `File[]`, so a text accessor
+  would store `[object File]`. An Angular consumer binds `[files]` and
+  `(pfChange)`, and the submission still works, because that goes through
+  `ElementInternals` rather than through the accessor.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

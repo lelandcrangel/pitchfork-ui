@@ -1119,6 +1119,67 @@ export namespace Components {
         "size": PfEmptyStateSize;
     }
     /**
+     * A form-associated file picker with a dropzone.
+     * All of the rules are core's — how a size is written, what makes two
+     * selections the same file, which files a selection leaves you with, what is
+     * wrong with the result and how the limits are described — so this and the
+     * React `FileUploader` cannot drift on any of them.
+     * It deliberately has **no Angular `ControlValueAccessor`**. The generator
+     * offers accessors that write `value`, a number or `checked`, and this
+     * control's value is a `File[]`: a text accessor would store `[object File]`.
+     * An Angular consumer binds `[files]` and `(pfChange)`, and the submission
+     * still works, because that goes through `ElementInternals` rather than
+     * through the accessor.
+     */
+    interface PfFileUploader {
+        /**
+          * The `accept` list, in the form an `<input type="file">` takes.
+         */
+        "accept"?: string;
+        "checkValidity": () => Promise<boolean>;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message from the consumer. Its presence marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The files chosen. A property only — there is no attribute that could carry a `File`.
+          * @default []
+         */
+        "files": File[];
+        "getValidationMessage": () => Promise<string>;
+        "label"?: string;
+        /**
+          * The largest any one file may be, in bytes.
+         */
+        "maxFileSize"?: number;
+        /**
+          * The most files that may be held at once.
+         */
+        "maxFiles"?: number;
+        /**
+          * @default true
+         */
+        "multiple": boolean;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` content attribute rather than from this property.
+         */
+        "name"?: string;
+        /**
+          * Opens the file picker, as clicking the dropzone does.
+         */
+        "open": () => Promise<void>;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+    }
+    /**
      * A header navigation over `pf-nav-item` children.
      * The group owns the one thing an item cannot know: which item is the current
      * page. Core's rule decides, so the React `HeaderNavigation` marks the same
@@ -3188,6 +3249,10 @@ export interface PfDropdownCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfDropdownElement;
 }
+export interface PfFileUploaderCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfFileUploaderElement;
+}
 export interface PfInlineCtaCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfInlineCtaElement;
@@ -3906,6 +3971,37 @@ declare global {
     var HTMLPfEmptyStateElement: {
         prototype: HTMLPfEmptyStateElement;
         new (): HTMLPfEmptyStateElement;
+    };
+    interface HTMLPfFileUploaderElementEventMap {
+        "pfChange": { files: File[] };
+        "pfReject": { message: string };
+    }
+    /**
+     * A form-associated file picker with a dropzone.
+     * All of the rules are core's — how a size is written, what makes two
+     * selections the same file, which files a selection leaves you with, what is
+     * wrong with the result and how the limits are described — so this and the
+     * React `FileUploader` cannot drift on any of them.
+     * It deliberately has **no Angular `ControlValueAccessor`**. The generator
+     * offers accessors that write `value`, a number or `checked`, and this
+     * control's value is a `File[]`: a text accessor would store `[object File]`.
+     * An Angular consumer binds `[files]` and `(pfChange)`, and the submission
+     * still works, because that goes through `ElementInternals` rather than
+     * through the accessor.
+     */
+    interface HTMLPfFileUploaderElement extends Components.PfFileUploader, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfFileUploaderElementEventMap>(type: K, listener: (this: HTMLPfFileUploaderElement, ev: PfFileUploaderCustomEvent<HTMLPfFileUploaderElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfFileUploaderElementEventMap>(type: K, listener: (this: HTMLPfFileUploaderElement, ev: PfFileUploaderCustomEvent<HTMLPfFileUploaderElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfFileUploaderElement: {
+        prototype: HTMLPfFileUploaderElement;
+        new (): HTMLPfFileUploaderElement;
     };
     /**
      * A header navigation over `pf-nav-item` children.
@@ -5145,6 +5241,7 @@ declare global {
         "pf-date-range-picker": HTMLPfDateRangePickerElement;
         "pf-dropdown": HTMLPfDropdownElement;
         "pf-empty-state": HTMLPfEmptyStateElement;
+        "pf-file-uploader": HTMLPfFileUploaderElement;
         "pf-header-navigation": HTMLPfHeaderNavigationElement;
         "pf-icon": HTMLPfIconElement;
         "pf-inline-cta": HTMLPfInlineCtaElement;
@@ -6240,6 +6337,72 @@ declare namespace LocalJSX {
           * @default 'md'
          */
         "size"?: PfEmptyStateSize;
+    }
+    /**
+     * A form-associated file picker with a dropzone.
+     * All of the rules are core's — how a size is written, what makes two
+     * selections the same file, which files a selection leaves you with, what is
+     * wrong with the result and how the limits are described — so this and the
+     * React `FileUploader` cannot drift on any of them.
+     * It deliberately has **no Angular `ControlValueAccessor`**. The generator
+     * offers accessors that write `value`, a number or `checked`, and this
+     * control's value is a `File[]`: a text accessor would store `[object File]`.
+     * An Angular consumer binds `[files]` and `(pfChange)`, and the submission
+     * still works, because that goes through `ElementInternals` rather than
+     * through the accessor.
+     */
+    interface PfFileUploader {
+        /**
+          * The `accept` list, in the form an `<input type="file">` takes.
+         */
+        "accept"?: string;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message from the consumer. Its presence marks the control invalid.
+         */
+        "error"?: string;
+        /**
+          * The files chosen. A property only — there is no attribute that could carry a `File`.
+          * @default []
+         */
+        "files"?: File[];
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        "label"?: string;
+        /**
+          * The largest any one file may be, in bytes.
+         */
+        "maxFileSize"?: number;
+        /**
+          * The most files that may be held at once.
+         */
+        "maxFiles"?: number;
+        /**
+          * @default true
+         */
+        "multiple"?: boolean;
+        /**
+          * Submitted under this name.  Reflected, because a form-associated custom element takes its submission name from the `name` content attribute rather than from this property.
+         */
+        "name"?: string;
+        /**
+          * Fires when the files held change, however they changed.
+         */
+        "onPfChange"?: (event: PfFileUploaderCustomEvent<{ files: File[] }>) => void;
+        /**
+          * Fires when a selection is refused, with the reason shown to the person.
+         */
+        "onPfReject"?: (event: PfFileUploaderCustomEvent<{ message: string }>) => void;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
     }
     /**
      * A header navigation over `pf-nav-item` children.
@@ -8455,6 +8618,18 @@ declare namespace LocalJSX {
         "size": PfEmptyStateSize;
         "icon": string;
     }
+    interface PfFileUploaderAttributes {
+        "name": string;
+        "accept": string;
+        "multiple": boolean;
+        "maxFiles": number;
+        "maxFileSize": number;
+        "label": string;
+        "description": string;
+        "error": string;
+        "required": boolean;
+        "disabled": boolean;
+    }
     interface PfHeaderNavigationAttributes {
         "label": string;
     }
@@ -8866,6 +9041,7 @@ declare namespace LocalJSX {
         "pf-date-range-picker": Omit<PfDateRangePicker, keyof PfDateRangePickerAttributes> & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes]?: PfDateRangePicker[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `attr:${K}`]?: PfDateRangePickerAttributes[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `prop:${K}`]?: PfDateRangePicker[K] };
         "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
         "pf-empty-state": Omit<PfEmptyState, keyof PfEmptyStateAttributes> & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes]?: PfEmptyState[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `attr:${K}`]?: PfEmptyStateAttributes[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `prop:${K}`]?: PfEmptyState[K] };
+        "pf-file-uploader": Omit<PfFileUploader, keyof PfFileUploaderAttributes> & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes]?: PfFileUploader[K] } & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes as `attr:${K}`]?: PfFileUploaderAttributes[K] } & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes as `prop:${K}`]?: PfFileUploader[K] };
         "pf-header-navigation": Omit<PfHeaderNavigation, keyof PfHeaderNavigationAttributes> & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes]?: PfHeaderNavigation[K] } & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes as `attr:${K}`]?: PfHeaderNavigationAttributes[K] } & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes as `prop:${K}`]?: PfHeaderNavigation[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-inline-cta": Omit<PfInlineCta, keyof PfInlineCtaAttributes> & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes]?: PfInlineCta[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `attr:${K}`]?: PfInlineCtaAttributes[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `prop:${K}`]?: PfInlineCta[K] };
@@ -9210,6 +9386,20 @@ declare module "@stencil/core" {
              * does not have. The slot wins where both are given.
              */
             "pf-empty-state": LocalJSX.IntrinsicElements["pf-empty-state"] & JSXBase.HTMLAttributes<HTMLPfEmptyStateElement>;
+            /**
+             * A form-associated file picker with a dropzone.
+             * All of the rules are core's — how a size is written, what makes two
+             * selections the same file, which files a selection leaves you with, what is
+             * wrong with the result and how the limits are described — so this and the
+             * React `FileUploader` cannot drift on any of them.
+             * It deliberately has **no Angular `ControlValueAccessor`**. The generator
+             * offers accessors that write `value`, a number or `checked`, and this
+             * control's value is a `File[]`: a text accessor would store `[object File]`.
+             * An Angular consumer binds `[files]` and `(pfChange)`, and the submission
+             * still works, because that goes through `ElementInternals` rather than
+             * through the accessor.
+             */
+            "pf-file-uploader": LocalJSX.IntrinsicElements["pf-file-uploader"] & JSXBase.HTMLAttributes<HTMLPfFileUploaderElement>;
             /**
              * A header navigation over `pf-nav-item` children.
              * The group owns the one thing an item cannot know: which item is the current

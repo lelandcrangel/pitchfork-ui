@@ -427,3 +427,25 @@ should show, and `pf-tooltip` cannot describe a trigger across a shadow
 boundary with an IDREF — it copies the text onto the trigger as
 `aria-description`. Two elements each copying text onto the same node is the
 part to think about first.
+
+---
+
+## The React `FileUploader` is not a form control
+
+It renders a real `<input type="file">`, so a file reaches a surrounding form
+the moment one is picked — but the component holds its _own_ list in state and
+clears the input after every selection, which means the input is empty by the
+time anything is submitted. A `<form>` around it submits nothing.
+`<pf-file-uploader>` has no such gap: being form-associated, it submits its
+held list through `ElementInternals`, one entry per file.
+
+**Fix:** the same shape the element uses — keep the real input for the picker
+only, and add a hidden carrier the component writes to. There is no way to set
+`FileList` on an input other than through a `DataTransfer`, which is
+constructible in every current browser, so `new DataTransfer()` filled from
+the held list and assigned to a hidden `<input type="file" name>` would do it.
+Worth a measurement first: Safari's `DataTransfer` constructor has been the
+late one historically.
+
+**Not done here** because it changes what a form sees, which is a decision
+about the public API rather than a port, and the element covers the case today.

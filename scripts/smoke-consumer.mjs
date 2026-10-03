@@ -45,6 +45,7 @@ const EXPECTED = [
   'pf-kbd',
   'pf-input',
   'pf-header-navigation',
+  'pf-file-uploader',
   'pf-icon',
   'pf-card',
   'pf-carousel',
@@ -4035,6 +4036,150 @@ try {
       }
       if (state.echo !== '25') {
         problems.push(`pf-resizable reported "${state.echo}" to the host framework`);
+      }
+    }
+  }
+
+  /*
+   * The uploader, and the one thing no test project can check: that it is a
+   * real form control in a real build. Plus the dropzone's layout and the
+   * dashed border a person reads as "drop here", and the dropped file's
+   * journey all the way out to the host framework's own state.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-file-uploader');
+        if (!el) return { error: 'the consumer app has no pf-file-uploader' };
+
+        const part = (name) => el.shadowRoot.querySelector(`[part="${name}"]`);
+        const rows = () => [...el.shadowRoot.querySelectorAll('[part="file"]')];
+        const picker = el.shadowRoot.querySelector('input[type=file]');
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const zone = part('dropzone');
+        const read = {
+          hint: zone.textContent.trim(),
+          // The dashed border is the affordance; a solid one reads as a box.
+          borderStyle: getComputedStyle(zone).borderTopStyle,
+          zoneWidth: zone.getBoundingClientRect().width,
+          hostWidth: el.getBoundingClientRect().width,
+          // The input is out of sight but not `display: none` — a
+          // display-none file input cannot be opened with .click() everywhere.
+          pickerDisplay: getComputedStyle(picker).display,
+          pickerBox: picker.getBoundingClientRect().width,
+          iconDrawn: getComputedStyle(part('icon')).display !== 'none',
+          /*
+           * The only place this can be checked: a form-associated element's
+           * submission comes from ElementInternals, which neither Vitest
+           * project provides.
+           */
+          emptySubmission: (() => {
+            const form = document.createElement('form');
+            el.parentElement.insertBefore(form, el);
+            form.appendChild(el);
+            const has = new FormData(form).has('docs');
+            form.parentElement.insertBefore(el, form);
+            form.remove();
+            return has;
+          })(),
+        };
+
+        // A real drop, carrying a real File.
+        const data = new DataTransfer();
+        data.items.add(new File(['hello'], 'brief.pdf', { type: 'application/pdf' }));
+        zone.dispatchEvent(
+          new DragEvent('drop', { dataTransfer: data, bubbles: true, cancelable: true }),
+        );
+
+        const echo = () =>
+          document.querySelector('[data-testid="file-uploader-count"]')?.textContent?.trim();
+        const deadline = Date.now() + 3000;
+        while (echo() !== '1') {
+          if (Date.now() > deadline)
+            return { ...read, echo: echo(), error: 'the drop never echoed' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        await settle();
+
+        const form = document.createElement('form');
+        el.parentElement.insertBefore(form, el);
+        form.appendChild(el);
+        const submitted = [...new FormData(form).getAll('docs')].map((entry) => entry.name);
+        form.parentElement.insertBefore(el, form);
+        form.remove();
+
+        const row = rows()[0];
+        const name = row.querySelector('.file-name') ?? row;
+        const remove = row.querySelector('[part="remove"]');
+
+        return {
+          ...read,
+          echo: echo(),
+          submitted,
+          rowText: row.textContent.replace(/\s+/g, ' ').trim(),
+          // The name takes the slack, so the remove button sits at the edge.
+          removeGap: row.getBoundingClientRect().right - remove.getBoundingClientRect().right,
+          nameTruncates: getComputedStyle(name).textOverflow,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-file-uploader: ${state.error}`);
+    } else {
+      if (!state.hint.includes('Accepted: .pdf,image/* | Max size: 1.0 MB | Max files: 3')) {
+        problems.push(`the dropzone's hint reads "${state.hint}"`);
+      }
+      if (state.borderStyle !== 'dashed') {
+        problems.push(
+          `the dropzone's border is "${state.borderStyle}" — the dashed affordance is missing`,
+        );
+      }
+      if (Math.abs(state.zoneWidth - state.hostWidth) > 2) {
+        problems.push(
+          `the dropzone measured ${state.zoneWidth}px in a ${state.hostWidth}px host — it does ` +
+            'not fill the field',
+        );
+      }
+      if (state.pickerDisplay === 'none') {
+        problems.push(
+          'the file input is display:none, which cannot be opened with .click() in every browser',
+        );
+      }
+      if (state.pickerBox > 2) {
+        problems.push(`the file input takes ${state.pickerBox}px of layout`);
+      }
+      if (!state.iconDrawn) {
+        problems.push('the dropzone icon did not draw');
+      }
+      if (state.emptySubmission) {
+        problems.push('an empty uploader was present in the submission — it should be absent');
+      }
+      if (state.submitted.join() !== 'brief.pdf') {
+        problems.push(
+          `the form submitted ${JSON.stringify(state.submitted)} — expected the dropped file`,
+        );
+      }
+      if (!state.rowText.includes('brief.pdf') || !state.rowText.includes('5 B')) {
+        problems.push(`the file row reads "${state.rowText}"`);
+      }
+      if (state.removeGap > 20) {
+        problems.push(
+          `the remove button sits ${state.removeGap.toFixed(1)}px from the row's edge — the ` +
+            'name is not taking the slack',
+        );
+      }
+      if (state.nameTruncates !== 'ellipsis') {
+        problems.push(`a long file name would not truncate ("${state.nameTruncates}")`);
+      }
+      if (state.echo !== '1') {
+        problems.push(`pf-file-uploader reported "${state.echo}" files to the host framework`);
       }
     }
   }
