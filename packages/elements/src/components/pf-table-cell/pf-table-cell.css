@@ -1,0 +1,77 @@
+:host {
+  border-bottom: 1px solid var(--pf-table-border);
+  color: var(--pf-table-text);
+  display: table-cell;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  padding: var(--pf-table-cell-padding-block, 14px) var(--space-3);
+  vertical-align: middle;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+@media (--md) {
+  :host {
+    padding-inline: var(--space-4);
+  }
+}
+
+:host([head]) {
+  background: var(--pf-table-bg-subtle);
+  color: var(--pf-table-text-muted);
+  font-weight: var(--font-weight-semibold);
+  /*
+   * Read from the table rather than told: `sticky` only when the table asked
+   * for a sticky header, `static` otherwise.
+   */
+  position: var(--pf-table-head-position, static);
+  top: 0;
+  z-index: 1;
+}
+
+/* The table's own border is the rule under the last row. */
+:host([last]) {
+  border-bottom: 0;
+}
+
+:host([align='left']) {
+  text-align: start;
+}
+
+:host([align='center']) {
+  text-align: center;
+}
+
+:host([align='right']) {
+  text-align: end;
+}
+
+.sort {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  gap: var(--space-2);
+  /* Follows the cell's own alignment rather than fighting it. */
+  justify-content: inherit;
+  padding: 0;
+  width: 100%;
+}
+
+.sort:hover,
+.sort:focus-visible {
+  color: var(--pf-table-text);
+  outline: none;
+}
+
+.indicator {
+  display: inline-flex;
+  font-size: var(--font-size-2xs);
+  line-height: 1;
+  opacity: 0.7;
+}

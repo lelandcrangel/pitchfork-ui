@@ -717,6 +717,25 @@ Things that differ from the React library, learned by porting the first two:
   `2.5` a frame later. Drive such an element the way a user does (click the
   button, press the key) and let the framework follow; assignment is only
   reliable on an element nothing else owns.
+- **CSS tables, not a grid, when a row has to be a box.** A grid needs its
+  semantic rows to be `display: contents` for the cells to line up in columns
+  (the `pf-calendar` rule above), and an element with no box takes no
+  background and no `:hover` — so striping and row hover would both have to be
+  pushed down in JS. `display: table` / `table-row` / `table-cell` gives a row
+  a box, sizes the columns itself, and takes a `width` from a header cell.
+  Measured by making `pf-table-row` `display: contents` in a real build: the
+  row reports 0px tall, every cell lands in one anonymous row so the columns
+  stop lining up, and the explicit 140px column collapses to 106px. Four smoke
+  checks catch it. The one thing CSS tables cannot do is `colspan`, so the
+  empty state is a `display: table-caption` box with `caption-side: bottom` —
+  the only box in a CSS table that spans every column.
+- **An element reports a sort; it does not reorder a consumer's rows.**
+  `pf-table` owns the header buttons, `aria-sort` and the indicator, and emits
+  `pfSortChange`. Sorting would mean moving elements in the consumer's DOM,
+  which their framework undoes on its next render and whose reconciliation it
+  breaks on the way. `compareSortValues` and `sortRowsBy` are in core so the
+  order a consumer produces matches the React `Table`, which does sort for
+  itself.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

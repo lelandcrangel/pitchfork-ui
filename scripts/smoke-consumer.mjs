@@ -119,6 +119,9 @@ const EXPECTED = [
   'pf-button-group-item',
   'pf-inline-cta',
   'pf-number-input',
+  'pf-table',
+  'pf-table-row',
+  'pf-table-cell',
 ];
 
 const TYPES = {
@@ -2845,19 +2848,27 @@ try {
             .backgroundColor,
         };
 
-        // Choosing another button has to reach the host framework.
+        /*
+         * Choosing another button has to reach the host framework — and the
+         * echo is waited for rather than sampled: the element writes its own
+         * value first, and the framework's render lands a frame or two later.
+         */
         button(0).click();
+        const echo = () =>
+          document.querySelector('[data-testid="button-group-value"]')?.textContent?.trim();
         const deadline = Date.now() + 3000;
-        while (group.value !== 'day') {
-          if (Date.now() > deadline) return { ...read, error: 'the click did not take' };
+        while (group.value !== 'day' || echo() !== 'day') {
+          if (Date.now() > deadline) {
+            return {
+              ...read,
+              echo: echo(),
+              error: `the click did not take (value ${group.value})`,
+            };
+          }
           await new Promise((resolve) => requestAnimationFrame(resolve));
         }
-        await new Promise((resolve) => requestAnimationFrame(resolve));
 
-        return {
-          ...read,
-          echo: document.querySelector('[data-testid="button-group-value"]')?.textContent?.trim(),
-        };
+        return { ...read, echo: echo() };
       })
       .catch((error) => ({ error: String(error) }));
 
@@ -3100,6 +3111,143 @@ try {
           `the button that cannot move looks the same as the one that can ` +
             `(opacity ${state.plainOpacity})`,
         );
+      }
+    }
+  }
+
+  /*
+   * The table, and specifically the CSS-table layout it is built on: a row has
+   * to be a box — that is what lets it take the stripe and the hover, where a
+   * grid's `display: contents` row takes neither — and the cells have to line
+   * up in columns across rows all the same.
+   *
+   * The sort is reported rather than performed, so what is checked is the
+   * round trip: the header reports, the app sorts its own rows, and the first
+   * row changes.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const table = document.querySelector('pf-table');
+        if (!table) return { error: 'the consumer app has no pf-table' };
+
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const rows = () =>
+          [...table.querySelectorAll('pf-table-row')].filter((row) => row.parentElement === table);
+        const bodyRows = () => rows().filter((row) => !row.hasAttribute('head'));
+        const headCells = [...table.querySelectorAll('pf-table-row[head] pf-table-cell')];
+        const cellsOf = (row) => [...row.querySelectorAll('pf-table-cell')];
+
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const first = bodyRows()[0];
+        const second = bodyRows()[1];
+        const read = {
+          rowDisplay: getComputedStyle(first).display,
+          cellDisplay: getComputedStyle(cellsOf(first)[0]).display,
+          tableDisplay: getComputedStyle(part(table, 'table')).display,
+          // A row with a box has a height; a display: contents row has none.
+          rowHeight: first.getBoundingClientRect().height,
+          // Columns line up across rows, which is the whole point of the table
+          // layout: no grid-template is computed anywhere.
+          columnsAligned: cellsOf(first).every(
+            (cell, index) =>
+              Math.abs(
+                cell.getBoundingClientRect().left -
+                  cellsOf(second)[index].getBoundingClientRect().left,
+              ) < 1,
+          ),
+          stripe: getComputedStyle(second).backgroundColor,
+          plainRow: getComputedStyle(first).backgroundColor,
+          headBackground: getComputedStyle(headCells[0]).backgroundColor,
+          headPosition: getComputedStyle(headCells[0]).position,
+          // The right-aligned column is aligned, and its width was taken.
+          alignment: getComputedStyle(cellsOf(first)[1]).textAlign,
+          totalWidth: cellsOf(first)[1].getBoundingClientRect().width,
+          captionBorder: getComputedStyle(part(table, 'caption')).borderBottomWidth,
+          firstRowText: cellsOf(first)[0].textContent.trim(),
+        };
+
+        // Sort on the second column and watch the app reorder its own rows.
+        part(headCells[1], 'sort').click();
+        const deadline = Date.now() + 3000;
+        while (headCells[1].getAttribute('aria-sort') !== 'ascending') {
+          if (Date.now() > deadline) return { ...read, error: 'the header never sorted' };
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        await settle();
+
+        return {
+          ...read,
+          sortedFirstRowText: cellsOf(bodyRows()[0])[0].textContent.trim(),
+          echo: document.querySelector('[data-testid="table-sort"]')?.textContent?.trim(),
+          indicator: part(headCells[1], 'indicator')?.textContent?.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-table: ${state.error}`);
+    } else {
+      if (state.tableDisplay !== 'table' || state.rowDisplay !== 'table-row') {
+        problems.push(
+          `the table computes display ${state.tableDisplay} with ${state.rowDisplay} rows, ` +
+            'expected a CSS table — a row with no box takes no stripe and no hover',
+        );
+      }
+      if (state.cellDisplay !== 'table-cell') {
+        problems.push(`a cell computes display: ${state.cellDisplay}`);
+      }
+      if (!(state.rowHeight > 0)) {
+        problems.push(`a row measured ${state.rowHeight}px tall, so it has no box`);
+      }
+      if (!state.columnsAligned) {
+        problems.push('the cells do not line up in columns across rows');
+      }
+      if (state.stripe === state.plainRow) {
+        problems.push(
+          `a striped row is the same colour as a plain one ("${state.plainRow}") — ` +
+            'the --pf-table-row-stripe bridge did not reach it',
+        );
+      }
+      if (state.headBackground === state.plainRow) {
+        problems.push('the header is the same colour as a body row');
+      }
+      if (state.headPosition !== 'sticky') {
+        problems.push(
+          `the header computes position: ${state.headPosition} — ` +
+            'the --pf-table-head-position bridge did not reach it',
+        );
+      }
+      if (state.alignment !== 'right' && state.alignment !== 'end') {
+        problems.push(`the right-aligned column computes text-align: ${state.alignment}`);
+      }
+      if (Math.abs(state.totalWidth - 140) > 2) {
+        problems.push(
+          `the column with width="140px" measured ${state.totalWidth}px — ` +
+            'the header cell’s width did not set the column',
+        );
+      }
+      if (state.captionBorder === '0px') {
+        problems.push('the caption has no rule under it');
+      }
+      if (state.firstRowText === state.sortedFirstRowText) {
+        problems.push(
+          `the rows did not change when the table reported a sort ` +
+            `(still "${state.firstRowText}") — the app sorts its own rows, so this is ` +
+            'the round trip through the host framework',
+        );
+      }
+      if (state.echo !== 'total asc') {
+        problems.push(`pf-table reported "${state.echo}" to the host framework`);
+      }
+      if (state.indicator !== '^') {
+        problems.push(`the sort indicator reads "${state.indicator}", expected ^`);
       }
     }
   }

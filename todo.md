@@ -337,3 +337,27 @@ rather than a duration — `const animations = el.getAnimations(); if
 `Promise.all(animations.map((a) => a.finished))`. `InlineCTA` is the only
 caller, which is what makes this a small change; the hook's `duration` option
 goes away with it.
+
+---
+
+## `<pf-table>` reports a sort where the React `Table` performs one
+
+Not a defect in either, but the one API difference in Wave 5 worth having
+written down.
+
+The React `Table` takes `rows` and sorts them itself. `<pf-table>` cannot: the
+rows are `pf-table-row` elements the consumer wrote, and reordering them means
+moving nodes in the consumer's DOM — which their framework undoes on its next
+render, and whose reconciliation it breaks on the way. So the element owns the
+header buttons, `aria-sort` and the indicator, and emits `pfSortChange` for the
+consumer to sort their own data with.
+
+`compareSortValues`, `sortRowsBy` and `nextSortState` are in core so that both
+orders agree: a consumer calling `sortRowsBy` gets exactly what the React
+`Table` would have produced, down to the collation ("Item 2" before "Item 10",
+case and accents ignored). Both consumer apps do precisely that, and the smoke
+asserts the round trip — header reports, app sorts, first row changes.
+
+**Nothing to do unless** a sorted-for-you element is wanted later, in which
+case the shape to reach for is a `rows` property of plain data on the element
+(no slotted rows at all) — a different component, not a change to this one.

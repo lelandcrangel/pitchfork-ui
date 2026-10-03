@@ -19,6 +19,7 @@ export * from './roving';
 export * from './scroll-lock';
 export * from './state';
 export * from './steps';
+export * from './table';
 export * from './tabs';
 export * from './text';
 export * from './time';

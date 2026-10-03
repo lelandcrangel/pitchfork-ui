@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { sortRowsBy, type SortState } from '@pitchfork-ui/core';
+import { useMemo, useRef, useState } from 'react';
 import {
   PfAccordion,
   PfAccordionItem,
@@ -67,6 +68,9 @@ import {
   PfSlider,
   PfSwitch,
   PfTab,
+  PfTable,
+  PfTableCell,
+  PfTableRow,
   PfTabPanel,
   PfTabs,
   PfTag,
@@ -104,6 +108,25 @@ export function App() {
   const [range, setRange] = useState('week');
   const [cta, setCta] = useState(true);
   const [quantity, setQuantity] = useState('2');
+  const [sort, setSort] = useState<SortState>({ key: 'name', direction: 'asc' });
+  // Sorted with core's own comparison, which is what makes the element's
+  // reported sort and the React Table's internal one agree.
+  const orders = useMemo(
+    () =>
+      sortRowsBy(
+        [
+          // The cheapest is the last by name, so sorting by total really
+          // does reorder the rows — the smoke's check would be vacuous
+          // otherwise, and was.
+          { name: 'Item 10', total: 9, notes: 'Rush' },
+          { name: 'Item 2', total: 18.5, notes: undefined },
+          { name: 'Item 1', total: 24, notes: 'Gift' },
+        ],
+        (row) => (sort.key === 'total' ? row.total : row.name),
+        sort.direction,
+      ),
+    [sort],
+  );
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
@@ -983,6 +1006,46 @@ export function App() {
       ) : (
         <p data-testid="inline-cta-echo">dismissed</p>
       )}
+
+      {/*
+        The table reports a sort rather than performing one: the rows are this
+        app's, so it sorts its own data with core's sortRowsBy — the same
+        comparison the React Table uses, so the order matches.
+
+        The layout is CSS tables, which is what lets a row be a box and so
+        take the stripe and the hover. A grid would need display: contents
+        rows, which have no box at all.
+      */}
+      <PfTable
+        striped
+        sticky-header
+        label="Orders"
+        sortKey={sort.key}
+        sortDirection={sort.direction}
+        data-testid="table"
+        onPfSortChange={(event) => setSort(event.detail)}
+      >
+        <span slot="caption">Orders this month</span>
+        <PfTableRow head>
+          <PfTableCell sortable sortKey="name">
+            Name
+          </PfTableCell>
+          <PfTableCell sortable sortKey="total" align="right" width="140px">
+            Total
+          </PfTableCell>
+          <PfTableCell>Notes</PfTableCell>
+        </PfTableRow>
+        {orders.map((order) => (
+          <PfTableRow key={order.name}>
+            <PfTableCell>{order.name}</PfTableCell>
+            <PfTableCell align="right">£{order.total.toFixed(2)}</PfTableCell>
+            <PfTableCell>{order.notes ?? '—'}</PfTableCell>
+          </PfTableRow>
+        ))}
+      </PfTable>
+      <output data-testid="table-sort">
+        {sort.key} {sort.direction}
+      </output>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

@@ -1,0 +1,86 @@
+:host {
+  background: var(--pf-table-bg);
+  border: 1px solid var(--pf-table-border);
+  border-radius: var(--radius-md);
+  display: block;
+  overflow: auto;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The cells read these rather than being told: a custom property inherits
+ * through the shadow boundary, so one declaration here reaches every cell in
+ * every row without the table walking them. The pf-option bridge again.
+ */
+:host {
+  --pf-table-cell-padding-block: 14px;
+  --pf-table-head-position: static;
+  --pf-table-row-stripe: transparent;
+  --pf-table-row-hover: transparent;
+}
+
+:host([dense]) {
+  --pf-table-cell-padding-block: var(--space-3);
+}
+
+:host([sticky-header]) {
+  --pf-table-head-position: sticky;
+}
+
+:host([striped]) {
+  --pf-table-row-stripe: color-mix(in srgb, var(--pf-table-bg-subtle) 55%, transparent);
+}
+
+:host([hoverable]) {
+  --pf-table-row-hover: color-mix(in srgb, var(--pf-table-bg-subtle) 70%, transparent);
+}
+
+.caption {
+  align-items: center;
+  border-bottom: 1px solid var(--pf-table-border);
+  color: var(--pf-table-text-muted);
+  display: flex;
+  font-size: var(--font-size-sm);
+  min-height: 56px;
+  padding: var(--space-3) var(--space-4);
+}
+
+/*
+ * Hidden when nothing is slotted into it, from the class the component sets:
+ * `:has(slot)` would always match, and two classes deep so this beats the
+ * `display: flex` above whatever the order.
+ */
+.caption.empty {
+  display: none;
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+  display: table;
+  min-width: 620px;
+  width: 100%;
+}
+
+/*
+ * The one box in a CSS table that spans every column. There is no `colspan`
+ * outside a real <table>, and a block child of a table box is wrapped in an
+ * anonymous cell in the first column instead of stretching across.
+ */
+.empty {
+  caption-side: bottom;
+  color: var(--pf-table-text-muted);
+  display: table-caption;
+  font-size: var(--font-size-sm);
+  padding: var(--pf-table-cell-padding-block) var(--space-3);
+  text-align: center;
+}
+
+@media (--md) {
+  .empty {
+    padding-inline: var(--space-4);
+  }
+}

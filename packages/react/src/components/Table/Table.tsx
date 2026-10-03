@@ -1,15 +1,20 @@
+import {
+  ariaSortFor,
+  nextSortState,
+  type SortDirection,
+  type SortState,
+  sortRowsBy,
+  type SortValue,
+} from '@pitchfork-ui/core';
 import { useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './Table.css';
 
 export type TableAlignment = 'left' | 'center' | 'right';
 export type TableRow = Record<string, React.ReactNode>;
-export type TableSortDirection = 'asc' | 'desc';
+export type TableSortDirection = SortDirection;
 
-export interface TableSortState {
-  key: string;
-  direction: TableSortDirection;
-}
+export type TableSortState = SortState;
 
 export interface TableColumn {
   key: string;
@@ -57,6 +62,12 @@ export function Table({
   );
   const resolvedSortState = sortState ?? internalSortState;
 
+  /*
+   * The comparison is core's, so a consumer sorting their own rows for
+   * `<pf-table>` — which reports a sort rather than performing one, because
+   * the rows are theirs — gets the same order. That includes the collation:
+   * "Item 2" before "Item 10", case and accents ignored.
+   */
   const sortedRows = useMemo(() => {
     if (!resolvedSortState) {
       return rows;
@@ -67,33 +78,10 @@ export function Table({
       return rows;
     }
 
-    const getValue = (row: TableRow) => {
-      const value = sortColumn.sortValue ? sortColumn.sortValue(row) : row[sortColumn.key];
-      if (value instanceof Date) {
-        return value.getTime();
-      }
-      if (typeof value === 'number') {
-        return value;
-      }
-      return value == null ? '' : String(value);
-    };
+    const getValue = (row: TableRow): SortValue =>
+      sortColumn.sortValue ? sortColumn.sortValue(row) : (row[sortColumn.key] as SortValue);
 
-    const directionFactor = resolvedSortState.direction === 'asc' ? 1 : -1;
-    return [...rows].sort((leftRow, rightRow) => {
-      const leftValue = getValue(leftRow);
-      const rightValue = getValue(rightRow);
-
-      if (typeof leftValue === 'number' && typeof rightValue === 'number') {
-        return (leftValue - rightValue) * directionFactor;
-      }
-
-      return (
-        String(leftValue).localeCompare(String(rightValue), undefined, {
-          numeric: true,
-          sensitivity: 'base',
-        }) * directionFactor
-      );
-    });
+    return sortRowsBy(rows, getValue, resolvedSortState.direction);
   }, [columns, resolvedSortState, rows]);
 
   const setSort = (nextState: TableSortState) => {
@@ -108,15 +96,8 @@ export function Table({
       return;
     }
 
-    if (resolvedSortState?.key !== column.key) {
-      setSort({ key: column.key, direction: 'asc' });
-      return;
-    }
-
-    setSort({
-      key: column.key,
-      direction: resolvedSortState.direction === 'asc' ? 'desc' : 'asc',
-    });
+    // Core's: a new column starts ascending, and the current one turns round.
+    setSort(nextSortState(resolvedSortState, column.key));
   };
 
   return (
@@ -145,13 +126,7 @@ export function Table({
                   column.className,
                 )}
                 scope="col"
-                aria-sort={
-                  resolvedSortState?.key === column.key
-                    ? resolvedSortState.direction === 'asc'
-                      ? 'ascending'
-                      : 'descending'
-                    : 'none'
-                }
+                aria-sort={ariaSortFor(resolvedSortState, column.key)}
                 style={
                   column.width !== undefined
                     ? ({

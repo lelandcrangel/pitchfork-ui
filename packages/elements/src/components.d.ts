@@ -22,7 +22,7 @@ import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots"
 import { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 import { PfModalSize } from "./components/pf-modal/pf-modal";
 import { PfNotificationVariant } from "./components/pf-notification/pf-notification";
-import { HourCycle, Side, StepStatus } from "@pitchfork-ui/core";
+import { HourCycle, Side, SortDirection, SortState, StepStatus } from "@pitchfork-ui/core";
 import { PfProgressStepsOrientation } from "./components/pf-progress-steps/pf-progress-steps";
 import { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./components/pf-progress-steps/pf-progress-steps";
 import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
@@ -33,6 +33,7 @@ import { PfSectionHeaderAlign as PfSectionHeaderAlign1 } from "./components/pf-s
 import { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 import { PfTabsSize, PfTabsVariant } from "./components/pf-tabs/pf-tabs";
 import { PfTabPlacement } from "./components/pf-tab/pf-tab";
+import { PfTableCellAlign } from "./components/pf-table-cell/pf-table-cell";
 import { PfTabsSize as PfTabsSize1, PfTabsVariant as PfTabsVariant1 } from "./components/pf-tabs/pf-tabs";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
 import { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
@@ -58,7 +59,7 @@ export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots"
 export { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 export { PfModalSize } from "./components/pf-modal/pf-modal";
 export { PfNotificationVariant } from "./components/pf-notification/pf-notification";
-export { HourCycle, Side, StepStatus } from "@pitchfork-ui/core";
+export { HourCycle, Side, SortDirection, SortState, StepStatus } from "@pitchfork-ui/core";
 export { PfProgressStepsOrientation } from "./components/pf-progress-steps/pf-progress-steps";
 export { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./components/pf-progress-steps/pf-progress-steps";
 export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
@@ -69,6 +70,7 @@ export { PfSectionHeaderAlign as PfSectionHeaderAlign1 } from "./components/pf-s
 export { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 export { PfTabsSize, PfTabsVariant } from "./components/pf-tabs/pf-tabs";
 export { PfTabPlacement } from "./components/pf-tab/pf-tab";
+export { PfTableCellAlign } from "./components/pf-table-cell/pf-table-cell";
 export { PfTabsSize as PfTabsSize1, PfTabsVariant as PfTabsVariant1 } from "./components/pf-tabs/pf-tabs";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
 export { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
@@ -2248,6 +2250,132 @@ export namespace Components {
         "value": string;
     }
     /**
+     * A table over `pf-table-row` and `pf-table-cell` children.
+     * **It reports a sort rather than performing one.** The rows are the
+     * consumer's — they wrote the loop — and reordering them would mean moving
+     * elements in their DOM, which their framework would undo on its next render
+     * and which would break its reconciliation on the way. So this element owns
+     * the header buttons, `aria-sort` and the indicator, and emits `pfSortChange`
+     * for the consumer to sort their own data with. `compareSortValues` and
+     * `sortRowsBy` are in core precisely so that the order they produce matches
+     * the React `Table`, which does sort for itself.
+     * The layout is CSS tables rather than a grid, which is what lets a row be a
+     * box: a grid needs its rows to be `display: contents` for the cells to line
+     * up in columns, and an element with no box takes no `:hover` and no
+     * background — so striping and row hover would both have to be pushed down in
+     * JS. `display: table-row` gives them for nothing, and column widths size
+     * themselves.
+     */
+    interface PfTable {
+        /**
+          * Tighter rows. Reflected, and bridged down to the cells' padding.
+          * @default false
+         */
+        "dense": boolean;
+        /**
+          * Shade the row under the pointer. Reflected, and bridged down.
+          * @default true
+         */
+        "hoverable": boolean;
+        /**
+          * The table's accessible name, for a table whose caption is not enough.
+         */
+        "label"?: string;
+        /**
+          * Re-reads the rows, for a consumer who changed one through a property.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Which way that column is sorted.
+          * @default 'asc'
+         */
+        "sortDirection": SortDirection;
+        /**
+          * The column being sorted on, by its `sort-key`.
+         */
+        "sortKey"?: string;
+        /**
+          * Keep the header visible while the body scrolls. Reflected and bridged.
+          * @default false
+         */
+        "stickyHeader": boolean;
+        /**
+          * Shade every other body row. Reflected, and bridged down.
+          * @default false
+         */
+        "striped": boolean;
+    }
+    /**
+     * One cell of a `pf-table` row.
+     * A header cell carries `columnheader` rather than `cell`, which the row tells
+     * it; `sortable` turns the label into a button that asks the table to sort.
+     * The table answers by writing `sort` back, which is what `aria-sort` and the
+     * indicator read — the ask and the answer kept apart, as everywhere else here.
+     */
+    interface PfTableCell {
+        /**
+          * Which way the content sits. Reflected for the stylesheet.
+          * @default 'left'
+         */
+        "align": PfTableCellAlign;
+        /**
+          * Set by the row: a header cell. Reflected, so the stylesheet reads it.
+          * @default false
+         */
+        "head": boolean;
+        /**
+          * Set by the row: a cell in the last body row, which drops its rule.
+          * @default false
+         */
+        "last": boolean;
+        /**
+          * Set by the table: how this column is sorted, if it is.
+          * @default 'none'
+         */
+        "sort": 'ascending' | 'descending' | 'none';
+        /**
+          * Identifies the column in the table's sort state. A header cell with one and `sortable` set is the only thing that can be sorted on.  Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-table-cell[sort-key="..."]` finds nothing. The table reads the property.
+         */
+        "sortKey"?: string;
+        /**
+          * Offer to sort on this column. Reflected for the stylesheet.
+          * @default false
+         */
+        "sortable": boolean;
+        /**
+          * A column width, as any CSS length. Only a header cell's is read.
+         */
+        "width"?: string;
+    }
+    /**
+     * One row of a `pf-table`.
+     * `display: table-row`, so the row is a box: that is what lets it take a
+     * background for striping and a `:hover` of its own, neither of which an
+     * element with `display: contents` can do. Its cells are table-cells inside
+     * it, and the column widths come from the table layout rather than from
+     * anything measured.
+     * The row pushes `head` and `last` onto its own cells, because it knows what
+     * it is and they do not — `last` comes from the table, which is the only
+     * thing that can see where the body ends.
+     */
+    interface PfTableRow {
+        /**
+          * A header row. Reflected, and pushed onto its cells.
+          * @default false
+         */
+        "head": boolean;
+        /**
+          * Set by the table: the last body row, whose cells drop their bottom border so the rule does not double up with the table's own.
+          * @default false
+         */
+        "last": boolean;
+        /**
+          * Set by the table: every other body row, for striping. Reflected.
+          * @default false
+         */
+        "odd": boolean;
+    }
+    /**
      * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
      * children.
      * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
@@ -2781,6 +2909,14 @@ export interface PfSwitchCustomEvent<T> extends CustomEvent<T> {
 export interface PfTabCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfTabElement;
+}
+export interface PfTableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTableElement;
+}
+export interface PfTableCellCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTableCellElement;
 }
 export interface PfTabsCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4066,6 +4202,81 @@ declare global {
         prototype: HTMLPfTabPanelElement;
         new (): HTMLPfTabPanelElement;
     };
+    interface HTMLPfTableElementEventMap {
+        "pfSortChange": SortState;
+    }
+    /**
+     * A table over `pf-table-row` and `pf-table-cell` children.
+     * **It reports a sort rather than performing one.** The rows are the
+     * consumer's — they wrote the loop — and reordering them would mean moving
+     * elements in their DOM, which their framework would undo on its next render
+     * and which would break its reconciliation on the way. So this element owns
+     * the header buttons, `aria-sort` and the indicator, and emits `pfSortChange`
+     * for the consumer to sort their own data with. `compareSortValues` and
+     * `sortRowsBy` are in core precisely so that the order they produce matches
+     * the React `Table`, which does sort for itself.
+     * The layout is CSS tables rather than a grid, which is what lets a row be a
+     * box: a grid needs its rows to be `display: contents` for the cells to line
+     * up in columns, and an element with no box takes no `:hover` and no
+     * background — so striping and row hover would both have to be pushed down in
+     * JS. `display: table-row` gives them for nothing, and column widths size
+     * themselves.
+     */
+    interface HTMLPfTableElement extends Components.PfTable, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTableElementEventMap>(type: K, listener: (this: HTMLPfTableElement, ev: PfTableCustomEvent<HTMLPfTableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTableElementEventMap>(type: K, listener: (this: HTMLPfTableElement, ev: PfTableCustomEvent<HTMLPfTableElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTableElement: {
+        prototype: HTMLPfTableElement;
+        new (): HTMLPfTableElement;
+    };
+    interface HTMLPfTableCellElementEventMap {
+        "pfTableSort": { key: string };
+    }
+    /**
+     * One cell of a `pf-table` row.
+     * A header cell carries `columnheader` rather than `cell`, which the row tells
+     * it; `sortable` turns the label into a button that asks the table to sort.
+     * The table answers by writing `sort` back, which is what `aria-sort` and the
+     * indicator read — the ask and the answer kept apart, as everywhere else here.
+     */
+    interface HTMLPfTableCellElement extends Components.PfTableCell, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTableCellElementEventMap>(type: K, listener: (this: HTMLPfTableCellElement, ev: PfTableCellCustomEvent<HTMLPfTableCellElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTableCellElementEventMap>(type: K, listener: (this: HTMLPfTableCellElement, ev: PfTableCellCustomEvent<HTMLPfTableCellElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTableCellElement: {
+        prototype: HTMLPfTableCellElement;
+        new (): HTMLPfTableCellElement;
+    };
+    /**
+     * One row of a `pf-table`.
+     * `display: table-row`, so the row is a box: that is what lets it take a
+     * background for striping and a `:hover` of its own, neither of which an
+     * element with `display: contents` can do. Its cells are table-cells inside
+     * it, and the column widths come from the table layout rather than from
+     * anything measured.
+     * The row pushes `head` and `last` onto its own cells, because it knows what
+     * it is and they do not — `last` comes from the table, which is the only
+     * thing that can see where the body ends.
+     */
+    interface HTMLPfTableRowElement extends Components.PfTableRow, HTMLStencilElement {
+    }
+    var HTMLPfTableRowElement: {
+        prototype: HTMLPfTableRowElement;
+        new (): HTMLPfTableRowElement;
+    };
     interface HTMLPfTabsElementEventMap {
         "pfChange": { value: string };
     }
@@ -4385,6 +4596,9 @@ declare global {
         "pf-switch": HTMLPfSwitchElement;
         "pf-tab": HTMLPfTabElement;
         "pf-tab-panel": HTMLPfTabPanelElement;
+        "pf-table": HTMLPfTableElement;
+        "pf-table-cell": HTMLPfTableCellElement;
+        "pf-table-row": HTMLPfTableRowElement;
         "pf-tabs": HTMLPfTabsElement;
         "pf-tag": HTMLPfTagElement;
         "pf-tag-input": HTMLPfTagInputElement;
@@ -6566,6 +6780,136 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     /**
+     * A table over `pf-table-row` and `pf-table-cell` children.
+     * **It reports a sort rather than performing one.** The rows are the
+     * consumer's — they wrote the loop — and reordering them would mean moving
+     * elements in their DOM, which their framework would undo on its next render
+     * and which would break its reconciliation on the way. So this element owns
+     * the header buttons, `aria-sort` and the indicator, and emits `pfSortChange`
+     * for the consumer to sort their own data with. `compareSortValues` and
+     * `sortRowsBy` are in core precisely so that the order they produce matches
+     * the React `Table`, which does sort for itself.
+     * The layout is CSS tables rather than a grid, which is what lets a row be a
+     * box: a grid needs its rows to be `display: contents` for the cells to line
+     * up in columns, and an element with no box takes no `:hover` and no
+     * background — so striping and row hover would both have to be pushed down in
+     * JS. `display: table-row` gives them for nothing, and column widths size
+     * themselves.
+     */
+    interface PfTable {
+        /**
+          * Tighter rows. Reflected, and bridged down to the cells' padding.
+          * @default false
+         */
+        "dense"?: boolean;
+        /**
+          * Shade the row under the pointer. Reflected, and bridged down.
+          * @default true
+         */
+        "hoverable"?: boolean;
+        /**
+          * The table's accessible name, for a table whose caption is not enough.
+         */
+        "label"?: string;
+        /**
+          * Fires when a header is clicked, with the sort the table has moved to. Sorting the rows is the consumer's to do.
+         */
+        "onPfSortChange"?: (event: PfTableCustomEvent<SortState>) => void;
+        /**
+          * Which way that column is sorted.
+          * @default 'asc'
+         */
+        "sortDirection"?: SortDirection;
+        /**
+          * The column being sorted on, by its `sort-key`.
+         */
+        "sortKey"?: string;
+        /**
+          * Keep the header visible while the body scrolls. Reflected and bridged.
+          * @default false
+         */
+        "stickyHeader"?: boolean;
+        /**
+          * Shade every other body row. Reflected, and bridged down.
+          * @default false
+         */
+        "striped"?: boolean;
+    }
+    /**
+     * One cell of a `pf-table` row.
+     * A header cell carries `columnheader` rather than `cell`, which the row tells
+     * it; `sortable` turns the label into a button that asks the table to sort.
+     * The table answers by writing `sort` back, which is what `aria-sort` and the
+     * indicator read — the ask and the answer kept apart, as everywhere else here.
+     */
+    interface PfTableCell {
+        /**
+          * Which way the content sits. Reflected for the stylesheet.
+          * @default 'left'
+         */
+        "align"?: PfTableCellAlign;
+        /**
+          * Set by the row: a header cell. Reflected, so the stylesheet reads it.
+          * @default false
+         */
+        "head"?: boolean;
+        /**
+          * Set by the row: a cell in the last body row, which drops its rule.
+          * @default false
+         */
+        "last"?: boolean;
+        /**
+          * Asks the table to sort on this column. The table decides which way.
+         */
+        "onPfTableSort"?: (event: PfTableCellCustomEvent<{ key: string }>) => void;
+        /**
+          * Set by the table: how this column is sorted, if it is.
+          * @default 'none'
+         */
+        "sort"?: 'ascending' | 'descending' | 'none';
+        /**
+          * Identifies the column in the table's sort state. A header cell with one and `sortable` set is the only thing that can be sorted on.  Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-table-cell[sort-key="..."]` finds nothing. The table reads the property.
+         */
+        "sortKey"?: string;
+        /**
+          * Offer to sort on this column. Reflected for the stylesheet.
+          * @default false
+         */
+        "sortable"?: boolean;
+        /**
+          * A column width, as any CSS length. Only a header cell's is read.
+         */
+        "width"?: string;
+    }
+    /**
+     * One row of a `pf-table`.
+     * `display: table-row`, so the row is a box: that is what lets it take a
+     * background for striping and a `:hover` of its own, neither of which an
+     * element with `display: contents` can do. Its cells are table-cells inside
+     * it, and the column widths come from the table layout rather than from
+     * anything measured.
+     * The row pushes `head` and `last` onto its own cells, because it knows what
+     * it is and they do not — `last` comes from the table, which is the only
+     * thing that can see where the body ends.
+     */
+    interface PfTableRow {
+        /**
+          * A header row. Reflected, and pushed onto its cells.
+          * @default false
+         */
+        "head"?: boolean;
+        /**
+          * Set by the table: the last body row, whose cells drop their bottom border so the rule does not double up with the table's own.
+          * @default false
+         */
+        "last"?: boolean;
+        /**
+          * Set by the table: every other body row, for striping. Reflected.
+          * @default false
+         */
+        "odd"?: boolean;
+    }
+    /**
      * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
      * children.
      * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
@@ -7393,6 +7737,29 @@ declare namespace LocalJSX {
         "value": string;
         "active": boolean;
     }
+    interface PfTableAttributes {
+        "dense": boolean;
+        "striped": boolean;
+        "hoverable": boolean;
+        "stickyHeader": boolean;
+        "sortKey": string;
+        "sortDirection": SortDirection;
+        "label": string;
+    }
+    interface PfTableCellAttributes {
+        "head": boolean;
+        "last": boolean;
+        "align": PfTableCellAlign;
+        "width": string;
+        "sortKey": string;
+        "sortable": boolean;
+        "sort": 'ascending' | 'descending' | 'none';
+    }
+    interface PfTableRowAttributes {
+        "head": boolean;
+        "odd": boolean;
+        "last": boolean;
+    }
     interface PfTabsAttributes {
         "value": string;
         "variant": PfTabsVariant;
@@ -7546,6 +7913,9 @@ declare namespace LocalJSX {
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
         "pf-tab": Omit<PfTab, keyof PfTabAttributes> & { [K in keyof PfTab & keyof PfTabAttributes]?: PfTab[K] } & { [K in keyof PfTab & keyof PfTabAttributes as `attr:${K}`]?: PfTabAttributes[K] } & { [K in keyof PfTab & keyof PfTabAttributes as `prop:${K}`]?: PfTab[K] };
         "pf-tab-panel": Omit<PfTabPanel, keyof PfTabPanelAttributes> & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes]?: PfTabPanel[K] } & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes as `attr:${K}`]?: PfTabPanelAttributes[K] } & { [K in keyof PfTabPanel & keyof PfTabPanelAttributes as `prop:${K}`]?: PfTabPanel[K] };
+        "pf-table": Omit<PfTable, keyof PfTableAttributes> & { [K in keyof PfTable & keyof PfTableAttributes]?: PfTable[K] } & { [K in keyof PfTable & keyof PfTableAttributes as `attr:${K}`]?: PfTableAttributes[K] } & { [K in keyof PfTable & keyof PfTableAttributes as `prop:${K}`]?: PfTable[K] };
+        "pf-table-cell": Omit<PfTableCell, keyof PfTableCellAttributes> & { [K in keyof PfTableCell & keyof PfTableCellAttributes]?: PfTableCell[K] } & { [K in keyof PfTableCell & keyof PfTableCellAttributes as `attr:${K}`]?: PfTableCellAttributes[K] } & { [K in keyof PfTableCell & keyof PfTableCellAttributes as `prop:${K}`]?: PfTableCell[K] };
+        "pf-table-row": Omit<PfTableRow, keyof PfTableRowAttributes> & { [K in keyof PfTableRow & keyof PfTableRowAttributes]?: PfTableRow[K] } & { [K in keyof PfTableRow & keyof PfTableRowAttributes as `attr:${K}`]?: PfTableRowAttributes[K] } & { [K in keyof PfTableRow & keyof PfTableRowAttributes as `prop:${K}`]?: PfTableRow[K] };
         "pf-tabs": Omit<PfTabs, keyof PfTabsAttributes> & { [K in keyof PfTabs & keyof PfTabsAttributes]?: PfTabs[K] } & { [K in keyof PfTabs & keyof PfTabsAttributes as `attr:${K}`]?: PfTabsAttributes[K] } & { [K in keyof PfTabs & keyof PfTabsAttributes as `prop:${K}`]?: PfTabs[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
         "pf-tag-input": Omit<PfTagInput, keyof PfTagInputAttributes> & { [K in keyof PfTagInput & keyof PfTagInputAttributes]?: PfTagInput[K] } & { [K in keyof PfTagInput & keyof PfTagInputAttributes as `attr:${K}`]?: PfTagInputAttributes[K] } & { [K in keyof PfTagInput & keyof PfTagInputAttributes as `prop:${K}`]?: PfTagInput[K] };
@@ -8133,6 +8503,44 @@ declare module "@stencil/core" {
              * one that resolves.
              */
             "pf-tab-panel": LocalJSX.IntrinsicElements["pf-tab-panel"] & JSXBase.HTMLAttributes<HTMLPfTabPanelElement>;
+            /**
+             * A table over `pf-table-row` and `pf-table-cell` children.
+             * **It reports a sort rather than performing one.** The rows are the
+             * consumer's — they wrote the loop — and reordering them would mean moving
+             * elements in their DOM, which their framework would undo on its next render
+             * and which would break its reconciliation on the way. So this element owns
+             * the header buttons, `aria-sort` and the indicator, and emits `pfSortChange`
+             * for the consumer to sort their own data with. `compareSortValues` and
+             * `sortRowsBy` are in core precisely so that the order they produce matches
+             * the React `Table`, which does sort for itself.
+             * The layout is CSS tables rather than a grid, which is what lets a row be a
+             * box: a grid needs its rows to be `display: contents` for the cells to line
+             * up in columns, and an element with no box takes no `:hover` and no
+             * background — so striping and row hover would both have to be pushed down in
+             * JS. `display: table-row` gives them for nothing, and column widths size
+             * themselves.
+             */
+            "pf-table": LocalJSX.IntrinsicElements["pf-table"] & JSXBase.HTMLAttributes<HTMLPfTableElement>;
+            /**
+             * One cell of a `pf-table` row.
+             * A header cell carries `columnheader` rather than `cell`, which the row tells
+             * it; `sortable` turns the label into a button that asks the table to sort.
+             * The table answers by writing `sort` back, which is what `aria-sort` and the
+             * indicator read — the ask and the answer kept apart, as everywhere else here.
+             */
+            "pf-table-cell": LocalJSX.IntrinsicElements["pf-table-cell"] & JSXBase.HTMLAttributes<HTMLPfTableCellElement>;
+            /**
+             * One row of a `pf-table`.
+             * `display: table-row`, so the row is a box: that is what lets it take a
+             * background for striping and a `:hover` of its own, neither of which an
+             * element with `display: contents` can do. Its cells are table-cells inside
+             * it, and the column widths come from the table layout rather than from
+             * anything measured.
+             * The row pushes `head` and `last` onto its own cells, because it knows what
+             * it is and they do not — `last` comes from the table, which is the only
+             * thing that can see where the body ends.
+             */
+            "pf-table-row": LocalJSX.IntrinsicElements["pf-table-row"] & JSXBase.HTMLAttributes<HTMLPfTableRowElement>;
             /**
              * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
              * children.

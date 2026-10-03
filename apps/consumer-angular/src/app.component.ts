@@ -1,4 +1,5 @@
-import { Component, ElementRef, signal, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, signal, viewChild } from '@angular/core';
+import { sortRowsBy, type SortState } from '@pitchfork-ui/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   PfAccordion,
@@ -68,6 +69,9 @@ import {
   PfSlider,
   PfSwitch,
   PfTab,
+  PfTable,
+  PfTableCell,
+  PfTableRow,
   PfTabPanel,
   PfTabs,
   PfTag,
@@ -164,6 +168,9 @@ import {
     PfSlider,
     PfSwitch,
     PfTab,
+    PfTable,
+    PfTableCell,
+    PfTableRow,
     PfTabPanel,
     PfTabs,
     PfTag,
@@ -839,6 +846,36 @@ import {
         <p data-testid="inline-cta-echo">dismissed</p>
       }
 
+      <!--
+        The table reports a sort and this app does the sorting, with the same
+        comparison core gives the React Table. The layout is CSS tables, so a
+        row is a box and can take the stripe and the hover.
+      -->
+      <pf-table
+        striped
+        sticky-header
+        label="Orders"
+        [sortKey]="sort().key"
+        [sortDirection]="sort().direction"
+        data-testid="table"
+        (pfSortChange)="sort.set($event.detail)"
+      >
+        <span slot="caption">Orders this month</span>
+        <pf-table-row head>
+          <pf-table-cell sortable sortKey="name">Name</pf-table-cell>
+          <pf-table-cell sortable sortKey="total" align="right" width="140px">Total</pf-table-cell>
+          <pf-table-cell>Notes</pf-table-cell>
+        </pf-table-row>
+        @for (order of orders(); track order.name) {
+          <pf-table-row>
+            <pf-table-cell>{{ order.name }}</pf-table-cell>
+            <pf-table-cell align="right">£{{ order.total.toFixed(2) }}</pf-table-cell>
+            <pf-table-cell>{{ order.notes ?? '—' }}</pf-table-cell>
+          </pf-table-row>
+        }
+      </pf-table>
+      <output data-testid="table-sort">{{ sort().key }} {{ sort().direction }}</output>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -864,6 +901,22 @@ export class AppComponent {
   range = signal('week');
   cta = signal(true);
   quantity = signal('2');
+  sort = signal<SortState>({ key: 'name', direction: 'asc' });
+  // Sorted with core's own comparison, which is what makes the element's
+  // reported sort and the React Table's internal one agree.
+  orders = computed(() =>
+    sortRowsBy(
+      [
+        // The cheapest is the last by name, so sorting by total really does
+        // reorder the rows; see the React consumer.
+        { name: 'Item 10', total: 9, notes: 'Rush' },
+        { name: 'Item 2', total: 18.5, notes: undefined as string | undefined },
+        { name: 'Item 1', total: 24, notes: 'Gift' },
+      ],
+      (row) => (this.sort().key === 'total' ? row.total : row.name),
+      this.sort().direction,
+    ),
+  );
   day = signal('2024-03-15');
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');
