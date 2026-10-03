@@ -1,0 +1,64 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTag" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-tag>`
+
+
+A label a person can remove, for a filter or a selection.
+
+It only reports that its dismiss button was pressed — removing it is the
+consumer's, as it is for `pf-alert`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dismissLabel` | `dismiss-label` | `string` | `'Remove tag'` | Accessible name for the remove button. |
+| `dismissible` | `dismissible` | `boolean` | `false` | Show a button that removes the tag. |
+| `variant` | `variant` | `"brand" \| "danger" \| "neutral" \| "success" \| "warning"` | `'neutral'` | — |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfDismiss` | `void` | Fired when the remove button is pressed. The tag does not remove itself — whoever owns the list decides, exactly as the React `onDismiss` callback leaves it to the caller. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the tag's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `dismiss` | the remove button, when dismissible. |
+| `label` | the label wrapper. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-tag></pf-tag>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTag } from '@pitchfork-ui/elements-react';
+
+<PfTag />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-tag></pf-tag>
+```
+

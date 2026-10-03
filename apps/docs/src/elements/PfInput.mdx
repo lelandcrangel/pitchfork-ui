@@ -1,0 +1,79 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfInput" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-input>`
+
+
+A form-associated text input.
+
+`formAssociated` plus `ElementInternals` is what makes this participate in a
+real `<form>`: the value reaches `FormData`, constraint validation works, and
+Angular's generated value accessor has something to bind to. A plain
+`<input>` inside a shadow root does none of that.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | `description` | `string \| undefined` | — | Hint text below the control. |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | Error message. Its presence is what marks the control invalid. |
+| `label` | `label` | `string \| undefined` | — | Visible label. Rendered in the same root as the input, so `for` works. |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working. |
+| `placeholder` | `placeholder` | `string \| undefined` | — | — |
+| `readonly` | `readonly` | `boolean` | `false` | — |
+| `required` | `required` | `boolean` | `false` | — |
+| `type` | `type` | `"email" \| "password" \| "search" \| "tel" \| "text" \| "url"` | `'text'` | — |
+| `value` | `value` | `string` | `''` | The control's value. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; \}` | Fires when the value is committed, like the native `change` event. |
+| `pfInput` | `\{ value: string; \}` | Fires on every keystroke, like the native `input` event. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | Whether the control currently satisfies its constraints. A form-associated custom element does not inherit `checkValidity` from anywhere -- the spec puts it on ElementInternals, so the element has to forward it or consumers cannot ask. |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | The message explaining why the control is invalid, or an empty string. |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | As `checkValidity`, but also shows the browser's validation message. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `description` | the hint text below the control. |
+| `error` | the error message below the control. |
+| `field` | the wrapper around label, control and messages. |
+| `input` | the native input. |
+| `label` | the label element. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-input></pf-input>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfInput } from '@pitchfork-ui/elements-react';
+
+<PfInput />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-input></pf-input>
+```
+

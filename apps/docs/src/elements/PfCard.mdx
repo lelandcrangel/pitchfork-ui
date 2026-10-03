@@ -1,0 +1,47 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfCard" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-card>`
+
+
+A surface that groups related content.
+
+The React library's `Card` / `CardHeader` / `CardContent` / `CardFooter` map
+to four elements rather than to one element with named slots. Named slots
+would need a slot controller to know whether to render each wrapper at all —
+an unslotted `header` would otherwise leave a padded, bordered empty strip.
+Separate elements have no such state: the consumer writing
+`<pf-card-header>` *is* the signal.
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the card's sections, usually `pf-card-header`, `pf-card-content` and `pf-card-footer`, though any content is allowed. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-card></pf-card>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfCard } from '@pitchfork-ui/elements-react';
+
+<PfCard />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-card></pf-card>
+```
+

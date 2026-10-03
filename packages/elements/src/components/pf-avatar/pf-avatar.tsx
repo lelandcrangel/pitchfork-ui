@@ -5,6 +5,11 @@ export type PfAvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 export type PfAvatarStatus = 'online' | 'away' | 'busy' | 'offline';
 
 /**
+ * A person or entity, as a photo or as initials.
+ *
+ * The initials are derived from `name` by core's `avatarInitials`, so this and
+ * the React `Avatar` shorten the same name the same way.
+ *
  * @slot - overrides the derived initials.
  * @part image - the photo, when `src` is set.
  * @part fallback - the initials, when it is not.

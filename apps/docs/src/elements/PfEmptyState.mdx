@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfEmptyState" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-empty-state>`
+
+
+What to show in place of content that is not there: an icon, a heading, a
+line of explanation and something to do about it.
+
+The icon can be a name — `icon="folder-open"`, which renders a `pf-icon` —
+or anything slotted into the `icon` slot, for an illustration this library
+does not have. The slot wins where both are given.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `icon` | `string \| undefined` | — | An icon name from the same registry as `pf-icon`. |
+| `size` | `size` | `"lg" \| "md" \| "sm"` | `'md'` | Padding and type scale. Reflected so the stylesheet can select on it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the heading. |
+| `action` | what to do about it, usually a button. |
+| `description` | a line explaining the emptiness. |
+| `icon` | an icon or illustration, in place of the `icon` name. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `action` | the box holding the action slot. |
+| `heading` | the heading's box. |
+| `icon` | the icon's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-empty-state></pf-empty-state>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfEmptyState } from '@pitchfork-ui/elements-react';
+
+<PfEmptyState />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-empty-state></pf-empty-state>
+```
+

@@ -1,0 +1,91 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfSlideoutMenu" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-slideout-menu>`
+
+
+A panel that slides in from the edge of the screen — a modal dialog that
+happens to be anchored to a side rather than centred.
+
+Which is why this is a native `<dialog>` opened with `showModal()`, exactly
+as `pf-modal` is. The React component hand-rolls the whole modal contract:
+a focus trap over `getFocusableElements`, a `focusin` listener to pull focus
+back, Escape handling, an overlay element, and focus restoration on close —
+about ninety lines. `showModal()` gives all of it, and the element needs
+none of core's `trapFocus`.
+
+The one thing it does not give is a page-scroll lock, so that comes from
+core's reference-counted `lockPageScroll`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | `description` | `string \| undefined` | — | A supporting line under the heading. |
+| `dismissable` | `dismissable` | `boolean` | `true` | Close on Escape or a click on the overlay. Defaults to true. |
+| `heading` | `heading` | `string \| undefined` | — | The heading shown in the header. |
+| `label` | `label` | `string \| undefined` | — | Accessible name, for when there is no `heading` to name it. With a heading, `aria-labelledby` is used instead and points at the heading's id. That works here and not in `pf-modal` because this heading is a prop rendered into this element's own shadow root, so the IDREF never crosses a boundary — `pf-modal`'s header is slotted light DOM, which is why it has to fall back to copying text into `aria-label`. |
+| `open` | `open` | `boolean` | `false` | Whether the panel is showing. Reflected so the stylesheet can select on it. |
+| `placement` | `placement` | `"left" \| "right"` | `'right'` | Which edge it slides in from. Reflected; the stylesheet positions on it. |
+| `showCloseButton` | `show-close-button` | `boolean` | `true` | Render the corner close button. Defaults to true. |
+| `size` | `size` | `"lg" \| "md" \| "sm"` | `'md'` | Panel width. Reflected so the stylesheet can select on it. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the panel opens or closes, whoever caused it. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | Closes the panel. |
+| `show()` | `show() =&gt; Promise&lt;void&gt;` | Opens the panel. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the panel's body. |
+| `footer` | actions pinned below the body. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `body` | the scrolling region the default slot renders into. |
+| `close` | the close button. |
+| `description` | the supporting line under the heading. |
+| `dialog` | the native dialog, which is also the overlay. |
+| `footer` | the footer region. |
+| `header` | the header row, present only when there is a heading. |
+| `panel` | the sliding panel. |
+| `title` | the heading. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-slideout-menu></pf-slideout-menu>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfSlideoutMenu } from '@pitchfork-ui/elements-react';
+
+<PfSlideoutMenu />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-slideout-menu></pf-slideout-menu>
+```
+

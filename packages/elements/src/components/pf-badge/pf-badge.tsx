@@ -3,6 +3,11 @@ import { Component, h, Host, Prop } from '@stencil/core';
 export type PfBadgeVariant = 'neutral' | 'brand' | 'success' | 'warning' | 'danger';
 
 /**
+ * A short status or count, rendered inline with the text around it.
+ *
+ * The leaf the `::part()` and reflected-attribute conventions were established
+ * on, back when the stakes were low.
+ *
  * @slot - the badge's content.
  */
 @Component({

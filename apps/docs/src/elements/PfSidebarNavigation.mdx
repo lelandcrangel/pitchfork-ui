@@ -1,0 +1,80 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfSidebarNavigation" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-sidebar-navigation>`
+
+
+A sidebar navigation over `pf-nav-item` children, optionally grouped into
+`pf-nav-section`s.
+
+The group owns the one thing an item cannot know: which item is the current
+page. Core's rule decides, so the React `SidebarNavigation` marks the same
+one — and the resolution runs across every section rather than within one,
+because `aria-current="page"` names the one page the reader is on and a
+sidebar with two marked sections would claim two.
+
+As with `pf-header-navigation`, the host is not a landmark of its own: the
+React component renders an `<aside>`, and an element cannot know whether it
+is the page's complementary region. Only the `<nav>` is rendered.
+
+Items are grouped: the default slot takes `pf-nav-section` children, each
+of which owns its own `<ul>`. A navigation with no section titles is one
+untitled section, which is exactly what the React `sections` array is — and
+it is also the only arrangement that keeps the list semantics honest, since
+a `<ul>` here would be a list whose children were sections rather than
+items.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string` | `'Sidebar navigation'` | The navigation's accessible name. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the items, for a consumer who marked one current through its *property* — which leaves no attribute and fires no `slotchange`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-nav-section` children. |
+| `footer` | a box below it, pushed to the bottom. |
+| `header` | a box above the navigation, such as a product switcher. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `footer` | the footer's box. |
+| `header` | the header's box. |
+| `nav` | the navigation landmark. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-sidebar-navigation></pf-sidebar-navigation>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfSidebarNavigation } from '@pitchfork-ui/elements-react';
+
+<PfSidebarNavigation />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-sidebar-navigation></pf-sidebar-navigation>
+```
+

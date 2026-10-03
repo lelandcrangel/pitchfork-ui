@@ -1,0 +1,79 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTab" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-tab>`
+
+
+One tab inside a `pf-tabs`.
+
+It only reports that it was chosen; the group owns the selection, the single
+tab stop and the id wiring — the same division as `pf-radio-group` with its
+radios and `pf-select` with its options. The group writes `selected`,
+`variant`, `size` and `full-width` back onto it, so the stylesheet has
+reflected attributes to select on without the tab knowing anything about its
+container.
+
+The host is the `tab` itself rather than a wrapper around a button, so it is
+the element the group focuses and the one `aria-controls` points from.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `badgePlacement` | `badge-placement` | `"end" \| "start"` | `'end'` | Which side of the label the count badge sits on. |
+| `count` | `count` | `number \| undefined` | — | A count rendered as a badge beside the label (GitHub-style, "Issues 12"). It is left in the tab's accessible name, so a screen reader announces it. `0` shows a zero; omitting the prop shows no badge at all. |
+| `disabled` | `disabled` | `boolean` | `false` | Reflected; the stylesheet and the group's own filtering both read it. |
+| `fullWidth` | `full-width` | `boolean` | `false` | Set by the group from its own `fullWidth`. Reflected for the stylesheet. |
+| `icon` | `icon` | `string \| undefined` | — | A decorative icon's name, from the same registry as `pf-icon`. |
+| `iconPlacement` | `icon-placement` | `"end" \| "start"` | `'start'` | Which side of the label the icon sits on. |
+| `selected` | `selected` | `boolean` | `false` | Set by the group. Reflected, so the stylesheet can mark the tab. |
+| `size` | `size` | `"md" \| "sm"` | `'md'` | Set by the group from its own `size`. Reflected for the stylesheet. |
+| `value` | `value` | `string` | `''` | Identifies the tab, and pairs it with the `pf-tab-panel` carrying the same value. Reflected because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing. |
+| `variant` | `variant` | `"pills" \| "underline"` | `'underline'` | Set by the group from its own `variant`. Reflected for the stylesheet. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfTabSelect` | `\{ value: string; \}` | Asks the group to select this tab. The group decides. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the tab's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `count` | the count badge, when `count` is set. |
+| `icon` | the decorative icon, when `icon` is set. |
+| `label` | the label's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-tab></pf-tab>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTab } from '@pitchfork-ui/elements-react';
+
+<PfTab />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-tab></pf-tab>
+```
+

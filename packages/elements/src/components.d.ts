@@ -193,6 +193,11 @@ export namespace Components {
          */
         "variant": PfAlertVariant;
     }
+    /**
+     * A person or entity, as a photo or as initials.
+     * The initials are derived from `name` by core's `avatarInitials`, so this and
+     * the React `Avatar` shorten the same name the same way.
+     */
     interface PfAvatar {
         /**
           * Alternative text for the photo.
@@ -251,6 +256,11 @@ export namespace Components {
          */
         "total"?: number;
     }
+    /**
+     * A short status or count, rendered inline with the text around it.
+     * The leaf the `::part()` and reflected-attribute conventions were established
+     * on, back when the stakes were low.
+     */
     interface PfBadge {
         /**
           * Colour treatment. Reflected so the stylesheet can select on it.
@@ -376,6 +386,14 @@ export namespace Components {
          */
         "separator": string;
     }
+    /**
+     * A button, with the variants, sizes and loading state the React `Button` has.
+     * The first element in this package, and the one the whole pipeline was proved
+     * on: the PostCSS chain, the generated React bindings and the generated Angular
+     * component all exist because this built end to end before anything else was
+     * attempted. `delegatesFocus` is why focusing the host reaches the real button
+     * inside, which is what lets `pf-toolbar` treat it as an item.
+     */
     interface PfButton {
         /**
           * Disable the button.
@@ -1456,6 +1474,14 @@ export namespace Components {
          */
         "weekStartsOn": 0 | 1;
     }
+    /**
+     * One glyph from the icon registry.
+     * The registry is core's, not this element's, and that is deliberate: a
+     * consumer calling `registerIcons()` has to get the icon in the React
+     * components *and* here, and a registry per layer would silently give them
+     * one or the other. A name the registry does not hold renders nothing and
+     * warns once.
+     */
     interface PfIcon {
         /**
           * Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label.
@@ -1568,6 +1594,11 @@ export namespace Components {
          */
         "value": string;
     }
+    /**
+     * A keyboard key or a combination of them, as `<kbd>` elements.
+     * `keys` renders one cap per entry with separators between; a single key can
+     * be slotted instead.
+     */
     interface PfKbd {
         /**
           * A key combination rendered as one cap, e.g. `["⌘", "K"]`.
@@ -3270,6 +3301,11 @@ export namespace Components {
          */
         "variant": PfTabsVariant1;
     }
+    /**
+     * A label a person can remove, for a filter or a selection.
+     * It only reports that its dismiss button was pressed — removing it is the
+     * consumer's, as it is for `pf-alert`.
+     */
     interface PfTag {
         /**
           * Accessible name for the remove button.
@@ -4099,6 +4135,11 @@ declare global {
         prototype: HTMLPfAlertElement;
         new (): HTMLPfAlertElement;
     };
+    /**
+     * A person or entity, as a photo or as initials.
+     * The initials are derived from `name` by core's `avatarInitials`, so this and
+     * the React `Avatar` shorten the same name the same way.
+     */
     interface HTMLPfAvatarElement extends Components.PfAvatar, HTMLStencilElement {
     }
     var HTMLPfAvatarElement: {
@@ -4123,6 +4164,11 @@ declare global {
         prototype: HTMLPfAvatarGroupElement;
         new (): HTMLPfAvatarGroupElement;
     };
+    /**
+     * A short status or count, rendered inline with the text around it.
+     * The leaf the `::part()` and reflected-attribute conventions were established
+     * on, back when the stakes were low.
+     */
     interface HTMLPfBadgeElement extends Components.PfBadge, HTMLStencilElement {
     }
     var HTMLPfBadgeElement: {
@@ -4183,6 +4229,14 @@ declare global {
         prototype: HTMLPfBreadcrumbsElement;
         new (): HTMLPfBreadcrumbsElement;
     };
+    /**
+     * A button, with the variants, sizes and loading state the React `Button` has.
+     * The first element in this package, and the one the whole pipeline was proved
+     * on: the PostCSS chain, the generated React bindings and the generated Angular
+     * component all exist because this built end to end before anything else was
+     * attempted. `delegatesFocus` is why focusing the host reaches the real button
+     * inside, which is what lets `pf-toolbar` treat it as an item.
+     */
     interface HTMLPfButtonElement extends Components.PfButton, HTMLStencilElement {
     }
     var HTMLPfButtonElement: {
@@ -4784,6 +4838,14 @@ declare global {
         prototype: HTMLPfHeatmapElement;
         new (): HTMLPfHeatmapElement;
     };
+    /**
+     * One glyph from the icon registry.
+     * The registry is core's, not this element's, and that is deliberate: a
+     * consumer calling `registerIcons()` has to get the icon in the React
+     * components *and* here, and a registry per layer would silently give them
+     * one or the other. A name the registry does not hold renders nothing and
+     * warns once.
+     */
     interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
     }
     var HTMLPfIconElement: {
@@ -4844,6 +4906,11 @@ declare global {
         prototype: HTMLPfInputElement;
         new (): HTMLPfInputElement;
     };
+    /**
+     * A keyboard key or a combination of them, as `<kbd>` elements.
+     * `keys` renders one cap per entry with separators between; a single key can
+     * be slotted instead.
+     */
     interface HTMLPfKbdElement extends Components.PfKbd, HTMLStencilElement {
     }
     var HTMLPfKbdElement: {
@@ -5817,6 +5884,11 @@ declare global {
     interface HTMLPfTagElementEventMap {
         "pfDismiss": void;
     }
+    /**
+     * A label a person can remove, for a filter or a selection.
+     * It only reports that its dismiss button was pressed — removing it is the
+     * consumer's, as it is for `pf-alert`.
+     */
     interface HTMLPfTagElement extends Components.PfTag, HTMLStencilElement {
         addEventListener<K extends keyof HTMLPfTagElementEventMap>(type: K, listener: (this: HTMLPfTagElement, ev: PfTagCustomEvent<HTMLPfTagElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -6345,6 +6417,11 @@ declare namespace LocalJSX {
          */
         "variant"?: PfAlertVariant;
     }
+    /**
+     * A person or entity, as a photo or as initials.
+     * The initials are derived from `name` by core's `avatarInitials`, so this and
+     * the React `Avatar` shorten the same name the same way.
+     */
     interface PfAvatar {
         /**
           * Alternative text for the photo.
@@ -6399,6 +6476,11 @@ declare namespace LocalJSX {
          */
         "total"?: number;
     }
+    /**
+     * A short status or count, rendered inline with the text around it.
+     * The leaf the `::part()` and reflected-attribute conventions were established
+     * on, back when the stakes were low.
+     */
     interface PfBadge {
         /**
           * Colour treatment. Reflected so the stylesheet can select on it.
@@ -6519,6 +6601,14 @@ declare namespace LocalJSX {
          */
         "separator"?: string;
     }
+    /**
+     * A button, with the variants, sizes and loading state the React `Button` has.
+     * The first element in this package, and the one the whole pipeline was proved
+     * on: the PostCSS chain, the generated React bindings and the generated Angular
+     * component all exist because this built end to end before anything else was
+     * attempted. `delegatesFocus` is why focusing the host reaches the real button
+     * inside, which is what lets `pf-toolbar` treat it as an item.
+     */
     interface PfButton {
         /**
           * Disable the button.
@@ -7599,6 +7689,14 @@ declare namespace LocalJSX {
          */
         "weekStartsOn"?: 0 | 1;
     }
+    /**
+     * One glyph from the icon registry.
+     * The registry is core's, not this element's, and that is deliberate: a
+     * consumer calling `registerIcons()` has to get the icon in the React
+     * components *and* here, and a registry per layer would silently give them
+     * one or the other. A name the registry does not hold renders nothing and
+     * warns once.
+     */
     interface PfIcon {
         /**
           * Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label.
@@ -7711,6 +7809,11 @@ declare namespace LocalJSX {
          */
         "value"?: string;
     }
+    /**
+     * A keyboard key or a combination of them, as `<kbd>` elements.
+     * `keys` renders one cap per entry with separators between; a single key can
+     * be slotted instead.
+     */
     interface PfKbd {
         /**
           * A key combination rendered as one cap, e.g. `["⌘", "K"]`.
@@ -9404,6 +9507,11 @@ declare namespace LocalJSX {
          */
         "variant"?: PfTabsVariant1;
     }
+    /**
+     * A label a person can remove, for a filter or a selection.
+     * It only reports that its dismiss button was pressed — removing it is the
+     * consumer's, as it is for `pf-alert`.
+     */
     interface PfTag {
         /**
           * Accessible name for the remove button.
@@ -10813,6 +10921,11 @@ declare module "@stencil/core" {
              * announce assertively and `info` and `success` wait their turn.
              */
             "pf-alert": LocalJSX.IntrinsicElements["pf-alert"] & JSXBase.HTMLAttributes<HTMLPfAlertElement>;
+            /**
+             * A person or entity, as a photo or as initials.
+             * The initials are derived from `name` by core's `avatarInitials`, so this and
+             * the React `Avatar` shorten the same name the same way.
+             */
             "pf-avatar": LocalJSX.IntrinsicElements["pf-avatar"] & JSXBase.HTMLAttributes<HTMLPfAvatarElement>;
             /**
              * A stack of overlapping `pf-avatar` children, with a `+N` chip for the ones
@@ -10827,6 +10940,11 @@ declare module "@stencil/core" {
              * the shadow boundary.
              */
             "pf-avatar-group": LocalJSX.IntrinsicElements["pf-avatar-group"] & JSXBase.HTMLAttributes<HTMLPfAvatarGroupElement>;
+            /**
+             * A short status or count, rendered inline with the text around it.
+             * The leaf the `::part()` and reflected-attribute conventions were established
+             * on, back when the stakes were low.
+             */
             "pf-badge": LocalJSX.IntrinsicElements["pf-badge"] & JSXBase.HTMLAttributes<HTMLPfBadgeElement>;
             /**
              * A badge joined to a line of text, sharing one rounded outline — the
@@ -10862,6 +10980,14 @@ declare module "@stencil/core" {
              * why the group pushes the string down.
              */
             "pf-breadcrumbs": LocalJSX.IntrinsicElements["pf-breadcrumbs"] & JSXBase.HTMLAttributes<HTMLPfBreadcrumbsElement>;
+            /**
+             * A button, with the variants, sizes and loading state the React `Button` has.
+             * The first element in this package, and the one the whole pipeline was proved
+             * on: the PostCSS chain, the generated React bindings and the generated Angular
+             * component all exist because this built end to end before anything else was
+             * attempted. `delegatesFocus` is why focusing the host reaches the real button
+             * inside, which is what lets `pf-toolbar` treat it as an item.
+             */
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
             /**
              * A row of joined toggle buttons: pick one, or several.
@@ -11145,6 +11271,14 @@ declare module "@stencil/core" {
              * that has daylight saving.
              */
             "pf-heatmap": LocalJSX.IntrinsicElements["pf-heatmap"] & JSXBase.HTMLAttributes<HTMLPfHeatmapElement>;
+            /**
+             * One glyph from the icon registry.
+             * The registry is core's, not this element's, and that is deliberate: a
+             * consumer calling `registerIcons()` has to get the icon in the React
+             * components *and* here, and a registry per layer would silently give them
+             * one or the other. A name the registry does not hold renders nothing and
+             * warns once.
+             */
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
              * A prompt in the flow of a page: an icon, a line or two, something to do, and
@@ -11167,6 +11301,11 @@ declare module "@stencil/core" {
              * `<input>` inside a shadow root does none of that.
              */
             "pf-input": LocalJSX.IntrinsicElements["pf-input"] & JSXBase.HTMLAttributes<HTMLPfInputElement>;
+            /**
+             * A keyboard key or a combination of them, as `<kbd>` elements.
+             * `keys` renders one cap per entry with separators between; a single key can
+             * be slotted instead.
+             */
             "pf-kbd": LocalJSX.IntrinsicElements["pf-kbd"] & JSXBase.HTMLAttributes<HTMLPfKbdElement>;
             /**
              * A line or area chart over `pf-chart-series` children.
@@ -11648,6 +11787,11 @@ declare module "@stencil/core" {
              * `pf-radio-button` does to its group.
              */
             "pf-tabs": LocalJSX.IntrinsicElements["pf-tabs"] & JSXBase.HTMLAttributes<HTMLPfTabsElement>;
+            /**
+             * A label a person can remove, for a filter or a selection.
+             * It only reports that its dismiss button was pressed — removing it is the
+             * consumer's, as it is for `pf-alert`.
+             */
             "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
             /**
              * A form-associated field that collects free-text tags.

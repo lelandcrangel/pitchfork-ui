@@ -1246,6 +1246,36 @@ Playwright's pinned build does not match.
 
 ---
 
+## Documenting the elements
+
+`apps/docs/src/WebComponents.mdx` is hand-written and is the only prose about
+the elements: how to install them, the custom-property-versus-`::part()`
+split, and the handful of places the element API deliberately differs from the
+React one. That last part is the whole value of the page, and no generator
+knows it.
+
+Everything else is generated. `scripts/build-elements-docs.mjs` reads Stencil's
+own `dist/docs.json` and writes one page per element to
+`apps/docs/src/elements/`, with its doc comment, its properties, events,
+methods, slots and parts. **Edit the component's doc comments, never those
+pages.** `--verify` in CI fails on a stale page, a missing one, or a page for
+an element that no longer exists; `--strict` fails on an element with no doc
+comment at all, which is what got the six earliest elements their prose.
+
+Two things that bit while writing it:
+
+- **MDX is JSX, so a doc comment's `<` and `{` matter** — but only outside
+  markdown code spans. These comments are full of `` `<pf-tooltip>` `` and
+  `` `<a routerLink>` `` written inside backticks, where MDX already treats
+  the content literally: escaping there renders `&lt;Link>` as visible
+  mojibake, while _not_ escaping outside there lets MDX parse `<Link>` as a
+  component and fail the build. The first draft managed both in one file.
+- **The generated pages are in `.prettierignore`**, because `--verify`
+  compares the generator's own output. Formatting them afterwards would make
+  every build report 108 stale pages.
+
+---
+
 ## Known gaps
 
 See `todo.md` at the repo root.

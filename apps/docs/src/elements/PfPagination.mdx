@@ -1,0 +1,76 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfPagination" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-pagination>`
+
+
+A pager: boundary pages pinned at each end, a window around the current
+page, and an ellipsis wherever that leaves a gap.
+
+Controlled or not, like `pf-input`: `page` is mutable, so leaving it alone
+lets the element advance itself, and setting it on every `pfPageChange`
+keeps the consumer in charge.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `boundaryCount` | `boundary-count` | `number` | `1` | Pages to pin at each end. |
+| `disabled` | `disabled` | `boolean` | `false` | Disable every button. Reflected for the stylesheet. |
+| `label` | `label` | `string` | `'Pagination'` | Accessible name for the navigation landmark. |
+| `page` | `page` | `number` | `1` | The current page, 1-based. Mutable so the element can advance itself. |
+| `showPrevNext` | `show-prev-next` | `boolean` | `true` | Show the previous/next buttons. Reflected for the stylesheet. |
+| `siblingCount` | `sibling-count` | `number` | `1` | Pages to show either side of the current one. |
+| `totalPages` | `total-pages` | `number` | `1` | How many pages there are in total. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfPageChange` | `\{ page: number; \}` | Emitted with the page the user asked for, already clamped to the range. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| `next` | the next button's label. Defaults to "Next". |
+| `previous` | the previous button's label. Defaults to "Previous". |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `current` | the page button for the current page. |
+| `ellipsis` | each gap. |
+| `list` | the ordered list of pages. |
+| `nav` | either of the previous/next buttons. |
+| `next` | the next button. |
+| `page` | each page button. |
+| `previous` | the previous button. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-pagination></pf-pagination>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfPagination } from '@pitchfork-ui/elements-react';
+
+<PfPagination />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-pagination></pf-pagination>
+```
+

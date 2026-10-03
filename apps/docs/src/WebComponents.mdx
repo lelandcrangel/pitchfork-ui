@@ -1,0 +1,170 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/Overview" />
+
+# Web components
+
+Every component in this library ships twice: as the hand-written React
+components documented throughout this site, and as standard custom elements in
+`@pitchfork-ui/elements`. Both are first-class. Neither is a wrapper around the
+other.
+
+The behaviour they share is not duplicated — it lives in
+`@pitchfork-ui/core`, which imports nothing and owns the parts of the system
+that are about the DOM and about arithmetic rather than about a framework:
+anchored positioning, focus trapping, list-navigation index maths, date
+stepping, chart geometry, the icon registry. Each layer owns only its own
+template and its own reactivity. That is what keeps a `<pf-tabs>` and a
+`<Tabs>` from drifting: when one of them is fixed, the fix is usually in core
+and both get it.
+
+## Installing
+
+```bash
+npm install @pitchfork-ui/elements @pitchfork-ui/tokens
+```
+
+The elements package ships the token stylesheet it needs. Load it once:
+
+```ts
+import '@pitchfork-ui/elements/dist/pitchfork/pitchfork.css';
+```
+
+### Plain HTML
+
+```html
+<script type="module">
+  import { defineCustomElements } from '@pitchfork-ui/elements/loader';
+  defineCustomElements();
+</script>
+
+<pf-button variant="primary">Save</pf-button>
+```
+
+### React
+
+The React bindings are **generated** from the elements by Stencil's output
+target — never hand-edited — and give every element a typed component with
+real event props rather than `addEventListener`.
+
+```tsx
+import { PfButton } from '@pitchfork-ui/elements-react';
+
+<PfButton variant="primary" onPfClick={save}>
+  Save
+</PfButton>;
+```
+
+If you are already using `@pitchfork-ui/react`, you do not need this: the React
+components are the better fit there. The bindings exist for applications that
+want one component set across more than one framework.
+
+### Angular
+
+Also generated, as standalone components — plus the
+`ControlValueAccessor` directives that let a form control bind with
+`formControlName` or `ngModel`. That capability is why the elements are
+Stencil-authored rather than Lit: with Lit each accessor would be
+hand-written, once per control.
+
+```ts
+import { PfInput } from '@pitchfork-ui/elements-angular';
+
+@Component({
+  imports: [PfInput, ReactiveFormsModule],
+  template: `<pf-input [formControl]="email" label="Email" />`,
+})
+export class SignUpForm {}
+```
+
+## Styling
+
+Two mechanisms, and the difference matters.
+
+**Custom properties cross a shadow boundary.** Every `--pf-*` alias the React
+components read is read by the elements too, so a theme set on `:root` — or on
+any ancestor — reaches inside. This is also how a group tells a child element
+what it needs: `pf-header-navigation` sets `--pf-nav-item-*` on itself, and the
+`pf-nav-item`s slotted into it resolve those inside their own shadow roots.
+
+```css
+:root {
+  --pf-button-primary-bg: rebeccapurple;
+}
+```
+
+**Selectors do not.** A consumer's stylesheet cannot reach a shadow-internal
+node, so every element exposes the boxes worth styling as `::part()`. Each
+one is listed on the element's own page.
+
+```css
+pf-table::part(cell) {
+  font-variant-numeric: tabular-nums;
+}
+```
+
+Dark mode works the same way it does for the React components:
+`[data-theme='dark']` on an ancestor, with no per-element handling.
+
+## Where the element API differs from the React one
+
+Most components take the same props. The differences are all consequences of
+the platform, and each one is a decision rather than an omission.
+
+**Data-driven components take child elements, not arrays.** The React
+`Select` takes `options`; `<pf-select>` takes `<pf-option>` children and the
+consumer loops in their own template. The same for `pf-tabs`, `pf-table`,
+`pf-tree-view`, `pf-command-palette`, `pf-pie-chart` and the rest. It is more
+markup and it is the right shape: a `ReactNode` in a prop has no equivalent
+here, and a slotted child is something a framework can key, reorder and bind
+to.
+
+**A group's legend is made of its children.** A slot renders its assigned
+content once and in one place, so a legend built inside a chart's shadow root
+could never reach labels that live in the light DOM. `pf-pie-slice` and
+`pf-radar-axis` therefore draw their own legend rows, and the chart pushes
+down the two things only it knows: the colour and the share.
+
+**Some names are attributes where React takes a node.** `pf-radar-axis` takes
+`label` as a string because the chart draws each name inside its own SVG, and
+an SVG `<text>` cannot hold arbitrary markup in either layer.
+
+**A few props are renamed, because the platform owns the name.**
+`pf-sparkline` takes `animated`, not `animate`: `Element.prototype.animate` is
+the Web Animations API, and a prop that shadows a prototype member fails the
+build. `pf-chart-series` takes `seriesKey` for the same reason `key` is
+unavailable.
+
+**Form controls are form-associated.** `pf-input`, `pf-checkbox`,
+`pf-file-uploader` and the rest use `ElementInternals`, so their values reach
+`FormData`, constraint validation works, and a reset restores the value the
+control started with. A plain `<input>` inside a shadow root does none of
+that — and neither does a React `contenteditable`, which is why
+`<pf-rich-text-editor>` reaches a form where `RichTextEditor` does not.
+
+**Overlays are `popover`s and `<dialog>`s, not portals.** `createPortal` has
+no equivalent in a shadow root, and a positioned element there is clipped by
+any ancestor's `overflow`. A `popover` opened from a shadow root is promoted
+to the top layer and escapes both, and `<dialog>.showModal()` brings the focus
+trap, Escape and the backdrop with it.
+
+## Browser support
+
+Safe to depend on, and depended on: custom elements, shadow DOM,
+constructable stylesheets, `::part()`, `ElementInternals`, `<dialog>` and
+`popover`.
+
+Used only where there is a working fallback: cross-root ARIA element
+reflection, which `pf-command-palette` feature-detects — without it the arrows
+and Enter still work and the active option simply is not announced.
+
+Deliberately unused: CSS anchor positioning, scoped custom element registries
+and `:host-context()`. Those are the three that quietly make a library
+Chromium-only.
+
+## Reference
+
+Every element has a generated page in this section listing its properties,
+events, methods, slots and shadow parts. Those pages come from Stencil's own
+`docs.json`, which is built from the source — so they cannot drift from the
+code, and CI fails if the committed copies are stale.

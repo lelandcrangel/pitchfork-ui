@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfVisuallyHidden" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-visually-hidden>`
+
+
+Hides content visually while keeping it available to screen readers and
+other assistive technology. Use for labels, instructions and status text
+that are implied visually but need to be announced.
+
+The React component takes an `as` prop to choose its tag; a custom element's
+tag is fixed, so wrap this instead of configuring it — `<h2><pf-visually-
+hidden>Results</pf-visually-hidden></h2>` is still a heading named
+"Results".
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `focusable` | `focusable` | `boolean` | `false` | Reveal the content when it, or a descendant, receives keyboard focus — the classic "skip link" pattern. Reflected so the stylesheet can select on it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the content to hide visually. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-visually-hidden></pf-visually-hidden>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfVisuallyHidden } from '@pitchfork-ui/elements-react';
+
+<PfVisuallyHidden />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-visually-hidden></pf-visually-hidden>
+```
+

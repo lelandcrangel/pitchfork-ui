@@ -5,6 +5,14 @@ export type PfButtonSize = 'sm' | 'md' | 'lg';
 export type PfButtonType = 'button' | 'submit' | 'reset';
 
 /**
+ * A button, with the variants, sizes and loading state the React `Button` has.
+ *
+ * The first element in this package, and the one the whole pipeline was proved
+ * on: the PostCSS chain, the generated React bindings and the generated Angular
+ * component all exist because this built end to end before anything else was
+ * attempted. `delegatesFocus` is why focusing the host reaches the real button
+ * inside, which is what lets `pf-toolbar` treat it as an item.
+ *
  * @slot - the button's label.
  * @part button - the native button element.
  * @part spinner - the loading spinner.

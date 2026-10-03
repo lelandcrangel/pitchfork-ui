@@ -1,0 +1,80 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfSlider" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-slider>`
+
+
+A form-associated range slider.
+
+A native `<input type="range">`, as the React component is — the drag, the
+keyboard stepping and the touch handling are all the browser's, and nothing
+here reimplements them.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | `description` | `string \| undefined` | — | Hint text below the control. |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | Error message. Its presence is what marks the control invalid. |
+| `label` | `label` | `string \| undefined` | — | Visible label, rendered in the same root so `for` actually associates. |
+| `max` | `max` | `number` | `100` | — |
+| `min` | `min` | `number` | `0` | — |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected, because a form-associated element takes its submission name from the attribute, not this property. |
+| `showValue` | `show-value` | `boolean` | `true` | Show the current value beside the label. Reflected for the stylesheet. |
+| `step` | `step` | `number` | `1` | — |
+| `value` | `value` | `number` | `0` | The control's value. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: number; \}` | Fires when the value is committed, like the native `change` event. |
+| `pfInput` | `\{ value: number; \}` | Fires as the user drags, like the native `input` event. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | A form-associated custom element does not inherit this. |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | The message explaining why the control is invalid, or an empty string. |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | As `checkValidity`, but also shows the browser's validation message. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `description` | the hint text below the control. |
+| `error` | the error message below the control. |
+| `field` | the wrapper around header, control and messages. |
+| `header` | the row holding the label and the readout. |
+| `input` | the native range input. |
+| `label` | the label element. |
+| `value` | the numeric readout. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-slider></pf-slider>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfSlider } from '@pitchfork-ui/elements-react';
+
+<PfSlider />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-slider></pf-slider>
+```
+

@@ -1,0 +1,82 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfCollapsible" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-collapsible>`
+
+
+One disclosure: a header that shows and hides the content below it.
+
+The same panel mechanics as `pf-accordion-item` — a `0fr` → `1fr` grid row
+so the height animates to the content's own, and `inert` on the closed panel
+because that height still holds focusable content — but no group above it,
+so this element owns `open` itself.
+
+Both IDREFs stay inside this one shadow root, which is where an IDREF
+resolves: the header names the panel with `aria-controls` and the panel
+names the header back with `aria-labelledby`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` | `false` | Reflected, so the stylesheet can mark the header. |
+| `open` | `open` | `boolean` | `false` | Whether the content is showing. Reflected so the stylesheet selects on it. |
+| `showChevron` | `show-chevron` | `boolean` | `true` | Show the rotating chevron. Defaults to true. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the content opens or closes, whoever caused it. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | Closes the content. |
+| `show()` | `show() =&gt; Promise&lt;void&gt;` | Opens the content. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the content. |
+| `trigger` | the header's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `content` | the region holding the content. |
+| `icon` | the chevron. |
+| `inner` | — |
+| `label` | the label's box inside the header. |
+| `panel` | the animating box around the content. |
+| `trigger` | the header button. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-collapsible></pf-collapsible>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfCollapsible } from '@pitchfork-ui/elements-react';
+
+<PfCollapsible />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-collapsible></pf-collapsible>
+```
+

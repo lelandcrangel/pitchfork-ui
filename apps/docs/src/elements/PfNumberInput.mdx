@@ -1,0 +1,88 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfNumberInput" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-number-input>`
+
+
+A form-associated stepper field.
+
+The value is a **string** rather than a number, because that is what an
+attribute can carry and what a form submits; `pfChange` reports the parsed
+number beside it, which is what a framework consumer wants. An empty string
+is an empty field — not zero, which is a value someone chose.
+
+All of the arithmetic is core's, so this and the React `NumberInput` step,
+round and clamp identically: ten steps of `0.1` reach exactly 1 in both.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `decrementLabel` | `decrement-label` | `string` | `'Decrease'` | The step-down button's accessible name. |
+| `description` | `description` | `string \| undefined` | — | Hint text below the control. |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | Error message. Its presence is what marks the control invalid. |
+| `incrementLabel` | `increment-label` | `string` | `'Increase'` | The step-up button's accessible name. |
+| `label` | `label` | `string \| undefined` | — | Visible label. Rendered in the same root as the input, so `for` works. |
+| `max` | `max` | `number \| undefined` | — | The highest value the field accepts. |
+| `min` | `min` | `number \| undefined` | — | The lowest value the field accepts. |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected, because a form-associated element takes its submission name from the attribute, not this property. |
+| `placeholder` | `placeholder` | `string \| undefined` | — | — |
+| `required` | `required` | `boolean` | `false` | — |
+| `step` | `step` | `number` | `1` | How far one step moves, and what the result is rounded to. |
+| `value` | `value` | `string` | `''` | The value, as a string. Empty means an empty field. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; number: number \| null; \}` | Fires when the value changes, with the parsed number beside the string. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | A form-associated custom element does not inherit this. |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | The message explaining why the control is invalid, or an empty string. |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | As `checkValidity`, but also shows the browser's validation message. |
+| `stepBy()` | `stepBy(direction: 1 \| -1) =&gt; Promise&lt;void&gt;` | Steps the value up or down, as the buttons and the arrows do. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `control` | the box holding the steppers and the input. |
+| `decrement` | the step-down button. |
+| `description` | the hint text below the control. |
+| `error` | the error message below the control. |
+| `field` | the wrapper around label, control and messages. |
+| `increment` | the step-up button. |
+| `input` | the native input. |
+| `label` | the label element. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-number-input></pf-number-input>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfNumberInput } from '@pitchfork-ui/elements-react';
+
+<PfNumberInput />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-number-input></pf-number-input>
+```
+

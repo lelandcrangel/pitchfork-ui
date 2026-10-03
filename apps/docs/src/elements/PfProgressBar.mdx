@@ -1,0 +1,51 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfProgressBar" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-progress-bar>`
+
+
+A horizontal determinate progress track.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string \| undefined` | — | Accessible name. |
+| `max` | `max` | `number` | `100` | The top of the scale. |
+| `showValue` | `show-value` | `boolean` | `true` | Show the percentage beside the track. Reflected for the stylesheet. |
+| `value` | `value` | `number` | `0` | How far along, on the 0..max scale. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `fill` | the filled portion. |
+| `track` | the unfilled groove. |
+| `value` | the percentage readout. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-progress-bar></pf-progress-bar>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfProgressBar } from '@pitchfork-ui/elements-react';
+
+<PfProgressBar />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-progress-bar></pf-progress-bar>
+```
+

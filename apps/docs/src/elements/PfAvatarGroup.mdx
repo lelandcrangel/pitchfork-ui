@@ -1,0 +1,72 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfAvatarGroup" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-avatar-group>`
+
+
+A stack of overlapping `pf-avatar` children, with a `+N` chip for the ones
+that did not fit.
+
+Children rather than an array of people, as everywhere else — a consumer
+loops in their own template, and each avatar keeps its own `src`, `name` and
+`status`.
+
+The chip is a `pf-avatar` of its own, in the shadow root: it needs an
+avatar's shape, size and ring, and reusing the element is how it gets them
+without a second copy of all three. Its colours come through the
+`--pf-avatar-*` properties the avatar already reads, which inherit through
+the shadow boundary.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string \| undefined` | — | Overrides the generated name, which counts the people in the group. |
+| `max` | `max` | `number` | `5` | How many avatars to show before collapsing the rest into the chip. |
+| `size` | `size` | `"lg" \| "md" \| "sm" \| "xl"` | `'md'` | Applied to every avatar in the group. Reflected, and pushed down. |
+| `total` | `total` | `number \| undefined` | — | The group's real size, for a group that knows how many people there are without being handed an avatar for each: five faces and `+35`. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children, for a consumer who changed one through a property. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-avatar` children. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `overflow` | the `+N` chip, when something did not fit. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-avatar-group></pf-avatar-group>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfAvatarGroup } from '@pitchfork-ui/elements-react';
+
+<PfAvatarGroup />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-avatar-group></pf-avatar-group>
+```
+

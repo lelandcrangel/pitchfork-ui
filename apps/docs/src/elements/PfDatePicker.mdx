@@ -1,0 +1,97 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfDatePicker" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-date-picker>`
+
+
+A form-associated date field: a trigger that opens `pf-calendar` in a
+popover.
+
+Form-associated, which the React `DatePicker` is not — it is a button and a
+portal, so its value reaches a surrounding `<form>` only if the consumer
+wires it there themselves. Here the value is submitted as `YYYY-MM-DD`,
+constraint validation works, and Angular's generated accessor has something
+to bind to.
+
+The panel is a `popover`, so light dismiss and Escape are the browser's.
+Unlike `pf-dropdown`, the trigger and the panel are both in *this* shadow
+root, so `aria-controls` resolves and is worth setting — a same-root IDREF
+is the one case that works, measured.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allowClear` | `allow-clear` | `boolean` | `false` | Offer a button that empties the field. |
+| `description` | `description` | `string \| undefined` | — | Hint text below the control. |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `endYear` | `end-year` | `number \| undefined` | — | — |
+| `error` | `error` | `string \| undefined` | — | Error message. Its presence is what marks the control invalid. |
+| `isDateDisabled` | — | `((date: Date) =&gt; boolean) \| undefined` | — | A predicate for days that cannot be chosen; see `pf-calendar`. |
+| `label` | `label` | `string \| undefined` | — | Visible label. In the same root as the trigger, so `for` works. |
+| `max` | `max` | `string \| undefined` | — | Latest selectable date, as `YYYY-MM-DD`. |
+| `min` | `min` | `string \| undefined` | — | Earliest selectable date, as `YYYY-MM-DD`. |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected, because the submission name comes from the content attribute and the generated bindings set properties. |
+| `open` | `open` | `boolean` | `false` | Whether the calendar is showing. Reflected for the stylesheet. |
+| `placeholder` | `placeholder` | `string` | `'Select a date'` | — |
+| `required` | `required` | `boolean` | `false` | — |
+| `showOutsideDays` | `show-outside-days` | `boolean` | `true` | — |
+| `startYear` | `start-year` | `number \| undefined` | — | — |
+| `value` | `value` | `string` | `''` | The selected date as `YYYY-MM-DD`, or empty. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; \}` | Fires when a date is chosen or cleared. |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the calendar opens or closes, whoever caused it. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | Closes the calendar. |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `show()` | `show() =&gt; Promise&lt;void&gt;` | Opens the calendar. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `calendar` | the calendar itself. |
+| `clear` | the clear button. |
+| `description` | the hint text below the control. |
+| `error` | the error message below the control. |
+| `field` | the wrapper around label, control and messages. |
+| `label` | the label element. |
+| `panel` | the floating panel holding the calendar. |
+| `trigger` | the button that opens the calendar. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-date-picker></pf-date-picker>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfDatePicker } from '@pitchfork-ui/elements-react';
+
+<PfDatePicker />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-date-picker></pf-date-picker>
+```
+

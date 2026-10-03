@@ -1,0 +1,48 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfLoadingDots" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-loading-dots>`
+
+
+Three pulsing dots, for an indeterminate wait in a tight space.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string` | `'Loading'` | Accessible name, announced by the live region. |
+| `size` | `size` | `"lg" \| "md" \| "sm"` | `'md'` | Dot size. Reflected so the stylesheet can select on it. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `dot` | each of the three dots. |
+| `label` | the visually hidden text the live region announces. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-loading-dots></pf-loading-dots>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfLoadingDots } from '@pitchfork-ui/elements-react';
+
+<PfLoadingDots />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-loading-dots></pf-loading-dots>
+```
+

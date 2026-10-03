@@ -78,6 +78,15 @@ jobs:
         run: npm run check:icons
       - name: Validate llms.txt (every component linked, every link resolves)
         run: npm run build:llms -- --strict --verify
+
+      # The 108 element reference pages are generated from Stencil's own
+      # docs.json, so they cannot drift from the source -- but a committed copy
+      # can go stale, which is exactly how the published changelog page sat on
+      # 0.13.2 while the library was on 0.15.0. --verify fails on a stale page,
+      # a missing one, or a page for an element that no longer exists;
+      # --strict fails on an element with no doc comment at all.
+      - name: Check the generated element docs are current
+        run: npm run build:elements-docs -- --verify
       - name: Test MCP server
         run: npm run test:mcp
 

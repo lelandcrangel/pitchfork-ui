@@ -3,6 +3,11 @@ import { Component, Event, EventEmitter, h, Host, Prop } from '@stencil/core';
 export type PfTagVariant = 'neutral' | 'brand' | 'success' | 'warning' | 'danger';
 
 /**
+ * A label a person can remove, for a filter or a selection.
+ *
+ * It only reports that its dismiss button was pressed — removing it is the
+ * consumer's, as it is for `pf-alert`.
+ *
  * @slot - the tag's label.
  * @part label - the label wrapper.
  * @part dismiss - the remove button, when dismissible.

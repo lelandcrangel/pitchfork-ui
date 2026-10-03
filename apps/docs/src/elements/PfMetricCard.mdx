@@ -1,0 +1,65 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfMetricCard" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-metric-card>`
+
+
+One figure worth looking at: a heading, the number, and optionally how it
+has moved.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `icon` | `icon` | `string \| undefined` | — | An icon name from the same registry as `pf-icon`. |
+| `trend` | `trend` | `"negative" \| "neutral" \| "positive"` | `'neutral'` | Which way the trend reads. Reflected so the stylesheet can colour it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the number. |
+| `action` | a control in the card's top corner. |
+| `description` | a line below the number. |
+| `heading` | what the number is. |
+| `icon` | a small icon beside the heading. |
+| `trend` | how it has moved, shown as a pill beside the number. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `action` | the box holding the action slot. |
+| `body` | the row holding the number and the trend. |
+| `header` | the row holding the heading and the action. |
+| `heading` | the heading's box. |
+| `icon` | the icon's box. |
+| `trend` | the trend pill. |
+| `value` | the number's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-metric-card></pf-metric-card>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfMetricCard } from '@pitchfork-ui/elements-react';
+
+<PfMetricCard />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-metric-card></pf-metric-card>
+```
+

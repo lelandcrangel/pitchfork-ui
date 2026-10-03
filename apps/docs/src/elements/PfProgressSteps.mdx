@@ -1,0 +1,56 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfProgressSteps" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-progress-steps>`
+
+
+A step indicator over `pf-progress-step` children.
+
+The group owns everything a step cannot see on its own: its number, whether
+it is last — so only the others draw a connector — the orientation, and the
+status inference, which depends on where the current step is.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `orientation` | `orientation` | `"horizontal" \| "vertical"` | `'horizontal'` | Layout. Reflected, and pushed down onto every step. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children, for a consumer who set a step's status through its *property* — which leaves no attribute and fires no `slotchange`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-progress-step` children. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-progress-steps></pf-progress-steps>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfProgressSteps } from '@pitchfork-ui/elements-react';
+
+<PfProgressSteps />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-progress-steps></pf-progress-steps>
+```
+

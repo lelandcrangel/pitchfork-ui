@@ -1,0 +1,52 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfRatingBadge" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-rating-badge>`
+
+
+A rating as a compact pill: one star, the number out of the maximum, and
+optionally how many reviews it came from.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `max` | `max` | `number` | `5` | The top of the scale. |
+| `reviews` | `reviews` | `number \| undefined` | — | How many reviews the rating came from. Omit it to show no count at all — which is different from `0`, a product nobody has reviewed yet. |
+| `size` | `size` | `"md" \| "sm"` | `'md'` | Padding and height. Reflected so the stylesheet can select on it. |
+| `value` | `value` | `number` | `0` | The rating. Clamped into 0..max. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `icon` | the star. |
+| `reviews` | the review count, when `reviews` is set. |
+| `value` | the rating and the maximum. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-rating-badge></pf-rating-badge>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfRatingBadge } from '@pitchfork-ui/elements-react';
+
+<PfRatingBadge />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-rating-badge></pf-rating-badge>
+```
+

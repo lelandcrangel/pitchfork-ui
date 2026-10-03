@@ -1,0 +1,70 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTableCell" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-table-cell>`
+
+
+One cell of a `pf-table` row.
+
+A header cell carries `columnheader` rather than `cell`, which the row tells
+it; `sortable` turns the label into a button that asks the table to sort.
+The table answers by writing `sort` back, which is what `aria-sort` and the
+indicator read — the ask and the answer kept apart, as everywhere else here.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `align` | `align` | `"center" \| "left" \| "right"` | `'left'` | Which way the content sits. Reflected for the stylesheet. |
+| `head` | `head` | `boolean` | `false` | Set by the row: a header cell. Reflected, so the stylesheet reads it. |
+| `last` | `last` | `boolean` | `false` | Set by the row: a cell in the last body row, which drops its rule. |
+| `sort` | `sort` | `"ascending" \| "descending" \| "none"` | `'none'` | Set by the table: how this column is sorted, if it is. |
+| `sortKey` | `sort-key` | `string \| undefined` | — | Identifies the column in the table's sort state. A header cell with one and `sortable` set is the only thing that can be sorted on. Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-table-cell[sort-key="..."]` finds nothing. The table reads the property. |
+| `sortable` | `sortable` | `boolean` | `false` | Offer to sort on this column. Reflected for the stylesheet. |
+| `width` | `width` | `string \| undefined` | — | A column width, as any CSS length. Only a header cell's is read. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfTableSort` | `\{ key: string; \}` | Asks the table to sort on this column. The table decides which way. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the cell's content. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `indicator` | the sort indicator inside that button. |
+| `sort` | the header's sort button, when `sortable` is set. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-table-cell></pf-table-cell>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTableCell } from '@pitchfork-ui/elements-react';
+
+<PfTableCell />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-table-cell></pf-table-cell>
+```
+

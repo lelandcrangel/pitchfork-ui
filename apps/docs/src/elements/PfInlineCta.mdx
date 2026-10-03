@@ -1,0 +1,85 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfInlineCta" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-inline-cta>`
+
+
+A prompt in the flow of a page: an icon, a line or two, something to do, and
+optionally a way to send it away.
+
+Dismissal waits on `Animation.finished` rather than a timeout. The React
+`useExitAnimation` guesses 220ms and calls back then, which is wrong twice
+over: it fires too early or too late if the stylesheet's duration changes,
+and it fires at all when nothing animated. Reading `getAnimations()` after a
+frame answers both — the same arrangement `pf-notification.dismiss()` uses,
+and for the same measured reason: an `animationend` listener never fires
+when no animation started, which is the ordinary case under
+`prefers-reduced-motion` or with the stylesheet unloaded.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dismissLabel` | `dismiss-label` | `string` | `'Dismiss'` | The dismiss button's accessible name. |
+| `dismissible` | `dismissible` | `boolean` | `false` | Offer a dismiss button. Reflected: it changes the padding. |
+| `exiting` | `exiting` | `boolean` | `false` | Whether the exit animation is running. Reflected for the stylesheet. |
+| `icon` | `icon` | `string` | `'circle-question'` | An icon name from the same registry as `pf-icon`. |
+| `tone` | `tone` | `"danger" \| "default" \| "info" \| "success" \| "warning"` | `'default'` | Colour treatment. Reflected so the stylesheet can select on it. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfDismiss` | `void` | Fires once the prompt has finished leaving. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `dismiss()` | `dismiss() =&gt; Promise&lt;void&gt;` | Plays the exit animation and resolves once it has finished, then reports. `getAnimations()` read after a frame, so the class the stylesheet animates has landed; an empty list resolves at once, which is what makes this correct with no stylesheet, under `prefers-reduced-motion`, and in both test projects. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the heading. |
+| `action` | what to do about it, usually a button. |
+| `description` | a line below the heading. |
+| `icon` | an icon, in place of the `icon` name. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `action` | the box holding the action slot. |
+| `content` | the box holding the heading and the description. |
+| `dismiss` | the dismiss button, when `dismissible` is set. |
+| `heading` | the heading's box. |
+| `icon` | the icon's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-inline-cta></pf-inline-cta>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfInlineCta } from '@pitchfork-ui/elements-react';
+
+<PfInlineCta />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-inline-cta></pf-inline-cta>
+```
+

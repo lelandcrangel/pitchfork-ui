@@ -4,6 +4,11 @@ import { Component, h, Prop } from '@stencil/core';
 export type PfKbdSize = 'sm' | 'md';
 
 /**
+ * A keyboard key or a combination of them, as `<kbd>` elements.
+ *
+ * `keys` renders one cap per entry with separators between; a single key can
+ * be slotted instead.
+ *
  * @slot - a single key, when `keys` is not given.
  * @part kbd - the native kbd element.
  */

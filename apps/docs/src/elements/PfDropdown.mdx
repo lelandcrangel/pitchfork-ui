@@ -1,0 +1,76 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfDropdown" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-dropdown>`
+
+
+A menu of actions, anchored to a trigger.
+
+`popover="auto"`, so light-dismiss and Escape are the browser's, as in
+`pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
+roving module — its third consumer, after `pf-toolbar` and
+`pf-radio-group` — because the items are custom elements rather than native
+controls and have to be queried by tag.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `align` | `align` | `"end" \| "start"` | `'start'` | Which edge of the trigger the menu lines up with. |
+| `disabled` | `disabled` | `boolean` | `false` | Prevent opening. Reflected so the stylesheet can select on it. |
+| `label` | `label` | `string` | `'Actions'` | Accessible name for the menu. |
+| `open` | `open` | `boolean` | `false` | Whether the menu is showing. Reflected so the stylesheet can select on it. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the menu opens or closes, whoever caused it. |
+| `pfSelect` | `\{ value: string; \}` | Fires with the chosen item's value. The menu closes itself afterwards. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | Closes the menu. |
+| `show()` | `show() =&gt; Promise&lt;void&gt;` | Opens the menu. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the trigger. |
+| `menu` | `pf-menu-item` and `pf-menu-separator` children. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `menu` | the floating menu panel. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-dropdown></pf-dropdown>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfDropdown } from '@pitchfork-ui/elements-react';
+
+<PfDropdown />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-dropdown></pf-dropdown>
+```
+

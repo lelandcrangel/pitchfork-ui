@@ -1,0 +1,65 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfButton" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-button>`
+
+
+A button, with the variants, sizes and loading state the React `Button` has.
+
+The first element in this package, and the one the whole pipeline was proved
+on: the PostCSS chain, the generated React bindings and the generated Angular
+component all exist because this built end to end before anything else was
+attempted. `delegatesFocus` is why focusing the host reaches the real button
+inside, which is what lets `pf-toolbar` treat it as an item.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` | `false` | Disable the button. |
+| `fullWidth` | `full-width` | `boolean` | `false` | Stretch to the width of the container. |
+| `label` | `label` | `string \| undefined` | — | Accessible name, for when the slot holds only an icon. |
+| `loading` | `loading` | `boolean` | `false` | Show a spinner and block interaction. |
+| `size` | `size` | `"lg" \| "md" \| "sm"` | `'md'` | Control size. Reflected so the stylesheet can select on it. |
+| `type` | `type` | `"button" \| "reset" \| "submit"` | `'button'` | Mirrors the native attribute. `submit` and `reset` do not yet act on a form outside this element's shadow root -- that needs ElementInternals, which arrives with the form controls in Wave 3. |
+| `variant` | `variant` | `"destructive" \| "ghost" \| "primary" \| "secondary"` | `'primary'` | Visual style. Reflected so the stylesheet can select on it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the button's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `button` | the native button element. |
+| `spinner` | the loading spinner. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-button></pf-button>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfButton } from '@pitchfork-ui/elements-react';
+
+<PfButton />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-button></pf-button>
+```
+

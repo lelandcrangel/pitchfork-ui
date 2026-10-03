@@ -84,26 +84,19 @@ pins and the `optionalDependencies` block with them.
 
 ---
 
-## Two names for the Chromium-path escape hatch
+## Two names for the Chromium-path escape hatch — fixed
 
-Four places launch Playwright Chromium, and they disagree on which
-environment variable points at a pre-installed browser:
+Four places launch Playwright Chromium, and `scripts/smoke-storybook.mjs` was
+the odd one out: it read `PLAYWRIGHT_CHROMIUM_PATH` while the two Vitest
+configs and `scripts/smoke-consumer.mjs` read `PW_CHROMIUM_PATH`, which is
+also the only name `CLAUDE.md` documents. So in an environment whose Chromium
+does not match Playwright's pinned build, setting the documented variable got
+three suites passing and left `npm run test:smoke` failing with Playwright's
+own "run npx playwright install" banner — pointing at the wrong cause
+entirely.
 
-| Entry point                                   | Variable                   |
-| --------------------------------------------- | -------------------------- |
-| `packages/elements/vitest.config.mts`         | `PW_CHROMIUM_PATH`         |
-| `packages/elements-angular/vitest.config.mts` | `PW_CHROMIUM_PATH`         |
-| `scripts/smoke-consumer.mjs`                  | `PW_CHROMIUM_PATH`         |
-| `scripts/smoke-storybook.mjs`                 | `PLAYWRIGHT_CHROMIUM_PATH` |
-
-`CLAUDE.md` documents only the first name. So in an environment whose
-Chromium does not match Playwright's pinned build, setting the documented
-variable gets three of the four suites passing and leaves `npm run
-test:smoke` failing with Playwright's own "run npx playwright install"
-banner — which points at the wrong cause entirely.
-
-**Fix:** settle on `PW_CHROMIUM_PATH` and have `smoke-storybook.mjs` read
-it, keeping the old name as a fallback if anything depends on it.
+It reads `PW_CHROMIUM_PATH` first now, with the old name as a fallback in case
+anything sets it.
 
 ---
 
@@ -318,25 +311,24 @@ docs examples updated, rather than folded into a port.
 
 ---
 
-## The React `useExitAnimation` waits on a guess
+## The React `useExitAnimation` waited on a guess — fixed
 
-`useExitAnimation` sets a class and then calls back after a fixed 220ms, which
-is wrong in both directions: too early or too late if the stylesheet's duration
-changes, and it fires at all when nothing animated — under
-`prefers-reduced-motion`, or for a consumer who has not loaded the CSS.
+It set a class and called back after a fixed 220ms, which is wrong in both
+directions: too early or too late when a stylesheet's duration changes, and it
+fired at all when nothing had animated — under `prefers-reduced-motion`, for a
+consumer who has not loaded the CSS, and in every test environment.
 
-`<pf-inline-cta>` and `<pf-notification>` both read `getAnimations()` after a
-frame and await `Animation.finished`, resolving at once when the list is empty.
-Measured in the browser spec: swapping the element's version for a 220ms
-timeout makes the no-animation case take 220ms instead of a frame, which is the
-test that fails.
+`animationsFinished` is in `@pitchfork-ui/core` now and all four callers use
+it: the hook (`Alert`, `InlineCTA`, `Notification`) and `pf-notification`,
+which had its own copy. It waits a frame so a class applied in the same tick
+has landed, reads `getAnimations()`, resolves at once on an empty list, and
+treats a cancelled animation as finished. The hook returns a `ref` to attach
+to the animating element, which is what replaced the `duration` option.
 
-**Fix:** have `useExitAnimation` take the element and await its animations
-rather than a duration — `const animations = el.getAnimations(); if
-(animations.length === 0) { onExited(); return; }` and otherwise
-`Promise.all(animations.map((a) => a.finished))`. `InlineCTA` is the only
-caller, which is what makes this a small change; the hook's `duration` option
-goes away with it.
+A `Notification` test changed with it, and the change is the finding: it had
+asserted that `onDismiss` was **not** called immediately after the click,
+which only held because the timeout was a fiction — nothing was ever animating
+in jsdom.
 
 ---
 

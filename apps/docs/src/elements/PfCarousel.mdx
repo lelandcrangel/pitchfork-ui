@@ -1,0 +1,88 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfCarousel" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-carousel>`
+
+
+A carousel over `pf-carousel-slide` children.
+
+The group owns the index, the controls, the indicators and the live region
+that announces the move; each slide owns only whether it is the one on show.
+
+`role="region"` with `aria-roledescription="carousel"` rather than any of
+the tab or listbox patterns: a carousel is a region whose content changes,
+and the announcement is what tells a reader it has.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `autoPlay` | `auto-play` | `boolean` | `false` | Step forward on a timer. |
+| `autoPlayInterval` | `auto-play-interval` | `number` | `5000` | How long between steps, in milliseconds. |
+| `index` | `index` | `number` | `0` | The slide on show, counting from 0. |
+| `label` | `label` | `string` | `'Carousel'` | The carousel's accessible name. |
+| `loop` | `loop` | `boolean` | `true` | Wrap at both ends rather than stopping. |
+| `nextLabel` | `next-label` | `string` | `'Next slide'` | The step-forward button's accessible name. |
+| `previousLabel` | `previous-label` | `string` | `'Previous slide'` | The step-back button's accessible name. |
+| `showIndicators` | `show-indicators` | `boolean` | `true` | Show the dots. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ index: number; \}` | Fires when the slide on show changes, however it changed. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `next()` | `next() =&gt; Promise&lt;void&gt;` | Steps one slide forward, as the button and the timer do. |
+| `previous()` | `previous() =&gt; Promise&lt;void&gt;` | Steps one slide back. |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the slides, for a consumer who changed them imperatively. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-carousel-slide` children. |
+| `empty` | what to show when there are no slides. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `controls` | the row holding the buttons and the indicators. |
+| `empty` | — |
+| `indicator` | one dot. |
+| `indicators` | the box holding the dots. |
+| `next` | the step-forward button. |
+| `previous` | the step-back button. |
+| `track` | the strip that slides. |
+| `viewport` | the clipping box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-carousel></pf-carousel>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfCarousel } from '@pitchfork-ui/elements-react';
+
+<PfCarousel />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-carousel></pf-carousel>
+```
+

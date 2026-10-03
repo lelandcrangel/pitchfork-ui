@@ -1,0 +1,54 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfContentDivider" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-content-divider>`
+
+
+A rule that separates content, optionally labelled.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `inset` | `inset` | `boolean` | `false` | Pad the divider horizontally. Reflected so the stylesheet can select on it. |
+| `orientation` | `orientation` | `"horizontal" \| "vertical"` | `'horizontal'` | Reflected so the stylesheet can select on it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the divider's label. Leave it empty for a plain rule; the element notices either way and lays the rule out accordingly. Ignored when `orientation` is `vertical`, which has nowhere to put a label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `label` | the wrapper around the slotted label. |
+| `line` | each of the two rule segments either side of the label, or the single segment when there is no label. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-content-divider></pf-content-divider>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfContentDivider } from '@pitchfork-ui/elements-react';
+
+<PfContentDivider />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-content-divider></pf-content-divider>
+```
+

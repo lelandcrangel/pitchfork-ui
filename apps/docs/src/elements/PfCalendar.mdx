@@ -1,0 +1,84 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfCalendar" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-calendar>`
+
+
+A month grid for picking a date.
+
+**It has a keyboard, which the React component does not.** `Calendar`
+renders 42 buttons and no key handling, so reaching the end of a month means
+42 presses of Tab and there is no way to move by week at all. This grid is
+the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
+week, Home and End to the ends of the week, PageUp/PageDown a month. The
+arithmetic is core's `moveCalendarDate`, so the React component can adopt it
+without the two disagreeing — recorded in `todo.md`.
+
+Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
+range of a century would mean a hundred custom elements rendered into this
+shadow root for one control, and a `<select>` brings its own keyboard and
+its platform picker on a phone.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `endYear` | `end-year` | `number \| undefined` | — | Last year offered in the year picker. Defaults to 50 years on. |
+| `isDateDisabled` | — | `((date: Date) =&gt; boolean) \| undefined` | — | A predicate for days that cannot be chosen, beyond `min` and `max`. A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a React or Angular consumer passes it as they would any other prop, and a plain-HTML consumer uses `min`/`max` or assigns it in script. |
+| `label` | `label` | `string` | `'Calendar'` | Accessible name for the grid. |
+| `max` | `max` | `string \| undefined` | — | Latest selectable date, as `YYYY-MM-DD`. |
+| `min` | `min` | `string \| undefined` | — | Earliest selectable date, as `YYYY-MM-DD`. |
+| `showOutsideDays` | `show-outside-days` | `boolean` | `true` | Render the days borrowed from the neighbouring months. |
+| `startYear` | `start-year` | `number \| undefined` | — | First year offered in the year picker. Defaults to 50 years back. |
+| `value` | `value` | `string \| undefined` | — | The selected date, as `YYYY-MM-DD`. Reflected, so a selector can find it. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; \}` | Fires with the chosen date, as `YYYY-MM-DD`. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `focusSelectedDay()` | `focusSelectedDay() =&gt; Promise&lt;void&gt;` | Puts focus on the grid's single tab stop. A method rather than something a container does for itself: the tab stop is inside this shadow root, and reaching into another component's shadow root to find it is exactly the coupling `::part()` and `@Method()` exist to avoid. `pf-date-picker` calls this when its popover opens. |
+| `goToMonth()` | `goToMonth(date: string \| Date) =&gt; Promise&lt;void&gt;` | Moves the grid to the month holding `date` (a `Date` or `YYYY-MM-DD`). |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `calendar` | the root box. |
+| `day` | every day cell. |
+| `grid` | the month grid. |
+| `header` | the month and year controls row. |
+| `selected` | the selected day. |
+| `today` | today's cell. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-calendar></pf-calendar>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfCalendar } from '@pitchfork-ui/elements-react';
+
+<PfCalendar />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-calendar></pf-calendar>
+```
+

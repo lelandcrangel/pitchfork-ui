@@ -1,0 +1,61 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfAvatar" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-avatar>`
+
+
+A person or entity, as a photo or as initials.
+
+The initials are derived from `name` by core's `avatarInitials`, so this and
+the React `Avatar` shorten the same name the same way.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `alt` | `alt` | `string \| undefined` | — | Alternative text for the photo. |
+| `name` | `name` | `string \| undefined` | — | The person's name: used for the accessible name and the initials. |
+| `size` | `size` | `"lg" \| "md" \| "sm" \| "xl"` | `'md'` | — |
+| `src` | `src` | `string \| undefined` | — | Photo URL. Without one the avatar shows initials. |
+| `status` | `status` | `"away" \| "busy" \| "offline" \| "online" \| undefined` | — | Presence indicator. Decorative — convey it in text as well. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | overrides the derived initials. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `fallback` | the initials, when it is not. |
+| `image` | the photo, when `src` is set. |
+| `status` | the presence dot, when `status` is set. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-avatar></pf-avatar>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfAvatar } from '@pitchfork-ui/elements-react';
+
+<PfAvatar />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-avatar></pf-avatar>
+```
+

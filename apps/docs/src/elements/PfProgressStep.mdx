@@ -1,0 +1,61 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfProgressStep" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-progress-step>`
+
+
+One step inside a `pf-progress-steps`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `last` | `last` | `boolean` | `false` | Set by the group: the last step draws no connector. |
+| `orientation` | `orientation` | `"horizontal" \| "vertical"` | `'horizontal'` | Set by the group from its own `orientation`. Reflected for the stylesheet. |
+| `position` | `position` | `number` | `1` | Set by the group: the step's number, counting from 1. |
+| `state` | `state` | `"complete" \| "current" \| "upcoming"` | `'upcoming'` | Set by the group: the resolved status, which is what the stylesheet reads and what carries `aria-current="step"` for the one current step. |
+| `status` | `status` | `"complete" \| "current" \| "upcoming" \| undefined` | — | Set it to say where the trail has got to — usually `current` on one step, and the group infers the rest. This is the *asking* half, which the group never writes; `state` below is the answer. Keeping them apart is what lets the trail change: if the answer were written back here, the first step of a trail that said nothing would look explicitly `current`, and prepending a step would leave the mark behind on it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| `description` | secondary text below the title. |
+| `title` | the step's title. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `connector` | the line to the next step. Absent on the last. |
+| `content` | the box holding the title and description. |
+| `marker` | the numbered circle. |
+| `marker-wrap` | the box holding the marker and the connector. |
+| `title` | the title's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-progress-step></pf-progress-step>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfProgressStep } from '@pitchfork-ui/elements-react';
+
+<PfProgressStep />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-progress-step></pf-progress-step>
+```
+

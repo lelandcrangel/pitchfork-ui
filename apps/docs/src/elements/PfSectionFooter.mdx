@@ -1,0 +1,62 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfSectionFooter" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-section-footer>`
+
+
+The foot of a section: an optional heading and line of text, and the
+controls that close it off.
+
+The same shape as `pf-section-header` with the rule on the other edge —
+and, unlike the header, the heading is optional here, so its box is one of
+the ones that can be empty.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `align` | `align` | `"between" \| "end" \| "start"` | `'between'` | How the heading and the actions share the row. Reflected. |
+| `divider` | `divider` | `boolean` | `true` | Draw a rule above the footer. Defaults to true, as the React one does. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the heading. |
+| `actions` | controls, which sit opposite the heading on a wide screen. |
+| `description` | a line below the heading. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `actions` | the box holding the actions slot. |
+| `content` | the box holding the heading and the description. |
+| `heading` | the heading's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-section-footer></pf-section-footer>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfSectionFooter } from '@pitchfork-ui/elements-react';
+
+<PfSectionFooter />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-section-footer></pf-section-footer>
+```
+

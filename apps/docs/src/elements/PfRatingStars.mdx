@@ -1,0 +1,56 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfRatingStars" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-rating-stars>`
+
+
+A row of stars showing a rating, filled to the fraction.
+
+One `role="img"` with a name rather than a star-by-star reading: the stars
+are an image of the rating, and the number is the thing worth announcing.
+Every star inside is therefore `aria-hidden`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string \| undefined` | — | Overrides the generated name, for a rating that means something else. |
+| `max` | `max` | `number` | `5` | How many stars there are. |
+| `showValue` | `show-value` | `boolean` | `false` | Write the rating out beside the stars. |
+| `size` | `size` | `number` | `18` | Star size in pixels. |
+| `value` | `value` | `number` | `0` | The rating. Clamped into 0..max, so it cannot overfill the row. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `star` | one star, filled to its own share of the rating. |
+| `track` | the row of stars. |
+| `value` | the rating written out, when `showValue` is set. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-rating-stars></pf-rating-stars>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfRatingStars } from '@pitchfork-ui/elements-react';
+
+<PfRatingStars />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-rating-stars></pf-rating-stars>
+```
+

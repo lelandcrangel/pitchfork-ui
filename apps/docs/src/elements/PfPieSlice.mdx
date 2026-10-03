@@ -1,0 +1,67 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfPieSlice" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-pie-slice>`
+
+
+One slice of a `pf-pie-chart`, and its own row in the legend.
+
+The React `PieChart` takes a `data` array of `{ label, value, color }`; a
+slot renders its assigned content once and in one place, so there is no way
+for the chart's shadow root to build a legend out of labels that live in the
+light DOM. The slice renders its own row instead, which is the §2.1 idiom
+and lets a consumer put anything in a label.
+
+`swatch`, `share` and `drawn` are the chart's to set: only it can see the
+total.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `color` | `color` | `string \| undefined` | — | Overrides the palette colour the chart would give it. |
+| `drawn` | `drawn` | `boolean` | `false` | Set by the chart: whether this slice is in the drawing at all. A slice of zero is not a wedge, so it is not a legend row either — otherwise the legend lists colours that appear nowhere in the chart. Reflected, because that is what the stylesheet hides it with. |
+| `share` | `share` | `number` | `0` | Set by the chart: this slice's share, as a whole percentage. |
+| `swatch` | `swatch` | `string` | `''` | Set by the chart: the colour actually used, palette or override. |
+| `value` | `value` | `number` | `0` | How big the slice is, in whatever unit the chart's slices share. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the slice's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `dot` | the colour swatch. |
+| `label` | the label's box. |
+| `value` | the share, as a whole percentage. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-pie-slice></pf-pie-slice>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfPieSlice } from '@pitchfork-ui/elements-react';
+
+<PfPieSlice />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-pie-slice></pf-pie-slice>
+```
+

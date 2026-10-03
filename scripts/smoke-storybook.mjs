@@ -262,8 +262,19 @@ async function run(args, served) {
   );
   sample.add(ANCHOR.storyId);
 
+  /*
+   * `PW_CHROMIUM_PATH` is the name the other three Playwright entry points
+   * use and the only one CLAUDE.md documents. This script read
+   * `PLAYWRIGHT_CHROMIUM_PATH` alone, so in an environment whose Chromium
+   * does not match Playwright's pinned build, setting the documented
+   * variable got three suites passing and left this one failing with
+   * Playwright's own "run npx playwright install" banner — which points at
+   * the wrong cause entirely. The old name is still honoured in case
+   * anything sets it.
+   */
   const browser = await chromium.launch({
-    executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined,
+    executablePath:
+      process.env.PW_CHROMIUM_PATH || process.env.PLAYWRIGHT_CHROMIUM_PATH || undefined,
   });
 
   try {

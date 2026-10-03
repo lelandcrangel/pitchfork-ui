@@ -1,0 +1,93 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfVideoPlayer" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-video-player>`
+
+
+A `<video>` in a framed, fixed-ratio box, with a label, a description and
+an error message.
+
+`sources` and `tracks` are **properties**, not slotted children, and this
+is one of the few places where that is forced rather than chosen: a
+`<source>` has to be a child of the `<video>` itself, and slotted content
+stays in the light DOM — a slotted `<source>` would be a child of this
+element, which the video would never look at. They are rendered into the
+shadow `<video>` instead.
+
+The label names the video with an IDREF rather than a `<label for>`:
+`for` must point at a *labelable* element and a `<video>` is not one, so
+the React `VideoPlayer`'s `htmlFor` was silently doing nothing and the
+video had no accessible name at all. Both layers use `aria-labelledby`
+now, and here it is a same-root reference, which is the kind that
+resolves.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `aspectRatio` | `aspect-ratio` | `"1/1" \| "16/9" \| "4/3"` | `'16/9'` | Reflected, because the stylesheet selects on it for the box's ratio. |
+| `autoplay` | `autoplay` | `boolean` | `false` | — |
+| `controls` | `controls` | `boolean` | `true` | — |
+| `description` | `description` | `string \| undefined` | — | — |
+| `error` | `error` | `string \| undefined` | — | Error message. Its presence is what marks the frame invalid. |
+| `label` | `label` | `string \| undefined` | — | Drawn above the frame, and what names the video. |
+| `loop` | `loop` | `boolean` | `false` | — |
+| `muted` | `muted` | `boolean` | `false` | — |
+| `poster` | `poster` | `string \| undefined` | — | — |
+| `preload` | `preload` | `"auto" \| "metadata" \| "none"` | `'metadata'` | — |
+| `sources` | — | `PfVideoSource[]` | `[]` | Several encodings of the same video, best first. |
+| `src` | `src` | `string \| undefined` | — | A single source. Use `sources` for several encodings. |
+| `tracks` | — | `PfVideoTrack[]` | `[]` | Captions and subtitles. A video without them is not finished. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `getVideoElement()` | `getVideoElement() =&gt; Promise&lt;HTMLVideoElement \| undefined&gt;` | The video element itself, for anything these methods do not cover. |
+| `pause()` | `pause() =&gt; Promise&lt;void&gt;` | Pauses it. |
+| `play()` | `play() =&gt; Promise&lt;void&gt;` | Starts playback, which a consumer cannot do through the shadow root. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| `empty` | what to show when there is no video to play. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `description` | the hint text. |
+| `empty` | the empty state's box. |
+| `error` | the error message. |
+| `field` | the wrapper around label, frame and messages. |
+| `frame` | the fixed-ratio box. |
+| `label` | the label. |
+| `video` | the video element. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-video-player></pf-video-player>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfVideoPlayer } from '@pitchfork-ui/elements-react';
+
+<PfVideoPlayer />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-video-player></pf-video-player>
+```
+

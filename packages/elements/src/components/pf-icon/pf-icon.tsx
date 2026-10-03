@@ -21,6 +21,14 @@ const warnUnknown = (name: string) => {
 };
 
 /**
+ * One glyph from the icon registry.
+ *
+ * The registry is core's, not this element's, and that is deliberate: a
+ * consumer calling `registerIcons()` has to get the icon in the React
+ * components *and* here, and a registry per layer would silently give them
+ * one or the other. A name the registry does not hold renders nothing and
+ * warns once.
+ *
  * @part svg - the rendered glyph.
  */
 @Component({
