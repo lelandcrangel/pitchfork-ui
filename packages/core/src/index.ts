@@ -14,3 +14,4 @@ export * from './roving';
 export * from './scroll-lock';
 export * from './state';
 export * from './text';
+export * from './time';

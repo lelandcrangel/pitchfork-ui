@@ -1,0 +1,151 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--pf-timepicker-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--pf-timepicker-invalid-border);
+  margin-inline-start: var(--space-1);
+}
+
+.trigger {
+  align-items: center;
+  background: var(--pf-timepicker-bg);
+  border: 1px solid var(--pf-timepicker-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-timepicker-text);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+  width: 100%;
+}
+
+.trigger:focus-visible {
+  border-color: var(--pf-timepicker-focus-border);
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.trigger--invalid {
+  border-color: var(--pf-timepicker-invalid-border);
+}
+
+.value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.value--placeholder {
+  color: var(--pf-timepicker-placeholder);
+}
+
+.description {
+  color: var(--pf-timepicker-text-muted);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+.error {
+  color: var(--pf-timepicker-invalid-border);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+/*
+ * See src/place-popover.ts: `inset: auto; margin: 0` are what make the
+ * coordinates mean what they say, since the UA stylesheet centres a popover.
+ */
+.panel {
+  inset: auto;
+  margin: 0;
+  background: var(--pf-timepicker-menu-bg);
+  border: 1px solid var(--pf-timepicker-menu-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--pf-elevation-popover-shadow);
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+}
+
+.panel:popover-open {
+  animation: pf-time-picker-in var(--pf-transition-enter);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-time-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel:popover-open {
+    animation: none;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.column:focus-visible {
+  outline: none;
+}
+
+.option {
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-timepicker-text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  padding: var(--space-1) var(--space-3);
+  text-align: center;
+}
+
+.option:hover {
+  background: var(--pf-timepicker-option-hover-bg);
+}
+
+.option:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.option--selected {
+  background: var(--pf-timepicker-option-active-bg);
+  color: var(--pf-timepicker-option-active-text);
+}

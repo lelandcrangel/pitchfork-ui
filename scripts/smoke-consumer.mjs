@@ -87,6 +87,7 @@ const EXPECTED = [
   'pf-command-item',
   'pf-calendar',
   'pf-date-picker',
+  'pf-time-picker',
 ];
 
 const TYPES = {
@@ -480,12 +481,41 @@ try {
        * a distinction a server relies on, and one `setFormValue('')` would
        * erase for the checkbox.
        */
-      if (names.join(',') !== 'due,notes,notify,plan,volume') {
+      if (names.join(',') !== 'at,due,notes,notify,plan,volume') {
         result.unstyled.push(
           `form sees [${names.join(', ')}] from the form controls, ` +
-            'expected due,notes,notify,plan,volume (terms is unticked, so absent)',
+            'expected at,due,notes,notify,plan,volume (terms is unticked, so absent)',
         );
       }
+      /*
+       * The values, not just the names. The time picker displays a 12-hour
+       * clock and submits a canonical 24-hour value, which is the one claim
+       * worth making about it — a control whose submitted value changed with
+       * its display would be unusable on a server. The date picker's ISO
+       * value is the same kind of claim.
+       */
+      const submitted = new FormData(prefs);
+      const at = submitted.get('at');
+      if (at !== '14:30') {
+        result.unstyled.push(
+          `pf-time-picker submitted "${at}" but shows a 12-hour clock — ` +
+            'expected the canonical 24-hour 14:30',
+        );
+      }
+      const due = submitted.get('due');
+      if (due !== '2024-03-15') {
+        result.unstyled.push(`pf-date-picker submitted "${due}", expected 2024-03-15`);
+      }
+      const shown = document
+        .querySelector('pf-time-picker')
+        ?.shadowRoot?.querySelector('[part="trigger"]')
+        ?.textContent?.trim();
+      if (!shown?.includes('2:30 PM')) {
+        result.unstyled.push(
+          `pf-time-picker shows "${shown}", expected a 12-hour 2:30 PM beside its 14:30 value`,
+        );
+      }
+
       const box = prefs.querySelector('pf-checkbox');
       if (box && typeof box.checkValidity === 'function') {
         result.requiredBoxValid = prefs.checkValidity();

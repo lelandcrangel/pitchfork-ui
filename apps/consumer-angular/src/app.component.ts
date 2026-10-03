@@ -44,6 +44,7 @@ import {
   PfSwitch,
   PfTag,
   PfTextarea,
+  PfTimePicker,
   PfToaster,
   PfToolbar,
   PfTooltip,
@@ -108,6 +109,7 @@ import {
     PfSwitch,
     PfTag,
     PfTextarea,
+    PfTimePicker,
     PfToaster,
     PfToolbar,
     PfTooltip,
@@ -294,6 +296,16 @@ import {
           formControlName="volume"
         ></pf-slider>
         <!-- Form-associated, unlike the React DatePicker. -->
+        <!-- 12-hour display, 24-hour value. -->
+        <pf-time-picker
+          label="Start time"
+          name="at"
+          [value]="at()"
+          [hourCycle]="12"
+          [minuteStep]="15"
+          data-testid="time-picker"
+          (pfChange)="at.set($event.detail.value)"
+        ></pf-time-picker>
         <pf-date-picker
           label="Due date"
           name="due"
@@ -501,6 +513,7 @@ export class AppComponent {
   slideoutOpen = signal(false);
   paletteOpen = signal(false);
   day = signal('2024-03-15');
+  at = signal('14:30');
   private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
 
   notify(variant: 'success' | 'danger') {

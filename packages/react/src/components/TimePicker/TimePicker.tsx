@@ -1,3 +1,17 @@
+import {
+  formatTimeDisplay,
+  formatTimeValue,
+  hourOptions,
+  meridiemOf,
+  padTimePart,
+  parseTimeValue,
+  timeRange,
+  toHour12,
+  toHour24,
+  type HourCycle,
+  type Meridiem,
+  type TimeParts,
+} from '@pitchfork-ui/core';
 import { forwardRef, useEffect, useId, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
@@ -15,7 +29,8 @@ import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
 import './TimePicker.css';
 
-export type HourCycle = 12 | 24;
+/** Re-exported so `TimePickerProps` keeps naming a type from this module. */
+export type { HourCycle };
 
 export interface TimePickerProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -36,35 +51,6 @@ export interface TimePickerProps extends Omit<
   required?: boolean;
   name?: string;
 }
-
-// ─── helpers ─────────────────────────────────────────────────────────────────
-
-const pad = (n: number) => String(n).padStart(2, '0');
-
-interface Parts {
-  hour: number | null; // 0–23
-  minute: number | null; // 0–59
-}
-
-const parseValue = (value: string): Parts => {
-  const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
-  if (!match) return { hour: null, minute: null };
-  const hour = Number(match[1]);
-  const minute = Number(match[2]);
-  if (hour > 23 || minute > 59) return { hour: null, minute: null };
-  return { hour, minute };
-};
-
-const formatDisplay = (parts: Parts, hourCycle: HourCycle): string => {
-  if (parts.hour === null || parts.minute === null) return '';
-  if (hourCycle === 24) return `${pad(parts.hour)}:${pad(parts.minute)}`;
-  const meridiem = parts.hour < 12 ? 'AM' : 'PM';
-  const h12 = parts.hour % 12 === 0 ? 12 : parts.hour % 12;
-  return `${h12}:${pad(parts.minute)} ${meridiem}`;
-};
-
-const range = (length: number, step = 1) =>
-  Array.from({ length: Math.ceil(length / step) }, (_, i) => i * step);
 
 // ─── component ───────────────────────────────────────────────────────────────
 
@@ -101,7 +87,7 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
     defaultValue: defaultValue ?? '',
     onChange: onValueChange,
   });
-  const parts = parseValue(current ?? '');
+  const parts = parseTimeValue(current ?? '');
 
   const disclosure = useDisclosure({ disabled });
   const isOpen = disclosure.isOpen ?? false;
@@ -132,50 +118,34 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
   });
 
   // Column option sets.
-  const hours = hourCycle === 24 ? range(24) : range(12).map((h) => h + 1); // 24h: 0–23, 12h: 1–12
-  const minutes = range(60, minuteStep);
-  const meridiems: Array<'AM' | 'PM'> = ['AM', 'PM'];
+  const hours = hourOptions(hourCycle);
+  const minutes = timeRange(60, minuteStep);
+  const meridiems: Meridiem[] = ['AM', 'PM'];
 
-  const selectedMeridiem: 'AM' | 'PM' | null =
-    parts.hour === null ? null : parts.hour < 12 ? 'AM' : 'PM';
+  const selectedMeridiem: Meridiem | null = parts.hour === null ? null : meridiemOf(parts.hour);
   const selectedHourDisplay =
-    parts.hour === null
-      ? null
-      : hourCycle === 24
-        ? parts.hour
-        : parts.hour % 12 === 0
-          ? 12
-          : parts.hour % 12;
+    parts.hour === null ? null : hourCycle === 24 ? parts.hour : toHour12(parts.hour);
 
-  const emit = (next: Parts) => {
-    if (next.hour === null || next.minute === null) return;
-    setCurrent(`${pad(next.hour)}:${pad(next.minute)}`);
+  const emit = (next: TimeParts) => {
+    const value = formatTimeValue(next);
+    if (!value) return;
+    setCurrent(value);
   };
 
   const selectHour = (h: number) => {
-    let hour24: number;
-    if (hourCycle === 24) {
-      hour24 = h;
-    } else {
-      const meridiem = selectedMeridiem ?? 'AM';
-      const base = h % 12; // 12 → 0
-      hour24 = meridiem === 'PM' ? base + 12 : base;
-    }
+    const hour24 = hourCycle === 24 ? h : toHour24(h, selectedMeridiem ?? 'AM');
     emit({ hour: hour24, minute: parts.minute ?? 0 });
   };
 
   const selectMinute = (m: number) => {
-    emit({ hour: parts.hour ?? (hourCycle === 12 ? 0 : 0), minute: m });
+    emit({ hour: parts.hour ?? 0, minute: m });
   };
 
-  const selectMeridiem = (mer: 'AM' | 'PM') => {
-    const baseHour = parts.hour ?? 0;
-    const base = baseHour % 12;
-    const hour24 = mer === 'PM' ? base + 12 : base;
-    emit({ hour: hour24, minute: parts.minute ?? 0 });
+  const selectMeridiem = (mer: Meridiem) => {
+    emit({ hour: toHour24(toHour12(parts.hour ?? 0), mer), minute: parts.minute ?? 0 });
   };
 
-  const display = formatDisplay(parts, hourCycle);
+  const display = formatTimeDisplay(parts, hourCycle);
 
   // Scroll the selected option of each column into view when the panel opens.
   useEffect(() => {
@@ -281,7 +251,7 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
                         )}
                         onClick={() => selectHour(h)}
                       >
-                        {pad(h)}
+                        {padTimePart(h)}
                       </button>
                     );
                   })}
@@ -309,7 +279,7 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
                         )}
                         onClick={() => selectMinute(m)}
                       >
-                        {pad(m)}
+                        {padTimePart(m)}
                       </button>
                     );
                   })}

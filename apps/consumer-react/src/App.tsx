@@ -43,6 +43,7 @@ import {
   PfSwitch,
   PfTag,
   PfTextarea,
+  PfTimePicker,
   PfToaster,
   PfToolbar,
   PfTooltip,
@@ -67,6 +68,7 @@ export function App() {
   const [slideoutOpen, setSlideoutOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [day, setDay] = useState('2024-03-15');
+  const [at, setAt] = useState('14:30');
   const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
@@ -256,6 +258,20 @@ export function App() {
           purpose: the submission assertion is what caught an unreflected
           `name` on the other controls.
         */}
+        {/*
+          12-hour display, 24-hour value — the submission below proves it. The
+          cycle is read through a getter, because an attribute of a
+          union-literal type arrives as a string.
+        */}
+        <PfTimePicker
+          label="Start time"
+          name="at"
+          value={at}
+          hourCycle={12}
+          minuteStep={15}
+          data-testid="time-picker"
+          onPfChange={(event) => setAt(event.detail.value)}
+        />
         <PfDatePicker
           label="Due date"
           name="due"

@@ -519,6 +519,15 @@ Things that differ from the React library, learned by porting the first two:
   both into its own shadow root, so the reference resolves and is worth
   having — the same measurement that showed a cross-root IDREF absent from
   the accessibility tree showed a same-root one resolving.
+- **A union-literal prop type defeats Stencil's attribute coercion.** Stencil
+  converts an attribute string only for the primitive types it recognises.
+  Measured on `pf-time-picker`: with `@Prop() hourCycle: 12 | 24`,
+  `hour-cycle="12"` arrives as the **string** `"12"` — so `=== 12` is false
+  and the element silently stayed on its 24-hour branch — while
+  `minute-step="15"`, declared `number`, arrives as `15`. `docs.json` records
+  the type verbatim as `12 | 24`, which is the tell. Keep the union, because
+  it is the useful type for a framework consumer who really does set the
+  number, and read it through a getter that coerces (`Number(x) === 12`).
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

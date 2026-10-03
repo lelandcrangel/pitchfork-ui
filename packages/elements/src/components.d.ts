@@ -20,10 +20,10 @@ import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-gr
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
+import { HourCycle, Side } from "@pitchfork-ui/core";
 import { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 import { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
-import { Side } from "@pitchfork-ui/core";
 import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
@@ -40,10 +40,10 @@ export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-gr
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
+export { HourCycle, Side } from "@pitchfork-ui/core";
 export { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 export { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
-export { Side } from "@pitchfork-ui/core";
 export { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export namespace Components {
     interface PfAvatar {
@@ -1338,6 +1338,60 @@ export namespace Components {
         "value": string;
     }
     /**
+     * A form-associated time field: a trigger that opens hour, minute and (on a
+     * 12-hour cycle) meridiem columns in a popover.
+     * The submitted value is always canonical 24-hour `HH:mm`, whatever
+     * `hour-cycle` displays. A control whose submitted value changed with its
+     * display would be unusable on a server, so the cycle is a rendering choice
+     * and nothing more — all of that arithmetic is core's.
+     */
+    interface PfTimePicker {
+        "checkValidity": () => Promise<boolean>;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        "error"?: string;
+        "getValidationMessage": () => Promise<string>;
+        "hide": () => Promise<void>;
+        /**
+          * 12- or 24-hour display. The value stays 24-hour either way.  Read through `cycle` below, never directly: Stencil coerces an attribute only for the primitive types it recognises, and a union of literals is not one of them. Measured: `hour-cycle="12"` arrives as the **string** `"12"`, so `=== 12` is false, while `minute-step="15"` — declared `number` — arrives as `15`. The union is kept because it is the useful type for a framework consumer, who really does set the number.
+          * @default 24
+         */
+        "hourCycle": HourCycle;
+        "label"?: string;
+        /**
+          * Granularity of the minutes column.
+          * @default 1
+         */
+        "minuteStep": number;
+        /**
+          * Submitted under this name. Reflected; the submission reads the attribute.
+         */
+        "name"?: string;
+        /**
+          * Whether the panel is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default 'Select time'
+         */
+        "placeholder": string;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        "show": () => Promise<void>;
+        /**
+          * Canonical 24-hour `HH:mm`, or empty.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * The region toasts appear in, and the queue behind them.
      * This is the one place the elements layer takes options rather than child
      * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
@@ -1566,6 +1620,10 @@ export interface PfTagCustomEvent<T> extends CustomEvent<T> {
 export interface PfTextareaCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfTextareaElement;
+}
+export interface PfTimePickerCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTimePickerElement;
 }
 export interface PfToasterCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2308,6 +2366,32 @@ declare global {
         prototype: HTMLPfTextareaElement;
         new (): HTMLPfTextareaElement;
     };
+    interface HTMLPfTimePickerElementEventMap {
+        "pfChange": { value: string };
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * A form-associated time field: a trigger that opens hour, minute and (on a
+     * 12-hour cycle) meridiem columns in a popover.
+     * The submitted value is always canonical 24-hour `HH:mm`, whatever
+     * `hour-cycle` displays. A control whose submitted value changed with its
+     * display would be unusable on a server, so the cycle is a rendering choice
+     * and nothing more — all of that arithmetic is core's.
+     */
+    interface HTMLPfTimePickerElement extends Components.PfTimePicker, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTimePickerElementEventMap>(type: K, listener: (this: HTMLPfTimePickerElement, ev: PfTimePickerCustomEvent<HTMLPfTimePickerElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTimePickerElementEventMap>(type: K, listener: (this: HTMLPfTimePickerElement, ev: PfTimePickerCustomEvent<HTMLPfTimePickerElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTimePickerElement: {
+        prototype: HTMLPfTimePickerElement;
+        new (): HTMLPfTimePickerElement;
+    };
     interface HTMLPfToasterElementEventMap {
         "pfToastDismiss": { id: string };
     }
@@ -2452,6 +2536,7 @@ declare global {
         "pf-switch": HTMLPfSwitchElement;
         "pf-tag": HTMLPfTagElement;
         "pf-textarea": HTMLPfTextareaElement;
+        "pf-time-picker": HTMLPfTimePickerElement;
         "pf-toaster": HTMLPfToasterElement;
         "pf-toolbar": HTMLPfToolbarElement;
         "pf-toolbar-separator": HTMLPfToolbarSeparatorElement;
@@ -3744,6 +3829,67 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     /**
+     * A form-associated time field: a trigger that opens hour, minute and (on a
+     * 12-hour cycle) meridiem columns in a popover.
+     * The submitted value is always canonical 24-hour `HH:mm`, whatever
+     * `hour-cycle` displays. A control whose submitted value changed with its
+     * display would be unusable on a server, so the cycle is a rendering choice
+     * and nothing more — all of that arithmetic is core's.
+     */
+    interface PfTimePicker {
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * 12- or 24-hour display. The value stays 24-hour either way.  Read through `cycle` below, never directly: Stencil coerces an attribute only for the primitive types it recognises, and a union of literals is not one of them. Measured: `hour-cycle="12"` arrives as the **string** `"12"`, so `=== 12` is false, while `minute-step="15"` — declared `number` — arrives as `15`. The union is kept because it is the useful type for a framework consumer, who really does set the number.
+          * @default 24
+         */
+        "hourCycle"?: HourCycle;
+        "label"?: string;
+        /**
+          * Granularity of the minutes column.
+          * @default 1
+         */
+        "minuteStep"?: number;
+        /**
+          * Submitted under this name. Reflected; the submission reads the attribute.
+         */
+        "name"?: string;
+        /**
+          * Fires when the time changes, with the canonical `HH:mm`.
+         */
+        "onPfChange"?: (event: PfTimePickerCustomEvent<{ value: string }>) => void;
+        /**
+          * Fires whenever the panel opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfTimePickerCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the panel is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default 'Select time'
+         */
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * Canonical 24-hour `HH:mm`, or empty.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
      * The region toasts appear in, and the queue behind them.
      * This is the one place the elements layer takes options rather than child
      * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
@@ -4132,6 +4278,19 @@ declare namespace LocalJSX {
         "disabled": boolean;
         "readonly": boolean;
     }
+    interface PfTimePickerAttributes {
+        "name": string;
+        "value": string;
+        "open": boolean;
+        "hourCycle": HourCycle;
+        "minuteStep": number;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "required": boolean;
+        "disabled": boolean;
+    }
     interface PfToasterAttributes {
         "placement": PfToasterPlacement;
         "duration": number;
@@ -4204,6 +4363,7 @@ declare namespace LocalJSX {
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
         "pf-textarea": Omit<PfTextarea, keyof PfTextareaAttributes> & { [K in keyof PfTextarea & keyof PfTextareaAttributes]?: PfTextarea[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `attr:${K}`]?: PfTextareaAttributes[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `prop:${K}`]?: PfTextarea[K] };
+        "pf-time-picker": Omit<PfTimePicker, keyof PfTimePickerAttributes> & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes]?: PfTimePicker[K] } & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes as `attr:${K}`]?: PfTimePickerAttributes[K] } & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes as `prop:${K}`]?: PfTimePicker[K] };
         "pf-toaster": Omit<PfToaster, keyof PfToasterAttributes> & { [K in keyof PfToaster & keyof PfToasterAttributes]?: PfToaster[K] } & { [K in keyof PfToaster & keyof PfToasterAttributes as `attr:${K}`]?: PfToasterAttributes[K] } & { [K in keyof PfToaster & keyof PfToasterAttributes as `prop:${K}`]?: PfToaster[K] };
         "pf-toolbar": Omit<PfToolbar, keyof PfToolbarAttributes> & { [K in keyof PfToolbar & keyof PfToolbarAttributes]?: PfToolbar[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `attr:${K}`]?: PfToolbarAttributes[K] } & { [K in keyof PfToolbar & keyof PfToolbarAttributes as `prop:${K}`]?: PfToolbar[K] };
         "pf-toolbar-separator": Omit<PfToolbarSeparator, keyof PfToolbarSeparatorAttributes> & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes]?: PfToolbarSeparator[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `attr:${K}`]?: PfToolbarSeparatorAttributes[K] } & { [K in keyof PfToolbarSeparator & keyof PfToolbarSeparatorAttributes as `prop:${K}`]?: PfToolbarSeparator[K] };
@@ -4510,6 +4670,15 @@ declare module "@stencil/core" {
              * `<textarea>` rather than an `<input>`, so it takes `rows` and resizes.
              */
             "pf-textarea": LocalJSX.IntrinsicElements["pf-textarea"] & JSXBase.HTMLAttributes<HTMLPfTextareaElement>;
+            /**
+             * A form-associated time field: a trigger that opens hour, minute and (on a
+             * 12-hour cycle) meridiem columns in a popover.
+             * The submitted value is always canonical 24-hour `HH:mm`, whatever
+             * `hour-cycle` displays. A control whose submitted value changed with its
+             * display would be unusable on a server, so the cycle is a rendering choice
+             * and nothing more — all of that arithmetic is core's.
+             */
+            "pf-time-picker": LocalJSX.IntrinsicElements["pf-time-picker"] & JSXBase.HTMLAttributes<HTMLPfTimePickerElement>;
             /**
              * The region toasts appear in, and the queue behind them.
              * This is the one place the elements layer takes options rather than child
