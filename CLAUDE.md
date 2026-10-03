@@ -519,15 +519,24 @@ Things that differ from the React library, learned by porting the first two:
   both into its own shadow root, so the reference resolves and is worth
   having — the same measurement that showed a cross-root IDREF absent from
   the accessibility tree showed a same-root one resolving.
-- **A union-literal prop type defeats Stencil's attribute coercion.** Stencil
-  converts an attribute string only for the primitive types it recognises.
-  Measured on `pf-time-picker`: with `@Prop() hourCycle: 12 | 24`,
-  `hour-cycle="12"` arrives as the **string** `"12"` — so `=== 12` is false
-  and the element silently stayed on its 24-hour branch — while
-  `minute-step="15"`, declared `number`, arrives as `15`. `docs.json` records
-  the type verbatim as `12 | 24`, which is the tell. Keep the union, because
-  it is the useful type for a framework consumer who really does set the
-  number, and read it through a getter that coerces (`Number(x) === 12`).
+- **An _imported_ type alias defeats Stencil's attribute coercion; an inline
+  union does not.** Stencil converts an attribute string using the prop's type
+  as _written_, and it cannot resolve a name it had to import. Measured side
+  by side in a real DOM: `@Prop() hourCycle: HourCycle` on `pf-time-picker`
+  — where `HourCycle` is `12 | 24` imported from core — receives
+  `hour-cycle="12"` as the **string** `"12"`, so `=== 12` is false and the
+  element silently stayed on its 24-hour branch, while
+  `@Prop() weekStartsOn: 0 | 1` written out inline on `pf-heatmap` receives
+  `week-starts-on="1"` as the **number** `1`. `docs.json` is the tell, and it
+  is `complexType.original` that matters, not `type`: both record
+  `resolved: "12 | 24"`-style text, but the first has
+  `original: "HourCycle"` with an `import` reference and the second has
+  `original: "0 | 1"`.
+  The earlier note here blamed the union and was wrong; it was measured only
+  in the mock DOM through the aliased prop, which hid the distinction.
+  Either way, read such a prop through a getter that coerces
+  (`Number(x) === 12`): it costs nothing, and it also covers a consumer who
+  sets the _property_ to a string.
 - **One form control can submit several entries.** `setFormValue` accepts a
   `FormData`, and every entry in it reaches the submission — measured, along
   with the fact that the element's own `name` attribute is then **ignored
@@ -679,7 +688,7 @@ Things that differ from the React library, learned by porting the first two:
   class for `.marker:has(*)`: both markers then measure 28px in a real build,
   and `scripts/smoke-consumer.mjs` catches it.
 - **Coerce a number a loop counts with.** The attribute-coercion trap has a
-  second shape beside the union-literal one: `max="5"` on `pf-rating-stars`
+  second shape beside the imported-alias one: `max="5"` on `pf-rating-stars`
   arrives as a number because the prop is typed `number`, but anything built
   from `Number(x)` by hand — or read off an element rather than a prop — is a
   string, and `Array.from({ length: "5" })` is **empty** rather than five long.
@@ -1042,6 +1051,21 @@ subgrid` on each line rather than a table: the numbers only have to share a
   `aria-label`, which leaves a reader told "73%" with no idea what is 73%
   full. `pf-gauge-chart` takes a `label` and reports the percentage
   separately.
+- **Both test projects now run in a timezone that has daylight saving.**
+  `process.env.TZ = 'America/New_York'` at the top of `packages/core` and
+  `packages/react`'s Vitest configs, set before the workers fork so `Date`
+  picks it up. The default here is UTC, which has no DST at all — and that
+  hides a whole class of date defect: swapping `date.ts`'s midday-pinned
+  `addDays` for a millisecond offset makes `buildHeatmapWeeks` lose a day
+  across the spring-forward Sunday, which fails under New York and **passes
+  under UTC**. Measured both ways; every test in both packages passes under
+  both zones, so the change costs nothing.
+- **The total of padding cells cannot show a grid's alignment.** A heatmap's
+  grid is rectangular, so a week moved forward at the start is a week moved
+  back at the end: a Sunday-first and a Monday-first rendering of the same
+  range both came to seven padding cells. Count the padding _before the first
+  real day_ instead — the first assertion written here passed under both
+  alignments.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

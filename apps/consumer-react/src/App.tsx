@@ -36,6 +36,7 @@ import {
   PfHeaderNavigation,
   PfFileUploader,
   PfGaugeChart,
+  PfHeatmap,
   PfIcon,
   PfInlineCta,
   PfInput,
@@ -130,6 +131,15 @@ export function App() {
   const [split, setSplit] = useState(40);
   const [uploads, setUploads] = useState<File[]>([]);
   const [copiedCode, setCopiedCode] = useState('');
+  // Two months, so the heatmap crosses a month boundary and the spring-forward
+  // Sunday — the day a midnight-based step would lose or repeat.
+  const activity = Array.from({ length: 61 }, (_, index) => {
+    const day = new Date(2024, 1, 15 + index, 12);
+    const iso = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(
+      day.getDate(),
+    ).padStart(2, '0')}`;
+    return { date: iso, value: index % 7 };
+  });
   const [notes, setNotes] = useState('<p>A <strong>first</strong> note.</p><p>And a second.</p>');
   const [openFolders, setOpenFolders] = useState('src');
   // Sorted with core's own comparison, which is what makes the element's
@@ -1233,6 +1243,13 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        A calendar heatmap. Its date stepping is core's, which pins every date
+        to midday: a day step from midnight across a daylight-saving boundary
+        loses or repeats a day, and the range below crosses one.
+      */}
+      <PfHeatmap data={activity} cellSize={12} cellGap={3} label="Commits" data-testid="heatmap" />
 
       {/*
         A gauge and a pie. The gauge names what it measures and reports the

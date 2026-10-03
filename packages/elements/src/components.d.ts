@@ -15,6 +15,7 @@ import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-but
 import { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 import { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 import { PfEmptyStateSize } from "./components/pf-empty-state/pf-empty-state";
+import { HeatmapDatumLike, HourCycle, Side, SortDirection, SortState, StepStatus } from "@pitchfork-ui/core";
 import { PfInlineCtaTone } from "./components/pf-inline-cta/pf-inline-cta";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
@@ -22,7 +23,6 @@ import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots"
 import { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 import { PfModalSize } from "./components/pf-modal/pf-modal";
 import { PfNotificationVariant } from "./components/pf-notification/pf-notification";
-import { HourCycle, Side, SortDirection, SortState, StepStatus } from "@pitchfork-ui/core";
 import { PfProgressStepsOrientation } from "./components/pf-progress-steps/pf-progress-steps";
 import { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./components/pf-progress-steps/pf-progress-steps";
 import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
@@ -52,6 +52,7 @@ export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-but
 export { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 export { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
 export { PfEmptyStateSize } from "./components/pf-empty-state/pf-empty-state";
+export { HeatmapDatumLike, HourCycle, Side, SortDirection, SortState, StepStatus } from "@pitchfork-ui/core";
 export { PfInlineCtaTone } from "./components/pf-inline-cta/pf-inline-cta";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
@@ -59,7 +60,6 @@ export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots"
 export { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 export { PfModalSize } from "./components/pf-modal/pf-modal";
 export { PfNotificationVariant } from "./components/pf-notification/pf-notification";
-export { HourCycle, Side, SortDirection, SortState, StepStatus } from "@pitchfork-ui/core";
 export { PfProgressStepsOrientation } from "./components/pf-progress-steps/pf-progress-steps";
 export { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./components/pf-progress-steps/pf-progress-steps";
 export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
@@ -1300,6 +1300,59 @@ export namespace Components {
           * Re-reads the items, for a consumer who marked one current through its *property* — which leaves no attribute and fires no `slotchange`.
          */
         "refresh": () => Promise<void>;
+    }
+    /**
+     * A calendar heatmap: one cell per day, darker where the value is higher.
+     * All of the arithmetic is core's, and the date stepping goes through
+     * `date.ts`, which pins every date to midday — a day step from midnight
+     * across a daylight-saving boundary loses or repeats a day, which is
+     * invisible under UTC and is why both test projects now run in a timezone
+     * that has daylight saving.
+     */
+    interface PfHeatmap {
+        /**
+          * @default 3
+         */
+        "cellGap": number;
+        /**
+          * @default 12
+         */
+        "cellSize": number;
+        /**
+          * One entry per day with a value, as `{ date: 'YYYY-MM-DD', value }`.  An array for a framework consumer, or JSON for plain HTML, because Stencil coerces an attribute only for the primitive types it recognises and would otherwise hand this the string verbatim.
+          * @default []
+         */
+        "data": HeatmapDatumLike[] | string;
+        /**
+          * Last day to draw. Defaults to the latest in the data.
+         */
+        "endDate"?: string;
+        /**
+          * The chart's accessible name. One is generated when it has none.
+         */
+        "label"?: string;
+        /**
+          * Colour buckets, counting the empty one.
+          * @default 5
+         */
+        "levels": number;
+        /**
+          * @default true
+         */
+        "showMonthLabels": boolean;
+        /**
+          * @default true
+         */
+        "showWeekdayLabels": boolean;
+        /**
+          * First day to draw. Defaults to the earliest in the data.
+         */
+        "startDate"?: string;
+        /**
+          * 0 = Sunday, 1 = Monday. Read through a getter, which coerces.
+          * @default 0
+         */
+        "weekStartsOn": 0 | 1;
     }
     interface PfIcon {
         /**
@@ -2674,7 +2727,7 @@ export namespace Components {
          */
         "color"?: string;
         /**
-          * The values to plot.  A `number[]` for a framework consumer, and a comma-separated string for plain HTML — `data="1,4,2,8"` — because Stencil coerces an attribute only for the primitive types it recognises and would otherwise hand this the string verbatim. Read through `values` below, never directly: the same trap `pf-time-picker.hourCycle` hit, where a union-typed prop silently arrived as a string.
+          * The values to plot.  A `number[]` for a framework consumer, and a comma-separated string for plain HTML — `data="1,4,2,8"` — because Stencil coerces an attribute only for the primitive types it recognises, and an array is not one of them. Read through `values` below, never directly.
           * @default []
          */
         "data": number[] | string;
@@ -3158,7 +3211,7 @@ export namespace Components {
         "getValidationMessage": () => Promise<string>;
         "hide": () => Promise<void>;
         /**
-          * 12- or 24-hour display. The value stays 24-hour either way.  Read through `cycle` below, never directly: Stencil coerces an attribute only for the primitive types it recognises, and a union of literals is not one of them. Measured: `hour-cycle="12"` arrives as the **string** `"12"`, so `=== 12` is false, while `minute-step="15"` — declared `number` — arrives as `15`. The union is kept because it is the useful type for a framework consumer, who really does set the number.
+          * 12- or 24-hour display. The value stays 24-hour either way.  Read through `cycle` below, never directly: Stencil coerces an attribute using the prop's type as *written*, and it cannot resolve a name it had to import. Measured: with `HourCycle` imported from core, `hour-cycle="12"` arrives as the **string** `"12"`, so `=== 12` is false, while `minute-step="15"` — declared `number` — arrives as `15`. Writing `0 | 1` out inline *is* coerced, which `pf-heatmap.weekStartsOn` shows; the alias is kept here because it is the shared type, and the getter costs nothing.
           * @default 24
          */
         "hourCycle": HourCycle;
@@ -4363,6 +4416,20 @@ declare global {
     var HTMLPfHeaderNavigationElement: {
         prototype: HTMLPfHeaderNavigationElement;
         new (): HTMLPfHeaderNavigationElement;
+    };
+    /**
+     * A calendar heatmap: one cell per day, darker where the value is higher.
+     * All of the arithmetic is core's, and the date stepping goes through
+     * `date.ts`, which pins every date to midday — a day step from midnight
+     * across a daylight-saving boundary loses or repeats a day, which is
+     * invisible under UTC and is why both test projects now run in a timezone
+     * that has daylight saving.
+     */
+    interface HTMLPfHeatmapElement extends Components.PfHeatmap, HTMLStencilElement {
+    }
+    var HTMLPfHeatmapElement: {
+        prototype: HTMLPfHeatmapElement;
+        new (): HTMLPfHeatmapElement;
     };
     interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
     }
@@ -5670,6 +5737,7 @@ declare global {
         "pf-file-uploader": HTMLPfFileUploaderElement;
         "pf-gauge-chart": HTMLPfGaugeChartElement;
         "pf-header-navigation": HTMLPfHeaderNavigationElement;
+        "pf-heatmap": HTMLPfHeatmapElement;
         "pf-icon": HTMLPfIconElement;
         "pf-inline-cta": HTMLPfInlineCtaElement;
         "pf-input": HTMLPfInputElement;
@@ -6956,6 +7024,59 @@ declare namespace LocalJSX {
           * @default 'Header navigation'
          */
         "label"?: string;
+    }
+    /**
+     * A calendar heatmap: one cell per day, darker where the value is higher.
+     * All of the arithmetic is core's, and the date stepping goes through
+     * `date.ts`, which pins every date to midday — a day step from midnight
+     * across a daylight-saving boundary loses or repeats a day, which is
+     * invisible under UTC and is why both test projects now run in a timezone
+     * that has daylight saving.
+     */
+    interface PfHeatmap {
+        /**
+          * @default 3
+         */
+        "cellGap"?: number;
+        /**
+          * @default 12
+         */
+        "cellSize"?: number;
+        /**
+          * One entry per day with a value, as `{ date: 'YYYY-MM-DD', value }`.  An array for a framework consumer, or JSON for plain HTML, because Stencil coerces an attribute only for the primitive types it recognises and would otherwise hand this the string verbatim.
+          * @default []
+         */
+        "data"?: HeatmapDatumLike[] | string;
+        /**
+          * Last day to draw. Defaults to the latest in the data.
+         */
+        "endDate"?: string;
+        /**
+          * The chart's accessible name. One is generated when it has none.
+         */
+        "label"?: string;
+        /**
+          * Colour buckets, counting the empty one.
+          * @default 5
+         */
+        "levels"?: number;
+        /**
+          * @default true
+         */
+        "showMonthLabels"?: boolean;
+        /**
+          * @default true
+         */
+        "showWeekdayLabels"?: boolean;
+        /**
+          * First day to draw. Defaults to the earliest in the data.
+         */
+        "startDate"?: string;
+        /**
+          * 0 = Sunday, 1 = Monday. Read through a getter, which coerces.
+          * @default 0
+         */
+        "weekStartsOn"?: 0 | 1;
     }
     interface PfIcon {
         /**
@@ -8325,7 +8446,7 @@ declare namespace LocalJSX {
          */
         "color"?: string;
         /**
-          * The values to plot.  A `number[]` for a framework consumer, and a comma-separated string for plain HTML — `data="1,4,2,8"` — because Stencil coerces an attribute only for the primitive types it recognises and would otherwise hand this the string verbatim. Read through `values` below, never directly: the same trap `pf-time-picker.hourCycle` hit, where a union-typed prop silently arrived as a string.
+          * The values to plot.  A `number[]` for a framework consumer, and a comma-separated string for plain HTML — `data="1,4,2,8"` — because Stencil coerces an attribute only for the primitive types it recognises, and an array is not one of them. Read through `values` below, never directly.
           * @default []
          */
         "data"?: number[] | string;
@@ -8823,7 +8944,7 @@ declare namespace LocalJSX {
          */
         "form"?: string;
         /**
-          * 12- or 24-hour display. The value stays 24-hour either way.  Read through `cycle` below, never directly: Stencil coerces an attribute only for the primitive types it recognises, and a union of literals is not one of them. Measured: `hour-cycle="12"` arrives as the **string** `"12"`, so `=== 12` is false, while `minute-step="15"` — declared `number` — arrives as `15`. The union is kept because it is the useful type for a framework consumer, who really does set the number.
+          * 12- or 24-hour display. The value stays 24-hour either way.  Read through `cycle` below, never directly: Stencil coerces an attribute using the prop's type as *written*, and it cannot resolve a name it had to import. Measured: with `HourCycle` imported from core, `hour-cycle="12"` arrives as the **string** `"12"`, so `=== 12` is false, while `minute-step="15"` — declared `number` — arrives as `15`. Writing `0 | 1` out inline *is* coerced, which `pf-heatmap.weekStartsOn` shows; the alias is kept here because it is the shared type, and the getter costs nothing.
           * @default 24
          */
         "hourCycle"?: HourCycle;
@@ -9369,6 +9490,18 @@ declare namespace LocalJSX {
     interface PfHeaderNavigationAttributes {
         "label": string;
     }
+    interface PfHeatmapAttributes {
+        "data": HeatmapDatumLike[] | string;
+        "startDate": string;
+        "endDate": string;
+        "levels": number;
+        "weekStartsOn": 0 | 1;
+        "cellSize": number;
+        "cellGap": number;
+        "showWeekdayLabels": boolean;
+        "showMonthLabels": boolean;
+        "label": string;
+    }
     interface PfIconAttributes {
         "name": string;
         "label": string;
@@ -9817,6 +9950,7 @@ declare namespace LocalJSX {
         "pf-file-uploader": Omit<PfFileUploader, keyof PfFileUploaderAttributes> & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes]?: PfFileUploader[K] } & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes as `attr:${K}`]?: PfFileUploaderAttributes[K] } & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes as `prop:${K}`]?: PfFileUploader[K] };
         "pf-gauge-chart": Omit<PfGaugeChart, keyof PfGaugeChartAttributes> & { [K in keyof PfGaugeChart & keyof PfGaugeChartAttributes]?: PfGaugeChart[K] } & { [K in keyof PfGaugeChart & keyof PfGaugeChartAttributes as `attr:${K}`]?: PfGaugeChartAttributes[K] } & { [K in keyof PfGaugeChart & keyof PfGaugeChartAttributes as `prop:${K}`]?: PfGaugeChart[K] };
         "pf-header-navigation": Omit<PfHeaderNavigation, keyof PfHeaderNavigationAttributes> & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes]?: PfHeaderNavigation[K] } & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes as `attr:${K}`]?: PfHeaderNavigationAttributes[K] } & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes as `prop:${K}`]?: PfHeaderNavigation[K] };
+        "pf-heatmap": Omit<PfHeatmap, keyof PfHeatmapAttributes> & { [K in keyof PfHeatmap & keyof PfHeatmapAttributes]?: PfHeatmap[K] } & { [K in keyof PfHeatmap & keyof PfHeatmapAttributes as `attr:${K}`]?: PfHeatmapAttributes[K] } & { [K in keyof PfHeatmap & keyof PfHeatmapAttributes as `prop:${K}`]?: PfHeatmap[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-inline-cta": Omit<PfInlineCta, keyof PfInlineCtaAttributes> & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes]?: PfInlineCta[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `attr:${K}`]?: PfInlineCtaAttributes[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `prop:${K}`]?: PfInlineCta[K] };
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
@@ -10219,6 +10353,15 @@ declare module "@stencil/core" {
              * a consumer who wants a banner puts this inside their own `<header>`.
              */
             "pf-header-navigation": LocalJSX.IntrinsicElements["pf-header-navigation"] & JSXBase.HTMLAttributes<HTMLPfHeaderNavigationElement>;
+            /**
+             * A calendar heatmap: one cell per day, darker where the value is higher.
+             * All of the arithmetic is core's, and the date stepping goes through
+             * `date.ts`, which pins every date to midday — a day step from midnight
+             * across a daylight-saving boundary loses or repeats a day, which is
+             * invisible under UTC and is why both test projects now run in a timezone
+             * that has daylight saving.
+             */
+            "pf-heatmap": LocalJSX.IntrinsicElements["pf-heatmap"] & JSXBase.HTMLAttributes<HTMLPfHeatmapElement>;
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
              * A prompt in the flow of a page: an icon, a line or two, something to do, and

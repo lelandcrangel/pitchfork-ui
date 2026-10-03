@@ -37,6 +37,7 @@ import {
   PfHeaderNavigation,
   PfFileUploader,
   PfGaugeChart,
+  PfHeatmap,
   PfIcon,
   PfInlineCta,
   PfInput,
@@ -152,6 +153,7 @@ import {
     PfHeaderNavigation,
     PfFileUploader,
     PfGaugeChart,
+    PfHeatmap,
     PfIcon,
     PfInlineCta,
     PfInput,
@@ -1034,6 +1036,15 @@ import {
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
 
+      <!-- A calendar heatmap, whose date stepping is core's; see the React consumer. -->
+      <pf-heatmap
+        [data]="activity"
+        [cellSize]="12"
+        [cellGap]="3"
+        label="Commits"
+        data-testid="heatmap"
+      ></pf-heatmap>
+
       <!-- A gauge and a pie; see the React consumer. -->
       <div style="display: flex; gap: var(--space-6); align-items: center">
         <pf-gauge-chart
@@ -1166,6 +1177,14 @@ export class AppComponent {
   split = signal(40);
   uploads = signal<File[]>([]);
   copiedCode = signal('');
+  // Two months, crossing a month boundary and the spring-forward Sunday.
+  activity = Array.from({ length: 61 }, (_, index) => {
+    const day = new Date(2024, 1, 15 + index, 12);
+    const iso = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(
+      day.getDate(),
+    ).padStart(2, '0')}`;
+    return { date: iso, value: index % 7 };
+  });
   trend = [4, 9, 6, 12, 10, 16];
   flat = [7, 7, 7, 7];
   notes = signal('<p>A <strong>first</strong> note.</p><p>And a second.</p>');

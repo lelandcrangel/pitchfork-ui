@@ -26,10 +26,8 @@ export class PfSparkline {
    *
    * A `number[]` for a framework consumer, and a comma-separated string for
    * plain HTML — `data="1,4,2,8"` — because Stencil coerces an attribute only
-   * for the primitive types it recognises and would otherwise hand this the
-   * string verbatim. Read through `values` below, never directly: the same
-   * trap `pf-time-picker.hourCycle` hit, where a union-typed prop silently
-   * arrived as a string.
+   * for the primitive types it recognises, and an array is not one of them.
+   * Read through `values` below, never directly.
    */
   @Prop() data: number[] | string = [];
 

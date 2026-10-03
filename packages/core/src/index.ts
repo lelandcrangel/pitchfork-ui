@@ -10,6 +10,7 @@ export * from './date-range';
 export * from './dismiss';
 export * from './files';
 export * from './focus';
+export * from './heatmap';
 export * from './icons';
 export * from './keys';
 export * from './motion';

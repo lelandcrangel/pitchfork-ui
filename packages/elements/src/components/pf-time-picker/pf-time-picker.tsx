@@ -72,11 +72,13 @@ export class PfTimePicker {
    * 12- or 24-hour display. The value stays 24-hour either way.
    *
    * Read through `cycle` below, never directly: Stencil coerces an attribute
-   * only for the primitive types it recognises, and a union of literals is
-   * not one of them. Measured: `hour-cycle="12"` arrives as the **string**
-   * `"12"`, so `=== 12` is false, while `minute-step="15"` — declared
-   * `number` — arrives as `15`. The union is kept because it is the useful
-   * type for a framework consumer, who really does set the number.
+   * using the prop's type as *written*, and it cannot resolve a name it had
+   * to import. Measured: with `HourCycle` imported from core,
+   * `hour-cycle="12"` arrives as the **string** `"12"`, so `=== 12` is
+   * false, while `minute-step="15"` — declared `number` — arrives as `15`.
+   * Writing `0 | 1` out inline *is* coerced, which `pf-heatmap.weekStartsOn`
+   * shows; the alias is kept here because it is the shared type, and the
+   * getter costs nothing.
    */
   @Prop() hourCycle: HourCycle = 24;
 

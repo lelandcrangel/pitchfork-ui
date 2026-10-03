@@ -47,6 +47,7 @@ const EXPECTED = [
   'pf-header-navigation',
   'pf-file-uploader',
   'pf-gauge-chart',
+  'pf-heatmap',
   'pf-icon',
   'pf-card',
   'pf-carousel',
@@ -4799,6 +4800,144 @@ try {
       }
       if (!(state.holeSize > 0 && state.holeSize < state.chartSize)) {
         problems.push(`the hole measured ${state.holeSize}px in a ${state.chartSize}px chart`);
+      }
+    }
+  }
+
+  /*
+   * The heatmap, whose shape is entirely CSS grid: seven fixed rows filled
+   * top to bottom and then left to right, which no test project can see.
+   * Plus the `color-mix` scale — a mix has to resolve against a real
+   * background — and the staggered entrance, whose `@keyframes` need a copy
+   * inside this shadow root.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-heatmap');
+        if (!el) return { error: 'the consumer app has no pf-heatmap' };
+
+        const part = (name) => el.shadowRoot.querySelector(`[part="${name}"]`);
+        const cells = [...el.shadowRoot.querySelectorAll('[part="cell"]')];
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const grid = part('grid');
+        const boxes = cells.map((cell) => cell.getBoundingClientRect());
+        const rows = new Set(boxes.map((box) => Math.round(box.top)));
+        const columns = new Set(boxes.map((box) => Math.round(box.left)));
+
+        const levelColour = (level) => {
+          const cell = cells.find((node) => node.getAttribute('data-level') === String(level));
+          return cell ? getComputedStyle(cell).backgroundColor : null;
+        };
+
+        /*
+         * The entrance animation has no fill mode and finished long before
+         * this block runs, so it has to be restarted to be seen — and with a
+         * frame between the two assignments, since these are real HTML
+         * elements but the idiom is the same one the charts need.
+         */
+        const first = cells[0];
+        first.style.animation = 'none';
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        first.style.animation = '';
+
+        const deadline = Date.now() + 3000;
+        let running = first.getAnimations();
+        while (running.length === 0 && Date.now() < deadline) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          running = first.getAnimations();
+        }
+
+        return {
+          cellCount: cells.length,
+          rowCount: rows.size,
+          columnCount: columns.size,
+          // Columns fill downward: the second cell is below the first.
+          fillsDownward: boxes[1].top > boxes[0].top && Math.abs(boxes[1].left - boxes[0].left) < 1,
+          cellSize: Math.round(boxes[0].width),
+          cellGap: Math.round(boxes[1].top - boxes[0].bottom),
+          gridWidth: grid.getBoundingClientRect().width,
+          // The mix: every level a different colour, and all of them real.
+          colours: [0, 1, 2, 4].map(levelColour),
+          animationName: getComputedStyle(first).animationName,
+          animationsRunning: running.length,
+          // The labels sit beside and above the grid.
+          weekdaysLeft:
+            part('weekdays').getBoundingClientRect().right <= grid.getBoundingClientRect().left + 1,
+          monthsAbove:
+            part('months').getBoundingClientRect().bottom <= grid.getBoundingClientRect().top + 1,
+          monthCount: el.shadowRoot.querySelectorAll('.month').length,
+          label: el.getAttribute('aria-label'),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-heatmap: ${state.error}`);
+    } else {
+      if (state.cellCount !== 61) {
+        problems.push(`the heatmap drew ${state.cellCount} cells for 61 days`);
+      }
+      if (state.rowCount !== 7) {
+        problems.push(
+          `the cells landed on ${state.rowCount} rows — the seven fixed grid rows did not apply`,
+        );
+      }
+      if (state.columnCount < 9) {
+        problems.push(
+          `the cells landed in ${state.columnCount} columns, too few for nine weeks — the grid ` +
+            'is not flowing by column',
+        );
+      }
+      if (!state.fillsDownward) {
+        problems.push('the grid fills across rather than down, so a row is not one weekday');
+      }
+      if (state.cellSize !== 12) {
+        problems.push(
+          `a cell measured ${state.cellSize}px — the --pf-heatmap-cell-size the consumer set ` +
+            'did not reach it',
+        );
+      }
+      if (state.cellGap !== 3) {
+        problems.push(`the gap between cells measured ${state.cellGap}px, expected 3`);
+      }
+      if (state.colours.some((colour) => !colour || colour === 'rgba(0, 0, 0, 0)')) {
+        problems.push(
+          `a level has no colour (${JSON.stringify(state.colours)}) — the color-mix scale did ` +
+            'not resolve',
+        );
+      }
+      if (new Set(state.colours).size !== state.colours.length) {
+        problems.push(
+          `two levels share a colour (${JSON.stringify(state.colours)}) — the scale is flat`,
+        );
+      }
+      if (state.animationName !== 'pf-heatmap-cell-in') {
+        problems.push(`the cells' animation-name computes to "${state.animationName}"`);
+      }
+      if (state.animationsRunning === 0) {
+        problems.push(
+          'the cells declared an animation and ran none — the shadow root has no copy of the ' +
+            'keyframes',
+        );
+      }
+      if (!state.weekdaysLeft) {
+        problems.push('the weekday labels are not to the left of the grid');
+      }
+      if (!state.monthsAbove) {
+        problems.push('the month labels are not above the grid');
+      }
+      if (state.monthCount !== 3) {
+        problems.push(`the heatmap named ${state.monthCount} months across a range spanning three`);
+      }
+      if (state.label !== 'Commits') {
+        problems.push(`the heatmap is named "${state.label}"`);
       }
     }
   }
