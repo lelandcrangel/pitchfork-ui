@@ -643,6 +643,21 @@ Things that differ from the React library, learned by porting the first two:
   Assign the tag to a variable cast to one of the literals (`as 'h3'`) and use
   ordinary JSX, which keeps the props checked against a real heading element.
   `pf-accordion-item` is the worked example.
+- **Keep a group's answer out of the prop the consumer asked with.**
+  `pf-breadcrumbs` resolves which crumb is the current page — the one marked,
+  or the last — and first wrote that answer back to the children's `current`.
+  It looked stable, and re-syncing did reach the same answer. Appending a crumb
+  did not: the crumb that had merely happened to be last now carried `current`,
+  so it read as a crumb the consumer had marked and kept the mark. The ask
+  (`current`) and the answer (`current-page`) are separate props now, and a
+  browser test that appends a crumb is what caught it. Worth remembering
+  wherever a group writes derived state onto its children: `pf-tabs` is safe
+  only because the ask lives on the group, as its `value`.
+- **A repeated ornament cannot be a slot.** A slot renders its assigned
+  content once, in one place, so a separator that has to appear between every
+  pair of children has no slot form — `pf-breadcrumbs` takes the separator as
+  a _string_ where the React `Breadcrumbs` takes a `ReactNode`, and pushes it
+  down for each crumb to draw its own.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

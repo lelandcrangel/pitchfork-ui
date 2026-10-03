@@ -100,6 +100,8 @@ const EXPECTED = [
   'pf-accordion',
   'pf-accordion-item',
   'pf-collapsible',
+  'pf-breadcrumbs',
+  'pf-breadcrumb',
 ];
 
 const TYPES = {
@@ -2059,6 +2061,95 @@ try {
           `Escape on the pf-collapsible header left it ` +
             `"${state.echoAfterEscape}" (closed: ${state.closedAgain})`,
         );
+      }
+    }
+  }
+
+  /*
+   * The breadcrumb trail. Two claims only a real build makes: the crumbs are
+   * laid out in a row by the `<ol>` inside the shadow root — which depends on
+   * the slot generating no box of its own — and the separator the group pushes
+   * down is drawn by every crumb but the last.
+   */
+  {
+    const state = await page
+      .evaluate(() => {
+        const trail = document.querySelector('pf-breadcrumbs');
+        if (!trail) return { error: 'the consumer app has no pf-breadcrumbs' };
+
+        const crumbs = Array.from(trail.querySelectorAll('pf-breadcrumb'));
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const list = part(trail, 'list');
+        const boxes = crumbs.map((crumb) => crumb.getBoundingClientRect());
+
+        return {
+          role: trail.getAttribute('role'),
+          name: trail.getAttribute('aria-label'),
+          slotDisplay: getComputedStyle(list.querySelector('slot')).display,
+          // A row: every crumb shares a baseline and each starts right of the
+          // one before it. A slot with a box of its own would stack them.
+          inARow: boxes.every((box, index) => index === 0 || box.left > boxes[index - 1].left),
+          sameLine: boxes.every((box) => Math.abs(box.top - boxes[0].top) < 2),
+          separators: crumbs.map((crumb) => part(crumb, 'separator')?.textContent ?? null),
+          currentPages: crumbs
+            .filter((crumb) => part(crumb, 'link').getAttribute('aria-current') === 'page')
+            .map((crumb) => crumb.textContent.trim()),
+          currentColour: getComputedStyle(part(crumbs[2], 'link')).color,
+          linkColour: getComputedStyle(part(crumbs[0], 'link')).color,
+          separatorColour: getComputedStyle(part(crumbs[0], 'separator')).color,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-breadcrumbs: ${state.error}`);
+    } else {
+      if (state.role !== 'navigation' || state.name !== 'Site breadcrumb') {
+        problems.push(
+          `pf-breadcrumbs is a ${state.role} named "${state.name}", ` +
+            'expected a navigation landmark with the consumer’s name',
+        );
+      }
+      if (state.slotDisplay !== 'contents') {
+        problems.push(
+          `the pf-breadcrumbs slot computes display: ${state.slotDisplay} — ` +
+            'the crumbs are items of a box inside the list rather than of the list',
+        );
+      }
+      if (!state.inARow || !state.sameLine) {
+        problems.push(
+          `the crumbs did not lay out in a row (in order: ${state.inARow}, ` +
+            `one line: ${state.sameLine})`,
+        );
+      }
+      if (state.separators.join('|') !== '›|›|') {
+        problems.push(
+          `the crumb separators read ${JSON.stringify(state.separators)}, ` +
+            'expected the pushed-down string after all but the last',
+        );
+      }
+      if (state.currentPages.join(',') !== 'Shoes') {
+        problems.push(
+          `aria-current="page" is on ${JSON.stringify(state.currentPages)}, ` +
+            'expected the last crumb alone',
+        );
+      }
+      if (state.currentColour === state.linkColour) {
+        problems.push(
+          `the current crumb is the same colour as a link ("${state.linkColour}") — ` +
+            'the [current-page] rule did not apply',
+        );
+      }
+      for (const [which, colour] of [
+        ['a crumb link', state.linkColour],
+        ['a crumb separator', state.separatorColour],
+      ]) {
+        if (colour === 'rgb(0, 0, 0)') {
+          problems.push(
+            `${which} computes colour ${colour}, the initial value — ` +
+              'a --pf-breadcrumbs-* alias did not resolve',
+          );
+        }
       }
     }
   }

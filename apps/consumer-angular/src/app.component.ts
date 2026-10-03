@@ -6,6 +6,8 @@ import {
   PfAvatar,
   PfBadge,
   PfBadgeGroup,
+  PfBreadcrumb,
+  PfBreadcrumbs,
   PfButton,
   PfCalendar,
   PfCard,
@@ -83,6 +85,8 @@ import {
     PfAvatar,
     PfBadge,
     PfBadgeGroup,
+    PfBreadcrumb,
+    PfBreadcrumbs,
     PfButton,
     PfCalendar,
     PfCard,
@@ -647,6 +651,13 @@ import {
         </p>
       </pf-collapsible>
       <output data-testid="collapsible-value">{{ details() ? 'open' : 'closed' }}</output>
+
+      <!-- A string separator, drawn by each crumb; see the React consumer. -->
+      <pf-breadcrumbs label="Site breadcrumb" separator="›" data-testid="breadcrumbs">
+        <pf-breadcrumb href="#home">Home</pf-breadcrumb>
+        <pf-breadcrumb href="#products">Products</pf-breadcrumb>
+        <pf-breadcrumb>Shoes</pf-breadcrumb>
+      </pf-breadcrumbs>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>

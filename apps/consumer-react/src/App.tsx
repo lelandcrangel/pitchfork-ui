@@ -5,6 +5,8 @@ import {
   PfAvatar,
   PfBadge,
   PfBadgeGroup,
+  PfBreadcrumb,
+  PfBreadcrumbs,
   PfButton,
   PfCalendar,
   PfCard,
@@ -737,6 +739,19 @@ export function App() {
         </p>
       </PfCollapsible>
       <output data-testid="collapsible-value">{details ? 'open' : 'closed'}</output>
+
+      {/*
+        The separator is a string, not a slot: it appears between every pair,
+        and a slot renders its content once — so each crumb draws its own from
+        the string the group pushes down. `current` is what a consumer asks
+        with; `current-page` is the group's answer, and only one crumb in the
+        trail carries it.
+      */}
+      <PfBreadcrumbs label="Site breadcrumb" separator="›" data-testid="breadcrumbs">
+        <PfBreadcrumb href="#home">Home</PfBreadcrumb>
+        <PfBreadcrumb href="#products">Products</PfBreadcrumb>
+        <PfBreadcrumb>Shoes</PfBreadcrumb>
+      </PfBreadcrumbs>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

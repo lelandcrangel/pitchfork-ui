@@ -186,6 +186,68 @@ export namespace Components {
          */
         "message": string;
     }
+    /**
+     * One crumb in a `pf-breadcrumbs` trail.
+     * With an `href` it renders a link; without one it renders a plain span, which
+     * is both what a current page wants and the way to use a framework's own
+     * router — slot an `<a routerLink>` or a `<Link>` in and leave `href` unset.
+     * `currentPage`, `last` and `separator` are the group's to set: only it can
+     * see the trail. A consumer asks by setting `current`; the group resolves the
+     * trail with core's rule and writes the answer to `currentPage`.
+     */
+    interface PfBreadcrumb {
+        /**
+          * Set it to mark this crumb as the current page, rather than letting the last crumb be it.  This is the *asking* half, and the group never writes it — `currentPage` below is the answer. Keeping the two apart is what lets the trail change: if the group wrote its answer back here, the crumb that happened to be last would look like a crumb the consumer had marked, and appending another would leave the mark behind on it.
+          * @default false
+         */
+        "current": boolean;
+        /**
+          * Set by the group: the resolved current page, which is the one thing that renders `aria-current="page"`. Exactly one crumb in a trail carries it.
+          * @default false
+         */
+        "currentPage": boolean;
+        /**
+          * Where the crumb goes. Reflected; a consumer's stylesheet reads it.
+         */
+        "href"?: string;
+        /**
+          * Set by the group: no separator is drawn after the last crumb.
+          * @default false
+         */
+        "last": boolean;
+        /**
+          * Set by the group from its own `separator`.
+          * @default '/'
+         */
+        "separator": string;
+    }
+    /**
+     * A breadcrumb trail over `pf-breadcrumb` children.
+     * The group owns the two things a crumb cannot know on its own: which crumb is
+     * the current page, and which one is last — so only the last goes without a
+     * separator after it.
+     * The separator is a **string**, where the React `separator` is a
+     * `ReactNode`, because it has to appear between every pair: a slot renders its
+     * assigned content once and in one place, so there is no way to repeat
+     * slotted content down the trail. Each crumb draws its own instead, which is
+     * why the group pushes the string down.
+     */
+    interface PfBreadcrumbs {
+        /**
+          * The trail's accessible name.
+          * @default 'Breadcrumb'
+         */
+        "label": string;
+        /**
+          * Re-reads the children, for a consumer who marked a crumb current through its *property* — which leaves no attribute and fires no `slotchange`.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Drawn after every crumb but the last.
+          * @default '/'
+         */
+        "separator": string;
+    }
     interface PfButton {
         /**
           * Disable the button.
@@ -2334,6 +2396,38 @@ declare global {
         prototype: HTMLPfBadgeGroupElement;
         new (): HTMLPfBadgeGroupElement;
     };
+    /**
+     * One crumb in a `pf-breadcrumbs` trail.
+     * With an `href` it renders a link; without one it renders a plain span, which
+     * is both what a current page wants and the way to use a framework's own
+     * router — slot an `<a routerLink>` or a `<Link>` in and leave `href` unset.
+     * `currentPage`, `last` and `separator` are the group's to set: only it can
+     * see the trail. A consumer asks by setting `current`; the group resolves the
+     * trail with core's rule and writes the answer to `currentPage`.
+     */
+    interface HTMLPfBreadcrumbElement extends Components.PfBreadcrumb, HTMLStencilElement {
+    }
+    var HTMLPfBreadcrumbElement: {
+        prototype: HTMLPfBreadcrumbElement;
+        new (): HTMLPfBreadcrumbElement;
+    };
+    /**
+     * A breadcrumb trail over `pf-breadcrumb` children.
+     * The group owns the two things a crumb cannot know on its own: which crumb is
+     * the current page, and which one is last — so only the last goes without a
+     * separator after it.
+     * The separator is a **string**, where the React `separator` is a
+     * `ReactNode`, because it has to appear between every pair: a slot renders its
+     * assigned content once and in one place, so there is no way to repeat
+     * slotted content down the trail. Each crumb draws its own instead, which is
+     * why the group pushes the string down.
+     */
+    interface HTMLPfBreadcrumbsElement extends Components.PfBreadcrumbs, HTMLStencilElement {
+    }
+    var HTMLPfBreadcrumbsElement: {
+        prototype: HTMLPfBreadcrumbsElement;
+        new (): HTMLPfBreadcrumbsElement;
+    };
     interface HTMLPfButtonElement extends Components.PfButton, HTMLStencilElement {
     }
     var HTMLPfButtonElement: {
@@ -3468,6 +3562,8 @@ declare global {
         "pf-avatar": HTMLPfAvatarElement;
         "pf-badge": HTMLPfBadgeElement;
         "pf-badge-group": HTMLPfBadgeGroupElement;
+        "pf-breadcrumb": HTMLPfBreadcrumbElement;
+        "pf-breadcrumbs": HTMLPfBreadcrumbsElement;
         "pf-button": HTMLPfButtonElement;
         "pf-calendar": HTMLPfCalendarElement;
         "pf-card": HTMLPfCardElement;
@@ -3661,6 +3757,64 @@ declare namespace LocalJSX {
           * @default ''
          */
         "message"?: string;
+    }
+    /**
+     * One crumb in a `pf-breadcrumbs` trail.
+     * With an `href` it renders a link; without one it renders a plain span, which
+     * is both what a current page wants and the way to use a framework's own
+     * router — slot an `<a routerLink>` or a `<Link>` in and leave `href` unset.
+     * `currentPage`, `last` and `separator` are the group's to set: only it can
+     * see the trail. A consumer asks by setting `current`; the group resolves the
+     * trail with core's rule and writes the answer to `currentPage`.
+     */
+    interface PfBreadcrumb {
+        /**
+          * Set it to mark this crumb as the current page, rather than letting the last crumb be it.  This is the *asking* half, and the group never writes it — `currentPage` below is the answer. Keeping the two apart is what lets the trail change: if the group wrote its answer back here, the crumb that happened to be last would look like a crumb the consumer had marked, and appending another would leave the mark behind on it.
+          * @default false
+         */
+        "current"?: boolean;
+        /**
+          * Set by the group: the resolved current page, which is the one thing that renders `aria-current="page"`. Exactly one crumb in a trail carries it.
+          * @default false
+         */
+        "currentPage"?: boolean;
+        /**
+          * Where the crumb goes. Reflected; a consumer's stylesheet reads it.
+         */
+        "href"?: string;
+        /**
+          * Set by the group: no separator is drawn after the last crumb.
+          * @default false
+         */
+        "last"?: boolean;
+        /**
+          * Set by the group from its own `separator`.
+          * @default '/'
+         */
+        "separator"?: string;
+    }
+    /**
+     * A breadcrumb trail over `pf-breadcrumb` children.
+     * The group owns the two things a crumb cannot know on its own: which crumb is
+     * the current page, and which one is last — so only the last goes without a
+     * separator after it.
+     * The separator is a **string**, where the React `separator` is a
+     * `ReactNode`, because it has to appear between every pair: a slot renders its
+     * assigned content once and in one place, so there is no way to repeat
+     * slotted content down the trail. Each crumb draws its own instead, which is
+     * why the group pushes the string down.
+     */
+    interface PfBreadcrumbs {
+        /**
+          * The trail's accessible name.
+          * @default 'Breadcrumb'
+         */
+        "label"?: string;
+        /**
+          * Drawn after every crumb but the last.
+          * @default '/'
+         */
+        "separator"?: string;
     }
     interface PfButton {
         /**
@@ -5637,6 +5791,17 @@ declare namespace LocalJSX {
         "appearance": PfBadgeGroupAppearance;
         "badgePosition": PfBadgeGroupBadgePosition;
     }
+    interface PfBreadcrumbAttributes {
+        "href": string;
+        "current": boolean;
+        "currentPage": boolean;
+        "last": boolean;
+        "separator": string;
+    }
+    interface PfBreadcrumbsAttributes {
+        "label": string;
+        "separator": string;
+    }
     interface PfButtonAttributes {
         "variant": PfButtonVariant;
         "size": PfButtonSize;
@@ -6014,6 +6179,8 @@ declare namespace LocalJSX {
         "pf-avatar": Omit<PfAvatar, keyof PfAvatarAttributes> & { [K in keyof PfAvatar & keyof PfAvatarAttributes]?: PfAvatar[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `attr:${K}`]?: PfAvatarAttributes[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `prop:${K}`]?: PfAvatar[K] };
         "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
         "pf-badge-group": Omit<PfBadgeGroup, keyof PfBadgeGroupAttributes> & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes]?: PfBadgeGroup[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `attr:${K}`]?: PfBadgeGroupAttributes[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `prop:${K}`]?: PfBadgeGroup[K] };
+        "pf-breadcrumb": Omit<PfBreadcrumb, keyof PfBreadcrumbAttributes> & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes]?: PfBreadcrumb[K] } & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes as `attr:${K}`]?: PfBreadcrumbAttributes[K] } & { [K in keyof PfBreadcrumb & keyof PfBreadcrumbAttributes as `prop:${K}`]?: PfBreadcrumb[K] };
+        "pf-breadcrumbs": Omit<PfBreadcrumbs, keyof PfBreadcrumbsAttributes> & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes]?: PfBreadcrumbs[K] } & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes as `attr:${K}`]?: PfBreadcrumbsAttributes[K] } & { [K in keyof PfBreadcrumbs & keyof PfBreadcrumbsAttributes as `prop:${K}`]?: PfBreadcrumbs[K] };
         "pf-button": Omit<PfButton, keyof PfButtonAttributes> & { [K in keyof PfButton & keyof PfButtonAttributes]?: PfButton[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `attr:${K}`]?: PfButtonAttributes[K] } & { [K in keyof PfButton & keyof PfButtonAttributes as `prop:${K}`]?: PfButton[K] };
         "pf-calendar": Omit<PfCalendar, keyof PfCalendarAttributes> & { [K in keyof PfCalendar & keyof PfCalendarAttributes]?: PfCalendar[K] } & { [K in keyof PfCalendar & keyof PfCalendarAttributes as `attr:${K}`]?: PfCalendarAttributes[K] } & { [K in keyof PfCalendar & keyof PfCalendarAttributes as `prop:${K}`]?: PfCalendar[K] };
         "pf-card": PfCard;
@@ -6111,6 +6278,28 @@ declare module "@stencil/core" {
              * "2 new · See what's changed" pattern.
              */
             "pf-badge-group": LocalJSX.IntrinsicElements["pf-badge-group"] & JSXBase.HTMLAttributes<HTMLPfBadgeGroupElement>;
+            /**
+             * One crumb in a `pf-breadcrumbs` trail.
+             * With an `href` it renders a link; without one it renders a plain span, which
+             * is both what a current page wants and the way to use a framework's own
+             * router — slot an `<a routerLink>` or a `<Link>` in and leave `href` unset.
+             * `currentPage`, `last` and `separator` are the group's to set: only it can
+             * see the trail. A consumer asks by setting `current`; the group resolves the
+             * trail with core's rule and writes the answer to `currentPage`.
+             */
+            "pf-breadcrumb": LocalJSX.IntrinsicElements["pf-breadcrumb"] & JSXBase.HTMLAttributes<HTMLPfBreadcrumbElement>;
+            /**
+             * A breadcrumb trail over `pf-breadcrumb` children.
+             * The group owns the two things a crumb cannot know on its own: which crumb is
+             * the current page, and which one is last — so only the last goes without a
+             * separator after it.
+             * The separator is a **string**, where the React `separator` is a
+             * `ReactNode`, because it has to appear between every pair: a slot renders its
+             * assigned content once and in one place, so there is no way to repeat
+             * slotted content down the trail. Each crumb draws its own instead, which is
+             * why the group pushes the string down.
+             */
+            "pf-breadcrumbs": LocalJSX.IntrinsicElements["pf-breadcrumbs"] & JSXBase.HTMLAttributes<HTMLPfBreadcrumbsElement>;
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
             /**
              * A month grid for picking a date.

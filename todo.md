@@ -273,3 +273,21 @@ to the first enabled tab when nothing matches, which `resolveSelectedTab`
 already works out), and guard the click on `item.value !== selectedItem?.value`.
 Both are small; they are here rather than done because changing which element
 is tabbable is a behaviour change for consumers' own tests.
+
+---
+
+## The React `Breadcrumbs` marked two current pages — fixed
+
+`aria-current="page"` identifies one page. `Breadcrumbs` read
+`item.current ?? isLast` per item, so marking any crumb but the last left the
+attribute on both it and the last one, and a screen reader was told the user
+was on two pages at once.
+
+Both layers now take one index from core's `resolveCurrentCrumb` — the first
+crumb marked, or the last when none is. Two React tests cover it and the first
+fails against the old expression.
+
+**Nothing left to do here.** The entry stands as a note that a per-item
+`?? isLast` is the shape to look for: the same reading would be wrong in
+`ProgressSteps` and in `Timeline`, both of which have a "current" of their own
+and are still to be ported.

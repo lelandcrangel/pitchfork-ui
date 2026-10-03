@@ -1,5 +1,6 @@
 export * from './anchoring';
 export * from './aria';
+export * from './breadcrumbs';
 export * from './command';
 export * from './date';
 export * from './date-range';
