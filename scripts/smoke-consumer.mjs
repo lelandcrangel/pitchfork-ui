@@ -58,6 +58,7 @@ const EXPECTED = [
   'pf-loading-dots',
   'pf-loading-skeleton',
   'pf-utility-button',
+  'pf-resizable',
   'pf-scroll-area',
   'pf-badge-group',
   'pf-progress-bar',
@@ -3886,6 +3887,154 @@ try {
       }
       if (!state.secondAsked) {
         problems.push('the sidebar cleared the second item’s current attribute');
+      }
+    }
+  }
+
+  /*
+   * The splitter, whose point is a layout: the first panel takes the share
+   * the separator reports and the second takes the rest, which only the
+   * stylesheet's `flex` rules make true. Dragged with a real pointer against
+   * a real build, because the share is read off the host's own box and a
+   * stylesheet that failed to load would leave the panels stacked at their
+   * content widths with every attribute still correct.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-resizable');
+        if (!el) return { error: 'the consumer app has no pf-resizable' };
+
+        const part = (name) => el.shadowRoot.querySelector(`[part="${name}"]`);
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const host = el.getBoundingClientRect();
+        const handle = part('handle');
+        const start = part('start').getBoundingClientRect();
+        const end = part('end').getBoundingClientRect();
+        const handleBox = handle.getBoundingClientRect();
+
+        const read = {
+          reported: Number(handle.getAttribute('aria-valuenow')),
+          startShare: (start.width / host.width) * 100,
+          // The three boxes fill the host between them, side by side.
+          sideBySide:
+            Math.round(start.right) <= Math.round(handleBox.left) + 1 &&
+            Math.round(handleBox.right) <= Math.round(end.left) + 1,
+          covered: (start.width + handleBox.width + end.width) / host.width,
+          handleWidth: handleBox.width,
+          handleCursor: getComputedStyle(handle).cursor,
+          // A drag must not be turned into a page scroll by the browser.
+          touchAction: getComputedStyle(handle).touchAction,
+          grip: getComputedStyle(part('grip')).backgroundColor,
+          ringWhenBlurred: getComputedStyle(handle).boxShadow,
+        };
+
+        // A real drag, with real pointer capture, to a quarter of the host.
+        const target = host.left + host.width * 0.25;
+        handle.dispatchEvent(
+          new PointerEvent('pointerdown', { pointerId: 1, bubbles: true, composed: true }),
+        );
+        handle.dispatchEvent(
+          new PointerEvent('pointermove', {
+            pointerId: 1,
+            clientX: target,
+            clientY: host.top + 10,
+            bubbles: true,
+            composed: true,
+          }),
+        );
+
+        const echo = () =>
+          document.querySelector('[data-testid="resizable-size"]')?.textContent?.trim();
+        const deadline = Date.now() + 3000;
+        while (echo() !== '25') {
+          if (Date.now() > deadline) {
+            return { ...read, echo: echo(), error: 'the drag never echoed' };
+          }
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        handle.dispatchEvent(
+          new PointerEvent('pointerup', { pointerId: 1, bubbles: true, composed: true }),
+        );
+        await settle();
+
+        const ringWhenFocused = getComputedStyle(handle).boxShadow;
+        const draggedStart = part('start').getBoundingClientRect();
+
+        return {
+          ...read,
+          echo: echo(),
+          ringWhenFocused,
+          draggedShare: (draggedStart.width / host.width) * 100,
+          // The separator sits where the pointer left it.
+          handleAtPointer: Math.abs(part('handle').getBoundingClientRect().left - target),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-resizable: ${state.error}`);
+    } else {
+      if (Math.abs(state.startShare - state.reported) > 2) {
+        problems.push(
+          `the first panel takes ${state.startShare.toFixed(1)}% of the host while the ` +
+            `separator reports ${state.reported}% — the flex basis did not apply`,
+        );
+      }
+      if (!state.sideBySide) {
+        problems.push('the panels and the separator are not laid out side by side');
+      }
+      if (Math.abs(state.covered - 1) > 0.02) {
+        problems.push(
+          `the panels and separator cover ${(state.covered * 100).toFixed(1)}% of the host — ` +
+            'the second panel is not taking the rest',
+        );
+      }
+      if (!(state.handleWidth > 0 && state.handleWidth < 20)) {
+        problems.push(`the separator measured ${state.handleWidth}px`);
+      }
+      if (state.handleCursor !== 'col-resize') {
+        problems.push(
+          `the separator's cursor is "${state.handleCursor}" — the orientation did not reach it`,
+        );
+      }
+      if (state.touchAction !== 'none') {
+        problems.push(
+          `the separator's touch-action is "${state.touchAction}" — a touch drag would scroll ` +
+            'the page instead',
+        );
+      }
+      if (!state.grip || state.grip === 'rgba(0, 0, 0, 0)') {
+        problems.push('the grip has no colour — the --pf-resizable-grip alias did not resolve');
+      }
+      if (state.ringWhenBlurred !== 'none') {
+        problems.push(`the separator has a ring before it is focused ("${state.ringWhenBlurred}")`);
+      }
+      if (state.ringWhenFocused === 'none') {
+        problems.push(
+          'the separator has no ring after a drag focused it — the focus ring alias did not ' +
+            'resolve, or the drag did not focus it',
+        );
+      }
+      if (Math.abs(state.draggedShare - 25) > 2) {
+        problems.push(
+          `after a drag to a quarter of the host the first panel takes ` +
+            `${state.draggedShare.toFixed(1)}%`,
+        );
+      }
+      if (state.handleAtPointer > 8) {
+        problems.push(
+          `the separator came to rest ${state.handleAtPointer.toFixed(1)}px from the pointer`,
+        );
+      }
+      if (state.echo !== '25') {
+        problems.push(`pf-resizable reported "${state.echo}" to the host framework`);
       }
     }
   }

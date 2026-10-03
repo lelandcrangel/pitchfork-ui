@@ -1,0 +1,83 @@
+:host {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([orientation='horizontal']) {
+  flex-direction: row;
+}
+
+:host([orientation='vertical']) {
+  flex-direction: column;
+}
+
+.panel {
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+}
+
+/* The second panel takes whatever the first one leaves. */
+.end {
+  flex: 1 1 0;
+}
+
+.handle {
+  align-items: center;
+  background: var(--pf-resizable-handle-bg);
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  position: relative;
+  /* Without this a touch drag scrolls the page instead of moving the split. */
+  touch-action: none;
+  transition: background var(--pf-transition-fast);
+}
+
+.handle:hover,
+.handle:focus-visible {
+  background: var(--pf-resizable-handle-active-bg);
+}
+
+.handle:focus-visible {
+  box-shadow: var(--pf-resizable-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+:host([orientation='horizontal']) .handle {
+  cursor: col-resize;
+  width: var(--pf-resizable-handle-size, 6px);
+}
+
+:host([orientation='vertical']) .handle {
+  cursor: row-resize;
+  height: var(--pf-resizable-handle-size, 6px);
+}
+
+.grip {
+  background: var(--pf-resizable-grip);
+  border-radius: var(--radius-full);
+}
+
+:host([orientation='horizontal']) .grip {
+  height: 24px;
+  width: 2px;
+}
+
+:host([orientation='vertical']) .grip {
+  height: 2px;
+  width: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .handle {
+    transition: none;
+  }
+}

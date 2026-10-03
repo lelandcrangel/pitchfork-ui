@@ -57,6 +57,38 @@ describe('Resizable', () => {
     expect(onSizeChange).toHaveBeenLastCalledWith(90);
   });
 
+  /*
+   * `NaN` survives arithmetic silently and reaches the DOM as
+   * `flex-basis: NaN%`, which is invalid at computed-value time and collapses
+   * the panel. Core turns it into an even split of the bounds instead, which
+   * is also what `<pf-resizable>` does.
+   */
+  it('falls back to an even split of the bounds for a size that is not a number', () => {
+    render(<Fixture size={Number.NaN} min={20} max={80} />);
+    const handle = screen.getByRole('separator');
+
+    expect(handle).toHaveAttribute('aria-valuenow', '50');
+    expect(screen.getByText('First panel').parentElement).toHaveStyle({ flexBasis: '50%' });
+  });
+
+  /*
+   * The arrows of the other axis are not handled at all, so a page still
+   * scrolls with a horizontal splitter focused.
+   */
+  it('leaves the other axis to the page', () => {
+    const onSizeChange = vi.fn();
+    render(<Fixture defaultSize={50} onSizeChange={onSizeChange} />);
+    const handle = screen.getByRole('separator');
+
+    const up = fireEvent.keyDown(handle, { key: 'ArrowUp' });
+    const down = fireEvent.keyDown(handle, { key: 'ArrowDown' });
+
+    expect(onSizeChange).not.toHaveBeenCalled();
+    // fireEvent returns false when preventDefault was called.
+    expect(up).toBe(true);
+    expect(down).toBe(true);
+  });
+
   it('uses up/down arrows and a horizontal separator when vertical', () => {
     const onSizeChange = vi.fn();
     render(

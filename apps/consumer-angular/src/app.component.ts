@@ -66,6 +66,7 @@ import {
   PfRadioGroup,
   PfRatingBadge,
   PfRatingStars,
+  PfResizable,
   PfScrollArea,
   PfSectionFooter,
   PfSectionHeader,
@@ -173,6 +174,7 @@ import {
     PfRadioGroup,
     PfRatingBadge,
     PfRatingStars,
+    PfResizable,
     PfScrollArea,
     PfSectionFooter,
     PfSectionHeader,
@@ -1018,6 +1020,25 @@ import {
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
 
+      <!-- The panels are slotted by name; see the React consumer. -->
+      <pf-resizable
+        [size]="split()"
+        [min]="20"
+        [max]="80"
+        [step]="5"
+        style="height: 140px; border: 1px solid var(--pf-resizable-handle-bg)"
+        data-testid="resizable"
+        (pfChange)="split.set($event.detail.size)"
+      >
+        <div slot="start" style="padding: var(--space-3)" data-testid="resizable-start">
+          The first panel, whose share the separator controls.
+        </div>
+        <div slot="end" style="padding: var(--space-3)" data-testid="resizable-end">
+          The second takes whatever is left.
+        </div>
+      </pf-resizable>
+      <output data-testid="resizable-size">{{ split() }}</output>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -1046,6 +1067,7 @@ export class AppComponent {
   sort = signal<SortState>({ key: 'name', direction: 'asc' });
   file = signal('index.ts');
   slide = signal(0);
+  split = signal(40);
   openFolders = signal('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.

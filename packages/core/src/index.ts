@@ -19,6 +19,7 @@ export * from './progress';
 export * from './rating';
 export * from './roving';
 export * from './scroll-lock';
+export * from './splitter';
 export * from './state';
 export * from './steps';
 export * from './table';

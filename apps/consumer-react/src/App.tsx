@@ -65,6 +65,7 @@ import {
   PfRadioGroup,
   PfRatingBadge,
   PfRatingStars,
+  PfResizable,
   PfScrollArea,
   PfSectionFooter,
   PfSectionHeader,
@@ -119,6 +120,7 @@ export function App() {
   const [sort, setSort] = useState<SortState>({ key: 'name', direction: 'asc' });
   const [file, setFile] = useState('index.ts');
   const [slide, setSlide] = useState(0);
+  const [split, setSplit] = useState(40);
   const [openFolders, setOpenFolders] = useState('src');
   // Sorted with core's own comparison, which is what makes the element's
   // reported sort and the React Table's internal one agree.
@@ -1221,6 +1223,30 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        The panels are slotted by name rather than taken as the first two
+        children: a slot cannot be told to take only the first assigned node,
+        so a consumer's third child would be silently ignored the way the
+        React `Resizable` ignores it.
+      */}
+      <PfResizable
+        size={split}
+        min={20}
+        max={80}
+        step={5}
+        style={{ height: '140px', border: '1px solid var(--pf-resizable-handle-bg)' }}
+        data-testid="resizable"
+        onPfChange={(event) => setSplit(event.detail.size)}
+      >
+        <div slot="start" style={{ padding: 'var(--space-3)' }} data-testid="resizable-start">
+          The first panel, whose share the separator controls.
+        </div>
+        <div slot="end" style={{ padding: 'var(--space-3)' }} data-testid="resizable-end">
+          The second takes whatever is left.
+        </div>
+      </PfResizable>
+      <output data-testid="resizable-size">{split}</output>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

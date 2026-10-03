@@ -2052,6 +2052,49 @@ export namespace Components {
         "value": number;
     }
     /**
+     * Two panels with a draggable separator between them.
+     * The panels are slotted — `start` and `end` rather than a default slot taking
+     * exactly two children, because a slot cannot be told to take only the first
+     * assigned node and a consumer looping in their own template would otherwise
+     * find the third child silently ignored, which is what the React `Resizable`
+     * does with `Children.toArray(children)`.
+     * All of the arithmetic is core's, so this and the React `Resizable` agree on
+     * which arrow grows the first panel, on where a pointer sits, and on what a
+     * size outside the bounds becomes.
+     */
+    interface PfResizable {
+        /**
+          * The separator's accessible name.
+          * @default 'Resize panels'
+         */
+        "handleLabel": string;
+        /**
+          * Its largest.
+          * @default 90
+         */
+        "max": number;
+        /**
+          * The first panel's smallest share, in percent.
+          * @default 10
+         */
+        "min": number;
+        /**
+          * `horizontal` puts the panels side by side and drags left and right; `vertical` stacks them. Reflected, because the stylesheet selects on it.
+          * @default 'horizontal'
+         */
+        "orientation": 'horizontal' | 'vertical';
+        /**
+          * The first panel's share, in percent.
+          * @default 50
+         */
+        "size": number;
+        /**
+          * How far one key press moves it, in percent.
+          * @default 2
+         */
+        "step": number;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -3196,6 +3239,10 @@ export interface PfRadioButtonCustomEvent<T> extends CustomEvent<T> {
 export interface PfRadioGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfRadioGroupElement;
+}
+export interface PfResizableCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfResizableElement;
 }
 export interface PfSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -4431,6 +4478,34 @@ declare global {
         prototype: HTMLPfRatingStarsElement;
         new (): HTMLPfRatingStarsElement;
     };
+    interface HTMLPfResizableElementEventMap {
+        "pfChange": { size: number };
+    }
+    /**
+     * Two panels with a draggable separator between them.
+     * The panels are slotted — `start` and `end` rather than a default slot taking
+     * exactly two children, because a slot cannot be told to take only the first
+     * assigned node and a consumer looping in their own template would otherwise
+     * find the third child silently ignored, which is what the React `Resizable`
+     * does with `Children.toArray(children)`.
+     * All of the arithmetic is core's, so this and the React `Resizable` agree on
+     * which arrow grows the first panel, on where a pointer sits, and on what a
+     * size outside the bounds becomes.
+     */
+    interface HTMLPfResizableElement extends Components.PfResizable, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfResizableElementEventMap>(type: K, listener: (this: HTMLPfResizableElement, ev: PfResizableCustomEvent<HTMLPfResizableElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfResizableElementEventMap>(type: K, listener: (this: HTMLPfResizableElement, ev: PfResizableCustomEvent<HTMLPfResizableElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfResizableElement: {
+        prototype: HTMLPfResizableElement;
+        new (): HTMLPfResizableElement;
+    };
     /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
@@ -5103,6 +5178,7 @@ declare global {
         "pf-radio-group": HTMLPfRadioGroupElement;
         "pf-rating-badge": HTMLPfRatingBadgeElement;
         "pf-rating-stars": HTMLPfRatingStarsElement;
+        "pf-resizable": HTMLPfResizableElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
         "pf-section-footer": HTMLPfSectionFooterElement;
         "pf-section-header": HTMLPfSectionHeaderElement;
@@ -7094,6 +7170,53 @@ declare namespace LocalJSX {
         "value"?: number;
     }
     /**
+     * Two panels with a draggable separator between them.
+     * The panels are slotted — `start` and `end` rather than a default slot taking
+     * exactly two children, because a slot cannot be told to take only the first
+     * assigned node and a consumer looping in their own template would otherwise
+     * find the third child silently ignored, which is what the React `Resizable`
+     * does with `Children.toArray(children)`.
+     * All of the arithmetic is core's, so this and the React `Resizable` agree on
+     * which arrow grows the first panel, on where a pointer sits, and on what a
+     * size outside the bounds becomes.
+     */
+    interface PfResizable {
+        /**
+          * The separator's accessible name.
+          * @default 'Resize panels'
+         */
+        "handleLabel"?: string;
+        /**
+          * Its largest.
+          * @default 90
+         */
+        "max"?: number;
+        /**
+          * The first panel's smallest share, in percent.
+          * @default 10
+         */
+        "min"?: number;
+        /**
+          * Fires when the split changes, by pointer or by key.
+         */
+        "onPfChange"?: (event: PfResizableCustomEvent<{ size: number }>) => void;
+        /**
+          * `horizontal` puts the panels side by side and drags left and right; `vertical` stacks them. Reflected, because the stylesheet selects on it.
+          * @default 'horizontal'
+         */
+        "orientation"?: 'horizontal' | 'vertical';
+        /**
+          * The first panel's share, in percent.
+          * @default 50
+         */
+        "size"?: number;
+        /**
+          * How far one key press moves it, in percent.
+          * @default 2
+         */
+        "step"?: number;
+    }
+    /**
      * A scrollable region with a styled, non-overlaying scrollbar.
      */
     interface PfScrollArea {
@@ -8507,6 +8630,14 @@ declare namespace LocalJSX {
         "showValue": boolean;
         "label": string;
     }
+    interface PfResizableAttributes {
+        "orientation": 'horizontal' | 'vertical';
+        "size": number;
+        "min": number;
+        "max": number;
+        "step": number;
+        "handleLabel": string;
+    }
     interface PfScrollAreaAttributes {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
@@ -8768,6 +8899,7 @@ declare namespace LocalJSX {
         "pf-radio-group": Omit<PfRadioGroup, keyof PfRadioGroupAttributes> & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes]?: PfRadioGroup[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `attr:${K}`]?: PfRadioGroupAttributes[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `prop:${K}`]?: PfRadioGroup[K] };
         "pf-rating-badge": Omit<PfRatingBadge, keyof PfRatingBadgeAttributes> & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes]?: PfRatingBadge[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `attr:${K}`]?: PfRatingBadgeAttributes[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `prop:${K}`]?: PfRatingBadge[K] };
         "pf-rating-stars": Omit<PfRatingStars, keyof PfRatingStarsAttributes> & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes]?: PfRatingStars[K] } & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes as `attr:${K}`]?: PfRatingStarsAttributes[K] } & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes as `prop:${K}`]?: PfRatingStars[K] };
+        "pf-resizable": Omit<PfResizable, keyof PfResizableAttributes> & { [K in keyof PfResizable & keyof PfResizableAttributes]?: PfResizable[K] } & { [K in keyof PfResizable & keyof PfResizableAttributes as `attr:${K}`]?: PfResizableAttributes[K] } & { [K in keyof PfResizable & keyof PfResizableAttributes as `prop:${K}`]?: PfResizable[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
         "pf-section-footer": Omit<PfSectionFooter, keyof PfSectionFooterAttributes> & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes]?: PfSectionFooter[K] } & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes as `attr:${K}`]?: PfSectionFooterAttributes[K] } & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes as `prop:${K}`]?: PfSectionFooter[K] };
         "pf-section-header": Omit<PfSectionHeader, keyof PfSectionHeaderAttributes> & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes]?: PfSectionHeader[K] } & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes as `attr:${K}`]?: PfSectionHeaderAttributes[K] } & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes as `prop:${K}`]?: PfSectionHeader[K] };
@@ -9339,6 +9471,18 @@ declare module "@stencil/core" {
              * Every star inside is therefore `aria-hidden`.
              */
             "pf-rating-stars": LocalJSX.IntrinsicElements["pf-rating-stars"] & JSXBase.HTMLAttributes<HTMLPfRatingStarsElement>;
+            /**
+             * Two panels with a draggable separator between them.
+             * The panels are slotted — `start` and `end` rather than a default slot taking
+             * exactly two children, because a slot cannot be told to take only the first
+             * assigned node and a consumer looping in their own template would otherwise
+             * find the third child silently ignored, which is what the React `Resizable`
+             * does with `Children.toArray(children)`.
+             * All of the arithmetic is core's, so this and the React `Resizable` agree on
+             * which arrow grows the first panel, on where a pointer sits, and on what a
+             * size outside the bounds becomes.
+             */
+            "pf-resizable": LocalJSX.IntrinsicElements["pf-resizable"] & JSXBase.HTMLAttributes<HTMLPfResizableElement>;
             /**
              * A scrollable region with a styled, non-overlaying scrollbar.
              */

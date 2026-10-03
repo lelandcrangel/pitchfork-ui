@@ -840,6 +840,36 @@ Things that differ from the React library, learned by porting the first two:
   label's `flex-grow` being what pushes a badge to the far edge. **Revert every
   new assertion once.** A check that cannot fail is worse than no check: it
   reads as cover.
+- **A JSX `onKeyDown` listens for `keyDown` in the mock DOM.** Measured, and
+  the reason every keyboard test in this package is a browser test: Stencil
+  resolves a JSX event prop by checking whether the lowercased member is a
+  property of `window`, and `'onkeydown' in window` is **false** in the mock
+  DOM, so it falls back to re-casing and registers the listener under
+  `keyDown`. A dispatched `keydown` never reaches the handler — silently, with
+  no error anywhere — while a hand-written
+  `handle.addEventListener('keydown', …)` on the same node fires perfectly.
+  Dispatching an event named `keyDown` runs the handler, which is how the
+  mechanism was confirmed. So a keyboard assertion in the `unit` project is
+  not a weaker test, it is a test of nothing.
+- **Pointer drags end on `pointercancel` as well as `pointerup`.** A drag the
+  browser takes away — a touch turning into a scroll gesture, a window losing
+  focus mid-drag — fires only `pointercancel`, and a splitter listening for
+  `pointerup` alone then follows the pointer around with no button held.
+  `pf-resizable` listens for both, on the host rather than the handle, and its
+  browser spec cancels a drag and then moves the pointer; removing the one
+  decorator fails exactly that test. `touch-action: none` on the handle is the
+  other half — without it a touch drag scrolls the page instead, which the
+  smoke asserts because no test project loads the stylesheet.
+- **A zero-length box is an ordinary state, so guard the division.** A
+  splitter inside a collapsed disclosure, or dragged before its first layout,
+  measures zero: `(position - start) / 0` is `Infinity`, or `NaN` when the
+  pointer is at the box's own edge, and `flex-basis: NaN%` is invalid at
+  computed-value time and takes the panel away. `splitSizeFromPointer` returns
+  `null` instead and the caller keeps the size it had. Setting the case up in
+  a browser test needs `display: block` in the _inline_ style as well as the
+  width, because neither project applies `styleUrl` CSS and an inline box
+  ignores `width` — the first attempt measured the content and clamped to
+  `min` instead.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.
