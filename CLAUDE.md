@@ -426,6 +426,38 @@ Things that differ from the React library, learned by porting the first two:
   `slotchange` fires when the assignment changes, not when text inside an
   already-assigned node is edited, so without it the visible tooltip updates
   while the accessible description goes stale.
+- **An IDREF cannot point into a shadow root, but an element reference can
+  point out of one.** The two cases are opposite directions of the same rule,
+  and both are measured against Chromium's accessibility tree. `pf-tooltip`
+  needs a light-DOM trigger to reference a panel _inside_ its shadow root:
+  invalid scope, and `ariaDescribedByElements` reads back empty, hence
+  `aria-description`. `pf-command-palette` needs the reverse — an input inside
+  its shadow root referencing a slotted option in the document tree, which is
+  an ancestor scope, and that is allowed. Measured side by side: a same-root
+  IDREF resolves, a cross-root IDREF is **absent from the tree entirely**, and
+  `ariaActiveDescendantElement` resolves to the right option. So an overlay
+  copies text, while a combobox over slotted options sets the element.
+  Assigning the property makes the platform write `aria-activedescendant=""` —
+  an empty attribute, not a stale id — which is its way of saying the real
+  value is the element reference; measured on a plain input with no framework
+  involved. Feature-detect it: where element reflection is missing there is no
+  cross-root equivalent, and the active option stops being announced while the
+  arrows and Enter still work.
+- **Grouping slotted children has to be structural.** One `<slot>` renders
+  every assigned child in source order, and a shadow root cannot wrap a subset
+  of them in a box, so a `group` _name_ on each item — which is what the React
+  `CommandPalette` takes — has no equivalent. `pf-command-group` is the answer,
+  and it is the §2.1 idiom anyway: the consumer nests.
+- **Reflect any prop a selector will look for.** Already true of `name` on a
+  form control, and true for the same reason wherever else code reads an
+  attribute: the generated bindings set props as **properties**, so an
+  unreflected prop leaves no attribute at all. `pf-command-item.value` was
+  unreflected, so the palette's own `[value=...]` query matched nothing and
+  every selection reported `''` — in the consumer apps only. Every browser
+  test passed, because a test fixture writes `value="new"` into HTML and so
+  creates the attribute the bindings never would. Prefer reading the property
+  and keep the reflection for consumers; a test that sets the property is the
+  one that proves it.
 - **Let the browser dismiss it.** `popover="auto"` does light-dismiss and
   Escape itself, from inside a shadow root — measured with trusted input: a
   real outside click and a real Escape both close an `auto` popover while a
@@ -483,6 +515,11 @@ What each project cannot do, measured rather than assumed:
   disabled state is untestable in the `unit` project — put those assertions in
   a browser spec. Core's own tests do cover it, because they run on jsdom,
   which honours the selector; `pf-toolbar` is the worked example.
+- **The mock DOM has no `toggleAttribute`.** Measured, and worth knowing how
+  it fails rather than just that it does: Stencil's `safeCall` swallows the
+  `TypeError`, so the lifecycle method carries on as if nothing happened. The
+  symptom was `pf-command-palette` rendering "No results found" over a full
+  list, with no error anywhere. Use `setAttribute`/`removeAttribute`.
 - **Neither project applies `styleUrl` CSS.** A mounted element's shadow root
   has zero adopted stylesheets and zero `<style>` tags, because the styles are
   bundled by the output targets and neither test project runs them. So no test

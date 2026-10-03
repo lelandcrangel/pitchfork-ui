@@ -1,3 +1,4 @@
+import { matchesCommandQuery } from '@pitchfork-ui/core';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Keys } from '../../a11y';
@@ -72,16 +73,12 @@ export function CommandPalette({
   });
 
   // Filter items by query.
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter(
-      (item) =>
-        item.label.toLowerCase().includes(q) ||
-        item.description?.toLowerCase().includes(q) ||
-        item.group?.toLowerCase().includes(q),
-    );
-  }, [items, query]);
+  const filtered = useMemo(
+    // The predicate is core's, so `<pf-command-palette>` answers a keystroke
+    // with the same set of commands.
+    () => items.filter((item) => matchesCommandQuery(item, query)),
+    [items, query],
+  );
 
   const { activeIndex, move, setActiveIndex } = useListNavigation({
     items: filtered,

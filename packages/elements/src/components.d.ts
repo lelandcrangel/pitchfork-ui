@@ -218,6 +218,100 @@ export namespace Components {
         "value": string;
     }
     /**
+     * A labelled section of a `pf-command-palette`.
+     * Grouping is structural here, where the React component takes a `group` name
+     * on each item and buckets them itself. That is not a stylistic choice: the
+     * items are slotted light-DOM children, and a shadow root cannot wrap a subset
+     * of its slotted children in a box — one `<slot>` renders them all, in source
+     * order. So the consumer expresses a group by nesting, which is also what
+     * §2.1 asks for everywhere else.
+     */
+    interface PfCommandGroup {
+        /**
+          * The section heading. Searched along with each item's own text.
+         */
+        "label"?: string;
+    }
+    /**
+     * One command in a `pf-command-palette`.
+     * It only reports that it was chosen; the palette owns filtering, the active
+     * option and closing, exactly as `pf-radio-group` owns selection for its
+     * radios and `pf-dropdown` owns it for its menu items.
+     */
+    interface PfCommandItem {
+        /**
+          * A supporting line under the label. Searched along with the label.
+         */
+        "description"?: string;
+        /**
+          * Reflected so the stylesheet and the palette's item query can select on it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Identifies the command in the palette's select event.  Reflected, and not only for tidiness: the generated React and Angular bindings set props as *properties*, so without this there is no `value` attribute and anything selecting on one — the palette's own item query included — finds nothing. The same defect as an unreflected `name` on a form control, and caught the same way, by the consumer apps.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
+     * A searchable command list in a modal dialog.
+     * A native `<dialog>` opened with `showModal()`, like `pf-modal` and
+     * `pf-slideout-menu`: the focus trap, Escape and the backdrop come free, and
+     * the React component's `useFocusTrap` has no equivalent here. Page scroll is
+     * the one part the dialog does not do, so that is core's reference-counted
+     * lock.
+     * **The active option is set as an element, not an IDREF.** The input lives in
+     * this shadow root and the options are slotted light-DOM children, and
+     * `aria-activedescendant` does not cross a shadow boundary — measured against
+     * Chromium's accessibility tree, where a cross-root IDREF is simply absent
+     * from it. `ariaActiveDescendantElement` does resolve, because the option sits
+     * in an ancestor scope of the input's tree, which is the direction element
+     * reflection allows. (`pf-tooltip` needed the opposite direction — a trigger
+     * referencing something inside a shadow root it does not own — and that one
+     * reads back empty, which is why it copies text into `aria-description`
+     * instead.)
+     */
+    interface PfCommandPalette {
+        /**
+          * Close on Escape or a click on the backdrop. Defaults to true.
+          * @default true
+         */
+        "dismissable": boolean;
+        /**
+          * Shown when the query matches nothing.
+          * @default 'No results found.'
+         */
+        "emptyMessage": string;
+        /**
+          * Closes the palette.
+         */
+        "hide": () => Promise<void>;
+        /**
+          * Accessible name for the dialog.
+          * @default 'Command palette'
+         */
+        "label": string;
+        /**
+          * Whether the palette is showing. Reflected so the stylesheet selects on it.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * Placeholder for the search input.
+          * @default 'Search commands…'
+         */
+        "placeholder": string;
+        /**
+          * Re-reads the children and re-applies the current query.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * Opens the palette.
+         */
+        "show": () => Promise<void>;
+    }
+    /**
      * A rule that separates content, optionally labelled.
      */
     interface PfContentDivider {
@@ -495,7 +589,7 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
-          * Identifies the item in the menu's select event.
+          * Identifies the item in the menu's select event.  Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-menu-item[value="..."]` in a React or Angular app finds nothing. The menus themselves read the property, so this was not a live defect here -- it is the same trap that was one in `pf-command-item`.
           * @default ''
          */
         "value": string;
@@ -1252,6 +1346,14 @@ export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCheckboxElement;
 }
+export interface PfCommandItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfCommandItemElement;
+}
+export interface PfCommandPaletteCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfCommandPaletteElement;
+}
 export interface PfContextMenuCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfContextMenuElement;
@@ -1408,6 +1510,80 @@ declare global {
     var HTMLPfCheckboxElement: {
         prototype: HTMLPfCheckboxElement;
         new (): HTMLPfCheckboxElement;
+    };
+    /**
+     * A labelled section of a `pf-command-palette`.
+     * Grouping is structural here, where the React component takes a `group` name
+     * on each item and buckets them itself. That is not a stylistic choice: the
+     * items are slotted light-DOM children, and a shadow root cannot wrap a subset
+     * of its slotted children in a box — one `<slot>` renders them all, in source
+     * order. So the consumer expresses a group by nesting, which is also what
+     * §2.1 asks for everywhere else.
+     */
+    interface HTMLPfCommandGroupElement extends Components.PfCommandGroup, HTMLStencilElement {
+    }
+    var HTMLPfCommandGroupElement: {
+        prototype: HTMLPfCommandGroupElement;
+        new (): HTMLPfCommandGroupElement;
+    };
+    interface HTMLPfCommandItemElementEventMap {
+        "pfCommandSelect": { value: string };
+    }
+    /**
+     * One command in a `pf-command-palette`.
+     * It only reports that it was chosen; the palette owns filtering, the active
+     * option and closing, exactly as `pf-radio-group` owns selection for its
+     * radios and `pf-dropdown` owns it for its menu items.
+     */
+    interface HTMLPfCommandItemElement extends Components.PfCommandItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfCommandItemElementEventMap>(type: K, listener: (this: HTMLPfCommandItemElement, ev: PfCommandItemCustomEvent<HTMLPfCommandItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfCommandItemElementEventMap>(type: K, listener: (this: HTMLPfCommandItemElement, ev: PfCommandItemCustomEvent<HTMLPfCommandItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfCommandItemElement: {
+        prototype: HTMLPfCommandItemElement;
+        new (): HTMLPfCommandItemElement;
+    };
+    interface HTMLPfCommandPaletteElementEventMap {
+        "pfOpenChange": { open: boolean };
+        "pfSelect": { value: string };
+    }
+    /**
+     * A searchable command list in a modal dialog.
+     * A native `<dialog>` opened with `showModal()`, like `pf-modal` and
+     * `pf-slideout-menu`: the focus trap, Escape and the backdrop come free, and
+     * the React component's `useFocusTrap` has no equivalent here. Page scroll is
+     * the one part the dialog does not do, so that is core's reference-counted
+     * lock.
+     * **The active option is set as an element, not an IDREF.** The input lives in
+     * this shadow root and the options are slotted light-DOM children, and
+     * `aria-activedescendant` does not cross a shadow boundary — measured against
+     * Chromium's accessibility tree, where a cross-root IDREF is simply absent
+     * from it. `ariaActiveDescendantElement` does resolve, because the option sits
+     * in an ancestor scope of the input's tree, which is the direction element
+     * reflection allows. (`pf-tooltip` needed the opposite direction — a trigger
+     * referencing something inside a shadow root it does not own — and that one
+     * reads back empty, which is why it copies text into `aria-description`
+     * instead.)
+     */
+    interface HTMLPfCommandPaletteElement extends Components.PfCommandPalette, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfCommandPaletteElementEventMap>(type: K, listener: (this: HTMLPfCommandPaletteElement, ev: PfCommandPaletteCustomEvent<HTMLPfCommandPaletteElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfCommandPaletteElementEventMap>(type: K, listener: (this: HTMLPfCommandPaletteElement, ev: PfCommandPaletteCustomEvent<HTMLPfCommandPaletteElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfCommandPaletteElement: {
+        prototype: HTMLPfCommandPaletteElement;
+        new (): HTMLPfCommandPaletteElement;
     };
     /**
      * A rule that separates content, optionally labelled.
@@ -2027,6 +2203,9 @@ declare global {
         "pf-card-footer": HTMLPfCardFooterElement;
         "pf-card-header": HTMLPfCardHeaderElement;
         "pf-checkbox": HTMLPfCheckboxElement;
+        "pf-command-group": HTMLPfCommandGroupElement;
+        "pf-command-item": HTMLPfCommandItemElement;
+        "pf-command-palette": HTMLPfCommandPaletteElement;
         "pf-content-divider": HTMLPfContentDividerElement;
         "pf-context-menu": HTMLPfContextMenuElement;
         "pf-credit-card": HTMLPfCreditCardElement;
@@ -2233,6 +2412,100 @@ declare namespace LocalJSX {
           * @default 'on'
          */
         "value"?: string;
+    }
+    /**
+     * A labelled section of a `pf-command-palette`.
+     * Grouping is structural here, where the React component takes a `group` name
+     * on each item and buckets them itself. That is not a stylistic choice: the
+     * items are slotted light-DOM children, and a shadow root cannot wrap a subset
+     * of its slotted children in a box — one `<slot>` renders them all, in source
+     * order. So the consumer expresses a group by nesting, which is also what
+     * §2.1 asks for everywhere else.
+     */
+    interface PfCommandGroup {
+        /**
+          * The section heading. Searched along with each item's own text.
+         */
+        "label"?: string;
+    }
+    /**
+     * One command in a `pf-command-palette`.
+     * It only reports that it was chosen; the palette owns filtering, the active
+     * option and closing, exactly as `pf-radio-group` owns selection for its
+     * radios and `pf-dropdown` owns it for its menu items.
+     */
+    interface PfCommandItem {
+        /**
+          * A supporting line under the label. Searched along with the label.
+         */
+        "description"?: string;
+        /**
+          * Reflected so the stylesheet and the palette's item query can select on it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Asks the palette to run this command. The palette decides and closes.
+         */
+        "onPfCommandSelect"?: (event: PfCommandItemCustomEvent<{ value: string }>) => void;
+        /**
+          * Identifies the command in the palette's select event.  Reflected, and not only for tidiness: the generated React and Angular bindings set props as *properties*, so without this there is no `value` attribute and anything selecting on one — the palette's own item query included — finds nothing. The same defect as an unreflected `name` on a form control, and caught the same way, by the consumer apps.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
+     * A searchable command list in a modal dialog.
+     * A native `<dialog>` opened with `showModal()`, like `pf-modal` and
+     * `pf-slideout-menu`: the focus trap, Escape and the backdrop come free, and
+     * the React component's `useFocusTrap` has no equivalent here. Page scroll is
+     * the one part the dialog does not do, so that is core's reference-counted
+     * lock.
+     * **The active option is set as an element, not an IDREF.** The input lives in
+     * this shadow root and the options are slotted light-DOM children, and
+     * `aria-activedescendant` does not cross a shadow boundary — measured against
+     * Chromium's accessibility tree, where a cross-root IDREF is simply absent
+     * from it. `ariaActiveDescendantElement` does resolve, because the option sits
+     * in an ancestor scope of the input's tree, which is the direction element
+     * reflection allows. (`pf-tooltip` needed the opposite direction — a trigger
+     * referencing something inside a shadow root it does not own — and that one
+     * reads back empty, which is why it copies text into `aria-description`
+     * instead.)
+     */
+    interface PfCommandPalette {
+        /**
+          * Close on Escape or a click on the backdrop. Defaults to true.
+          * @default true
+         */
+        "dismissable"?: boolean;
+        /**
+          * Shown when the query matches nothing.
+          * @default 'No results found.'
+         */
+        "emptyMessage"?: string;
+        /**
+          * Accessible name for the dialog.
+          * @default 'Command palette'
+         */
+        "label"?: string;
+        /**
+          * Fires whenever the palette opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfCommandPaletteCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Fires with the chosen item's `value`. The palette then closes.
+         */
+        "onPfSelect"?: (event: PfCommandPaletteCustomEvent<{ value: string }>) => void;
+        /**
+          * Whether the palette is showing. Reflected so the stylesheet selects on it.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * Placeholder for the search input.
+          * @default 'Search commands…'
+         */
+        "placeholder"?: string;
     }
     /**
      * A rule that separates content, optionally labelled.
@@ -2516,7 +2789,7 @@ declare namespace LocalJSX {
          */
         "onPfMenuSelect"?: (event: PfMenuItemCustomEvent<{ value: string }>) => void;
         /**
-          * Identifies the item in the menu's select event.
+          * Identifies the item in the menu's select event.  Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-menu-item[value="..."]` in a React or Angular app finds nothing. The menus themselves read the property, so this was not a live defect here -- it is the same trap that was one in `pf-command-item`.
           * @default ''
          */
         "value"?: string;
@@ -3288,6 +3561,21 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
     }
+    interface PfCommandGroupAttributes {
+        "label": string;
+    }
+    interface PfCommandItemAttributes {
+        "value": string;
+        "description": string;
+        "disabled": boolean;
+    }
+    interface PfCommandPaletteAttributes {
+        "open": boolean;
+        "placeholder": string;
+        "emptyMessage": string;
+        "label": string;
+        "dismissable": boolean;
+    }
     interface PfContentDividerAttributes {
         "orientation": PfContentDividerOrientation;
         "inset": boolean;
@@ -3497,6 +3785,9 @@ declare namespace LocalJSX {
         "pf-card-footer": PfCardFooter;
         "pf-card-header": PfCardHeader;
         "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
+        "pf-command-group": Omit<PfCommandGroup, keyof PfCommandGroupAttributes> & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes]?: PfCommandGroup[K] } & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes as `attr:${K}`]?: PfCommandGroupAttributes[K] } & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes as `prop:${K}`]?: PfCommandGroup[K] };
+        "pf-command-item": Omit<PfCommandItem, keyof PfCommandItemAttributes> & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes]?: PfCommandItem[K] } & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes as `attr:${K}`]?: PfCommandItemAttributes[K] } & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes as `prop:${K}`]?: PfCommandItem[K] };
+        "pf-command-palette": Omit<PfCommandPalette, keyof PfCommandPaletteAttributes> & { [K in keyof PfCommandPalette & keyof PfCommandPaletteAttributes]?: PfCommandPalette[K] } & { [K in keyof PfCommandPalette & keyof PfCommandPaletteAttributes as `attr:${K}`]?: PfCommandPaletteAttributes[K] } & { [K in keyof PfCommandPalette & keyof PfCommandPaletteAttributes as `prop:${K}`]?: PfCommandPalette[K] };
         "pf-content-divider": Omit<PfContentDivider, keyof PfContentDividerAttributes> & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes]?: PfContentDivider[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `attr:${K}`]?: PfContentDividerAttributes[K] } & { [K in keyof PfContentDivider & keyof PfContentDividerAttributes as `prop:${K}`]?: PfContentDivider[K] };
         "pf-context-menu": Omit<PfContextMenu, keyof PfContextMenuAttributes> & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes]?: PfContextMenu[K] } & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes as `attr:${K}`]?: PfContextMenuAttributes[K] } & { [K in keyof PfContextMenu & keyof PfContextMenuAttributes as `prop:${K}`]?: PfContextMenu[K] };
         "pf-credit-card": Omit<PfCreditCard, keyof PfCreditCardAttributes> & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes]?: PfCreditCard[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `attr:${K}`]?: PfCreditCardAttributes[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `prop:${K}`]?: PfCreditCard[K] };
@@ -3574,6 +3865,42 @@ declare module "@stencil/core" {
              * A form-associated checkbox.
              */
             "pf-checkbox": LocalJSX.IntrinsicElements["pf-checkbox"] & JSXBase.HTMLAttributes<HTMLPfCheckboxElement>;
+            /**
+             * A labelled section of a `pf-command-palette`.
+             * Grouping is structural here, where the React component takes a `group` name
+             * on each item and buckets them itself. That is not a stylistic choice: the
+             * items are slotted light-DOM children, and a shadow root cannot wrap a subset
+             * of its slotted children in a box — one `<slot>` renders them all, in source
+             * order. So the consumer expresses a group by nesting, which is also what
+             * §2.1 asks for everywhere else.
+             */
+            "pf-command-group": LocalJSX.IntrinsicElements["pf-command-group"] & JSXBase.HTMLAttributes<HTMLPfCommandGroupElement>;
+            /**
+             * One command in a `pf-command-palette`.
+             * It only reports that it was chosen; the palette owns filtering, the active
+             * option and closing, exactly as `pf-radio-group` owns selection for its
+             * radios and `pf-dropdown` owns it for its menu items.
+             */
+            "pf-command-item": LocalJSX.IntrinsicElements["pf-command-item"] & JSXBase.HTMLAttributes<HTMLPfCommandItemElement>;
+            /**
+             * A searchable command list in a modal dialog.
+             * A native `<dialog>` opened with `showModal()`, like `pf-modal` and
+             * `pf-slideout-menu`: the focus trap, Escape and the backdrop come free, and
+             * the React component's `useFocusTrap` has no equivalent here. Page scroll is
+             * the one part the dialog does not do, so that is core's reference-counted
+             * lock.
+             * **The active option is set as an element, not an IDREF.** The input lives in
+             * this shadow root and the options are slotted light-DOM children, and
+             * `aria-activedescendant` does not cross a shadow boundary — measured against
+             * Chromium's accessibility tree, where a cross-root IDREF is simply absent
+             * from it. `ariaActiveDescendantElement` does resolve, because the option sits
+             * in an ancestor scope of the input's tree, which is the direction element
+             * reflection allows. (`pf-tooltip` needed the opposite direction — a trigger
+             * referencing something inside a shadow root it does not own — and that one
+             * reads back empty, which is why it copies text into `aria-description`
+             * instead.)
+             */
+            "pf-command-palette": LocalJSX.IntrinsicElements["pf-command-palette"] & JSXBase.HTMLAttributes<HTMLPfCommandPaletteElement>;
             /**
              * A rule that separates content, optionally labelled.
              */

@@ -10,6 +10,9 @@ import {
   PfCardFooter,
   PfCardHeader,
   PfCheckbox,
+  PfCommandGroup,
+  PfCommandItem,
+  PfCommandPalette,
   PfContentDivider,
   PfContextMenu,
   PfCreditCard,
@@ -69,6 +72,9 @@ import {
     PfCardFooter,
     PfCardHeader,
     PfCheckbox,
+    PfCommandGroup,
+    PfCommandItem,
+    PfCommandPalette,
     PfContentDivider,
     PfContextMenu,
     PfCreditCard,
@@ -418,6 +424,34 @@ import {
 
       <pf-toaster #toaster placement="top-right" data-testid="toaster"></pf-toaster>
 
+      <!--
+        Options are slotted light DOM while the search input sits in the
+        element's shadow root, so the active option is set as an element
+        reference; a cross-root aria-activedescendant resolves to nothing.
+      -->
+      <div class="row">
+        <pf-button variant="secondary" (click)="paletteOpen.set(true)">
+          Open command palette
+        </pf-button>
+        <output data-testid="command-choice">{{ menuChoice() || 'nothing chosen' }}</output>
+      </div>
+
+      <pf-command-palette
+        [open]="paletteOpen()"
+        data-testid="command-palette"
+        (pfOpenChange)="paletteOpen.set($event.detail.open)"
+        (pfSelect)="menuChoice.set($event.detail.value)"
+      >
+        <pf-command-group label="File">
+          <pf-command-item value="new">New file</pf-command-item>
+          <pf-command-item value="open" description="Pick from recent">Open file</pf-command-item>
+        </pf-command-group>
+        <pf-command-group label="App">
+          <pf-command-item value="settings">Settings</pf-command-item>
+          <pf-command-item value="quit" disabled>Quit</pf-command-item>
+        </pf-command-group>
+      </pf-command-palette>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -436,6 +470,7 @@ export class AppComponent {
   modalOpen = signal(false);
   menuChoice = signal('');
   slideoutOpen = signal(false);
+  paletteOpen = signal(false);
   private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
 
   notify(variant: 'success' | 'danger') {

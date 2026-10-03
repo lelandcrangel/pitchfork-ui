@@ -82,6 +82,9 @@ const EXPECTED = [
   'pf-slideout-menu',
   'pf-notification',
   'pf-toaster',
+  'pf-command-palette',
+  'pf-command-group',
+  'pf-command-item',
 ];
 
 const TYPES = {
@@ -126,6 +129,12 @@ const browser = await chromium.launch(
 );
 const page = await browser.newPage();
 const problems = [];
+
+/*
+ * The same test as the one inside page.evaluate, in Node scope: that closure's
+ * copy cannot be reached from the assertions that run out here.
+ */
+const isTransparent = (value) => !value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent';
 const consoleErrors = [];
 
 page.on('console', (message) => {
@@ -980,6 +989,194 @@ try {
           .catch(() => null);
 
         if (!gone) problems.push('pf-toaster.dismiss() left the notification in the stack');
+      }
+    }
+  }
+
+  /*
+   * The command palette, driven the way a user drives it. Three of these are
+   * claims packages/elements cannot make, because neither Vitest project applies
+   * `styleUrl` CSS: that a filtered-out item is actually *hidden* (the `hidden`
+   * attribute alone loses to the host's own `display: flex`, which is why
+   * `:host([hidden])` exists), that the active option's background resolves
+   * through the alias chain, and that the panel animates.
+   */
+  {
+    const clicked = await page.evaluate(() => {
+      const opener = [...document.querySelectorAll('pf-button')].find(
+        (b) => b.textContent?.trim() === 'Open command palette',
+      );
+      opener?.shadowRoot?.querySelector('button')?.click();
+      return Boolean(opener);
+    });
+
+    if (!clicked) {
+      problems.push('the consumer app has no "Open command palette" button');
+    } else {
+      const opened = await page
+        .waitForFunction(
+          () => {
+            const el = document.querySelector('pf-command-palette');
+            const dialog = el?.shadowRoot?.querySelector('dialog');
+            const panel = el?.shadowRoot?.querySelector('[part="panel"]');
+            if (!dialog?.open || !panel) return null;
+            const style = getComputedStyle(panel);
+            return {
+              background: style.backgroundColor,
+              animations: panel.getAnimations().length,
+              animationName: style.animationName,
+              animationDuration: style.animationDuration,
+              overflow: document.documentElement.style.overflow,
+              focused: el.shadowRoot?.activeElement?.tagName,
+              groupLabel: el
+                .querySelector('pf-command-group')
+                ?.shadowRoot?.querySelector('[part="label"]')?.textContent,
+            };
+          },
+          undefined,
+          { timeout: 5_000 },
+        )
+        .then((handle) => handle.jsonValue())
+        .catch(() => null);
+
+      if (!opened) {
+        problems.push('pf-command-palette did not open after clicking its button');
+      } else {
+        if (isTransparent(opened.background)) {
+          problems.push('pf-command-palette panel has no background');
+        }
+        if (opened.animations === 0) {
+          problems.push(
+            'pf-command-palette panel runs no animation ' +
+              `(animation-name "${opened.animationName}", duration ` +
+              `"${opened.animationDuration}")`,
+          );
+        }
+        if (opened.overflow !== 'hidden') {
+          problems.push(`pf-command-palette did not lock page scroll ("${opened.overflow}")`);
+        }
+        if (opened.focused !== 'INPUT') {
+          problems.push(`pf-command-palette focused "${opened.focused}", expected its input`);
+        }
+        if (opened.groupLabel !== 'File') {
+          problems.push(`the first command group is labelled "${opened.groupLabel}"`);
+        }
+
+        // Type a query, then read what the stylesheet actually did with it.
+        const filtered = await page
+          .evaluate(async () => {
+            const el = document.querySelector('pf-command-palette');
+            const input = el.shadowRoot.querySelector('input');
+            input.value = 'settings';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+
+            const read = (value) => {
+              const item = el.querySelector(`pf-command-item[value="${value}"]`);
+              const style = getComputedStyle(item);
+              return {
+                hidden: item.hasAttribute('hidden'),
+                display: style.display,
+                background: style.backgroundColor,
+                selected: item.getAttribute('aria-selected'),
+                labelColour: getComputedStyle(item.shadowRoot.querySelector('[part="label"]'))
+                  .color,
+              };
+            };
+
+            return {
+              match: read('settings'),
+              excluded: read('new'),
+              emptyGroupDisplay: getComputedStyle(el.querySelector('pf-command-group')).display,
+              activeIsElement:
+                input.ariaActiveDescendantElement ===
+                el.querySelector('pf-command-item[value="settings"]'),
+            };
+          })
+          .catch((error) => ({ error: String(error) }));
+
+        if (filtered.error) {
+          problems.push(`pf-command-palette filtering threw: ${filtered.error}`);
+        } else {
+          // The attribute is set, and the stylesheet is what makes it count.
+          if (!filtered.excluded.hidden) {
+            problems.push('pf-command-palette did not mark a non-matching command hidden');
+          }
+          if (filtered.excluded.display !== 'none') {
+            problems.push(
+              `a filtered-out pf-command-item computes display "${filtered.excluded.display}" ` +
+                '— :host([hidden]) is missing, and `hidden` alone loses to `display: flex`',
+            );
+          }
+          if (filtered.emptyGroupDisplay !== 'none') {
+            problems.push(
+              `a pf-command-group with no matches computes display ` +
+                `"${filtered.emptyGroupDisplay}", expected none`,
+            );
+          }
+          if (filtered.match.display === 'none') {
+            problems.push('pf-command-palette hid the command that matched');
+          }
+          if (filtered.match.selected !== 'true') {
+            problems.push('pf-command-palette did not make the only match the active option');
+          }
+          if (isTransparent(filtered.match.background)) {
+            problems.push(
+              'the active pf-command-item has no background — ' +
+                '--pf-command-item-active-bg did not resolve',
+            );
+          }
+          // The active background is the primary action colour, so the label has
+          // to switch to its matching foreground or it is unreadable.
+          if (filtered.match.labelColour === filtered.excluded.labelColour) {
+            problems.push(
+              `the active command's label is the same colour as an inactive one ` +
+                `("${filtered.match.labelColour}") — --pf-command-item-active-text did not apply`,
+            );
+          }
+          if (!filtered.activeIsElement) {
+            problems.push('the search input does not point at the active option as an element');
+          }
+        }
+
+        // Enter runs it, which closes the palette and gives the scroll back.
+        await page.evaluate(() => {
+          const el = document.querySelector('pf-command-palette');
+          el.shadowRoot
+            .querySelector('input')
+            .dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        });
+
+        const ran = await page
+          .waitForFunction(
+            () => {
+              const el = document.querySelector('pf-command-palette');
+              const dialog = el?.shadowRoot?.querySelector('dialog');
+              const output = document.querySelector('[data-testid="command-choice"]');
+              return !dialog?.open &&
+                document.documentElement.style.overflow === '' &&
+                output?.textContent?.trim() === 'settings'
+                ? true
+                : null;
+            },
+            undefined,
+            { timeout: 5_000 },
+          )
+          .catch(() => null);
+
+        if (!ran) {
+          const state = await page.evaluate(() => ({
+            open: document.querySelector('pf-command-palette')?.shadowRoot?.querySelector('dialog')
+              ?.open,
+            overflow: document.documentElement.style.overflow,
+            output: document.querySelector('[data-testid="command-choice"]')?.textContent?.trim(),
+          }));
+          problems.push(
+            `pf-command-palette Enter did not run the command: open ${state.open}, ` +
+              `overflow "${state.overflow}", output "${state.output}"`,
+          );
+        }
       }
     }
   }

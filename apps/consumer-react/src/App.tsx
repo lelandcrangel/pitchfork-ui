@@ -9,6 +9,9 @@ import {
   PfCardFooter,
   PfCardHeader,
   PfCheckbox,
+  PfCommandGroup,
+  PfCommandItem,
+  PfCommandPalette,
   PfContentDivider,
   PfContextMenu,
   PfCreditCard,
@@ -60,6 +63,7 @@ export function App() {
   const [modalOpen, setModalOpen] = useState(false);
   const [menuChoice, setMenuChoice] = useState('');
   const [slideoutOpen, setSlideoutOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
@@ -451,6 +455,42 @@ export function App() {
       />
 
       <PfToaster ref={toaster} placement="top-right" data-testid="toaster" />
+
+      {/*
+        The command palette's options are slotted light-DOM children, and the
+        search input is in the element's shadow root, so the active option is
+        pointed at with `ariaActiveDescendantElement` rather than an IDREF --
+        a cross-root `aria-activedescendant` is absent from the accessibility
+        tree entirely. Grouping is structural for the same reason: one <slot>
+        renders every child in source order, so a shadow root cannot box a
+        subset of them.
+      */}
+      <div className="row">
+        <PfButton variant="secondary" onClick={() => setPaletteOpen(true)}>
+          Open command palette
+        </PfButton>
+        <output data-testid="command-choice">{menuChoice || 'nothing chosen'}</output>
+      </div>
+
+      <PfCommandPalette
+        open={paletteOpen}
+        data-testid="command-palette"
+        onPfOpenChange={(event) => setPaletteOpen(event.detail.open)}
+        onPfSelect={(event) => setMenuChoice(event.detail.value)}
+      >
+        <PfCommandGroup label="File">
+          <PfCommandItem value="new">New file</PfCommandItem>
+          <PfCommandItem value="open" description="Pick from recent">
+            Open file
+          </PfCommandItem>
+        </PfCommandGroup>
+        <PfCommandGroup label="App">
+          <PfCommandItem value="settings">Settings</PfCommandItem>
+          <PfCommandItem value="quit" disabled>
+            Quit
+          </PfCommandItem>
+        </PfCommandGroup>
+      </PfCommandPalette>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

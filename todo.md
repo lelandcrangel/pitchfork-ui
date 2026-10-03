@@ -130,3 +130,29 @@ faithful, not so the behaviour is blessed.
 itself — in core, which changes `Pagination` and `<pf-pagination>` together.
 Update the two assertions in `pagination.test.ts` that pin the current run, and
 check the Pagination stories still read sensibly at small totals.
+
+---
+
+## The command palette's active option is not announced without ARIA element reflection
+
+`pf-command-palette` keeps its search input in its shadow root and its options
+in the light DOM, so it points at the active one with
+`input.ariaActiveDescendantElement`. There is no cross-root fallback:
+`aria-activedescendant` is an IDREF, and a cross-root IDREF is **absent from
+Chromium's accessibility tree entirely** — measured against a same-root IDREF,
+which does resolve.
+
+The assignment is feature-detected (`'ariaActiveDescendantElement' in input`),
+so where element reflection is missing the palette still filters, highlights,
+moves with the arrows and runs on Enter. What is lost is the _announcement_:
+a screen reader is not told which option is active as the user arrows through.
+Only Chromium has been measured here; support elsewhere was not verified in
+this environment.
+
+**Fix:** measure the other engines rather than trusting a support table, and if
+one lacks it, give the palette a roving-focus mode for that engine — move DOM
+focus to the active `pf-command-item` and forward typing back to the input.
+That is the only pattern that needs no cross-root reference at all. Worth
+pairing with a decision about whether the React `CommandPalette`, which has no
+shadow boundary and so uses a plain IDREF, should adopt the same mode for
+consistency.

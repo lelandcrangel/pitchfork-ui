@@ -22,8 +22,16 @@ import { Component, Event, EventEmitter, h, Host, Listen, Prop } from '@stencil/
   shadow: true,
 })
 export class PfMenuItem {
-  /** Identifies the item in the menu's select event. */
-  @Prop() value = '';
+  /**
+   * Identifies the item in the menu's select event.
+   *
+   * Reflected because the generated bindings set props as properties, so
+   * without it a consumer selecting `pf-menu-item[value="..."]` in a React or
+   * Angular app finds nothing. The menus themselves read the property, so this
+   * was not a live defect here -- it is the same trap that was one in
+   * `pf-command-item`.
+   */
+  @Prop({ reflect: true }) value = '';
 
   /** Reflected so the stylesheet and the menu's item query can select on it. */
   @Prop({ reflect: true }) disabled = false;
