@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import {
   PfAccordion,
   PfAccordionItem,
+  PfAlert,
   PfAvatar,
   PfAvatarGroup,
   PfBarChart,
@@ -126,6 +127,7 @@ import {
     ReactiveFormsModule,
     PfAccordion,
     PfAccordionItem,
+    PfAlert,
     PfAvatar,
     PfAvatarGroup,
     PfBarChart,
@@ -1048,6 +1050,23 @@ import {
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
 
+      <!-- An inline alert, pf-notification's sibling; see the React consumer. -->
+      <pf-alert variant="warning" heading="Low on space" data-testid="alert-warning">
+        You have 2 GB left of your 500 GB plan.
+      </pf-alert>
+
+      @if (alertOpen()) {
+        <pf-alert
+          variant="success"
+          heading="Saved"
+          description="Your changes are live."
+          [dismissible]="true"
+          data-testid="alert-dismissible"
+          (pfDismiss)="alertOpen.set(false)"
+        ></pf-alert>
+      }
+      <output data-testid="alert-open">{{ alertOpen() }}</output>
+
       <!-- The video's name is an IDREF, not a label for; see the React consumer. -->
       <pf-video-player
         src="/missing.mp4"
@@ -1228,6 +1247,7 @@ export class AppComponent {
   split = signal(40);
   uploads = signal<File[]>([]);
   copiedCode = signal('');
+  alertOpen = signal(true);
   traffic = [
     { label: 'Jan', visits: 1200, signups: 320 },
     { label: 'Feb', visits: 2400, signups: 540 },

@@ -7,6 +7,7 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { PfAccordionHeadingLevel, PfAccordionType } from "./components/pf-accordion/pf-accordion";
 import { PfAccordionHeadingLevel as PfAccordionHeadingLevel1 } from "./components/pf-accordion/pf-accordion";
+import { PfAlertVariant } from "./components/pf-alert/pf-alert";
 import { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 import { PfAvatarSize as PfAvatarSize1 } from "./components/pf-avatar/pf-avatar";
 import { PfBadgeVariant } from "./components/pf-badge/pf-badge";
@@ -47,6 +48,7 @@ import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-uti
 import { PfVideoSource, PfVideoTrack } from "./components/pf-video-player/pf-video-player";
 export { PfAccordionHeadingLevel, PfAccordionType } from "./components/pf-accordion/pf-accordion";
 export { PfAccordionHeadingLevel as PfAccordionHeadingLevel1 } from "./components/pf-accordion/pf-accordion";
+export { PfAlertVariant } from "./components/pf-alert/pf-alert";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfAvatarSize as PfAvatarSize1 } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
@@ -153,6 +155,43 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    /**
+     * An inline alert: an icon, a heading, a body and an optional dismiss button.
+     * The sibling of `pf-notification`, and deliberately a separate element
+     * rather than a variant of it: an alert belongs in the page's flow and
+     * collapses its own height when dismissed so the content below reflows, while
+     * a notification is one of a stack in a corner and slides out. The two look
+     * alike and behave differently, which is exactly when one element serving
+     * both goes wrong.
+     * The role comes from core's `liveRegionRole`, so `warning` and `danger`
+     * announce assertively and `info` and `success` wait their turn.
+     */
+    interface PfAlert {
+        /**
+          * The body. A slotted body is used instead when there is one.
+         */
+        "description"?: string;
+        /**
+          * Dismisses the alert, waiting for its exit animation first.  The wait is core's `animationsFinished`, which asks the element what is actually running rather than sleeping for a duration someone wrote down: under `prefers-reduced-motion` the stylesheet sets `animation: none`, no test project applies `styleUrl` CSS at all, and a consumer may not have loaded the stylesheet — in all three an `animationend` listener would wait for ever and a timeout would be a fiction.
+         */
+        "dismiss": () => Promise<void>;
+        /**
+          * The dismiss button's accessible name.
+          * @default 'Dismiss alert'
+         */
+        "dismissLabel": string;
+        /**
+          * Show the dismiss button. Reflected.
+          * @default false
+         */
+        "dismissible": boolean;
+        "heading"?: string;
+        /**
+          * Reflected, because the stylesheet selects on it for the colours.
+          * @default 'info'
+         */
+        "variant": PfAlertVariant;
     }
     interface PfAvatar {
         /**
@@ -3788,6 +3827,10 @@ export interface PfAccordionItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfAccordionItemElement;
 }
+export interface PfAlertCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfAlertElement;
+}
 export interface PfButtonGroupCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfButtonGroupElement;
@@ -4027,6 +4070,34 @@ declare global {
     var HTMLPfAccordionItemElement: {
         prototype: HTMLPfAccordionItemElement;
         new (): HTMLPfAccordionItemElement;
+    };
+    interface HTMLPfAlertElementEventMap {
+        "pfDismiss": void;
+    }
+    /**
+     * An inline alert: an icon, a heading, a body and an optional dismiss button.
+     * The sibling of `pf-notification`, and deliberately a separate element
+     * rather than a variant of it: an alert belongs in the page's flow and
+     * collapses its own height when dismissed so the content below reflows, while
+     * a notification is one of a stack in a corner and slides out. The two look
+     * alike and behave differently, which is exactly when one element serving
+     * both goes wrong.
+     * The role comes from core's `liveRegionRole`, so `warning` and `danger`
+     * announce assertively and `info` and `success` wait their turn.
+     */
+    interface HTMLPfAlertElement extends Components.PfAlert, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfAlertElementEventMap>(type: K, listener: (this: HTMLPfAlertElement, ev: PfAlertCustomEvent<HTMLPfAlertElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfAlertElementEventMap>(type: K, listener: (this: HTMLPfAlertElement, ev: PfAlertCustomEvent<HTMLPfAlertElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfAlertElement: {
+        prototype: HTMLPfAlertElement;
+        new (): HTMLPfAlertElement;
     };
     interface HTMLPfAvatarElement extends Components.PfAvatar, HTMLStencilElement {
     }
@@ -6054,6 +6125,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "pf-accordion": HTMLPfAccordionElement;
         "pf-accordion-item": HTMLPfAccordionItemElement;
+        "pf-alert": HTMLPfAlertElement;
         "pf-avatar": HTMLPfAvatarElement;
         "pf-avatar-group": HTMLPfAvatarGroupElement;
         "pf-badge": HTMLPfBadgeElement;
@@ -6235,6 +6307,43 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    /**
+     * An inline alert: an icon, a heading, a body and an optional dismiss button.
+     * The sibling of `pf-notification`, and deliberately a separate element
+     * rather than a variant of it: an alert belongs in the page's flow and
+     * collapses its own height when dismissed so the content below reflows, while
+     * a notification is one of a stack in a corner and slides out. The two look
+     * alike and behave differently, which is exactly when one element serving
+     * both goes wrong.
+     * The role comes from core's `liveRegionRole`, so `warning` and `danger`
+     * announce assertively and `info` and `success` wait their turn.
+     */
+    interface PfAlert {
+        /**
+          * The body. A slotted body is used instead when there is one.
+         */
+        "description"?: string;
+        /**
+          * The dismiss button's accessible name.
+          * @default 'Dismiss alert'
+         */
+        "dismissLabel"?: string;
+        /**
+          * Show the dismiss button. Reflected.
+          * @default false
+         */
+        "dismissible"?: boolean;
+        "heading"?: string;
+        /**
+          * Fires once the alert has finished leaving.
+         */
+        "onPfDismiss"?: (event: PfAlertCustomEvent<void>) => void;
+        /**
+          * Reflected, because the stylesheet selects on it for the colours.
+          * @default 'info'
+         */
+        "variant"?: PfAlertVariant;
     }
     interface PfAvatar {
         /**
@@ -9855,6 +9964,13 @@ declare namespace LocalJSX {
         "expanded": boolean;
         "headingLevel": PfAccordionHeadingLevel;
     }
+    interface PfAlertAttributes {
+        "variant": PfAlertVariant;
+        "heading": string;
+        "description": string;
+        "dismissible": boolean;
+        "dismissLabel": string;
+    }
     interface PfAvatarAttributes {
         "src": string;
         "alt": string;
@@ -10546,6 +10662,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "pf-accordion": Omit<PfAccordion, keyof PfAccordionAttributes> & { [K in keyof PfAccordion & keyof PfAccordionAttributes]?: PfAccordion[K] } & { [K in keyof PfAccordion & keyof PfAccordionAttributes as `attr:${K}`]?: PfAccordionAttributes[K] } & { [K in keyof PfAccordion & keyof PfAccordionAttributes as `prop:${K}`]?: PfAccordion[K] };
         "pf-accordion-item": Omit<PfAccordionItem, keyof PfAccordionItemAttributes> & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes]?: PfAccordionItem[K] } & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes as `attr:${K}`]?: PfAccordionItemAttributes[K] } & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes as `prop:${K}`]?: PfAccordionItem[K] };
+        "pf-alert": Omit<PfAlert, keyof PfAlertAttributes> & { [K in keyof PfAlert & keyof PfAlertAttributes]?: PfAlert[K] } & { [K in keyof PfAlert & keyof PfAlertAttributes as `attr:${K}`]?: PfAlertAttributes[K] } & { [K in keyof PfAlert & keyof PfAlertAttributes as `prop:${K}`]?: PfAlert[K] };
         "pf-avatar": Omit<PfAvatar, keyof PfAvatarAttributes> & { [K in keyof PfAvatar & keyof PfAvatarAttributes]?: PfAvatar[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `attr:${K}`]?: PfAvatarAttributes[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `prop:${K}`]?: PfAvatar[K] };
         "pf-avatar-group": Omit<PfAvatarGroup, keyof PfAvatarGroupAttributes> & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes]?: PfAvatarGroup[K] } & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes as `attr:${K}`]?: PfAvatarGroupAttributes[K] } & { [K in keyof PfAvatarGroup & keyof PfAvatarGroupAttributes as `prop:${K}`]?: PfAvatarGroup[K] };
         "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
@@ -10684,6 +10801,18 @@ declare module "@stencil/core" {
              * panel names the header back with `aria-labelledby`.
              */
             "pf-accordion-item": LocalJSX.IntrinsicElements["pf-accordion-item"] & JSXBase.HTMLAttributes<HTMLPfAccordionItemElement>;
+            /**
+             * An inline alert: an icon, a heading, a body and an optional dismiss button.
+             * The sibling of `pf-notification`, and deliberately a separate element
+             * rather than a variant of it: an alert belongs in the page's flow and
+             * collapses its own height when dismissed so the content below reflows, while
+             * a notification is one of a stack in a corner and slides out. The two look
+             * alike and behave differently, which is exactly when one element serving
+             * both goes wrong.
+             * The role comes from core's `liveRegionRole`, so `warning` and `danger`
+             * announce assertively and `info` and `success` wait their turn.
+             */
+            "pf-alert": LocalJSX.IntrinsicElements["pf-alert"] & JSXBase.HTMLAttributes<HTMLPfAlertElement>;
             "pf-avatar": LocalJSX.IntrinsicElements["pf-avatar"] & JSXBase.HTMLAttributes<HTMLPfAvatarElement>;
             /**
              * A stack of overlapping `pf-avatar` children, with a `+N` chip for the ones

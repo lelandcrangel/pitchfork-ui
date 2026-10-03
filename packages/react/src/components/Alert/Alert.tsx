@@ -1,6 +1,6 @@
 import { liveRegionRole, severityIconName } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
-import { useExitAnimation } from '../../hooks';
+import { useComposedRefs, useExitAnimation } from '../../hooks';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Alert.css';
@@ -33,11 +33,23 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
   ) => {
     const resolvedIcon = icon ?? <Icon name={severityIconName(variant)} aria-hidden />;
     const body = children ?? description;
-    const { isExiting, startExit } = useExitAnimation({ onExited: onDismiss });
+    /*
+     * The hook's `ref` goes on the element the exit animation runs on, which
+     * is how it waits for the real animation rather than for a guessed
+     * duration.
+     */
+    const {
+      isExiting,
+      startExit,
+      ref: exitRef,
+    } = useExitAnimation<HTMLDivElement>({
+      onExited: onDismiss,
+    });
+    const rootRef = useComposedRefs(exitRef, ref);
 
     return (
       <div
-        ref={ref}
+        ref={rootRef}
         className={cx(
           'pf-alert',
           `pf-alert--${variant}`,

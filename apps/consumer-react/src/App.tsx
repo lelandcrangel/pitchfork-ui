@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react';
 import {
   PfAccordion,
   PfAccordionItem,
+  PfAlert,
   PfAvatar,
   PfAvatarGroup,
   PfBarChart,
@@ -137,6 +138,7 @@ export function App() {
   const [split, setSplit] = useState(40);
   const [uploads, setUploads] = useState<File[]>([]);
   const [copiedCode, setCopiedCode] = useState('');
+  const [alertOpen, setAlertOpen] = useState(true);
   const traffic = [
     { label: 'Jan', visits: 1200, signups: 320 },
     { label: 'Feb', visits: 2400, signups: 540 },
@@ -1255,6 +1257,29 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        An inline alert, which is `pf-notification`'s sibling rather than one
+        of its variants: an alert sits in the page's flow and collapses its
+        own height when dismissed so the content below reflows, where a
+        notification slides out of a corner stack. The two look alike and
+        behave differently, which is when one element serving both goes wrong.
+      */}
+      <PfAlert variant="warning" heading="Low on space" data-testid="alert-warning">
+        You have 2 GB left of your 500 GB plan.
+      </PfAlert>
+
+      {alertOpen ? (
+        <PfAlert
+          variant="success"
+          heading="Saved"
+          description="Your changes are live."
+          dismissible
+          data-testid="alert-dismissible"
+          onPfDismiss={() => setAlertOpen(false)}
+        />
+      ) : null}
+      <output data-testid="alert-open">{String(alertOpen)}</output>
 
       {/*
         The video's name is an IDREF, not a `<label for>`: `for` has to point

@@ -1,0 +1,140 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.alert {
+  align-items: flex-start;
+  border: 1px solid var(--pf-alert-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+/*
+ * The colours come from the reflected attribute rather than a class: the
+ * generated bindings set props as properties, so an unreflected prop would
+ * leave no attribute to select on.
+ */
+:host([variant='info']) .alert {
+  background: var(--pf-alert-info-background);
+  border-color: var(--pf-alert-info-border);
+  color: var(--pf-alert-info-foreground);
+}
+
+:host([variant='success']) .alert {
+  background: var(--pf-alert-success-background);
+  border-color: var(--pf-alert-success-border);
+  color: var(--pf-alert-success-foreground);
+}
+
+:host([variant='warning']) .alert {
+  background: var(--pf-alert-warning-background);
+  border-color: var(--pf-alert-warning-border);
+  color: var(--pf-alert-warning-foreground);
+}
+
+:host([variant='danger']) .alert {
+  background: var(--pf-alert-danger-background);
+  border-color: var(--pf-alert-danger-border);
+  color: var(--pf-alert-danger-foreground);
+}
+
+.icon {
+  align-items: center;
+  display: inline-flex;
+  font-size: var(--font-size-lg);
+  height: 1em;
+  justify-content: center;
+  line-height: 1;
+  margin-top: 1px;
+  width: 1em;
+}
+
+.content {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.body {
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+}
+
+/*
+ * Two classes deep, because the ties break on source order. The slot stays
+ * rendered inside the hidden box, or content added later never fires
+ * `slotchange`.
+ */
+.body.empty {
+  display: none;
+}
+
+/* The browser's own paragraphs, if a consumer slots any. */
+::slotted(p) {
+  margin: 0;
+}
+
+.dismiss {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: currentcolor;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--font-size-md);
+  justify-content: center;
+  margin-inline-start: auto;
+  padding: 0;
+}
+
+.dismiss:focus-visible {
+  box-shadow: var(--pf-alert-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+/*
+ * Fade *and* collapse, so the content below reflows into the space rather
+ * than jumping when the alert is removed. This is the difference from
+ * `pf-notification`, which slides out of a stack instead.
+ */
+.alert--exiting {
+  animation: pf-alert-out var(--duration-moderate) var(--easing-accelerate) forwards;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Its own copy: `@keyframes` do not cross a shadow boundary. */
+@keyframes pf-alert-out {
+  from {
+    max-height: 480px;
+    opacity: 1;
+  }
+
+  to {
+    margin-bottom: 0;
+    margin-top: 0;
+    max-height: 0;
+    opacity: 0;
+    padding-bottom: 0;
+    padding-top: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .alert--exiting {
+    animation: none;
+  }
+}

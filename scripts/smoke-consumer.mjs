@@ -42,6 +42,7 @@ const EXPECTED = [
   'pf-bar-chart',
   'pf-badge',
   'pf-tag',
+  'pf-alert',
   'pf-avatar',
   'pf-kbd',
   'pf-input',
@@ -5356,6 +5357,136 @@ try {
           `the video preloads "${state.preload}" — metadata keeps a page from pulling whole ` +
             'video files',
         );
+      }
+    }
+  }
+
+  /*
+   * The alert, and the one thing that distinguishes it from
+   * `pf-notification`: it collapses its own height on the way out, so the
+   * content below reflows into the space. That is a `max-height` animation
+   * whose keyframes have to exist inside this shadow root, and the dismiss
+   * has to resolve — and report — once it finishes.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const warning = document.querySelector('[data-testid="alert-warning"]');
+        const dismissible = document.querySelector('[data-testid="alert-dismissible"]');
+        if (!warning || !dismissible) return { error: 'the consumer app is missing a pf-alert' };
+
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const warningBox = part(warning, 'alert');
+        const successBox = part(dismissible, 'alert');
+
+        const read = {
+          warningRole: warningBox.getAttribute('role'),
+          successRole: successBox.getAttribute('role'),
+          // Each variant is a different colour, from the reflected attribute.
+          warningBackground: getComputedStyle(warningBox).backgroundColor,
+          successBackground: getComputedStyle(successBox).backgroundColor,
+          warningBorder: getComputedStyle(warningBox).borderTopColor,
+          warningText: getComputedStyle(warningBox).color,
+          /*
+           * The icon the variant chose, read as a *property*: Stencil's vdom
+           * sets props on an upgraded child as properties, so the `name`
+           * attribute is absent in a real build even though a test fixture's
+           * HTML would have it.
+           */
+          warningIcon: part(warning, 'icon').querySelector('pf-icon')?.name,
+          iconDrawn: part(warning, 'icon').getBoundingClientRect().width > 0,
+          // The dismiss button sits at the far end of the row.
+          dismissGap:
+            successBox.getBoundingClientRect().right -
+            part(dismissible, 'dismiss').getBoundingClientRect().right,
+          heightBefore: dismissible.getBoundingClientRect().height,
+        };
+
+        // Dismiss it for real and watch it collapse and report.
+        part(dismissible, 'dismiss').click();
+
+        const echo = () =>
+          document.querySelector('[data-testid="alert-open"]')?.textContent?.trim();
+        const deadline = Date.now() + 4000;
+        let animated = false;
+        while (echo() !== 'false') {
+          if (!animated) {
+            animated = successBox
+              .getAnimations()
+              .some((animation) => animation.animationName === 'pf-alert-out');
+          }
+          if (Date.now() > deadline) {
+            return { ...read, animated, echo: echo(), error: 'the dismiss never echoed' };
+          }
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+
+        return { ...read, animated, echo: echo() };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-alert: ${state.error}`);
+    } else {
+      if (state.warningRole !== 'alert') {
+        problems.push(
+          `a warning alert has role "${state.warningRole}" — it should interrupt a reader`,
+        );
+      }
+      if (state.successRole !== 'status') {
+        problems.push(`a success alert has role "${state.successRole}" — it should wait its turn`);
+      }
+      if (state.warningBackground === state.successBackground) {
+        problems.push(
+          `a warning and a success alert are both "${state.warningBackground}" — the variant ` +
+            'attribute did not reach the stylesheet',
+        );
+      }
+      if (!state.warningBackground || state.warningBackground === 'rgba(0, 0, 0, 0)') {
+        problems.push('the alert has no background of its own');
+      }
+      if (state.warningBorder === state.warningBackground) {
+        problems.push("the alert's border is the same colour as its background");
+      }
+      if (state.warningText === state.warningBackground) {
+        problems.push("the alert's text is the same colour as its background");
+      }
+      if (state.warningIcon !== 'triangle-exclamation') {
+        problems.push(`a warning alert drew the "${state.warningIcon}" icon`);
+      }
+      if (!state.iconDrawn) {
+        problems.push("the alert's icon measured nothing");
+      }
+      if (state.dismissGap > 20) {
+        problems.push(
+          `the dismiss button sits ${state.dismissGap.toFixed(1)}px from the alert's edge — the ` +
+            'auto margin did not push it there',
+        );
+      }
+      if (!(state.heightBefore > 0)) {
+        problems.push('the alert measured nothing before it was dismissed');
+      }
+      /*
+       * The collapse is the whole difference from a notification, and
+       * `getAnimations()` is the only check that sees a missing `@keyframes`
+       * copy: the name and duration compute fine in that case and nothing
+       * runs.
+       */
+      if (!state.animated) {
+        problems.push(
+          'the alert reported its dismiss without ever running pf-alert-out — its shadow root ' +
+            'has no copy of the keyframes',
+        );
+      }
+      if (state.echo !== 'false') {
+        problems.push(`pf-alert reported "${state.echo}" to the host framework`);
       }
     }
   }

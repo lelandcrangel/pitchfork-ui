@@ -1141,6 +1141,31 @@ exceeded` pointing into the mock DOM's selector engine, which reads as a
   render is what you are looking at. Set something else in the same breath —
   `pf-video-player`'s test sets a new `label` alongside the bad `sources` —
   so the assertion only holds if the render actually completed.
+- **Wait for the animation, never for a number.** `animationsFinished` in
+  core is the one way to do it, and it replaced a hard-coded 220ms
+  `setTimeout` in the React `useExitAnimation`. Every alternative fails
+  somewhere ordinary: an `animationend` listener waits for ever when nothing
+  ever started (reduced motion sets `animation: none`, a consumer may not have
+  loaded the stylesheet, and no test project applies one);
+  `getComputedStyle().animationName` reports whatever `animation` declared
+  whether or not the keyframes resolve; and a timeout goes stale the moment a
+  duration changes. It waits a frame first, so a class applied in the same
+  tick has landed, and treats a cancelled animation as finished. The hook now
+  returns a `ref` to attach to the animating element, which is what replaced
+  the `duration` option.
+- **Two components that look alike and behave differently stay two
+  components.** `pf-alert` and `pf-notification` share an icon, a heading, a
+  body and a dismiss, and differ in the only way that matters: an alert sits
+  in the page's flow and collapses its own height on the way out so the
+  content below reflows, while a notification slides out of a corner stack.
+  Folding them into one element with a `placement` prop would have meant one
+  stylesheet trying to be both.
+- **Read a child element's prop as a property in a real build.** The smoke
+  asked a slot's fallback `pf-icon` for its `name` **attribute** and got
+  `null`: Stencil's vdom sets props on an upgraded child as properties, so the
+  attribute is simply absent — where a test fixture's HTML would have had it.
+  The same trap `pf-command-item.value` was a live defect for, seen from the
+  test's side this time.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

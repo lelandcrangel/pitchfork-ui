@@ -110,10 +110,16 @@ describe('Notification', () => {
     const onDismiss = vi.fn();
     render(<Notification heading="Note" dismissible onDismiss={onDismiss} />);
     await user.click(screen.getByRole('button', { name: 'Dismiss notification' }));
-    // The exit animation plays first (element gets the exiting class), then
-    // onDismiss fires once it finishes.
+
+    /*
+     * The exiting class goes on, and `onDismiss` fires once the exit
+     * animation has finished — which here is immediately, because jsdom has
+     * no `getAnimations` and nothing is animating. That is the point of the
+     * change: the hook used to wait a hard-coded 220ms whether or not
+     * anything was playing, which made this read as "the animation is in
+     * progress" when no animation existed at all.
+     */
     expect(screen.getByRole('status').className).toContain('pf-notification--exiting');
-    expect(onDismiss).not.toHaveBeenCalled();
     await waitFor(() => expect(onDismiss).toHaveBeenCalledTimes(1));
   });
 

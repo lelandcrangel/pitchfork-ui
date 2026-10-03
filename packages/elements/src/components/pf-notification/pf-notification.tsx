@@ -1,4 +1,9 @@
-import { liveRegionRole, severityIconName, type LiveRegionVariant } from '@pitchfork-ui/core';
+import {
+  animationsFinished,
+  liveRegionRole,
+  severityIconName,
+  type LiveRegionVariant,
+} from '@pitchfork-ui/core';
 
 import {
   Component,
@@ -80,29 +85,11 @@ export class PfNotification {
 
   /**
    * Waits for the exit animation, or returns straight away when there is not
-   * one.
-   *
-   * `getAnimations()` is the only reliable way to ask: `animationName` from
-   * `getComputedStyle` reports whatever `animation` declared whether or not
-   * the keyframes resolve, and an `animationend` listener waits forever when
-   * no animation ever started. Which is not hypothetical here — under
-   * `prefers-reduced-motion` the stylesheet sets `animation: none`, and in
-   * both Vitest projects no `styleUrl` CSS is applied at all, so nothing
-   * animates and a listener-based dismiss would simply hang.
+   * one. Core's, so `pf-alert` and the React `useExitAnimation` wait the same
+   * way — and none of them waits on a guessed duration.
    */
   private async waitForExit(): Promise<void> {
-    const root = this.el.shadowRoot?.querySelector('.notification');
-    if (!root) return;
-
-    // A frame, so the reflected `exiting` attribute has been applied and the
-    // exit animation has actually been created.
-    await new Promise((resolve) => requestAnimationFrame(resolve));
-
-    const running = root.getAnimations().filter((animation) => animation.playState !== 'finished');
-    if (running.length === 0) return;
-
-    // A cancelled animation rejects; that is still "done leaving".
-    await Promise.all(running.map((animation) => animation.finished.catch(() => undefined)));
+    await animationsFinished(this.el.shadowRoot?.querySelector('.notification'));
   }
 
   private readBody() {
