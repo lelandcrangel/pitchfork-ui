@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react';
 import {
+  PfAccordion,
+  PfAccordionItem,
   PfAvatar,
   PfBadge,
   PfBadgeGroup,
@@ -77,6 +79,7 @@ export function App() {
   const [slideoutOpen, setSlideoutOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [tab, setTab] = useState('overview');
+  const [sections, setSections] = useState('shipping');
   const [day, setDay] = useState('2024-03-15');
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
@@ -684,6 +687,37 @@ export function App() {
         </PfTabPanel>
       </PfTabs>
       <output data-testid="tabs-value">{tab}</output>
+
+      {/*
+        Each section is self-contained — it owns its header, its panel and the
+        0fr → 1fr height animation — and the group owns only which sections are
+        open, because in single mode that depends on what else is. The heading
+        level is pushed down, so one prop sets it for every section.
+      */}
+      <PfAccordion
+        type="multiple"
+        value={sections}
+        headingLevel={3}
+        data-testid="accordion"
+        onPfChange={(event) => setSections(event.detail.value)}
+      >
+        <PfAccordionItem value="shipping">
+          <span slot="title">Shipping</span>
+          <p>
+            Ships in two days. <a href="#shipping-detail">Read the detail</a>, which is focusable
+            and so has to be inert while this section is closed.
+          </p>
+        </PfAccordionItem>
+        <PfAccordionItem value="returns">
+          <span slot="title">Returns</span>
+          <p>Thirty days, no questions.</p>
+        </PfAccordionItem>
+        <PfAccordionItem value="warranty" disabled>
+          <span slot="title">Warranty</span>
+          <p>Nothing here; the section is disabled.</p>
+        </PfAccordionItem>
+      </PfAccordion>
+      <output data-testid="accordion-value">{sections || 'none'}</output>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

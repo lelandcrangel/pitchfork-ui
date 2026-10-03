@@ -1,6 +1,8 @@
 import { Component, ElementRef, signal, viewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
+  PfAccordion,
+  PfAccordionItem,
   PfAvatar,
   PfBadge,
   PfBadgeGroup,
@@ -75,6 +77,8 @@ import {
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    PfAccordion,
+    PfAccordionItem,
     PfAvatar,
     PfBadge,
     PfBadgeGroup,
@@ -599,6 +603,36 @@ import {
       </pf-tabs>
       <output data-testid="tabs-value">{{ tab() }}</output>
 
+      <!--
+        One group, three self-contained sections; see the React consumer for
+        the division of labour. The heading level is pushed down from the
+        group, which is why no section sets it.
+      -->
+      <pf-accordion
+        type="multiple"
+        [value]="sections()"
+        [headingLevel]="3"
+        data-testid="accordion"
+        (pfChange)="sections.set($event.detail.value)"
+      >
+        <pf-accordion-item value="shipping">
+          <span slot="title">Shipping</span>
+          <p>
+            Ships in two days. <a href="#shipping-detail">Read the detail</a>, which is focusable
+            and so has to be inert while this section is closed.
+          </p>
+        </pf-accordion-item>
+        <pf-accordion-item value="returns">
+          <span slot="title">Returns</span>
+          <p>Thirty days, no questions.</p>
+        </pf-accordion-item>
+        <pf-accordion-item value="warranty" disabled>
+          <span slot="title">Warranty</span>
+          <p>Nothing here; the section is disabled.</p>
+        </pf-accordion-item>
+      </pf-accordion>
+      <output data-testid="accordion-value">{{ sections() || 'none' }}</output>
+
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>
           A scroll area is focusable by default, so it can be scrolled with the arrow keys even when
@@ -619,6 +653,7 @@ export class AppComponent {
   slideoutOpen = signal(false);
   paletteOpen = signal(false);
   tab = signal('overview');
+  sections = signal('shipping');
   day = signal('2024-03-15');
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');

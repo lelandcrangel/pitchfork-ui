@@ -97,6 +97,8 @@ const EXPECTED = [
   'pf-tabs',
   'pf-tab',
   'pf-tab-panel',
+  'pf-accordion',
+  'pf-accordion-item',
 ];
 
 const TYPES = {
@@ -1799,6 +1801,141 @@ try {
       }
       if (state.echo !== 'issues') {
         problems.push(`pf-tabs reported "${state.echo}" to the host framework, expected "issues"`);
+      }
+    }
+  }
+
+  /*
+   * The accordion, and specifically the two things only a real stylesheet
+   * does: the 0fr → 1fr height animation, and the rule between sections.
+   *
+   * The animation is asserted with `getAnimations()` rather than a computed
+   * `transition`, because a computed value reports whatever was declared
+   * whether or not it resolves — `pf-modal` shipped an undefined duration
+   * token, which computes the whole shorthand away, and its entrance animation
+   * had never run. Here the same mistake would make every section snap open.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const accordion = document.querySelector('pf-accordion');
+        if (!accordion) return { error: 'the consumer app has no pf-accordion' };
+
+        const items = Array.from(accordion.querySelectorAll('pf-accordion-item'));
+        const section = (value) => items.find((item) => item.getAttribute('value') === value);
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const height = (value) => part(section(value), 'content').getBoundingClientRect().height;
+
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const read = {
+          // `shipping` is open in both apps; `returns` is not.
+          openHeight: height('shipping'),
+          closedHeight: height('returns'),
+          openChevron: getComputedStyle(part(section('shipping'), 'icon')).transform,
+          closedChevron: getComputedStyle(part(section('returns'), 'icon')).transform,
+          // `:host(:first-child)` drops the rule above the first section.
+          firstBorder: getComputedStyle(section('shipping')).borderTopWidth,
+          secondBorder: getComputedStyle(section('returns')).borderTopWidth,
+          groupBorder: getComputedStyle(accordion).borderTopWidth,
+          triggerText: getComputedStyle(part(section('shipping'), 'trigger')).color,
+          disabledOpacity: getComputedStyle(part(section('warranty'), 'trigger')).opacity,
+          plainOpacity: getComputedStyle(part(section('returns'), 'trigger')).opacity,
+        };
+
+        // Open the second section and watch the panel animate rather than jump.
+        part(section('returns'), 'trigger').click();
+        const panel = part(section('returns'), 'panel');
+        const deadline = Date.now() + 3000;
+        while (panel.getAnimations().length === 0) {
+          if (Date.now() > deadline) {
+            // Reported with the echo, so a dead animation does not also look
+            // like the event never reaching the host framework.
+            return {
+              ...read,
+              animated: [],
+              openedHeight: height('returns'),
+              echo: document.querySelector('[data-testid="accordion-value"]')?.textContent?.trim(),
+            };
+          }
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        const animated = panel.getAnimations().map((animation) => ({
+          property: animation.transitionProperty ?? null,
+          duration: animation.effect?.getTiming().duration ?? 0,
+        }));
+        await Promise.all(panel.getAnimations().map((animation) => animation.finished));
+        await settle();
+
+        return {
+          ...read,
+          animated,
+          openedHeight: height('returns'),
+          echo: document.querySelector('[data-testid="accordion-value"]')?.textContent?.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-accordion: ${state.error}`);
+    } else {
+      if (!(state.openHeight > 0)) {
+        problems.push(`an open pf-accordion-item panel measured ${state.openHeight}px`);
+      }
+      if (state.closedHeight !== 0) {
+        problems.push(
+          `a closed pf-accordion-item panel measured ${state.closedHeight}px — ` +
+            'the 0fr row is not collapsing',
+        );
+      }
+      if (state.openChevron === state.closedChevron) {
+        problems.push(
+          `the chevron looks the same open and closed ("${state.openChevron}") — ` +
+            'the [expanded] rotation did not apply',
+        );
+      }
+      if (state.firstBorder !== '0px') {
+        problems.push(
+          `the first pf-accordion-item has a ${state.firstBorder} top border — ` +
+            ':host(:first-child) did not match, so it doubles the group’s own',
+        );
+      }
+      if (state.secondBorder === '0px') {
+        problems.push('the second pf-accordion-item has no rule above it');
+      }
+      if (state.groupBorder === '0px') {
+        problems.push('pf-accordion has no border — a --pf-accordion-* alias is missing');
+      }
+      if (isTransparent(state.triggerText)) {
+        problems.push('a pf-accordion-item header has no text colour');
+      }
+      if (state.disabledOpacity === state.plainOpacity) {
+        problems.push(
+          `a disabled header looks the same as an enabled one (opacity ${state.plainOpacity})`,
+        );
+      }
+      const rows = state.animated.filter(
+        (animation) => animation.property === 'grid-template-rows' && animation.duration > 0,
+      );
+      if (rows.length === 0) {
+        problems.push(
+          'opening a pf-accordion-item ran no grid-template-rows animation — ' +
+            `it snaps open (${JSON.stringify(state.animated)})`,
+        );
+      }
+      if (!(state.openedHeight > 0)) {
+        problems.push(`the opened panel measured ${state.openedHeight}px once settled`);
+      }
+      if (state.echo !== 'shipping,returns') {
+        problems.push(
+          `pf-accordion reported "${state.echo}" to the host framework, ` +
+            'expected "shipping,returns"',
+        );
       }
     }
   }

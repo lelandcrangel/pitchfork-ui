@@ -42,6 +42,25 @@ export function toggleValueInList(values: readonly string[], value: string): str
 }
 
 /**
+ * The expanded set after toggling `value` in a disclosure group.
+ *
+ * `multiple` is the whole difference between an accordion that keeps one
+ * section open and one that keeps several, and it is shared because the two
+ * layers have to agree on both halves of it: in single mode closing the open
+ * section leaves *nothing* open rather than falling back to the first, and
+ * opening one closes whatever else was open — including, in a group handed
+ * several expanded values to begin with, all of them at once.
+ */
+export function toggleDisclosureValue(
+  expanded: readonly string[],
+  value: string,
+  { multiple = false } = {},
+): string[] {
+  if (multiple) return toggleValueInList(expanded, value);
+  return expanded.includes(value) ? [] : [value];
+}
+
+/**
  * The values that cannot survive a round trip through the separator.
  *
  * Returned rather than thrown, so a caller can warn once with every offender

@@ -6,6 +6,7 @@ import {
   parseValueList,
   removeTagAt,
   splitPastedTags,
+  toggleDisclosureValue,
   toggleValueInList,
 } from './value-list';
 
@@ -192,5 +193,33 @@ describe('splitPastedTags', () => {
 
   it('collapses runs of separators', () => {
     expect(splitPastedTags('a,,\n\tb')).toEqual(['a', 'b']);
+  });
+});
+
+describe('toggleDisclosureValue', () => {
+  it('opens one section at a time in single mode', () => {
+    expect(toggleDisclosureValue([], 'a')).toEqual(['a']);
+    expect(toggleDisclosureValue(['a'], 'b')).toEqual(['b']);
+  });
+
+  it('closes the open section, leaving nothing open', () => {
+    expect(toggleDisclosureValue(['a'], 'a')).toEqual([]);
+  });
+
+  /* A group handed several expanded values collapses to the one picked. */
+  it('collapses a pre-expanded set in single mode', () => {
+    expect(toggleDisclosureValue(['a', 'b', 'c'], 'b')).toEqual([]);
+    expect(toggleDisclosureValue(['a', 'b', 'c'], 'd')).toEqual(['d']);
+  });
+
+  it('keeps the others open in multiple mode', () => {
+    expect(toggleDisclosureValue(['a'], 'b', { multiple: true })).toEqual(['a', 'b']);
+    expect(toggleDisclosureValue(['a', 'b'], 'a', { multiple: true })).toEqual(['b']);
+  });
+
+  it('leaves the input alone', () => {
+    const expanded = ['a'];
+    toggleDisclosureValue(expanded, 'b', { multiple: true });
+    expect(expanded).toEqual(['a']);
   });
 });

@@ -626,6 +626,23 @@ Things that differ from the React library, learned by porting the first two:
   hydration, so the bar animates up from empty, where React's is set at
   creation and never moves. Awaiting the fill's animations costs the React app
   nothing, because the list is empty there.
+- **A rule _between_ slotted children belongs in the child.** `::slotted()`
+  takes a compound selector and no combinator, so there is no way to write
+  `::slotted(item + item)` from the container's sheet. `:host(:first-child)` in
+  the child's own sheet says the same thing and needs no coordination — which
+  is how `pf-accordion-item` draws a rule above every section but the first.
+- **`inert` is not implied by a collapsed height.** `pf-accordion-item`'s panel
+  animates to a `0fr` grid row with `overflow: hidden`, which hides its content
+  and leaves it perfectly focusable: without `inert` on the closed panel, the
+  next Tab from a closed header lands on a link inside the box that just shut.
+  Three tests catch it, one of them simply tabbing through the group.
+- **A dynamic heading tag has to be cast, not built.** Calling `h` with a
+  computed tag string — "h" plus the level — type-checks under the test
+  transpile and fails the Stencil build, because the overload for a plain
+  string tag types `class` as a className map and rejects a plain string.
+  Assign the tag to a variable cast to one of the literals (`as 'h3'`) and use
+  ordinary JSX, which keeps the props checked against a real heading element.
+  `pf-accordion-item` is the worked example.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.
@@ -666,6 +683,14 @@ What each project cannot do, measured rather than assumed:
   `TypeError`, so the lifecycle method carries on as if nothing happened. The
   symptom was `pf-command-palette` rendering "No results found" over a full
   list, with no error anywhere. Use `setAttribute`/`removeAttribute`.
+- **Importing a child component changes what a spec can read.** A nested
+  `<pf-icon name="chevron-down">` leaves a `name` attribute only while
+  `pf-icon` is _not_ imported by the spec: once it upgrades, Stencil sets the
+  prop as a property and no attribute is written. So
+  `getAttribute('name')` reads null in a spec that imports it and the right
+  string in one that does not — the unreflected-prop trap seen from the other
+  side. Import the children a test really exercises, and read properties
+  rather than attributes when it does.
 - **Neither project applies `styleUrl` CSS.** A mounted element's shadow root
   has zero adopted stylesheets and zero `<style>` tags, because the styles are
   bundled by the output targets and neither test project runs them. So no test
@@ -673,6 +698,15 @@ What each project cannot do, measured rather than assumed:
   reflected attributes the stylesheet selects on instead. Computed styles are
   the consumer apps' job — `scripts/smoke-consumer.mjs` asserts them against a
   real build, which is where a missing `--pf-*` alias actually shows up.
+
+**Rebuild `@pitchfork-ui/core` before running these tests.** The elements
+package imports core's _build_, not its sources, so a function added to core
+and not yet built is `undefined` here — and Stencil's `safeCall` swallows the
+`TypeError`, exactly as it does for the missing `toggleAttribute`. The symptom
+is a handler that silently does nothing: `pf-accordion`'s toggle was reached,
+stopped the event and then vanished mid-call, with five tests failing and no
+error anywhere. `npm run build:core` is part of running an elements test, not
+part of shipping.
 
 **Stencil's queue is `async`**, so a re-render provoked by an event lands
 several frames after the mutation. A single `requestAnimationFrame` is reliably

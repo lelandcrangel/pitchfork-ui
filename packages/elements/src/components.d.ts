@@ -5,6 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { PfAccordionHeadingLevel, PfAccordionType } from "./components/pf-accordion/pf-accordion";
+import { PfAccordionHeadingLevel as PfAccordionHeadingLevel1 } from "./components/pf-accordion/pf-accordion";
 import { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 import { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 import { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
@@ -29,6 +31,8 @@ import { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-t
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 import { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
 import { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
+export { PfAccordionHeadingLevel, PfAccordionType } from "./components/pf-accordion/pf-accordion";
+export { PfAccordionHeadingLevel as PfAccordionHeadingLevel1 } from "./components/pf-accordion/pf-accordion";
 export { PfAvatarSize, PfAvatarStatus } from "./components/pf-avatar/pf-avatar";
 export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 export { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
@@ -54,6 +58,74 @@ export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
 export { PfToolbarSeparatorOrientation } from "./components/pf-toolbar-separator/pf-toolbar-separator";
 export { PfUtilityButtonSize, PfUtilityButtonVariant } from "./components/pf-utility-button/pf-utility-button";
 export namespace Components {
+    /**
+     * A stack of `pf-accordion-item` children, of which either one or several can
+     * be open.
+     * The group owns which sections are open and the arrow keys; each item owns
+     * its own header, panel and animation. Same division as `pf-radio-group` and
+     * its radios — and for the same reason, since "one open at a time" is not a
+     * thing a section can decide for itself.
+     * Unlike a tab strip this is **not** a roving tabindex: the ARIA accordion
+     * pattern puts every header in the tab sequence, and the arrows are an extra
+     * way to move between them rather than the only one. A header is a real
+     * `<button>` inside its item's shadow root, so it is tabbable with no help.
+     */
+    interface PfAccordion {
+        /**
+          * The heading level each item's header is wrapped in.  A union-literal type defeats Stencil's attribute coercion — measured on `pf-time-picker`, where `hour-cycle="12"` arrived as the *string* `"12"` — so the value is coerced before it is pushed down rather than compared here. The union stays because it is the useful type for a framework consumer who really does set the number.
+          * @default 3
+         */
+        "headingLevel": PfAccordionHeadingLevel;
+        /**
+          * Re-reads the children, for a consumer who changed one through its *property* — `item.disabled = true` leaves no attribute, moves no node and fires no `slotchange`.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * `single` closes the others when one opens; `multiple` leaves them.
+          * @default 'single'
+         */
+        "type": PfAccordionType;
+        /**
+          * The open sections, as one comma-separated string — which is what an attribute can carry. `pfChange` also reports the parsed array, which is what a framework consumer usually wants.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
+     * One section inside a `pf-accordion`.
+     * It owns its header, its panel and the open/close animation; the group owns
+     * only *which* sections are open, because in `single` mode that depends on
+     * what else is. So this element reports that it was clicked and waits to be
+     * told, exactly as `pf-radio-button` does.
+     * The header is a real `<button>` in the shadow root, which makes it tabbable
+     * with no help and gives Enter and Space for free. `delegatesFocus` is what
+     * lets the group's arrow keys hand focus to it through the host.
+     * Both IDREFs here point inside this one shadow root, which is the case where
+     * an IDREF resolves — the header names the panel with `aria-controls` and the
+     * panel names the header back with `aria-labelledby`.
+     */
+    interface PfAccordionItem {
+        /**
+          * Reflected; the stylesheet and the group's own filtering both read it.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Set by the group. Reflected, so the stylesheet can turn the chevron.
+          * @default false
+         */
+        "expanded": boolean;
+        /**
+          * Set by the group from its own `headingLevel`.
+          * @default 3
+         */
+        "headingLevel": PfAccordionHeadingLevel1;
+        /**
+          * Identifies the section in the group's open set.  Reflected because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing. The group reads the property.
+          * @default ''
+         */
+        "value": string;
+    }
     interface PfAvatar {
         /**
           * Alternative text for the photo.
@@ -2013,6 +2085,14 @@ export namespace Components {
         "focusable": boolean;
     }
 }
+export interface PfAccordionCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfAccordionElement;
+}
+export interface PfAccordionItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfAccordionItemElement;
+}
 export interface PfCalendarCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCalendarElement;
@@ -2134,6 +2214,65 @@ export interface PfToasterCustomEvent<T> extends CustomEvent<T> {
     target: HTMLPfToasterElement;
 }
 declare global {
+    interface HTMLPfAccordionElementEventMap {
+        "pfChange": { value: string; values: string[] };
+    }
+    /**
+     * A stack of `pf-accordion-item` children, of which either one or several can
+     * be open.
+     * The group owns which sections are open and the arrow keys; each item owns
+     * its own header, panel and animation. Same division as `pf-radio-group` and
+     * its radios — and for the same reason, since "one open at a time" is not a
+     * thing a section can decide for itself.
+     * Unlike a tab strip this is **not** a roving tabindex: the ARIA accordion
+     * pattern puts every header in the tab sequence, and the arrows are an extra
+     * way to move between them rather than the only one. A header is a real
+     * `<button>` inside its item's shadow root, so it is tabbable with no help.
+     */
+    interface HTMLPfAccordionElement extends Components.PfAccordion, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfAccordionElementEventMap>(type: K, listener: (this: HTMLPfAccordionElement, ev: PfAccordionCustomEvent<HTMLPfAccordionElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfAccordionElementEventMap>(type: K, listener: (this: HTMLPfAccordionElement, ev: PfAccordionCustomEvent<HTMLPfAccordionElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfAccordionElement: {
+        prototype: HTMLPfAccordionElement;
+        new (): HTMLPfAccordionElement;
+    };
+    interface HTMLPfAccordionItemElementEventMap {
+        "pfAccordionToggle": { value: string };
+    }
+    /**
+     * One section inside a `pf-accordion`.
+     * It owns its header, its panel and the open/close animation; the group owns
+     * only *which* sections are open, because in `single` mode that depends on
+     * what else is. So this element reports that it was clicked and waits to be
+     * told, exactly as `pf-radio-button` does.
+     * The header is a real `<button>` in the shadow root, which makes it tabbable
+     * with no help and gives Enter and Space for free. `delegatesFocus` is what
+     * lets the group's arrow keys hand focus to it through the host.
+     * Both IDREFs here point inside this one shadow root, which is the case where
+     * an IDREF resolves — the header names the panel with `aria-controls` and the
+     * panel names the header back with `aria-labelledby`.
+     */
+    interface HTMLPfAccordionItemElement extends Components.PfAccordionItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfAccordionItemElementEventMap>(type: K, listener: (this: HTMLPfAccordionItemElement, ev: PfAccordionItemCustomEvent<HTMLPfAccordionItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfAccordionItemElementEventMap>(type: K, listener: (this: HTMLPfAccordionItemElement, ev: PfAccordionItemCustomEvent<HTMLPfAccordionItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfAccordionItemElement: {
+        prototype: HTMLPfAccordionItemElement;
+        new (): HTMLPfAccordionItemElement;
+    };
     interface HTMLPfAvatarElement extends Components.PfAvatar, HTMLStencilElement {
     }
     var HTMLPfAvatarElement: {
@@ -3258,6 +3397,8 @@ declare global {
         new (): HTMLPfVisuallyHiddenElement;
     };
     interface HTMLElementTagNameMap {
+        "pf-accordion": HTMLPfAccordionElement;
+        "pf-accordion-item": HTMLPfAccordionItemElement;
         "pf-avatar": HTMLPfAvatarElement;
         "pf-badge": HTMLPfBadgeElement;
         "pf-badge-group": HTMLPfBadgeGroupElement;
@@ -3322,6 +3463,78 @@ declare global {
 declare namespace LocalJSX {
     type OneOf<K extends string, PropT, AttrT = PropT> = { [P in K]: PropT } & { [P in `attr:${K}`]?: never } | { [P in `attr:${K}`]: AttrT } & { [P in K]?: never };
 
+    /**
+     * A stack of `pf-accordion-item` children, of which either one or several can
+     * be open.
+     * The group owns which sections are open and the arrow keys; each item owns
+     * its own header, panel and animation. Same division as `pf-radio-group` and
+     * its radios — and for the same reason, since "one open at a time" is not a
+     * thing a section can decide for itself.
+     * Unlike a tab strip this is **not** a roving tabindex: the ARIA accordion
+     * pattern puts every header in the tab sequence, and the arrows are an extra
+     * way to move between them rather than the only one. A header is a real
+     * `<button>` inside its item's shadow root, so it is tabbable with no help.
+     */
+    interface PfAccordion {
+        /**
+          * The heading level each item's header is wrapped in.  A union-literal type defeats Stencil's attribute coercion — measured on `pf-time-picker`, where `hour-cycle="12"` arrived as the *string* `"12"` — so the value is coerced before it is pushed down rather than compared here. The union stays because it is the useful type for a framework consumer who really does set the number.
+          * @default 3
+         */
+        "headingLevel"?: PfAccordionHeadingLevel;
+        /**
+          * Fires when the open set changes, however it was changed.
+         */
+        "onPfChange"?: (event: PfAccordionCustomEvent<{ value: string; values: string[] }>) => void;
+        /**
+          * `single` closes the others when one opens; `multiple` leaves them.
+          * @default 'single'
+         */
+        "type"?: PfAccordionType;
+        /**
+          * The open sections, as one comma-separated string — which is what an attribute can carry. `pfChange` also reports the parsed array, which is what a framework consumer usually wants.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
+     * One section inside a `pf-accordion`.
+     * It owns its header, its panel and the open/close animation; the group owns
+     * only *which* sections are open, because in `single` mode that depends on
+     * what else is. So this element reports that it was clicked and waits to be
+     * told, exactly as `pf-radio-button` does.
+     * The header is a real `<button>` in the shadow root, which makes it tabbable
+     * with no help and gives Enter and Space for free. `delegatesFocus` is what
+     * lets the group's arrow keys hand focus to it through the host.
+     * Both IDREFs here point inside this one shadow root, which is the case where
+     * an IDREF resolves — the header names the panel with `aria-controls` and the
+     * panel names the header back with `aria-labelledby`.
+     */
+    interface PfAccordionItem {
+        /**
+          * Reflected; the stylesheet and the group's own filtering both read it.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Set by the group. Reflected, so the stylesheet can turn the chevron.
+          * @default false
+         */
+        "expanded"?: boolean;
+        /**
+          * Set by the group from its own `headingLevel`.
+          * @default 3
+         */
+        "headingLevel"?: PfAccordionHeadingLevel1;
+        /**
+          * Asks the group to open or close this section. The group decides.
+         */
+        "onPfAccordionToggle"?: (event: PfAccordionItemCustomEvent<{ value: string }>) => void;
+        /**
+          * Identifies the section in the group's open set.  Reflected because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing. The group reads the property.
+          * @default ''
+         */
+        "value"?: string;
+    }
     interface PfAvatar {
         /**
           * Alternative text for the photo.
@@ -5298,6 +5511,17 @@ declare namespace LocalJSX {
         "focusable"?: boolean;
     }
 
+    interface PfAccordionAttributes {
+        "value": string;
+        "type": PfAccordionType;
+        "headingLevel": PfAccordionHeadingLevel;
+    }
+    interface PfAccordionItemAttributes {
+        "value": string;
+        "disabled": boolean;
+        "expanded": boolean;
+        "headingLevel": PfAccordionHeadingLevel;
+    }
     interface PfAvatarAttributes {
         "src": string;
         "alt": string;
@@ -5682,6 +5906,8 @@ declare namespace LocalJSX {
     }
 
     interface IntrinsicElements {
+        "pf-accordion": Omit<PfAccordion, keyof PfAccordionAttributes> & { [K in keyof PfAccordion & keyof PfAccordionAttributes]?: PfAccordion[K] } & { [K in keyof PfAccordion & keyof PfAccordionAttributes as `attr:${K}`]?: PfAccordionAttributes[K] } & { [K in keyof PfAccordion & keyof PfAccordionAttributes as `prop:${K}`]?: PfAccordion[K] };
+        "pf-accordion-item": Omit<PfAccordionItem, keyof PfAccordionItemAttributes> & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes]?: PfAccordionItem[K] } & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes as `attr:${K}`]?: PfAccordionItemAttributes[K] } & { [K in keyof PfAccordionItem & keyof PfAccordionItemAttributes as `prop:${K}`]?: PfAccordionItem[K] };
         "pf-avatar": Omit<PfAvatar, keyof PfAvatarAttributes> & { [K in keyof PfAvatar & keyof PfAvatarAttributes]?: PfAvatar[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `attr:${K}`]?: PfAvatarAttributes[K] } & { [K in keyof PfAvatar & keyof PfAvatarAttributes as `prop:${K}`]?: PfAvatar[K] };
         "pf-badge": Omit<PfBadge, keyof PfBadgeAttributes> & { [K in keyof PfBadge & keyof PfBadgeAttributes]?: PfBadge[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `attr:${K}`]?: PfBadgeAttributes[K] } & { [K in keyof PfBadge & keyof PfBadgeAttributes as `prop:${K}`]?: PfBadge[K] };
         "pf-badge-group": Omit<PfBadgeGroup, keyof PfBadgeGroupAttributes> & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes]?: PfBadgeGroup[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `attr:${K}`]?: PfBadgeGroupAttributes[K] } & { [K in keyof PfBadgeGroup & keyof PfBadgeGroupAttributes as `prop:${K}`]?: PfBadgeGroup[K] };
@@ -5747,6 +5973,33 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            /**
+             * A stack of `pf-accordion-item` children, of which either one or several can
+             * be open.
+             * The group owns which sections are open and the arrow keys; each item owns
+             * its own header, panel and animation. Same division as `pf-radio-group` and
+             * its radios — and for the same reason, since "one open at a time" is not a
+             * thing a section can decide for itself.
+             * Unlike a tab strip this is **not** a roving tabindex: the ARIA accordion
+             * pattern puts every header in the tab sequence, and the arrows are an extra
+             * way to move between them rather than the only one. A header is a real
+             * `<button>` inside its item's shadow root, so it is tabbable with no help.
+             */
+            "pf-accordion": LocalJSX.IntrinsicElements["pf-accordion"] & JSXBase.HTMLAttributes<HTMLPfAccordionElement>;
+            /**
+             * One section inside a `pf-accordion`.
+             * It owns its header, its panel and the open/close animation; the group owns
+             * only *which* sections are open, because in `single` mode that depends on
+             * what else is. So this element reports that it was clicked and waits to be
+             * told, exactly as `pf-radio-button` does.
+             * The header is a real `<button>` in the shadow root, which makes it tabbable
+             * with no help and gives Enter and Space for free. `delegatesFocus` is what
+             * lets the group's arrow keys hand focus to it through the host.
+             * Both IDREFs here point inside this one shadow root, which is the case where
+             * an IDREF resolves — the header names the panel with `aria-controls` and the
+             * panel names the header back with `aria-labelledby`.
+             */
+            "pf-accordion-item": LocalJSX.IntrinsicElements["pf-accordion-item"] & JSXBase.HTMLAttributes<HTMLPfAccordionItemElement>;
             "pf-avatar": LocalJSX.IntrinsicElements["pf-avatar"] & JSXBase.HTMLAttributes<HTMLPfAvatarElement>;
             "pf-badge": LocalJSX.IntrinsicElements["pf-badge"] & JSXBase.HTMLAttributes<HTMLPfBadgeElement>;
             /**
