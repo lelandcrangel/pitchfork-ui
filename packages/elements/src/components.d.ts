@@ -276,6 +276,76 @@ export namespace Components {
         "value": string;
     }
     /**
+     * A form-associated combobox: an editable field that filters `pf-option`
+     * children.
+     * It shares `pf-option` with `pf-select`, which is why the option reads a
+     * generic `--pf-option-*` set that each container maps to its own family —
+     * the same arrangement as `pf-menu-item` between the two menus.
+     * Filtering is core's `matchesCommandQuery`, and so is the rule that a query
+     * which is only the chosen label echoed back does not filter: without it,
+     * reopening the list to change your mind would show the one answer you already
+     * had. Both shared with the React component, which is now rewired to them.
+     * Two things the React `Combobox` does not do, both gaps rather than choices:
+     * Home and End, and arrows that wrap rather than stop at the ends — which is
+     * what `pf-select` does, and one design system should not have two arrow
+     * behaviours in neighbouring controls.
+     */
+    interface PfCombobox {
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * Accessible name for that button.
+          * @default 'Clear'
+         */
+        "clearLabel": string;
+        /**
+          * Offer a button that empties the field.
+          * @default true
+         */
+        "clearable": boolean;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Shown when the query matches nothing.
+          * @default 'No matches'
+         */
+        "emptyMessage": string;
+        "error"?: string;
+        "getValidationMessage": () => Promise<string>;
+        "hide": () => Promise<void>;
+        "label"?: string;
+        /**
+          * Submitted under this name. Reflected; the submission reads the attribute.
+         */
+        "name"?: string;
+        /**
+          * Whether the listbox is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open": boolean;
+        /**
+          * @default 'Search…'
+         */
+        "placeholder": string;
+        /**
+          * Re-reads the options, for a label edited in place (no `slotchange` fires).
+         */
+        "refresh": () => Promise<void>;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        "show": () => Promise<void>;
+        /**
+          * The chosen option's value, or empty.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A labelled section of a `pf-command-palette`.
      * Grouping is structural here, where the React component takes a `group` name
      * on each item and buckets them itself. That is not a stylistic choice: the
@@ -1702,6 +1772,10 @@ export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCheckboxElement;
 }
+export interface PfComboboxCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfComboboxElement;
+}
 export interface PfCommandItemCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCommandItemElement;
@@ -1917,6 +1991,39 @@ declare global {
     var HTMLPfCheckboxElement: {
         prototype: HTMLPfCheckboxElement;
         new (): HTMLPfCheckboxElement;
+    };
+    interface HTMLPfComboboxElementEventMap {
+        "pfChange": { value: string };
+        "pfOpenChange": { open: boolean };
+    }
+    /**
+     * A form-associated combobox: an editable field that filters `pf-option`
+     * children.
+     * It shares `pf-option` with `pf-select`, which is why the option reads a
+     * generic `--pf-option-*` set that each container maps to its own family —
+     * the same arrangement as `pf-menu-item` between the two menus.
+     * Filtering is core's `matchesCommandQuery`, and so is the rule that a query
+     * which is only the chosen label echoed back does not filter: without it,
+     * reopening the list to change your mind would show the one answer you already
+     * had. Both shared with the React component, which is now rewired to them.
+     * Two things the React `Combobox` does not do, both gaps rather than choices:
+     * Home and End, and arrows that wrap rather than stop at the ends — which is
+     * what `pf-select` does, and one design system should not have two arrow
+     * behaviours in neighbouring controls.
+     */
+    interface HTMLPfComboboxElement extends Components.PfCombobox, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfComboboxElementEventMap>(type: K, listener: (this: HTMLPfComboboxElement, ev: PfComboboxCustomEvent<HTMLPfComboboxElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfComboboxElementEventMap>(type: K, listener: (this: HTMLPfComboboxElement, ev: PfComboboxCustomEvent<HTMLPfComboboxElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfComboboxElement: {
+        prototype: HTMLPfComboboxElement;
+        new (): HTMLPfComboboxElement;
     };
     /**
      * A labelled section of a `pf-command-palette`.
@@ -2759,6 +2866,7 @@ declare global {
         "pf-card-footer": HTMLPfCardFooterElement;
         "pf-card-header": HTMLPfCardHeaderElement;
         "pf-checkbox": HTMLPfCheckboxElement;
+        "pf-combobox": HTMLPfComboboxElement;
         "pf-command-group": HTMLPfCommandGroupElement;
         "pf-command-item": HTMLPfCommandItemElement;
         "pf-command-palette": HTMLPfCommandPaletteElement;
@@ -3025,6 +3133,79 @@ declare namespace LocalJSX {
         /**
           * What is submitted when ticked. Mirrors the native attribute, whose default is also `on` — a checkbox with no value still submits something.
           * @default 'on'
+         */
+        "value"?: string;
+    }
+    /**
+     * A form-associated combobox: an editable field that filters `pf-option`
+     * children.
+     * It shares `pf-option` with `pf-select`, which is why the option reads a
+     * generic `--pf-option-*` set that each container maps to its own family —
+     * the same arrangement as `pf-menu-item` between the two menus.
+     * Filtering is core's `matchesCommandQuery`, and so is the rule that a query
+     * which is only the chosen label echoed back does not filter: without it,
+     * reopening the list to change your mind would show the one answer you already
+     * had. Both shared with the React component, which is now rewired to them.
+     * Two things the React `Combobox` does not do, both gaps rather than choices:
+     * Home and End, and arrows that wrap rather than stop at the ends — which is
+     * what `pf-select` does, and one design system should not have two arrow
+     * behaviours in neighbouring controls.
+     */
+    interface PfCombobox {
+        /**
+          * Accessible name for that button.
+          * @default 'Clear'
+         */
+        "clearLabel"?: string;
+        /**
+          * Offer a button that empties the field.
+          * @default true
+         */
+        "clearable"?: boolean;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Shown when the query matches nothing.
+          * @default 'No matches'
+         */
+        "emptyMessage"?: string;
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        "label"?: string;
+        /**
+          * Submitted under this name. Reflected; the submission reads the attribute.
+         */
+        "name"?: string;
+        /**
+          * Fires when the chosen value changes.
+         */
+        "onPfChange"?: (event: PfComboboxCustomEvent<{ value: string }>) => void;
+        /**
+          * Fires whenever the listbox opens or closes, whoever caused it.
+         */
+        "onPfOpenChange"?: (event: PfComboboxCustomEvent<{ open: boolean }>) => void;
+        /**
+          * Whether the listbox is showing. Reflected for the stylesheet.
+          * @default false
+         */
+        "open"?: boolean;
+        /**
+          * @default 'Search…'
+         */
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * The chosen option's value, or empty.
+          * @default ''
          */
         "value"?: string;
     }
@@ -4501,6 +4682,20 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
     }
+    interface PfComboboxAttributes {
+        "name": string;
+        "value": string;
+        "open": boolean;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "emptyMessage": string;
+        "required": boolean;
+        "disabled": boolean;
+        "clearable": boolean;
+        "clearLabel": string;
+    }
     interface PfCommandGroupAttributes {
         "label": string;
     }
@@ -4790,6 +4985,7 @@ declare namespace LocalJSX {
         "pf-card-footer": PfCardFooter;
         "pf-card-header": PfCardHeader;
         "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
+        "pf-combobox": Omit<PfCombobox, keyof PfComboboxAttributes> & { [K in keyof PfCombobox & keyof PfComboboxAttributes]?: PfCombobox[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `attr:${K}`]?: PfComboboxAttributes[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `prop:${K}`]?: PfCombobox[K] };
         "pf-command-group": Omit<PfCommandGroup, keyof PfCommandGroupAttributes> & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes]?: PfCommandGroup[K] } & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes as `attr:${K}`]?: PfCommandGroupAttributes[K] } & { [K in keyof PfCommandGroup & keyof PfCommandGroupAttributes as `prop:${K}`]?: PfCommandGroup[K] };
         "pf-command-item": Omit<PfCommandItem, keyof PfCommandItemAttributes> & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes]?: PfCommandItem[K] } & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes as `attr:${K}`]?: PfCommandItemAttributes[K] } & { [K in keyof PfCommandItem & keyof PfCommandItemAttributes as `prop:${K}`]?: PfCommandItem[K] };
         "pf-command-palette": Omit<PfCommandPalette, keyof PfCommandPaletteAttributes> & { [K in keyof PfCommandPalette & keyof PfCommandPaletteAttributes]?: PfCommandPalette[K] } & { [K in keyof PfCommandPalette & keyof PfCommandPaletteAttributes as `attr:${K}`]?: PfCommandPaletteAttributes[K] } & { [K in keyof PfCommandPalette & keyof PfCommandPaletteAttributes as `prop:${K}`]?: PfCommandPalette[K] };
@@ -4890,6 +5086,22 @@ declare module "@stencil/core" {
              * A form-associated checkbox.
              */
             "pf-checkbox": LocalJSX.IntrinsicElements["pf-checkbox"] & JSXBase.HTMLAttributes<HTMLPfCheckboxElement>;
+            /**
+             * A form-associated combobox: an editable field that filters `pf-option`
+             * children.
+             * It shares `pf-option` with `pf-select`, which is why the option reads a
+             * generic `--pf-option-*` set that each container maps to its own family —
+             * the same arrangement as `pf-menu-item` between the two menus.
+             * Filtering is core's `matchesCommandQuery`, and so is the rule that a query
+             * which is only the chosen label echoed back does not filter: without it,
+             * reopening the list to change your mind would show the one answer you already
+             * had. Both shared with the React component, which is now rewired to them.
+             * Two things the React `Combobox` does not do, both gaps rather than choices:
+             * Home and End, and arrows that wrap rather than stop at the ends — which is
+             * what `pf-select` does, and one design system should not have two arrow
+             * behaviours in neighbouring controls.
+             */
+            "pf-combobox": LocalJSX.IntrinsicElements["pf-combobox"] & JSXBase.HTMLAttributes<HTMLPfComboboxElement>;
             /**
              * A labelled section of a `pf-command-palette`.
              * Grouping is structural here, where the React component takes a `group` name

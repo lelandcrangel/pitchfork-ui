@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { matchesCommandQuery, normalizeCommandQuery } from './command';
+import { matchesCommandQuery, normalizeCommandQuery, queryIsEchoedSelection } from './command';
 
 describe('normalizeCommandQuery', () => {
   it('trims and lower-cases', () => {
@@ -58,5 +58,35 @@ describe('matchesCommandQuery', () => {
 
   it('trims the query before matching, so a padded query still matches', () => {
     expect(matchesCommandQuery(item, '  open  ')).toBe(true);
+  });
+});
+
+describe('queryIsEchoedSelection', () => {
+  it('is true when the query is the chosen label', () => {
+    expect(queryIsEchoedSelection('Banana', 'Banana')).toBe(true);
+  });
+
+  it('ignores surrounding whitespace on both sides', () => {
+    expect(queryIsEchoedSelection('  Banana ', 'Banana  ')).toBe(true);
+  });
+
+  it('is false once the query has been edited', () => {
+    expect(queryIsEchoedSelection('Banan', 'Banana')).toBe(false);
+    expect(queryIsEchoedSelection('Bananas', 'Banana')).toBe(false);
+  });
+
+  /* Case matters: a retyped label with different case is a real query. */
+  it('is false for a different case', () => {
+    expect(queryIsEchoedSelection('banana', 'Banana')).toBe(false);
+  });
+
+  it('is false when nothing is chosen', () => {
+    expect(queryIsEchoedSelection('Banana', null)).toBe(false);
+    expect(queryIsEchoedSelection('Banana', undefined)).toBe(false);
+    expect(queryIsEchoedSelection('Banana', '')).toBe(false);
+  });
+
+  it('is false for an empty query, which filters nothing anyway', () => {
+    expect(queryIsEchoedSelection('', 'Banana')).toBe(false);
   });
 });

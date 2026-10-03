@@ -91,6 +91,7 @@ const EXPECTED = [
   'pf-date-range-picker',
   'pf-select',
   'pf-option',
+  'pf-combobox',
 ];
 
 const TYPES = {
@@ -1501,6 +1502,111 @@ try {
       }
 
       await page.evaluate(() => document.querySelector('pf-select')?.hide());
+    }
+  }
+
+  /*
+   * The combobox, and specifically the --pf-option-* bridge: the same pf-option
+   * element is slotted into pf-select and into pf-combobox, and each maps the
+   * generic set to its own alias family. Only a real stylesheet resolves that —
+   * neither Vitest project applies component CSS — and the failure mode is an
+   * option with no colour at all, or two listboxes that look identical when the
+   * two React families do not.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const combobox = document.querySelector('pf-combobox');
+        const select = document.querySelector('pf-select');
+        if (!combobox || !select) return { error: 'the consumer app is missing one of them' };
+
+        const openIt = async (host, triggerPart) => {
+          const panel = host.shadowRoot.querySelector('[part="listbox"]');
+          host.shadowRoot.querySelector(triggerPart).click();
+          const deadline = Date.now() + 2000;
+          while (!panel.matches(':popover-open')) {
+            if (Date.now() > deadline) return null;
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          return panel;
+        };
+
+        if (!(await openIt(combobox, '[part="input"]')))
+          return { error: 'the combobox never opened' };
+        const comboActive = combobox.querySelector('pf-option[active]');
+        const comboRead = comboActive && {
+          background: getComputedStyle(comboActive).backgroundColor,
+          colour: getComputedStyle(comboActive).color,
+        };
+        const comboDisabled = getComputedStyle(
+          combobox.querySelector('pf-option[value="coventry"]'),
+        ).color;
+        const comboPlain = getComputedStyle(
+          combobox.querySelector('pf-option[value="cardiff"]'),
+        ).color;
+        combobox.hide();
+
+        if (!(await openIt(select, '[part="trigger"]')))
+          return { error: 'the select never opened' };
+        const selectActive = document.querySelector('pf-select pf-option[active]');
+        const selectRead = selectActive && {
+          background: getComputedStyle(selectActive).backgroundColor,
+          colour: getComputedStyle(selectActive).color,
+        };
+        select.hide();
+
+        return { comboRead, comboDisabled, comboPlain, selectRead };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-combobox: ${state.error}`);
+    } else {
+      for (const [which, read] of [
+        ['pf-combobox', state.comboRead],
+        ['pf-select', state.selectRead],
+      ]) {
+        if (!read) {
+          problems.push(`${which} rendered no active pf-option`);
+          continue;
+        }
+        if (isTransparent(read.background)) {
+          problems.push(
+            `the active pf-option inside ${which} has no background — ` +
+              'the --pf-option-* bridge did not resolve',
+          );
+        }
+        if (isTransparent(read.colour)) {
+          problems.push(`the active pf-option inside ${which} has no text colour`);
+        }
+      }
+
+      /*
+       * An unresolved `var()` on `color` computes to the *initial* value —
+       * measured as `rgb(0, 0, 0)` — not to the inherited one, which is the
+       * fingerprint to look for. Comparing the disabled colour with a plain
+       * one instead was vacuous: they differ either way, so it passed with the
+       * mapping deleted. This palette's text is `rgb(15, 23, 42)` and nothing
+       * in it is pure black, so black here means a mapping is missing.
+       */
+      for (const [which, colour] of [
+        ['a disabled pf-option', state.comboDisabled],
+        ['a selectable pf-option', state.comboPlain],
+      ]) {
+        if (colour === 'rgb(0, 0, 0)') {
+          problems.push(
+            `${which} computes colour ${colour}, the initial value — ` +
+              'a --pf-option-* mapping did not resolve',
+          );
+        }
+      }
+      if (state.comboDisabled === state.comboPlain) {
+        problems.push(
+          `a disabled pf-option is the same colour as a selectable one ` +
+            `("${state.comboPlain}")`,
+        );
+      }
     }
   }
 

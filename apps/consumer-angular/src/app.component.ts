@@ -14,6 +14,7 @@ import {
   PfCommandGroup,
   PfCommandItem,
   PfCommandPalette,
+  PfCombobox,
   PfContentDivider,
   PfDatePicker,
   PfDateRangePicker,
@@ -82,6 +83,7 @@ import {
     PfCommandGroup,
     PfCommandItem,
     PfCommandPalette,
+    PfCombobox,
     PfContentDivider,
     PfDatePicker,
     PfDateRangePicker,
@@ -311,6 +313,20 @@ import {
           data-testid="date-range-picker"
           (pfChange)="trip.set($event.detail.value)"
         ></pf-date-range-picker>
+        <!-- Shares pf-option with pf-select through the --pf-option-* bridge. -->
+        <pf-combobox
+          label="City"
+          name="city"
+          [value]="city()"
+          data-testid="combobox"
+          (pfChange)="city.set($event.detail.value)"
+        >
+          <pf-option value="berlin">Berlin</pf-option>
+          <pf-option value="bristol">Bristol</pf-option>
+          <pf-option value="cardiff">Cardiff</pf-option>
+          <pf-option value="coventry" disabled>Coventry</pf-option>
+        </pf-combobox>
+
         <!-- Children, not an options array; and typeahead. -->
         <pf-select
           label="Fruit"
@@ -545,6 +561,7 @@ export class AppComponent {
   at = signal('14:30');
   trip = signal('2024-03-10/2024-03-20');
   fruit = signal('banana');
+  city = signal('');
   private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
 
   notify(variant: 'success' | 'danger') {

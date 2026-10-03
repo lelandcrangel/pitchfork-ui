@@ -559,6 +559,16 @@ Things that differ from the React library, learned by porting the first two:
   1216px trigger. Apply whichever is present. Neither Vitest project can see
   this, since the width comes from a measured layout; the consumer smoke test
   caught it.
+- **An unresolved `var()` computes to the _initial_ value, not the inherited
+  one.** Measured: with `--pf-option-text-disabled` deleted,
+  `color: var(--pf-option-text-disabled)` computes to `rgb(0, 0, 0)` rather
+  than inheriting the host's colour. That matters for how a missing alias is
+  detected — a check comparing a disabled option's colour against a plain
+  one's is **vacuous**, because the two differ whether the mapping exists or
+  not, and it passed with the mapping deleted. Look for the initial value
+  instead; nothing in this palette is pure black, so black is the fingerprint.
+  The same goes for any `--pf-*` the smoke script asserts: compare against
+  what an unresolved property actually leaves behind, not against a sibling.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

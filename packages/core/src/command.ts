@@ -31,3 +31,22 @@ export function matchesCommandQuery(fields: CommandSearchFields, query: string):
     field ? field.toLowerCase().includes(needle) : false,
   );
 }
+
+/**
+ * Whether a combobox query should filter the list at all.
+ *
+ * It should not when the query is simply the chosen option's label echoed
+ * back, which is what the field holds the moment after a selection. Filtering
+ * then would leave exactly one option on screen, so reopening the list to
+ * change your mind would show only the answer you already had.
+ *
+ * Shared because it is a rule rather than a rendering detail, and a layer that
+ * forgot it would feel broken in a way its own tests would not notice.
+ */
+export function queryIsEchoedSelection(
+  query: string,
+  selectedLabel: string | null | undefined,
+): boolean {
+  if (!selectedLabel) return false;
+  return query.trim() === selectedLabel.trim();
+}

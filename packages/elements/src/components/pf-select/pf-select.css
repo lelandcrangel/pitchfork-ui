@@ -1,5 +1,14 @@
+/*
+ * The generic set pf-option reads, mapped to this control's own family. They
+ * inherit through the shadow boundary, so a slotted option is themed by the
+ * listbox it sits in without knowing which that is.
+ */
 :host {
   display: block;
+  --pf-option-text: var(--pf-select-input-text, var(--pf-input-text));
+  --pf-option-text-disabled: var(--pf-select-input-placeholder, var(--pf-input-placeholder));
+  --pf-option-active-bg: var(--pf-select-option-active-bg);
+  --pf-option-active-text: var(--pf-select-option-active-text);
 }
 
 :host([hidden]) {

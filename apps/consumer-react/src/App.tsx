@@ -13,6 +13,7 @@ import {
   PfCommandGroup,
   PfCommandItem,
   PfCommandPalette,
+  PfCombobox,
   PfContentDivider,
   PfDatePicker,
   PfDateRangePicker,
@@ -74,6 +75,7 @@ export function App() {
   const [at, setAt] = useState('14:30');
   const [trip, setTrip] = useState('2024-03-10/2024-03-20');
   const [fruit, setFruit] = useState('banana');
+  const [city, setCity] = useState('');
   const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
@@ -281,6 +283,26 @@ export function App() {
           data-testid="date-range-picker"
           onPfChange={(event) => setTrip(event.detail.value)}
         />
+        {/*
+          Shares pf-option with pf-select: the option reads a generic
+          --pf-option-* set that each listbox maps to its own family, so one
+          element is themed by whichever container it is slotted into.
+        */}
+        <PfCombobox
+          label="City"
+          name="city"
+          value={city}
+          data-testid="combobox"
+          onPfChange={(event) => setCity(event.detail.value)}
+        >
+          <PfOption value="berlin">Berlin</PfOption>
+          <PfOption value="bristol">Bristol</PfOption>
+          <PfOption value="cardiff">Cardiff</PfOption>
+          <PfOption value="coventry" disabled>
+            Coventry
+          </PfOption>
+        </PfCombobox>
+
         {/*
           Wave 5's first: options are child elements, so a label is a slot and
           can hold markup — which an `options` array of strings cannot. It also

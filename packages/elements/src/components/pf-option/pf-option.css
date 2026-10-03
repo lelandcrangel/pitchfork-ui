@@ -1,6 +1,15 @@
+/*
+ * This element is shared by pf-select and pf-combobox, whose React
+ * counterparts have separate alias families with their own values. Rather than
+ * pick one and diverge from the other, the option reads a generic
+ * `--pf-option-*` set that each container defines on itself -- custom
+ * properties inherit through the shadow boundary, so a slotted option picks up
+ * whichever listbox it is inside. Exactly the pf-menu-item arrangement, for
+ * the same reason.
+ */
 :host {
   border-radius: var(--radius-sm);
-  color: var(--pf-select-input-text, var(--pf-input-text));
+  color: var(--pf-option-text);
   cursor: pointer;
   display: block;
   font-size: var(--font-size-sm);
@@ -18,8 +27,8 @@
  */
 :host([active]),
 :host(:hover:not([disabled])) {
-  background: var(--pf-select-option-active-bg);
-  color: var(--pf-select-option-active-text);
+  background: var(--pf-option-active-bg);
+  color: var(--pf-option-active-text);
 }
 
 :host([selected]) {
@@ -28,7 +37,7 @@
 
 :host([disabled]) {
   background: transparent;
-  color: var(--pf-select-input-placeholder, var(--pf-input-placeholder));
+  color: var(--pf-option-text-disabled);
   cursor: not-allowed;
 }
 

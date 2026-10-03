@@ -205,3 +205,21 @@ behaviour to match.
 
 The same applies to `Combobox`, `MultiSelect` and `TreeView` when their turn
 comes.
+
+---
+
+## The React Combobox has no Home or End, and its arrows stop at the ends
+
+`Combobox` handles `ArrowDown`/`ArrowUp` with `Math.min`/`Math.max`, so the
+active option stops at the first and last match rather than wrapping, and
+`Home`/`End` do nothing at all. `Select` next door wraps, through core's
+`resolveListMove`. One design system with two arrow behaviours in neighbouring
+controls is the actual problem; which way they both go matters less.
+
+`<pf-combobox>` and `<pf-select>` both use `resolveListMove`, so they wrap and
+both answer `Home`/`End`.
+
+**Fix:** replace the clamping arithmetic in `Combobox` with
+`resolveListMove(action, getEnabledIndexes(filtered, …), activeIndex)` and add
+the two keys. `MultiSelect` and `TagInput` have the same gap and the same
+remedy.

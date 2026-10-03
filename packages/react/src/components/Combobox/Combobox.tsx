@@ -1,3 +1,4 @@
+import { matchesCommandQuery, queryIsEchoedSelection } from '@pitchfork-ui/core';
 import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
@@ -96,13 +97,12 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
     flip: true,
   });
 
+  // Both rules are core's, so `<pf-combobox>` filters the same list from the
+  // same keystrokes — including that the label echoed back after a selection
+  // does not filter at all.
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const fromSelection = selectedOption && query === selectedOption.label;
-    if (!q || fromSelection) {
-      return options;
-    }
-    return options.filter((option) => option.label.toLowerCase().includes(q));
+    if (queryIsEchoedSelection(query, selectedOption?.label)) return options;
+    return options.filter((option) => matchesCommandQuery({ label: option.label }, query));
   }, [options, query, selectedOption]);
 
   useOutsideInteraction({
