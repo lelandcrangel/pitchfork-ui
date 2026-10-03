@@ -33,6 +33,7 @@ import {
   PfCreditCard,
   PfDropdown,
   PfEmptyState,
+  PfHeaderNavigation,
   PfIcon,
   PfInlineCta,
   PfInput,
@@ -44,6 +45,7 @@ import {
   PfMenuSeparator,
   PfMetricCard,
   PfMetricGrid,
+  PfNavItem,
   PfModal,
   PfModalBody,
   PfModalFooter,
@@ -136,6 +138,7 @@ import {
     PfCreditCard,
     PfDropdown,
     PfEmptyState,
+    PfHeaderNavigation,
     PfIcon,
     PfInlineCta,
     PfInput,
@@ -147,6 +150,7 @@ import {
     PfMenuSeparator,
     PfMetricCard,
     PfMetricGrid,
+    PfNavItem,
     PfModal,
     PfModalBody,
     PfModalFooter,
@@ -914,6 +918,28 @@ import {
         </pf-tree-item>
       </pf-tree-view>
       <output data-testid="tree-value">{{ file() }} / {{ openFolders() || 'none' }}</output>
+
+      <!-- One nav landmark, no banner, and two items asking to be current; see the React consumer. -->
+      <pf-header-navigation label="Site navigation" data-testid="header-navigation">
+        <span slot="brand">Pitchfork</span>
+        <pf-nav-item href="#overview" [current]="true" data-testid="header-nav-current">
+          Overview
+        </pf-nav-item>
+        <pf-nav-item href="#docs" [current]="true" data-testid="header-nav-second">
+          Docs
+        </pf-nav-item>
+        <pf-nav-item href="#pricing" data-testid="header-nav-plain">Pricing</pf-nav-item>
+        <pf-nav-item href="#archive" [disabled]="true" data-testid="header-nav-disabled">
+          Archive
+        </pf-nav-item>
+        <pf-button slot="actions" variant="secondary">Sign in</pf-button>
+      </pf-header-navigation>
+
+      <!-- The same navigation with nothing slotted into either box; see the React consumer. -->
+      <pf-header-navigation label="Sections" data-testid="header-navigation-bare">
+        <pf-nav-item href="#one">One</pf-nav-item>
+        <pf-nav-item href="#two">Two</pf-nav-item>
+      </pf-header-navigation>
 
       <!-- A carousel is a region whose content changes; see the React consumer. -->
       <pf-carousel

@@ -782,6 +782,37 @@ Things that differ from the React library, learned by porting the first two:
   `stopTimer()`, and the browser spec steps on a 60ms interval, swaps it for
   40ms, then turns autoplay off and asserts the index holds still for 200ms —
   the one assertion a leaked interval fails.
+- **The mock DOM cannot parse `:scope`.** Measured: `querySelector(':scope >
+[slot="brand"]')` throws out of jQuery's selector engine
+  ("unsupported pseudo: scope") rather than returning nothing, and Stencil's
+  `safeCall` then abandons the rest of the lifecycle method. Walk
+  `el.children` and read each `slot` attribute instead, which is what
+  `pf-slideout-menu` already did.
+- **An element cannot know that it is the page's header.** The React
+  `HeaderNavigation` renders a `<header>`, which is the banner landmark at the
+  top level of a document, but a second banner on a page is a defect rather
+  than a decoration — and a custom element has no way to tell whether it is the
+  first. `pf-header-navigation` therefore renders only the `<nav>` landmark in
+  its shadow root and carries no host role; a consumer who wants a banner puts
+  it inside their own `<header>`. The same reasoning applies to `main` and
+  `contentinfo`.
+- **An anchor has no disabled state.** `aria-disabled` on an `<a href>` leaves
+  it focusable and clickable, so a disabled `pf-nav-item` renders no anchor at
+  all — a plain box with `aria-disabled="true"`, which is also what the React
+  `SidebarNavigation` does for a disabled item with an `href`. The smoke
+  asserts both halves against the real build: the tag is a `span`, and the box
+  does not take focus.
+- **A shared child's colours have no `:root` default.** `pf-nav-item` is one
+  element in two navigations, so it reads a generic `--pf-nav-item-*` set that
+  each navigation defines on its own host — the `pf-option` arrangement, and
+  the only one that works, since custom properties inherit through a shadow
+  boundary and `:host-context` is not in Firefox. Leaving the set out of
+  `theme.css` is deliberate: with a `:root` fallback that happens to resolve to
+  the same tokens, _every_ assertion about the bridge is vacuous — removing the
+  bridge changes no colour and the smoke stays green. Without one, a missing
+  bridge kills the declaration at computed-value time and shows up as an item
+  with no colours at all. Both measured by deleting the bridge from the
+  navigation's stylesheet.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

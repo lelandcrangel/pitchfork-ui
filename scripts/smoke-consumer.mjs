@@ -44,6 +44,7 @@ const EXPECTED = [
   'pf-avatar',
   'pf-kbd',
   'pf-input',
+  'pf-header-navigation',
   'pf-icon',
   'pf-card',
   'pf-carousel',
@@ -74,6 +75,7 @@ const EXPECTED = [
   'pf-tooltip',
   'pf-popover',
   'pf-modal',
+  'pf-nav-item',
   'pf-modal-header',
   'pf-modal-body',
   'pf-modal-footer',
@@ -3557,6 +3559,162 @@ try {
       }
       if (state.echo !== '1') {
         problems.push(`pf-carousel reported "${state.echo}" to the host framework`);
+      }
+    }
+  }
+
+  /*
+   * The header navigation, and the two things only a build can show: the
+   * brand box really collapsing when nothing is slotted into it — a wrapper
+   * around a slot cannot be collapsed from CSS, so the class the element sets
+   * has to meet a rule that wins on source order — and the `--pf-nav-item-*`
+   * bridge reaching a slotted item inside its own shadow root, which is how
+   * one item element serves two navigations.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const nav = document.querySelector('pf-header-navigation');
+        if (!nav) return { error: 'the consumer app has no pf-header-navigation' };
+
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const item = (testid) => document.querySelector(`[data-testid="${testid}"]`);
+        const box = (testid) => part(item(testid), 'link');
+        for (let i = 0; i < 4; i += 1) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+
+        const current = box('header-nav-current');
+        const plain = box('header-nav-plain');
+        const disabled = box('header-nav-disabled');
+
+        return {
+          landmarks: [...nav.shadowRoot.querySelectorAll('nav')].length,
+          hostRole: nav.getAttribute('role'),
+          // The brand is slotted here and the box is drawn; nothing is
+          // slotted into the carousel's empty state, which the carousel
+          // block covers.
+          brandDrawn: getComputedStyle(part(nav, 'brand')).display !== 'none',
+          itemsOnOneRow:
+            new Set(
+              ['header-nav-current', 'header-nav-plain', 'header-nav-disabled'].map((id) =>
+                Math.round(item(id).getBoundingClientRect().top),
+              ),
+            ).size === 1,
+          // The bridge: the current item's colours come from the header's
+          // aliases, read inside the item's own shadow root.
+          currentBackground: getComputedStyle(current).backgroundColor,
+          plainBackground: getComputedStyle(plain).backgroundColor,
+          currentColor: getComputedStyle(current).color,
+          plainColor: getComputedStyle(plain).color,
+          bridge: getComputedStyle(item('header-nav-current'))
+            .getPropertyValue('--pf-nav-item-current-bg')
+            .trim(),
+          // Only one item announces the page, however many asked.
+          announced: [...nav.querySelectorAll('pf-nav-item')].filter(
+            (node) => part(node, 'link').getAttribute('aria-current') === 'page',
+          ).length,
+          secondAsked: item('header-nav-second').hasAttribute('current'),
+          // A disabled item is no anchor at all, so it is not a tab stop.
+          disabledTag: disabled.tagName.toLowerCase(),
+          disabledOpacity: getComputedStyle(disabled).opacity,
+          plainOpacity: getComputedStyle(plain).opacity,
+          disabledTakesFocus: (() => {
+            disabled.focus?.();
+            return item('header-nav-disabled').shadowRoot.activeElement === disabled;
+          })(),
+          /*
+           * A second navigation with nothing slotted into either box. The
+           * boxes are grid items, so one that draws anyway costs a column and
+           * a gap, and the first item starts a `--space-3` further in than the
+           * navigation's own padding. A wrapper around a slot cannot be
+           * collapsed from CSS, and the class that collapses it has to beat
+           * the `display` the box sets on itself — which it only does by
+           * being two classes deep, because the ties break on source order.
+           */
+          bare: (() => {
+            const bare = document.querySelector('[data-testid="header-navigation-bare"]');
+            if (!bare) return null;
+            const firstItem = bare.querySelector('pf-nav-item');
+            return {
+              brandDisplay: getComputedStyle(part(bare, 'brand')).display,
+              actionsDisplay: getComputedStyle(part(bare, 'actions')).display,
+              brandSlotPresent: part(bare, 'brand').querySelector('slot') !== null,
+              itemOffset:
+                firstItem.getBoundingClientRect().left -
+                part(bare, 'list').getBoundingClientRect().left,
+            };
+          })(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-header-navigation: ${state.error}`);
+    } else {
+      if (state.landmarks !== 1 || state.hostRole !== null) {
+        problems.push(
+          `the navigation rendered ${state.landmarks} nav landmarks and a host role of ` +
+            `"${state.hostRole}" — expected one landmark and no banner`,
+        );
+      }
+      if (!state.brandDrawn) {
+        problems.push('the brand box stayed collapsed with something slotted into it');
+      }
+      if (!state.itemsOnOneRow) {
+        problems.push('the items did not lay out on one row');
+      }
+      if (state.currentBackground === state.plainBackground) {
+        problems.push(
+          `the current item is the same colour as a plain one ("${state.plainBackground}") — ` +
+            'the --pf-nav-item-current-bg bridge did not reach it',
+        );
+      }
+      if (state.currentColor === state.plainColor) {
+        problems.push(`the current item's text is the same colour as a plain one's`);
+      }
+      if (!state.bridge) {
+        problems.push('--pf-nav-item-current-bg resolved to nothing on the item');
+      }
+      if (state.announced !== 1) {
+        problems.push(`${state.announced} items announced aria-current="page" — exactly one may`);
+      }
+      if (!state.secondAsked) {
+        problems.push('the group cleared the second item’s current attribute');
+      }
+      if (state.disabledTag !== 'span') {
+        problems.push(
+          `a disabled item rendered a <${state.disabledTag}> — an anchor has no disabled state`,
+        );
+      }
+      if (state.disabledTakesFocus) {
+        problems.push('a disabled item took focus');
+      }
+      if (state.disabledOpacity === state.plainOpacity) {
+        problems.push(
+          `a disabled item looks the same as an enabled one (opacity ${state.plainOpacity})`,
+        );
+      }
+      if (!state.bare) {
+        problems.push('the consumer app has no bare pf-header-navigation to check');
+      } else {
+        if (state.bare.brandDisplay !== 'none' || state.bare.actionsDisplay !== 'none') {
+          problems.push(
+            `an unslotted brand box computes to "${state.bare.brandDisplay}" and an unslotted ` +
+              `actions box to "${state.bare.actionsDisplay}" — both should be none`,
+          );
+        }
+        if (!state.bare.brandSlotPresent) {
+          problems.push(
+            'the hidden brand box dropped its slot, so content added later would never show',
+          );
+        }
+        if (Math.abs(state.bare.itemOffset) > 1) {
+          problems.push(
+            `the first item of a bare navigation starts ${state.bare.itemOffset}px into its ` +
+              'list — an empty box is still taking a column',
+          );
+        }
       }
     }
   }

@@ -1,3 +1,4 @@
+import { resolveCurrentNavItem } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './HeaderNavigation.css';
@@ -20,6 +21,13 @@ export const HeaderNavigation = forwardRef<HTMLElement, HeaderNavigationProps>(
     { className, brand, items, actions, 'aria-label': ariaLabel = 'Header navigation', ...props },
     ref,
   ) {
+    /*
+     * One index, which is core's, so `<pf-header-navigation>` marks the same
+     * item — and so two active items cannot both claim to be the page the
+     * reader is on.
+     */
+    const currentIndex = resolveCurrentNavItem(items.map((item) => ({ current: item.active })));
+
     return (
       <header ref={ref} className={cx('pf-header-navigation', className)} {...props}>
         <nav className="pf-header-navigation__nav" aria-label={ariaLabel}>
@@ -28,6 +36,7 @@ export const HeaderNavigation = forwardRef<HTMLElement, HeaderNavigationProps>(
           <ul className="pf-header-navigation__list">
             {items.map((item, index) => {
               const key = `${index}-${typeof item.label === 'string' ? item.label : 'item'}`;
+              const current = index === currentIndex;
 
               if (item.href) {
                 return (
@@ -39,9 +48,9 @@ export const HeaderNavigation = forwardRef<HTMLElement, HeaderNavigationProps>(
                       }
                       className={cx(
                         'pf-header-navigation__link',
-                        item.active && 'pf-header-navigation__link--active',
+                        current && 'pf-header-navigation__link--active',
                       )}
-                      aria-current={item.active ? 'page' : undefined}
+                      aria-current={current ? 'page' : undefined}
                     >
                       {item.label}
                     </a>
@@ -57,9 +66,9 @@ export const HeaderNavigation = forwardRef<HTMLElement, HeaderNavigationProps>(
                       onClick={item.onClick as React.MouseEventHandler<HTMLButtonElement>}
                       className={cx(
                         'pf-header-navigation__link',
-                        item.active && 'pf-header-navigation__link--active',
+                        current && 'pf-header-navigation__link--active',
                       )}
-                      aria-current={item.active ? 'page' : undefined}
+                      aria-current={current ? 'page' : undefined}
                     >
                       {item.label}
                     </button>
@@ -72,9 +81,9 @@ export const HeaderNavigation = forwardRef<HTMLElement, HeaderNavigationProps>(
                   <span
                     className={cx(
                       'pf-header-navigation__link',
-                      item.active && 'pf-header-navigation__link--active',
+                      current && 'pf-header-navigation__link--active',
                     )}
-                    aria-current={item.active ? 'page' : undefined}
+                    aria-current={current ? 'page' : undefined}
                   >
                     {item.label}
                   </span>

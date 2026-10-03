@@ -383,3 +383,29 @@ in one tree. The smaller change is a roving tabindex — `tabIndex={isActive ? 0
 : -1}` over the flattened list, with the active value in state beside the
 selected one, since the two are not the same thing. Core's `resolveTreeKey`
 already returns focus intents, so the handler does not change.
+
+---
+
+## The React navigations take `ReactNode` labels and an `items` array
+
+Both `HeaderNavigation` and `SidebarNavigation` take arrays of plain objects,
+which is the shape the element layer cannot have — `<pf-nav-item>` children
+are what let a consumer loop in their own template and slot their framework's
+router link in. That difference is deliberate and §2.1 of
+`WEB-COMPONENTS-PLAN.md` settles it; nothing to do.
+
+What _was_ wrong and is now fixed: both read `item.active` per item, so two
+active items put `aria-current="page"` on both and announced the reader as
+being on two pages at once. Core's `resolveCurrentNavItem` resolves one index,
+the same call `<pf-header-navigation>` makes, and the highlight follows the
+announcement — a second highlighted item with no `aria-current` is a
+sighted-only lie. The sidebar resolves across every section rather than within
+one, and counts items rather than comparing them, since nothing stops a
+consumer reusing one item object twice.
+
+**Still open:** neither React navigation is a single tab stop, which is correct
+for a list of links (a navigation is not a composite widget) — but
+`SidebarNavigation` renders a disabled item with an `href` as a `<span>` and a
+disabled item with an `onClick` as a `disabled` button, so the two disabled
+states are differently reachable. `<pf-nav-item>` has one rule: a disabled item
+renders no anchor at all.

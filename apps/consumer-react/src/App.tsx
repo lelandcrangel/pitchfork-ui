@@ -32,6 +32,7 @@ import {
   PfCreditCard,
   PfDropdown,
   PfEmptyState,
+  PfHeaderNavigation,
   PfIcon,
   PfInlineCta,
   PfInput,
@@ -44,6 +45,7 @@ import {
   PfMetricCard,
   PfMetricGrid,
   PfModal,
+  PfNavItem,
   PfModalBody,
   PfModalFooter,
   PfModalHeader,
@@ -1095,6 +1097,41 @@ export function App() {
       <output data-testid="tree-value">
         {file} / {openFolders || 'none'}
       </output>
+
+      {/*
+        The navigation is one `<nav>` landmark in the shadow root, and the
+        host is deliberately not a banner: an element cannot know whether it
+        is the page's `<header>`, and a second banner landmark is a defect.
+        Both items below ask to be the current page; core's rule marks one.
+      */}
+      <PfHeaderNavigation label="Site navigation" data-testid="header-navigation">
+        <span slot="brand">Pitchfork</span>
+        <PfNavItem href="#overview" current data-testid="header-nav-current">
+          Overview
+        </PfNavItem>
+        <PfNavItem href="#docs" current data-testid="header-nav-second">
+          Docs
+        </PfNavItem>
+        <PfNavItem href="#pricing" data-testid="header-nav-plain">
+          Pricing
+        </PfNavItem>
+        <PfNavItem href="#archive" disabled data-testid="header-nav-disabled">
+          Archive
+        </PfNavItem>
+        <PfButton slot="actions" variant="secondary">
+          Sign in
+        </PfButton>
+      </PfHeaderNavigation>
+
+      {/*
+        The same navigation with nothing slotted into either box: both are
+        grid items, so one that draws anyway costs a column and pushes every
+        item along.
+      */}
+      <PfHeaderNavigation label="Sections" data-testid="header-navigation-bare">
+        <PfNavItem href="#one">One</PfNavItem>
+        <PfNavItem href="#two">Two</PfNavItem>
+      </PfHeaderNavigation>
 
       {/*
         A carousel is a region whose content changes, not a tab list: the

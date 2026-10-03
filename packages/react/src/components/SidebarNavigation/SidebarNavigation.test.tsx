@@ -73,3 +73,45 @@ describe('SidebarNavigation', () => {
     expect(screen.getByTestId('sidebar-footer')).toBeInTheDocument();
   });
 });
+
+/*
+ * The resolution runs across sections, not within one: `aria-current="page"`
+ * names the one page the reader is on. Core's `resolveCurrentNavItem` is
+ * shared with `<pf-sidebar-navigation>` so both mark the same item, and the
+ * highlight follows the announcement — a second highlighted row with no
+ * `aria-current` would be a sighted-only lie.
+ */
+describe('SidebarNavigation with two active items', () => {
+  const sections: SidebarNavigationSection[] = [
+    { title: 'Main', items: [{ label: 'Home', href: '/', active: true }] },
+    { title: 'Admin', items: [{ label: 'Users', href: '/users', active: true }] },
+  ];
+
+  it('marks only the first across every section', () => {
+    render(<SidebarNavigation sections={sections} />);
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: 'Users' })).not.toHaveAttribute('aria-current');
+  });
+
+  it('highlights only the item it announces', () => {
+    render(<SidebarNavigation sections={sections} />);
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveClass(
+      'pf-sidebar-navigation__link--active',
+    );
+    expect(screen.getByRole('link', { name: 'Users' })).not.toHaveClass(
+      'pf-sidebar-navigation__link--active',
+    );
+  });
+
+  /* One item object reused in two sections must not mark both. */
+  it('counts items rather than comparing them', () => {
+    const shared = { label: 'Shared', href: '/shared', active: true };
+    render(
+      <SidebarNavigation
+        sections={[{ items: [shared] }, { items: [{ ...shared, label: 'Second' }] }]}
+      />,
+    );
+    expect(screen.getByRole('link', { name: 'Shared' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: 'Second' })).not.toHaveAttribute('aria-current');
+  });
+});

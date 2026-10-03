@@ -11,6 +11,7 @@ export * from './focus';
 export * from './icons';
 export * from './keys';
 export * from './motion';
+export * from './nav';
 export * from './navigation';
 export * from './number-field';
 export * from './pagination';

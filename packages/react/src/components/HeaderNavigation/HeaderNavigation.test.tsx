@@ -57,3 +57,33 @@ describe('HeaderNavigation', () => {
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeInTheDocument();
   });
 });
+
+/*
+ * `aria-current="page"` names one page, so two active items must not both
+ * claim it — the resolution is core's `resolveCurrentNavItem`, which the
+ * element shares. The highlight follows the announcement for the same reason:
+ * a second highlighted item with no `aria-current` would be a sighted-only
+ * lie.
+ */
+describe('HeaderNavigation with two active items', () => {
+  const twoActive: HeaderNavigationItem[] = [
+    { label: 'Home', href: '/', active: true },
+    { label: 'About', href: '/about', active: true },
+  ];
+
+  it('marks only the first as the current page', () => {
+    render(<HeaderNavigation items={twoActive} />);
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('link', { name: 'About' })).not.toHaveAttribute('aria-current');
+  });
+
+  it('highlights only the item it announces', () => {
+    render(<HeaderNavigation items={twoActive} />);
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveClass(
+      'pf-header-navigation__link--active',
+    );
+    expect(screen.getByRole('link', { name: 'About' })).not.toHaveClass(
+      'pf-header-navigation__link--active',
+    );
+  });
+});

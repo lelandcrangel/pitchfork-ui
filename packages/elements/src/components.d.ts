@@ -1118,6 +1118,29 @@ export namespace Components {
          */
         "size": PfEmptyStateSize;
     }
+    /**
+     * A header navigation over `pf-nav-item` children.
+     * The group owns the one thing an item cannot know: which item is the current
+     * page. Core's rule decides, so the React `HeaderNavigation` marks the same
+     * one, and it is one index — which is what stops a navigation claiming two
+     * current pages.
+     * The host is **not** a banner. The React component renders a `<header>`,
+     * which is the banner landmark at the top level of a page, but an element
+     * cannot know whether it is the page's header: a second banner is a defect,
+     * not a decoration. So the shadow root renders only the `<nav>` landmark, and
+     * a consumer who wants a banner puts this inside their own `<header>`.
+     */
+    interface PfHeaderNavigation {
+        /**
+          * The navigation's accessible name.
+          * @default 'Header navigation'
+         */
+        "label": string;
+        /**
+          * Re-reads the items, for a consumer who marked one current through its *property* — which leaves no attribute and fires no `slotchange`.
+         */
+        "refresh": () => Promise<void>;
+    }
     interface PfIcon {
         /**
           * Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label.
@@ -1482,6 +1505,54 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    /**
+     * One item in a `pf-header-navigation` or a `pf-sidebar-navigation`.
+     * Shared by both, because the React library's `HeaderNavigationItem` and
+     * `SidebarNavigationItem` are the same shape — one element rather than two
+     * that would drift. What differs is the layout, and that is the group's to
+     * say: it pushes `orientation` down, which is the only thing an item cannot
+     * work out for itself.
+     * With an `href` it renders a link; without one it renders a plain box, which
+     * is how a framework's own router is used — slot an `<a routerLink>` or a
+     * `<Link>` in and leave `href` unset.
+     * `currentPage` and `orientation` are the group's to set. A consumer asks by
+     * setting `current`; the group resolves every item with core's rule and
+     * writes the answer to `currentPage`.
+     */
+    interface PfNavItem {
+        /**
+          * Set it to mark this item as the current page.  The *asking* half, which the group never writes — `currentPage` below is the answer. The two are kept apart for the reason `pf-breadcrumb` keeps them apart: a group that wrote its answer back would leave the mark behind on an item the consumer had not marked.
+          * @default false
+         */
+        "current": boolean;
+        /**
+          * Set by the group: the resolved current page, which is the one thing that renders `aria-current="page"`. At most one item in a navigation carries it, and the highlight follows it rather than `current` — a second highlighted item with no `aria-current` would be a sighted-only lie.
+          * @default false
+         */
+        "currentPage": boolean;
+        /**
+          * Takes the item out of the navigation without removing it.  A disabled item renders **no anchor at all**, because an anchor has no disabled state: `aria-disabled` alone leaves it focusable and clickable, and dropping the `href` is the only thing that really takes it out of the tab order.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Where the item goes. Reflected; a consumer's stylesheet reads it.
+         */
+        "href"?: string;
+        /**
+          * Set by the group, which is the only one that knows which it is.
+          * @default 'horizontal'
+         */
+        "orientation": 'horizontal' | 'vertical';
+        /**
+          * Goes on the anchor as-is. Ignored without an `href`.
+         */
+        "rel"?: string;
+        /**
+          * Opens elsewhere, as on a plain anchor. Ignored without an `href`.
+         */
+        "target"?: string;
     }
     /**
      * A notification: an icon, a heading, a body and an optional dismiss button.
@@ -3743,6 +3814,24 @@ declare global {
         prototype: HTMLPfEmptyStateElement;
         new (): HTMLPfEmptyStateElement;
     };
+    /**
+     * A header navigation over `pf-nav-item` children.
+     * The group owns the one thing an item cannot know: which item is the current
+     * page. Core's rule decides, so the React `HeaderNavigation` marks the same
+     * one, and it is one index — which is what stops a navigation claiming two
+     * current pages.
+     * The host is **not** a banner. The React component renders a `<header>`,
+     * which is the banner landmark at the top level of a page, but an element
+     * cannot know whether it is the page's header: a second banner is a defect,
+     * not a decoration. So the shadow root renders only the `<nav>` landmark, and
+     * a consumer who wants a banner puts this inside their own `<header>`.
+     */
+    interface HTMLPfHeaderNavigationElement extends Components.PfHeaderNavigation, HTMLStencilElement {
+    }
+    var HTMLPfHeaderNavigationElement: {
+        prototype: HTMLPfHeaderNavigationElement;
+        new (): HTMLPfHeaderNavigationElement;
+    };
     interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
     }
     var HTMLPfIconElement: {
@@ -3990,6 +4079,26 @@ declare global {
     var HTMLPfMultiSelectElement: {
         prototype: HTMLPfMultiSelectElement;
         new (): HTMLPfMultiSelectElement;
+    };
+    /**
+     * One item in a `pf-header-navigation` or a `pf-sidebar-navigation`.
+     * Shared by both, because the React library's `HeaderNavigationItem` and
+     * `SidebarNavigationItem` are the same shape — one element rather than two
+     * that would drift. What differs is the layout, and that is the group's to
+     * say: it pushes `orientation` down, which is the only thing an item cannot
+     * work out for itself.
+     * With an `href` it renders a link; without one it renders a plain box, which
+     * is how a framework's own router is used — slot an `<a routerLink>` or a
+     * `<Link>` in and leave `href` unset.
+     * `currentPage` and `orientation` are the group's to set. A consumer asks by
+     * setting `current`; the group resolves every item with core's rule and
+     * writes the answer to `currentPage`.
+     */
+    interface HTMLPfNavItemElement extends Components.PfNavItem, HTMLStencilElement {
+    }
+    var HTMLPfNavItemElement: {
+        prototype: HTMLPfNavItemElement;
+        new (): HTMLPfNavItemElement;
     };
     interface HTMLPfNotificationElementEventMap {
         "pfDismiss": void;
@@ -4863,6 +4972,7 @@ declare global {
         "pf-date-range-picker": HTMLPfDateRangePickerElement;
         "pf-dropdown": HTMLPfDropdownElement;
         "pf-empty-state": HTMLPfEmptyStateElement;
+        "pf-header-navigation": HTMLPfHeaderNavigationElement;
         "pf-icon": HTMLPfIconElement;
         "pf-inline-cta": HTMLPfInlineCtaElement;
         "pf-input": HTMLPfInputElement;
@@ -4879,6 +4989,7 @@ declare global {
         "pf-modal-footer": HTMLPfModalFooterElement;
         "pf-modal-header": HTMLPfModalHeaderElement;
         "pf-multi-select": HTMLPfMultiSelectElement;
+        "pf-nav-item": HTMLPfNavItemElement;
         "pf-notification": HTMLPfNotificationElement;
         "pf-number-input": HTMLPfNumberInputElement;
         "pf-option": HTMLPfOptionElement;
@@ -5954,6 +6065,25 @@ declare namespace LocalJSX {
          */
         "size"?: PfEmptyStateSize;
     }
+    /**
+     * A header navigation over `pf-nav-item` children.
+     * The group owns the one thing an item cannot know: which item is the current
+     * page. Core's rule decides, so the React `HeaderNavigation` marks the same
+     * one, and it is one index — which is what stops a navigation claiming two
+     * current pages.
+     * The host is **not** a banner. The React component renders a `<header>`,
+     * which is the banner landmark at the top level of a page, but an element
+     * cannot know whether it is the page's header: a second banner is a defect,
+     * not a decoration. So the shadow root renders only the `<nav>` landmark, and
+     * a consumer who wants a banner puts this inside their own `<header>`.
+     */
+    interface PfHeaderNavigation {
+        /**
+          * The navigation's accessible name.
+          * @default 'Header navigation'
+         */
+        "label"?: string;
+    }
     interface PfIcon {
         /**
           * Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label.
@@ -6321,6 +6451,54 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    /**
+     * One item in a `pf-header-navigation` or a `pf-sidebar-navigation`.
+     * Shared by both, because the React library's `HeaderNavigationItem` and
+     * `SidebarNavigationItem` are the same shape — one element rather than two
+     * that would drift. What differs is the layout, and that is the group's to
+     * say: it pushes `orientation` down, which is the only thing an item cannot
+     * work out for itself.
+     * With an `href` it renders a link; without one it renders a plain box, which
+     * is how a framework's own router is used — slot an `<a routerLink>` or a
+     * `<Link>` in and leave `href` unset.
+     * `currentPage` and `orientation` are the group's to set. A consumer asks by
+     * setting `current`; the group resolves every item with core's rule and
+     * writes the answer to `currentPage`.
+     */
+    interface PfNavItem {
+        /**
+          * Set it to mark this item as the current page.  The *asking* half, which the group never writes — `currentPage` below is the answer. The two are kept apart for the reason `pf-breadcrumb` keeps them apart: a group that wrote its answer back would leave the mark behind on an item the consumer had not marked.
+          * @default false
+         */
+        "current"?: boolean;
+        /**
+          * Set by the group: the resolved current page, which is the one thing that renders `aria-current="page"`. At most one item in a navigation carries it, and the highlight follows it rather than `current` — a second highlighted item with no `aria-current` would be a sighted-only lie.
+          * @default false
+         */
+        "currentPage"?: boolean;
+        /**
+          * Takes the item out of the navigation without removing it.  A disabled item renders **no anchor at all**, because an anchor has no disabled state: `aria-disabled` alone leaves it focusable and clickable, and dropping the `href` is the only thing that really takes it out of the tab order.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Where the item goes. Reflected; a consumer's stylesheet reads it.
+         */
+        "href"?: string;
+        /**
+          * Set by the group, which is the only one that knows which it is.
+          * @default 'horizontal'
+         */
+        "orientation"?: 'horizontal' | 'vertical';
+        /**
+          * Goes on the anchor as-is. Ignored without an `href`.
+         */
+        "rel"?: string;
+        /**
+          * Opens elsewhere, as on a plain anchor. Ignored without an `href`.
+         */
+        "target"?: string;
     }
     /**
      * A notification: an icon, a heading, a body and an optional dismiss button.
@@ -8012,6 +8190,9 @@ declare namespace LocalJSX {
         "size": PfEmptyStateSize;
         "icon": string;
     }
+    interface PfHeaderNavigationAttributes {
+        "label": string;
+    }
     interface PfIconAttributes {
         "name": string;
         "label": string;
@@ -8080,6 +8261,15 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
         "maxVisibleOptions": number;
+    }
+    interface PfNavItemAttributes {
+        "href": string;
+        "target": string;
+        "rel": string;
+        "current": boolean;
+        "currentPage": boolean;
+        "disabled": boolean;
+        "orientation": 'horizontal' | 'vertical';
     }
     interface PfNotificationAttributes {
         "variant": PfNotificationVariant;
@@ -8400,6 +8590,7 @@ declare namespace LocalJSX {
         "pf-date-range-picker": Omit<PfDateRangePicker, keyof PfDateRangePickerAttributes> & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes]?: PfDateRangePicker[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `attr:${K}`]?: PfDateRangePickerAttributes[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `prop:${K}`]?: PfDateRangePicker[K] };
         "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
         "pf-empty-state": Omit<PfEmptyState, keyof PfEmptyStateAttributes> & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes]?: PfEmptyState[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `attr:${K}`]?: PfEmptyStateAttributes[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `prop:${K}`]?: PfEmptyState[K] };
+        "pf-header-navigation": Omit<PfHeaderNavigation, keyof PfHeaderNavigationAttributes> & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes]?: PfHeaderNavigation[K] } & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes as `attr:${K}`]?: PfHeaderNavigationAttributes[K] } & { [K in keyof PfHeaderNavigation & keyof PfHeaderNavigationAttributes as `prop:${K}`]?: PfHeaderNavigation[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-inline-cta": Omit<PfInlineCta, keyof PfInlineCtaAttributes> & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes]?: PfInlineCta[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `attr:${K}`]?: PfInlineCtaAttributes[K] } & { [K in keyof PfInlineCta & keyof PfInlineCtaAttributes as `prop:${K}`]?: PfInlineCta[K] };
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
@@ -8416,6 +8607,7 @@ declare namespace LocalJSX {
         "pf-modal-footer": PfModalFooter;
         "pf-modal-header": PfModalHeader;
         "pf-multi-select": Omit<PfMultiSelect, keyof PfMultiSelectAttributes> & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes]?: PfMultiSelect[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `attr:${K}`]?: PfMultiSelectAttributes[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `prop:${K}`]?: PfMultiSelect[K] };
+        "pf-nav-item": Omit<PfNavItem, keyof PfNavItemAttributes> & { [K in keyof PfNavItem & keyof PfNavItemAttributes]?: PfNavItem[K] } & { [K in keyof PfNavItem & keyof PfNavItemAttributes as `attr:${K}`]?: PfNavItemAttributes[K] } & { [K in keyof PfNavItem & keyof PfNavItemAttributes as `prop:${K}`]?: PfNavItem[K] };
         "pf-notification": Omit<PfNotification, keyof PfNotificationAttributes> & { [K in keyof PfNotification & keyof PfNotificationAttributes]?: PfNotification[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `attr:${K}`]?: PfNotificationAttributes[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `prop:${K}`]?: PfNotification[K] };
         "pf-number-input": Omit<PfNumberInput, keyof PfNumberInputAttributes> & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes]?: PfNumberInput[K] } & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes as `attr:${K}`]?: PfNumberInputAttributes[K] } & { [K in keyof PfNumberInput & keyof PfNumberInputAttributes as `prop:${K}`]?: PfNumberInput[K] };
         "pf-option": Omit<PfOption, keyof PfOptionAttributes> & { [K in keyof PfOption & keyof PfOptionAttributes]?: PfOption[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `attr:${K}`]?: PfOptionAttributes[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `prop:${K}`]?: PfOption[K] };
@@ -8739,6 +8931,19 @@ declare module "@stencil/core" {
              * does not have. The slot wins where both are given.
              */
             "pf-empty-state": LocalJSX.IntrinsicElements["pf-empty-state"] & JSXBase.HTMLAttributes<HTMLPfEmptyStateElement>;
+            /**
+             * A header navigation over `pf-nav-item` children.
+             * The group owns the one thing an item cannot know: which item is the current
+             * page. Core's rule decides, so the React `HeaderNavigation` marks the same
+             * one, and it is one index — which is what stops a navigation claiming two
+             * current pages.
+             * The host is **not** a banner. The React component renders a `<header>`,
+             * which is the banner landmark at the top level of a page, but an element
+             * cannot know whether it is the page's header: a second banner is a defect,
+             * not a decoration. So the shadow root renders only the `<nav>` landmark, and
+             * a consumer who wants a banner puts this inside their own `<header>`.
+             */
+            "pf-header-navigation": LocalJSX.IntrinsicElements["pf-header-navigation"] & JSXBase.HTMLAttributes<HTMLPfHeaderNavigationElement>;
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
              * A prompt in the flow of a page: an icon, a line or two, something to do, and
@@ -8850,6 +9055,21 @@ declare module "@stencil/core" {
              * `--pf-option-*` set.
              */
             "pf-multi-select": LocalJSX.IntrinsicElements["pf-multi-select"] & JSXBase.HTMLAttributes<HTMLPfMultiSelectElement>;
+            /**
+             * One item in a `pf-header-navigation` or a `pf-sidebar-navigation`.
+             * Shared by both, because the React library's `HeaderNavigationItem` and
+             * `SidebarNavigationItem` are the same shape — one element rather than two
+             * that would drift. What differs is the layout, and that is the group's to
+             * say: it pushes `orientation` down, which is the only thing an item cannot
+             * work out for itself.
+             * With an `href` it renders a link; without one it renders a plain box, which
+             * is how a framework's own router is used — slot an `<a routerLink>` or a
+             * `<Link>` in and leave `href` unset.
+             * `currentPage` and `orientation` are the group's to set. A consumer asks by
+             * setting `current`; the group resolves every item with core's rule and
+             * writes the answer to `currentPage`.
+             */
+            "pf-nav-item": LocalJSX.IntrinsicElements["pf-nav-item"] & JSXBase.HTMLAttributes<HTMLPfNavItemElement>;
             /**
              * A notification: an icon, a heading, a body and an optional dismiss button.
              * The role comes from core's `liveRegionRole`, so `warning` and `danger`

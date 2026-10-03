@@ -1,0 +1,83 @@
+:host {
+  background: var(--pf-header-nav-bg);
+  border: 1px solid var(--pf-header-nav-border);
+  border-radius: var(--pf-header-nav-radius, var(--radius-md));
+  display: block;
+  width: 100%;
+
+  /*
+   * The bridge to the shared item: custom properties inherit through a shadow
+   * boundary, so a slotted `pf-nav-item` resolves these inside its own shadow
+   * root. It is how one element serves two navigations without
+   * `:host-context`, which Firefox does not support.
+   */
+  --pf-nav-item-text: var(--pf-header-nav-text-muted);
+  --pf-nav-item-hover-text: var(--pf-header-nav-text);
+  --pf-nav-item-hover-bg: var(--pf-header-nav-bg-subtle);
+  --pf-nav-item-current-text: var(--pf-header-nav-text);
+  --pf-nav-item-current-bg: var(--pf-header-nav-bg-subtle);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* Mobile first: one column, the items wrapping under the brand. */
+.nav {
+  align-items: center;
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: 1fr;
+  min-height: var(--pf-header-nav-min-height, 56px);
+  padding: var(--space-3);
+}
+
+@media (--md) {
+  .nav {
+    grid-template-columns: auto 1fr auto;
+    padding: 0 var(--space-4);
+  }
+}
+
+.brand {
+  color: var(--pf-header-nav-text);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.list {
+  align-items: center;
+  display: flex;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  overflow-x: auto;
+  padding: 0;
+}
+
+/*
+ * The items have to be flex children of the list, not of a box inside it. The
+ * UA stylesheet already gives a slot `display: contents`; this says so out
+ * loud.
+ */
+.list slot {
+  display: contents;
+}
+
+.actions {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+/*
+ * Both classes rather than a bare `.empty`, so the rule does not depend on
+ * sitting below the `display` a box sets on itself: specificity ties break on
+ * source order, and `.empty` losing that way is how a bare `pf-metric-card`
+ * came to draw all three of its boxes.
+ */
+.brand.empty,
+.actions.empty {
+  display: none;
+}
