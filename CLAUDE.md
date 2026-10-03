@@ -685,6 +685,14 @@ Things that differ from the React library, learned by porting the first two:
   string, and `Array.from({ length: "5" })` is **empty** rather than five long.
   Read such a value through a getter that coerces and clamps, so a nonsense
   value renders nothing rather than throwing.
+- **A one-class `.empty { display: none }` loses to the box's own `display`.**
+  Specificity ties break on source order, and a box that sets
+  `display: inline-flex` further down the file wins — so every hidden-when-empty
+  box in `pf-metric-card`, `pf-empty-state` and the three headers was drawn
+  anyway. Neither test project could see it, because neither applies the
+  stylesheet; the consumer smoke caught it on the first run, as a bare metric
+  card drawing all three of its empty boxes. Written as `.icon.empty,
+.action.empty { … }` now, which beats them whatever the order.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

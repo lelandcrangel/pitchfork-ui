@@ -1,0 +1,73 @@
+:host {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  justify-content: space-between;
+  padding-top: var(--space-4);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+@media (--sm) {
+  :host {
+    align-items: center;
+    flex-direction: row;
+  }
+}
+
+:host([divider]) {
+  border-top: 1px solid var(--pf-section-footer-border);
+}
+
+:host([align='start']) {
+  justify-content: flex-start;
+}
+
+:host([align='end']) {
+  justify-content: flex-end;
+}
+
+/*
+ * Hidden rather than left out, so a later `slotchange` still arrives. Two
+ * classes deep, because the actions box sets its own `display` below.
+ */
+.heading.empty,
+.actions.empty {
+  display: none;
+}
+
+.content {
+  min-width: 0;
+}
+
+.heading {
+  color: var(--pf-section-footer-text);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+slot[name='description']::slotted(*) {
+  color: var(--pf-section-footer-text-muted);
+  display: block;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  margin: var(--space-1) 0 0;
+}
+
+.actions {
+  align-items: center;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+@media (--sm) {
+  .actions {
+    width: auto;
+  }
+}

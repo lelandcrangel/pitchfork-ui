@@ -25,6 +25,7 @@ import {
   PfContextMenu,
   PfCreditCard,
   PfDropdown,
+  PfEmptyState,
   PfIcon,
   PfInput,
   PfKbd,
@@ -33,12 +34,15 @@ import {
   PfLoadingSpinner,
   PfMenuItem,
   PfMenuSeparator,
+  PfMetricCard,
+  PfMetricGrid,
   PfModal,
   PfModalBody,
   PfModalFooter,
   PfModalHeader,
   PfMultiSelect,
   PfNotification,
+  PfPageHeader,
   PfPagination,
   PfPopover,
   PfProgressBar,
@@ -51,6 +55,8 @@ import {
   PfRatingBadge,
   PfRatingStars,
   PfScrollArea,
+  PfSectionFooter,
+  PfSectionHeader,
   PfSelect,
   PfSlideoutMenu,
   PfSlider,
@@ -811,6 +817,81 @@ export function App() {
         <PfRatingStars value={3.5} showValue data-testid="rating-stars" />
         <PfRatingBadge value={4.5} reviews={1234} data-testid="rating-badge" />
       </div>
+
+      {/*
+        The icon and action boxes are hidden rather than left out when empty,
+        because a slot that is not rendered never fires slotchange — content
+        added later would stay invisible. The description has no box at all,
+        since an unassigned slot generates nothing.
+      */}
+      <PfEmptyState icon="folder-open" data-testid="empty-state">
+        No results
+        <span slot="description">Try a different search, or clear the filters.</span>
+        <PfButton slot="action" variant="secondary">
+          Clear filters
+        </PfButton>
+      </PfEmptyState>
+
+      {/*
+        The headers and the cards share one arrangement: a box that carries
+        layout stays in the tree and is hidden when its slot is empty, so
+        content added later still fires slotchange, while a slot that carries
+        no layout — an eyebrow, a description — has no box at all and
+        collapses on its own.
+
+        The page header takes a slotted pf-breadcrumbs rather than a
+        breadcrumbs array, which is §2.1 again: each crumb's label is a node.
+      */}
+      <PfPageHeader data-testid="page-header">
+        <PfBreadcrumbs slot="breadcrumbs" label="Page breadcrumb">
+          <PfBreadcrumb href="#shop">Shop</PfBreadcrumb>
+          <PfBreadcrumb>Orders</PfBreadcrumb>
+        </PfBreadcrumbs>
+        <span slot="eyebrow">Shop</span>
+        Orders
+        <span slot="description">Everything bought this month, newest first.</span>
+        <span slot="metadata">24 orders · £24,500</span>
+        <PfButton slot="actions" variant="secondary">
+          Export
+        </PfButton>
+      </PfPageHeader>
+
+      <PfSectionHeader divider data-testid="section-header">
+        <span slot="eyebrow">This month</span>
+        Recent activity
+        <span slot="description">What has changed since the last report.</span>
+        <span slot="metadata">Updated today</span>
+        <PfButton slot="actions" variant="ghost">
+          Refresh
+        </PfButton>
+      </PfSectionHeader>
+
+      <PfMetricGrid data-testid="metric-grid">
+        <PfMetricCard trend="positive" icon="chart-bar" data-testid="metric-card">
+          <span slot="heading">Revenue</span>
+          £24,500
+          <span slot="trend">12% on last month</span>
+          <span slot="description">Since April</span>
+          <PfButton slot="action" variant="ghost" size="sm">
+            Export
+          </PfButton>
+        </PfMetricCard>
+        <PfMetricCard trend="negative">
+          <span slot="heading">Refunds</span>
+          £1,200
+          <span slot="trend">3% on last month</span>
+        </PfMetricCard>
+        <PfMetricCard>
+          <span slot="heading">Orders</span>
+          1,204
+        </PfMetricCard>
+      </PfMetricGrid>
+
+      <PfSectionFooter data-testid="section-footer">
+        Next steps
+        <span slot="description">Nothing is blocked.</span>
+        <PfButton slot="actions">Save</PfButton>
+      </PfSectionFooter>
 
       <PfScrollArea style={{ height: '80px', maxWidth: '280px' }}>
         <p>

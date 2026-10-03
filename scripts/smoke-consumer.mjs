@@ -108,6 +108,12 @@ const EXPECTED = [
   'pf-timeline-item',
   'pf-rating-stars',
   'pf-rating-badge',
+  'pf-empty-state',
+  'pf-metric-grid',
+  'pf-metric-card',
+  'pf-page-header',
+  'pf-section-header',
+  'pf-section-footer',
 ];
 
 const TYPES = {
@@ -2438,6 +2444,236 @@ try {
       }
       if (state.reviewsColour === state.badgeTextColour) {
         problems.push('the review count is the same colour as the rating');
+      }
+    }
+  }
+
+  /*
+   * The empty state. What needs a real stylesheet is the pair of boxes that
+   * are hidden rather than left out: `display: none` has to come from the
+   * `empty` class, and the box that does have content has to be laid out. The
+   * description has no box at all, so it costs nothing when absent.
+   */
+  {
+    const state = await page
+      .evaluate(() => {
+        const el = document.querySelector('pf-empty-state');
+        if (!el) return { error: 'the consumer app has no pf-empty-state' };
+
+        const part = (name) => el.shadowRoot.querySelector(`[part="${name}"]`);
+        const slot = (name) => el.shadowRoot.querySelector(`slot[name="${name}"]`);
+
+        return {
+          iconDisplay: getComputedStyle(part('icon')).display,
+          actionDisplay: getComputedStyle(part('action')).display,
+          // The same element with nothing in those slots, so the `empty`
+          // class has to beat each box's own `display`. The first version of
+          // this check only looked at the filled boxes and so said nothing
+          // about the rule that hides them.
+          bareIconDisplay: getComputedStyle(
+            document
+              .querySelector('pf-metric-grid pf-metric-card:last-of-type')
+              .shadowRoot.querySelector('[part="icon"]'),
+          ).display,
+          iconColour: getComputedStyle(part('icon')).color,
+          iconSize: part('icon').getBoundingClientRect().width,
+          headingWeight: getComputedStyle(part('heading')).fontWeight,
+          headingColour: getComputedStyle(part('heading')).color,
+          descriptionColour: getComputedStyle(slot('description').assignedElements()[0]).color,
+          descriptionWidth: getComputedStyle(slot('description').assignedElements()[0]).maxWidth,
+          centred: getComputedStyle(el).textAlign,
+          padding: getComputedStyle(el).paddingTop,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-empty-state: ${state.error}`);
+    } else {
+      if (state.iconDisplay === 'none' || !(state.iconSize > 0)) {
+        problems.push(
+          `the pf-empty-state icon box is ${state.iconDisplay} at ${state.iconSize}px — ` +
+            'the named icon did not draw',
+        );
+      }
+      /*
+       * `flex`, not the `inline-flex` the sheet asks for: the host is a flex
+       * container, so an inline-level child is blockified. Measured — the
+       * first version of this check asserted `inline-flex` and failed on a
+       * perfectly good build.
+       */
+      if (!['flex', 'inline-flex'].includes(state.actionDisplay)) {
+        problems.push(
+          `the pf-empty-state action box computes display: ${state.actionDisplay}, ` +
+            'expected the row that holds the button',
+        );
+      }
+      for (const [which, colour] of [
+        ['the icon', state.iconColour],
+        ['the heading', state.headingColour],
+        ['the description', state.descriptionColour],
+      ]) {
+        if (colour === 'rgb(0, 0, 0)') {
+          problems.push(
+            `${which} computes colour ${colour}, the initial value — ` +
+              'a --pf-empty-state-* alias did not resolve',
+          );
+        }
+      }
+      if (state.headingColour === state.descriptionColour) {
+        problems.push('the heading and the description are the same colour');
+      }
+      if (state.descriptionWidth === 'none') {
+        problems.push(
+          'the description has no measure — the ::slotted styling did not apply, ' +
+            'which is the only styling it gets',
+        );
+      }
+      if (state.bareIconDisplay !== 'none') {
+        problems.push(
+          `a box with an empty slot computes display: ${state.bareIconDisplay} — ` +
+            'the `empty` class is tying with the box’s own display and losing on order',
+        );
+      }
+      if (state.centred !== 'center' || state.padding === '0px') {
+        problems.push(
+          `pf-empty-state is ${state.centred} with ${state.padding} padding, ` +
+            'expected centred and padded',
+        );
+      }
+    }
+  }
+
+  /*
+   * The four slot-shaped leaves, which share one arrangement: a box that
+   * carries layout is hidden when its slot is empty, and a slot that carries
+   * none has no box at all. Only a real stylesheet shows the difference —
+   * `display: none` coming from the `empty` class, and the absent box costing
+   * nothing in a gapped grid.
+   */
+  {
+    const state = await page
+      .evaluate(() => {
+        const card = document.querySelector('pf-metric-card');
+        const grid = document.querySelector('pf-metric-grid');
+        const pageHeader = document.querySelector('pf-page-header');
+        const sectionHeader = document.querySelector('pf-section-header');
+        const sectionFooter = document.querySelector('pf-section-footer');
+        if (!card || !grid || !pageHeader || !sectionHeader || !sectionFooter) {
+          return { error: 'the consumer app is missing one of the leaves' };
+        }
+
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const display = (host, name) => getComputedStyle(part(host, name)).display;
+        const cards = Array.from(grid.querySelectorAll('pf-metric-card'));
+        const cardBoxes = cards.map((node) => node.getBoundingClientRect());
+
+        return {
+          // The filled card draws every box; the bare one draws none of them.
+          filledTrend: display(cards[0], 'trend'),
+          filledAction: display(cards[0], 'action'),
+          filledIcon: display(cards[0], 'icon'),
+          bareTrend: display(cards[2], 'trend'),
+          bareAction: display(cards[2], 'action'),
+          bareIcon: display(cards[2], 'icon'),
+          // The trend pill is coloured by direction.
+          positivePill: getComputedStyle(part(cards[0], 'trend')).backgroundColor,
+          negativePill: getComputedStyle(part(cards[1], 'trend')).backgroundColor,
+          cardBackground: getComputedStyle(cards[0]).backgroundColor,
+          cardBorder: getComputedStyle(cards[0]).borderTopWidth,
+          // Cards in a row, laid out by the grid itself.
+          cardsInARow: cardBoxes.every(
+            (box, index) => index === 0 || box.left > cardBoxes[index - 1].left,
+          ),
+          gridSlotDisplay: getComputedStyle(grid.shadowRoot.querySelector('slot')).display,
+          // The page header's title is the big one, and its trail is drawn.
+          headingSize: parseFloat(getComputedStyle(part(pageHeader, 'heading')).fontSize),
+          breadcrumbsDisplay: display(pageHeader, 'breadcrumbs'),
+          pageActions: display(pageHeader, 'actions'),
+          // The section header's rule, and the footer's on the other edge.
+          sectionRule: getComputedStyle(sectionHeader).borderBottomWidth,
+          footerRule: getComputedStyle(sectionFooter).borderTopWidth,
+          sectionMetadata: display(sectionHeader, 'metadata'),
+          footerHeading: display(sectionFooter, 'heading'),
+          // An eyebrow is styled only through ::slotted(), so this is the
+          // only thing that says the styling applied at all.
+          eyebrowTransform: getComputedStyle(
+            pageHeader.shadowRoot.querySelector('slot[name="eyebrow"]').assignedElements()[0],
+          ).textTransform,
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`the slot-shaped leaves: ${state.error}`);
+    } else {
+      for (const [which, value] of [
+        ['trend', state.filledTrend],
+        ['action', state.filledAction],
+        ['icon', state.filledIcon],
+      ]) {
+        if (value === 'none') {
+          problems.push(`the filled pf-metric-card hid its ${which} box`);
+        }
+      }
+      for (const [which, value] of [
+        ['trend', state.bareTrend],
+        ['action', state.bareAction],
+        ['icon', state.bareIcon],
+      ]) {
+        if (value !== 'none') {
+          problems.push(
+            `a bare pf-metric-card drew its ${which} box (display ${value}) — ` +
+              'the empty class is not hiding it',
+          );
+        }
+      }
+      if (state.positivePill === state.negativePill) {
+        problems.push(
+          `a positive trend is the same colour as a negative one ("${state.positivePill}")`,
+        );
+      }
+      if (isTransparent(state.cardBackground) || state.cardBorder === '0px') {
+        problems.push(
+          `pf-metric-card has no surface (background "${state.cardBackground}", ` +
+            `border ${state.cardBorder})`,
+        );
+      }
+      if (!state.cardsInARow || state.gridSlotDisplay !== 'contents') {
+        problems.push(
+          `the cards did not lay out as a row of grid items ` +
+            `(slot display ${state.gridSlotDisplay}, in order: ${state.cardsInARow})`,
+        );
+      }
+      if (!(state.headingSize > 28)) {
+        problems.push(
+          `the pf-page-header title computes ${state.headingSize}px — ` +
+            'the clamp() did not resolve',
+        );
+      }
+      if (state.breadcrumbsDisplay === 'none' || state.pageActions === 'none') {
+        problems.push(
+          `pf-page-header hid a box that has content in it ` +
+            `(breadcrumbs ${state.breadcrumbsDisplay}, actions ${state.pageActions})`,
+        );
+      }
+      if (state.sectionRule === '0px' || state.footerRule === '0px') {
+        problems.push(
+          `the section rules read ${state.sectionRule} / ${state.footerRule}, ` +
+            'expected one under the header and one over the footer',
+        );
+      }
+      if (state.sectionMetadata === 'none' || state.footerHeading === 'none') {
+        problems.push(
+          `a section box with content in it is hidden ` +
+            `(metadata ${state.sectionMetadata}, footer heading ${state.footerHeading})`,
+        );
+      }
+      if (state.eyebrowTransform !== 'uppercase') {
+        problems.push(
+          `the page header's eyebrow computes text-transform: ${state.eyebrowTransform} — ` +
+            '::slotted() is the only styling it gets, and it did not apply',
+        );
       }
     }
   }

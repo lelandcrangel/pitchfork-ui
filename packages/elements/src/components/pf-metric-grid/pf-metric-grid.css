@@ -1,0 +1,14 @@
+:host {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* The cards have to be grid items of the host, not of a box inside it. */
+slot {
+  display: contents;
+}

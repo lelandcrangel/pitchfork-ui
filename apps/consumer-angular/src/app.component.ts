@@ -26,6 +26,7 @@ import {
   PfContextMenu,
   PfCreditCard,
   PfDropdown,
+  PfEmptyState,
   PfIcon,
   PfInput,
   PfKbd,
@@ -34,12 +35,15 @@ import {
   PfLoadingSpinner,
   PfMenuItem,
   PfMenuSeparator,
+  PfMetricCard,
+  PfMetricGrid,
   PfModal,
   PfModalBody,
   PfModalFooter,
   PfModalHeader,
   PfMultiSelect,
   PfNotification,
+  PfPageHeader,
   PfPagination,
   PfPopover,
   PfProgressBar,
@@ -52,6 +56,8 @@ import {
   PfRatingBadge,
   PfRatingStars,
   PfScrollArea,
+  PfSectionFooter,
+  PfSectionHeader,
   PfSelect,
   PfSlideoutMenu,
   PfSlider,
@@ -111,6 +117,7 @@ import {
     PfContextMenu,
     PfCreditCard,
     PfDropdown,
+    PfEmptyState,
     PfIcon,
     PfInput,
     PfKbd,
@@ -119,12 +126,15 @@ import {
     PfLoadingSpinner,
     PfMenuItem,
     PfMenuSeparator,
+    PfMetricCard,
+    PfMetricGrid,
     PfModal,
     PfModalBody,
     PfModalFooter,
     PfModalHeader,
     PfMultiSelect,
     PfNotification,
+    PfPageHeader,
     PfPagination,
     PfPopover,
     PfProgressBar,
@@ -137,6 +147,8 @@ import {
     PfRatingBadge,
     PfRatingStars,
     PfScrollArea,
+    PfSectionFooter,
+    PfSectionHeader,
     PfSelect,
     PfSlideoutMenu,
     PfSlider,
@@ -708,6 +720,63 @@ import {
         <pf-rating-badge [value]="4.5" [reviews]="1234" data-testid="rating-badge">
         </pf-rating-badge>
       </div>
+
+      <!-- Hidden boxes rather than absent slots; see the React consumer. -->
+      <pf-empty-state icon="folder-open" data-testid="empty-state">
+        No results
+        <span slot="description">Try a different search, or clear the filters.</span>
+        <pf-button slot="action" variant="secondary">Clear filters</pf-button>
+      </pf-empty-state>
+
+      <!--
+        One arrangement across all four: a box that carries layout is hidden
+        when empty rather than left out, and a slot that carries none has no
+        box at all. See the React consumer.
+      -->
+      <pf-page-header data-testid="page-header">
+        <pf-breadcrumbs slot="breadcrumbs" label="Page breadcrumb">
+          <pf-breadcrumb href="#shop">Shop</pf-breadcrumb>
+          <pf-breadcrumb>Orders</pf-breadcrumb>
+        </pf-breadcrumbs>
+        <span slot="eyebrow">Shop</span>
+        Orders
+        <span slot="description">Everything bought this month, newest first.</span>
+        <span slot="metadata">24 orders · £24,500</span>
+        <pf-button slot="actions" variant="secondary">Export</pf-button>
+      </pf-page-header>
+
+      <pf-section-header divider data-testid="section-header">
+        <span slot="eyebrow">This month</span>
+        Recent activity
+        <span slot="description">What has changed since the last report.</span>
+        <span slot="metadata">Updated today</span>
+        <pf-button slot="actions" variant="ghost">Refresh</pf-button>
+      </pf-section-header>
+
+      <pf-metric-grid data-testid="metric-grid">
+        <pf-metric-card trend="positive" icon="chart-bar" data-testid="metric-card">
+          <span slot="heading">Revenue</span>
+          £24,500
+          <span slot="trend">12% on last month</span>
+          <span slot="description">Since April</span>
+          <pf-button slot="action" variant="ghost" size="sm">Export</pf-button>
+        </pf-metric-card>
+        <pf-metric-card trend="negative">
+          <span slot="heading">Refunds</span>
+          £1,200
+          <span slot="trend">3% on last month</span>
+        </pf-metric-card>
+        <pf-metric-card>
+          <span slot="heading">Orders</span>
+          1,204
+        </pf-metric-card>
+      </pf-metric-grid>
+
+      <pf-section-footer data-testid="section-footer">
+        Next steps
+        <span slot="description">Nothing is blocked.</span>
+        <pf-button slot="actions">Save</pf-button>
+      </pf-section-footer>
 
       <pf-scroll-area style="height: 80px; max-width: 280px">
         <p>

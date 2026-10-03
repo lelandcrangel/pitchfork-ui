@@ -13,9 +13,11 @@ import { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } 
 import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 import { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 import { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
+import { PfEmptyStateSize } from "./components/pf-empty-state/pf-empty-state";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
+import { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 import { PfModalSize } from "./components/pf-modal/pf-modal";
 import { PfNotificationVariant } from "./components/pf-notification/pf-notification";
 import { HourCycle, Side, StepStatus } from "@pitchfork-ui/core";
@@ -24,6 +26,8 @@ import { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./com
 import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 import { PfRatingBadgeSize } from "./components/pf-rating-badge/pf-rating-badge";
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
+import { PfSectionHeaderAlign } from "./components/pf-section-header/pf-section-header";
+import { PfSectionHeaderAlign as PfSectionHeaderAlign1 } from "./components/pf-section-header/pf-section-header";
 import { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 import { PfTabsSize, PfTabsVariant } from "./components/pf-tabs/pf-tabs";
 import { PfTabPlacement } from "./components/pf-tab/pf-tab";
@@ -43,9 +47,11 @@ export { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } 
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
 export { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 export { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
+export { PfEmptyStateSize } from "./components/pf-empty-state/pf-empty-state";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
+export { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 export { PfModalSize } from "./components/pf-modal/pf-modal";
 export { PfNotificationVariant } from "./components/pf-notification/pf-notification";
 export { HourCycle, Side, StepStatus } from "@pitchfork-ui/core";
@@ -54,6 +60,8 @@ export { PfProgressStepsOrientation as PfProgressStepsOrientation1 } from "./com
 export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-group";
 export { PfRatingBadgeSize } from "./components/pf-rating-badge/pf-rating-badge";
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
+export { PfSectionHeaderAlign } from "./components/pf-section-header/pf-section-header";
+export { PfSectionHeaderAlign as PfSectionHeaderAlign1 } from "./components/pf-section-header/pf-section-header";
 export { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 export { PfTabsSize, PfTabsVariant } from "./components/pf-tabs/pf-tabs";
 export { PfTabPlacement } from "./components/pf-tab/pf-tab";
@@ -893,6 +901,24 @@ export namespace Components {
          */
         "show": () => Promise<void>;
     }
+    /**
+     * What to show in place of content that is not there: an icon, a heading, a
+     * line of explanation and something to do about it.
+     * The icon can be a name — `icon="folder-open"`, which renders a `pf-icon` —
+     * or anything slotted into the `icon` slot, for an illustration this library
+     * does not have. The slot wins where both are given.
+     */
+    interface PfEmptyState {
+        /**
+          * An icon name from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Padding and type scale. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size": PfEmptyStateSize;
+    }
     interface PfIcon {
         /**
           * Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label.
@@ -1063,6 +1089,30 @@ export namespace Components {
      * column, so the rule is always horizontal.
      */
     interface PfMenuSeparator {
+    }
+    /**
+     * One figure worth looking at: a heading, the number, and optionally how it
+     * has moved.
+     */
+    interface PfMetricCard {
+        /**
+          * An icon name from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Which way the trend reads. Reflected so the stylesheet can colour it.
+          * @default 'neutral'
+         */
+        "trend": PfMetricTrend;
+    }
+    /**
+     * A responsive grid of `pf-metric-card` children.
+     * Nothing but layout — the cards are independent, so there is no state to
+     * push down and no group behaviour to own. It exists because the column
+     * arithmetic (`auto-fit`, `minmax(220px, 1fr)`) is a decision rather than
+     * something a consumer should have to repeat.
+     */
+    interface PfMetricGrid {
     }
     /**
      * A modal dialog.
@@ -1256,6 +1306,16 @@ export namespace Components {
           * @default ''
          */
         "value": string;
+    }
+    /**
+     * The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
+     * explanation, some metadata and the page's actions.
+     * The trail is slotted rather than taken as data — the consumer nests a
+     * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+     * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
+     * Each crumb's label is a node, which does not cross the HTML boundary.
+     */
+    interface PfPageHeader {
     }
     /**
      * A pager: boundary pages pinned at each end, a window around the current
@@ -1599,6 +1659,46 @@ export namespace Components {
           * @default 'vertical'
          */
         "orientation": PfScrollAreaOrientation;
+    }
+    /**
+     * The foot of a section: an optional heading and line of text, and the
+     * controls that close it off.
+     * The same shape as `pf-section-header` with the rule on the other edge —
+     * and, unlike the header, the heading is optional here, so its box is one of
+     * the ones that can be empty.
+     */
+    interface PfSectionFooter {
+        /**
+          * How the heading and the actions share the row. Reflected.
+          * @default 'between'
+         */
+        "align": PfSectionHeaderAlign;
+        /**
+          * Draw a rule above the footer. Defaults to true, as the React one does.
+          * @default true
+         */
+        "divider": boolean;
+    }
+    /**
+     * The heading of a section, with room for an eyebrow, a line of explanation,
+     * some metadata and a control or two.
+     * Every optional box stays in the tree and is hidden when empty rather than
+     * being left out, because a slot that is not rendered never fires
+     * `slotchange` — content added later would stay invisible for good. The
+     * eyebrow and the description need no box of their own, so they are styled
+     * through `::slotted()` and collapse on their own.
+     */
+    interface PfSectionHeader {
+        /**
+          * How the heading and the actions share the row. Reflected.
+          * @default 'between'
+         */
+        "align": PfSectionHeaderAlign1;
+        /**
+          * Draw a rule below the header. Reflected for the stylesheet.
+          * @default false
+         */
+        "divider": boolean;
     }
     /**
      * A form-associated single-choice select over `pf-option` children.
@@ -2937,6 +3037,19 @@ declare global {
         prototype: HTMLPfDropdownElement;
         new (): HTMLPfDropdownElement;
     };
+    /**
+     * What to show in place of content that is not there: an icon, a heading, a
+     * line of explanation and something to do about it.
+     * The icon can be a name — `icon="folder-open"`, which renders a `pf-icon` —
+     * or anything slotted into the `icon` slot, for an illustration this library
+     * does not have. The slot wins where both are given.
+     */
+    interface HTMLPfEmptyStateElement extends Components.PfEmptyState, HTMLStencilElement {
+    }
+    var HTMLPfEmptyStateElement: {
+        prototype: HTMLPfEmptyStateElement;
+        new (): HTMLPfEmptyStateElement;
+    };
     interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
     }
     var HTMLPfIconElement: {
@@ -3036,6 +3149,29 @@ declare global {
     var HTMLPfMenuSeparatorElement: {
         prototype: HTMLPfMenuSeparatorElement;
         new (): HTMLPfMenuSeparatorElement;
+    };
+    /**
+     * One figure worth looking at: a heading, the number, and optionally how it
+     * has moved.
+     */
+    interface HTMLPfMetricCardElement extends Components.PfMetricCard, HTMLStencilElement {
+    }
+    var HTMLPfMetricCardElement: {
+        prototype: HTMLPfMetricCardElement;
+        new (): HTMLPfMetricCardElement;
+    };
+    /**
+     * A responsive grid of `pf-metric-card` children.
+     * Nothing but layout — the cards are independent, so there is no state to
+     * push down and no group behaviour to own. It exists because the column
+     * arithmetic (`auto-fit`, `minmax(220px, 1fr)`) is a decision rather than
+     * something a consumer should have to repeat.
+     */
+    interface HTMLPfMetricGridElement extends Components.PfMetricGrid, HTMLStencilElement {
+    }
+    var HTMLPfMetricGridElement: {
+        prototype: HTMLPfMetricGridElement;
+        new (): HTMLPfMetricGridElement;
     };
     interface HTMLPfModalElementEventMap {
         "pfOpenChange": { open: boolean };
@@ -3181,6 +3317,20 @@ declare global {
     var HTMLPfOptionElement: {
         prototype: HTMLPfOptionElement;
         new (): HTMLPfOptionElement;
+    };
+    /**
+     * The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
+     * explanation, some metadata and the page's actions.
+     * The trail is slotted rather than taken as data — the consumer nests a
+     * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+     * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
+     * Each crumb's label is a node, which does not cross the HTML boundary.
+     */
+    interface HTMLPfPageHeaderElement extends Components.PfPageHeader, HTMLStencilElement {
+    }
+    var HTMLPfPageHeaderElement: {
+        prototype: HTMLPfPageHeaderElement;
+        new (): HTMLPfPageHeaderElement;
     };
     interface HTMLPfPaginationElementEventMap {
         "pfPageChange": { page: number };
@@ -3358,6 +3508,34 @@ declare global {
     var HTMLPfScrollAreaElement: {
         prototype: HTMLPfScrollAreaElement;
         new (): HTMLPfScrollAreaElement;
+    };
+    /**
+     * The foot of a section: an optional heading and line of text, and the
+     * controls that close it off.
+     * The same shape as `pf-section-header` with the rule on the other edge —
+     * and, unlike the header, the heading is optional here, so its box is one of
+     * the ones that can be empty.
+     */
+    interface HTMLPfSectionFooterElement extends Components.PfSectionFooter, HTMLStencilElement {
+    }
+    var HTMLPfSectionFooterElement: {
+        prototype: HTMLPfSectionFooterElement;
+        new (): HTMLPfSectionFooterElement;
+    };
+    /**
+     * The heading of a section, with room for an eyebrow, a line of explanation,
+     * some metadata and a control or two.
+     * Every optional box stays in the tree and is hidden when empty rather than
+     * being left out, because a slot that is not rendered never fires
+     * `slotchange` — content added later would stay invisible for good. The
+     * eyebrow and the description need no box of their own, so they are styled
+     * through `::slotted()` and collapse on their own.
+     */
+    interface HTMLPfSectionHeaderElement extends Components.PfSectionHeader, HTMLStencilElement {
+    }
+    var HTMLPfSectionHeaderElement: {
+        prototype: HTMLPfSectionHeaderElement;
+        new (): HTMLPfSectionHeaderElement;
     };
     interface HTMLPfSelectElementEventMap {
         "pfChange": { value: string };
@@ -3788,6 +3966,7 @@ declare global {
         "pf-date-picker": HTMLPfDatePickerElement;
         "pf-date-range-picker": HTMLPfDateRangePickerElement;
         "pf-dropdown": HTMLPfDropdownElement;
+        "pf-empty-state": HTMLPfEmptyStateElement;
         "pf-icon": HTMLPfIconElement;
         "pf-input": HTMLPfInputElement;
         "pf-kbd": HTMLPfKbdElement;
@@ -3796,6 +3975,8 @@ declare global {
         "pf-loading-spinner": HTMLPfLoadingSpinnerElement;
         "pf-menu-item": HTMLPfMenuItemElement;
         "pf-menu-separator": HTMLPfMenuSeparatorElement;
+        "pf-metric-card": HTMLPfMetricCardElement;
+        "pf-metric-grid": HTMLPfMetricGridElement;
         "pf-modal": HTMLPfModalElement;
         "pf-modal-body": HTMLPfModalBodyElement;
         "pf-modal-footer": HTMLPfModalFooterElement;
@@ -3803,6 +3984,7 @@ declare global {
         "pf-multi-select": HTMLPfMultiSelectElement;
         "pf-notification": HTMLPfNotificationElement;
         "pf-option": HTMLPfOptionElement;
+        "pf-page-header": HTMLPfPageHeaderElement;
         "pf-pagination": HTMLPfPaginationElement;
         "pf-popover": HTMLPfPopoverElement;
         "pf-progress-bar": HTMLPfProgressBarElement;
@@ -3814,6 +3996,8 @@ declare global {
         "pf-rating-badge": HTMLPfRatingBadgeElement;
         "pf-rating-stars": HTMLPfRatingStarsElement;
         "pf-scroll-area": HTMLPfScrollAreaElement;
+        "pf-section-footer": HTMLPfSectionFooterElement;
+        "pf-section-header": HTMLPfSectionHeaderElement;
         "pf-select": HTMLPfSelectElement;
         "pf-slideout-menu": HTMLPfSlideoutMenuElement;
         "pf-slider": HTMLPfSliderElement;
@@ -4664,6 +4848,24 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
     }
+    /**
+     * What to show in place of content that is not there: an icon, a heading, a
+     * line of explanation and something to do about it.
+     * The icon can be a name — `icon="folder-open"`, which renders a `pf-icon` —
+     * or anything slotted into the `icon` slot, for an illustration this library
+     * does not have. The slot wins where both are given.
+     */
+    interface PfEmptyState {
+        /**
+          * An icon name from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Padding and type scale. Reflected so the stylesheet can select on it.
+          * @default 'md'
+         */
+        "size"?: PfEmptyStateSize;
+    }
     interface PfIcon {
         /**
           * Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label.
@@ -4838,6 +5040,30 @@ declare namespace LocalJSX {
      * column, so the rule is always horizontal.
      */
     interface PfMenuSeparator {
+    }
+    /**
+     * One figure worth looking at: a heading, the number, and optionally how it
+     * has moved.
+     */
+    interface PfMetricCard {
+        /**
+          * An icon name from the same registry as `pf-icon`.
+         */
+        "icon"?: string;
+        /**
+          * Which way the trend reads. Reflected so the stylesheet can colour it.
+          * @default 'neutral'
+         */
+        "trend"?: PfMetricTrend;
+    }
+    /**
+     * A responsive grid of `pf-metric-card` children.
+     * Nothing but layout — the cards are independent, so there is no state to
+     * push down and no group behaviour to own. It exists because the column
+     * arithmetic (`auto-fit`, `minmax(220px, 1fr)`) is a decision rather than
+     * something a consumer should have to repeat.
+     */
+    interface PfMetricGrid {
     }
     /**
      * A modal dialog.
@@ -5034,6 +5260,16 @@ declare namespace LocalJSX {
           * @default ''
          */
         "value"?: string;
+    }
+    /**
+     * The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
+     * explanation, some metadata and the page's actions.
+     * The trail is slotted rather than taken as data — the consumer nests a
+     * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+     * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
+     * Each crumb's label is a node, which does not cross the HTML boundary.
+     */
+    interface PfPageHeader {
     }
     /**
      * A pager: boundary pages pinned at each end, a window around the current
@@ -5373,6 +5609,46 @@ declare namespace LocalJSX {
           * @default 'vertical'
          */
         "orientation"?: PfScrollAreaOrientation;
+    }
+    /**
+     * The foot of a section: an optional heading and line of text, and the
+     * controls that close it off.
+     * The same shape as `pf-section-header` with the rule on the other edge —
+     * and, unlike the header, the heading is optional here, so its box is one of
+     * the ones that can be empty.
+     */
+    interface PfSectionFooter {
+        /**
+          * How the heading and the actions share the row. Reflected.
+          * @default 'between'
+         */
+        "align"?: PfSectionHeaderAlign;
+        /**
+          * Draw a rule above the footer. Defaults to true, as the React one does.
+          * @default true
+         */
+        "divider"?: boolean;
+    }
+    /**
+     * The heading of a section, with room for an eyebrow, a line of explanation,
+     * some metadata and a control or two.
+     * Every optional box stays in the tree and is hidden when empty rather than
+     * being left out, because a slot that is not rendered never fires
+     * `slotchange` — content added later would stay invisible for good. The
+     * eyebrow and the description need no box of their own, so they are styled
+     * through `::slotted()` and collapse on their own.
+     */
+    interface PfSectionHeader {
+        /**
+          * How the heading and the actions share the row. Reflected.
+          * @default 'between'
+         */
+        "align"?: PfSectionHeaderAlign1;
+        /**
+          * Draw a rule below the header. Reflected for the stylesheet.
+          * @default false
+         */
+        "divider"?: boolean;
     }
     /**
      * A form-associated single-choice select over `pf-option` children.
@@ -6257,6 +6533,10 @@ declare namespace LocalJSX {
         "label": string;
         "disabled": boolean;
     }
+    interface PfEmptyStateAttributes {
+        "size": PfEmptyStateSize;
+        "icon": string;
+    }
     interface PfIconAttributes {
         "name": string;
         "label": string;
@@ -6295,6 +6575,10 @@ declare namespace LocalJSX {
         "value": string;
         "disabled": boolean;
         "destructive": boolean;
+    }
+    interface PfMetricCardAttributes {
+        "trend": PfMetricTrend;
+        "icon": string;
     }
     interface PfModalAttributes {
         "open": boolean;
@@ -6397,6 +6681,14 @@ declare namespace LocalJSX {
     interface PfScrollAreaAttributes {
         "orientation": PfScrollAreaOrientation;
         "focusable": boolean;
+    }
+    interface PfSectionFooterAttributes {
+        "divider": boolean;
+        "align": PfSectionHeaderAlign;
+    }
+    interface PfSectionHeaderAttributes {
+        "divider": boolean;
+        "align": PfSectionHeaderAlign;
     }
     interface PfSelectAttributes {
         "name": string;
@@ -6567,6 +6859,7 @@ declare namespace LocalJSX {
         "pf-date-picker": Omit<PfDatePicker, keyof PfDatePickerAttributes> & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes]?: PfDatePicker[K] } & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes as `attr:${K}`]?: PfDatePickerAttributes[K] } & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes as `prop:${K}`]?: PfDatePicker[K] };
         "pf-date-range-picker": Omit<PfDateRangePicker, keyof PfDateRangePickerAttributes> & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes]?: PfDateRangePicker[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `attr:${K}`]?: PfDateRangePickerAttributes[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `prop:${K}`]?: PfDateRangePicker[K] };
         "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
+        "pf-empty-state": Omit<PfEmptyState, keyof PfEmptyStateAttributes> & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes]?: PfEmptyState[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `attr:${K}`]?: PfEmptyStateAttributes[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `prop:${K}`]?: PfEmptyState[K] };
         "pf-icon": Omit<PfIcon, keyof PfIconAttributes> & { [K in keyof PfIcon & keyof PfIconAttributes]?: PfIcon[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `attr:${K}`]?: PfIconAttributes[K] } & { [K in keyof PfIcon & keyof PfIconAttributes as `prop:${K}`]?: PfIcon[K] } & OneOf<"name", PfIcon["name"], PfIconAttributes["name"]>;
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
         "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
@@ -6575,6 +6868,8 @@ declare namespace LocalJSX {
         "pf-loading-spinner": Omit<PfLoadingSpinner, keyof PfLoadingSpinnerAttributes> & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes]?: PfLoadingSpinner[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `attr:${K}`]?: PfLoadingSpinnerAttributes[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `prop:${K}`]?: PfLoadingSpinner[K] };
         "pf-menu-item": Omit<PfMenuItem, keyof PfMenuItemAttributes> & { [K in keyof PfMenuItem & keyof PfMenuItemAttributes]?: PfMenuItem[K] } & { [K in keyof PfMenuItem & keyof PfMenuItemAttributes as `attr:${K}`]?: PfMenuItemAttributes[K] } & { [K in keyof PfMenuItem & keyof PfMenuItemAttributes as `prop:${K}`]?: PfMenuItem[K] };
         "pf-menu-separator": PfMenuSeparator;
+        "pf-metric-card": Omit<PfMetricCard, keyof PfMetricCardAttributes> & { [K in keyof PfMetricCard & keyof PfMetricCardAttributes]?: PfMetricCard[K] } & { [K in keyof PfMetricCard & keyof PfMetricCardAttributes as `attr:${K}`]?: PfMetricCardAttributes[K] } & { [K in keyof PfMetricCard & keyof PfMetricCardAttributes as `prop:${K}`]?: PfMetricCard[K] };
+        "pf-metric-grid": PfMetricGrid;
         "pf-modal": Omit<PfModal, keyof PfModalAttributes> & { [K in keyof PfModal & keyof PfModalAttributes]?: PfModal[K] } & { [K in keyof PfModal & keyof PfModalAttributes as `attr:${K}`]?: PfModalAttributes[K] } & { [K in keyof PfModal & keyof PfModalAttributes as `prop:${K}`]?: PfModal[K] };
         "pf-modal-body": PfModalBody;
         "pf-modal-footer": PfModalFooter;
@@ -6582,6 +6877,7 @@ declare namespace LocalJSX {
         "pf-multi-select": Omit<PfMultiSelect, keyof PfMultiSelectAttributes> & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes]?: PfMultiSelect[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `attr:${K}`]?: PfMultiSelectAttributes[K] } & { [K in keyof PfMultiSelect & keyof PfMultiSelectAttributes as `prop:${K}`]?: PfMultiSelect[K] };
         "pf-notification": Omit<PfNotification, keyof PfNotificationAttributes> & { [K in keyof PfNotification & keyof PfNotificationAttributes]?: PfNotification[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `attr:${K}`]?: PfNotificationAttributes[K] } & { [K in keyof PfNotification & keyof PfNotificationAttributes as `prop:${K}`]?: PfNotification[K] };
         "pf-option": Omit<PfOption, keyof PfOptionAttributes> & { [K in keyof PfOption & keyof PfOptionAttributes]?: PfOption[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `attr:${K}`]?: PfOptionAttributes[K] } & { [K in keyof PfOption & keyof PfOptionAttributes as `prop:${K}`]?: PfOption[K] };
+        "pf-page-header": PfPageHeader;
         "pf-pagination": Omit<PfPagination, keyof PfPaginationAttributes> & { [K in keyof PfPagination & keyof PfPaginationAttributes]?: PfPagination[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `attr:${K}`]?: PfPaginationAttributes[K] } & { [K in keyof PfPagination & keyof PfPaginationAttributes as `prop:${K}`]?: PfPagination[K] };
         "pf-popover": Omit<PfPopover, keyof PfPopoverAttributes> & { [K in keyof PfPopover & keyof PfPopoverAttributes]?: PfPopover[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `attr:${K}`]?: PfPopoverAttributes[K] } & { [K in keyof PfPopover & keyof PfPopoverAttributes as `prop:${K}`]?: PfPopover[K] };
         "pf-progress-bar": Omit<PfProgressBar, keyof PfProgressBarAttributes> & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes]?: PfProgressBar[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `attr:${K}`]?: PfProgressBarAttributes[K] } & { [K in keyof PfProgressBar & keyof PfProgressBarAttributes as `prop:${K}`]?: PfProgressBar[K] };
@@ -6593,6 +6889,8 @@ declare namespace LocalJSX {
         "pf-rating-badge": Omit<PfRatingBadge, keyof PfRatingBadgeAttributes> & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes]?: PfRatingBadge[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `attr:${K}`]?: PfRatingBadgeAttributes[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `prop:${K}`]?: PfRatingBadge[K] };
         "pf-rating-stars": Omit<PfRatingStars, keyof PfRatingStarsAttributes> & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes]?: PfRatingStars[K] } & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes as `attr:${K}`]?: PfRatingStarsAttributes[K] } & { [K in keyof PfRatingStars & keyof PfRatingStarsAttributes as `prop:${K}`]?: PfRatingStars[K] };
         "pf-scroll-area": Omit<PfScrollArea, keyof PfScrollAreaAttributes> & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes]?: PfScrollArea[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `attr:${K}`]?: PfScrollAreaAttributes[K] } & { [K in keyof PfScrollArea & keyof PfScrollAreaAttributes as `prop:${K}`]?: PfScrollArea[K] };
+        "pf-section-footer": Omit<PfSectionFooter, keyof PfSectionFooterAttributes> & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes]?: PfSectionFooter[K] } & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes as `attr:${K}`]?: PfSectionFooterAttributes[K] } & { [K in keyof PfSectionFooter & keyof PfSectionFooterAttributes as `prop:${K}`]?: PfSectionFooter[K] };
+        "pf-section-header": Omit<PfSectionHeader, keyof PfSectionHeaderAttributes> & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes]?: PfSectionHeader[K] } & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes as `attr:${K}`]?: PfSectionHeaderAttributes[K] } & { [K in keyof PfSectionHeader & keyof PfSectionHeaderAttributes as `prop:${K}`]?: PfSectionHeader[K] };
         "pf-select": Omit<PfSelect, keyof PfSelectAttributes> & { [K in keyof PfSelect & keyof PfSelectAttributes]?: PfSelect[K] } & { [K in keyof PfSelect & keyof PfSelectAttributes as `attr:${K}`]?: PfSelectAttributes[K] } & { [K in keyof PfSelect & keyof PfSelectAttributes as `prop:${K}`]?: PfSelect[K] };
         "pf-slideout-menu": Omit<PfSlideoutMenu, keyof PfSlideoutMenuAttributes> & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes]?: PfSlideoutMenu[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `attr:${K}`]?: PfSlideoutMenuAttributes[K] } & { [K in keyof PfSlideoutMenu & keyof PfSlideoutMenuAttributes as `prop:${K}`]?: PfSlideoutMenu[K] };
         "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
@@ -6835,6 +7133,14 @@ declare module "@stencil/core" {
              * controls and have to be queried by tag.
              */
             "pf-dropdown": LocalJSX.IntrinsicElements["pf-dropdown"] & JSXBase.HTMLAttributes<HTMLPfDropdownElement>;
+            /**
+             * What to show in place of content that is not there: an icon, a heading, a
+             * line of explanation and something to do about it.
+             * The icon can be a name — `icon="folder-open"`, which renders a `pf-icon` —
+             * or anything slotted into the `icon` slot, for an illustration this library
+             * does not have. The slot wins where both are given.
+             */
+            "pf-empty-state": LocalJSX.IntrinsicElements["pf-empty-state"] & JSXBase.HTMLAttributes<HTMLPfEmptyStateElement>;
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**
              * A form-associated text input.
@@ -6872,6 +7178,19 @@ declare module "@stencil/core" {
              * column, so the rule is always horizontal.
              */
             "pf-menu-separator": LocalJSX.IntrinsicElements["pf-menu-separator"] & JSXBase.HTMLAttributes<HTMLPfMenuSeparatorElement>;
+            /**
+             * One figure worth looking at: a heading, the number, and optionally how it
+             * has moved.
+             */
+            "pf-metric-card": LocalJSX.IntrinsicElements["pf-metric-card"] & JSXBase.HTMLAttributes<HTMLPfMetricCardElement>;
+            /**
+             * A responsive grid of `pf-metric-card` children.
+             * Nothing but layout — the cards are independent, so there is no state to
+             * push down and no group behaviour to own. It exists because the column
+             * arithmetic (`auto-fit`, `minmax(220px, 1fr)`) is a decision rather than
+             * something a consumer should have to repeat.
+             */
+            "pf-metric-grid": LocalJSX.IntrinsicElements["pf-metric-grid"] & JSXBase.HTMLAttributes<HTMLPfMetricGridElement>;
             /**
              * A modal dialog.
              * A native `<dialog>` opened with `showModal()`, which from inside a shadow
@@ -6937,6 +7256,15 @@ declare module "@stencil/core" {
              * on without the option knowing anything about its container.
              */
             "pf-option": LocalJSX.IntrinsicElements["pf-option"] & JSXBase.HTMLAttributes<HTMLPfOptionElement>;
+            /**
+             * The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
+             * explanation, some metadata and the page's actions.
+             * The trail is slotted rather than taken as data — the consumer nests a
+             * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+             * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
+             * Each crumb's label is a node, which does not cross the HTML boundary.
+             */
+            "pf-page-header": LocalJSX.IntrinsicElements["pf-page-header"] & JSXBase.HTMLAttributes<HTMLPfPageHeaderElement>;
             /**
              * A pager: boundary pages pinned at each end, a window around the current
              * page, and an ellipsis wherever that leaves a gap.
@@ -7015,6 +7343,24 @@ declare module "@stencil/core" {
              * A scrollable region with a styled, non-overlaying scrollbar.
              */
             "pf-scroll-area": LocalJSX.IntrinsicElements["pf-scroll-area"] & JSXBase.HTMLAttributes<HTMLPfScrollAreaElement>;
+            /**
+             * The foot of a section: an optional heading and line of text, and the
+             * controls that close it off.
+             * The same shape as `pf-section-header` with the rule on the other edge —
+             * and, unlike the header, the heading is optional here, so its box is one of
+             * the ones that can be empty.
+             */
+            "pf-section-footer": LocalJSX.IntrinsicElements["pf-section-footer"] & JSXBase.HTMLAttributes<HTMLPfSectionFooterElement>;
+            /**
+             * The heading of a section, with room for an eyebrow, a line of explanation,
+             * some metadata and a control or two.
+             * Every optional box stays in the tree and is hidden when empty rather than
+             * being left out, because a slot that is not rendered never fires
+             * `slotchange` — content added later would stay invisible for good. The
+             * eyebrow and the description need no box of their own, so they are styled
+             * through `::slotted()` and collapse on their own.
+             */
+            "pf-section-header": LocalJSX.IntrinsicElements["pf-section-header"] & JSXBase.HTMLAttributes<HTMLPfSectionHeaderElement>;
             /**
              * A form-associated single-choice select over `pf-option` children.
              * The first of Wave 5, and the worked example for §2.1: the options are child

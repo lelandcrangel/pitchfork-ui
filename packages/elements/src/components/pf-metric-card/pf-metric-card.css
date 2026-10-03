@@ -1,0 +1,125 @@
+:host {
+  background: var(--pf-metric-bg);
+  border: 1px solid var(--pf-metric-border);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+@media (--md) {
+  :host {
+    padding: var(--space-4);
+  }
+}
+
+/*
+ * The boxes that carry layout are hidden rather than left out when empty, so
+ * that content slotted in later still fires `slotchange`.
+ *
+ * Two classes deep, because each of these boxes sets its own `display` below:
+ * `.empty` alone ties on specificity and loses on order, which is a defect
+ * only a real stylesheet shows -- `scripts/smoke-consumer.mjs` caught it as a
+ * bare card drawing all three of its empty boxes.
+ */
+.icon.empty,
+.action.empty,
+.trend.empty {
+  display: none;
+}
+
+.header {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+.heading-wrap {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.heading {
+  color: var(--pf-metric-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.icon {
+  align-items: center;
+  color: var(--pf-metric-text-muted);
+  display: inline-flex;
+  font-size: var(--font-size-sm);
+  justify-content: center;
+}
+
+.action {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.body {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.value {
+  color: var(--pf-metric-text);
+  font-size: clamp(var(--font-size-3xl), 3vw, var(--font-size-4xl));
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.trend {
+  align-items: center;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+}
+
+.trend-symbol {
+  font-size: var(--font-size-2xs);
+  line-height: 1;
+}
+
+:host([trend='positive']) .trend {
+  background: color-mix(in srgb, var(--pf-metric-success-bg) 55%, var(--pf-mix-base));
+  color: var(--pf-metric-success-text);
+}
+
+:host([trend='negative']) .trend {
+  background: color-mix(in srgb, var(--pf-metric-danger-bg) 55%, var(--pf-mix-base));
+  color: var(--pf-metric-danger-text);
+}
+
+:host([trend='neutral']) .trend {
+  background: var(--pf-metric-bg-subtle);
+  color: var(--pf-metric-text-muted);
+}
+
+/*
+ * The description needs no box of its own, so it has none: an unassigned slot
+ * generates nothing, where an empty wrapper would leave the grid's own gap
+ * behind it.
+ */
+slot[name='description']::slotted(*) {
+  color: var(--pf-metric-text-muted);
+  display: block;
+  font-size: var(--font-size-sm);
+  margin: 0;
+}

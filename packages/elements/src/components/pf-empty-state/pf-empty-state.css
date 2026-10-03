@@ -1,0 +1,94 @@
+:host {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-8);
+  text-align: center;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([size='sm']) {
+  gap: var(--space-2);
+  padding: var(--space-4);
+}
+
+:host([size='lg']) {
+  gap: var(--space-4);
+  padding: var(--space-10);
+}
+
+/*
+ * The two wrappers that carry layout are hidden rather than left out when
+ * there is nothing in them, because a slot that is not rendered never fires
+ * `slotchange` -- an icon or an action added later would stay invisible.
+ *
+ * Two classes deep, because both boxes set their own `display` below: `.empty`
+ * alone ties on specificity and loses on order.
+ */
+.icon.empty,
+.action.empty {
+  display: none;
+}
+
+.icon {
+  color: var(--pf-empty-state-icon);
+  display: inline-flex;
+  font-size: var(--font-size-3xl);
+  line-height: 1;
+  margin-bottom: var(--space-1);
+}
+
+:host([size='sm']) .icon {
+  font-size: var(--font-size-xl);
+  margin-bottom: 0;
+}
+
+:host([size='lg']) .icon {
+  font-size: var(--font-size-5xl);
+  margin-bottom: var(--space-2);
+}
+
+.heading {
+  color: var(--pf-empty-state-text);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
+  margin: 0;
+}
+
+:host([size='sm']) .heading {
+  font-size: var(--font-size-sm);
+}
+
+:host([size='lg']) .heading {
+  font-size: var(--font-size-xl);
+}
+
+/*
+ * The description needs no box of its own, so it has none: an unassigned slot
+ * generates nothing, where an empty wrapper would leave its own gap behind.
+ */
+slot[name='description']::slotted(*) {
+  color: var(--pf-empty-state-text-muted);
+  display: block;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 40ch;
+}
+
+:host([size='lg']) slot[name='description']::slotted(*) {
+  font-size: var(--font-size-md);
+  max-width: 48ch;
+}
+
+.action {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
