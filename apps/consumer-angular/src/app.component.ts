@@ -67,6 +67,8 @@ import {
   PfProgressCircle,
   PfProgressStep,
   PfProgressSteps,
+  PfRadarAxis,
+  PfRadarChart,
   PfRadioButton,
   PfOption,
   PfRadioGroup,
@@ -183,6 +185,8 @@ import {
     PfProgressCircle,
     PfProgressStep,
     PfProgressSteps,
+    PfRadarAxis,
+    PfRadarChart,
     PfRadioButton,
     PfOption,
     PfRadioGroup,
@@ -1035,6 +1039,15 @@ import {
         </pf-carousel-slide>
       </pf-carousel>
       <output data-testid="carousel-index">{{ slide() }}</output>
+
+      <!-- A radar chart, whose axis names are attributes; see the React consumer. -->
+      <pf-radar-chart [size]="240" [max]="10" label="Vehicle profile" data-testid="radar">
+        <pf-radar-axis label="Speed" [value]="9" data-testid="radar-axis-1"></pf-radar-axis>
+        <pf-radar-axis label="Power" [value]="6" data-testid="radar-axis-2"></pf-radar-axis>
+        <pf-radar-axis label="Range" [value]="3" data-testid="radar-axis-3"></pf-radar-axis>
+        <pf-radar-axis label="Comfort" [value]="7" data-testid="radar-axis-4"></pf-radar-axis>
+        <pf-radar-axis label="Price" [value]="-1" data-testid="radar-axis-dropped"></pf-radar-axis>
+      </pf-radar-chart>
 
       <!-- A calendar heatmap, whose date stepping is core's; see the React consumer. -->
       <pf-heatmap

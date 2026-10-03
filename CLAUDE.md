@@ -1066,6 +1066,33 @@ subgrid` on each line rather than a table: the numbers only have to share a
   range both came to seven padding cells. Count the padding _before the first
   real day_ instead — the first assertion written here passed under both
   alignments.
+- **Never name a private getter after a DOM property.** A component class's
+  members land on the custom element itself, so `private get children()` on
+  `pf-radar-chart` _shadowed_ `Element.children`: `this.el.children` called
+  the getter, which called `this.el.children`, and the mock DOM's own
+  `getElementsByTagName` — which walks `.children` — recursed until the stack
+  ran out. Stencil warns about a `@Prop` that shadows a prototype member
+  (`animate` is one, and it fails the build) and says **nothing** about a
+  getter. The symptom was 19 tests failing with `Maximum call stack size
+exceeded` pointing into the mock DOM's selector engine, which reads as a
+  mock-DOM limitation and is not one.
+- **An SVG `<text>` cannot hold arbitrary markup**, which is why
+  `pf-radar-axis` takes its name as a `label` _attribute_ where the React
+  `RadarChart` takes a `ReactNode`. The chart has to draw each name inside
+  its own SVG, and the legend row the axis draws for itself uses the same
+  string, so the two cannot disagree. A narrower API for a reason, and worth
+  saying out loud rather than quietly accepting a `ReactNode` the SVG would
+  stringify.
+- **`transform-box: view-box` is the initial value now**, so asserting it
+  proves nothing — measured, by deleting the declaration and watching the
+  check stay green. What the element actually decides is
+  `transform-origin`, and a grow-from-the-centre animation without it scales
+  about the shape's own bounding box, which moves with the data. Assert the
+  origin.
+- **Clamp a chart's values into its grid.** A point outside the outer ring is
+  drawn outside the viewBox and clipped, so a value above `max` does not
+  overshoot — it **disappears**. `radarValuePoints` clamps, and an explicit
+  `max` wins over a larger value because a consumer who set a scale meant it.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

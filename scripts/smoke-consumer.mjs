@@ -78,6 +78,8 @@ const EXPECTED = [
   'pf-textarea',
   'pf-slider',
   'pf-radio-group',
+  'pf-radar-axis',
+  'pf-radar-chart',
   'pf-radio-button',
   'pf-tooltip',
   'pf-pie-chart',
@@ -4938,6 +4940,158 @@ try {
       }
       if (state.label !== 'Commits') {
         problems.push(`the heatmap is named "${state.label}"`);
+      }
+    }
+  }
+
+  /*
+   * The radar, whose geometry a test project can read off the `points`
+   * attributes but whose *layout* it cannot: the names are drawn outside the
+   * rings, so the SVG has to be `overflow: visible` or they are clipped away
+   * — and the grow-from-the-centre animation needs `transform-box: view-box`
+   * or it scales about the value polygon's own bounding box, which moves
+   * with the data.
+   */
+  {
+    const state = await page
+      .evaluate(async () => {
+        const el = document.querySelector('pf-radar-chart');
+        if (!el) return { error: 'the consumer app has no pf-radar-chart' };
+
+        const part = (host, name) => host.shadowRoot.querySelector(`[part="${name}"]`);
+        const parts = (host, name) => [...host.shadowRoot.querySelectorAll(`[part="${name}"]`)];
+        const axis = (testid) => document.querySelector(`[data-testid="${testid}"]`);
+        const settle = async () => {
+          for (let i = 0; i < 4; i += 1) {
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+        };
+        await settle();
+
+        const svg = part(el, 'svg');
+        const group = el.shadowRoot.querySelector('.value');
+        const labels = parts(el, 'axis-label');
+        const area = part(el, 'area');
+        const rings = parts(el, 'grid');
+
+        // Restart the entrance animation; it has no fill mode and is over.
+        group.style.animation = 'none';
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        group.style.animation = '';
+
+        const deadline = Date.now() + 3000;
+        let running = group.getAnimations();
+        while (running.length === 0 && Date.now() < deadline) {
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+          running = group.getAnimations();
+        }
+
+        const svgBox = svg.getBoundingClientRect();
+        const labelBoxes = labels.map((label) => label.getBoundingClientRect());
+
+        return {
+          overflow: getComputedStyle(svg).overflow,
+          /*
+           * The origin, not `transform-box`: the latter's initial value is
+           * already `view-box` in current browsers, so asserting it proves
+           * nothing — measured, by removing the declaration and watching the
+           * check stay green. The origin is what the element actually
+           * decides, and the animation grows from the wrong place without it.
+           */
+          transformOrigin: getComputedStyle(group).transformOrigin,
+          animationName: getComputedStyle(group).animationName,
+          animationsRunning: running.length,
+          labelCount: labels.length,
+          // The names are drawn outside the outermost ring.
+          namesOutsideRings: (() => {
+            const ring = rings[rings.length - 1].getBoundingClientRect();
+            return labelBoxes.every(
+              (box) =>
+                box.left < ring.left ||
+                box.right > ring.right ||
+                box.top < ring.top ||
+                box.bottom > ring.bottom,
+            );
+          })(),
+          // And they are visible: a clipped name measures nothing.
+          namesHaveSize: labelBoxes.every((box) => box.width > 0 && box.height > 0),
+          svgWidth: svgBox.width,
+          areaFill: getComputedStyle(area).fill,
+          areaStroke: getComputedStyle(area).stroke,
+          pointFill: getComputedStyle(part(el, 'point')).fill,
+          gridStroke: getComputedStyle(rings[0]).stroke,
+          droppedDisplay: getComputedStyle(axis('radar-axis-dropped')).display,
+          drawnDisplay: getComputedStyle(axis('radar-axis-1')).display,
+          legendValue: part(axis('radar-axis-1'), 'value').textContent.trim(),
+        };
+      })
+      .catch((error) => ({ error: String(error) }));
+
+    if (state.error) {
+      problems.push(`pf-radar-chart: ${state.error}`);
+    } else {
+      if (state.overflow !== 'visible') {
+        problems.push(
+          `the radar's svg overflow is "${state.overflow}" — the names drawn outside the rings ` +
+            'would be clipped',
+        );
+      }
+      // size 240 → centre 120, so the group grows about 120px 120px.
+      if (!state.transformOrigin.startsWith('120px 120px')) {
+        problems.push(
+          `the value group's transform-origin is "${state.transformOrigin}" — the grow ` +
+            "animation does not scale about the chart's centre",
+        );
+      }
+      if (state.animationName !== 'pf-radar-grow') {
+        problems.push(`the radar's animation-name computes to "${state.animationName}"`);
+      }
+      if (state.animationsRunning === 0) {
+        problems.push(
+          'the radar declared an animation and ran none — the shadow root has no copy of the ' +
+            'keyframes',
+        );
+      }
+      if (state.labelCount !== 4) {
+        problems.push(`the radar drew ${state.labelCount} names for four usable axes`);
+      }
+      if (!state.namesOutsideRings) {
+        problems.push('a name is drawn inside the outermost ring rather than around it');
+      }
+      if (!state.namesHaveSize) {
+        problems.push('a name measured nothing — it was clipped or never drawn');
+      }
+      if (!(state.svgWidth > 0)) {
+        problems.push(`the radar's svg measured ${state.svgWidth}px`);
+      }
+      if (!state.areaFill || state.areaFill === 'none') {
+        problems.push('the value polygon has no fill — the --pf-radar-fill mix did not resolve');
+      }
+      if (state.areaFill === state.areaStroke) {
+        problems.push(
+          `the polygon's fill and stroke are both "${state.areaFill}" — the fill should be the ` +
+            'translucent mix',
+        );
+      }
+      if (state.pointFill !== state.areaStroke) {
+        problems.push(
+          `a vertex is "${state.pointFill}" against the outline's "${state.areaStroke}"`,
+        );
+      }
+      if (state.gridStroke === state.areaStroke) {
+        problems.push('the grid is the same colour as the value outline');
+      }
+      if (state.droppedDisplay !== 'none') {
+        problems.push(
+          `an axis the chart did not draw computes to display "${state.droppedDisplay}" — it is ` +
+            'a legend row for a spoke that does not exist',
+        );
+      }
+      if (state.drawnDisplay === 'none') {
+        problems.push('a drawn axis is hidden from the legend');
+      }
+      if (state.legendValue !== '9') {
+        problems.push(`the first legend row reads "${state.legendValue}"`);
       }
     }
   }

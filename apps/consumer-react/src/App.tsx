@@ -66,6 +66,8 @@ import {
   PfProgressCircle,
   PfProgressStep,
   PfProgressSteps,
+  PfRadarAxis,
+  PfRadarChart,
   PfRadioButton,
   PfOption,
   PfRadioGroup,
@@ -1243,6 +1245,21 @@ export function App() {
         </PfCarouselSlide>
       </PfCarousel>
       <output data-testid="carousel-index">{slide}</output>
+
+      {/*
+        A radar chart. Its axis names are attributes rather than slotted
+        content, because the chart draws them inside its own SVG and an SVG
+        `<text>` cannot hold arbitrary markup — the one place the element's
+        API is narrower than the React component's, and narrower for a
+        reason.
+      */}
+      <PfRadarChart size={240} max={10} label="Vehicle profile" data-testid="radar">
+        <PfRadarAxis label="Speed" value={9} data-testid="radar-axis-1" />
+        <PfRadarAxis label="Power" value={6} data-testid="radar-axis-2" />
+        <PfRadarAxis label="Range" value={3} data-testid="radar-axis-3" />
+        <PfRadarAxis label="Comfort" value={7} data-testid="radar-axis-4" />
+        <PfRadarAxis label="Price" value={-1} data-testid="radar-axis-dropped" />
+      </PfRadarChart>
 
       {/*
         A calendar heatmap. Its date stepping is core's, which pins every date

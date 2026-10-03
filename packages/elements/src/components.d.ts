@@ -2195,6 +2195,74 @@ export namespace Components {
         "refresh": () => Promise<void>;
     }
     /**
+     * One axis of a `pf-radar-chart`, and its own row in the legend.
+     * The name is a `label` **attribute** rather than slotted content, which is
+     * the one place this differs from the React `RadarChart`'s `ReactNode`: the
+     * chart draws each name inside its own SVG as a `<text>`, and an SVG `<text>`
+     * cannot hold arbitrary markup in either layer. The legend row the axis draws
+     * for itself uses the same string, so the two always agree.
+     */
+    interface PfRadarAxis {
+        /**
+          * Set by the chart: whether this axis is in the drawing.  An axis with an unusable value is not drawn, so it is not a legend row either — a legend naming an axis that appears nowhere is worse than a shorter legend. Reflected, because that is what the stylesheet hides it with.
+          * @default false
+         */
+        "drawn": boolean;
+        /**
+          * The axis's name, drawn in the chart and in the legend.
+          * @default ''
+         */
+        "label": string;
+        /**
+          * How far along this axis the shape reaches.
+          * @default 0
+         */
+        "value": number;
+    }
+    /**
+     * A radar chart over `pf-radar-axis` children.
+     * The chart owns the drawing; each axis owns its own legend row, as a pie's
+     * slices do. The axis names are attributes rather than slotted content,
+     * because the chart has to draw them inside its own SVG and an SVG `<text>`
+     * cannot hold arbitrary markup.
+     * All of the trigonometry is core's, so this and the React `RadarChart` put
+     * the same numbers in the same places — the grid rings and the value polygon
+     * only line up if both were built from the same centre, radius and angles.
+     */
+    interface PfRadarChart {
+        /**
+          * The chart's accessible name.
+          * @default 'Radar chart'
+         */
+        "label": string;
+        /**
+          * Grid rings, the outermost of which is the chart's edge.
+          * @default 4
+         */
+        "levels": number;
+        /**
+          * The scale's top. Defaults to the largest value, never below 1.
+         */
+        "max"?: number;
+        /**
+          * Re-reads the axes, for a consumer who changed a value through its *property* — which leaves no attribute and fires no `slotchange`.
+         */
+        "refresh": () => Promise<void>;
+        /**
+          * @default true
+         */
+        "showAxes": boolean;
+        /**
+          * @default true
+         */
+        "showLegend": boolean;
+        /**
+          * Width of the drawing's viewBox, in pixels. Never below 180.
+          * @default 280
+         */
+        "size": number;
+    }
+    /**
      * One choice inside a `pf-radio-group`.
      * Not form-associated, and deliberately so: a form-associated custom element
      * gets no radio grouping from the browser. Measured — checking a second one
@@ -4937,6 +5005,36 @@ declare global {
         prototype: HTMLPfProgressStepsElement;
         new (): HTMLPfProgressStepsElement;
     };
+    /**
+     * One axis of a `pf-radar-chart`, and its own row in the legend.
+     * The name is a `label` **attribute** rather than slotted content, which is
+     * the one place this differs from the React `RadarChart`'s `ReactNode`: the
+     * chart draws each name inside its own SVG as a `<text>`, and an SVG `<text>`
+     * cannot hold arbitrary markup in either layer. The legend row the axis draws
+     * for itself uses the same string, so the two always agree.
+     */
+    interface HTMLPfRadarAxisElement extends Components.PfRadarAxis, HTMLStencilElement {
+    }
+    var HTMLPfRadarAxisElement: {
+        prototype: HTMLPfRadarAxisElement;
+        new (): HTMLPfRadarAxisElement;
+    };
+    /**
+     * A radar chart over `pf-radar-axis` children.
+     * The chart owns the drawing; each axis owns its own legend row, as a pie's
+     * slices do. The axis names are attributes rather than slotted content,
+     * because the chart has to draw them inside its own SVG and an SVG `<text>`
+     * cannot hold arbitrary markup.
+     * All of the trigonometry is core's, so this and the React `RadarChart` put
+     * the same numbers in the same places — the grid rings and the value polygon
+     * only line up if both were built from the same centre, radius and angles.
+     */
+    interface HTMLPfRadarChartElement extends Components.PfRadarChart, HTMLStencilElement {
+    }
+    var HTMLPfRadarChartElement: {
+        prototype: HTMLPfRadarChartElement;
+        new (): HTMLPfRadarChartElement;
+    };
     interface HTMLPfRadioButtonElementEventMap {
         "pfRadioSelect": { value: string };
     }
@@ -5768,6 +5866,8 @@ declare global {
         "pf-progress-circle": HTMLPfProgressCircleElement;
         "pf-progress-step": HTMLPfProgressStepElement;
         "pf-progress-steps": HTMLPfProgressStepsElement;
+        "pf-radar-axis": HTMLPfRadarAxisElement;
+        "pf-radar-chart": HTMLPfRadarChartElement;
         "pf-radio-button": HTMLPfRadioButtonElement;
         "pf-radio-group": HTMLPfRadioGroupElement;
         "pf-rating-badge": HTMLPfRatingBadgeElement;
@@ -7914,6 +8014,70 @@ declare namespace LocalJSX {
         "orientation"?: PfProgressStepsOrientation1;
     }
     /**
+     * One axis of a `pf-radar-chart`, and its own row in the legend.
+     * The name is a `label` **attribute** rather than slotted content, which is
+     * the one place this differs from the React `RadarChart`'s `ReactNode`: the
+     * chart draws each name inside its own SVG as a `<text>`, and an SVG `<text>`
+     * cannot hold arbitrary markup in either layer. The legend row the axis draws
+     * for itself uses the same string, so the two always agree.
+     */
+    interface PfRadarAxis {
+        /**
+          * Set by the chart: whether this axis is in the drawing.  An axis with an unusable value is not drawn, so it is not a legend row either — a legend naming an axis that appears nowhere is worse than a shorter legend. Reflected, because that is what the stylesheet hides it with.
+          * @default false
+         */
+        "drawn"?: boolean;
+        /**
+          * The axis's name, drawn in the chart and in the legend.
+          * @default ''
+         */
+        "label"?: string;
+        /**
+          * How far along this axis the shape reaches.
+          * @default 0
+         */
+        "value"?: number;
+    }
+    /**
+     * A radar chart over `pf-radar-axis` children.
+     * The chart owns the drawing; each axis owns its own legend row, as a pie's
+     * slices do. The axis names are attributes rather than slotted content,
+     * because the chart has to draw them inside its own SVG and an SVG `<text>`
+     * cannot hold arbitrary markup.
+     * All of the trigonometry is core's, so this and the React `RadarChart` put
+     * the same numbers in the same places — the grid rings and the value polygon
+     * only line up if both were built from the same centre, radius and angles.
+     */
+    interface PfRadarChart {
+        /**
+          * The chart's accessible name.
+          * @default 'Radar chart'
+         */
+        "label"?: string;
+        /**
+          * Grid rings, the outermost of which is the chart's edge.
+          * @default 4
+         */
+        "levels"?: number;
+        /**
+          * The scale's top. Defaults to the largest value, never below 1.
+         */
+        "max"?: number;
+        /**
+          * @default true
+         */
+        "showAxes"?: boolean;
+        /**
+          * @default true
+         */
+        "showLegend"?: boolean;
+        /**
+          * Width of the drawing's viewBox, in pixels. Never below 180.
+          * @default 280
+         */
+        "size"?: number;
+    }
+    /**
      * One choice inside a `pf-radio-group`.
      * Not form-associated, and deliberately so: a form-associated custom element
      * gets no radio grouping from the browser. Measured — checking a second one
@@ -9660,6 +9824,19 @@ declare namespace LocalJSX {
     interface PfProgressStepsAttributes {
         "orientation": PfProgressStepsOrientation;
     }
+    interface PfRadarAxisAttributes {
+        "label": string;
+        "value": number;
+        "drawn": boolean;
+    }
+    interface PfRadarChartAttributes {
+        "size": number;
+        "max": number;
+        "levels": number;
+        "showAxes": boolean;
+        "showLegend": boolean;
+        "label": string;
+    }
     interface PfRadioButtonAttributes {
         "value": string;
         "checked": boolean;
@@ -9981,6 +10158,8 @@ declare namespace LocalJSX {
         "pf-progress-circle": Omit<PfProgressCircle, keyof PfProgressCircleAttributes> & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes]?: PfProgressCircle[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `attr:${K}`]?: PfProgressCircleAttributes[K] } & { [K in keyof PfProgressCircle & keyof PfProgressCircleAttributes as `prop:${K}`]?: PfProgressCircle[K] };
         "pf-progress-step": Omit<PfProgressStep, keyof PfProgressStepAttributes> & { [K in keyof PfProgressStep & keyof PfProgressStepAttributes]?: PfProgressStep[K] } & { [K in keyof PfProgressStep & keyof PfProgressStepAttributes as `attr:${K}`]?: PfProgressStepAttributes[K] } & { [K in keyof PfProgressStep & keyof PfProgressStepAttributes as `prop:${K}`]?: PfProgressStep[K] };
         "pf-progress-steps": Omit<PfProgressSteps, keyof PfProgressStepsAttributes> & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes]?: PfProgressSteps[K] } & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes as `attr:${K}`]?: PfProgressStepsAttributes[K] } & { [K in keyof PfProgressSteps & keyof PfProgressStepsAttributes as `prop:${K}`]?: PfProgressSteps[K] };
+        "pf-radar-axis": Omit<PfRadarAxis, keyof PfRadarAxisAttributes> & { [K in keyof PfRadarAxis & keyof PfRadarAxisAttributes]?: PfRadarAxis[K] } & { [K in keyof PfRadarAxis & keyof PfRadarAxisAttributes as `attr:${K}`]?: PfRadarAxisAttributes[K] } & { [K in keyof PfRadarAxis & keyof PfRadarAxisAttributes as `prop:${K}`]?: PfRadarAxis[K] };
+        "pf-radar-chart": Omit<PfRadarChart, keyof PfRadarChartAttributes> & { [K in keyof PfRadarChart & keyof PfRadarChartAttributes]?: PfRadarChart[K] } & { [K in keyof PfRadarChart & keyof PfRadarChartAttributes as `attr:${K}`]?: PfRadarChartAttributes[K] } & { [K in keyof PfRadarChart & keyof PfRadarChartAttributes as `prop:${K}`]?: PfRadarChart[K] };
         "pf-radio-button": Omit<PfRadioButton, keyof PfRadioButtonAttributes> & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes]?: PfRadioButton[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `attr:${K}`]?: PfRadioButtonAttributes[K] } & { [K in keyof PfRadioButton & keyof PfRadioButtonAttributes as `prop:${K}`]?: PfRadioButton[K] };
         "pf-radio-group": Omit<PfRadioGroup, keyof PfRadioGroupAttributes> & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes]?: PfRadioGroup[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `attr:${K}`]?: PfRadioGroupAttributes[K] } & { [K in keyof PfRadioGroup & keyof PfRadioGroupAttributes as `prop:${K}`]?: PfRadioGroup[K] };
         "pf-rating-badge": Omit<PfRatingBadge, keyof PfRatingBadgeAttributes> & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes]?: PfRatingBadge[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `attr:${K}`]?: PfRatingBadgeAttributes[K] } & { [K in keyof PfRatingBadge & keyof PfRatingBadgeAttributes as `prop:${K}`]?: PfRatingBadge[K] };
@@ -10595,6 +10774,26 @@ declare module "@stencil/core" {
              * status inference, which depends on where the current step is.
              */
             "pf-progress-steps": LocalJSX.IntrinsicElements["pf-progress-steps"] & JSXBase.HTMLAttributes<HTMLPfProgressStepsElement>;
+            /**
+             * One axis of a `pf-radar-chart`, and its own row in the legend.
+             * The name is a `label` **attribute** rather than slotted content, which is
+             * the one place this differs from the React `RadarChart`'s `ReactNode`: the
+             * chart draws each name inside its own SVG as a `<text>`, and an SVG `<text>`
+             * cannot hold arbitrary markup in either layer. The legend row the axis draws
+             * for itself uses the same string, so the two always agree.
+             */
+            "pf-radar-axis": LocalJSX.IntrinsicElements["pf-radar-axis"] & JSXBase.HTMLAttributes<HTMLPfRadarAxisElement>;
+            /**
+             * A radar chart over `pf-radar-axis` children.
+             * The chart owns the drawing; each axis owns its own legend row, as a pie's
+             * slices do. The axis names are attributes rather than slotted content,
+             * because the chart has to draw them inside its own SVG and an SVG `<text>`
+             * cannot hold arbitrary markup.
+             * All of the trigonometry is core's, so this and the React `RadarChart` put
+             * the same numbers in the same places — the grid rings and the value polygon
+             * only line up if both were built from the same centre, radius and angles.
+             */
+            "pf-radar-chart": LocalJSX.IntrinsicElements["pf-radar-chart"] & JSXBase.HTMLAttributes<HTMLPfRadarChartElement>;
             /**
              * One choice inside a `pf-radio-group`.
              * Not form-associated, and deliberately so: a form-associated custom element
