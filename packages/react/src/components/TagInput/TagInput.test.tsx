@@ -80,4 +80,43 @@ describe('TagInput', () => {
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onValueChange).not.toHaveBeenCalled();
   });
+
+  /*
+   * Pasting a list used to add only the last tag: the handler called its add
+   * helper once per candidate, and each call built the next list from the same
+   * closed-over state, so the final `setTags` won. It folds the additions now,
+   * which also lets the maximum and the dedup see each one.
+   */
+  it('adds every tag from a pasted list', () => {
+    const onValueChange = vi.fn();
+    render(<TagInput onValueChange={onValueChange} />);
+
+    fireEvent.paste(screen.getByRole('textbox'), {
+      clipboardData: { getData: () => 'alpha, beta, gamma' },
+    });
+
+    expect(onValueChange).toHaveBeenCalledWith(['alpha', 'beta', 'gamma']);
+  });
+
+  it('applies the maximum across a pasted list', () => {
+    const onValueChange = vi.fn();
+    render(<TagInput max={2} onValueChange={onValueChange} />);
+
+    fireEvent.paste(screen.getByRole('textbox'), {
+      clipboardData: { getData: () => 'alpha, beta, gamma' },
+    });
+
+    expect(onValueChange).toHaveBeenCalledWith(['alpha', 'beta']);
+  });
+
+  it('dedupes within a pasted list', () => {
+    const onValueChange = vi.fn();
+    render(<TagInput onValueChange={onValueChange} />);
+
+    fireEvent.paste(screen.getByRole('textbox'), {
+      clipboardData: { getData: () => 'alpha, Alpha, beta' },
+    });
+
+    expect(onValueChange).toHaveBeenCalledWith(['alpha', 'beta']);
+  });
 });

@@ -584,6 +584,14 @@ Things that differ from the React library, learned by porting the first two:
   select: `data.getAll(name)` reads the values back as an array, in the order
   they were appended. The React `MultiSelect` gets the same shape from
   rendering one hidden `<input>` per selection.
+- **Fold a batch of additions; never loop a state setter over closed-over
+  state.** The React `TagInput`'s paste handler called its add helper once per
+  pasted candidate, and that helper built `[...currentTags, tag]` from the
+  render's closure each time — so the last `setTags` won and pasting
+  `alpha, beta, gamma` left one tag, with the maximum and the dedup equally
+  blind. Both layers fold now: each candidate is added to the _result_ of the
+  previous one. Three React tests cover it and fail against the old handler.
+  Worth looking for wherever a handler adds several things at once.
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.

@@ -1,3 +1,4 @@
+import { addTag, removeTagAt, splitPastedTags } from '@pitchfork-ui/core';
 import { forwardRef, useId, useRef, useState } from 'react';
 import { composeDescribedBy, Keys } from '../../a11y';
 import { useComposedRefs, useControllableState } from '../../hooks';
@@ -74,22 +75,25 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function Tag
 
   const atMax = max !== undefined && currentTags.length >= max;
 
-  const addTag = (raw: string) => {
-    const tag = raw.trim();
-    if (!tag) return;
-    if (atMax) return;
-    if (validate && !validate(tag)) return;
-    const exists = currentTags.some((t) => t.toLowerCase() === tag.toLowerCase());
-    if (!allowDuplicates && exists) {
+  /*
+   * The rules are core's — trimming, the case-insensitive dedup, the maximum
+   * and `validate` — so `<pf-tag-input>` accepts and refuses the same tags.
+   * What stays here is what to do with the draft, which differs per refusal:
+   * a duplicate clears it, because the tag asked for is already there, while
+   * hitting the maximum leaves it so nothing is lost.
+   */
+  const addDraftTag = (raw: string) => {
+    const result = addTag(currentTags, raw, { max, allowDuplicates, validate });
+    if (result.added) {
+      setTags(result.tags);
       setDraft('');
       return;
     }
-    setTags([...currentTags, tag]);
-    setDraft('');
+    if (result.refusal === 'duplicate') setDraft('');
   };
 
   const removeTag = (index: number) => {
-    setTags(currentTags.filter((_, i) => i !== index));
+    setTags(removeTagAt(currentTags, index));
   };
 
   const onKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
@@ -99,7 +103,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function Tag
       // Don't commit on a bare comma keystroke producing an empty tag.
       if (draft.trim()) {
         event.preventDefault();
-        addTag(draft);
+        addDraftTag(draft);
       } else if (event.key !== Keys.Enter) {
         // swallow stray delimiter chars (e.g. comma) when there's nothing to add
         event.preventDefault();
@@ -113,16 +117,21 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function Tag
     }
   };
 
-  // Support pasting a delimited list.
+  // Support pasting a delimited list; the split is core's.
   const onPaste: React.ClipboardEventHandler<HTMLInputElement> = (event) => {
-    const text = event.clipboardData.getData('text');
-    if (!/[,\n\t]/.test(text)) return;
+    const pasted = splitPastedTags(event.clipboardData.getData('text'));
+    if (pasted.length === 0) return;
     event.preventDefault();
-    text
-      .split(/[,\n\t]+/)
-      .map((t) => t.trim())
-      .filter(Boolean)
-      .forEach((t) => addTag(t));
+
+    // Folded rather than added one at a time, so the maximum and the dedup see
+    // each addition — adding in a loop over stale state would not.
+    let next = currentTags;
+    for (const candidate of pasted) {
+      const result = addTag(next, candidate, { max, allowDuplicates, validate });
+      next = result.tags;
+    }
+    setTags(next);
+    setDraft('');
   };
 
   return (
@@ -169,7 +178,7 @@ export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function Tag
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={onKeyDown}
               onPaste={onPaste}
-              onBlur={() => addTag(draft)}
+              onBlur={() => addDraftTag(draft)}
             />
           </li>
         </ul>

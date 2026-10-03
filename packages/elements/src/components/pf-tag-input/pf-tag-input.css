@@ -1,0 +1,80 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--pf-taginput-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--pf-taginput-invalid-border);
+  margin-inline-start: var(--space-1);
+}
+
+/*
+ * The chips and the draft field share one box that looks like a single input,
+ * so clicking anywhere in it lands on the field.
+ */
+.control {
+  align-items: center;
+  background: var(--pf-taginput-bg);
+  border: 1px solid var(--pf-taginput-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+}
+
+.control:focus-within {
+  border-color: var(--pf-taginput-focus-border);
+  box-shadow: var(--pf-focus-ring);
+}
+
+.control--invalid {
+  border-color: var(--pf-taginput-invalid-border);
+}
+
+.input {
+  background: none;
+  border: 0;
+  color: var(--pf-taginput-text);
+  /* Grows to fill the row's remainder, but never forces the box wider. */
+  flex: 1 1 6ch;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  min-width: 6ch;
+  outline: none;
+  padding: var(--space-1);
+}
+
+.input::placeholder {
+  color: var(--pf-taginput-placeholder);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.description {
+  color: var(--pf-taginput-placeholder);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+.error {
+  color: var(--pf-taginput-invalid-border);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}

@@ -47,6 +47,7 @@ import {
   PfSlider,
   PfSwitch,
   PfTag,
+  PfTagInput,
   PfTextarea,
   PfTimePicker,
   PfToaster,
@@ -78,6 +79,7 @@ export function App() {
   const [fruit, setFruit] = useState('banana');
   const [city, setCity] = useState('');
   const [colours, setColours] = useState('red,blue');
+  const [topics, setTopics] = useState('design,systems');
   const toaster = useRef<HTMLPfToasterElement>(null);
   const [plan, setPlan] = useState('pro');
   const plans = [
@@ -285,6 +287,19 @@ export function App() {
           data-testid="date-range-picker"
           onPfChange={(event) => setTrip(event.detail.value)}
         />
+        {/*
+          Free text rather than a fixed list, so no pf-option children — the
+          chips are pf-tag elements, which already have the dismiss button.
+        */}
+        <PfTagInput
+          label="Topics"
+          name="topics"
+          value={topics}
+          max={5}
+          data-testid="tag-input"
+          onPfChange={(event) => setTopics(event.detail.value)}
+        />
+
         {/*
           One control, one entry per value: setFormValue takes a FormData and a
           repeated key submits once per value, so `colours` appears twice below.

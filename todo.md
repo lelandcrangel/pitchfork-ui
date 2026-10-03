@@ -223,3 +223,26 @@ both answer `Home`/`End`.
 `resolveListMove(action, getEnabledIndexes(filtered, …), activeIndex)` and add
 the two keys. `MultiSelect` and `TagInput` have the same gap and the same
 remedy.
+
+---
+
+## `TagInput`'s paste handler only ever added the last tag — fixed
+
+Recorded because the fix shipped with `<pf-tag-input>` rather than on its own,
+and the shape of the mistake is worth remembering.
+
+`onPaste` split the clipboard text and then called the component's own
+`addTag` once per candidate. That helper read `currentTags` from the render's
+closure and called `setTags([...currentTags, tag])`, so every call built its
+list from the _same_ base and the last `setTags` won. Pasting
+`alpha, beta, gamma` left one tag. The maximum and the dedup were equally
+blind, for the same reason.
+
+Both layers now fold the additions — each candidate is added to the result of
+the previous one — through core's `addTag`. Three React tests cover it and
+fail against the old handler.
+
+**Nothing left to do here.** The entry stands as a note that a loop of state
+setters over closed-over state is the failure mode to look for in the
+remaining ports: `MultiSelect`, `Combobox` and `TreeView` all have handlers
+shaped like that one.

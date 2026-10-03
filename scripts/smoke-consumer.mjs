@@ -93,6 +93,7 @@ const EXPECTED = [
   'pf-option',
   'pf-combobox',
   'pf-multi-select',
+  'pf-tag-input',
 ];
 
 const TYPES = {
@@ -488,11 +489,11 @@ try {
        */
       if (
         names.join(',') !==
-        'at,colours,colours,due,fruit,notes,notify,plan,trip-end,trip-start,volume'
+        'at,colours,colours,due,fruit,notes,notify,plan,topics,topics,trip-end,trip-start,volume'
       ) {
         result.unstyled.push(
           `form sees [${names.join(', ')}] from the form controls, ` +
-            'expected at,colours,colours,due,fruit,notes,notify,plan,trip-end,trip-start,volume (colours twice, one entry per value) (terms is unticked, so absent)',
+            'expected at,colours,colours,due,fruit,notes,notify,plan,topics,topics,trip-end,trip-start,volume (colours and topics twice each, one entry per value) (terms is unticked, so absent)',
         );
       }
       /*

@@ -48,6 +48,7 @@ import {
   PfSlider,
   PfSwitch,
   PfTag,
+  PfTagInput,
   PfTextarea,
   PfTimePicker,
   PfToaster,
@@ -118,6 +119,7 @@ import {
     PfSlider,
     PfSwitch,
     PfTag,
+    PfTagInput,
     PfTextarea,
     PfTimePicker,
     PfToaster,
@@ -315,6 +317,16 @@ import {
           data-testid="date-range-picker"
           (pfChange)="trip.set($event.detail.value)"
         ></pf-date-range-picker>
+        <!-- Free text, with pf-tag chips. -->
+        <pf-tag-input
+          label="Topics"
+          name="topics"
+          [value]="topics()"
+          [max]="5"
+          data-testid="tag-input"
+          (pfChange)="topics.set($event.detail.value)"
+        ></pf-tag-input>
+
         <!-- One control, one submitted entry per value. -->
         <pf-multi-select
           label="Colours"
@@ -579,6 +591,7 @@ export class AppComponent {
   fruit = signal('banana');
   city = signal('');
   colours = signal('red,blue');
+  topics = signal('design,systems');
   private toaster = viewChild<ElementRef<HTMLPfToasterElement>>('toaster');
 
   notify(variant: 'success' | 'danger') {

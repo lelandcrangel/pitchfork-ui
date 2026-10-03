@@ -20,6 +20,7 @@ import { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-gr
 import { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 import { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 import { PfTagVariant } from "./components/pf-tag/pf-tag";
+import { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
 import { HourCycle, Side } from "@pitchfork-ui/core";
 import { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 import { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
@@ -40,6 +41,7 @@ export { PfRadioGroupOrientation } from "./components/pf-radio-group/pf-radio-gr
 export { PfScrollAreaOrientation } from "./components/pf-scroll-area/pf-scroll-area";
 export { PfSlideoutMenuPlacement, PfSlideoutMenuSize } from "./components/pf-slideout-menu/pf-slideout-menu";
 export { PfTagVariant } from "./components/pf-tag/pf-tag";
+export { PfTagVariant as PfTagVariant1 } from "./components/pf-tag/pf-tag";
 export { HourCycle, Side } from "@pitchfork-ui/core";
 export { PfToasterPlacement, PfToastOptions } from "./components/pf-toaster/pf-toaster";
 export { PfToolbarOrientation } from "./components/pf-toolbar/pf-toolbar";
@@ -1561,6 +1563,67 @@ export namespace Components {
         "variant": PfTagVariant;
     }
     /**
+     * A form-associated field that collects free-text tags.
+     * Unlike the other multi-value controls here the tags are not chosen from a
+     * list, so there are no `pf-option` children — the chips are `pf-tag`
+     * elements this component renders, and `pf-tag` already has the dismiss
+     * button and the event for it.
+     * The rules are core's: trimming, the case-insensitive dedup (`React` and
+     * `react` are one tag), the maximum, and `validate`. So is the paste split.
+     * What stays here is what to do with the draft, which differs per refusal — a
+     * duplicate clears it, because the tag asked for is already there, while
+     * hitting the maximum leaves it so nothing is lost.
+     * Submits one entry per tag under one name, the same way `pf-multi-select`
+     * does.
+     */
+    interface PfTagInput {
+        /**
+          * Accept the same tag twice. The comparison is case-insensitive.
+          * @default false
+         */
+        "allowDuplicates": boolean;
+        "checkValidity": () => Promise<boolean>;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled": boolean;
+        "error"?: string;
+        "getValidationMessage": () => Promise<string>;
+        "label"?: string;
+        /**
+          * Stop accepting tags once there are this many.
+         */
+        "max"?: number;
+        /**
+          * Submitted under this name, once per tag. Reflected.
+         */
+        "name"?: string;
+        /**
+          * @default 'Add a tag…'
+         */
+        "placeholder": string;
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * Visual variant for the chips, passed through to `pf-tag`.  The type is imported from `pf-tag` rather than restated, so the two cannot drift apart — a second copy of the union would compile happily while offering a variant `pf-tag` has never heard of.
+          * @default 'neutral'
+         */
+        "tagVariant": PfTagVariant1;
+        /**
+          * Refuse a candidate tag. A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a framework consumer passes it like any other.
+         */
+        "validate"?: (tag: string) => boolean;
+        /**
+          * The tags, comma-separated. Reflected, so HTML can set it.
+          * @default ''
+         */
+        "value": string;
+    }
+    /**
      * A form-associated multi-line text control.
      * Shares `pf-input`'s field anatomy and form wiring; the control is a
      * `<textarea>` rather than an `<input>`, so it takes `rows` and resizes.
@@ -1917,6 +1980,10 @@ export interface PfSwitchCustomEvent<T> extends CustomEvent<T> {
 export interface PfTagCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfTagElement;
+}
+export interface PfTagInputCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfTagInputElement;
 }
 export interface PfTextareaCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -2800,6 +2867,37 @@ declare global {
         prototype: HTMLPfTagElement;
         new (): HTMLPfTagElement;
     };
+    interface HTMLPfTagInputElementEventMap {
+        "pfChange": { value: string; values: string[] };
+    }
+    /**
+     * A form-associated field that collects free-text tags.
+     * Unlike the other multi-value controls here the tags are not chosen from a
+     * list, so there are no `pf-option` children — the chips are `pf-tag`
+     * elements this component renders, and `pf-tag` already has the dismiss
+     * button and the event for it.
+     * The rules are core's: trimming, the case-insensitive dedup (`React` and
+     * `react` are one tag), the maximum, and `validate`. So is the paste split.
+     * What stays here is what to do with the draft, which differs per refusal — a
+     * duplicate clears it, because the tag asked for is already there, while
+     * hitting the maximum leaves it so nothing is lost.
+     * Submits one entry per tag under one name, the same way `pf-multi-select`
+     * does.
+     */
+    interface HTMLPfTagInputElement extends Components.PfTagInput, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfTagInputElementEventMap>(type: K, listener: (this: HTMLPfTagInputElement, ev: PfTagInputCustomEvent<HTMLPfTagInputElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfTagInputElementEventMap>(type: K, listener: (this: HTMLPfTagInputElement, ev: PfTagInputCustomEvent<HTMLPfTagInputElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfTagInputElement: {
+        prototype: HTMLPfTagInputElement;
+        new (): HTMLPfTagInputElement;
+    };
     interface HTMLPfTextareaElementEventMap {
         "pfInput": { value: string };
         "pfChange": { value: string };
@@ -2997,6 +3095,7 @@ declare global {
         "pf-slider": HTMLPfSliderElement;
         "pf-switch": HTMLPfSwitchElement;
         "pf-tag": HTMLPfTagElement;
+        "pf-tag-input": HTMLPfTagInputElement;
         "pf-textarea": HTMLPfTextareaElement;
         "pf-time-picker": HTMLPfTimePickerElement;
         "pf-toaster": HTMLPfToasterElement;
@@ -4534,6 +4633,72 @@ declare namespace LocalJSX {
         "variant"?: PfTagVariant;
     }
     /**
+     * A form-associated field that collects free-text tags.
+     * Unlike the other multi-value controls here the tags are not chosen from a
+     * list, so there are no `pf-option` children — the chips are `pf-tag`
+     * elements this component renders, and `pf-tag` already has the dismiss
+     * button and the event for it.
+     * The rules are core's: trimming, the case-insensitive dedup (`React` and
+     * `react` are one tag), the maximum, and `validate`. So is the paste split.
+     * What stays here is what to do with the draft, which differs per refusal — a
+     * duplicate clears it, because the tag asked for is already there, while
+     * hitting the maximum leaves it so nothing is lost.
+     * Submits one entry per tag under one name, the same way `pf-multi-select`
+     * does.
+     */
+    interface PfTagInput {
+        /**
+          * Accept the same tag twice. The comparison is case-insensitive.
+          * @default false
+         */
+        "allowDuplicates"?: boolean;
+        "description"?: string;
+        /**
+          * @default false
+         */
+        "disabled"?: boolean;
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        "label"?: string;
+        /**
+          * Stop accepting tags once there are this many.
+         */
+        "max"?: number;
+        /**
+          * Submitted under this name, once per tag. Reflected.
+         */
+        "name"?: string;
+        /**
+          * Fires when the tags change, with both representations.
+         */
+        "onPfChange"?: (event: PfTagInputCustomEvent<{ value: string; values: string[] }>) => void;
+        /**
+          * @default 'Add a tag…'
+         */
+        "placeholder"?: string;
+        /**
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * Visual variant for the chips, passed through to `pf-tag`.  The type is imported from `pf-tag` rather than restated, so the two cannot drift apart — a second copy of the union would compile happily while offering a variant `pf-tag` has never heard of.
+          * @default 'neutral'
+         */
+        "tagVariant"?: PfTagVariant1;
+        /**
+          * Refuse a candidate tag. A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a framework consumer passes it like any other.
+         */
+        "validate"?: (tag: string) => boolean;
+        /**
+          * The tags, comma-separated. Reflected, so HTML can set it.
+          * @default ''
+         */
+        "value"?: string;
+    }
+    /**
      * A form-associated multi-line text control.
      * Shares `pf-input`'s field anatomy and form wiring; the control is a
      * `<textarea>` rather than an `<input>`, so it takes `rows` and resizes.
@@ -5089,6 +5254,19 @@ declare namespace LocalJSX {
         "dismissible": boolean;
         "dismissLabel": string;
     }
+    interface PfTagInputAttributes {
+        "name": string;
+        "value": string;
+        "label": string;
+        "description": string;
+        "error": string;
+        "placeholder": string;
+        "max": number;
+        "allowDuplicates": boolean;
+        "tagVariant": PfTagVariant;
+        "required": boolean;
+        "disabled": boolean;
+    }
     interface PfTextareaAttributes {
         "name": string;
         "value": string;
@@ -5190,6 +5368,7 @@ declare namespace LocalJSX {
         "pf-slider": Omit<PfSlider, keyof PfSliderAttributes> & { [K in keyof PfSlider & keyof PfSliderAttributes]?: PfSlider[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `attr:${K}`]?: PfSliderAttributes[K] } & { [K in keyof PfSlider & keyof PfSliderAttributes as `prop:${K}`]?: PfSlider[K] };
         "pf-switch": Omit<PfSwitch, keyof PfSwitchAttributes> & { [K in keyof PfSwitch & keyof PfSwitchAttributes]?: PfSwitch[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `attr:${K}`]?: PfSwitchAttributes[K] } & { [K in keyof PfSwitch & keyof PfSwitchAttributes as `prop:${K}`]?: PfSwitch[K] };
         "pf-tag": Omit<PfTag, keyof PfTagAttributes> & { [K in keyof PfTag & keyof PfTagAttributes]?: PfTag[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `attr:${K}`]?: PfTagAttributes[K] } & { [K in keyof PfTag & keyof PfTagAttributes as `prop:${K}`]?: PfTag[K] };
+        "pf-tag-input": Omit<PfTagInput, keyof PfTagInputAttributes> & { [K in keyof PfTagInput & keyof PfTagInputAttributes]?: PfTagInput[K] } & { [K in keyof PfTagInput & keyof PfTagInputAttributes as `attr:${K}`]?: PfTagInputAttributes[K] } & { [K in keyof PfTagInput & keyof PfTagInputAttributes as `prop:${K}`]?: PfTagInput[K] };
         "pf-textarea": Omit<PfTextarea, keyof PfTextareaAttributes> & { [K in keyof PfTextarea & keyof PfTextareaAttributes]?: PfTextarea[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `attr:${K}`]?: PfTextareaAttributes[K] } & { [K in keyof PfTextarea & keyof PfTextareaAttributes as `prop:${K}`]?: PfTextarea[K] };
         "pf-time-picker": Omit<PfTimePicker, keyof PfTimePickerAttributes> & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes]?: PfTimePicker[K] } & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes as `attr:${K}`]?: PfTimePickerAttributes[K] } & { [K in keyof PfTimePicker & keyof PfTimePickerAttributes as `prop:${K}`]?: PfTimePicker[K] };
         "pf-toaster": Omit<PfToaster, keyof PfToasterAttributes> & { [K in keyof PfToaster & keyof PfToasterAttributes]?: PfToaster[K] } & { [K in keyof PfToaster & keyof PfToasterAttributes as `attr:${K}`]?: PfToasterAttributes[K] } & { [K in keyof PfToaster & keyof PfToasterAttributes as `prop:${K}`]?: PfToaster[K] };
@@ -5564,6 +5743,21 @@ declare module "@stencil/core" {
              */
             "pf-switch": LocalJSX.IntrinsicElements["pf-switch"] & JSXBase.HTMLAttributes<HTMLPfSwitchElement>;
             "pf-tag": LocalJSX.IntrinsicElements["pf-tag"] & JSXBase.HTMLAttributes<HTMLPfTagElement>;
+            /**
+             * A form-associated field that collects free-text tags.
+             * Unlike the other multi-value controls here the tags are not chosen from a
+             * list, so there are no `pf-option` children — the chips are `pf-tag`
+             * elements this component renders, and `pf-tag` already has the dismiss
+             * button and the event for it.
+             * The rules are core's: trimming, the case-insensitive dedup (`React` and
+             * `react` are one tag), the maximum, and `validate`. So is the paste split.
+             * What stays here is what to do with the draft, which differs per refusal — a
+             * duplicate clears it, because the tag asked for is already there, while
+             * hitting the maximum leaves it so nothing is lost.
+             * Submits one entry per tag under one name, the same way `pf-multi-select`
+             * does.
+             */
+            "pf-tag-input": LocalJSX.IntrinsicElements["pf-tag-input"] & JSXBase.HTMLAttributes<HTMLPfTagInputElement>;
             /**
              * A form-associated multi-line text control.
              * Shares `pf-input`'s field anatomy and form wiring; the control is a
