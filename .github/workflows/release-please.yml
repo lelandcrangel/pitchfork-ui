@@ -79,6 +79,33 @@ jobs:
           npm pack --workspace @pitchfork-ui/tokens --dry-run 2>&1 | grep -q 'dist/json/tokens.json'
           npm pack --workspace @pitchfork-ui/tokens --dry-run 2>&1 | grep -q 'README.md'
           npm pack --workspace @pitchfork-ui/tokens --dry-run 2>&1 | grep -q 'LICENSE'
+      # The last thing between here and the registry. `check:package` asks
+      # whether every bare import is declared; this asks whether every declared
+      # workspace sibling can actually be installed -- which is a different
+      # question, and the one that bites when release-please cuts react without
+      # cutting core. A sibling going out in this same run is passed in rather
+      # than looked up, because it is not on the registry yet and is not meant
+      # to be.
+      - name: Check every workspace dependency can be installed
+        env:
+          CORE_RELEASED: ${{ needs.release-please.outputs.core_released }}
+          REACT_RELEASED: ${{ needs.release-please.outputs.react_released }}
+          MCP_RELEASED: ${{ needs.release-please.outputs.mcp_released }}
+          TOKENS_RELEASED: ${{ needs.release-please.outputs.tokens_released }}
+        run: |
+          set -euo pipefail
+          # `if`, not `[ … ] && …`. Under `set -e` a failing test inside an
+          # AND list is exempt while another command follows it, so the `&&`
+          # form works here — but only by position: move one of these lines
+          # last and the step starts failing whenever that package is not
+          # being released. Measured both ways rather than assumed.
+          shipping=""
+          if [ "${CORE_RELEASED:-}" = "true" ]; then shipping="$shipping,core"; fi
+          if [ "${REACT_RELEASED:-}" = "true" ]; then shipping="$shipping,react"; fi
+          if [ "${MCP_RELEASED:-}" = "true" ]; then shipping="$shipping,mcp"; fi
+          if [ "${TOKENS_RELEASED:-}" = "true" ]; then shipping="$shipping,tokens"; fi
+          node scripts/check-publishable.mjs --publishing="${shipping#,}"
+
       # No NODE_AUTH_TOKEN: auth + provenance come from OIDC via the trusted publisher.
       - name: Publish @pitchfork-ui/tokens
         if: needs.release-please.outputs.tokens_released == 'true'

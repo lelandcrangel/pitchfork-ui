@@ -31,22 +31,34 @@ constraint goes.
 Two things follow from that table, and they decide the order of everything
 else.
 
-**The next React publish is already broken, migration or no migration.** The
-published 0.15.2 predates the core extraction: its dependencies are the flat
-list (`react`, `react-dom`, `prism-react-renderer`, the three Font Awesome
-packages) and it needs nothing from this workspace. The local
-`packages/react/package.json` now declares `"@pitchfork-ui/core": "^0.1.0"`,
-and `packages/react/dist` really does import it. Publishing 0.16 today ships a
-dependency npm cannot resolve — including, with some irony, the release that
-would carry the deprecation notice.
+**The next React publish breaks the moment the web-components branch lands.**
+Not before — the distinction matters, and the first draft of this document got
+it wrong.
+
+On `main` today, `packages/react/package.json` has no `dependencies` block at
+all, only peer dependencies, exactly like the published 0.15.2. A release cut
+from `main` installs fine, which is why release PR #107 (react 0.15.3) was
+safe to leave sitting.
+
+The core extraction lives on `claude/wizardly-wozniak-bvvomh`, and there
+`packages/react/package.json` declares `"@pitchfork-ui/core": "^0.1.0"` while
+`packages/react/dist` really does import it. The moment that branch merges,
+any React release ships a dependency npm cannot resolve — including, with some
+irony, the release that would carry the deprecation notice.
+
+`.github/workflows/release-please.yml` already publishes tokens → core → react
+in order, with a comment explaining why, so it covers the case where
+release-please cuts **both**. What it does not cover is react being cut
+**alone**: no core release means the `Publish @pitchfork-ui/core` step is
+skipped, and react goes to a registry that has never heard of core.
 
 **Nothing can be migrated to a package nobody can install.** Every phase below
 waits on the first one.
 
 `scripts/check-built-packages.mjs` does not catch this. It was taught that
 every bare import must be _declared_; it never asks whether a declared
-workspace dependency is _publishable_. Closing that is roughly twenty lines and
-belongs before the first release, not after.
+workspace dependency is _publishable_. `scripts/check-publishable.mjs` does,
+and runs in the publish job before anything reaches the registry.
 
 ---
 
@@ -164,9 +176,21 @@ An element absorbed them rather than mirroring them, and `elements.json`'s
 
 **Phase 1 — Make publishing possible.** npm trusted publishers for the five
 new packages, and "Allow npm publish" is off by default (`todo.md` has the
-failure this refers to). Add the publishable-dependency check. Then release in
-dependency order: `core` → `elements` → the three bindings. React cannot ship
-again until `core` is out.
+failure this refers to). Then release in dependency order, which
+`npm run check:publishable` prints:
+
+```
+core → tokens → elements → elements-angular → elements-react → elements-vue → mcp → react
+```
+
+**The publish workflow only knows four of the eight packages.**
+`release-please-config.json` lists all eight, but
+`.github/workflows/release-please.yml` has `*_released` outputs and publish
+steps for `core`, `react`, `mcp` and `tokens` only. So release-please will
+happily cut `elements@0.1.0` and the four binding packages, write their
+changelogs and tag them, and publish none of them — a release that looks
+complete and puts nothing on the registry. Four outputs, four `if` conditions
+and four publish steps have to be added alongside the trusted publishers.
 _Exit:_ `npm install @pitchfork-ui/elements-react` works in a clean directory.
 
 **Phase 2 — Make the elements viewable.** The Storybook gap stops being

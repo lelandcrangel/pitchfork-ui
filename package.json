@@ -43,6 +43,7 @@
     "check:contrast": "node scripts/check-dark-contrast.mjs",
     "prepare": "husky",
     "check:package": "node scripts/check-built-packages.mjs",
+    "check:publishable": "node scripts/check-publishable.mjs",
     "check:icons": "node scripts/check-icon-names.mjs",
     "build:elements-metadata": "node scripts/build-elements-metadata.mjs"
   },
