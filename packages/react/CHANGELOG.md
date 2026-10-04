@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.15.3](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.2...react-v0.15.3) (2026-10-04)
+
+
+### Bug Fixes
+
+* **badge:** keep single characters round ([#106](https://github.com/lelandcrangel/pitchfork-ui/issues/106)) ([45297ed](https://github.com/lelandcrangel/pitchfork-ui/commit/45297ed55975fb3b1e0a4833f98417d5863289ee))
+
 ## [0.15.2](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.1...react-v0.15.2) (2026-09-24)
 
 
