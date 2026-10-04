@@ -57,7 +57,7 @@
     "globals": "latest",
     "husky": "^9.1.7",
     "jsdom": "latest",
-    "lint-staged": "^17.5.1",
+    "lint-staged": "^17.6.0",
     "playwright": "^1.63.0",
     "postcss-custom-media": "latest",
     "prettier": "latest",
