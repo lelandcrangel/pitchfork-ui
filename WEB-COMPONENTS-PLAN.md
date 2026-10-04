@@ -11,6 +11,12 @@ throughout.
 
 **Nothing in `packages/react/src/components` is deleted at any phase.**
 
+> **Superseded on this one point.** That constraint was right while the
+> elements were unproven, and they are proven now. `REACT-RETIREMENT-PLAN.md`
+> retires `@pitchfork-ui/react` in favour of the elements. Everything else
+> here still holds — in particular §2.1 and §5, which describe the API shapes
+> that migration has to reshape, and §3, which is why the tokens survive it.
+
 ---
 
 ## 0. Guiding principles
