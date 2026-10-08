@@ -31,11 +31,69 @@ pages with markdown tables are all generated.
 
 ---
 
+## Trusted publishing cannot create a package: the five new names need a first publish by hand
+
+**Open, and it blocks the web-components release.** Five of the eight packages
+are not on the registry at all — measured, E404 rather than an auth error:
+
+```
+@pitchfork-ui/tokens            0.4.2    on npm
+@pitchfork-ui/react             0.15.3   on npm
+@pitchfork-ui/mcp               0.2.1    on npm
+@pitchfork-ui/core              —        E404
+@pitchfork-ui/elements          —        E404
+@pitchfork-ui/elements-react    —        E404
+@pitchfork-ui/elements-angular  —        E404
+@pitchfork-ui/elements-vue      —        E404
+```
+
+Trusted publishing (OIDC) cannot publish a package's **first** version. A
+trusted publisher is configured per package and npm requires the package to
+already exist, so there is no publisher to match against for a name that is not
+there yet. `npm/cli#8544` tracks allowing it; until then the first publish of a
+new name has to come from an account, with a token or an OTP.
+
+The failure mode is the nastiest one in this file: the registry answers a
+**404**, the same answer it gives when a publisher exists but does not match
+the job's identity. So the error points at a misconfigured publisher when the
+real cause is a package that is not there — and it arrives _after_
+release-please has cut and pushed eight tags.
+
+**Order of operations, which cannot be rearranged:**
+
+1. Publish each of the five names once from a machine, signed in as an owner of
+   the `@pitchfork-ui` scope. `--access public` matters: a scoped package is
+   **private** on its first publish whatever the trusted publisher says.
+2. Configure a trusted publisher for each, with publish allowed. From the CLI
+   (npm ≥ 11.15, account-level 2FA required):
+
+   ```
+   npm trust github @pitchfork-ui/core \
+     --repo lelandcrangel/pitchfork-ui \
+     --file release-please.yml \
+     --env release \
+     --allow-publish
+   ```
+
+   `--file` is the workflow filename and `--env` the environment name, and both
+   have to match `.github/workflows/release-please.yml` exactly — npm validates
+   neither when the configuration is saved, only at publish time.
+
+3. Do step 2 and the next CI publish within **two days** of each other: a new
+   configuration that has not completed a successful publish in that window
+   expires and has to be deleted and recreated.
+
+The _Verify npm trusted publisher_ workflow below is the way to check step 2
+landed without cutting a release.
+
+---
+
 ## Publishing a new package: tick "Allow npm publish"
 
-Not an open gap — all three trusted publishers are verified. Kept because this
-will bite the next package added to the workspace, and this is where someone
-would look.
+The three published packages' trusted publishers are verified. The five new
+ones cannot be configured until they exist — see the entry above, which is the
+blocking one. Kept because this will bite every package added to the workspace,
+and this is where someone would look.
 
 On npmjs.com a package's trusted publisher has an **Allowed actions** section,
 and **`Allow npm publish` is off by default** — the publisher may only _stage_ a

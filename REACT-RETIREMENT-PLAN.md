@@ -174,23 +174,39 @@ An element absorbed them rather than mirroring them, and `elements.json`'s
 
 ## 2. Phases
 
-**Phase 1 — Make publishing possible.** npm trusted publishers for the five
-new packages, and "Allow npm publish" is off by default (`todo.md` has the
-failure this refers to). Then release in dependency order, which
-`npm run check:publishable` prints:
+**Phase 1 — Make publishing possible.** This is the phase with a step only an
+account owner can take, so it is worth reading before Friday rather than during
+it.
+
+Release order is the dependency order, which `npm run check:publishable`
+prints and the workflow enforces:
 
 ```
 core → tokens → elements → elements-angular → elements-react → elements-vue → mcp → react
 ```
 
-**The publish workflow only knows four of the eight packages.**
-`release-please-config.json` lists all eight, but
-`.github/workflows/release-please.yml` has `*_released` outputs and publish
-steps for `core`, `react`, `mcp` and `tokens` only. So release-please will
-happily cut `elements@0.1.0` and the four binding packages, write their
-changelogs and tag them, and publish none of them — a release that looks
-complete and puts nothing on the registry. Four outputs, four `if` conditions
-and four publish steps have to be added alongside the trusted publishers.
+Two gaps, one closed and one open.
+
+_Closed._ The publish workflow knew only four of the eight packages:
+`release-please-config.json` listed all eight, but
+`.github/workflows/release-please.yml` had `*_released` outputs and publish
+steps for `core`, `react`, `mcp` and `tokens` only — so release-please would
+have cut `elements@0.1.0` and the four binding packages, written their
+changelogs, tagged them, and published none of them. A release that looks
+complete and puts nothing on the registry. All eight are wired now, in
+dependency order, with `check-publishable` gating the step.
+
+_Open, and the actual blocker._ **Trusted publishing cannot create a package.**
+Five of the eight names are not on the registry at all, and a trusted publisher
+is configured per package against a package that already exists — so there is
+nothing for the workflow's OIDC identity to match. npm answers a 404, which is
+also what it answers when a publisher exists and does not match, so the error
+points at the wrong cause. And it arrives after eight tags have been pushed.
+
+Each of the five therefore needs one publish by hand, as an owner of the scope
+and with `--access public` (a scoped package is private on its first publish
+regardless), before its trusted publisher can be created at all. `todo.md` has
+the commands and the two-day window that follows.
 _Exit:_ `npm install @pitchfork-ui/elements-react` works in a clean directory.
 
 **Phase 2 — Make the elements viewable.** The Storybook gap stops being
