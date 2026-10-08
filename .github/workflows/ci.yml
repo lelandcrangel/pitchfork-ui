@@ -140,12 +140,15 @@ jobs:
       # matters for a published package -- does anything a consumer installs
       # carry a known vulnerability?
       #
-      # The whole-tree audit is informational, and red today: 14 advisories in
-      # the @angular/cli 21 toolchain and the lint setup, whose only offered
-      # fix is @angular/cli@7.2.4, fourteen majors back. Running it anyway
-      # keeps the output in the log; failing on it would make this the step
-      # nobody reads, which is the one thing an audit must not be. `todo.md`
-      # has the full reasoning.
+      # The whole-tree audit is informational, and red today: postcss <= 8.5.22
+      # under @stencil/postcss, which pins `~8.3.8` itself -- so `npm audit
+      # fix` offers nothing and a root `overrides` entry for it is ignored
+      # outright (measured). It is a build-time plugin in packages/elements'
+      # devDependencies and reaches nothing a consumer installs, which is why
+      # the blocking audit above is clean. Running it anyway keeps the output
+      # in the log; failing on it would make this the step nobody reads, which
+      # is the one thing an audit must not be. `todo.md` has the full
+      # reasoning, including what has and has not been tried.
       - name: Security audit (what a consumer installs)
         run: npm audit --omit=dev --audit-level=high
       - name: Security audit (whole tree, informational)
