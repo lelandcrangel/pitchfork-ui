@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.16.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.3...react-v0.16.0) (2026-10-08)
+
+
+### Features
+
+* **elements:** add 108 custom elements with React, Angular and Vue bindings ([#114](https://github.com/lelandcrangel/pitchfork-ui/issues/114)) ([50ed57a](https://github.com/lelandcrangel/pitchfork-ui/commit/50ed57ab3d9cdbda02258475be07c87c81ff5e43))
+
 ## [0.15.3](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.2...react-v0.15.3) (2026-10-04)
 
 

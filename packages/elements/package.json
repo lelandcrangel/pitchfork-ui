@@ -1,7 +1,7 @@
 {
   "name": "@pitchfork-ui/elements",
-  "version": "0.1.0",
-  "description": "Framework-agnostic custom elements for Pitchfork UI \u2014 the design system as standard web components, usable from React, Angular, Vue or plain HTML.",
+  "version": "0.2.0",
+  "description": "Framework-agnostic custom elements for Pitchfork UI — the design system as standard web components, usable from React, Angular, Vue or plain HTML.",
   "license": "MIT",
   "author": "Leland Rangel",
   "homepage": "https://lelandrangel.com/pitchfork-ui/",

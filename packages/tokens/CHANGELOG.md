@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.4.2...tokens-v0.5.0) (2026-10-08)
+
+
+### Features
+
+* **elements:** add 108 custom elements with React, Angular and Vue bindings ([#114](https://github.com/lelandcrangel/pitchfork-ui/issues/114)) ([50ed57a](https://github.com/lelandcrangel/pitchfork-ui/commit/50ed57ab3d9cdbda02258475be07c87c81ff5e43))
+
 ## [0.4.2](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.4.1...tokens-v0.4.2) (2026-09-24)
 
 

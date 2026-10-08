@@ -1,7 +1,7 @@
 {
   "name": "@pitchfork-ui/elements-vue",
-  "version": "0.1.0",
-  "description": "Vue bindings for @pitchfork-ui/elements \u2014 typed Vue components generated from the Pitchfork UI custom elements.",
+  "version": "0.2.0",
+  "description": "Vue bindings for @pitchfork-ui/elements — typed Vue components generated from the Pitchfork UI custom elements.",
   "license": "MIT",
   "author": "Leland Rangel",
   "homepage": "https://lelandrangel.com/pitchfork-ui/",
