@@ -28,6 +28,11 @@ on:
           - mcp
           - react
           - tokens
+          - core
+          - elements
+          - elements-react
+          - elements-angular
+          - elements-vue
 
 permissions:
   contents: read
@@ -52,9 +57,16 @@ jobs:
       - run: npm install -g npm@latest
       - run: npm ci
       # The same artifacts the real publish job builds, so the pack succeeds.
+      # All of them, for any choice: `npm publish --workspace` packs that one
+      # workspace, but several of these packages assert their own generated
+      # files are present, and a pack that fails tells you nothing about the
+      # publisher -- which is the only thing this workflow exists to ask.
       - run: npm run build:tokens
+      - run: npm run build:core
       - run: npm run build:react
       - run: npm run build:metadata
+      - run: npm run build:elements
+      - run: npm run build:elements-metadata
       - run: npm run build:mcp
 
       - name: Refuse to run unless this version is already published
@@ -64,7 +76,17 @@ jobs:
         run: |
           set -euo pipefail
           local_version=$(node -p "require('./packages/${PKG}/package.json').version")
-          published=$(curl -fsS "https://registry.npmjs.org/@pitchfork-ui%2f${PKG}" \
+          # A name that is not on the registry at all 404s here, and `curl -f`
+          # exits non-zero with `set -e` -- which would stop the job with
+          # curl's exit code and no explanation. That is the state five of
+          # these eight packages are in, and it is not a publisher problem:
+          # trusted publishing cannot create a package, so there is nothing to
+          # verify until someone has published the name once by hand. Say so.
+          if ! body=$(curl -fsS "https://registry.npmjs.org/@pitchfork-ui%2f${PKG}" 2>/dev/null); then
+            echo "::error::@pitchfork-ui/${PKG} is not on the registry. A trusted publisher cannot be created for a package that does not exist, and OIDC cannot publish a first version -- publish it once by hand with --access public, then configure the publisher. todo.md has the commands."
+            exit 1
+          fi
+          published=$(printf '%s' "$body" \
             | node -p "Object.keys(JSON.parse(require('fs').readFileSync(0,'utf8')).versions).join(' ')")
           echo "local:     @pitchfork-ui/${PKG}@${local_version}"
           echo "published: ${published}"
