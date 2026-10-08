@@ -100,13 +100,22 @@ jobs:
           npm pack --workspace @pitchfork-ui/elements-react --dry-run 2>&1 | grep -q 'dist/index.js'
           npm pack --workspace @pitchfork-ui/elements-angular --dry-run 2>&1 | grep -q 'dist/fesm2022/pitchfork-ui-elements-angular.mjs'
           npm pack --workspace @pitchfork-ui/elements-vue --dry-run 2>&1 | grep -q 'dist/components.js'
-      # The last thing between here and the registry. `check:package` asks
-      # whether every bare import is declared; this asks whether every declared
-      # workspace sibling can actually be installed -- which is a different
-      # question, and the one that bites when release-please cuts react without
-      # cutting core. A sibling going out in this same run is passed in rather
-      # than looked up, because it is not on the registry yet and is not meant
-      # to be.
+      # The last thing between here and the registry, and it asks two questions
+      # neither the build nor `check:package` can.
+      #
+      # `check:package` asks whether every bare import is declared. The first
+      # question here is whether every declared workspace sibling can actually
+      # be *installed*, which is what bites when release-please cuts react
+      # without cutting core. A sibling going out in this same run is passed in
+      # rather than looked up, because it is not on the registry yet and is not
+      # meant to be.
+      #
+      # The second is whether this run can publish the packages it is about to
+      # at all. Trusted publishing cannot create a package, so a name that has
+      # never been published needs one publish by hand first -- otherwise the
+      # steps below go out in dependency order until they meet it and stop,
+      # leaving some packages published, the rest not, and every tag cut.
+      # Refusing here costs a re-run; a half-release costs a version number.
       - name: Check every workspace dependency can be installed
         env:
           CORE_RELEASED: ${{ needs.release-please.outputs.core_released }}
