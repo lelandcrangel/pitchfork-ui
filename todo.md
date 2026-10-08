@@ -722,11 +722,30 @@ consumer installs carry a known vulnerability? It is clean. The whole-tree
 audit still runs, with `|| true`, so the fourteen Angular-toolchain and lint
 advisories stay visible in the log without failing every build.
 
-What is left, and why it stays: `piscina`, `@angular/build`, `undici`,
-`postcss` and the `sigstore` → `make-fetch-happen` → `http-cache-semantics`
-chain all come from `@angular/cli` 21, a devDependency of the Angular consumer
-app. `npm audit fix --force` offers `@angular/cli@7.2.4`. Revisit when Angular
-ships a toolchain that resolves them.
+What was left then: `piscina`, `@angular/build`, `undici`, `postcss` and the
+`sigstore` → `make-fetch-happen` → `http-cache-semantics` chain, all from
+`@angular/cli` 21, a devDependency of the Angular consumer app.
+
+**That is out of date, and in a way worth recording: the whole-tree audit is
+down to two advisories and the one that is left comes from somewhere else.**
+The Angular toolchain's were resolved by the dependency bumps that landed on
+main. What remains is `postcss` ≤ 8.5.22 under **`@stencil/postcss`**, which
+declares `postcss: ~8.3.8` and so holds a nested 8.3.11 — the root copy is
+8.5.28 and clean. Five Dependabot alerts, two npm-audit entries, and
+`npm audit fix` offers nothing, because the constraint is the plugin's own
+pin. The blocking audit stays clean either way: this is a build-time plugin in
+`packages/elements`' devDependencies and reaches nothing a consumer installs.
+
+The remedy that looks obvious does not work as written. An `overrides` entry
+of `"@stencil/postcss": { "postcss": "^8.5.29" }` in the root manifest is
+**ignored** — measured, with both `npm install --package-lock-only` and a real
+`npm install` on npm 11.21: the lockfile does not change by a single line and
+the nested copy is still 8.3.11. Worth knowing before someone spends an
+afternoon on it. A plain global `"postcss": "^8.5.29"` override is untried; so
+is dropping `@stencil/postcss` for Stencil 4's own PostCSS handling, which is
+the fix that removes the pin rather than talking over it. Either needs the
+element CSS compared before and after, since this plugin is what resolves
+`@custom-media`.
 
 ---
 
