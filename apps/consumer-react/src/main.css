@@ -1,0 +1,19 @@
+body {
+  background: var(--color-semantic-background-default, #fff);
+  color: var(--color-semantic-text-default, #111);
+  font-family: var(--font-family-sans, system-ui, sans-serif);
+  margin: 0;
+  padding: 2rem;
+}
+
+.row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-size: 1.25rem;
+}

@@ -1,0 +1,139 @@
+/*
+ * The generic set pf-option reads, mapped to this control's own family — see
+ * pf-option.css.
+ */
+:host {
+  display: block;
+  --pf-option-text: var(--pf-multiselect-text);
+  --pf-option-text-disabled: var(--pf-multiselect-text-muted);
+  --pf-option-active-bg: var(--pf-multiselect-active-bg);
+  --pf-option-active-text: var(--pf-multiselect-active-text);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--pf-multiselect-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--pf-multiselect-invalid-border);
+  margin-inline-start: var(--space-1);
+}
+
+.trigger {
+  align-items: center;
+  background: var(--pf-multiselect-bg);
+  border: 1px solid var(--pf-multiselect-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-multiselect-text);
+  cursor: pointer;
+  display: flex;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+  width: 100%;
+}
+
+.trigger:focus-visible {
+  border-color: var(--pf-multiselect-focus-border);
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.trigger--invalid {
+  border-color: var(--pf-multiselect-invalid-border);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.chip {
+  background: var(--pf-multiselect-bg-subtle);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  padding: 2px var(--space-2);
+}
+
+.placeholder {
+  color: var(--pf-multiselect-text-muted);
+}
+
+.chevron {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  transition: transform var(--pf-transition-fast);
+}
+
+:host([open]) .chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
+.description {
+  color: var(--pf-multiselect-text-muted);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+.error {
+  color: var(--pf-multiselect-invalid-border);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+/* See src/place-popover.ts: the UA stylesheet centres a popover otherwise. */
+.listbox {
+  inset: auto;
+  margin: 0;
+  background: var(--pf-multiselect-bg);
+  border: 1px solid var(--pf-multiselect-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--pf-elevation-popover-shadow);
+  padding: var(--space-1);
+}
+
+.listbox:popover-open {
+  animation: pf-multi-select-in var(--pf-transition-enter);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-multi-select-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .listbox:popover-open {
+    animation: none;
+  }
+}

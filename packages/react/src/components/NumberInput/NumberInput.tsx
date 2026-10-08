@@ -1,3 +1,10 @@
+import {
+  clampNumber,
+  formatNumberValue,
+  parseNumberValue,
+  roundToStep,
+  stepNumber,
+} from '@pitchfork-ui/core';
 import { forwardRef, useId, useRef, useState } from 'react';
 import { composeDescribedBy, Keys } from '../../a11y';
 import { useComposedRefs, useControllableState } from '../../hooks';
@@ -27,14 +34,6 @@ export interface NumberInputProps extends Omit<
   incrementLabel?: string;
   name?: string;
 }
-
-const decimalsOf = (n: number) => {
-  const str = String(n);
-  const dot = str.indexOf('.');
-  return dot === -1 ? 0 : str.length - dot - 1;
-};
-
-const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max);
 
 export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(function NumberInput(
   {
@@ -78,19 +77,12 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
   const inputRef = useRef<HTMLInputElement>(null);
   const inputRefs = useComposedRefs(inputRef, ref);
 
-  const stepDecimals = decimalsOf(step);
-  const round = (n: number) => {
-    const factor = 10 ** stepDecimals;
-    return Math.round(n * factor) / factor;
-  };
-
-  const formatValue = (n: number | null) => {
-    if (n === null) return '';
-    if (formatOptions) {
-      return new Intl.NumberFormat(locale, formatOptions).format(n);
-    }
-    return String(n);
-  };
+  /*
+   * All of the arithmetic is core's, so `<pf-number-input>` steps, rounds and
+   * clamps identically — including that ten steps of 0.1 reach exactly 1.
+   */
+  const round = (n: number) => roundToStep(n, step);
+  const formatValue = (n: number | null) => formatNumberValue(n, { locale, format: formatOptions });
 
   const [focused, setFocused] = useState(false);
   const [draft, setDraft] = useState(() => formatValue(currentValue));
@@ -104,16 +96,15 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
       setDraft('');
       return;
     }
-    const clamped = round(clamp(next, min, max));
+    const clamped = round(clampNumber(next, min, max));
     setCurrentValue(clamped);
     setDraft(focused ? String(clamped) : formatValue(clamped));
   };
 
   const stepBy = (direction: 1 | -1) => {
     if (disabled) return;
-    // Step from the current value, or from a sensible bound when empty.
-    const start = currentValue ?? (Number.isFinite(min) ? min : Number.isFinite(max) ? max : 0);
-    commit(start + direction * step);
+    // Core's, including where an empty field starts from.
+    commit(stepNumber(currentValue, direction, { min, max, step }));
   };
 
   const atMin = currentValue !== null && currentValue <= min;
@@ -184,13 +175,13 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
           onChange={(event) => {
             const raw = event.target.value;
             setDraft(raw);
+            const parsed = parseNumberValue(raw);
             if (raw.trim() === '') {
               setCurrentValue(null);
               return;
             }
-            const parsed = Number(raw);
-            if (!Number.isNaN(parsed)) {
-              setCurrentValue(round(clamp(parsed, min, max)));
+            if (parsed !== null) {
+              setCurrentValue(round(clampNumber(parsed, min, max)));
             }
           }}
           onBlur={() => {
@@ -199,8 +190,8 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
             if (draft.trim() === '') {
               commit(null);
             } else {
-              const parsed = Number(draft);
-              commit(Number.isNaN(parsed) ? currentValue : parsed);
+              const parsed = parseNumberValue(draft);
+              commit(parsed ?? currentValue);
             }
           }}
           onKeyDown={onKeyDown}

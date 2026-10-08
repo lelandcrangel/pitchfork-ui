@@ -230,4 +230,114 @@ describe('TreeView', () => {
     expect(screen.queryByText('Mid')).not.toBeInTheDocument();
     expect(screen.queryByText('Leaf')).not.toBeInTheDocument();
   });
+
+  /* ─── One tab stop ─────────────────────────────────────────────────────── *
+   *
+   * Every visible item was tabbable, so a tree of thirty open nodes was thirty
+   * stops in the page's tab order. The ARIA tree pattern is one stop with the
+   * arrows moving inside — the arrows were already there.
+   */
+
+  const stops = () =>
+    screen.getAllByRole('treeitem').filter((item) => item.getAttribute('tabindex') === '0');
+
+  it('has one tab stop however many items are visible', () => {
+    render(<TreeView nodes={deepNodes} defaultExpandedValues={['root', 'mid']} />);
+
+    expect(screen.getAllByRole('treeitem').length).toBeGreaterThan(2);
+    expect(stops()).toHaveLength(1);
+  });
+
+  it('puts the tab stop on the selected item', () => {
+    render(<TreeView nodes={simpleNodes} defaultSelectedValue="b" />);
+    expect(stops()[0]).toHaveAccessibleName('Beta');
+  });
+
+  it('tabs in from outside onto the selection, not onto the first item', async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <button type="button">Before</button>
+        <TreeView nodes={simpleNodes} defaultSelectedValue="c" />
+      </>,
+    );
+
+    screen.getByRole('button', { name: 'Before' }).focus();
+    await user.tab();
+
+    expect(screen.getByRole('treeitem', { name: 'Gamma' })).toHaveFocus();
+  });
+
+  it('moves the tab stop with the arrows', async () => {
+    const user = userEvent.setup();
+    render(<TreeView nodes={simpleNodes} />);
+    screen.getByRole('treeitem', { name: 'Alpha' }).focus();
+
+    await user.keyboard('{ArrowDown}');
+
+    expect(screen.getByRole('treeitem', { name: 'Beta' })).toHaveFocus();
+    expect(stops()[0]).toHaveAccessibleName('Beta');
+  });
+
+  /*
+   * Collapsing a branch takes its children off screen. A tab stop left on one
+   * of them leaves the tree with no stop at all — reachable by mouse and by
+   * nothing else — which is why the active item is derived against the visible
+   * list rather than stored outright.
+   *
+   * It has to be collapsed from *outside* the keyboard to catch this: walking
+   * out of a branch with ArrowLeft moves focus to the parent first, so the
+   * stored value is never stale on that path. `collapseAll()` is the case that
+   * is, and so is a click on the toggle chevron.
+   */
+  it('keeps a tab stop when the focused item is collapsed away', () => {
+    const ref = createRef<TreeViewHandle>();
+    render(<TreeView ref={ref} nodes={nestedNodes} defaultExpandedValues={['parent']} />);
+
+    // In `act`, because the item's own `onFocus` is what moves the tab stop.
+    act(() => screen.getByRole('treeitem', { name: 'Child 1' }).focus());
+    expect(stops()[0]).toHaveAccessibleName('Child 1');
+
+    act(() => ref.current!.collapseAll());
+
+    expect(screen.queryByRole('treeitem', { name: 'Child 1' })).not.toBeInTheDocument();
+    expect(stops()).toHaveLength(1);
+    expect(stops()[0]).toHaveAccessibleName('Parent');
+  });
+
+  /*
+   * Core's `resolveTreeKey` returns a focus intent for a disabled node — the
+   * ARIA pattern is that focus moves freely while activation refuses — and a
+   * `disabled` button cannot take focus, so arrowing onto one used to drop
+   * focus out of the tree entirely.
+   */
+  it('focuses a disabled item but will not select it', async () => {
+    const user = userEvent.setup();
+    const onSelectedValueChange = vi.fn();
+    render(
+      <TreeView
+        nodes={[
+          { value: 'a', label: 'Alpha' },
+          { value: 'b', label: 'Beta', disabled: true },
+          { value: 'c', label: 'Gamma' },
+        ]}
+        onSelectedValueChange={onSelectedValueChange}
+      />,
+    );
+
+    const beta = screen.getByRole('treeitem', { name: 'Beta' });
+    expect(beta).toHaveAttribute('aria-disabled', 'true');
+    expect(beta).not.toBeDisabled();
+
+    screen.getByRole('treeitem', { name: 'Alpha' }).focus();
+    await user.keyboard('{ArrowDown}');
+    expect(beta).toHaveFocus();
+
+    await user.keyboard('{Enter}');
+    expect(onSelectedValueChange).not.toHaveBeenCalled();
+
+    // And the keyboard can carry on past it.
+    await user.keyboard('{ArrowDown}{Enter}');
+    expect(onSelectedValueChange).toHaveBeenCalledWith('c');
+  });
 });

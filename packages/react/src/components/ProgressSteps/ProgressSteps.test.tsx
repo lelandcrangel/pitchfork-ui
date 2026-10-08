@@ -68,6 +68,31 @@ describe('ProgressSteps', () => {
     expect(items[2]).toHaveClass('pf-progress-steps__item--current');
   });
 
+  /*
+   * The marker is `aria-hidden` and the statuses are colour, so before this
+   * there was nothing in the accessibility tree saying which step the user was
+   * on. `aria-current="step"` is the standard way to say it, and only one step
+   * carries it.
+   */
+  it('marks the current step with aria-current="step", and only that one', () => {
+    const stepsWithCurrent: ProgressStepItem[] = [
+      { title: 'Step 1' },
+      { title: 'Step 2', status: 'current' },
+      { title: 'Step 3' },
+    ];
+    const { container } = render(<ProgressSteps steps={stepsWithCurrent} />);
+    const marked = container.querySelectorAll('[aria-current="step"]');
+    expect(marked).toHaveLength(1);
+    expect(marked[0]).toHaveTextContent('Step 2');
+  });
+
+  it('marks the first step current when the trail says nothing', () => {
+    const { container } = render(<ProgressSteps steps={steps} />);
+    const marked = container.querySelectorAll('[aria-current="step"]');
+    expect(marked).toHaveLength(1);
+    expect(marked[0]).toHaveTextContent('Account');
+  });
+
   // ─── Orientation ─────────────────────────────────────────────────────────
 
   it('defaults to horizontal orientation', () => {

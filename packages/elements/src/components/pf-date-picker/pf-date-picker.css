@@ -1,0 +1,141 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--pf-field-label-text, var(--pf-input-label-text));
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--pf-input-invalid-border);
+  margin-inline-start: var(--space-1);
+}
+
+.row {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+}
+
+.trigger {
+  align-items: center;
+  background: var(--pf-input-bg);
+  border: 1px solid var(--pf-input-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-input-text);
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+  justify-content: space-between;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  text-align: start;
+}
+
+.trigger:hover:not(:disabled) {
+  border-color: var(--pf-input-border-hover);
+}
+
+.trigger:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.trigger--invalid {
+  border-color: var(--pf-input-invalid-border);
+}
+
+.value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.value--placeholder {
+  color: var(--pf-input-placeholder-text);
+}
+
+.clear {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-input-text-muted, var(--pf-input-placeholder-text));
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: var(--space-1);
+}
+
+.clear:hover:not(:disabled) {
+  color: var(--pf-input-text);
+}
+
+.clear:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.description {
+  color: var(--pf-input-description-text);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+.error {
+  color: var(--pf-input-invalid-border);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+/*
+ * See src/place-popover.ts: `inset: auto; margin: 0` are what make the
+ * coordinates mean what they say, since the UA stylesheet centres a popover.
+ * Declared here and set inline, because no test project applies this file.
+ */
+.panel {
+  inset: auto;
+  margin: 0;
+  background: none;
+  border: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+.panel:popover-open {
+  animation: pf-date-picker-in var(--pf-transition-enter);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-date-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel:popover-open {
+    animation: none;
+  }
+}

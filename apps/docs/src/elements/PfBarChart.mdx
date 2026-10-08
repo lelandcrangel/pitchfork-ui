@@ -1,0 +1,72 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfBarChart" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-bar-chart>`
+
+
+A grouped or stacked bar chart over `pf-chart-series` children.
+
+The same split as `pf-line-chart`: the rows are bulk numbers in a property,
+the series are named and coloured and live in the light DOM so the legend
+can reach their labels.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `data` | `data` | `PfChartRow[] \| string` | `[]` | The rows to plot. An array, or JSON for plain HTML. |
+| `label` | `label` | `string \| undefined` | — | — |
+| `showLegend` | `show-legend` | `boolean` | `true` | — |
+| `stacked` | `stacked` | `boolean` | `false` | Stack each group's series rather than standing them side by side. |
+| `yAxisLabel` | `y-axis-label` | `string \| undefined` | — | — |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | — |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-chart-series` children. |
+| `empty` | what to show when there is nothing to draw. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `bar` | one bar. |
+| `empty` | the empty state's box. |
+| `grid` | one gridline. |
+| `legend` | the list the series are slotted into. |
+| `svg` | the drawing. |
+| `tick` | one axis label. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-bar-chart></pf-bar-chart>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfBarChart } from '@pitchfork-ui/elements-react';
+
+<PfBarChart />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-bar-chart></pf-bar-chart>
+```
+

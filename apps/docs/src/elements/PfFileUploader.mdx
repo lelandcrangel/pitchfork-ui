@@ -1,0 +1,92 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfFileUploader" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-file-uploader>`
+
+
+A form-associated file picker with a dropzone.
+
+All of the rules are core's — how a size is written, what makes two
+selections the same file, which files a selection leaves you with, what is
+wrong with the result and how the limits are described — so this and the
+React `FileUploader` cannot drift on any of them.
+
+It deliberately has **no Angular `ControlValueAccessor`**. The generator
+offers accessors that write `value`, a number or `checked`, and this
+control's value is a `File[]`: a text accessor would store `[object File]`.
+An Angular consumer binds `[files]` and `(pfChange)`, and the submission
+still works, because that goes through `ElementInternals` rather than
+through the accessor.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `accept` | `accept` | `string \| undefined` | — | The `accept` list, in the form an `&lt;input type="file"&gt;` takes. |
+| `description` | `description` | `string \| undefined` | — | — |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | Error message from the consumer. Its presence marks the control invalid. |
+| `files` | — | `File[]` | `[]` | The files chosen. A property only — there is no attribute that could carry a `File`. |
+| `label` | `label` | `string \| undefined` | — | — |
+| `maxFileSize` | `max-file-size` | `number \| undefined` | — | The largest any one file may be, in bytes. |
+| `maxFiles` | `max-files` | `number \| undefined` | — | The most files that may be held at once. |
+| `multiple` | `multiple` | `boolean` | `true` | — |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected, because a form-associated custom element takes its submission name from the `name` content attribute rather than from this property. |
+| `required` | `required` | `boolean` | `false` | — |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ files: File[]; \}` | Fires when the files held change, however they changed. |
+| `pfReject` | `\{ message: string; \}` | Fires when a selection is refused, with the reason shown to the person. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
+| `open()` | `open() =&gt; Promise&lt;void&gt;` | Opens the file picker, as clicking the dropzone does. |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `description` | the hint text. |
+| `dropzone` | the button that opens the picker and takes the drop. |
+| `error` | the error message. |
+| `field` | the wrapper around label, dropzone and messages. |
+| `file` | one row of that list. |
+| `icon` | the dropzone's icon. |
+| `label` | the label element. |
+| `list` | the list of chosen files. |
+| `remove` | a row's remove button. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-file-uploader></pf-file-uploader>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfFileUploader } from '@pitchfork-ui/elements-react';
+
+<PfFileUploader />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-file-uploader></pf-file-uploader>
+```
+

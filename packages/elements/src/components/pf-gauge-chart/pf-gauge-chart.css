@@ -1,0 +1,83 @@
+:host {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  position: relative;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.svg {
+  inset: 0;
+  position: absolute;
+}
+
+.track {
+  stroke: var(--pf-gauge-track-color);
+}
+
+.fill {
+  /*
+   * The animation and the transition together: the first fills the arc in on
+   * first paint, the second carries it between values afterwards. A
+   * `--pf-transition-*` alias where the raw duration tokens would do, because
+   * an alias cannot be half-right.
+   */
+  animation: pf-gauge-fill var(--duration-slow) var(--easing-decelerate);
+  stroke-dashoffset: var(--pf-gauge-offset);
+  transition: stroke-dashoffset var(--pf-transition-medium);
+}
+
+/*
+ * Its own copy: `@keyframes` do not cross a shadow boundary, so the React
+ * library's global declaration is invisible here.
+ */
+@keyframes pf-gauge-fill {
+  from {
+    stroke-dashoffset: var(--pf-gauge-circumference);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    animation: none;
+    transition: none;
+  }
+}
+
+.center {
+  align-items: center;
+  background: var(--pf-gauge-center-bg);
+  border-radius: var(--radius-full);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  justify-content: center;
+  padding: var(--space-2);
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}
+
+.label {
+  color: var(--pf-gauge-label-color);
+  font-size: var(--pf-gauge-label-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+}
+
+/*
+ * The slotted sub-label itself, with no wrapper of ours around it: an
+ * unassigned slot is `display: contents` and generates nothing, so a gauge
+ * with no sub-label lays out nothing extra. A wrapper would still be a flex
+ * item costing the `--space-1` gap, and could not be collapsed from CSS —
+ * `:has()` cannot ask whether a slot has assigned content, because assigned
+ * nodes are not the slot's children.
+ */
+::slotted([slot='sub']) {
+  color: var(--pf-gauge-sub-label-color);
+  font-size: var(--font-size-sm);
+  line-height: 1;
+}

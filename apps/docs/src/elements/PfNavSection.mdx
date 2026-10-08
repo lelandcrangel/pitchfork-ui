@@ -1,0 +1,64 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfNavSection" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-nav-section>`
+
+
+A titled group of `pf-nav-item` children inside a `pf-sidebar-navigation`.
+
+The React `SidebarNavigation` takes a `sections` array of `{ title, items }`.
+Grouping slotted children has to be structural — one `<slot>` renders every
+assigned child in source order, and a shadow root cannot wrap a subset of
+them in a box — so the consumer nests, which is the §2.1 idiom and the same
+answer `pf-command-group` gives.
+
+The title names the list with a **same-root** IDREF: both the title and the
+`<ul>` are in this shadow root, so the reference resolves. An
+`aria-labelledby` from the host could not point at either of them.
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfNavStructure` | `void` | Tells the navigation its items have moved. `slotchange` is not composed, so the navigation never hears this section's own slot change — exactly the reason `pf-tree-item` emits `pfTreeStructure`. Without it an item appended to a section is never given an orientation or a place in the one-current resolution. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-nav-item` children. |
+| `title` | the section's title. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `list` | the list the items are slotted into. |
+| `title` | the title's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-nav-section></pf-nav-section>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfNavSection } from '@pitchfork-ui/elements-react';
+
+<PfNavSection />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-nav-section></pf-nav-section>
+```
+

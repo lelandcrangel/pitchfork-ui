@@ -1,0 +1,58 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTableRow" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-table-row>`
+
+
+One row of a `pf-table`.
+
+`display: table-row`, so the row is a box: that is what lets it take a
+background for striping and a `:hover` of its own, neither of which an
+element with `display: contents` can do. Its cells are table-cells inside
+it, and the column widths come from the table layout rather than from
+anything measured.
+
+The row pushes `head` and `last` onto its own cells, because it knows what
+it is and they do not — `last` comes from the table, which is the only
+thing that can see where the body ends.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `head` | `head` | `boolean` | `false` | A header row. Reflected, and pushed onto its cells. |
+| `last` | `last` | `boolean` | `false` | Set by the table: the last body row, whose cells drop their bottom border so the rule does not double up with the table's own. |
+| `odd` | `odd` | `boolean` | `false` | Set by the table: every other body row, for striping. Reflected. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-table-cell` children. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-table-row></pf-table-row>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTableRow } from '@pitchfork-ui/elements-react';
+
+<PfTableRow />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-table-row></pf-table-row>
+```
+

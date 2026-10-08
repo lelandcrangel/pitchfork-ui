@@ -1,0 +1,55 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfRadarAxis" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-radar-axis>`
+
+
+One axis of a `pf-radar-chart`, and its own row in the legend.
+
+The name is a `label` **attribute** rather than slotted content, which is
+the one place this differs from the React `RadarChart`'s `ReactNode`: the
+chart draws each name inside its own SVG as a `<text>`, and an SVG `<text>`
+cannot hold arbitrary markup in either layer. The legend row the axis draws
+for itself uses the same string, so the two always agree.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `drawn` | `drawn` | `boolean` | `false` | Set by the chart: whether this axis is in the drawing. An axis with an unusable value is not drawn, so it is not a legend row either — a legend naming an axis that appears nowhere is worse than a shorter legend. Reflected, because that is what the stylesheet hides it with. |
+| `label` | `label` | `string` | `''` | The axis's name, drawn in the chart and in the legend. |
+| `value` | `value` | `number` | `0` | How far along this axis the shape reaches. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `label` | the legend row's name. |
+| `value` | the legend row's number. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-radar-axis></pf-radar-axis>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfRadarAxis } from '@pitchfork-ui/elements-react';
+
+<PfRadarAxis />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-radar-axis></pf-radar-axis>
+```
+

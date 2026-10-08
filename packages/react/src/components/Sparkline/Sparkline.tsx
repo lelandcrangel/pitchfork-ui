@@ -1,3 +1,4 @@
+import { sparklineAreaPath, sparklineLinePath, sparklinePoints } from '@pitchfork-ui/core';
 import { forwardRef, useMemo } from 'react';
 import { cx } from '../../utils/cx';
 import './Sparkline.css';
@@ -20,44 +21,6 @@ export interface SparklineProps extends React.HTMLAttributes<SVGSVGElement> {
   label?: string;
 }
 
-function buildPath(points: [number, number][], close = false): string {
-  if (points.length < 2) return '';
-  const [first, ...rest] = points;
-  const d = [`M ${first[0]} ${first[1]}`];
-  for (const [x, y] of rest) {
-    d.push(`L ${x} ${y}`);
-  }
-  if (close) {
-    const lastX = points[points.length - 1][0];
-    const height = points[points.length - 1][1]; // will be overridden below
-    void height;
-    d.push(`L ${lastX} ${close}`);
-    d.push(`L ${first[0]} ${close}`);
-    d.push('Z');
-  }
-  return d.join(' ');
-}
-
-function normalizePoints(
-  data: number[],
-  width: number,
-  height: number,
-  padding: number,
-): [number, number][] {
-  if (data.length === 0) return [];
-  const min = Math.min(...data);
-  const max = Math.max(...data);
-  const range = max - min || 1;
-  const innerW = width - padding * 2;
-  const innerH = height - padding * 2;
-
-  return data.map((value, i) => {
-    const x = padding + (i / (data.length - 1)) * innerW;
-    const y = padding + (1 - (value - min) / range) * innerH;
-    return [x, y];
-  });
-}
-
 export const Sparkline = forwardRef<SVGSVGElement, SparklineProps>(function Sparkline(
   {
     className,
@@ -77,27 +40,25 @@ export const Sparkline = forwardRef<SVGSVGElement, SparklineProps>(function Spar
 ) {
   const padding = strokeWidth + 2;
 
+  /*
+   * All of the geometry is core's, so `<pf-sparkline>` draws the same numbers
+   * the same way — including the three edge cases this got wrong: one value
+   * divided by `length - 1` and gave `NaN`, a flat series was pinned to an
+   * edge rather than centred, and the closing branch of the old `buildPath`
+   * interpolated a boolean into the path (never reached, because no call site
+   * passed the flag).
+   */
   const points = useMemo(
-    () => normalizePoints(data, width, height, padding),
+    () => sparklinePoints(data, { width, height, padding }),
     [data, width, height, padding],
   );
 
-  const linePath = useMemo(() => buildPath(points), [points]);
+  const linePath = useMemo(() => sparklineLinePath(points), [points]);
 
-  const areaPath = useMemo(() => {
-    if (variant !== 'area' || points.length < 2) return '';
-    const [first, ...rest] = points;
-    const d = [`M ${first[0]} ${first[1]}`];
-    for (const [x, y] of rest) {
-      d.push(`L ${x} ${y}`);
-    }
-    const lastX = points[points.length - 1][0];
-    const bottom = height - padding + strokeWidth;
-    d.push(`L ${lastX} ${bottom}`);
-    d.push(`L ${first[0]} ${bottom}`);
-    d.push('Z');
-    return d.join(' ');
-  }, [points, variant, height, padding, strokeWidth]);
+  const areaPath = useMemo(
+    () => (variant === 'area' ? sparklineAreaPath(points, height - padding + strokeWidth) : ''),
+    [points, variant, height, padding, strokeWidth],
+  );
 
   const lastPoint = points[points.length - 1];
 

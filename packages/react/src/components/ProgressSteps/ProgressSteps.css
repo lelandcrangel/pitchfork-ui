@@ -154,7 +154,11 @@
 .pf-progress-steps__item--current .pf-progress-steps__marker {
   background: var(--pf-progress-steps-current-bg);
   border-color: var(--pf-progress-steps-current-border);
-  box-shadow: var(--focus-ring-shadow);
+  /* `--focus-ring-shadow` was never defined anywhere, and an undefined custom
+     property makes the declaration invalid at computed-value time: measured in
+     Chromium, `box-shadow: var(--focus-ring-shadow)` computes to `none`, so
+     the ring around the current step had never been drawn. */
+  box-shadow: var(--pf-focus-ring);
   color: var(--pf-progress-steps-current-text);
 }
 

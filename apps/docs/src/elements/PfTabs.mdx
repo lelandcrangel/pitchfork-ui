@@ -1,0 +1,85 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTabs" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-tabs>`
+
+
+A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
+children.
+
+Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+the React `TabsItem` carries a `label` and a `content` that are both
+`ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
+and loops in their own template.
+
+A `pf-tab` puts itself in the `tab` slot, so the two kinds of child can be
+written interleaved — one `pf-tab` and one `pf-tab-panel` per item, which is
+what a loop over data wants — and still land in the right box.
+
+The group owns everything the children cannot see on their own: which one is
+selected, the single tab stop, the id wiring in both directions, and the
+sliding indicator. Each `pf-tab` only reports that it was chosen, as
+`pf-radio-button` does to its group.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `fullWidth` | `full-width` | `boolean` | `false` | Stretch the tabs to fill the strip. Reflected, and pushed down. |
+| `size` | `size` | `"md" \| "sm"` | `'md'` | Tab padding and type scale. Reflected, and pushed down onto every tab. |
+| `value` | `value` | `string` | `''` | The selected tab's value. Left exactly as the consumer set it, as the React component leaves its state: a value no tab carries still *shows* the first enabled tab, but it is not silently rewritten here, so a consumer holding `value` sees only the changes they made. |
+| `variant` | `variant` | `"pills" \| "underline"` | `'underline'` | Underline or pills. Reflected, and pushed down onto every tab. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; \}` | Fires when the selected tab changes, however it was chosen. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children. Needed because a consumer can change a tab through its *property* — `tab.disabled = true` — which leaves no attribute, moves no node and so fires neither `slotchange` nor any watcher here. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-tab-panel` children. |
+| `tab` | the `pf-tab` children. They assign themselves to it. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `indicator` | the bar or pill that slides to the selected tab. |
+| `list` | the tab strip, which is the `tablist`. |
+| `panels` | the box the panels are slotted into. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-tabs></pf-tabs>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTabs } from '@pitchfork-ui/elements-react';
+
+<PfTabs />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-tabs></pf-tabs>
+```
+

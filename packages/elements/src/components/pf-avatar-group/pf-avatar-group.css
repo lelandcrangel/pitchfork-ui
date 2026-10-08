@@ -1,0 +1,55 @@
+:host {
+  /* How far each avatar laps over the one before it. */
+  --pf-avatar-group-overlap: 8px;
+  align-items: center;
+  display: inline-flex;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([size='lg']),
+:host([size='xl']) {
+  --pf-avatar-group-overlap: 12px;
+}
+
+/*
+ * The ring is drawn in the surface colour, so overlapping avatars stay
+ * separated. `position: relative` is what makes the z-index the group writes
+ * on each avatar mean anything.
+ */
+::slotted(pf-avatar),
+.overflow {
+  box-shadow: 0 0 0 2px var(--pf-avatar-group-ring);
+  position: relative;
+}
+
+/*
+ * `:not(:first-child)` inside `::slotted()` rather than a sibling combinator:
+ * the parens take a compound selector and no combinator, so `::slotted(a + a)`
+ * cannot be written -- the same limit that keeps pf-accordion's rule in the
+ * child. A pseudo-class is part of a compound selector, so this one is fine.
+ */
+::slotted(pf-avatar:not(:first-child)),
+.overflow {
+  margin-inline-start: calc(-1 * var(--pf-avatar-group-overlap));
+}
+
+/*
+ * Collapsed by the group. A data attribute of the group's own, so an avatar
+ * the *consumer* hid with `hidden` is a separate thing and still works.
+ */
+::slotted(pf-avatar[data-pf-overflow]) {
+  display: none;
+}
+
+/*
+ * The chip's colours go through the properties pf-avatar already reads, which
+ * inherit through the shadow boundary -- the pf-option bridge again, and the
+ * way to colour a nested element without reaching into its shadow root.
+ */
+.overflow {
+  --pf-avatar-bg: var(--pf-avatar-group-overflow-bg);
+  --pf-avatar-text: var(--pf-avatar-group-overflow-text);
+}

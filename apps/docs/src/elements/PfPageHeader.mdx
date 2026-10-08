@@ -1,0 +1,62 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfPageHeader" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-page-header>`
+
+
+The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
+explanation, some metadata and the page's actions.
+
+The trail is slotted rather than taken as data — the consumer nests a
+`pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+`PageHeader` takes a `breadcrumbs` array and renders the component itself.
+Each crumb's label is a node, which does not cross the HTML boundary.
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the title. |
+| `actions` | the page's controls. |
+| `breadcrumbs` | a `pf-breadcrumbs` trail above the title. |
+| `description` | a line below the title. |
+| `eyebrow` | small text above the title. |
+| `metadata` | small facts below the description. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `actions` | the box holding the actions slot. |
+| `breadcrumbs` | the box holding the breadcrumbs slot. |
+| `content` | the box holding everything but the actions. |
+| `heading` | the title's box. |
+| `metadata` | the box holding the metadata slot. |
+| `row` | the row holding the content and the actions. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-page-header></pf-page-header>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfPageHeader } from '@pitchfork-ui/elements-react';
+
+<PfPageHeader />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-page-header></pf-page-header>
+```
+

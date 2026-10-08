@@ -1,0 +1,62 @@
+:host {
+  display: block;
+  /* Standard scrollbar styling (Firefox + modern browsers). */
+  scrollbar-color: var(--pf-scrollarea-thumb) transparent;
+  scrollbar-width: thin;
+  /* Reserve a gutter so the scrollbar never overlays (and obscures) content. */
+  scrollbar-gutter: stable;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host(:focus-visible) {
+  border-radius: var(--radius-sm);
+  box-shadow: var(--pf-scrollarea-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+:host([orientation='vertical']) {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+:host([orientation='horizontal']) {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+:host([orientation='both']) {
+  overflow: auto;
+}
+
+/*
+ * WebKit / Blink scrollbar styling. These pseudo-elements target the host's own
+ * scrollbar, so they are written against `:host` rather than an inner element.
+ */
+:host::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+:host::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+:host::-webkit-scrollbar-thumb {
+  background: var(--pf-scrollarea-thumb);
+  /* Transparent border + padding-box clip insets the thumb so it reads slimmer. */
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  border-radius: var(--radius-full);
+}
+
+:host::-webkit-scrollbar-thumb:hover {
+  background: var(--pf-scrollarea-thumb-hover);
+  background-clip: padding-box;
+}
+
+:host::-webkit-scrollbar-corner {
+  background: transparent;
+}

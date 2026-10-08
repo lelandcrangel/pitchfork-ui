@@ -1,0 +1,86 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTimePicker" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-time-picker>`
+
+
+A form-associated time field: a trigger that opens hour, minute and (on a
+12-hour cycle) meridiem columns in a popover.
+
+The submitted value is always canonical 24-hour `HH:mm`, whatever
+`hour-cycle` displays. A control whose submitted value changed with its
+display would be unusable on a server, so the cycle is a rendering choice
+and nothing more — all of that arithmetic is core's.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | `description` | `string \| undefined` | — | — |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | — |
+| `hourCycle` | `hour-cycle` | `12 \| 24` | `24` | 12- or 24-hour display. The value stays 24-hour either way. Read through `cycle` below, never directly: Stencil coerces an attribute using the prop's type as *written*, and it cannot resolve a name it had to import. Measured: with `HourCycle` imported from core, `hour-cycle="12"` arrives as the **string** `"12"`, so `=== 12` is false, while `minute-step="15"` — declared `number` — arrives as `15`. Writing `0 \| 1` out inline *is* coerced, which `pf-heatmap.weekStartsOn` shows; the alias is kept here because it is the shared type, and the getter costs nothing. |
+| `label` | `label` | `string \| undefined` | — | — |
+| `minuteStep` | `minute-step` | `number` | `1` | Granularity of the minutes column. |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected; the submission reads the attribute. |
+| `open` | `open` | `boolean` | `false` | Whether the panel is showing. Reflected for the stylesheet. |
+| `placeholder` | `placeholder` | `string` | `'Select time'` | — |
+| `required` | `required` | `boolean` | `false` | — |
+| `value` | `value` | `string` | `''` | Canonical 24-hour `HH:mm`, or empty. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; \}` | Fires when the time changes, with the canonical `HH:mm`. |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the panel opens or closes, whoever caused it. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | — |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `show()` | `show() =&gt; Promise&lt;void&gt;` | — |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `column` | each of the scrolling columns. |
+| `description` | the hint text below the control. |
+| `error` | the error message below the control. |
+| `field` | the wrapper around label, control and messages. |
+| `label` | the label element. |
+| `option` | every option button. |
+| `panel` | the floating panel. |
+| `trigger` | the button that opens the columns. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-time-picker></pf-time-picker>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTimePicker } from '@pitchfork-ui/elements-react';
+
+<PfTimePicker />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-time-picker></pf-time-picker>
+```
+

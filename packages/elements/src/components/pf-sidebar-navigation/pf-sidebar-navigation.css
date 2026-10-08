@@ -1,0 +1,69 @@
+:host {
+  background: var(--pf-sidebar-nav-bg);
+  border: 1px solid var(--pf-sidebar-nav-border);
+  border-radius: var(--pf-sidebar-nav-radius, var(--radius-md));
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+
+  /*
+   * The bridge to the shared item. `pf-header-navigation` defines the same
+   * five from its own aliases; custom properties inherit through the shadow
+   * boundary, which is how one item element takes its colours from whichever
+   * navigation it is slotted into.
+   */
+  --pf-nav-item-text: var(--pf-sidebar-nav-text-muted);
+  --pf-nav-item-hover-text: var(--pf-sidebar-nav-text);
+  --pf-nav-item-hover-bg: var(--pf-sidebar-nav-bg-subtle);
+  --pf-nav-item-current-text: var(--pf-sidebar-nav-text);
+  --pf-nav-item-current-bg: var(--pf-sidebar-nav-bg-subtle);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* Mobile first: full width, growing to a fixed column on a wider screen. */
+@media (--md) {
+  :host {
+    min-height: var(--pf-sidebar-nav-min-height, 360px);
+    width: min(100%, var(--pf-sidebar-nav-width, 280px));
+  }
+}
+
+.header,
+.footer {
+  padding: var(--space-3);
+}
+
+.header {
+  border-bottom: 1px solid var(--pf-sidebar-nav-border);
+}
+
+.footer {
+  border-top: 1px solid var(--pf-sidebar-nav-border);
+  /* Pushed to the bottom, so a short navigation still has it at the foot. */
+  margin-top: auto;
+}
+
+/*
+ * Both classes rather than a bare `.empty`: an empty box here would draw a
+ * rule across the sidebar, which is the most visible version of the
+ * can't-collapse-a-slot-wrapper problem.
+ */
+.header.empty,
+.footer.empty {
+  display: none;
+}
+
+.nav {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+/* The sections are grid children of the nav, not of a box inside it. */
+.nav slot {
+  display: contents;
+}

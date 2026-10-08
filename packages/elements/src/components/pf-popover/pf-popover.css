@@ -1,0 +1,49 @@
+:host {
+  display: inline-flex;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * `inset: auto` and `margin: 0` are essential, not tidying -- see
+ * `src/place-popover.ts`, which sets the same two inline and explains the
+ * measurement. They are declared in both places deliberately: here so the
+ * cascade carries them for the whole life of the panel, and inline so a panel
+ * is still positioned where this stylesheet has not been applied.
+ */
+.panel {
+  inset: auto;
+  margin: 0;
+  background: var(--pf-popover-bg);
+  border: 1px solid var(--pf-popover-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  color: var(--pf-popover-text);
+  max-width: min(320px, calc(100vw - 2 * var(--space-4)));
+  padding: var(--space-3);
+  width: max-content;
+}
+
+.panel:focus-visible {
+  outline: none;
+}
+
+.panel:popover-open {
+  animation: pf-popover-in var(--duration-fast) var(--easing-decelerate);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel:popover-open {
+    animation: none;
+  }
+}

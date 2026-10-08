@@ -1,0 +1,74 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfGaugeChart" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-gauge-chart>`
+
+
+A single value drawn as a filled arc, with a label in the middle.
+
+The geometry is `getProgressCircleGeometry`, which `pf-progress-circle` and
+the React `ProgressCircle` already share: the dash offset only lands on the
+right angle if it and the circumference came from the same radius, and the
+radius has to be inset by half the stroke or half of it paints outside the
+viewBox.
+
+It names itself with `label` where the React `GaugeChart` puts the
+percentage in `aria-label`. A meter's name should say what is being
+measured; the value belongs in `aria-valuetext`, which is where a reader
+looks for it, and announcing "73%" as the name of a thing leaves a reader
+with no idea what is 73% full.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `color` | `color` | `string \| undefined` | — | Overrides the token colour. |
+| `label` | `label` | `string` | `'Gauge'` | What is being measured. The meter's accessible name. |
+| `max` | `max` | `number` | `100` | — |
+| `size` | `size` | `number` | `200` | Diameter, in pixels. |
+| `strokeWidth` | `stroke-width` | `number` | `16` | The arc's thickness, in pixels. |
+| `value` | `value` | `number` | `0` | — |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| `center` | replaces the percentage in the middle. |
+| `sub` | a second line under it. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `center` | the box in the middle. |
+| `fill` | the filled arc. |
+| `label` | the big number. |
+| `svg` | the arc's canvas. |
+| `track` | the unfilled ring. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-gauge-chart></pf-gauge-chart>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfGaugeChart } from '@pitchfork-ui/elements-react';
+
+<PfGaugeChart />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-gauge-chart></pf-gauge-chart>
+```
+

@@ -12,6 +12,10 @@ concurrency:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    # The whole job finishes in well under 30 minutes when it is healthy. The
+    # default is 360, and a single hung test step burned nearly three hours of
+    # it before anyone could tell which suite was stuck.
+    timeout-minutes: 45
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
@@ -31,7 +35,38 @@ jobs:
       # published changelog page sat on 0.13.2 while the library was on 0.15.0.
       - name: Check dark mode contrast (WCAG AA)
         run: npm run check:contrast
-      - run: npm run test
+      # packages/elements runs its form-associated components in a real
+      # browser -- Stencil's mock DOM and jsdom both lack a working
+      # ElementInternals -- so Chromium has to be here, before the tests, not
+      # only before the Storybook smoke test further down.
+      - name: Install Chromium for the element browser tests
+        run: npx playwright install --with-deps chromium
+      # packages/elements imports @pitchfork-ui/core's *build*, not its
+      # sources, so with no dist there Vite cannot resolve the entry and every
+      # element spec fails on its first import. The unit project says so in
+      # eight seconds; the browser project, which Vitest runs in the same
+      # `vitest run`, instead sat there -- one run on this branch burned two
+      # hours and forty minutes before it was cancelled. Building core is part
+      # of running an element test, not part of shipping.
+      - name: Build @pitchfork-ui/core for the element tests
+        run: npm run build:core
+      # Four steps rather than `npm run test`, which chains all of them behind
+      # one name. A hang there says only "Run npm run test" and gives no way to
+      # tell core from react from the two element projects -- and GitHub serves
+      # logs from a host some clients cannot reach, so the step name may be the
+      # only signal available. Each bound is roughly triple the healthy time.
+      - name: Test @pitchfork-ui/core
+        timeout-minutes: 8
+        run: npm run test -w @pitchfork-ui/core
+      - name: Test @pitchfork-ui/react
+        timeout-minutes: 12
+        run: npm run test -w @pitchfork-ui/react
+      - name: Test @pitchfork-ui/elements (unit)
+        timeout-minutes: 10
+        run: npm run test:unit -w @pitchfork-ui/elements
+      - name: Test @pitchfork-ui/elements (browser)
+        timeout-minutes: 15
+        run: npm run test:browser -w @pitchfork-ui/elements
       - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build
 
@@ -49,16 +84,45 @@ jobs:
       - name: Check the published types resolve under node16
         run: npx tsc --noEmit -p scripts/fixtures/node16-resolution/tsconfig.json
 
+      # Runs after the build, not in the test sweep above: it bootstraps a real
+      # Angular application against the built library to prove the generated
+      # ControlValueAccessor binds, so the artifacts have to exist first.
+      - name: Test the Angular bindings against the built library
+        run: npm run test:angular
+      # The consumer apps resolve the published wrapper packages through their
+      # exports maps and render in a real browser. Between them they caught a
+      # "sideEffects": false that let the icon registry be tree-shaken, an
+      # elements package that shipped no token stylesheet at all, and an
+      # Angular package with no entry points -- none of which any unit test
+      # could see.
+      - name: Smoke-test the consumer apps
+        run: npm run test:consumers
       - name: Validate component metadata
         run: npm run build:metadata -- --strict
+
+      # The element metadata the MCP server and llms.txt answer from. --strict
+      # fails on an element with no doc comment, one whose category cannot be
+      # derived, and -- the guard that matters -- a React component that no
+      # element answers for, by counterpart or by absorption.
+      - name: Validate element metadata
+        run: npm run build:elements-metadata -- --strict
 
       # `validate_usage` checks the code an agent writes; nothing checked ours.
       # EmptyState's published examples used three icons the registry does not
       # have, so the docs site demonstrated broken usage.
       - name: Check every icon name this repository uses resolves
         run: npm run check:icons
-      - name: Validate llms.txt (every component linked, every link resolves)
+      - name: Validate llms.txt (every component and element linked, every link resolves)
         run: npm run build:llms -- --strict --verify
+
+      # The 108 element reference pages are generated from Stencil's own
+      # docs.json, so they cannot drift from the source -- but a committed copy
+      # can go stale, which is exactly how the published changelog page sat on
+      # 0.13.2 while the library was on 0.15.0. --verify fails on a stale page,
+      # a missing one, or a page for an element that no longer exists;
+      # --strict fails on an element with no doc comment at all.
+      - name: Check the generated element docs are current
+        run: npm run build:elements-docs -- --verify
       - name: Test MCP server
         run: npm run test:mcp
 
@@ -67,9 +131,22 @@ jobs:
       # passed while every published component rendered with no design tokens at
       # all. This renders the built output in a real browser and fails if the
       # tokens do not resolve.
-      - name: Install Chromium for the smoke test
-        run: npx playwright install --with-deps chromium
       - name: Smoke-test the built Storybook
         run: npm run test:smoke -- --dir apps/docs/storybook-static
-      - name: Security audit
-        run: npm audit --audit-level=high
+      # Two audits, because they ask different questions and only one of them
+      # should fail a build.
+      #
+      # The blocking one omits devDependencies: that is the question that
+      # matters for a published package -- does anything a consumer installs
+      # carry a known vulnerability?
+      #
+      # The whole-tree audit is informational, and red today: 14 advisories in
+      # the @angular/cli 21 toolchain and the lint setup, whose only offered
+      # fix is @angular/cli@7.2.4, fourteen majors back. Running it anyway
+      # keeps the output in the log; failing on it would make this the step
+      # nobody reads, which is the one thing an audit must not be. `todo.md`
+      # has the full reasoning.
+      - name: Security audit (what a consumer installs)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Security audit (whole tree, informational)
+        run: npm audit --audit-level=high || true

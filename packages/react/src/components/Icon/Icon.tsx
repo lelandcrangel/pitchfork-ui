@@ -17,234 +17,56 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon, type FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
+import {
+  type CustomGlyph as CustomGlyphData,
+  type CustomGlyphName,
+  customGlyphAttributes,
+  getCustomGlyphNames,
+  getRegisteredIconNames,
+  normalizeIconName,
+  registerIconGlyphs,
+  resolveCustomGlyph,
+  resolveIconGlyph,
+} from '@pitchfork-ui/core';
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
-// Custom SVGs not available in the free-regular FA set
-const customIcons = {
-  'chevron-down': (
+/**
+ * The custom glyphs, rendered from the shared data in @pitchfork-ui/core.
+ *
+ * The geometry used to be written here as JSX and a second time as Stencil JSX
+ * in `pf-icon/custom-icons.tsx`. Two copies of a shape agree on the day they
+ * are written, and no test in either layer could have seen them stop agreeing,
+ * because each one only ever rendered its own. Core holds the shapes; this
+ * maps them to React's camelCase presentation attributes.
+ */
+function CustomGlyph({ glyph }: { glyph: CustomGlyphData }) {
+  const { viewBox, fill, stroke, strokeWidth, strokeLinecap, strokeLinejoin } =
+    customGlyphAttributes(glyph);
+
+  return (
     <svg
       width="1em"
       height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox={viewBox}
+      fill={fill}
+      stroke={stroke}
+      strokeWidth={strokeWidth}
+      strokeLinecap={strokeLinecap}
+      strokeLinejoin={strokeLinejoin}
       focusable="false"
       aria-hidden="true"
     >
-      <polyline points="5 9 12 18 19 9" />
+      {glyph.shapes.map((shape, index) => {
+        if (shape.kind === 'polyline') return <polyline key={index} points={shape.points} />;
+        if (shape.kind === 'circle') {
+          return <circle key={index} cx={shape.cx} cy={shape.cy} r={shape.r} />;
+        }
+        return <path key={index} d={shape.d} />;
+      })}
     </svg>
-  ),
-  'chevron-up': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <polyline points="5 15 12 6 19 15" />
-    </svg>
-  ),
-  'chevron-left': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <polyline points="15 5 6 12 15 19" />
-    </svg>
-  ),
-  'chevron-right': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="3"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <polyline points="9 5 18 12 9 19" />
-    </svg>
-  ),
-  'circle-info': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4" />
-      <path d="M12 8h.01" />
-    </svg>
-  ),
-  'triangle-exclamation': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-      <path d="M12 9v4" />
-      <path d="M12 17h.01" />
-    </svg>
-  ),
-  // The mirror of file-arrow-up, for an export or download action. Neither is
-  // in the free-regular set.
-  'file-arrow-down': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-      <path d="M12 12v6" />
-      <path d="m9 15 3 3 3-3" />
-    </svg>
-  ),
-  // "More options". The free-regular set has no horizontal ellipsis.
-  ellipsis: (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <circle cx="5" cy="12" r="2" />
-      <circle cx="12" cy="12" r="2" />
-      <circle cx="19" cy="12" r="2" />
-    </svg>
-  ),
-  'file-arrow-up': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-      <path d="M12 12v6" />
-      <path d="m15 15-3-3-3 3" />
-    </svg>
-  ),
-  plus: (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M12 5v14" />
-      <path d="M5 12h14" />
-    </svg>
-  ),
-  clock: (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3 2" />
-    </svg>
-  ),
-  'magnifying-glass': (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  ),
-  minus: (
-    <svg
-      width="1em"
-      height="1em"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14" />
-    </svg>
-  ),
-} satisfies Record<string, React.ReactNode>;
+  );
+}
 
 /**
  * The Font Awesome regular icons bundled with the library. This is an explicit
@@ -273,7 +95,7 @@ const bundledRegularIcons = {
   user: faUser,
 } satisfies Record<string, IconDefinition>;
 
-export type RegisteredIconName = keyof typeof customIcons | keyof typeof bundledRegularIcons;
+export type RegisteredIconName = CustomGlyphName | keyof typeof bundledRegularIcons;
 
 /**
  * A registered name, or any other string: `registerIcons()` can add names at
@@ -283,71 +105,21 @@ export type RegisteredIconName = keyof typeof customIcons | keyof typeof bundled
 export type IconName = RegisteredIconName | (string & {});
 
 /**
- * Every registered Font Awesome icon, bundled or added by the consumer. A Map
- * rather than the object literal above, because `registerIcons()` writes to it.
+ * The registry lives in @pitchfork-ui/core so that React components and
+ * custom elements resolve the same names: a consumer who calls
+ * `registerIcons()` must get the icon in both, and a registry per layer would
+ * give them one or the other.
  */
-const registeredIcons = new Map<string, IconDefinition>(Object.entries(bundledRegularIcons));
+registerIconGlyphs(bundledRegularIcons);
 
-/**
- * Font Awesome records each icon's former names in `icon[2]`, so `"bar-chart"`
- * keeps working after the icon is renamed to `"chart-bar"`. Aliases lose to
- * registered names, so registering an icon under an alias is never shadowed.
- */
-const aliases = new Map<string, IconDefinition>();
-
-const registerAliases = (icon: IconDefinition) => {
-  const names = icon.icon?.[2];
-  if (!Array.isArray(names)) return;
-
-  names.forEach((alias) => {
-    if (typeof alias === 'string') aliases.set(alias, icon);
-  });
-};
-
-/**
- * Drop the aliases an icon brought with it. Without this, replacing a
- * registered icon leaves its old aliases pointing at the old glyph:
- * `registerIcons({ 'chart-bar': other })` would swap `chart-bar` and leave
- * `bar-chart` rendering the icon it replaced.
- */
-const unregisterAliases = (icon: IconDefinition) => {
-  aliases.forEach((target, alias) => {
-    if (target === icon) aliases.delete(alias);
-  });
-};
-
-registeredIcons.forEach(registerAliases);
-
-/**
- * Add Font Awesome icons the library does not bundle.
- *
- * `Icon` resolves an explicit registry of icons, not the whole free-regular
- * set -- individually importing them is what keeps a consumer's bundle to the
- * icons actually in use. Anything else you import yourself and register once,
- * at startup, from the peer dependency you already have:
- *
- * ```tsx
- * import { faPaperPlane, faComments } from '@fortawesome/free-regular-svg-icons';
- * import { registerIcons } from '@pitchfork-ui/react';
- *
- * registerIcons({ 'paper-plane': faPaperPlane, comments: faComments });
- * ```
- *
- * Registering a name that already exists replaces it, which is how you
- * substitute a different glyph for a bundled one. The replaced icon's aliases
- * go with it, so no former name is left rendering the old glyph.
- */
 export const registerIcons = (icons: Record<string, IconDefinition>) => {
-  Object.entries(icons).forEach(([name, icon]) => {
-    const replaced = registeredIcons.get(name);
-    if (replaced !== undefined && replaced !== icon) unregisterAliases(replaced);
+  registerIconGlyphs(icons);
 
-    registeredIcons.set(name, icon);
-    registerAliases(icon);
+  for (const name of Object.keys(icons)) {
     // A name that failed before may now resolve, so let it warn again if it
-    // is somehow still unknown.
+    // is removed later.
     warnedNames.delete(name);
-  });
+  }
 };
 
 /**
@@ -376,25 +148,11 @@ const warnUnknownIcon = (name: string) => {
   );
 };
 
-const legacyAliases: Record<string, string> = {
-  circleCheck: 'circle-check',
-  circleQuestion: 'circle-question',
-  circleInfo: 'circle-info',
-};
-
-const toKebabCase = (value: string) => {
-  return value.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
-};
-
-const normalizeName = (name: IconName) => {
-  return legacyAliases[name] ?? toKebabCase(name);
-};
-
 export const getAvailableIconNames = () => {
-  return [...new Set([...registeredIcons.keys(), ...Object.keys(customIcons)])].sort();
+  return [...new Set([...getRegisteredIconNames(), ...getCustomGlyphNames()])].sort();
 };
 
-export const getCustomIconNames = () => Object.keys(customIcons).sort();
+export const getCustomIconNames = () => getCustomGlyphNames();
 
 export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   name: IconName;
@@ -402,15 +160,14 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
 }
 
 export function Icon({ name, label, className, style, ...props }: IconProps) {
-  const normalizedName = normalizeName(name);
+  const normalizedName = normalizeIconName(name);
 
   // Normalized as well as raw: `legacyAliases` maps `circleInfo` to
   // `circle-info`, which is a custom SVG -- and a raw-only lookup here meant
   // that mapping never took effect. `circleInfo` and `magnifyingGlass`
   // rendered nothing.
-  const custom = customIcons as Record<string, React.ReactNode>;
-  const customIcon = custom[name] ?? custom[normalizedName];
-  if (customIcon !== undefined) {
+  const customGlyph = resolveCustomGlyph(name) ?? resolveCustomGlyph(normalizedName);
+  if (customGlyph !== undefined) {
     return (
       <span
         className={cx('pf-icon', className)}
@@ -419,12 +176,14 @@ export function Icon({ name, label, className, style, ...props }: IconProps) {
         style={style}
         {...(props as React.HTMLAttributes<HTMLSpanElement>)}
       >
-        {customIcon}
+        <CustomGlyph glyph={customGlyph} />
       </span>
     );
   }
 
-  const faIcon = registeredIcons.get(normalizedName) ?? aliases.get(normalizedName);
+  // core's registry is structurally typed so that core imports nothing;
+  // everything registered here is a real IconDefinition.
+  const faIcon = resolveIconGlyph(name) as IconDefinition | undefined;
 
   if (!faIcon) {
     warnUnknownIcon(name);

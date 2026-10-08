@@ -1,4 +1,5 @@
 import { forwardRef, useId } from 'react';
+import { composeDescribedBy } from '../../a11y';
 import { cx } from '../../utils/cx';
 import './VideoPlayer.css';
 
@@ -48,19 +49,24 @@ export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(
   ) => {
     const generatedId = useId();
     const videoId = id ?? generatedId;
+    const labelId = label ? `${videoId}-label` : undefined;
     const descriptionId = description ? `${videoId}-description` : undefined;
     const errorId = error ? `${videoId}-error` : undefined;
-    const describedBy =
-      [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') || undefined;
+    const describedBy = composeDescribedBy(ariaDescribedBy, descriptionId, errorId);
 
     const hasSource = Boolean(src) || Boolean(sources?.length);
 
     return (
       <div className="pf-field">
+        {/*
+          A `<span>`, not a `<label htmlFor>`: `for` must point at a labelable
+          element and a `<video>` is not one, so the association was silently
+          doing nothing. The video takes `aria-labelledby` instead.
+        */}
         {label ? (
-          <label className="pf-field__label" htmlFor={videoId}>
+          <span className="pf-field__label" id={labelId}>
             {label}
-          </label>
+          </span>
         ) : null}
 
         <div
@@ -82,6 +88,8 @@ export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(
               preload={preload}
               src={src}
               aria-invalid={error ? true : undefined}
+              aria-label={labelId ? undefined : props['aria-label']}
+              aria-labelledby={labelId}
               aria-describedby={describedBy}
             >
               {sources?.map((source) => (

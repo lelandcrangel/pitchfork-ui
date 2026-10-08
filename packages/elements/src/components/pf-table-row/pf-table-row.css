@@ -1,0 +1,21 @@
+/*
+ * A box, not `display: contents`: that is what lets the row take a background
+ * and a `:hover` of its own. An element with no box takes neither, which is
+ * why the grid version of this needed both pushed down in JS.
+ */
+:host {
+  display: table-row;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([odd]) {
+  background: var(--pf-table-row-stripe, transparent);
+}
+
+/* The header is not a row anyone hovers over to read. */
+:host(:not([head]):hover) {
+  background: var(--pf-table-row-hover, transparent);
+}

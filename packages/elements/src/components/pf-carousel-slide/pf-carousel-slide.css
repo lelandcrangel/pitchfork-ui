@@ -1,0 +1,12 @@
+:host {
+  background: var(--pf-carousel-slide-background, transparent);
+  color: var(--pf-carousel-slide-text);
+  /* One slide per viewport, which is what the track's transform steps by. */
+  flex: 0 0 100%;
+  min-width: 0;
+  padding: var(--pf-carousel-slide-padding, 0);
+}
+
+:host([hidden]) {
+  display: none;
+}

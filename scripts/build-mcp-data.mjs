@@ -18,6 +18,7 @@ const outDir = join(root, 'packages/mcp/data');
 const sources = [
   ['packages/react/dist/metadata.json', 'metadata.json', 'npm run build:metadata'],
   ['packages/tokens/dist/json/tokens.json', 'tokens.json', 'npm run build:tokens'],
+  ['packages/elements/dist/elements.json', 'elements.json', 'npm run build:elements-metadata'],
 ];
 
 mkdirSync(outDir, { recursive: true });

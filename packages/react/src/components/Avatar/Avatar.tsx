@@ -1,3 +1,4 @@
+import { getAvatarInitials } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Avatar.css';
@@ -13,23 +14,9 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
   status?: AvatarStatus;
 }
 
-const getInitials = (name?: string) => {
-  if (!name) {
-    return '?';
-  }
-
-  const parts = name.trim().split(/\s+/).filter(Boolean).slice(0, 2);
-
-  if (parts.length === 0) {
-    return '?';
-  }
-
-  return parts.map((part) => part.charAt(0).toUpperCase()).join('');
-};
-
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
   ({ src, alt, name, size = 'md', status, className, children, ...props }, ref) => {
-    const initials = children ?? getInitials(name);
+    const initials = children ?? getAvatarInitials(name);
 
     return (
       <span

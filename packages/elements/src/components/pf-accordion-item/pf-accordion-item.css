@@ -1,0 +1,94 @@
+/*
+ * The rule between sections lives here rather than in the group's sheet,
+ * because `::slotted()` takes a compound selector and no combinator -- there is
+ * no way to say `::slotted(item + item)` from outside. `:host(:first-child)`
+ * says the same thing from in here, and needs no coordination.
+ */
+:host {
+  border-top: 1px solid var(--pf-accordion-border);
+  display: block;
+}
+
+:host(:first-child) {
+  border-top: 0;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.heading {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+}
+
+.trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--pf-accordion-trigger-text);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  gap: var(--space-3);
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  text-align: start;
+  width: 100%;
+}
+
+.trigger:hover:not(:disabled) {
+  background: var(--pf-accordion-trigger-bg-hover);
+}
+
+.trigger:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.icon {
+  align-items: center;
+  color: var(--pf-accordion-icon);
+  display: inline-flex;
+  flex-shrink: 0;
+  transition: transform var(--pf-transition-fast);
+}
+
+:host([expanded]) .icon {
+  transform: rotate(180deg);
+}
+
+/* The 0fr -> 1fr technique, which animates to the content's own height. */
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--pf-transition-medium);
+}
+
+:host([expanded]) .panel {
+  grid-template-rows: 1fr;
+}
+
+.content {
+  color: var(--pf-accordion-content-text);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.inner {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .icon {
+    transition: none;
+  }
+}

@@ -1,0 +1,35 @@
+:host {
+  display: grid;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The gap is declared here and read by each step's connector, which has to
+ * span it: custom properties inherit through the shadow boundary, so the
+ * child picks up whichever indicator it is slotted into. The same bridge
+ * pf-option uses for its colours.
+ */
+:host([orientation='horizontal']) {
+  --pf-progress-step-gap: var(--space-3);
+  gap: var(--pf-progresssteps-progress-step-gap, var(--pf-progress-step-gap));
+  grid-template-columns: 1fr;
+}
+
+@media (--sm) {
+  :host([orientation='horizontal']) {
+    --pf-progress-step-gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
+:host([orientation='vertical']) {
+  gap: var(--space-3);
+}
+
+/* The steps have to be grid items of the host, not of a box inside it. */
+slot {
+  display: contents;
+}

@@ -1,0 +1,74 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfHeaderNavigation" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-header-navigation>`
+
+
+A header navigation over `pf-nav-item` children.
+
+The group owns the one thing an item cannot know: which item is the current
+page. Core's rule decides, so the React `HeaderNavigation` marks the same
+one, and it is one index — which is what stops a navigation claiming two
+current pages.
+
+The host is **not** a banner. The React component renders a `<header>`,
+which is the banner landmark at the top level of a page, but an element
+cannot know whether it is the page's header: a second banner is a defect,
+not a decoration. So the shadow root renders only the `<nav>` landmark, and
+a consumer who wants a banner puts this inside their own `<header>`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string` | `'Header navigation'` | The navigation's accessible name. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the items, for a consumer who marked one current through its *property* — which leaves no attribute and fires no `slotchange`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-nav-item` children. |
+| `actions` | controls after the items, such as a sign-in button. |
+| `brand` | a logo or product name, before the items. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `actions` | the actions' box. |
+| `brand` | the brand's box. |
+| `list` | the list the items are slotted into. |
+| `nav` | the navigation landmark. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-header-navigation></pf-header-navigation>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfHeaderNavigation } from '@pitchfork-ui/elements-react';
+
+<PfHeaderNavigation />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-header-navigation></pf-header-navigation>
+```
+

@@ -1,0 +1,73 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfContextMenu" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-context-menu>`
+
+
+A menu opened by right-clicking the region it wraps.
+
+Unlike `pf-dropdown` there is no anchor element — the menu opens at the
+pointer — so it is placed with core's `clampToViewport` rather than the
+anchoring observer. The same `pf-menu-item` children serve both.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` | `false` | Let the browser's own context menu through instead. Reflected so the stylesheet can select on it. |
+| `label` | `label` | `string` | `'Context menu'` | Accessible name for the menu. |
+| `open` | `open` | `boolean` | `false` | Whether the menu is showing. Reflected so the stylesheet can select on it. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the menu opens or closes, whoever caused it. |
+| `pfSelect` | `\{ value: string; \}` | Fires with the chosen item's value. The menu closes itself afterwards. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | Closes the menu. |
+| `showAt()` | `showAt(x: number, y: number) =&gt; Promise&lt;void&gt;` | Opens the menu at a point in client coordinates. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the region that responds to a right-click. |
+| `menu` | `pf-menu-item` and `pf-menu-separator` children. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `menu` | the floating menu panel. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-context-menu></pf-context-menu>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfContextMenu } from '@pitchfork-ui/elements-react';
+
+<PfContextMenu />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-context-menu></pf-context-menu>
+```
+

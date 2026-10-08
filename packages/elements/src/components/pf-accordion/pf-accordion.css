@@ -1,0 +1,10 @@
+:host {
+  border: 1px solid var(--pf-accordion-border);
+  border-radius: var(--radius-md);
+  display: block;
+  overflow: hidden;
+}
+
+:host([hidden]) {
+  display: none;
+}

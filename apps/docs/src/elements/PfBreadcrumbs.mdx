@@ -1,0 +1,69 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfBreadcrumbs" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-breadcrumbs>`
+
+
+A breadcrumb trail over `pf-breadcrumb` children.
+
+The group owns the two things a crumb cannot know on its own: which crumb is
+the current page, and which one is last — so only the last goes without a
+separator after it.
+
+The separator is a **string**, where the React `separator` is a
+`ReactNode`, because it has to appear between every pair: a slot renders its
+assigned content once and in one place, so there is no way to repeat
+slotted content down the trail. Each crumb draws its own instead, which is
+why the group pushes the string down.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string` | `'Breadcrumb'` | The trail's accessible name. |
+| `separator` | `separator` | `string` | `'/'` | Drawn after every crumb but the last. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children, for a consumer who marked a crumb current through its *property* — which leaves no attribute and fires no `slotchange`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-breadcrumb` children. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `list` | the ordered list the crumbs are slotted into. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-breadcrumbs></pf-breadcrumbs>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfBreadcrumbs } from '@pitchfork-ui/elements-react';
+
+<PfBreadcrumbs />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-breadcrumbs></pf-breadcrumbs>
+```
+

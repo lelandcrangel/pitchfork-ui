@@ -1,0 +1,90 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTable" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-table>`
+
+
+A table over `pf-table-row` and `pf-table-cell` children.
+
+**It reports a sort rather than performing one.** The rows are the
+consumer's — they wrote the loop — and reordering them would mean moving
+elements in their DOM, which their framework would undo on its next render
+and which would break its reconciliation on the way. So this element owns
+the header buttons, `aria-sort` and the indicator, and emits `pfSortChange`
+for the consumer to sort their own data with. `compareSortValues` and
+`sortRowsBy` are in core precisely so that the order they produce matches
+the React `Table`, which does sort for itself.
+
+The layout is CSS tables rather than a grid, which is what lets a row be a
+box: a grid needs its rows to be `display: contents` for the cells to line
+up in columns, and an element with no box takes no `:hover` and no
+background — so striping and row hover would both have to be pushed down in
+JS. `display: table-row` gives them for nothing, and column widths size
+themselves.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dense` | `dense` | `boolean` | `false` | Tighter rows. Reflected, and bridged down to the cells' padding. |
+| `hoverable` | `hoverable` | `boolean` | `true` | Shade the row under the pointer. Reflected, and bridged down. |
+| `label` | `label` | `string \| undefined` | — | The table's accessible name, for a table whose caption is not enough. |
+| `sortDirection` | `sort-direction` | `"asc" \| "desc"` | `'asc'` | Which way that column is sorted. |
+| `sortKey` | `sort-key` | `string \| undefined` | — | The column being sorted on, by its `sort-key`. |
+| `stickyHeader` | `sticky-header` | `boolean` | `false` | Keep the header visible while the body scrolls. Reflected and bridged. |
+| `striped` | `striped` | `boolean` | `false` | Shade every other body row. Reflected, and bridged down. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfSortChange` | `SortState` | Fires when a header is clicked, with the sort the table has moved to. Sorting the rows is the consumer's to do. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the rows, for a consumer who changed one through a property. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-table-row` children. |
+| `caption` | a heading above the table. |
+| `empty` | what to show when there are no body rows. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `caption` | the caption's box. |
+| `empty` | the box holding the empty slot. |
+| `table` | the table itself. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-table></pf-table>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTable } from '@pitchfork-ui/elements-react';
+
+<PfTable />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-table></pf-table>
+```
+

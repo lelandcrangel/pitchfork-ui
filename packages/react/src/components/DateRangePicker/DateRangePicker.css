@@ -193,7 +193,7 @@
   cursor: pointer;
 }
 
-.pf-daterange__day:hover:not(:disabled):not(.pf-daterange__day--selected):not(
+.pf-daterange__day:hover:not([aria-disabled='true']):not(.pf-daterange__day--selected):not(
     .pf-daterange__day--in-range
   ) {
   background: var(--pf-calendar-bg-subtle);
@@ -214,12 +214,12 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.pf-daterange__day--selected:hover:not(:disabled) {
+.pf-daterange__day--selected:hover:not([aria-disabled='true']) {
   background: var(--pf-calendar-selected-bg-hover);
   color: var(--pf-calendar-selected-text);
 }
 
-.pf-daterange__day:disabled {
+.pf-daterange__day[aria-disabled='true'] {
   color: var(--pf-calendar-text-muted);
   cursor: not-allowed;
   opacity: 0.45;

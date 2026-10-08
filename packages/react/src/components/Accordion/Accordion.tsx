@@ -1,5 +1,10 @@
+import {
+  getEnabledIndexes,
+  resolveListMove,
+  resolveRovingKey,
+  toggleDisclosureValue,
+} from '@pitchfork-ui/core';
 import { forwardRef, useId, useRef } from 'react';
-import { Keys } from '../../a11y';
 import { useControllableState } from '../../hooks';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
@@ -51,38 +56,28 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Acc
   });
   const triggerRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
+  // Core's, so `<pf-accordion>` opens and closes the same set — including that
+  // closing the open section in single mode leaves nothing open.
   const toggle = (itemValue: string) => {
-    const isOpen = expanded.includes(itemValue);
-    if (type === 'single') {
-      setExpanded(isOpen ? [] : [itemValue]);
-    } else {
-      setExpanded(isOpen ? expanded.filter((v) => v !== itemValue) : [...expanded, itemValue]);
-    }
+    setExpanded(toggleDisclosureValue(expanded, itemValue, { multiple: type === 'multiple' }));
   };
 
-  const enabledIndexes = items
-    .map((item, index) => ({ item, index }))
-    .filter(({ item }) => !item.disabled)
-    .map(({ index }) => index);
+  const enabledIndexes = getEnabledIndexes(items, (item) => Boolean(item.disabled));
 
+  /*
+   * The arrows move focus between the headers and nothing else: unlike a tab
+   * strip, an accordion's sections are opened deliberately. The index maths is
+   * core's `resolveListMove`, so both layers wrap at the same ends and skip a
+   * disabled header the same way.
+   */
   const onTriggerKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
-    if (enabledIndexes.length === 0) {
+    const action = resolveRovingKey(event.key, 'vertical');
+    if (!action) {
       return;
     }
-    const position = enabledIndexes.indexOf(index);
-    let target: number | undefined;
 
-    if (event.key === Keys.ArrowDown) {
-      target = enabledIndexes[(position + 1) % enabledIndexes.length];
-    } else if (event.key === Keys.ArrowUp) {
-      target = enabledIndexes[(position - 1 + enabledIndexes.length) % enabledIndexes.length];
-    } else if (event.key === Keys.Home) {
-      target = enabledIndexes[0];
-    } else if (event.key === Keys.End) {
-      target = enabledIndexes[enabledIndexes.length - 1];
-    }
-
-    if (target !== undefined) {
+    const target = resolveListMove(action, enabledIndexes, index);
+    if (target >= 0) {
       event.preventDefault();
       triggerRefs.current[target]?.focus();
     }

@@ -1,0 +1,94 @@
+:host {
+  display: contents;
+}
+
+/*
+ * The dialog is the overlay: it fills the viewport and centres the panel, so a
+ * click that lands on it rather than on the panel is an overlay click.
+ */
+.dialog {
+  align-items: center;
+  background: none;
+  border: 0;
+  display: none;
+  height: 100%;
+  justify-content: center;
+  max-height: 100%;
+  max-width: 100%;
+  padding: var(--space-4);
+  width: 100%;
+}
+
+.dialog[open] {
+  display: flex;
+}
+
+.dialog::backdrop {
+  background: var(--pf-modal-overlay-backdrop, var(--pf-overlay-backdrop));
+}
+
+.panel {
+  background: var(--pf-modal-bg);
+  border: 1px solid var(--pf-modal-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--pf-modal-text);
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow: auto;
+  position: relative;
+  width: 100%;
+}
+
+:host([size='sm']) .panel {
+  max-width: 400px;
+}
+
+:host([size='md']) .panel {
+  max-width: 560px;
+}
+
+:host([size='lg']) .panel {
+  max-width: 800px;
+}
+
+.close {
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-modal-text-muted);
+  cursor: pointer;
+  display: inline-flex;
+  inset-block-start: var(--space-3);
+  inset-inline-end: var(--space-3);
+  padding: var(--space-1);
+  position: absolute;
+}
+
+.close:hover {
+  color: var(--pf-modal-text);
+}
+
+.close:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.dialog[open] .panel {
+  animation: pf-modal-in var(--pf-transition-enter);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] .panel {
+    animation: none;
+  }
+}

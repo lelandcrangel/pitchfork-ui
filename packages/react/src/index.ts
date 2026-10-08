@@ -4,7 +4,7 @@
 // imports that every component makes. In `tsc -b` mode the same directive in a
 // `.d.ts` is not picked up, so it has to live in a `.ts` source file.
 
-import './styles/theme.css';
+import '@pitchfork-ui/tokens/theme.css';
 
 export * from './a11y';
 export * from './components/Accordion';

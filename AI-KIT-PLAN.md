@@ -63,14 +63,14 @@ Everything downstream derives from this artifact, so it ships first.
 
 ### 2a. What to extract, and from where
 
-| Field                 | Source                                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------------------- |
-| `name`, `importPath`  | `packages/react/src/index.ts`                                                                     |
-| `props[]`             | TS compiler API over `components/*/*.tsx` — name, type, union members, default, required, JSDoc   |
-| `cssVars[]`           | Scrape `components/*/*.css` for `--pf-*`, then resolve the alias chain through `styles/theme.css` |
-| `examples[]`          | `apps/docs/src/*.examples.stories.tsx` — explicit `source.code`, else synthesized from `args`     |
-| `description`, `a11y` | `apps/docs/src/*.mdx` prose                                                                       |
-| `category`            | Reuse the grouping already established in `FIGMA-KIT-PLAN.md` §2                                  |
+| Field                 | Source                                                                                                |
+| --------------------- | ----------------------------------------------------------------------------------------------------- |
+| `name`, `importPath`  | `packages/react/src/index.ts`                                                                         |
+| `props[]`             | TS compiler API over `components/*/*.tsx` — name, type, union members, default, required, JSDoc       |
+| `cssVars[]`           | Scrape `components/*/*.css` for `--pf-*`, then resolve the alias chain through `tokens/src/theme.css` |
+| `examples[]`          | `apps/docs/src/*.examples.stories.tsx` — explicit `source.code`, else synthesized from `args`         |
+| `description`, `a11y` | `apps/docs/src/*.mdx` prose                                                                           |
+| `category`            | Reuse the grouping already established in `FIGMA-KIT-PLAN.md` §2                                      |
 
 ### 2b. Shape
 
@@ -297,7 +297,7 @@ Phases 2 and 3 are parallelizable once Phase 1 is stable. Resist starting 3 befo
 - Public API surface: `packages/react/src/index.ts`
 - Conventions an agent must know: `CLAUDE.md`
 - Tokens: `packages/tokens/src/tokens/*.json` → `dist/json/tokens.json`
-- Theme aliases + dark mode: `packages/react/src/styles/theme.css`
+- Theme aliases + dark mode: `packages/tokens/src/theme.css`
 - Examples corpus: `apps/docs/src/*.examples.stories.tsx`
 - Prose + a11y notes: `apps/docs/src/*.mdx`
 - Existing build script precedent: `scripts/check-dark-contrast.mjs`

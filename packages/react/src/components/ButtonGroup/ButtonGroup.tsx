@@ -1,3 +1,4 @@
+import { toggleValueInList } from '@pitchfork-ui/core';
 import { forwardRef, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './ButtonGroup.css';
@@ -63,9 +64,9 @@ export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
       }
 
       if (multiple) {
-        const nextValue = selectedSet.has(itemValue)
-          ? [...selectedSet].filter((currentItem) => currentItem !== itemValue)
-          : [...selectedSet, itemValue];
+        // Core's, so `<pf-button-group>` builds the same list in the same
+        // order — the same call `pf-multi-select` makes.
+        const nextValue = toggleValueInList([...selectedSet], itemValue);
 
         if (!isControlled) {
           setInternalValue(nextValue);

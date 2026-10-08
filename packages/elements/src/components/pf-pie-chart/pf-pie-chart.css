@@ -1,0 +1,115 @@
+/* Mobile first: the legend under the chart, beside it on a wider screen. */
+:host {
+  align-items: flex-start;
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+@media (--sm) {
+  :host {
+    align-items: center;
+    flex-direction: row;
+    gap: var(--space-6);
+  }
+}
+
+.visual {
+  align-items: center;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  position: relative;
+}
+
+/*
+ * A registered custom property, because an unregistered one cannot be
+ * animated: `--pf-pie-sweep` has to interpolate as a percentage for the
+ * sweep to happen at all, and without `@property` it would jump from 0% to
+ * 100% at the halfway point. Declared here rather than relying on the React
+ * library's copy — `@property` registers document-globally, but a consumer
+ * who ships only the elements has no other source for it.
+ */
+@property --pf-pie-sweep {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+.gradient {
+  --pf-pie-sweep: 100%;
+
+  animation: pf-pie-sweep var(--duration-slow) var(--easing-decelerate);
+  background-image: var(--pf-pie-gradient);
+  border-radius: inherit;
+  inset: 0;
+  mask: conic-gradient(#000 var(--pf-pie-sweep), #0000 0);
+  position: absolute;
+}
+
+/* Its own copy: `@keyframes` do not cross a shadow boundary. */
+@keyframes pf-pie-sweep {
+  from {
+    --pf-pie-sweep: 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient {
+    animation: none;
+  }
+}
+
+.visual--empty {
+  outline: 1px solid var(--pf-piechart-border-muted);
+}
+
+.center {
+  align-items: center;
+  background: var(--pf-piechart-bg);
+  border-radius: var(--radius-full);
+  color: var(--pf-piechart-text);
+  display: inline-flex;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  justify-content: center;
+  line-height: 1.2;
+  position: relative;
+  text-align: center;
+  z-index: 1;
+}
+
+.legend {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+  width: 100%;
+}
+
+@media (--sm) {
+  .legend {
+    min-width: 180px;
+    width: auto;
+  }
+}
+
+/*
+ * Hidden rather than dropped, so the slices stay slotted and `slotchange`
+ * still fires. Two classes deep, because the tie breaks on source order.
+ */
+.legend.legend--hidden {
+  display: none;
+}
+
+/* The slices are grid children of the list, not of a box inside it. */
+.legend slot {
+  display: contents;
+}

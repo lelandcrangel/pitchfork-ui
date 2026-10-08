@@ -1,5 +1,6 @@
 import { createPortal } from 'react-dom';
 import { forwardRef, useEffect, useId, useRef } from 'react';
+import { resolveRovingKey } from '@pitchfork-ui/core';
 import { isActivationKey, Keys } from '../../a11y';
 import {
   useAnchoredPosition,
@@ -43,7 +44,7 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     const menuRef = useRef<HTMLDivElement>(null);
     const disclosure = useDisclosure({ disabled });
     const { isOpen } = disclosure;
-    const { activeIndex, setActiveIndex } = useListNavigation({
+    const { activeIndex, move, setActiveIndex } = useListNavigation({
       items,
       isDisabled: (item) => Boolean(item.disabled),
     });
@@ -89,30 +90,36 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     };
 
     const onMenuKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
-      const menuItems = Array.from(
-        menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]:not([disabled])') ??
-          [],
-      );
-      const currentIndex = menuItems.indexOf(document.activeElement as HTMLButtonElement);
-
-      if (event.key === Keys.ArrowDown) {
-        event.preventDefault();
-        menuItems[Math.min(currentIndex + 1, menuItems.length - 1)]?.focus();
-      } else if (event.key === Keys.ArrowUp) {
-        event.preventDefault();
-        menuItems[Math.max(currentIndex - 1, 0)]?.focus();
-      } else if (event.key === Keys.Home) {
-        event.preventDefault();
-        menuItems[0]?.focus();
-      } else if (event.key === Keys.End) {
-        event.preventDefault();
-        menuItems[menuItems.length - 1]?.focus();
-      } else if (event.key === Keys.Escape) {
+      if (event.key === Keys.Escape) {
         disclosure.close();
         triggerRef.current?.focus();
-      } else if (event.key === Keys.Tab) {
-        disclosure.close();
+        return;
       }
+      if (event.key === Keys.Tab) {
+        disclosure.close();
+        return;
+      }
+
+      /*
+       * A menu is a column, so navigation is always the vertical axis — the
+       * same `resolveRovingKey` + `resolveListMove` pair `<pf-dropdown>` and
+       * `ContextMenu` use.
+       *
+       * This clamped with `Math.min`/`Math.max` over a DOM query, so the
+       * arrows stopped at both ends where the element and `ContextMenu`
+       * wrapped: one design system with two menu behaviours. Driving it
+       * through the hook also puts `activeIndex` and DOM focus on one path,
+       * where before they were two that happened to agree because every
+       * `.focus()` fires the item's `onFocus` — true, but only by accident.
+       */
+      const action = resolveRovingKey(event.key, 'vertical');
+      if (!action) return;
+
+      event.preventDefault();
+      const nextIndex = move(action, activeIndex);
+      if (nextIndex < 0) return;
+      // One menuitem per item, in order, so the index addresses the button.
+      menuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')[nextIndex]?.focus();
     };
 
     // Calculate maxHeight for menu if maxVisibleItems is set

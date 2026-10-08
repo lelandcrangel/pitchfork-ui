@@ -1,0 +1,67 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfSectionHeader" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-section-header>`
+
+
+The heading of a section, with room for an eyebrow, a line of explanation,
+some metadata and a control or two.
+
+Every optional box stays in the tree and is hidden when empty rather than
+being left out, because a slot that is not rendered never fires
+`slotchange` — content added later would stay invisible for good. The
+eyebrow and the description need no box of their own, so they are styled
+through `::slotted()` and collapse on their own.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `align` | `align` | `"between" \| "end" \| "start"` | `'between'` | How the heading and the actions share the row. Reflected. |
+| `divider` | `divider` | `boolean` | `false` | Draw a rule below the header. Reflected for the stylesheet. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the heading. |
+| `actions` | controls, which sit opposite the heading on a wide screen. |
+| `description` | a line below the heading. |
+| `eyebrow` | small text above the heading. |
+| `metadata` | small facts below the description. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `actions` | the box holding the actions slot. |
+| `content` | the box holding everything but the actions. |
+| `heading` | the heading's box. |
+| `metadata` | the box holding the metadata slot. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-section-header></pf-section-header>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfSectionHeader } from '@pitchfork-ui/elements-react';
+
+<PfSectionHeader />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-section-header></pf-section-header>
+```
+

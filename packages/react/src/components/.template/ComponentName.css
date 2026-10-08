@@ -1,6 +1,6 @@
 .pf-component-name {
   /* Never use raw tokens (--color-*, --space-*, ...) here — define a
-     --pf-componentname-* alias in packages/react/src/styles/theme.css
+     --pf-componentname-* alias in packages/tokens/src/theme.css
      (with a dark-mode value there if needed) and reference it. */
   color: var(--pf-componentname-text);
 }

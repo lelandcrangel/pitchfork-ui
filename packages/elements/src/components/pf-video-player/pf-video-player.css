@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.label {
+  color: var(--pf-field-label);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.description {
+  color: var(--pf-field-description);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.error {
+  color: var(--pf-field-error);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.frame {
+  background: var(--pf-videoplayer-bg);
+  border: 1px solid var(--pf-videoplayer-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: 100%;
+}
+
+/*
+ * The ratio comes from the reflected attribute rather than a class: the
+ * generated bindings set props as properties, so an unreflected prop would
+ * leave no attribute for this to select on.
+ */
+:host([aspect-ratio='16/9']) .frame {
+  aspect-ratio: 16 / 9;
+}
+
+:host([aspect-ratio='4/3']) .frame {
+  aspect-ratio: 4 / 3;
+}
+
+:host([aspect-ratio='1/1']) .frame {
+  aspect-ratio: 1 / 1;
+}
+
+.frame--invalid {
+  border-color: var(--pf-videoplayer-invalid-border);
+}
+
+.video {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.empty {
+  align-items: center;
+  color: var(--pf-videoplayer-text-muted);
+  display: flex;
+  font-size: var(--font-size-sm);
+  height: 100%;
+  justify-content: center;
+  padding: var(--space-4);
+  text-align: center;
+}

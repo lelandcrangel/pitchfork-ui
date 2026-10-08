@@ -1,0 +1,49 @@
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-progress-bar-in {
+  from {
+    width: 0;
+  }
+}
+
+:host {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+  min-width: 220px;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.track {
+  background: var(--pf-progress-track-bg);
+  border-radius: var(--radius-full);
+  flex: 1;
+  height: 8px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fill {
+  animation: pf-progress-bar-in var(--duration-slow) var(--easing-decelerate);
+  background: var(--pf-progress-accent);
+  border-radius: inherit;
+  height: 100%;
+  /* Animate in from 0 on mount, and smoothly between values on change. */
+  transition: width var(--pf-transition-slow);
+  width: var(--pf-progress-fill, 0%);
+}
+
+.value {
+  color: var(--pf-progress-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    animation: none;
+    transition: none;
+  }
+}

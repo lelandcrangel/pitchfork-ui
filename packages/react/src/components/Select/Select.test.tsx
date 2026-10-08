@@ -234,4 +234,119 @@ describe('Select', () => {
     const hidden = container.querySelector('input[type="hidden"]');
     expect(hidden).toHaveAttribute('value', '');
   });
+
+  /* ─── Typeahead ────────────────────────────────────────────────────────── *
+   *
+   * The ARIA listbox pattern expects printable-character typeahead, and this
+   * component had none: a long list could only be walked one arrow at a time.
+   * The matching is core's, so these mirror `pf-select`'s browser spec --
+   * including the two rules that are easy to get wrong, that one letter
+   * repeated *cycles* while two different letters *narrow*.
+   */
+
+  const fruits = [
+    { value: 'apple', label: 'Apple' },
+    { value: 'apricot', label: 'Apricot' },
+    { value: 'banana', label: 'Banana' },
+    { value: 'blackberry', label: 'Blackberry', disabled: true },
+    { value: 'cherry', label: 'Cherry' },
+  ];
+
+  const activeLabel = (trigger: HTMLElement) => {
+    const id = trigger.getAttribute('aria-activedescendant');
+    return id ? document.getElementById(id)?.textContent : null;
+  };
+
+  const openSelect = async (list = fruits) => {
+    const user = userEvent.setup();
+    render(<Select options={list} label="Fruit" />);
+    const trigger = screen.getByRole('combobox', { name: /Fruit/i });
+    await user.click(trigger);
+    return { user, trigger };
+  };
+
+  it('jumps to the next option beginning with the letter typed', async () => {
+    const { user, trigger } = await openSelect();
+    expect(activeLabel(trigger)).toBe('Apple');
+
+    await user.keyboard('b');
+    expect(activeLabel(trigger)).toBe('Banana');
+  });
+
+  it('narrows on more letters rather than jumping on', async () => {
+    const { user, trigger } = await openSelect();
+
+    await user.keyboard('apr');
+    expect(activeLabel(trigger)).toBe('Apricot');
+  });
+
+  /*
+   * `bc` matches nothing, so nothing moves. The element's spec had this test
+   * written the other way round at first -- pressing `b` then `c` and
+   * expecting Cherry -- and it was the test that was wrong.
+   */
+  it('treats consecutive letters as one word, not two jumps', async () => {
+    const { user, trigger } = await openSelect();
+
+    await user.keyboard('b');
+    expect(activeLabel(trigger)).toBe('Banana');
+    await user.keyboard('c');
+    expect(activeLabel(trigger)).toBe('Banana');
+  });
+
+  /*
+   * Blackberry is disabled, so `b` finds only Banana and repeating it stays
+   * there rather than landing somewhere the keyboard cannot act.
+   */
+  it('never lands on a disabled option', async () => {
+    const { user, trigger } = await openSelect();
+
+    await user.keyboard('b');
+    expect(activeLabel(trigger)).toBe('Banana');
+    await user.keyboard('b');
+    expect(activeLabel(trigger)).toBe('Banana');
+  });
+
+  it('cycles through the matches on a repeated letter', async () => {
+    const { user, trigger } = await openSelect([
+      { value: 'a1', label: 'Apple' },
+      { value: 'a2', label: 'Apricot' },
+      { value: 'c1', label: 'Cherry' },
+    ]);
+
+    // Apple is already active, so the first `a` steps on to Apricot.
+    await user.keyboard('a');
+    expect(activeLabel(trigger)).toBe('Apricot');
+    await user.keyboard('a');
+    expect(activeLabel(trigger)).toBe('Apple');
+  });
+
+  /*
+   * Closed, typeahead *chooses* rather than highlighting -- what a native
+   * `<select>` does, and with no listbox on screen a highlight nobody can see
+   * would be no feedback at all.
+   */
+  it('chooses outright when the listbox is closed', async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<Select options={fruits} label="Fruit" onValueChange={onValueChange} />);
+    const trigger = screen.getByRole('combobox', { name: /Fruit/i });
+
+    trigger.focus();
+    await user.keyboard('b');
+
+    expect(onValueChange).toHaveBeenCalledWith('banana');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
+  it('does not let a space start a word, because a space selects', async () => {
+    const { user, trigger } = await openSelect();
+
+    await user.keyboard('b');
+    expect(activeLabel(trigger)).toBe('Banana');
+    await user.keyboard(' ');
+
+    // The space committed Banana rather than going into the buffer.
+    expect(trigger).toHaveTextContent('Banana');
+  });
 });

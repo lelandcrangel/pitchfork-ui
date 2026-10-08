@@ -23,6 +23,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^5.4.0",
     "@storybook/addon-vitest": "^10.6.1",
-    "mockdate": "^3.0.5"
+    "mockdate": "^3.0.5",
+    "remark-gfm": "^4.0.1"
   }
 }

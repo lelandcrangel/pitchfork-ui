@@ -1,0 +1,167 @@
+:host {
+  display: flex;
+  gap: var(--space-3);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([orientation='horizontal']) {
+  align-items: center;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+:host([orientation='vertical']) {
+  align-items: flex-start;
+  position: relative;
+}
+
+.marker-wrap {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+}
+
+:host([orientation='horizontal']) .marker-wrap {
+  justify-content: center;
+}
+
+@media (--sm) {
+  :host([orientation='horizontal']) .marker-wrap {
+    flex: 1;
+    position: relative;
+    width: 100%;
+  }
+}
+
+:host([orientation='vertical']) .marker-wrap {
+  align-items: center;
+  flex-direction: column;
+}
+
+.marker {
+  align-items: center;
+  background: var(--pf-progress-steps-bg);
+  border: 1px solid var(--pf-progress-steps-border);
+  border-radius: var(--radius-full);
+  color: var(--pf-progress-steps-text-muted);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  height: 28px;
+  justify-content: center;
+  position: relative;
+  width: 28px;
+  z-index: 1;
+  /* The marker changes as the current step advances. */
+  transition:
+    background-color var(--pf-transition-medium),
+    border-color var(--pf-transition-medium),
+    color var(--pf-transition-medium),
+    box-shadow var(--pf-transition-medium);
+}
+
+.connector {
+  background: var(--pf-progress-steps-border);
+  display: block;
+  flex: 1;
+  margin-inline-start: var(--space-2);
+  /* The connector fills in as the step completes. */
+  transition: background-color var(--pf-transition-slow);
+}
+
+:host([orientation='horizontal']) .connector {
+  display: none;
+}
+
+@media (--sm) {
+  :host([orientation='horizontal']) .connector {
+    display: block;
+    height: 1px;
+    left: 50%;
+    margin-inline-start: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Spans the group's own gap, which it reads through the bridge above. */
+    width: calc(100% + var(--pf-progresssteps-progress-step-gap, var(--pf-progress-step-gap)));
+    z-index: 0;
+  }
+}
+
+:host([orientation='vertical']) .connector {
+  bottom: calc(var(--space-3) * -1);
+  inset-inline-start: 14px;
+  margin: 0;
+  position: absolute;
+  top: 28px;
+  width: 1px;
+}
+
+.content {
+  min-width: 0;
+}
+
+:host([orientation='horizontal']) .content {
+  text-align: center;
+}
+
+.title {
+  color: var(--pf-progress-steps-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  margin: var(--space-1) 0 0;
+  transition: color var(--pf-transition-medium);
+}
+
+/*
+ * The description is styled through the slot rather than wrapped in a box of
+ * its own, so that a step without one has no stray margin: a wrapper cannot be
+ * collapsed from CSS, while an unassigned slot generates nothing at all.
+ */
+slot[name='description']::slotted(*) {
+  color: var(--pf-progress-steps-text-muted);
+  display: block;
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  margin: var(--space-1) 0 0;
+}
+
+:host([state='complete']) .marker {
+  background: var(--pf-progress-steps-complete-bg);
+  border-color: var(--pf-progress-steps-complete-border);
+  color: var(--pf-progress-steps-complete-text);
+}
+
+:host([state='current']) .marker {
+  background: var(--pf-progress-steps-current-bg);
+  border-color: var(--pf-progress-steps-current-border);
+  /*
+   * `--pf-focus-ring`, not the `--focus-ring-shadow` the React component asked
+   * for: that one is defined nowhere, and an undefined custom property makes
+   * the declaration invalid at computed-value time -- measured in Chromium,
+   * `box-shadow: var(--focus-ring-shadow)` computes to `none`, so the ring had
+   * never been drawn. Fixed in both layers.
+   */
+  box-shadow: var(--pf-focus-ring);
+  color: var(--pf-progress-steps-current-text);
+}
+
+:host([state='complete']) .connector {
+  background: var(--pf-progress-steps-complete-border);
+}
+
+:host([state='current']) .title {
+  color: var(--pf-progress-steps-current-title);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marker,
+  .connector,
+  .title {
+    transition: none;
+  }
+}

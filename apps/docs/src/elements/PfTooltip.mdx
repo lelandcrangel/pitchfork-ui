@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTooltip" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-tooltip>`
+
+
+A tooltip anchored to whatever is slotted into it.
+
+The panel is a `popover`, which is how it escapes an ancestor's `overflow`
+and stacking context — the thing `createPortal` does for the React
+component, and the only equivalent available from inside a shadow root.
+Verified: a popover opened from a shadow root inside an `overflow: hidden`
+container beats a `z-index: 999` sibling, where a plain absolute element in
+the same place loses.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `delay` | `delay` | `number` | `120` | Milliseconds to wait before showing on hover or focus. |
+| `disabled` | `disabled` | `boolean` | `false` | Never show. Reflected so the stylesheet can select on it. |
+| `open` | `open` | `boolean \| undefined` | — | Force the tooltip open or closed, rather than letting it react. |
+| `placement` | `placement` | `"bottom" \| "left" \| "right" \| "top"` | `'top'` | Preferred side. Reflected so the stylesheet can place the arrow. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the trigger. |
+| `content` | the tooltip's content. Its text also becomes the trigger's accessible description. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `tooltip` | the floating panel. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-tooltip></pf-tooltip>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTooltip } from '@pitchfork-ui/elements-react';
+
+<PfTooltip />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-tooltip></pf-tooltip>
+```
+

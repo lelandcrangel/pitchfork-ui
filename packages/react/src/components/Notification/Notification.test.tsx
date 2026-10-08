@@ -7,7 +7,7 @@ import { Notification, NotificationStack } from './Notification';
 describe('Notification', () => {
   // ─── Rendering ──────────────────────────────────────────────────────────
 
-  it('renders with role="status"', () => {
+  it('renders as a polite live region by default', () => {
     render(<Notification heading="Saved" />);
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
@@ -29,7 +29,7 @@ describe('Notification', () => {
 
   it('applies the variant class', () => {
     render(<Notification variant="danger" heading="Error" />);
-    expect(screen.getByRole('status')).toHaveClass('pf-notification--danger');
+    expect(screen.getByRole('alert')).toHaveClass('pf-notification--danger');
   });
 
   it('defaults to info variant', () => {
@@ -38,6 +38,11 @@ describe('Notification', () => {
   });
 
   // ─── Role per variant ────────────────────────────────────────────────────
+  //
+  // These four used to assert role="status" throughout, which is what the
+  // component did: it carried no variant-to-role map, while Alert next door
+  // carried one, so the same failure announced politely here and assertively
+  // there. The role now comes from core's liveRegionRole, which both use.
 
   it('has role="status" on info variant', () => {
     render(<Notification variant="info" heading="Info" />);
@@ -49,14 +54,17 @@ describe('Notification', () => {
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
-  it('has role="status" on warning variant', () => {
+  /* Assertive, because a warning that waits its turn can arrive too late. */
+  it('has role="alert" on warning variant', () => {
     render(<Notification variant="warning" heading="Warning" />);
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
-  it('has role="status" on danger variant', () => {
+  it('has role="alert" on danger variant', () => {
     render(<Notification variant="danger" heading="Error" />);
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
   // ─── Icon slot ───────────────────────────────────────────────────────────
@@ -102,10 +110,16 @@ describe('Notification', () => {
     const onDismiss = vi.fn();
     render(<Notification heading="Note" dismissible onDismiss={onDismiss} />);
     await user.click(screen.getByRole('button', { name: 'Dismiss notification' }));
-    // The exit animation plays first (element gets the exiting class), then
-    // onDismiss fires once it finishes.
+
+    /*
+     * The exiting class goes on, and `onDismiss` fires once the exit
+     * animation has finished — which here is immediately, because jsdom has
+     * no `getAnimations` and nothing is animating. That is the point of the
+     * change: the hook used to wait a hard-coded 220ms whether or not
+     * anything was playing, which made this read as "the animation is in
+     * progress" when no animation existed at all.
+     */
     expect(screen.getByRole('status').className).toContain('pf-notification--exiting');
-    expect(onDismiss).not.toHaveBeenCalled();
     await waitFor(() => expect(onDismiss).toHaveBeenCalledTimes(1));
   });
 

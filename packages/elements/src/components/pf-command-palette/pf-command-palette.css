@@ -1,0 +1,113 @@
+:host {
+  display: contents;
+}
+
+/*
+ * The dialog is the backdrop: it fills the viewport and aligns the panel near
+ * the top, so a click landing on it rather than on the panel is a backdrop
+ * click. The explicit sizing overrides the UA's `margin: auto` and
+ * `width: fit-content` for a `<dialog>`.
+ */
+.dialog {
+  align-items: flex-start;
+  background: none;
+  border: 0;
+  display: none;
+  height: 100%;
+  justify-content: center;
+  max-height: 100%;
+  max-width: 100%;
+  padding: var(--space-4);
+  width: 100%;
+}
+
+.dialog[open] {
+  display: flex;
+}
+
+@media (--md) {
+  .dialog {
+    padding-top: 10vh;
+  }
+}
+
+.dialog::backdrop {
+  background: var(--pf-commandpalette-overlay-backdrop, var(--pf-overlay-backdrop));
+}
+
+.panel {
+  background: var(--pf-command-bg);
+  border: 1px solid var(--pf-command-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--pf-commandpalette-elevation-overlay-shadow, var(--pf-elevation-overlay-shadow));
+  color: var(--pf-command-text);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  max-height: 100%;
+  overflow: hidden;
+  width: min(560px, 100%);
+}
+
+.dialog[open] .panel {
+  animation: pf-command-panel-in var(--pf-transition-enter);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-command-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] .panel {
+    animation: none;
+  }
+}
+
+.search {
+  align-items: center;
+  border-bottom: 1px solid var(--pf-command-border);
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+.search-icon {
+  color: var(--pf-command-text-muted);
+  flex-shrink: 0;
+}
+
+.input {
+  background: none;
+  border: 0;
+  color: var(--pf-command-text);
+  flex: 1;
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  min-width: 0;
+  outline: none;
+  padding: 0;
+}
+
+.input::placeholder {
+  color: var(--pf-command-text-muted);
+}
+
+.hint {
+  flex-shrink: 0;
+}
+
+.list {
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.empty {
+  color: var(--pf-command-text-muted);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  padding: var(--space-4) var(--space-3);
+  text-align: center;
+}

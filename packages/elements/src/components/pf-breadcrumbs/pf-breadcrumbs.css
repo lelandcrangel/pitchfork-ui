@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.list {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * The crumbs have to be flex items of the list, not of a box inside it. The UA
+ * stylesheet already gives a slot `display: contents`, and this says so out
+ * loud -- the same thing pf-calendar needs for a semantic row in a grid.
+ */
+.list slot {
+  display: contents;
+}

@@ -1,24 +1,11 @@
+import { liveRegionRole, severityIconName } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
-import { useExitAnimation } from '../../hooks';
+import { useComposedRefs, useExitAnimation } from '../../hooks';
 import { cx } from '../../utils/cx';
-import { Icon, type IconName } from '../Icon';
+import { Icon } from '../Icon';
 import './Alert.css';
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'danger';
-
-const variantIcon: Record<AlertVariant, IconName> = {
-  info: 'circle-info',
-  success: 'circle-check',
-  warning: 'triangle-exclamation',
-  danger: 'circle-xmark',
-};
-
-const variantRole: Record<AlertVariant, React.AriaRole> = {
-  info: 'status',
-  success: 'status',
-  warning: 'alert',
-  danger: 'alert',
-};
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: AlertVariant;
@@ -44,20 +31,32 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
     },
     ref,
   ) => {
-    const resolvedIcon = icon ?? <Icon name={variantIcon[variant]} aria-hidden />;
+    const resolvedIcon = icon ?? <Icon name={severityIconName(variant)} aria-hidden />;
     const body = children ?? description;
-    const { isExiting, startExit } = useExitAnimation({ onExited: onDismiss });
+    /*
+     * The hook's `ref` goes on the element the exit animation runs on, which
+     * is how it waits for the real animation rather than for a guessed
+     * duration.
+     */
+    const {
+      isExiting,
+      startExit,
+      ref: exitRef,
+    } = useExitAnimation<HTMLDivElement>({
+      onExited: onDismiss,
+    });
+    const rootRef = useComposedRefs(exitRef, ref);
 
     return (
       <div
-        ref={ref}
+        ref={rootRef}
         className={cx(
           'pf-alert',
           `pf-alert--${variant}`,
           isExiting && 'pf-alert--exiting',
           className,
         )}
-        role={variantRole[variant]}
+        role={liveRegionRole(variant)}
         {...props}
       >
         <span className="pf-alert__icon" aria-hidden>

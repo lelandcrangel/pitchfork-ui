@@ -1,0 +1,9 @@
+:host {
+  display: block;
+  overflow: auto;
+  padding: var(--space-4);
+}
+
+:host([hidden]) {
+  display: none;
+}

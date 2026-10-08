@@ -7,7 +7,7 @@
  * Sources, in order of authority:
  *   props        <- TS interfaces under packages/react/src/components
  *   defaults     <- destructuring defaults in the component render function
- *   cssVars      <- component .css files, resolved through styles/theme.css
+ *   cssVars      <- component .css files, resolved through tokens/src/theme.css
  *   examples     <- apps/docs/src/*.examples.stories.tsx
  *   description  <- apps/docs/src/*.mdx
  *
@@ -27,7 +27,7 @@ import ts from 'typescript';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const componentsDir = join(root, 'packages/react/src/components');
-const themeCssPath = join(root, 'packages/react/src/styles/theme.css');
+const themeCssPath = join(root, 'packages/tokens/src/theme.css');
 const docsDir = join(root, 'apps/docs/src');
 const outDir = join(root, 'packages/react/dist');
 const outFile = join(outDir, 'metadata.json');
@@ -949,12 +949,19 @@ function main() {
    */
   function readIconNames() {
     const source = readFileSync(join(componentsDir, 'Icon/Icon.tsx'), 'utf8');
+    // The registry moved to @pitchfork-ui/core so React components and custom
+    // elements resolve the same names; the spellings table went with it, and
+    // so did the custom glyphs, since both layers drew their own copy of the
+    // same thirteen shapes. What stays with the component is the bundled
+    // Font Awesome list, because each layer imports those glyphs individually.
+    const coreSource = readFileSync(join(root, 'packages/core/src/icons.ts'), 'utf8');
+    const glyphSource = readFileSync(join(root, 'packages/core/src/custom-glyphs.ts'), 'utf8');
 
-    const blockAfter = (declaration) => {
-      const start = source.indexOf(declaration);
+    const blockAfter = (declaration, text = source) => {
+      const start = text.indexOf(declaration);
       if (start === -1) {
         throw new Error(
-          `build-metadata: \`${declaration}\` not found in Icon.tsx. The icon ` +
+          `build-metadata: \`${declaration}\` not found. The icon ` +
             'registry was renamed or restructured; update readIconNames().',
         );
       }
@@ -962,21 +969,23 @@ function main() {
       // Match braces from the opening one so a nested object or JSX cannot end
       // the block early.
       let depth = 0;
-      for (let i = source.indexOf('{', start); i < source.length; i += 1) {
-        if (source[i] === '{') depth += 1;
-        else if (source[i] === '}') {
+      for (let i = text.indexOf('{', start); i < text.length; i += 1) {
+        if (text[i] === '{') depth += 1;
+        else if (text[i] === '}') {
           depth -= 1;
-          if (depth === 0) return source.slice(start, i);
+          if (depth === 0) return text.slice(start, i);
         }
       }
       throw new Error(`build-metadata: unbalanced braces after \`${declaration}\``);
     };
 
     /** Keys at one level of indentation: `name:` or `'kebab-name':`. */
-    const keysIn = (declaration) =>
-      [...blockAfter(declaration).matchAll(/^ {2}'?([a-zA-Z][a-zA-Z0-9-]*)'?:/gm)].map((m) => m[1]);
+    const keysIn = (declaration, text = source) =>
+      [...blockAfter(declaration, text).matchAll(/^ {2}'?([a-zA-Z][a-zA-Z0-9-]*)'?:/gm)].map(
+        (m) => m[1],
+      );
 
-    const custom = keysIn('const customIcons = {');
+    const custom = keysIn('export const CUSTOM_GLYPHS = {', glyphSource);
 
     // name -> the `faXxx` export it is bound to.
     const bundled = new Map(
@@ -989,14 +998,16 @@ function main() {
 
     const legacyAliases = Object.fromEntries(
       [
-        ...blockAfter('const legacyAliases: Record<string, string> = {').matchAll(
+        ...blockAfter('const legacySpellings: Record<string, string> = {', coreSource).matchAll(
           /^ {2}([a-zA-Z][a-zA-Z0-9]*):\s*'([^']+)'/gm,
         ),
       ].map((m) => [m[1], m[2]]),
     );
 
     if (custom.length === 0 || bundled.size === 0) {
-      throw new Error('build-metadata: parsed an empty icon registry from Icon.tsx');
+      throw new Error(
+        'build-metadata: parsed an empty icon registry from Icon.tsx or custom-glyphs.ts',
+      );
     }
 
     // A synchronous require: this script is otherwise entirely sync, and the

@@ -1,0 +1,19 @@
+:host {
+  background: var(--pf-toolbar-separator);
+  flex-shrink: 0;
+  margin: var(--space-1);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* A horizontal toolbar is divided by a vertical hairline, and vice versa. */
+:host([orientation='horizontal']) {
+  align-self: stretch;
+  width: 1px;
+}
+
+:host([orientation='vertical']) {
+  height: 1px;
+}

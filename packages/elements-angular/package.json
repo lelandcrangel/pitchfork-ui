@@ -1,0 +1,69 @@
+{
+  "name": "@pitchfork-ui/elements-angular",
+  "version": "0.1.0",
+  "description": "Angular bindings for @pitchfork-ui/elements \u2014 standalone components and ControlValueAccessor directives generated from the Pitchfork UI custom elements.",
+  "license": "MIT",
+  "author": "Leland Rangel",
+  "homepage": "https://lelandrangel.com/pitchfork-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lelandcrangel/pitchfork-ui.git",
+    "directory": "packages/elements-angular"
+  },
+  "bugs": {
+    "url": "https://github.com/lelandcrangel/pitchfork-ui/issues"
+  },
+  "keywords": [
+    "angular",
+    "web-components",
+    "custom-elements",
+    "design-system",
+    "pitchfork-ui",
+    "stencil",
+    "reactive-forms"
+  ],
+  "scripts": {
+    "build": "ng-packagr -p ng-package.json -c tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@pitchfork-ui/elements": "^0.1.0",
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@angular/common": ">=18.0.0",
+    "@angular/core": ">=18.0.0",
+    "@angular/forms": ">=18.0.0",
+    "rxjs": ">=7.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.7.5",
+    "@angular/build": "^21.2.24",
+    "@angular/compiler": "^21.2.25",
+    "@angular/compiler-cli": "^21.2.25",
+    "@angular/platform-browser": "^21.2.25",
+    "@vitest/browser-playwright": "^4.1.11",
+    "ng-packagr": "^21.2.7",
+    "vitest": "^4.1.11",
+    "zone.js": "^0.16.3"
+  },
+  "module": "dist/fesm2022/pitchfork-ui-elements-angular.mjs",
+  "types": "dist/types/pitchfork-ui-elements-angular.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/pitchfork-ui-elements-angular.d.ts",
+      "default": "./dist/fesm2022/pitchfork-ui-elements-angular.mjs"
+    },
+    "./package.json": {
+      "default": "./package.json"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ]
+}

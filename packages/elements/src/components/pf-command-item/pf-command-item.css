@@ -1,0 +1,76 @@
+:host {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--pf-command-text);
+  cursor: pointer;
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  user-select: none;
+}
+
+/* The palette sets `hidden` on the items a query filters out. */
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The active option, which the palette marks. Not `:hover` alone: the keyboard
+ * and the mouse share one active item, and the palette is what decides it.
+ */
+:host([aria-selected='true']) {
+  background: var(--pf-command-item-active-bg);
+}
+
+/*
+ * The active background is the primary action colour, so everything on top of
+ * it needs the matching foreground -- including the description, which is
+ * muted against the panel and would be unreadable against this.
+ */
+:host([aria-selected='true']) .label,
+:host([aria-selected='true']) slot[name='icon']::slotted(*) {
+  color: var(--pf-command-item-active-text);
+}
+
+:host([aria-selected='true']) .description {
+  color: var(--pf-command-item-active-text);
+  opacity: 0.85;
+}
+
+:host([disabled]) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/*
+ * No wrapper box around the icon slot: an unassigned slot is
+ * `display: contents` and generates nothing, so the row's `gap` does not open
+ * in front of an item with no icon.
+ */
+slot[name='icon']::slotted(*) {
+  color: var(--pf-command-text-muted);
+  flex-shrink: 0;
+}
+
+.content {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.description {
+  color: var(--pf-command-text-muted);
+  font-size: var(--font-size-xs);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

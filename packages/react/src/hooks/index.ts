@@ -7,3 +7,5 @@ export * from './useFocusTrap';
 export * from './useListNavigation';
 export * from './useOutsideInteraction';
 export * from './usePresence';
+export * from './useRovingTabIndex';
+export * from './useTypeahead';

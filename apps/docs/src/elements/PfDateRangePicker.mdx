@@ -1,0 +1,98 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfDateRangePicker" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-date-range-picker>`
+
+
+A form-associated date-range field: two month grids in a popover, with a
+preview that follows the pointer while the range is half-made.
+
+**It submits two entries from one control.** `setFormValue` accepts a
+`FormData`, and every entry in it is submitted — measured, along with the
+fact that the element's own `name` attribute is then ignored entirely. So a
+range goes in as `${name}-start` and `${name}-end`, which is what a server
+handling a form actually wants, rather than one field a handler has to split.
+The `value` property stays a single round-trippable `start/end` string.
+
+The grids are rendered here rather than composed from two `pf-calendar`s:
+the range preview spans both months, so one element has to own the hover and
+the selection for both. The day-state and selection rules are core's, shared
+with the React component.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allowClear` | `allow-clear` | `boolean` | `false` | Offer a button that empties the range. |
+| `description` | `description` | `string \| undefined` | — | — |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `endYear` | `end-year` | `number \| undefined` | — | — |
+| `error` | `error` | `string \| undefined` | — | — |
+| `isDateDisabled` | — | `((date: Date) =&gt; boolean) \| undefined` | — | A predicate for days that cannot be chosen; see `pf-calendar`. |
+| `label` | `label` | `string \| undefined` | — | — |
+| `max` | `max` | `string \| undefined` | — | — |
+| `min` | `min` | `string \| undefined` | — | — |
+| `name` | `name` | `string \| undefined` | — | The base name for the two submitted entries, `$\{name\}-start` and `$\{name\}-end`. Reflected for selectors; the submission reads the property, because a `FormData` value carries its own keys. |
+| `open` | `open` | `boolean` | `false` | Whether the panel is showing. Reflected for the stylesheet. |
+| `placeholder` | `placeholder` | `string` | `'Select dates'` | — |
+| `required` | `required` | `boolean` | `false` | — |
+| `startYear` | `start-year` | `number \| undefined` | — | — |
+| `value` | `value` | `string` | `''` | The range as `YYYY-MM-DD/YYYY-MM-DD`, or empty. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; start: string; end: string; \}` | Fires when the range changes or is cleared, with the `start/end` string. |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the panel opens or closes, whoever caused it. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | — |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `show()` | `show() =&gt; Promise&lt;void&gt;` | — |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `clear` | the clear button. |
+| `day` | every day cell. |
+| `description` | the hint text below the control. |
+| `error` | the error message below the control. |
+| `field` | the wrapper around label, control and messages. |
+| `grid` | each month grid. |
+| `label` | the label element. |
+| `panel` | the floating panel. |
+| `trigger` | the button that opens the grids. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-date-range-picker></pf-date-range-picker>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfDateRangePicker } from '@pitchfork-ui/elements-react';
+
+<PfDateRangePicker />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-date-range-picker></pf-date-range-picker>
+```
+

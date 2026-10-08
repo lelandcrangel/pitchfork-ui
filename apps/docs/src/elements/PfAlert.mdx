@@ -1,0 +1,83 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfAlert" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-alert>`
+
+
+An inline alert: an icon, a heading, a body and an optional dismiss button.
+
+The sibling of `pf-notification`, and deliberately a separate element
+rather than a variant of it: an alert belongs in the page's flow and
+collapses its own height when dismissed so the content below reflows, while
+a notification is one of a stack in a corner and slides out. The two look
+alike and behave differently, which is exactly when one element serving
+both goes wrong.
+
+The role comes from core's `liveRegionRole`, so `warning` and `danger`
+announce assertively and `info` and `success` wait their turn.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | `description` | `string \| undefined` | — | The body. A slotted body is used instead when there is one. |
+| `dismissLabel` | `dismiss-label` | `string` | `'Dismiss alert'` | The dismiss button's accessible name. |
+| `dismissible` | `dismissible` | `boolean` | `false` | Show the dismiss button. Reflected. |
+| `heading` | `heading` | `string \| undefined` | — | — |
+| `variant` | `variant` | `"danger" \| "info" \| "success" \| "warning"` | `'info'` | Reflected, because the stylesheet selects on it for the colours. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfDismiss` | `void` | Fires once the alert has finished leaving. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `dismiss()` | `dismiss() =&gt; Promise&lt;void&gt;` | Dismisses the alert, waiting for its exit animation first. The wait is core's `animationsFinished`, which asks the element what is actually running rather than sleeping for a duration someone wrote down: under `prefers-reduced-motion` the stylesheet sets `animation: none`, no test project applies `styleUrl` CSS at all, and a consumer may not have loaded the stylesheet — in all three an `animationend` listener would wait for ever and a timeout would be a fiction. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the body, used instead of the `description` prop when present. |
+| `icon` | replaces the icon the variant would choose. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `alert` | the root box. |
+| `body` | the description's box. |
+| `dismiss` | the dismiss button. |
+| `icon` | the icon's box. |
+| `title` | the heading. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-alert></pf-alert>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfAlert } from '@pitchfork-ui/elements-react';
+
+<PfAlert />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-alert></pf-alert>
+```
+

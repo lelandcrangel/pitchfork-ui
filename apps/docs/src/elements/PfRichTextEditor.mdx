@@ -1,0 +1,97 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfRichTextEditor" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-rich-text-editor>`
+
+
+A form-associated rich-text field over a `contenteditable`.
+
+The toolbar is core's list, so this and the React `RichTextEditor` cannot
+offer different buttons, and the value is normalised with core's
+`stripOuterParagraph`, so they cannot disagree about what a round trip
+looks like.
+
+Two things differ from the React component, both deliberate:
+
+- **The toolbar is one tab stop**, with the arrows moving inside it, which
+  is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
+  version is six tab stops inside a `role="toolbar"`, so tabbing past the
+  field walks every button; `todo.md` has that.
+- **It is a real form control.** `formAssociated` with `ElementInternals` is
+  what puts the value in `FormData`; a `contenteditable` is not a form
+  control in any framework, and the React component's value reaches a form
+  only if the consumer wires it there themselves.
+
+`document.execCommand` is deprecated and is still the only way to apply
+formatting inside a `contenteditable` without a dependency, which is the
+same trade the React component makes.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `characterMax` | `character-max` | `number \| undefined` | — | The most characters of text the field will hold. |
+| `description` | `description` | `string \| undefined` | — | — |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | Error message from the consumer. Its presence marks the control invalid. |
+| `label` | `label` | `string \| undefined` | — | — |
+| `minHeight` | `min-height` | `number` | `140` | The editable area's smallest height, in pixels. |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected, because a form-associated custom element takes its submission name from the `name` content attribute rather than from this property. |
+| `placeholder` | `placeholder` | `string` | `'Start typing...'` | — |
+| `required` | `required` | `boolean` | `false` | — |
+| `value` | `value` | `string` | `''` | The field's value, as HTML. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; \}` | Fires when the value changes, however it changed. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `format()` | `format(command: string) =&gt; Promise&lt;void&gt;` | Applies one of the toolbar's commands, as pressing its button does. |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `count` | the character counter. |
+| `description` | the hint text. |
+| `editor` | the editable area. |
+| `error` | the error message. |
+| `field` | the wrapper around label, toolbar, editor and messages. |
+| `label` | the label element. |
+| `tool` | one toolbar button. |
+| `toolbar` | the formatting toolbar. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-rich-text-editor></pf-rich-text-editor>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfRichTextEditor } from '@pitchfork-ui/elements-react';
+
+<PfRichTextEditor />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-rich-text-editor></pf-rich-text-editor>
+```
+

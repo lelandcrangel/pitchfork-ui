@@ -112,7 +112,7 @@ This project uses a **mobile-first** approach: base styles target mobile, and `@
 }
 ```
 
-Breakpoints are resolved at build time by `postcss-custom-media`. The canonical definitions live in `packages/react/src/styles/theme.css` and are provided to PostCSS via `vite.config.ts` and `apps/docs/.storybook/main.ts`.
+Breakpoints are resolved at build time by `postcss-custom-media`. The canonical definitions live in `packages/tokens/src/theme.css` and are provided to PostCSS via `packages/react/vite.config.ts`, `packages/elements/stencil.config.ts` and `apps/docs/.storybook/main.ts`.
 
 Do not use raw `min-width` or `max-width` pixel values in component CSS — always use the named breakpoints above.
 

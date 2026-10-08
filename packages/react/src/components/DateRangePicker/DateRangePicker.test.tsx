@@ -75,4 +75,78 @@ describe('DateRangePicker', () => {
     fireEvent.click(screen.getByRole('button', { name: /clear date range/i }));
     expect(onValueChange).toHaveBeenCalledWith({ start: null, end: null });
   });
+
+  /* ─── Keyboard ─────────────────────────────────────────────────────────── *
+   *
+   * The grid is shared with `Calendar`, so the keyboard arrived here with it.
+   * What is specific to this component is the two panels: they show
+   * consecutive months off one `leftMonth`, so the keyboard walking out of
+   * either one has to move that single piece of state the right way.
+   */
+
+  const focusedCells = () =>
+    screen.getAllByRole('gridcell').filter((cell) => cell.getAttribute('tabindex') === '0');
+
+  /*
+   * On the cell, not on the grid: the handler lives on the day buttons,
+   * because the `role="grid"` container never takes focus and a key always
+   * arrives at a cell. A synthetic event on the container would not reach
+   * them -- React events bubble up, not down -- so a test written that way
+   * passes or fails for the wrong reason.
+   */
+  const pressOnPanel = (panel: 0 | 1, key: string) =>
+    fireEvent.keyDown(focusedCells()[panel], { key });
+
+  it('gives each of the two months one tab stop', () => {
+    render(
+      <DateRangePicker
+        label="Dates"
+        defaultValue={{ start: new Date(2025, 0, 10, 12), end: new Date(2025, 1, 15, 12) }}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /dates/i }));
+
+    expect(screen.getAllByRole('grid')).toHaveLength(2);
+    expect(focusedCells()).toHaveLength(2);
+  });
+
+  it('moves the focused day with the arrows', () => {
+    render(
+      <DateRangePicker
+        label="Dates"
+        defaultValue={{ start: new Date(2025, 0, 10, 12), end: null }}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /dates/i }));
+
+    expect(focusedCells()[0]).toHaveAccessibleName('January 10, 2025');
+
+    pressOnPanel(0, 'ArrowDown');
+    expect(focusedCells()[0]).toHaveAccessibleName('January 17, 2025');
+  });
+
+  /*
+   * Walking off the end of the *right* panel moves `leftMonth` forward by one,
+   * not to the month the keyboard landed in -- the right panel is always one
+   * month ahead of it. Getting that backwards scrolls two months at a time.
+   */
+  it('scrolls both panels by one month when the right panel walks out of its month', () => {
+    render(
+      <DateRangePicker
+        label="Dates"
+        defaultValue={{ start: new Date(2025, 0, 10, 12), end: new Date(2025, 1, 28, 12) }}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /dates/i }));
+
+    const grids = screen.getAllByRole('grid');
+    expect(grids[0]).toHaveAccessibleName('January 2025');
+    expect(grids[1]).toHaveAccessibleName('February 2025');
+
+    pressOnPanel(1, 'ArrowRight');
+
+    const moved = screen.getAllByRole('grid');
+    expect(moved[0]).toHaveAccessibleName('February 2025');
+    expect(moved[1]).toHaveAccessibleName('March 2025');
+  });
 });

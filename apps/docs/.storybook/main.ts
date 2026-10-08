@@ -3,18 +3,30 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import customMedia from 'postcss-custom-media';
+import remarkGfm from 'remark-gfm';
 
 const storybookDir = dirname(fileURLToPath(import.meta.url));
 const reactSourceEntry = resolve(storybookDir, '../../../packages/react/src/index.ts');
 // The published package ships a single styles.css; from source, the equivalent
-// entry point is theme.css, which defines the design tokens and every --pf-*
-// alias on :root. Aliasing the stylesheet specifier to the TypeScript entry
-// instead made preview.ts's `import '@pitchfork-ui/react/styles.css'` a
-// side-effect-only import of a module Rollup treats as side-effect-free, so the
-// whole chain -- theme.css included -- was tree-shaken out of the build. Every
-// component class still landed, so the site rendered with correct markup and no
-// token values at all, and nothing failed loudly enough to notice.
-const reactThemeCss = resolve(storybookDir, '../../../packages/react/src/styles/theme.css');
+// entry point is @pitchfork-ui/tokens' theme.css, which defines the design
+// tokens and every --pf-* alias on :root. Aliasing the stylesheet specifier to
+// the TypeScript entry instead made preview.ts's
+// `import '@pitchfork-ui/react/styles.css'` a side-effect-only import of a
+// module Rollup treats as side-effect-free, so the whole chain -- theme.css
+// included -- was tree-shaken out of the build. Every component class still
+// landed, so the site rendered with correct markup and no token values at all,
+// and nothing failed loudly enough to notice.
+//
+// This is the built copy, not the source: it is served as a stylesheet, so its
+// `@import './variables.css'` has to resolve to a file beside it, which only
+// holds in dist/css.
+const themeCssBuilt = resolve(storybookDir, '../../../packages/tokens/dist/css/theme.css');
+// Read only for its `@custom-media` definitions, which are authored in src.
+const themeCssSource = resolve(storybookDir, '../../../packages/tokens/src/theme.css');
+// react's source imports @pitchfork-ui/core; without this alias Storybook would
+// resolve it to core's dist, which means `npm run storybook` on a fresh clone
+// fails until core has been built.
+const coreSourceEntry = resolve(storybookDir, '../../../packages/core/src/index.ts');
 
 const rawBasePath = process.env.STORYBOOK_BASE_PATH ?? '/';
 const withLeadingSlash = rawBasePath.startsWith('/') ? rawBasePath : `/${rawBasePath}`;
@@ -33,7 +45,26 @@ const config: StorybookConfig & { title: string } = {
       excludeFromSidebar: true,
     },
   },
-  addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
+  addons: [
+    {
+      // Storybook's MDX pipeline runs remark with no GFM extension, so a
+      // pipe table renders as a paragraph of pipe characters. That was a
+      // curiosity while one page had a table; the 108 generated element
+      // reference pages are almost entirely tables, so without this the
+      // whole web-components section of the site is pipe soup. Probed by
+      // removing the plugin again: `<table` disappears from the built
+      // output and the pipes come back as text.
+      name: '@storybook/addon-docs',
+      options: {
+        mdxPluginOptions: {
+          mdxCompileOptions: {
+            remarkPlugins: [remarkGfm],
+          },
+        },
+      },
+    },
+    '@storybook/addon-a11y',
+  ],
   staticDirs: ['../public'],
   // Storybook writes its own <link rel="icon" href="./favicon.svg"> into the
   // manager HTML and serves whatever favicon.svg the static dir holds, so
@@ -63,7 +94,7 @@ const config: StorybookConfig & { title: string } = {
       postcss: {
         plugins: [
           globalData({
-            files: [resolve(storybookDir, '../../../packages/react/src/styles/theme.css')],
+            files: [themeCssSource],
           }),
           customMedia(),
         ],
@@ -74,11 +105,15 @@ const config: StorybookConfig & { title: string } = {
       alias: [
         {
           find: '@pitchfork-ui/react/styles.css',
-          replacement: reactThemeCss,
+          replacement: themeCssBuilt,
         },
         {
           find: '@pitchfork-ui/react',
           replacement: reactSourceEntry,
+        },
+        {
+          find: '@pitchfork-ui/core',
+          replacement: coreSourceEntry,
         },
       ],
     };

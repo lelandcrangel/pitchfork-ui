@@ -1,0 +1,101 @@
+:host {
+  display: grid;
+  gap: var(--space-4);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * Hidden rather than left out, so a later `slotchange` still arrives. Two
+ * classes deep, because these boxes set their own `display` below.
+ */
+.breadcrumbs.empty,
+.metadata.empty,
+.actions.empty {
+  display: none;
+}
+
+.breadcrumbs {
+  min-width: 0;
+}
+
+.row {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  justify-content: space-between;
+}
+
+@media (--md) {
+  .row {
+    flex-direction: row;
+  }
+}
+
+.content {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+slot[name='eyebrow']::slotted(*) {
+  color: var(--pf-page-header-eyebrow);
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.heading {
+  color: var(--pf-page-header-text);
+  font-size: clamp(var(--font-size-3xl), 3vw, var(--font-size-5xl));
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+slot[name='description']::slotted(*) {
+  color: var(--pf-page-header-text-muted);
+  display: block;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 68ch;
+}
+
+@media (--md) {
+  slot[name='description']::slotted(*) {
+    font-size: var(--font-size-md);
+  }
+}
+
+.metadata {
+  align-items: center;
+  color: var(--pf-page-header-text-muted);
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.actions {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-start;
+  width: 100%;
+}
+
+@media (--md) {
+  .actions {
+    justify-content: flex-end;
+    width: auto;
+  }
+}

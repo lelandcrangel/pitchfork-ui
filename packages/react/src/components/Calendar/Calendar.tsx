@@ -3,7 +3,13 @@ import { forwardRef, useEffect, useId, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import { CalendarGrid } from './CalendarGrid';
-import { addMonths, isSameDay, startOfMonth, toMidday } from './dateUtils';
+import {
+  addMonths,
+  clampMonthToYearRange,
+  isSameDay,
+  startOfMonth,
+  toMidday,
+} from '@pitchfork-ui/core';
 import './Calendar.css';
 
 const MONTH_OPTIONS = Array.from({ length: 12 }, (_, month) => {
@@ -70,19 +76,8 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
     };
   }, [endYear, startYear]);
 
-  const clampToYearRange = (date: Date) => {
-    const year = date.getFullYear();
-
-    if (year < yearRange.start) {
-      return new Date(yearRange.start, 0, 1, 12);
-    }
-
-    if (year > yearRange.end) {
-      return new Date(yearRange.end, 11, 1, 12);
-    }
-
-    return date;
-  };
+  const clampToYearRange = (date: Date) =>
+    clampMonthToYearRange(date, yearRange.start, yearRange.end);
 
   const [displayMonth, setDisplayMonth] = useState<Date>(() => {
     const base = selectedDate ?? new Date();
@@ -209,6 +204,10 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
           onDayClick={selectDate}
           disabledDates={disabledDates}
           showOutsideDays={showOutsideDays}
+          // The grid's arrows move one tab stop through 42 cells; walking off
+          // either end has to bring the month with it.
+          onMonthChange={(month) => setDisplayMonth(clampToYearRange(month))}
+          initialFocusedDate={selectedDate}
         />
       </div>
 

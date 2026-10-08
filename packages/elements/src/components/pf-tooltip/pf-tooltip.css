@@ -1,0 +1,51 @@
+:host {
+  display: inline-flex;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * `popover` puts this in the top layer, so it escapes any ancestor's overflow
+ * and stacking context. left/top come from the observer.
+ */
+/*
+ * `inset: auto` and `margin: 0` are essential, not tidying -- see
+ * `src/place-popover.ts`, which sets the same two inline and explains the
+ * measurement. They are declared in both places deliberately: here so the
+ * cascade carries them for the whole life of the panel, and inline so a panel
+ * is still positioned where this stylesheet has not been applied.
+ */
+.tooltip {
+  inset: auto;
+  margin: 0;
+  background: var(--pf-tooltip-bg);
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  color: var(--pf-tooltip-text);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  max-width: 260px;
+  padding: var(--space-2) var(--space-3);
+  width: max-content;
+}
+
+.tooltip:popover-open {
+  /* Fade in from the side it sits on. */
+  animation: pf-tooltip-in var(--duration-fast) var(--easing-decelerate);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-tooltip-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip:popover-open {
+    animation: none;
+  }
+}

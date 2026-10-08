@@ -53,6 +53,29 @@ describe('Breadcrumbs', () => {
     expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page');
   });
 
+  /*
+   * `aria-current="page"` identifies one page. Reading `item.current ?? isLast`
+   * per item marked both the explicitly-current crumb and the last one, so a
+   * screen reader was told the user was on two pages at once. Core's
+   * `resolveCurrentCrumb` picks one index, which is what this pins.
+   */
+  it('marks exactly one crumb, even when a non-last one is current', () => {
+    const custom: BreadcrumbItem[] = [
+      { label: 'Home', href: '/', current: true },
+      { label: 'Products', href: '/products' },
+      { label: 'Shoes' },
+    ];
+    const { container } = render(<Breadcrumbs items={custom} />);
+    expect(container.querySelectorAll('[aria-current="page"]')).toHaveLength(1);
+    expect(screen.getByRole('link', { name: 'Home' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByText('Shoes')).not.toHaveAttribute('aria-current');
+  });
+
+  it('marks nothing current in an empty trail', () => {
+    const { container } = render(<Breadcrumbs items={[]} />);
+    expect(container.querySelectorAll('[aria-current="page"]')).toHaveLength(0);
+  });
+
   it('renders the default separator between items', () => {
     const { container } = render(<Breadcrumbs items={items} />);
     const separators = container.querySelectorAll('.pf-breadcrumbs__separator');

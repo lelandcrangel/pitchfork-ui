@@ -1,5 +1,6 @@
-import { forwardRef, useEffect, useId, useState } from 'react';
+import { copyText } from '@pitchfork-ui/core';
 import { Highlight, Language, themes } from 'prism-react-renderer';
+import { forwardRef, useEffect, useId, useState } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './CodeSnippet.css';
@@ -49,18 +50,32 @@ export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(function Co
   }, [copied]);
 
   const handleCopy = async () => {
-    try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(code);
-      }
-      setCopied(true);
-      setCopyError(false);
-      onCodeCopy?.(code);
-    } catch {
-      setCopied(false);
-      setCopyError(true);
-    }
+    /*
+     * Core's, and the return value is the point: this used to guard the write
+     * with `if (navigator.clipboard?.writeText)` and then set `copied`
+     * unconditionally, so in any insecure context — every plain-`http` page —
+     * nothing was copied and the button said "Copied" regardless.
+     */
+    const ok = await copyText(code);
+    setCopied(ok);
+    setCopyError(!ok);
+    if (ok) onCodeCopy?.(code);
   };
+
+  // One button, rendered in whichever of the two places the header allows.
+  const copyButton = (
+    <button
+      type="button"
+      className="pf-code-snippet__copy"
+      onClick={() => {
+        void handleCopy();
+      }}
+      aria-describedby={liveRegionId}
+    >
+      <Icon name={copied ? 'circle-check' : 'copy'} aria-hidden />
+      <span>{copied ? copiedLabel : copyLabel}</span>
+    </button>
+  );
 
   return (
     <figure ref={ref} className={cx('pf-code-snippet', className)} {...props}>
@@ -70,35 +85,11 @@ export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(function Co
             {title ? <span className="pf-code-snippet__title">{title}</span> : null}
             {language ? <span className="pf-code-snippet__language">{language}</span> : null}
           </div>
-          <button
-            type="button"
-            className="pf-code-snippet__copy"
-            onClick={() => {
-              void handleCopy();
-            }}
-            aria-describedby={liveRegionId}
-          >
-            <Icon name={copied ? 'circle-check' : 'copy'} aria-hidden />
-            <span>{copied ? copiedLabel : copyLabel}</span>
-          </button>
+          {copyButton}
         </figcaption>
       )}
 
-      {!(title || language) ? (
-        <div className="pf-code-snippet__toolbar">
-          <button
-            type="button"
-            className="pf-code-snippet__copy"
-            onClick={() => {
-              void handleCopy();
-            }}
-            aria-describedby={liveRegionId}
-          >
-            <Icon name={copied ? 'circle-check' : 'copy'} aria-hidden />
-            <span>{copied ? copiedLabel : copyLabel}</span>
-          </button>
-        </div>
-      ) : null}
+      {!(title || language) ? <div className="pf-code-snippet__toolbar">{copyButton}</div> : null}
 
       <Highlight code={code} language={(language as Language) || 'tsx'} theme={themes.vsDark}>
         {({ className: prismClass, style, tokens, getLineProps, getTokenProps }) => (

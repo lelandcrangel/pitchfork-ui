@@ -1,0 +1,92 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfCommandPalette" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-command-palette>`
+
+
+A searchable command list in a modal dialog.
+
+A native `<dialog>` opened with `showModal()`, like `pf-modal` and
+`pf-slideout-menu`: the focus trap, Escape and the backdrop come free, and
+the React component's `useFocusTrap` has no equivalent here. Page scroll is
+the one part the dialog does not do, so that is core's reference-counted
+lock.
+
+**The active option is set as an element, not an IDREF.** The input lives in
+this shadow root and the options are slotted light-DOM children, and
+`aria-activedescendant` does not cross a shadow boundary — measured against
+Chromium's accessibility tree, where a cross-root IDREF is simply absent
+from it. `ariaActiveDescendantElement` does resolve, because the option sits
+in an ancestor scope of the input's tree, which is the direction element
+reflection allows. (`pf-tooltip` needed the opposite direction — a trigger
+referencing something inside a shadow root it does not own — and that one
+reads back empty, which is why it copies text into `aria-description`
+instead.)
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `dismissable` | `dismissable` | `boolean` | `true` | Close on Escape or a click on the backdrop. Defaults to true. |
+| `emptyMessage` | `empty-message` | `string` | `'No results found.'` | Shown when the query matches nothing. |
+| `label` | `label` | `string` | `'Command palette'` | Accessible name for the dialog. |
+| `open` | `open` | `boolean` | `false` | Whether the palette is showing. Reflected so the stylesheet selects on it. |
+| `placeholder` | `placeholder` | `string` | `'Search commands…'` | Placeholder for the search input. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the palette opens or closes, whoever caused it. |
+| `pfSelect` | `\{ value: string; \}` | Fires with the chosen item's `value`. The palette then closes. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | Closes the palette. |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children and re-applies the current query. |
+| `show()` | `show() =&gt; Promise&lt;void&gt;` | Opens the palette. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | `pf-command-item` and `pf-command-group` children. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `dialog` | the native dialog, which is also the backdrop. |
+| `empty` | the message shown when nothing matches. |
+| `input` | the search input. |
+| `list` | the listbox the items are slotted into. |
+| `panel` | the floating panel. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-command-palette></pf-command-palette>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfCommandPalette } from '@pitchfork-ui/elements-react';
+
+<PfCommandPalette />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-command-palette></pf-command-palette>
+```
+

@@ -111,7 +111,7 @@
   cursor: pointer;
 }
 
-.pf-calendar__day:hover:not(:disabled) {
+.pf-calendar__day:hover:not([aria-disabled='true']) {
   background: var(--pf-calendar-bg-subtle);
 }
 
@@ -131,12 +131,12 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.pf-calendar__day--selected:hover:not(:disabled) {
+.pf-calendar__day--selected:hover:not([aria-disabled='true']) {
   background: var(--pf-calendar-selected-bg-hover);
   color: var(--pf-calendar-selected-text);
 }
 
-.pf-calendar__day:disabled {
+.pf-calendar__day[aria-disabled='true'] {
   color: var(--pf-calendar-text-muted);
   cursor: not-allowed;
   opacity: 0.45;

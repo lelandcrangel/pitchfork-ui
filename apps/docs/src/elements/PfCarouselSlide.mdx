@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfCarouselSlide" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-carousel-slide>`
+
+
+One slide of a `pf-carousel`.
+
+The carousel tells it where it sits and whether it is the one on show; it
+owns only what that means for itself — chiefly that an off-screen slide is
+`inert`, so the focusable content inside it cannot be tabbed to while it is
+scrolled out of sight.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `active` | `active` | `boolean` | `false` | Set by the carousel: the slide on show. Reflected for the stylesheet. |
+| `position` | `position` | `number` | `1` | Set by the carousel: this slide's place, counting from 1. |
+| `total` | `total` | `number` | `1` | Set by the carousel: how many slides there are. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the slide's content. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-carousel-slide></pf-carousel-slide>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfCarouselSlide } from '@pitchfork-ui/elements-react';
+
+<PfCarouselSlide />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-carousel-slide></pf-carousel-slide>
+```
+

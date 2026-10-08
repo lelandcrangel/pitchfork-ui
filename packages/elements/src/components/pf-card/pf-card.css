@@ -1,0 +1,17 @@
+/*
+ * The host is the card. `overflow: hidden` is what makes a section's own
+ * border-bottom stop at the rounded corner instead of crossing it, so the
+ * sections need no corner-radius rules of their own.
+ */
+:host {
+  background: var(--pf-card-background);
+  border: 1px solid var(--pf-card-border);
+  border-radius: var(--pf-card-radius, var(--radius-lg));
+  box-shadow: var(--pf-card-shadow, var(--shadow-sm));
+  display: block;
+  overflow: hidden;
+}
+
+:host([hidden]) {
+  display: none;
+}

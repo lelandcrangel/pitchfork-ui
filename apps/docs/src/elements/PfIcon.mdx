@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfIcon" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-icon>`
+
+
+One glyph from the icon registry.
+
+The registry is core's, not this element's, and that is deliberate: a
+consumer calling `registerIcons()` has to get the icon in the React
+components *and* here, and a registry per layer would silently give them
+one or the other. A name the registry does not hold renders nothing and
+warns once.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string \| undefined` | — | Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label. |
+| `name` | `name` | `string` | — | A registered Font Awesome name, one of its aliases, or a custom glyph. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `svg` | the rendered glyph. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-icon></pf-icon>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfIcon } from '@pitchfork-ui/elements-react';
+
+<PfIcon />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-icon></pf-icon>
+```
+

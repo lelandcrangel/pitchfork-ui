@@ -5,26 +5,95 @@ does not need discussion. Referenced from `CLAUDE.md`.
 
 ---
 
-## Markdown tables do not render in Storybook MDX
+## Markdown tables in Storybook MDX: fixed, and now checked
 
-Storybook's MDX pipeline does not load `remark-gfm`, so a GFM table in an
-`.mdx` file renders as a paragraph of pipe characters rather than a table. The
-one table in the docs — the MCP tool list in `UsingWithAI.mdx` — hit this and
-now uses the library's own `Table` component instead, which looks better
-anyway. But the trap is still there for the next person who writes one.
+Not an open gap. Kept because of how long it hid and how it was found.
 
-**Fix:** add `remark-gfm` to the docs addon's
-`mdxPluginOptions.mdxCompileOptions.remarkPlugins` in
-`apps/docs/.storybook/main.ts`. Worth checking the other MDX pages afterwards,
-since the same plugin also turns on strikethrough, footnotes and autolinks.
+Storybook's MDX pipeline runs remark with no GFM extension, so a pipe table in
+an `.mdx` file rendered as a paragraph of pipe characters. That was a curiosity
+while the docs had one table — the MCP tool list in `UsingWithAI.mdx`, which
+uses the library's own `Table` component and looks better for it. Then the
+element reference generator added 108 pages that are **almost entirely**
+tables, and the whole web-components section of the site was pipe soup: no
+error, no failed request, every story still rendering, and nothing in CI
+looking at a docs page at all.
+
+`remark-gfm` is now wired into addon-docs' `mdxPluginOptions.mdxCompileOptions`
+in `apps/docs/.storybook/main.ts`, and `scripts/smoke-storybook.mjs` opens one
+element reference page and asserts both halves — a `<table>` is there, and the
+header row is **not** on the page as literal text. Measured by removing the
+plugin and rebuilding: the page's table count goes from 5 to 0, the raw row
+appears as text, and the smoke fails with that message.
+
+Checked afterwards, because the same plugin also turns on strikethrough,
+footnotes and autolinks: no hand-written page uses `~~` or `[^`, and the 107
+pages with markdown tables are all generated.
+
+---
+
+## Trusted publishing cannot create a package: the five new names need a first publish by hand
+
+**Open, and it blocks the web-components release.** Five of the eight packages
+are not on the registry at all — measured, E404 rather than an auth error:
+
+```
+@pitchfork-ui/tokens            0.4.2    on npm
+@pitchfork-ui/react             0.15.3   on npm
+@pitchfork-ui/mcp               0.2.1    on npm
+@pitchfork-ui/core              —        E404
+@pitchfork-ui/elements          —        E404
+@pitchfork-ui/elements-react    —        E404
+@pitchfork-ui/elements-angular  —        E404
+@pitchfork-ui/elements-vue      —        E404
+```
+
+Trusted publishing (OIDC) cannot publish a package's **first** version. A
+trusted publisher is configured per package and npm requires the package to
+already exist, so there is no publisher to match against for a name that is not
+there yet. `npm/cli#8544` tracks allowing it; until then the first publish of a
+new name has to come from an account, with a token or an OTP.
+
+The failure mode is the nastiest one in this file: the registry answers a
+**404**, the same answer it gives when a publisher exists but does not match
+the job's identity. So the error points at a misconfigured publisher when the
+real cause is a package that is not there — and it arrives _after_
+release-please has cut and pushed eight tags.
+
+**Order of operations, which cannot be rearranged:**
+
+1. Publish each of the five names once from a machine, signed in as an owner of
+   the `@pitchfork-ui` scope. `--access public` matters: a scoped package is
+   **private** on its first publish whatever the trusted publisher says.
+2. Configure a trusted publisher for each, with publish allowed. From the CLI
+   (npm ≥ 11.15, account-level 2FA required):
+
+   ```
+   npm trust github @pitchfork-ui/core \
+     --repo lelandcrangel/pitchfork-ui \
+     --file release-please.yml \
+     --env release \
+     --allow-publish
+   ```
+
+   `--file` is the workflow filename and `--env` the environment name, and both
+   have to match `.github/workflows/release-please.yml` exactly — npm validates
+   neither when the configuration is saved, only at publish time.
+
+3. Do step 2 and the next CI publish within **two days** of each other: a new
+   configuration that has not completed a successful publish in that window
+   expires and has to be deleted and recreated.
+
+The _Verify npm trusted publisher_ workflow below is the way to check step 2
+landed without cutting a release.
 
 ---
 
 ## Publishing a new package: tick "Allow npm publish"
 
-Not an open gap — all three trusted publishers are verified. Kept because this
-will bite the next package added to the workspace, and this is where someone
-would look.
+The three published packages' trusted publishers are verified. The five new
+ones cannot be configured until they exist — see the entry above, which is the
+blocking one. Kept because this will bite every package added to the workspace,
+and this is where someone would look.
 
 On npmjs.com a package's trusted publisher has an **Allowed actions** section,
 and **`Allow npm publish` is off by default** — the publisher may only _stage_ a
@@ -58,7 +127,7 @@ Verified this way on 2026-09-21:
 
 ---
 
-## Root `optionalDependencies` pin OXC bindings nothing consumes
+## Root `optionalDependencies` pin OXC bindings nothing consumes — fixed
 
 `package.json` pins `@oxc-parser/binding-linux-x64-gnu` and
 `@oxc-resolver/binding-linux-x64-gnu` at exact versions in
@@ -77,7 +146,604 @@ unanchored to any consumer, and each bump is a change that cannot affect
 anything. Copilot flagged the drift on
 [#98](https://github.com/lelandcrangel/pitchfork-ui/pull/98).
 
-**Fix:** check whether the npm bug that prompted the pins is still live (it
-was fixed in npm 10.x for most cases). If it is, tie the pins to the
-consumers' versions and add a check that they match. If it isn't, drop both
-pins and the `optionalDependencies` block with them.
+**Fixed** by dropping both pins and the `optionalDependencies` block. The npm
+bug is not live: the committed lockfile already records every platform binding
+for every consumer of `oxc-parser` and `oxc-resolver`, nested, with its `cpu`
+and `os` fields — including the ones no root pin covers
+(`apps/consumer-angular/node_modules/@oxc-parser/binding-linux-x64-gnu`). So
+the pins were adding two top-level copies at versions nothing loads, which is
+what the drift above describes.
+
+Verified rather than assumed: removed the pins, regenerated the lockfile, ran
+a real `npm ci`, and confirmed both modules load and resolve their bindings
+from the nested gnu copies. Measured on npm 10.9.7; CI runs npm 11, which is
+newer, so the behaviour cannot regress there.
+
+---
+
+## Two names for the Chromium-path escape hatch — fixed
+
+Four places launch Playwright Chromium, and `scripts/smoke-storybook.mjs` was
+the odd one out: it read `PLAYWRIGHT_CHROMIUM_PATH` while the two Vitest
+configs and `scripts/smoke-consumer.mjs` read `PW_CHROMIUM_PATH`, which is
+also the only name `CLAUDE.md` documents. So in an environment whose Chromium
+does not match Playwright's pinned build, setting the documented variable got
+three suites passing and left `npm run test:smoke` failing with Playwright's
+own "run npx playwright install" banner — pointing at the wrong cause
+entirely.
+
+It reads `PW_CHROMIUM_PATH` first now, with the old name as a fallback in case
+anything sets it.
+
+---
+
+## An ellipsis can stand in for a single page — fixed
+
+`getPaginationItems` in `packages/core/src/pagination.ts` opens a gap wherever
+the sibling window does not reach the boundary — even when exactly one page is
+behind it. At 4 of 7 with the default counts the run is
+
+```
+1 … 3 4 5 … 7
+```
+
+where each ellipsis hides one page: 2 on the left, 6 on the right. An ellipsis
+costs the same room as the page it hides and says less, so showing `1 2 3 4 5 6
+7` would be strictly better there.
+
+This is the React component's long-standing behaviour, carried over verbatim
+when the maths moved into core, and both layers now share the one
+implementation. It is asserted in `pagination.test.ts` so the port is
+faithful, not so the behaviour is blessed.
+
+**Fixed** in core, so `Pagination` and `<pf-pagination>` changed together —
+and both layers' tests passed unchanged, which is the signal the fix was in
+the right place.
+
+Not by special-casing the gap, in the end. `getPaginationItems` now collects
+the pages to show and walks them, emitting a gap wherever pages are genuinely
+missing, rather than placing gaps from the window's indexes. That turned up a
+second defect, older than this one: at 1 of 6 with `boundaryCount: 3` the two
+boundaries meet in the middle and the run was `1 2 3 … 4 5 6` — an ellipsis
+standing between two consecutive pages, because the arithmetic compared the
+window against the boundary edges rather than asking which pages were actually
+missing. Neither shape can express that.
+
+Two exhaustive sweeps over total 1..14 x current x sibling 0..3 x boundary 0..3
+now pin it: every gap hides at least one page, and a run is never longer than
+`2·boundary + 2·sibling + 3` items, which is what a pager has to lay out.
+
+---
+
+## The command palette's active option is not announced without ARIA element reflection
+
+`pf-command-palette` keeps its search input in its shadow root and its options
+in the light DOM, so it points at the active one with
+`input.ariaActiveDescendantElement`. There is no cross-root fallback:
+`aria-activedescendant` is an IDREF, and a cross-root IDREF is **absent from
+Chromium's accessibility tree entirely** — measured against a same-root IDREF,
+which does resolve.
+
+The assignment is feature-detected (`'ariaActiveDescendantElement' in input`),
+so where element reflection is missing the palette still filters, highlights,
+moves with the arrows and runs on Enter. What is lost is the _announcement_:
+a screen reader is not told which option is active as the user arrows through.
+Only Chromium has been measured here; support elsewhere was not verified in
+this environment.
+
+**Fix:** measure the other engines rather than trusting a support table, and if
+one lacks it, give the palette a roving-focus mode for that engine — move DOM
+focus to the active `pf-command-item` and forward typing back to the input.
+That is the only pattern that needs no cross-root reference at all. Worth
+pairing with a decision about whether the React `CommandPalette`, which has no
+shadow boundary and so uses a plain IDREF, should adopt the same mode for
+consistency.
+
+---
+
+## The React Calendar has no keyboard — fixed
+
+`Calendar` and `DateRangePicker` render 42 day buttons through `CalendarGrid`
+and handle no keys at all. So the grid is 42 sequential tab stops, there is no
+way to move by week, and reaching the end of a month from its start takes 42
+presses of Tab. The ARIA grid pattern is one tab stop plus arrows.
+
+`<pf-calendar>` implements that pattern, and the arithmetic behind it —
+`moveCalendarDate` — is in `packages/core/src/date.ts` precisely so the React
+component can adopt it without the two layers disagreeing about what
+PageDown from the 31st of January means.
+
+**Fixed**, in `CalendarGrid`, so `Calendar` and `DateRangePicker` both have it.
+`resolveCalendarKey` moved into core on the way through — `pf-calendar` held
+the key map in a private `MOVES` record, and two copies of a key map agree
+until one of them gains a key.
+
+Four things the port turned up that the element's version did not have to
+face:
+
+- **The blocked days were `disabled`, so focus could not cross them.** The
+  ARIA pattern is that focus moves freely while activation refuses, which is
+  why `pf-calendar` uses `aria-disabled` — and a `disabled` button cannot take
+  focus at all, so a long blocked stretch was uncrossable. The React grid now
+  uses `aria-disabled` too, both stylesheets select on it, and the click
+  handler refuses (an `aria-disabled` button still fires a click). Found by
+  writing the element's test and watching focus vanish from the grid.
+- **The focused day is _derived_, not synchronised.** An effect that re-seated
+  it when `monthDate` changed worked, but `react-hooks/set-state-in-effect`
+  objected and was right: reading the stored day through `monthDate` at render
+  time makes the two impossible to disagree, where the effect left one render
+  in between where they did.
+- **The key handler is on the cells, not on the grid container.** A
+  `role="grid"` that never takes focus should not carry a key handler
+  (`jsx-a11y/interactive-supports-focus`), and the thing a key arrives at here
+  is always a day button. This changes how a test has to drive it: a synthetic
+  event on the container never reaches the cells, since React events bubble up.
+- **The right panel of `DateRangePicker` moves `leftMonth` by one**, not to the
+  month the keyboard landed in — it is always one month ahead. Getting that
+  backwards scrolls two months at a time.
+
+---
+
+## The React Select has no typeahead — fixed
+
+The ARIA listbox pattern expects printable-character typeahead: typing `b`
+moves to the next option beginning with `b`, `br` narrows, and pressing one
+letter repeatedly cycles through the options that match it. `Select` handles
+`ArrowUp`/`ArrowDown`/`Home`/`End`/`Enter`/`Escape` and no character keys at
+all, so a long list can only be walked one arrow at a time.
+
+`<pf-select>` implements it, and the matching is in
+`packages/core/src/typeahead.ts` — `isTypeaheadKey`, `nextTypeaheadBuffer` and
+`findTypeaheadMatch` — precisely so the two layers cannot disagree about what
+`bbb` means.
+
+**Fixed**, and the buffer went into a hook rather than into the component:
+`packages/react/src/hooks/useTypeahead.ts` owns the buffer and its timer and
+delegates the matching to core, which is the shape every other hook here
+takes. `MultiSelect`, `Combobox` and `TreeView` can take it as it stands.
+
+The buffer is a **ref, not state**. It never reaches the DOM — what renders is
+the active index the caller sets from the match — so holding it in state would
+re-render on every keystroke to produce identical markup.
+
+Both of the element's decisions came across, each with a test: a disabled
+option is never matched, and with the listbox closed typeahead _chooses_
+rather than highlighting. One more the port needed: the typeahead branch has
+to come **after** the activation branch, or a space goes into the buffer
+instead of selecting. Probed by reordering them, which breaks two tests.
+
+---
+
+## The React Combobox has no Home or End, and its arrows stop at the ends — fixed
+
+`Combobox` handles `ArrowDown`/`ArrowUp` with `Math.min`/`Math.max`, so the
+active option stops at the first and last match rather than wrapping, and
+`Home`/`End` do nothing at all. `Select` next door wraps, through core's
+`resolveListMove`. One design system with two arrow behaviours in neighbouring
+controls is the actual problem; which way they both go matters less.
+
+`<pf-combobox>` and `<pf-select>` both use `resolveListMove`, so they wrap and
+both answer `Home`/`End`.
+
+**Fixed** by putting `Combobox` on `useListNavigation`, the hook over
+`resolveListMove` that `Select` and `MultiSelect` already used, and adding the
+two keys. A third defect came with it: the clamping could leave a _disabled_
+option active, and Enter on one did nothing at all — the arrows now skip it,
+as the ARIA pattern and both elements do.
+
+One more thing the swap needed. `filtered` changes with every keystroke, so
+the active option has to be re-established against the new list in an effect:
+the `setActiveIndex(0)` in the change handler still saw the previous render's
+options, so index 0 of those might not exist in these.
+
+Two claims in the original entry were wrong, and are worth recording as
+wrong: `MultiSelect` was already on `useListNavigation` with both keys, and
+`TagInput` has no list of any kind — no suggestions, no listbox — so there is
+nothing in it to navigate.
+
+---
+
+## `TagInput`'s paste handler only ever added the last tag — fixed
+
+Recorded because the fix shipped with `<pf-tag-input>` rather than on its own,
+and the shape of the mistake is worth remembering.
+
+`onPaste` split the clipboard text and then called the component's own
+`addTag` once per candidate. That helper read `currentTags` from the render's
+closure and called `setTags([...currentTags, tag])`, so every call built its
+list from the _same_ base and the last `setTags` won. Pasting
+`alpha, beta, gamma` left one tag. The maximum and the dedup were equally
+blind, for the same reason.
+
+Both layers now fold the additions — each candidate is added to the result of
+the previous one — through core's `addTag`. Three React tests cover it and
+fail against the old handler.
+
+**Nothing left to do here.** The entry stands as a note that a loop of state
+setters over closed-over state is the failure mode to look for in the
+remaining ports: `MultiSelect`, `Combobox` and `TreeView` all have handlers
+shaped like that one.
+
+---
+
+## The React `Tabs` is one tab stop per tab, and reports an unchanged selection — fixed
+
+Two gaps, both found porting it to `<pf-tabs>`.
+
+`Tabs` renders `tabIndex={item.disabled ? -1 : 0}`, so a six-tab strip is six
+tab stops and tabbing through the page walks every one. The ARIA tabs pattern
+is a single stop on the _selected_ tab, with the arrows moving inside the
+group — which `Tabs` already implements, so the keyboard half is there and
+only the tabindex is wrong. `<pf-tabs>` does it with core's
+`syncRovingTabIndex`, the same call `pf-toolbar` and `pf-radio-group` make, and
+its browser spec asserts that tabbing in from outside lands on the selection.
+
+`onClick` then calls `setSelectedValue(item.value)` unconditionally, so
+clicking the tab that is already selected calls `onValueChange` with a value
+that did not change. A native `<select>` does not fire `change` for the same
+option. `<pf-tabs>` compares against the tab actually on show — not against
+`value`, which is still `''` while the first enabled tab is selected by
+fallback — and a unit test pins it.
+
+**Fixed**, both as described. The guard goes in `setSelectedValue`, so the
+arrows and a click are covered by one check — and it compares against
+`selectedItem`, the tab on show, not against `selectedValue`, which is still
+`undefined` while the first enabled tab is selected by fallback.
+
+Five tests, including the one that matters most for the tabindex: tabbing in
+from a button outside the strip lands on the _selection_, not on the first tab.
+
+---
+
+## The React `Breadcrumbs` marked two current pages — fixed
+
+`aria-current="page"` identifies one page. `Breadcrumbs` read
+`item.current ?? isLast` per item, so marking any crumb but the last left the
+attribute on both it and the last one, and a screen reader was told the user
+was on two pages at once.
+
+Both layers now take one index from core's `resolveCurrentCrumb` — the first
+crumb marked, or the last when none is. Two React tests cover it and the first
+fails against the old expression.
+
+**Nothing left to do here.** The entry stands as a note that a per-item
+`?? isLast` is the shape to look for: the same reading would be wrong in
+`ProgressSteps` and in `Timeline`, both of which have a "current" of their own
+and are still to be ported.
+
+---
+
+## The React `ProgressSteps` said nothing about where the trail had got to — fixed
+
+Two gaps, both found porting it to `<pf-progress-steps>`.
+
+The marker is `aria-hidden` and `complete`/`current`/`upcoming` were conveyed
+by colour alone, so nothing in the accessibility tree said which step the user
+was on. Both layers now put `aria-current="step"` on the current step, and only
+on that one. Two React tests cover it.
+
+The ring around the current marker asked for `--focus-ring-shadow`, which is
+defined in no stylesheet in this repository — and an undefined custom property
+makes the declaration invalid at computed-value time, so `box-shadow` computed
+to `none` and the ring had never been drawn. Measured in Chromium, and fixed to
+`--pf-focus-ring` in both layers; `scripts/smoke-consumer.mjs` reads the
+computed value now.
+
+**What is left:** the three statuses are still only colour and a ring, so a
+screen reader is told which step is current but not which are done. The usual
+remedy is visually-hidden text in each step ("Completed: ", "Current step: "),
+which changes every step's accessible name — worth doing deliberately, with the
+docs examples updated, rather than folded into a port.
+
+---
+
+## The React `useExitAnimation` waited on a guess — fixed
+
+It set a class and called back after a fixed 220ms, which is wrong in both
+directions: too early or too late when a stylesheet's duration changes, and it
+fired at all when nothing had animated — under `prefers-reduced-motion`, for a
+consumer who has not loaded the CSS, and in every test environment.
+
+`animationsFinished` is in `@pitchfork-ui/core` now and all four callers use
+it: the hook (`Alert`, `InlineCTA`, `Notification`) and `pf-notification`,
+which had its own copy. It waits a frame so a class applied in the same tick
+has landed, reads `getAnimations()`, resolves at once on an empty list, and
+treats a cancelled animation as finished. The hook returns a `ref` to attach
+to the animating element, which is what replaced the `duration` option.
+
+A `Notification` test changed with it, and the change is the finding: it had
+asserted that `onDismiss` was **not** called immediately after the click,
+which only held because the timeout was a fiction — nothing was ever animating
+in jsdom.
+
+---
+
+## `<pf-table>` reports a sort where the React `Table` performs one
+
+Not a defect in either, but the one API difference in Wave 5 worth having
+written down.
+
+The React `Table` takes `rows` and sorts them itself. `<pf-table>` cannot: the
+rows are `pf-table-row` elements the consumer wrote, and reordering them means
+moving nodes in the consumer's DOM — which their framework undoes on its next
+render, and whose reconciliation it breaks on the way. So the element owns the
+header buttons, `aria-sort` and the indicator, and emits `pfSortChange` for the
+consumer to sort their own data with.
+
+`compareSortValues`, `sortRowsBy` and `nextSortState` are in core so that both
+orders agree: a consumer calling `sortRowsBy` gets exactly what the React
+`Table` would have produced, down to the collation ("Item 2" before "Item 10",
+case and accents ignored). Both consumer apps do precisely that, and the smoke
+asserts the round trip — header reports, app sorts, first row changes.
+
+**Nothing to do unless** a sorted-for-you element is wanted later, in which
+case the shape to reach for is a `rows` property of plain data on the element
+(no slotted rows at all) — a different component, not a change to this one.
+
+---
+
+## The React `TreeView` is one tab stop per visible item — fixed
+
+`TreeView` renders every visible node as a `<button role="treeitem">` with no
+tabindex management, so a tree of thirty open nodes is thirty tab stops and
+tabbing through the page walks every one. The ARIA tree pattern is a single tab
+stop with the arrows moving inside — which `TreeView` already implements, so
+the keyboard half is there and only the focus management is wrong.
+
+`<pf-tree-view>` could not use a roving tabindex even if it wanted to: a
+`tabindex="0"` host slotted into another host's shadow tree is skipped by
+sequential navigation when the outer host's tabindex is negative, which is
+measured in its browser spec. It holds the tab stop itself and names the active
+item with `aria-activedescendant`.
+
+**Fixed** with the roving tabindex, and the handler did not change. Two things
+the change needed that the entry did not foresee:
+
+- **The items were `disabled`, so focus could not cross them.**
+  `resolveTreeKey` returns a focus intent for a disabled node — the ARIA
+  pattern is that focus moves freely while activation refuses — and a
+  `disabled` button cannot take focus, so arrowing onto one dropped focus out
+  of the tree entirely. `pf-tree-item` has always used `aria-disabled`, and
+  the stylesheet keys off the row's class rather than the pseudo-class, so
+  nothing about the look changed. The same defect as the Calendar's, found the
+  same way.
+- **The active item is derived against the visible list**, not stored outright.
+  Collapsing a branch takes its children off screen, and a tab stop on a node
+  that is no longer rendered leaves the tree with none at all.
+
+That second one took two attempts to test. Walking out of a branch with
+ArrowLeft moves focus to the parent first, so the stored value is never stale
+on that path and the test passed with the fix reverted; `collapseAll()` while
+a child is focused is the case that is stale.
+
+---
+
+## The React navigations take `ReactNode` labels and an `items` array
+
+Both `HeaderNavigation` and `SidebarNavigation` take arrays of plain objects,
+which is the shape the element layer cannot have — `<pf-nav-item>` children
+are what let a consumer loop in their own template and slot their framework's
+router link in. That difference is deliberate and §2.1 of
+`WEB-COMPONENTS-PLAN.md` settles it; nothing to do.
+
+What _was_ wrong and is now fixed: both read `item.active` per item, so two
+active items put `aria-current="page"` on both and announced the reader as
+being on two pages at once. Core's `resolveCurrentNavItem` resolves one index,
+the same call `<pf-header-navigation>` makes, and the highlight follows the
+announcement — a second highlighted item with no `aria-current` is a
+sighted-only lie. The sidebar resolves across every section rather than within
+one, and counts items rather than comparing them, since nothing stops a
+consumer reusing one item object twice.
+
+**Still open:** neither React navigation is a single tab stop, which is correct
+for a list of links (a navigation is not a composite widget) — but
+`SidebarNavigation` renders a disabled item with an `href` as a `<span>` and a
+disabled item with an `onClick` as a `disabled` button, so the two disabled
+states are differently reachable. `<pf-nav-item>` has one rule: a disabled item
+renders no anchor at all.
+
+---
+
+## `<pf-sidebar-navigation>` has no collapsed state
+
+The React `SidebarNavigation` has none either, so nothing has been lost — but a
+sidebar that cannot narrow to icons only is the obvious gap in both layers. The
+element is the better place to add it: `pf-nav-item` already has the icon slot
+and a pushed-down `orientation`, so a `collapsed` prop on the navigation would
+push the same way and the item would hide its label and badge and keep the
+icon. The label still has to reach a screen reader, which means
+`aria-label` from the slotted text rather than `display: none` on it.
+
+**Not yet done because** it needs a decision on the tooltip a collapsed item
+should show, and `pf-tooltip` cannot describe a trigger across a shadow
+boundary with an IDREF — it copies the text onto the trigger as
+`aria-description`. Two elements each copying text onto the same node is the
+part to think about first.
+
+---
+
+## The React `FileUploader` is not a form control
+
+It renders a real `<input type="file">`, so a file reaches a surrounding form
+the moment one is picked — but the component holds its _own_ list in state and
+clears the input after every selection, which means the input is empty by the
+time anything is submitted. A `<form>` around it submits nothing.
+`<pf-file-uploader>` has no such gap: being form-associated, it submits its
+held list through `ElementInternals`, one entry per file.
+
+**Fix:** the same shape the element uses — keep the real input for the picker
+only, and add a hidden carrier the component writes to. There is no way to set
+`FileList` on an input other than through a `DataTransfer`, which is
+constructible in every current browser, so `new DataTransfer()` filled from
+the held list and assigned to a hidden `<input type="file" name>` would do it.
+Worth a measurement first: Safari's `DataTransfer` constructor has been the
+late one historically.
+
+**Not done here** because it changes what a form sees, which is a decision
+about the public API rather than a port, and the element covers the case today.
+
+---
+
+## `<pf-code-snippet>` does not highlight
+
+Deliberate, and documented on the element: `prism-react-renderer` is a React
+renderer, and every framework-free highlighter is a large runtime dependency
+that an element in a design system should not force into a consumer's bundle.
+A consumer who already highlights slots the markup their highlighter produced
+into the default slot and keeps the frame, header, copy button, scroll box and
+announcement; line numbers are then withheld, because aligning a gutter with
+someone else's markup needs to know where their lines break.
+
+**If this is ever wanted built in**, the shape to reach for is a registry
+rather than a dependency: a `registerHighlighter(fn)` in core taking
+`(code, language) => string` of markup, defaulting to identity, so a consumer
+who already has Shiki or Prism wires it once at startup — exactly what
+`registerIcons` does for glyphs, and for the same reason. The element would
+then set that markup rather than text, which is the only place in either layer
+that would need `innerHTML`, so the decision to make is whose escaping is
+trusted.
+
+---
+
+## The React `RichTextEditor` is six tab stops, and reaches no form — half fixed
+
+Two gaps, both of which `<pf-rich-text-editor>` closes:
+
+- Its toolbar is `role="toolbar"` with six focusable buttons inside, so
+  tabbing past the field walks every one. The ARIA toolbar pattern is one tab
+  stop with the arrows moving inside, which is what `pf-toolbar` and the
+  element's own toolbar do. Core already has `getRovingItems`,
+  `resolveRovingKey`, `resolveListMove` and `syncRovingTabIndex`, so the fix
+  is a `ref` on the toolbar and the same three handlers the element has — no
+  new logic at all.
+- A `contenteditable` is not a form control, so a `<form>` around the React
+  editor submits nothing. Same shape as the `FileUploader` entry above, and the
+  same fix: a hidden input the component writes its value to. Simpler here,
+  because the value is a string.
+
+**The toolbar is fixed**, and not the way this entry proposed. Copying the
+element's three handlers would have been the third place in the repo with the
+same five lines, because the React `Toolbar` already had them inline. They are
+now `packages/react/src/hooks/useRovingTabIndex.ts`, which `Toolbar` and the
+editor's toolbar both use — the editor keeps its own `.pf-rte__toolbar`
+styling, which reusing the `Toolbar` component outright would have changed.
+
+**The form half is still open**, and stays open for the reason the
+`FileUploader` entry gives: what a `<form>` sees is a decision about the
+public API rather than a port, and the element covers the case today.
+
+---
+
+## The React `GaugeChart`'s accessible name is its value
+
+`aria-label={`${pct}%`}` on `role="meter"`, so a reader is told "73%" with no
+idea what is 73% full — and `aria-valuenow` already carries the number, so the
+name is pure duplication. `<pf-gauge-chart>` takes a `label` for what is being
+measured and puts the percentage in `aria-valuetext`, which is where a reader
+looks for it.
+
+**Fix:** add a `label` prop defaulting to nothing, use it for `aria-label`, and
+move the percentage to `aria-valuetext`. Left alone here because a gauge that
+suddenly has no accessible name would be a regression for any consumer relying
+on the current one, so the default needs a decision: `"Gauge"`, as the element
+uses, or required.
+
+---
+
+## The published declarations of `elements-vue` reach for `vue-router`
+
+`StencilVueComponent` is typed in `@stencil/vue-output-target/runtime`, whose
+own declarations `import type { RouteLocationAsPathGeneric } from 'vue-router'`
+for the `routerLink` prop it adds to every wrapper. `vue-router` is not a
+dependency of anything here, so that import resolves to nothing — invisibly,
+because every tsconfig in this repo (and the node16 fixture) has
+`skipLibCheck: true`, which suppresses errors inside declaration files
+including unresolved imports.
+
+A consumer with `skipLibCheck: false` and no `vue-router` installed would get
+"Cannot find module 'vue-router'" from our package's types. Measured only as
+far as the import existing in the installed runtime's `types.d.ts`; the
+consumer failure is inferred from how `skipLibCheck` works, not reproduced.
+
+**Fix, if it proves real:** declare `vue-router` an optional peer dependency of
+`@pitchfork-ui/elements-vue` (`peerDependenciesMeta.optional`), which is what
+Ionic's Vue package does for the same prop. Checking it needs a fixture with
+`skipLibCheck: false` — the existing node16 probe cannot see it, and turning
+`skipLibCheck` off there would also surface every unrelated third-party
+declaration, so it wants a fixture of its own.
+
+---
+
+## `pf-icon::part(svg)` missed every custom glyph — fixed
+
+The Font Awesome branch of `pf-icon.render` set `part="svg"` on its `<svg>`;
+the thirteen hand-drawn glyphs, which were written out as Stencil JSX in a
+sibling module, did not. So a consumer styling `pf-icon::part(svg)` — the one
+hook a shadow root offers them — reached `star` and `circle-check` and silently
+missed every chevron, the search icon and the warning triangle.
+
+Fixed by the same change that moved the glyph geometry into
+`packages/core/src/custom-glyphs.ts`: one renderer per layer over shared data,
+so there is one `<svg>` per layer to get the part right on. A browser spec
+asserts the part on a custom glyph, probed by removing the attribute.
+
+---
+
+## `npm audit --audit-level=high` is red, and has been — fixed
+
+CI's last step is `npm audit --audit-level=high`, and it fails: 15
+vulnerabilities, 12 high and 2 critical. Checked against the committed
+lockfile at HEAD as well as a fresh install — the same 15 either way, so this
+predates the dependency pinning and is not a side effect of it.
+
+Two chains, and neither has a fix this repo can take:
+
+- **`@angular/cli` 21's toolchain** — `piscina` (critical), `@angular/build`
+  (critical), `undici`, `postcss`, and the `sigstore` →
+  `make-fetch-happen` → `http-cache-semantics` chain.
+  `npm audit fix --force` offers `@angular/cli@7.2.4`, fourteen majors back,
+  which would take the Angular consumer app with it.
+- **`brace-expansion`** via `eslint-plugin-jsx-a11y`. `npm audit fix` reports a
+  non-breaking fix for this one.
+
+All of it is devDependencies of the consumer apps and the lint setup: nothing
+here reaches a published package, which is why it has gone unnoticed. But a CI
+step that is always red is a CI step nobody reads, and it is the step meant to
+catch a dependency that actually matters.
+
+**Fixed** in two parts. `brace-expansion` had a non-breaking fix (5.0.9 →
+5.0.12, one line of the lockfile), and it was the only one of the fifteen that
+reached anything outside devDependencies — it comes in through `minimatch`
+under `vite-plugin-dts`.
+
+The step is now two steps. `npm audit --omit=dev --audit-level=high` blocks,
+and is the question that matters for a published package: does anything a
+consumer installs carry a known vulnerability? It is clean. The whole-tree
+audit still runs, with `|| true`, so the fourteen Angular-toolchain and lint
+advisories stay visible in the log without failing every build.
+
+What is left, and why it stays: `piscina`, `@angular/build`, `undici`,
+`postcss` and the `sigstore` → `make-fetch-happen` → `http-cache-semantics`
+chain all come from `@angular/cli` 21, a devDependency of the Angular consumer
+app. `npm audit fix --force` offers `@angular/cli@7.2.4`. Revisit when Angular
+ships a toolchain that resolves them.
+
+---
+
+## The React `Dropdown`'s arrows stopped at the ends — fixed
+
+The third component found with the same defect as `Combobox`: `onMenuKeyDown`
+clamped with `Math.min`/`Math.max` over a `querySelectorAll` of enabled items,
+so the arrows stopped at the first and last item where `<pf-dropdown>` and
+`ContextMenu` next door wrapped. One design system with two menu behaviours.
+
+Fixed with the same pair the element uses — `resolveRovingKey(key,
+'vertical')` for the key and the `useListNavigation` hook's `move` for the
+index — which also puts DOM focus and the `--active` highlight on one path.
+They were two before, and agreed only because every `.focus()` fires the
+item's own `onFocus`; true, but by accident.
+
+Found by sweeping the library rather than by a report: the three
+`aria-disabled` fixes made it worth asking which other components navigate a
+list by hand. `ContextMenu`, `Select`, `MultiSelect` and `CommandPalette` were
+all already on the core helpers; `Dropdown` was the only one left.

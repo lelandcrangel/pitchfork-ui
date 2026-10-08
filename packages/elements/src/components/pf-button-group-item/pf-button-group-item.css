@@ -1,0 +1,103 @@
+:host {
+  display: inline-flex;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.button {
+  align-items: center;
+  background: var(--pf-buttongroup-bg);
+  border: 1px solid var(--pf-buttongroup-border);
+  color: var(--pf-buttongroup-text);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  gap: var(--space-2);
+  justify-content: center;
+  line-height: 1;
+  /* The buttons share a border, so each laps one pixel over the last. */
+  margin-inline-start: -1px;
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  position: relative;
+  transition:
+    background-color var(--pf-transition-fast),
+    border-color var(--pf-transition-fast),
+    color var(--pf-transition-fast),
+    box-shadow var(--pf-transition-fast);
+}
+
+/*
+ * The rounded ends, from in here rather than from the group's sheet:
+ * `::slotted()` takes a compound selector and no combinator, and the radius
+ * belongs on the inner button in any case -- it is the thing with the border.
+ * The same arrangement as pf-accordion-item's rule between sections.
+ */
+:host(:first-child) .button {
+  border-bottom-left-radius: var(--radius-md);
+  border-top-left-radius: var(--radius-md);
+  margin-inline-start: 0;
+}
+
+:host(:last-child) .button {
+  border-bottom-right-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+}
+
+.button:focus-visible {
+  box-shadow: var(--pf-buttongroup-focus-ring, var(--pf-focus-ring));
+  outline: none;
+  /* Above both neighbours, so the ring is not clipped by their borders. */
+  z-index: 2;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--pf-buttongroup-bg-subtle);
+}
+
+:host([selected]) .button {
+  background: var(--pf-buttongroup-action-primary);
+  border-color: var(--pf-buttongroup-action-primary);
+  color: var(--pf-buttongroup-action-primary-text);
+  z-index: 1;
+}
+
+:host([selected]) .button:hover:not(:disabled) {
+  background: var(--pf-buttongroup-action-primary-hover);
+  border-color: var(--pf-buttongroup-action-primary-hover);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.button:disabled:hover {
+  background: var(--pf-buttongroup-bg);
+}
+
+:host([selected]) .button:disabled:hover {
+  background: var(--pf-buttongroup-action-primary);
+  border-color: var(--pf-buttongroup-action-primary);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.dot {
+  background: var(--pf-buttongroup-action-primary);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  height: 8px;
+  width: 8px;
+}
+
+/* There is an alias for exactly this, so the selected dot uses it. */
+:host([selected]) .dot {
+  background: var(--pf-buttongroup-dot-selected);
+}

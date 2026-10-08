@@ -63,3 +63,44 @@ describe('Sparkline', () => {
     expect(container.querySelector('[data-testid="spark"]')).toBeInTheDocument();
   });
 });
+
+/*
+ * The three edge cases the geometry used to get wrong, now core's. The first
+ * is the live one: `i / (data.length - 1)` with one value divides by zero, so
+ * `x` was `NaN` and an end dot rendered `cx="NaN"`.
+ */
+describe('Sparkline edge cases', () => {
+  const svgOf = (container: HTMLElement) => container.querySelector('svg') as SVGSVGElement;
+
+  it('places a single value without an invalid coordinate', () => {
+    const { container } = render(<Sparkline data={[7]} endDot width={100} height={40} />);
+    const dot = svgOf(container).querySelector('circle') as SVGCircleElement;
+
+    expect(dot.getAttribute('cx')).toBe('50');
+    expect(dot.getAttribute('cy')).toBe('20');
+  });
+
+  it('centres a flat series rather than pinning it to an edge', () => {
+    const { container } = render(<Sparkline data={[5, 5, 5]} width={100} height={40} />);
+    const d = svgOf(container).querySelector('path')?.getAttribute('d') ?? '';
+
+    // Every y is the box's middle.
+    expect(d.match(/\d+(\.\d+)? 20\b/g)).toHaveLength(3);
+  });
+
+  it('draws no path at all from no data', () => {
+    const { container } = render(<Sparkline data={[]} />);
+    expect(svgOf(container).querySelector('path')).toBeNull();
+  });
+
+  /* The closing branch of the old path builder put a boolean in the `d`. */
+  it('puts no non-number in an area path', () => {
+    const { container } = render(<Sparkline data={[1, 4, 2]} variant="area" />);
+    const paths = Array.from(svgOf(container).querySelectorAll('path'));
+
+    expect(paths.length).toBeGreaterThan(0);
+    for (const path of paths) {
+      expect(path.getAttribute('d')).not.toMatch(/true|false|NaN|undefined/);
+    }
+  });
+});

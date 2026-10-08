@@ -1,0 +1,158 @@
+/*
+ * The generic set pf-option reads, mapped to this control's own family — see
+ * pf-option.css. The same option element is themed by whichever listbox it is
+ * slotted into.
+ */
+:host {
+  display: block;
+  --pf-option-text: var(--pf-combobox-text);
+  --pf-option-text-disabled: var(--pf-combobox-placeholder);
+  --pf-option-active-bg: var(--pf-combobox-option-active-bg);
+  --pf-option-active-text: var(--pf-combobox-option-active-text);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.label {
+  color: var(--pf-combobox-text);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.required {
+  color: var(--pf-combobox-invalid-border);
+  margin-inline-start: var(--space-1);
+}
+
+.control {
+  align-items: center;
+  background: var(--pf-combobox-bg);
+  border: 1px solid var(--pf-combobox-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: var(--space-1);
+  padding-inline-end: var(--space-2);
+}
+
+.control:focus-within {
+  border-color: var(--pf-combobox-focus-border);
+  box-shadow: var(--pf-focus-ring);
+}
+
+.control--invalid {
+  border-color: var(--pf-combobox-invalid-border);
+}
+
+.input {
+  background: none;
+  border: 0;
+  color: var(--pf-combobox-text);
+  flex: 1;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  min-width: 0;
+  outline: none;
+  padding: var(--space-2) var(--space-3);
+}
+
+.input::placeholder {
+  color: var(--pf-combobox-placeholder);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.clear,
+.chevron {
+  align-items: center;
+  color: var(--pf-combobox-placeholder);
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+.clear {
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  padding: var(--space-1);
+}
+
+.clear:hover {
+  color: var(--pf-combobox-text);
+}
+
+.chevron {
+  transition: transform var(--pf-transition-fast);
+}
+
+:host([open]) .chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
+.description {
+  color: var(--pf-combobox-placeholder);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+.error {
+  color: var(--pf-combobox-invalid-border);
+  font-size: var(--font-size-xs);
+  margin: 0;
+}
+
+/* See src/place-popover.ts: the UA stylesheet centres a popover otherwise. */
+.listbox {
+  inset: auto;
+  margin: 0;
+  background: var(--pf-combobox-menu-bg);
+  border: 1px solid var(--pf-combobox-menu-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--pf-elevation-popover-shadow);
+  max-height: min(60vh, 320px);
+  overflow-y: auto;
+  padding: var(--space-1);
+}
+
+.listbox:popover-open {
+  animation: pf-combobox-in var(--pf-transition-enter);
+}
+
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-combobox-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .listbox:popover-open {
+    animation: none;
+  }
+}
+
+.empty {
+  color: var(--pf-combobox-placeholder);
+  font-size: var(--font-size-sm);
+  margin: 0;
+  padding: var(--space-3);
+  text-align: center;
+}

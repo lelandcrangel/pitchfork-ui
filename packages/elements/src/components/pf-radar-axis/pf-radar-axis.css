@@ -1,0 +1,26 @@
+:host {
+  align-items: center;
+  display: flex;
+  gap: var(--space-2);
+  justify-content: space-between;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* An axis the chart did not draw is not a legend row either. */
+:host(:not([drawn])) {
+  display: none;
+}
+
+.label {
+  color: var(--pf-radar-legend-text);
+  font-size: var(--font-size-sm);
+}
+
+.value {
+  color: var(--pf-radar-legend-value);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}

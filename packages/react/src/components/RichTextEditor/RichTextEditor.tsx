@@ -1,11 +1,18 @@
-import { forwardRef, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
+import { RICH_TEXT_COMMANDS, stripOuterParagraph } from '@pitchfork-ui/core';
+import {
+  Fragment,
+  forwardRef,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import { composeDescribedBy } from '../../a11y';
+import { useRovingTabIndex } from '../../hooks';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import './RichTextEditor.css';
-
-type ToolbarCommand =
-  'bold' | 'italic' | 'underline' | 'insertUnorderedList' | 'insertOrderedList' | 'removeFormat';
 
 export interface RichTextEditorProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -24,23 +31,12 @@ export interface RichTextEditorProps extends Omit<
   disabled?: boolean;
 }
 
-// Strips a single outer <p>...</p> wrapper if present
-const stripOuterPTags = (html: string): string => {
-  if (!html) return '';
-  const trimmed = html.trim();
-  if (
-    trimmed.startsWith('<p>') &&
-    trimmed.endsWith('</p>') &&
-    trimmed.indexOf('<p>') === 0 &&
-    trimmed.lastIndexOf('</p>') === trimmed.length - 4
-  ) {
-    // Remove only the outermost <p>...</p>
-    return trimmed.slice(3, -4);
-  }
-  return html;
-};
-
-const normalizeHtml = (value: string | undefined) => stripOuterPTags(value ?? '');
+/*
+ * Core's, which fixed a live defect: every one of the four conditions this
+ * used to test is true of `<p>a</p><p>b</p>`, so two paragraphs were cut into
+ * the broken fragment `a</p><p>b`.
+ */
+const normalizeHtml = (value: string | undefined) => stripOuterParagraph(value ?? '');
 const getTextLength = (element: HTMLDivElement) => element.textContent?.length ?? 0;
 
 export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
@@ -71,6 +67,8 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
     const countId = typeof characterMax === 'number' ? `${editorId}-count` : undefined;
     const describedBy = composeDescribedBy(ariaDescribedBy, descriptionId, errorId, countId);
     const editorRef = useRef<HTMLDivElement>(null);
+    const toolbarRef = useRef<HTMLDivElement>(null);
+    const roving = useRovingTabIndex({ ref: toolbarRef });
     const lastValidHtmlRef = useRef('');
     const [characterCount, setCharacterCount] = useState(0);
     const isControlled = value !== undefined;
@@ -116,7 +114,7 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
       emitChange();
     };
 
-    const handleCommand = (command: ToolbarCommand) => {
+    const handleCommand = (command: (typeof RICH_TEXT_COMMANDS)[number]['command']) => {
       if (!editorRef.current || disabled) {
         return;
       }
@@ -144,68 +142,38 @@ export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
             className,
           )}
         >
-          <div className="pf-rte__toolbar" role="toolbar" aria-label="Formatting options">
-            <button
-              type="button"
-              className="pf-rte__tool"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => handleCommand('bold')}
-              disabled={disabled}
-              aria-label="Bold"
-            >
-              B
-            </button>
-            <button
-              type="button"
-              className="pf-rte__tool"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => handleCommand('italic')}
-              disabled={disabled}
-              aria-label="Italic"
-            >
-              I
-            </button>
-            <button
-              type="button"
-              className="pf-rte__tool"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => handleCommand('underline')}
-              disabled={disabled}
-              aria-label="Underline"
-            >
-              U
-            </button>
-            <span className="pf-rte__divider" aria-hidden />
-            <button
-              type="button"
-              className="pf-rte__tool"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => handleCommand('insertUnorderedList')}
-              disabled={disabled}
-              aria-label="Bulleted list"
-            >
-              • List
-            </button>
-            <button
-              type="button"
-              className="pf-rte__tool"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => handleCommand('insertOrderedList')}
-              disabled={disabled}
-              aria-label="Numbered list"
-            >
-              1. List
-            </button>
-            <button
-              type="button"
-              className="pf-rte__tool"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => handleCommand('removeFormat')}
-              disabled={disabled}
-              aria-label="Clear formatting"
-            >
-              Clear
-            </button>
+          {/*
+            The buttons are core's list, so `<pf-rich-text-editor>` cannot
+            offer a different set or different names for the same set.
+
+            One tab stop with the arrows moving inside, which is the ARIA
+            toolbar pattern and what the element's own toolbar does. Six
+            focusable buttons meant tabbing past the field walked every one
+            before reaching the text.
+          */}
+          <div
+            ref={toolbarRef}
+            className="pf-rte__toolbar"
+            role="toolbar"
+            aria-label="Formatting options"
+            onFocus={roving.onFocus}
+            onKeyDown={roving.onKeyDown}
+          >
+            {RICH_TEXT_COMMANDS.map((tool) => (
+              <Fragment key={tool.command}>
+                {tool.separatorBefore ? <span className="pf-rte__divider" aria-hidden /> : null}
+                <button
+                  type="button"
+                  className="pf-rte__tool"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => handleCommand(tool.command)}
+                  disabled={disabled}
+                  aria-label={tool.label}
+                >
+                  {tool.text}
+                </button>
+              </Fragment>
+            ))}
           </div>
 
           <div

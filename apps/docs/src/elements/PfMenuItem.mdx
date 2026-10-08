@@ -1,0 +1,69 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfMenuItem" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-menu-item>`
+
+
+One action inside a `pf-dropdown` or a `pf-context-menu`.
+
+Shared by both, because the React library's `DropdownItem` and
+`ContextMenuItem` are the same shape and the two menus render them
+identically — one element rather than two that would drift.
+
+It only reports that it was chosen. The menu owns focus, closing and the
+keyboard pattern, exactly as `pf-radio-group` owns selection for its radios.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `destructive` | `destructive` | `boolean` | `false` | Style as a destructive action. Reflected for the stylesheet. |
+| `disabled` | `disabled` | `boolean` | `false` | Reflected so the stylesheet and the menu's item query can select on it. |
+| `value` | `value` | `string` | `''` | Identifies the item in the menu's select event. Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-menu-item[value="..."]` in a React or Angular app finds nothing. The menus themselves read the property, so this was not a live defect here -- it is the same trap that was one in `pf-command-item`. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfMenuSelect` | `\{ value: string; \}` | Asks the menu to act on this item. The menu decides and then closes. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the item's label. |
+| `icon` | a leading icon. |
+| `shortcut` | a trailing keyboard hint. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `label` | the label's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-menu-item></pf-menu-item>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfMenuItem } from '@pitchfork-ui/elements-react';
+
+<PfMenuItem />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-menu-item></pf-menu-item>
+```
+

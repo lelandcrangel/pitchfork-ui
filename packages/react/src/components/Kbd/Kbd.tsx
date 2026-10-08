@@ -1,3 +1,4 @@
+import { formatKeyCombination } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Kbd.css';
@@ -19,7 +20,7 @@ export const Kbd = forwardRef<HTMLElement, KbdProps>(function Kbd(
   // Combos render as one cap of joined text (e.g. "⌘ + K") rather than nested
   // per-key elements — keeping a single, contrast-resolvable element and
   // avoiding symbol-only child nodes that axe can't evaluate.
-  const content = keys && keys.length > 0 ? keys.join(` ${separator} `) : children;
+  const content = keys && keys.length > 0 ? formatKeyCombination(keys, separator) : children;
 
   return (
     <kbd ref={ref} className={cx('pf-kbd', `pf-kbd--${size}`, className)} {...props}>

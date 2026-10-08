@@ -1,0 +1,81 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfAccordionItem" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-accordion-item>`
+
+
+One section inside a `pf-accordion`.
+
+It owns its header, its panel and the open/close animation; the group owns
+only *which* sections are open, because in `single` mode that depends on
+what else is. So this element reports that it was clicked and waits to be
+told, exactly as `pf-radio-button` does.
+
+The header is a real `<button>` in the shadow root, which makes it tabbable
+with no help and gives Enter and Space for free. `delegatesFocus` is what
+lets the group's arrow keys hand focus to it through the host.
+
+Both IDREFs here point inside this one shadow root, which is the case where
+an IDREF resolves — the header names the panel with `aria-controls` and the
+panel names the header back with `aria-labelledby`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` | `false` | Reflected; the stylesheet and the group's own filtering both read it. |
+| `expanded` | `expanded` | `boolean` | `false` | Set by the group. Reflected, so the stylesheet can turn the chevron. |
+| `headingLevel` | `heading-level` | `2 \| 3 \| 4 \| 5 \| 6` | `3` | Set by the group from its own `headingLevel`. |
+| `value` | `value` | `string` | `''` | Identifies the section in the group's open set. Reflected because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing. The group reads the property. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfAccordionToggle` | `\{ value: string; \}` | Asks the group to open or close this section. The group decides. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the section's content. |
+| `title` | the header's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `content` | the region holding the content. |
+| `heading` | the heading element wrapping the header button. |
+| `icon` | the chevron. |
+| `inner` | — |
+| `panel` | the animating box around the content. |
+| `title` | the label's box inside the header. |
+| `trigger` | the header button. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-accordion-item></pf-accordion-item>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfAccordionItem } from '@pitchfork-ui/elements-react';
+
+<PfAccordionItem />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-accordion-item></pf-accordion-item>
+```
+

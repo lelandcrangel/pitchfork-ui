@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfUtilityButton" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-utility-button>`
+
+
+A compact button for toolbars and table rows, where the affordance is often
+an icon alone.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` | `false` | Disable the button. Reflected so the stylesheet can select on it. |
+| `label` | `label` | `string \| undefined` | — | Accessible name. Required for an icon-only button, and also used as the native tooltip unless `tooltip` says otherwise. |
+| `size` | `size` | `"md" \| "sm"` | `'md'` | Control size. Reflected so the stylesheet can select on it. |
+| `tooltip` | `tooltip` | `string \| undefined` | — | Native tooltip text. Defaults to `label`. |
+| `type` | `type` | `"button" \| "reset" \| "submit"` | `'button'` | Mirrors the native attribute. |
+| `variant` | `variant` | `"brand" \| "destructive" \| "neutral"` | `'neutral'` | Colour treatment. Reflected so the stylesheet can select on it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the button's label. Omit it for an icon-only button, and give a `label` so the button still has an accessible name. |
+| `icon` | a leading icon, usually `pf-icon`. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `button` | the native button element. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-utility-button></pf-utility-button>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfUtilityButton } from '@pitchfork-ui/elements-react';
+
+<PfUtilityButton />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-utility-button></pf-utility-button>
+```
+

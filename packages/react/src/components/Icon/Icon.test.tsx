@@ -1,9 +1,29 @@
 import { faPaperPlane, faStar } from '@fortawesome/free-regular-svg-icons';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Icon, getAvailableIconNames, registerIcons } from './Icon';
+import { BUNDLED_FA_ICON_NAMES } from '@pitchfork-ui/core';
+import { Icon, getAvailableIconNames, getCustomIconNames, registerIcons } from './Icon';
 
 describe('Icon', () => {
+  /*
+   * First in the file on purpose: the registry is module state, so a later
+   * `registerIcons` in this file would add names and make this pass for the
+   * wrong reason.
+   *
+   * The custom glyphs come from core in both layers now, so they cannot
+   * diverge. The Font Awesome glyphs still have to be imported per layer, to
+   * keep a consumer's bundle to the icons in use, so the *names* are core's
+   * and each layer checks its own map against them. Without this, an icon
+   * added here and not to `<pf-icon>` draws in React and renders nothing as an
+   * element, with every test in both layers passing.
+   */
+  it('bundles exactly the Font Awesome names core lists', () => {
+    const custom = new Set(getCustomIconNames());
+    expect(getAvailableIconNames().filter((name) => !custom.has(name))).toEqual([
+      ...BUNDLED_FA_ICON_NAMES,
+    ]);
+  });
+
   // ─── Known FA icon names ─────────────────────────────────────────────────
 
   it('renders a span container for known icons', () => {

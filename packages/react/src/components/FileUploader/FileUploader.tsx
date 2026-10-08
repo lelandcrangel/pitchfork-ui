@@ -1,20 +1,16 @@
+import {
+  fileKey,
+  fileLimitsHint,
+  formatFileSize,
+  mergeFileSelection,
+  validateFileSelection,
+} from '@pitchfork-ui/core';
 import { forwardRef, useId, useMemo, useRef, useState } from 'react';
+import { composeDescribedBy } from '../../a11y';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './FileUploader.css';
-
-const bytesToSize = (bytes: number) => {
-  if (bytes < 1024) {
-    return `${bytes} B`;
-  }
-
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
-  }
-
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-};
 
 export interface FileUploaderProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -61,9 +57,6 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
   const descriptionId = description ? `${uploaderId}-description` : undefined;
   const errorId = error ? `${uploaderId}-error` : undefined;
   const internalErrorId = `${uploaderId}-internal-error`;
-  const describedBy =
-    [ariaDescribedBy, descriptionId, errorId, internalErrorId].filter(Boolean).join(' ') ||
-    undefined;
 
   const isControlled = value !== undefined;
   const [internalFiles, setInternalFiles] = useState<File[]>(defaultValue);
@@ -73,6 +66,18 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  /*
+   * The internal error id only joins the list once there is an error to point
+   * at. It was unconditional, so the dropzone described itself with an id
+   * that resolved to nothing most of the time.
+   */
+  const describedBy = composeDescribedBy(
+    ariaDescribedBy,
+    descriptionId,
+    errorId,
+    internalError ? internalErrorId : undefined,
+  );
+
   const setFiles = (nextFiles: File[]) => {
     if (!isControlled) {
       setInternalFiles(nextFiles);
@@ -81,37 +86,35 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
     onFilesChange?.(nextFiles);
   };
 
-  const validateFiles = (incoming: File[]) => {
-    if (maxFileSize) {
-      const oversized = incoming.find((file) => file.size > maxFileSize);
-
-      if (oversized) {
-        return `"${oversized.name}" exceeds the ${bytesToSize(maxFileSize)} size limit.`;
-      }
-    }
-
-    if (maxFiles && incoming.length > maxFiles) {
-      return `You can upload up to ${maxFiles} file${maxFiles === 1 ? '' : 's'}.`;
-    }
-
-    return undefined;
-  };
-
   const addFiles = (selected: FileList | null) => {
     if (!selected || disabled) {
       return;
     }
 
-    const incoming = Array.from(selected);
-    const merged = multiple ? [...files, ...incoming] : incoming.slice(0, 1);
-    const deduped = Array.from(
-      new Map(
-        merged.map((file) => [`${file.name}-${file.size}-${file.lastModified}`, file]),
-      ).values(),
-    );
+    /*
+     * Merge, then validate — in that order and with no truncation between
+     * them. The list used to be cut to `maxFiles` before being checked, which
+     * made the "up to N files" message unreachable: the extra files were
+     * simply gone, with nothing said. Core keeps the two steps apart.
+     */
+    const nextFiles = mergeFileSelection(files, Array.from(selected), { multiple });
+    /*
+     * `accept` is passed here as well as to the input, because the attribute
+     * filters the *picker* and nothing else: a dropped file passes no filter
+     * at all, so a dropzone that trusts the attribute accepts whatever is
+     * dragged onto it.
+     */
+    const nextError = validateFileSelection(nextFiles, { maxFiles, maxFileSize, accept });
 
-    const nextFiles = maxFiles ? deduped.slice(0, maxFiles) : deduped;
-    const nextError = validateFiles(nextFiles);
+    /*
+     * The input is cleared whichever way this goes. A file input fires no
+     * `change` for an identical selection, so leaving the rejected value in
+     * place meant picking the same file again did nothing at all — the error
+     * stood with no way to retry it.
+     */
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
 
     if (nextError) {
       setInternalError(nextError);
@@ -120,10 +123,6 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
 
     setInternalError(undefined);
     setFiles(nextFiles);
-
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
   };
 
   const removeFile = (index: number) => {
@@ -132,23 +131,11 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
     setFiles(next);
   };
 
-  const hintText = useMemo(() => {
-    const parts: string[] = [];
-
-    if (accept) {
-      parts.push(`Accepted: ${accept}`);
-    }
-
-    if (maxFileSize) {
-      parts.push(`Max size: ${bytesToSize(maxFileSize)}`);
-    }
-
-    if (maxFiles) {
-      parts.push(`Max files: ${maxFiles}`);
-    }
-
-    return parts.join(' | ');
-  }, [accept, maxFileSize, maxFiles]);
+  // Core's, so `<pf-file-uploader>` describes the same limits in the same words.
+  const hintText = useMemo(
+    () => fileLimitsHint(accept, { maxFiles, maxFileSize }),
+    [accept, maxFileSize, maxFiles],
+  );
 
   return (
     <FieldWrapper
@@ -228,13 +215,10 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
         {files.length > 0 ? (
           <ul className="pf-file-uploader__list" aria-label="Selected files">
             {files.map((file, index) => (
-              <li
-                key={`${file.name}-${file.size}-${file.lastModified}`}
-                className="pf-file-uploader__list-item"
-              >
+              <li key={fileKey(file)} className="pf-file-uploader__list-item">
                 <span className="pf-file-uploader__file-meta">
                   <span className="pf-file-uploader__file-name">{file.name}</span>
-                  <span className="pf-file-uploader__file-size">{bytesToSize(file.size)}</span>
+                  <span className="pf-file-uploader__file-size">{formatFileSize(file.size)}</span>
                 </span>
                 <button
                   type="button"

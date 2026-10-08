@@ -1,0 +1,66 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfChartSeries" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-chart-series>`
+
+
+One series of a `pf-line-chart` or a `pf-bar-chart`, and its own row in the
+legend.
+
+The chart's data is a single array of rows keyed by series — bulk numbers,
+which belong in a property — while the series are the part with names and
+colours, which belong in the light DOM so a consumer can loop over them and
+so the legend can hold their labels. A legend built in the chart's shadow
+root could not reach a slotted label at all.
+
+`swatch` is the chart's to set: only it knows this series' place in the
+palette.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `color` | `color` | `string \| undefined` | — | Overrides the palette colour the chart would give it. |
+| `dashed` | `dashed` | `boolean` | `false` | Draw this series' line dashed. Line charts only. Reflected. |
+| `seriesKey` | `series-key` | `string` | `''` | The property each data row carries this series' value under. `seriesKey`, not `key`: `key` is the vdom's own prop name and reserved, the same family as `animate` shadowing `Element.prototype.animate`. |
+| `swatch` | `swatch` | `string` | `''` | Set by the chart: the colour actually used, palette or override. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the series' name. Falls back to `seriesKey`. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `dot` | the colour swatch. |
+| `label` | the name. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-chart-series></pf-chart-series>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfChartSeries } from '@pitchfork-ui/elements-react';
+
+<PfChartSeries />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-chart-series></pf-chart-series>
+```
+

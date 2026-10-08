@@ -1,0 +1,31 @@
+{
+  "name": "@pitchfork-ui/consumer-angular",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Builds a real Angular application against the published @pitchfork-ui/elements-angular, including a reactive form bound through the generated ControlValueAccessor.",
+  "scripts": {
+    "dev": "ng serve",
+    "build": "ng build",
+    "smoke": "node ../../scripts/smoke-consumer.mjs --dir apps/consumer-angular/dist --label angular"
+  },
+  "dependencies": {
+    "@angular/common": "^21.2.25",
+    "@angular/core": "^21.2.25",
+    "@angular/forms": "^21.2.25",
+    "@angular/platform-browser": "^21.2.25",
+    "@pitchfork-ui/core": "*",
+    "@pitchfork-ui/elements": "*",
+    "@pitchfork-ui/elements-angular": "*",
+    "rxjs": "^7.8.2",
+    "zone.js": "^0.16.3"
+  },
+  "devDependencies": {
+    "@analogjs/vite-plugin-angular": "^2.7.5",
+    "@angular/build": "^21.2.24",
+    "@angular/cli": "^21.2.24",
+    "@angular/compiler": "^21.2.25",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.6"
+  }
+}

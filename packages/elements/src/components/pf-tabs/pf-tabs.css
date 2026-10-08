@@ -1,0 +1,108 @@
+:host {
+  display: grid;
+  gap: var(--space-3);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+@media (--md) {
+  :host {
+    gap: var(--space-4);
+  }
+}
+
+.list {
+  display: flex;
+  /*
+   * As a grid item the strip defaults to `min-width: auto`, which refuses to
+   * shrink below its content width -- so it would overflow the viewport
+   * instead of scrolling inside itself.
+   */
+  min-width: 0;
+  /*
+   * Horizontal scroll only. Without pinning overflow-y, `overflow-x: auto`
+   * forces it to compute to `auto` too, so a horizontal scrollbar eats
+   * vertical space and triggers a phantom vertical one.
+   */
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+  /* Hidden so it never draws over the underline; the indicator is the cue. */
+  scrollbar-width: none;
+}
+
+.list::-webkit-scrollbar {
+  display: none;
+}
+
+:host([full-width]) .list {
+  width: 100%;
+}
+
+:host([variant='underline']) .list {
+  border-bottom: 1px solid var(--pf-tabs-border);
+  gap: var(--space-1);
+}
+
+:host([variant='pills']) .list {
+  background: var(--pf-tabs-bg-subtle);
+  border-radius: var(--radius-md);
+  gap: var(--space-1);
+  padding: var(--space-1);
+}
+
+/*
+ * One indicator for the whole strip, placed from measurements in
+ * `placeIndicator` so it slides between tabs. `left`/`width` (and `top`/
+ * `height` for a pill) are written inline; everything else is here.
+ */
+.indicator {
+  pointer-events: none;
+  position: absolute;
+  transition:
+    left var(--pf-transition-medium),
+    width var(--pf-transition-medium),
+    top var(--pf-transition-medium),
+    height var(--pf-transition-medium);
+}
+
+.indicator[hidden] {
+  display: none;
+}
+
+:host([variant='underline']) .indicator {
+  background: var(--pf-tabs-text);
+  border-radius: var(--radius-full);
+  bottom: 0;
+  height: var(--pf-tabs-underline-width);
+}
+
+:host([variant='pills']) .indicator {
+  background: var(--pf-tabs-bg);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--pf-tabs-elevation-tab-active-shadow, var(--pf-elevation-tab-active-shadow));
+  z-index: 0;
+}
+
+.panels {
+  min-width: 0;
+}
+
+/*
+ * A `pf-tab` assigns itself to the `tab` slot in `connectedCallback`, but a
+ * tab added later is briefly assigned to the default slot before that runs.
+ * Hiding it there keeps it from flashing in the panel stack. `::slotted` after
+ * the slot selector is what scopes this to the default slot's assignments --
+ * the `tab` slot's own are untouched.
+ */
+.panels > slot::slotted(pf-tab) {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator {
+    transition: none;
+  }
+}

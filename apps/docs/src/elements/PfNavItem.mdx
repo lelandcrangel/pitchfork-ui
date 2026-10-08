@@ -1,0 +1,75 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfNavItem" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-nav-item>`
+
+
+One item in a `pf-header-navigation` or a `pf-sidebar-navigation`.
+
+Shared by both, because the React library's `HeaderNavigationItem` and
+`SidebarNavigationItem` are the same shape — one element rather than two
+that would drift. What differs is the layout, and that is the group's to
+say: it pushes `orientation` down, which is the only thing an item cannot
+work out for itself.
+
+With an `href` it renders a link; without one it renders a plain box, which
+is how a framework's own router is used — slot an `<a routerLink>` or a
+`<Link>` in and leave `href` unset.
+
+`currentPage` and `orientation` are the group's to set. A consumer asks by
+setting `current`; the group resolves every item with core's rule and
+writes the answer to `currentPage`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `current` | `current` | `boolean` | `false` | Set it to mark this item as the current page. The *asking* half, which the group never writes — `currentPage` below is the answer. The two are kept apart for the reason `pf-breadcrumb` keeps them apart: a group that wrote its answer back would leave the mark behind on an item the consumer had not marked. |
+| `currentPage` | `current-page` | `boolean` | `false` | Set by the group: the resolved current page, which is the one thing that renders `aria-current="page"`. At most one item in a navigation carries it, and the highlight follows it rather than `current` — a second highlighted item with no `aria-current` would be a sighted-only lie. |
+| `disabled` | `disabled` | `boolean` | `false` | Takes the item out of the navigation without removing it. A disabled item renders **no anchor at all**, because an anchor has no disabled state: `aria-disabled` alone leaves it focusable and clickable, and dropping the `href` is the only thing that really takes it out of the tab order. |
+| `href` | `href` | `string \| undefined` | — | Where the item goes. Reflected; a consumer's stylesheet reads it. |
+| `orientation` | `orientation` | `"horizontal" \| "vertical"` | `'horizontal'` | Set by the group, which is the only one that knows which it is. |
+| `rel` | `rel` | `string \| undefined` | — | Goes on the anchor as-is. Ignored without an `href`. |
+| `target` | `target` | `string \| undefined` | — | Opens elsewhere, as on a plain anchor. Ignored without an `href`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the item's label. |
+| `badge` | a trailing badge or count. |
+| `icon` | a leading icon. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `label` | — |
+| `link` | the link, or the box standing in for one. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-nav-item></pf-nav-item>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfNavItem } from '@pitchfork-ui/elements-react';
+
+<PfNavItem />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-nav-item></pf-nav-item>
+```
+

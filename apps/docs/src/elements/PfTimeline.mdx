@@ -1,0 +1,56 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTimeline" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-timeline>`
+
+
+A vertical timeline over `pf-timeline-item` children.
+
+The group owns the one thing an entry cannot see: whether it is the last,
+which decides both the connector running down to the next entry and the
+space below the content.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string \| undefined` | — | The timeline's accessible name. A list of entries is worth naming, and a consumer can only do it from out here. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children, for a consumer who moved them imperatively. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-timeline-item` children. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-timeline></pf-timeline>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTimeline } from '@pitchfork-ui/elements-react';
+
+<PfTimeline />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-timeline></pf-timeline>
+```
+

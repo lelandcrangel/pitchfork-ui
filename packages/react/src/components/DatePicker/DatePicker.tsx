@@ -1,3 +1,4 @@
+import { toMidday } from '@pitchfork-ui/core';
 import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
@@ -12,12 +13,6 @@ import { cx } from '../../utils/cx';
 import { Calendar } from '../Calendar';
 import { Icon } from '../Icon';
 import './DatePicker.css';
-
-const toMidday = (date: Date) => {
-  const next = new Date(date);
-  next.setHours(12, 0, 0, 0);
-  return next;
-};
 
 export interface DatePickerProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,

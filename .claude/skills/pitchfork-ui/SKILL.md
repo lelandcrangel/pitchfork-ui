@@ -55,7 +55,8 @@ accessibility-focused test; `Button.test.tsx` is the minimal example and
 
 Adding a component means four things, not one: the component folder, an export
 in `packages/react/src/index.ts`, the three Storybook files in `apps/docs/src/`,
-and a theme alias in `styles/theme.css` for each new `--pf-*` variable.
+and a theme alias in `packages/tokens/src/theme.css` for each new `--pf-*`
+variable.
 
 Commits follow Conventional Commits with the component as scope:
 `feat(Badge): add outline variant`. See `CONTRIBUTING.md`.

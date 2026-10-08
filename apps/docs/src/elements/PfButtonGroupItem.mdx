@@ -1,0 +1,73 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfButtonGroupItem" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-button-group-item>`
+
+
+One button inside a `pf-button-group`.
+
+It only reports that it was pressed; the group owns the selection, exactly
+as `pf-radio-group` does for its radios. The group writes `selected` and
+`groupDisabled` back onto it.
+
+`aria-pressed` rather than `aria-checked`: these are toggle buttons, not
+radios, which is also why every one of them is a tab stop.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` | `false` | Disable this button alone. Reflected for the stylesheet. |
+| `dot` | `dot` | `boolean` | `false` | Draw a leading dot — a status light rather than an icon. |
+| `groupDisabled` | `group-disabled` | `boolean` | `false` | Set by the group when the whole group is disabled, kept apart from `disabled` so that enabling the group does not enable a button the consumer disabled on its own. |
+| `icon` | `icon` | `string \| undefined` | — | A leading icon's name, from the same registry as `pf-icon`. |
+| `selected` | `selected` | `boolean` | `false` | Set by the group. Reflected, so the stylesheet can mark the choice. |
+| `value` | `value` | `string` | `''` | The value the group reports when this button is chosen. Reflected, because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfButtonGroupSelect` | `\{ value: string; \}` | Asks the group to choose this button. The group decides. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the button's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `button` | the button itself. |
+| `dot` | the leading dot, when `dot` is set. |
+| `icon` | the leading icon, when `icon` is set. |
+| `label` | the label's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-button-group-item></pf-button-group-item>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfButtonGroupItem } from '@pitchfork-ui/elements-react';
+
+<PfButtonGroupItem />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-button-group-item></pf-button-group-item>
+```
+

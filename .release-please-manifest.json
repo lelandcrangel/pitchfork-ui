@@ -1,4 +1,9 @@
 {
+  "packages/core": "0.1.0",
+  "packages/elements": "0.1.0",
+  "packages/elements-angular": "0.1.0",
+  "packages/elements-react": "0.1.0",
+  "packages/elements-vue": "0.1.0",
   "packages/react": "0.15.3",
   "packages/tokens": "0.4.2",
   "packages/mcp": "0.2.1"

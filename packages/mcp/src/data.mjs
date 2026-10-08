@@ -61,7 +61,26 @@ export const { data: tokens, path: tokensPath } = load('design tokens', {
   fallback: 'tokens.json',
 });
 
+/*
+ * The elements are a second first-class layer, not a wrapper, so the server
+ * answers about them from their own artifact -- derived from Stencil's
+ * docs.json rather than parsed out of TypeScript, and preferring the copy in
+ * the consumer's own project for the same reason the React metadata does.
+ */
+export const { data: elementMetadata, path: elementMetadataPath } = load('element metadata', {
+  env: 'PITCHFORK_UI_ELEMENTS',
+  specifier: '@pitchfork-ui/elements/metadata',
+  fallback: 'elements.json',
+});
+
 export const componentsByName = new Map(metadata.components.map((c) => [c.name, c]));
+
+/** Keyed by tag (`pf-button`) and by binding name (`PfButton`), since an agent has either. */
+export const elementsByTag = new Map(elementMetadata.elements.map((e) => [e.tag, e]));
+export const elementsByName = new Map(elementMetadata.elements.map((e) => [e.name, e]));
+
+/** React component name -> the element that answers for it, counterpart or absorption. */
+export const elementForComponent = new Map(Object.entries(elementMetadata.reactCoverage ?? {}));
 
 /**
  * What `Icon` resolves without the consumer registering anything.

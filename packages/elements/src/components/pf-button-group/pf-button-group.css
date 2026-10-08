@@ -1,0 +1,14 @@
+:host {
+  align-items: stretch;
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* The buttons have to be flex items of the host, not of a box inside it. */
+slot {
+  display: contents;
+}

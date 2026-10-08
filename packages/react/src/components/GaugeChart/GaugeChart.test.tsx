@@ -62,3 +62,42 @@ describe('GaugeChart', () => {
     expect(el).toHaveStyle({ width: '160px', height: '160px' });
   });
 });
+
+/*
+ * The geometry is core's, shared with `ProgressCircle` and
+ * `<pf-progress-circle>`, which fixed a `NaN`: the old clamp was
+ * `Math.min(Math.max(value, 0), max)`, and `Math.max(NaN, 0)` is `NaN`, so an
+ * unparsed value reached the DOM as `--pf-gauge-offset: NaN` and nothing drew.
+ */
+describe('GaugeChart edge cases', () => {
+  const fillOf = (container: HTMLElement) =>
+    container.querySelector('.pf-gauge__fill') as SVGCircleElement;
+
+  it('draws nothing for a value that is not a number, rather than NaN', () => {
+    const { container } = render(<GaugeChart value={Number.NaN} />);
+    const style = fillOf(container).getAttribute('style') ?? '';
+
+    expect(style).not.toMatch(/NaN/);
+    expect(container.querySelector('.pf-gauge')?.textContent).toContain('0%');
+  });
+
+  it('reports nothing drawable for a max of zero', () => {
+    const { container } = render(<GaugeChart value={10} max={0} />);
+    expect(fillOf(container).getAttribute('style') ?? '').not.toMatch(/NaN/);
+  });
+
+  it('clamps an overshoot to the full arc', () => {
+    const { container } = render(<GaugeChart value={500} max={100} />);
+    const style = fillOf(container).getAttribute('style') ?? '';
+
+    expect(container.querySelector('.pf-gauge')?.textContent).toContain('100%');
+    // A full arc has no offset left.
+    expect(style).toMatch(/--pf-gauge-offset:\s*0/);
+  });
+
+  /* The stroke straddles the path, so the radius is inset by half of it. */
+  it('insets the radius by half the stroke so the arc is not clipped', () => {
+    const { container } = render(<GaugeChart value={50} size={200} strokeWidth={16} />);
+    expect(fillOf(container).getAttribute('r')).toBe('92');
+  });
+});

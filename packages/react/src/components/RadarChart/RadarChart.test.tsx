@@ -69,3 +69,88 @@ describe('RadarChart', () => {
     expect(container.querySelector('.pf-radar-chart__legend')).not.toBeInTheDocument();
   });
 });
+
+/*
+ * The geometry is core's now. Two behaviours it pins that were accidental
+ * before: a value above an explicit `max` is clamped to the outer ring rather
+ * than drawn outside the viewBox and clipped away, and a value that is not a
+ * number is dropped rather than relied on to fail `>= 0`.
+ */
+describe('RadarChart geometry', () => {
+  const axes = [
+    { label: 'A', value: 1 },
+    { label: 'B', value: 1 },
+    { label: 'C', value: 1 },
+  ];
+  const pointsOf = (container: HTMLElement, selector: string) =>
+    (container.querySelector(selector) as SVGPolygonElement).getAttribute('points') ?? '';
+
+  it('starts the first axis at the top', () => {
+    const { container } = render(<RadarChart data={axes} size={200} max={1} />);
+    // size 200 → centre 100, outer radius 64, so the first point is 36 above.
+    expect(pointsOf(container, '.pf-radar-chart__area').split(' ')[0]).toBe('100.00,36.00');
+  });
+
+  it('clamps a value above the scale to the outer ring', () => {
+    const { container } = render(
+      <RadarChart
+        data={[
+          { label: 'A', value: 500 },
+          { label: 'B', value: 1 },
+          { label: 'C', value: 1 },
+        ]}
+        size={200}
+        max={1}
+      />,
+    );
+    const first = pointsOf(container, '.pf-radar-chart__area').split(' ')[0];
+
+    expect(first).toBe('100.00,36.00');
+  });
+
+  it('drops a value that is not a number', () => {
+    const { container } = render(
+      <RadarChart
+        data={[
+          { label: 'A', value: Number.NaN },
+          { label: 'B', value: 1 },
+          { label: 'C', value: 1 },
+          { label: 'D', value: 1 },
+        ]}
+      />,
+    );
+
+    expect(pointsOf(container, '.pf-radar-chart__area')).not.toMatch(/NaN/);
+    expect(container.querySelectorAll('.pf-radar-chart__point')).toHaveLength(3);
+  });
+
+  /* Fewer than three axes enclose nothing. */
+  it('refuses fewer than three axes', () => {
+    render(
+      <RadarChart
+        data={[
+          { label: 'A', value: 1 },
+          { label: 'B', value: 1 },
+        ]}
+      />,
+    );
+    expect(screen.getByText(/at least 3 data points/i)).toBeInTheDocument();
+  });
+
+  it('keeps a grid for a chart of all zeroes', () => {
+    const { container } = render(
+      <RadarChart data={axes.map((axis) => ({ ...axis, value: 0 }))} size={200} />,
+    );
+
+    expect(container.querySelectorAll('.pf-radar-chart__grid').length).toBeGreaterThan(1);
+    expect(pointsOf(container, '.pf-radar-chart__area')).not.toMatch(/NaN/);
+  });
+
+  it('draws one ring per level, the outermost at the edge', () => {
+    const { container } = render(<RadarChart data={axes} size={200} levels={4} />);
+    const rings = Array.from(container.querySelectorAll('.pf-radar-chart__grid'));
+
+    expect(rings).toHaveLength(4);
+    expect(rings[3].getAttribute('points')?.split(' ')[0]).toBe('100.00,36.00');
+  });
+});

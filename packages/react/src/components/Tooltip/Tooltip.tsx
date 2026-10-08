@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { computeSidePosition } from '@pitchfork-ui/core';
 import { createPortal } from 'react-dom';
 import { usePresence } from '../../hooks';
 import { cx } from '../../utils/cx';
@@ -27,99 +28,29 @@ export interface TooltipProps {
 const GAP = 10;
 const VIEWPORT_MARGIN = 8;
 
-const placementFallbacks: Record<TooltipPlacement, TooltipPlacement[]> = {
-  top: ['top', 'bottom', 'right', 'left'],
-  bottom: ['bottom', 'top', 'right', 'left'],
-  left: ['left', 'right', 'top', 'bottom'],
-  right: ['right', 'left', 'top', 'bottom'],
-};
-
-const clamp = (value: number, min: number, max: number) =>
-  Math.min(Math.max(value, min), Math.max(min, max));
-
 const getViewportSize = () => ({
   width: window.innerWidth || document.documentElement.clientWidth,
   height: window.innerHeight || document.documentElement.clientHeight,
 });
 
-const getTooltipCoordinates = (
-  triggerRect: DOMRect,
-  tooltipRect: DOMRect,
-  placement: TooltipPlacement,
-) => {
-  const centerX = triggerRect.left + triggerRect.width / 2;
-  const centerY = triggerRect.top + triggerRect.height / 2;
-
-  if (placement === 'bottom') {
-    return {
-      left: centerX - tooltipRect.width / 2,
-      top: triggerRect.bottom + GAP,
-    };
-  }
-
-  if (placement === 'left') {
-    return {
-      left: triggerRect.left - tooltipRect.width - GAP,
-      top: centerY - tooltipRect.height / 2,
-    };
-  }
-
-  if (placement === 'right') {
-    return {
-      left: triggerRect.right + GAP,
-      top: centerY - tooltipRect.height / 2,
-    };
-  }
-
-  return {
-    left: centerX - tooltipRect.width / 2,
-    top: triggerRect.top - tooltipRect.height - GAP,
-  };
-};
-
-const getOverflow = (coordinates: { left: number; top: number }, tooltipRect: DOMRect) => {
-  const viewport = getViewportSize();
-
-  return (
-    Math.max(VIEWPORT_MARGIN - coordinates.left, 0) +
-    Math.max(VIEWPORT_MARGIN - coordinates.top, 0) +
-    Math.max(coordinates.left + tooltipRect.width - viewport.width + VIEWPORT_MARGIN, 0) +
-    Math.max(coordinates.top + tooltipRect.height - viewport.height + VIEWPORT_MARGIN, 0)
-  );
-};
-
+/**
+ * Thin wrapper over core's four-sided anchoring: this component owns reading
+ * the DOM rects and turning the result into a style object, while the geometry
+ * — which side fits, where it lands, how it clamps — is shared with
+ * `<pf-tooltip>` so the two place a tooltip identically.
+ */
 const getTooltipPosition = (
   triggerRect: DOMRect,
   tooltipRect: DOMRect,
   placement: TooltipPlacement,
 ): { placement: TooltipPlacement; style: React.CSSProperties } => {
-  const candidates = placementFallbacks[placement].map((candidatePlacement) => ({
-    placement: candidatePlacement,
-    coordinates: getTooltipCoordinates(triggerRect, tooltipRect, candidatePlacement),
-  }));
-  const bestPlacement = candidates.reduce((best, candidate) =>
-    getOverflow(candidate.coordinates, tooltipRect) < getOverflow(best.coordinates, tooltipRect)
-      ? candidate
-      : best,
-  );
-  const viewport = getViewportSize();
+  const { side, left, top } = computeSidePosition(triggerRect, tooltipRect, getViewportSize(), {
+    side: placement,
+    offset: GAP,
+    viewportPadding: VIEWPORT_MARGIN,
+  });
 
-  return {
-    placement: bestPlacement.placement,
-    style: {
-      left: clamp(
-        bestPlacement.coordinates.left,
-        VIEWPORT_MARGIN,
-        viewport.width - tooltipRect.width - VIEWPORT_MARGIN,
-      ),
-      top: clamp(
-        bestPlacement.coordinates.top,
-        VIEWPORT_MARGIN,
-        viewport.height - tooltipRect.height - VIEWPORT_MARGIN,
-      ),
-      visibility: 'visible',
-    },
-  };
+  return { placement: side, style: { left, top, visibility: 'visible' } };
 };
 
 export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip(

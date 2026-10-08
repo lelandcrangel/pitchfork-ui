@@ -32,7 +32,7 @@ const TOKEN_HEX = flattenTokens(colorTokens);
 // A checker that validates a copy of the thing it is checking will eventually
 // pass while the real stylesheet is broken, so it parses the stylesheet.
 
-const THEME_CSS = resolve(root, 'packages/react/src/styles/theme.css');
+const THEME_CSS = resolve(root, 'packages/tokens/src/theme.css');
 
 // Walks braces rather than searching for a closing delimiter. `indexOf('\n}')`
 // looked fine but only guesses where the block ends: indent that brace and it

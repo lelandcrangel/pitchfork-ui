@@ -1,0 +1,80 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfRadarChart" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-radar-chart>`
+
+
+A radar chart over `pf-radar-axis` children.
+
+The chart owns the drawing; each axis owns its own legend row, as a pie's
+slices do. The axis names are attributes rather than slotted content,
+because the chart has to draw them inside its own SVG and an SVG `<text>`
+cannot hold arbitrary markup.
+
+All of the trigonometry is core's, so this and the React `RadarChart` put
+the same numbers in the same places — the grid rings and the value polygon
+only line up if both were built from the same centre, radius and angles.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string` | `'Radar chart'` | The chart's accessible name. |
+| `levels` | `levels` | `number` | `4` | Grid rings, the outermost of which is the chart's edge. |
+| `max` | `max` | `number \| undefined` | — | The scale's top. Defaults to the largest value, never below 1. |
+| `showAxes` | `show-axes` | `boolean` | `true` | — |
+| `showLegend` | `show-legend` | `boolean` | `true` | — |
+| `size` | `size` | `number` | `280` | Width of the drawing's viewBox, in pixels. Never below 180. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the axes, for a consumer who changed a value through its *property* — which leaves no attribute and fires no `slotchange`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-radar-axis` children. |
+| `empty` | what to show when there are too few axes to enclose anything. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `area` | the value polygon. |
+| `axis` | one spoke. |
+| `axis-label` | one name drawn around the edge. |
+| `empty` | the empty state's box. |
+| `grid` | one grid ring. |
+| `legend` | the list the axes are slotted into. |
+| `point` | one vertex of it. |
+| `svg` | the drawing. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-radar-chart></pf-radar-chart>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfRadarChart } from '@pitchfork-ui/elements-react';
+
+<PfRadarChart />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-radar-chart></pf-radar-chart>
+```
+

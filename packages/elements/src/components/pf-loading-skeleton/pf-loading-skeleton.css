@@ -1,0 +1,54 @@
+/* Its own copy: @keyframes do not cross a shadow boundary. */
+@keyframes pf-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+:host {
+  animation: pf-skeleton-shimmer 1.4s linear infinite;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--pf-loading-bg-subtle) 92%, var(--pf-mix-base) 8%) 25%,
+    color-mix(in srgb, var(--pf-loading-border) 72%, var(--pf-mix-base) 28%) 37%,
+    color-mix(in srgb, var(--pf-loading-bg-subtle) 92%, var(--pf-mix-base) 8%) 63%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  height: var(--pf-skeleton-height, 16px);
+  max-width: 100%;
+  width: var(--pf-skeleton-width, 100%);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([rounded]) {
+  border-radius: var(--radius-full);
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}

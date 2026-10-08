@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useId, useMemo, useRef, useState } from 'react';
+import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
 import {
@@ -11,7 +11,7 @@ import { cx } from '../../utils/cx';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
 import { CalendarGrid } from '../Calendar/CalendarGrid';
-import { addMonths, isSameDay, startOfMonth, toMidday } from '../Calendar/dateUtils';
+import { addMonths, nextDateRangeSelection, rangeDayState, startOfMonth } from '@pitchfork-ui/core';
 import './DateRangePicker.css';
 
 export interface DateRange {
@@ -66,6 +66,9 @@ interface RangeCalendarProps {
   isNextDisabled?: boolean;
   onPrev?: () => void;
   onNext?: () => void;
+  /** The grid's arrows walked out of this month. */
+  onMonthChange?: (month: Date) => void;
+  initialFocusedDate?: Date;
   /** Hide nav on desktop only (right panel — left panel controls both on wide screens). */
   hideNavDesktop?: boolean;
 }
@@ -83,30 +86,19 @@ function RangeCalendar({
   isNextDisabled,
   onPrev,
   onNext,
+  onMonthChange,
+  initialFocusedDate,
   hideNavDesktop = false,
 }: RangeCalendarProps) {
   const monthLabel = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(
     monthDate,
   );
 
-  // Effective end for hover preview: when only start is selected, hover extends range
-  const effectiveEnd = rangeEnd ?? hoverDate;
-
-  const isInRange = useCallback(
-    (date: Date) => {
-      if (!rangeStart || !effectiveEnd) return false;
-      const lo = rangeStart <= effectiveEnd ? rangeStart : effectiveEnd;
-      const hi = rangeStart <= effectiveEnd ? effectiveEnd : rangeStart;
-      return date > lo && date < hi;
-    },
-    [rangeStart, effectiveEnd],
-  );
-
-  const isRangeStart = (date: Date) => !!rangeStart && isSameDay(date, rangeStart);
-  const isRangeEnd = (date: Date) => {
-    const end = rangeEnd ?? (hoverDate && rangeStart ? hoverDate : null);
-    return !!end && isSameDay(date, end);
-  };
+  // Core's, so `<pf-date-range-picker>` previews the same range from the same
+  // hover — including that a hovered day stands in for the missing end only
+  // while the range is half-made.
+  const dayState = (date: Date) =>
+    rangeDayState(date, { start: rangeStart, end: rangeEnd }, hoverDate);
 
   return (
     <div className="pf-daterange__calendar">
@@ -142,15 +134,16 @@ function RangeCalendar({
       <CalendarGrid
         monthDate={monthDate}
         classPrefix="pf-daterange"
-        getDayState={(date) => ({
-          rangeStart: isRangeStart(date),
-          rangeEnd: isRangeEnd(date),
-          inRange: isInRange(date),
-        })}
+        getDayState={(date) => {
+          const state = dayState(date);
+          return { rangeStart: state.isStart, rangeEnd: state.isEnd, inRange: state.isInside };
+        }}
         onDayClick={onDayClick}
         onDayHover={onDayHover}
         disabledDates={disabledDates}
         showOutsideDays={showOutsideDays}
+        onMonthChange={onMonthChange}
+        initialFocusedDate={initialFocusedDate}
       />
     </div>
   );
@@ -259,24 +252,19 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
       },
     });
 
+    /*
+     * The state machine is core's: first click starts, second closes, the ends
+     * swap if picked backwards, and the same day twice starts over. Only the
+     * closing side-effects — clearing the hover and shutting the panel — are
+     * this component's.
+     */
     const handleDayClick = (date: Date) => {
-      if (selecting === null) {
-        // First click — set start, clear end
-        setRange({ start: toMidday(date), end: null });
-        setSelecting('start');
-      } else {
-        // Second click — set end, close
-        const start = range.start!;
-        const end = toMidday(date);
-        if (isSameDay(start, end)) {
-          // Same day twice — reset
-          setRange({ start: toMidday(date), end: null });
-        } else if (end < start) {
-          setRange({ start: end, end: start });
-        } else {
-          setRange({ start, end });
-        }
-        setSelecting(null);
+      const next = nextDateRangeSelection({ range, awaitingEnd: selecting === 'start' }, date);
+
+      setRange(next.range);
+      setSelecting(next.awaitingEnd ? 'start' : null);
+
+      if (!next.awaitingEnd) {
         setHoverDate(null);
         disclosure.close();
       }
@@ -414,6 +402,10 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                       isNextDisabled={false}
                       onPrev={() => setLeftMonth((m) => clampMonth(addMonths(m, -1)))}
                       onNext={() => setLeftMonth((m) => clampMonth(addMonths(m, 1)))}
+                      // Both panels scroll together, so the left month is what
+                      // moves whichever grid the keyboard walked out of.
+                      onMonthChange={(month) => setLeftMonth(clampMonth(month))}
+                      initialFocusedDate={range.start ?? undefined}
                     />
 
                     {/* Right month — hides its nav on desktop (left controls both);
@@ -431,6 +423,8 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                       isNextDisabled={isNextDisabled}
                       onPrev={() => setLeftMonth((m) => clampMonth(addMonths(m, -1)))}
                       onNext={() => setLeftMonth((m) => clampMonth(addMonths(m, 1)))}
+                      onMonthChange={(month) => setLeftMonth(clampMonth(addMonths(month, -1)))}
+                      initialFocusedDate={range.end ?? undefined}
                       hideNavDesktop
                     />
                   </div>

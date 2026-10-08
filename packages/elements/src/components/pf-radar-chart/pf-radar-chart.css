@@ -1,0 +1,123 @@
+/* Mobile first: the legend under the chart, beside it on a wider screen. */
+:host {
+  align-items: stretch;
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+@media (--sm) {
+  :host {
+    align-items: center;
+    flex-direction: row;
+    gap: var(--space-6);
+  }
+}
+
+.svg {
+  display: block;
+  height: auto;
+  /* The names are drawn outside the rings, so the box must not clip. */
+  overflow: visible;
+  width: min(100%, 320px);
+}
+
+.grid {
+  fill: none;
+  stroke: var(--pf-radar-grid-stroke);
+  stroke-width: 1;
+}
+
+.axis {
+  stroke: var(--pf-radar-axis-stroke);
+  stroke-width: 1;
+}
+
+.area {
+  fill: var(--pf-radar-fill);
+  stroke: var(--pf-radar-stroke);
+  stroke-width: 2;
+}
+
+.point {
+  fill: var(--pf-radar-stroke);
+  stroke: var(--pf-radar-point-stroke);
+  stroke-width: 1.5;
+}
+
+.axis-label {
+  fill: var(--pf-radar-label);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.value {
+  animation: pf-radar-grow var(--duration-slow) var(--easing-decelerate);
+}
+
+/* Its own copy: `@keyframes` do not cross a shadow boundary. */
+@keyframes pf-radar-grow {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .value {
+    animation: none;
+  }
+}
+
+.legend {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+  width: 100%;
+}
+
+@media (--sm) {
+  .legend {
+    min-width: 140px;
+    width: auto;
+  }
+}
+
+/*
+ * Hidden rather than dropped, so the axes stay slotted and `slotchange` still
+ * fires. Two classes deep, because the tie breaks on source order.
+ */
+.legend.legend--hidden {
+  display: none;
+}
+
+/* The axes are grid children of the list, not of a box inside it. */
+.legend slot {
+  display: contents;
+}
+
+.empty {
+  align-items: center;
+  border: 1px dashed var(--pf-radar-empty-border);
+  border-radius: var(--radius-md);
+  color: var(--pf-radar-empty-text);
+  display: inline-flex;
+  font-size: var(--font-size-sm);
+  justify-content: center;
+  min-height: 180px;
+  min-width: 260px;
+  padding: var(--space-4);
+  text-align: center;
+}

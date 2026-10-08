@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTabPanel" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-tab-panel>`
+
+
+One panel inside a `pf-tabs`, shown when the `pf-tab` carrying the same
+`value` is selected.
+
+A sibling of its tab rather than a child of it, so that both live in the
+consumer's tree: that is what lets the group point `aria-controls` at this
+panel and `aria-labelledby` back at the tab, since a same-root IDREF is the
+one that resolves.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `active` | `active` | `boolean` | `false` | Set by the group: whether this is the panel on show. Reflected. |
+| `value` | `value` | `string` | `''` | Pairs the panel with its tab. Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-tab-panel[value="..."]` in a React or Angular app finds nothing. The group reads the property. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the panel's content. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-tab-panel></pf-tab-panel>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTabPanel } from '@pitchfork-ui/elements-react';
+
+<PfTabPanel />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-tab-panel></pf-tab-panel>
+```
+

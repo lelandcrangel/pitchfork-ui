@@ -1,3 +1,13 @@
+import {
+  RADAR_MINIMUM_AXES,
+  pointsToAttribute,
+  polarPoint,
+  radarAxisAngles,
+  radarGridPolygons,
+  radarMax,
+  radarValuePoints,
+  usableRadarAxes,
+} from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './RadarChart.css';
@@ -18,17 +28,6 @@ export interface RadarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   fillColor?: string;
 }
 
-function polarToCartesian(cx: number, cy: number, radius: number, angle: number) {
-  return {
-    x: cx + radius * Math.cos(angle),
-    y: cy + radius * Math.sin(angle),
-  };
-}
-
-function toPointsString(points: Array<{ x: number; y: number }>): string {
-  return points.map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(' ');
-}
-
 export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function RadarChart(
   {
     className,
@@ -44,12 +43,16 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
   },
   ref,
 ) {
-  const safeData = data.filter((item) => item.value >= 0);
+  /*
+   * All of the trigonometry is core's, so `<pf-radar-chart>` puts the same
+   * numbers in the same places — the grid rings and the value polygon only
+   * line up if both were built from the same centre, radius and angles.
+   */
+  const safeData = usableRadarAxes(data);
   const count = safeData.length;
   const safeSize = Math.max(size, 180);
-  const safeLevels = Math.max(2, levels);
 
-  if (count < 3) {
+  if (count < RADAR_MINIMUM_AXES) {
     return (
       <div ref={ref} className={cx('pf-radar-chart', className)} {...props}>
         <div className="pf-radar-chart__empty">RadarChart needs at least 3 data points.</div>
@@ -59,40 +62,24 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
 
   const center = safeSize / 2;
   const outerRadius = center - 36;
-  const computedMax = max ?? Math.max(...safeData.map((item) => item.value), 1);
-  const safeMax = computedMax > 0 ? computedMax : 1;
+  const safeMax = radarMax(safeData, max);
 
-  const baseAngle = -Math.PI / 2;
-  const angleStep = (2 * Math.PI) / count;
+  const angles = radarAxisAngles(count);
+  const axes = safeData.map((item, index) => ({
+    item,
+    angle: angles[index],
+    end: polarPoint(center, outerRadius, angles[index]),
+  }));
 
-  const axes = safeData.map((item, index) => {
-    const angle = baseAngle + index * angleStep;
-    const end = polarToCartesian(center, center, outerRadius, angle);
-
-    return {
-      item,
-      angle,
-      end,
-    };
-  });
-
-  const gridPolygons = Array.from({ length: safeLevels }, (_, levelIndex) => {
-    const ratio = (levelIndex + 1) / safeLevels;
-
-    const points = axes.map((axis) =>
-      polarToCartesian(center, center, outerRadius * ratio, axis.angle),
-    );
-
-    return toPointsString(points);
-  });
-
-  const valuePoints = axes.map((axis) => {
-    const ratio = Math.max(0, Math.min(1, axis.item.value / safeMax));
-
-    return polarToCartesian(center, center, outerRadius * ratio, axis.angle);
-  });
-
-  const valuePolygon = toPointsString(valuePoints);
+  const gridPolygons = radarGridPolygons(angles, center, outerRadius, levels);
+  const valuePoints = radarValuePoints(
+    safeData.map((item) => item.value),
+    safeMax,
+    angles,
+    center,
+    outerRadius,
+  );
+  const valuePolygon = pointsToAttribute(valuePoints);
 
   return (
     <div ref={ref} className={cx('pf-radar-chart', className)} {...props}>
@@ -147,7 +134,7 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
         </g>
 
         {axes.map((axis, index) => {
-          const labelPoint = polarToCartesian(center, center, outerRadius + 18, axis.angle);
+          const labelPoint = polarPoint(center, outerRadius + 18, axis.angle);
 
           return (
             <text

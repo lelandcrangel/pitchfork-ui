@@ -1,0 +1,70 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfButtonGroup" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-button-group>`
+
+
+A row of joined toggle buttons: pick one, or several.
+
+The group owns the selection, because "one at a time" is not a thing a
+button can decide for itself — the same division as `pf-radio-group`. Each
+`pf-button-group-item` renders a real `<button>` in its own shadow root, so
+every one of them is an ordinary tab stop: a group of toggle buttons is not
+a roving-tabindex pattern, unlike a toolbar or a tab strip.
+
+`value` is one comma-separated string, because that is what an attribute
+can carry; `pfChange` also reports the parsed array, which is what a
+framework consumer usually wants.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | `disabled` | `boolean` | `false` | Disable every button. Reflected, and pushed down. |
+| `multiple` | `multiple` | `boolean` | `false` | Allow several at once. Reflected for the stylesheet. |
+| `value` | `value` | `string` | `''` | The chosen value, or values, as one comma-separated string. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; values: string[]; \}` | Fires when the selection changes, however it was changed. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children, for a consumer who changed one through a property. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-button-group-item` children. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-button-group></pf-button-group>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfButtonGroup } from '@pitchfork-ui/elements-react';
+
+<PfButtonGroup />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-button-group></pf-button-group>
+```
+

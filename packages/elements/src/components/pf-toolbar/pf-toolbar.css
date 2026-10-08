@@ -1,0 +1,23 @@
+:host {
+  align-items: center;
+  background: var(--pf-toolbar-bg);
+  border: 1px solid var(--pf-toolbar-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-1);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+:host([orientation='horizontal']) {
+  flex-direction: row;
+}
+
+:host([orientation='vertical']) {
+  align-items: stretch;
+  flex-direction: column;
+  width: fit-content;
+}

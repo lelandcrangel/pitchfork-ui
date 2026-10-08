@@ -1,0 +1,80 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfLineChart" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-line-chart>`
+
+
+A line or area chart over `pf-chart-series` children.
+
+The split follows what the data is: the rows are bulk numbers and live in a
+property, while the series are the part with names and colours and live in
+the light DOM, where a consumer can loop over them and where the legend can
+reach their labels.
+
+Every scale and path is core's, so this and the React `LineChart` draw the
+same chart — the axis labels and the geometry have to come from the same
+tick scale, or the gridlines say one thing and the line says another.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `area` | `area` | `boolean` | `false` | Fill under each line. Reflected. |
+| `curved` | `curved` | `boolean` | `true` | Curve the lines through their points rather than joining them straight. |
+| `data` | `data` | `PfChartRow[] \| string` | `[]` | The rows to plot. An array for a framework consumer, or JSON for plain HTML, because Stencil coerces an attribute only for the primitive types it recognises. |
+| `label` | `label` | `string \| undefined` | — | The chart's accessible name. |
+| `showLegend` | `show-legend` | `boolean` | `true` | — |
+| `yAxisLabel` | `y-axis-label` | `string \| undefined` | — | Printed down the y axis, and used as the chart's name when it has none. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the series, for a consumer who changed one through a property. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-chart-series` children. |
+| `empty` | what to show when there is nothing to draw. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `area` | one series' fill, on the area variant. |
+| `dot` | one data point. |
+| `empty` | the empty state's box. |
+| `grid` | one gridline. |
+| `legend` | the list the series are slotted into. |
+| `line` | one series' line. |
+| `svg` | the drawing. |
+| `tick` | one axis label. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-line-chart></pf-line-chart>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfLineChart } from '@pitchfork-ui/elements-react';
+
+<PfLineChart />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-line-chart></pf-line-chart>
+```
+

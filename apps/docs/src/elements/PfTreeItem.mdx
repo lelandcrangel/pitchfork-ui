@@ -1,0 +1,82 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTreeItem" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-tree-item>`
+
+
+One item in a `pf-tree-view`, with its own items nested inside it.
+
+The host is the `treeitem`, and it is never focused: the tree keeps the
+focus and names the active item with `aria-activedescendant`, because a
+nested host cannot take a roving tabindex at all — measured, and explained
+on `pf-tree-view`. So the row inside is a plain box rather than a button,
+and the twisty is the only focusable thing in here, kept out of the tab
+order.
+
+`level`, `selected`, `expanded` and `hasChildren` are the group's to set:
+only it can see the whole tree.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `active` | `active` | `boolean` | `false` | Set by the tree: the item the keyboard is on, which is not always the selected one. Reflected, because the ring is drawn from it. |
+| `disabled` | `disabled` | `boolean` | `false` | Reflected; the stylesheet and the tree's own filtering both read it. |
+| `expanded` | `expanded` | `boolean` | `false` | Set by the tree: whether this branch is open. Reflected. |
+| `hasChildren` | `has-children` | `boolean` | `false` | Set by the tree: whether there is anything to open. Reflected. |
+| `icon` | `icon` | `string \| undefined` | — | An icon name from the same registry as `pf-icon`. |
+| `level` | `level` | `number` | `1` | Set by the tree: how deep this item sits, counting from 1. |
+| `selected` | `selected` | `boolean` | `false` | Set by the tree. Reflected, so the stylesheet can mark the item. |
+| `value` | `value` | `string` | `''` | Identifies the item in the tree's selection and open set. Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-tree-item[value="..."]` finds nothing. The tree reads the property. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfTreeSelect` | `\{ value: string; \}` | Asks the tree to select this item. The tree decides. |
+| `pfTreeStructure` | `void` | Tells the tree that the items inside this one have changed. `slotchange` does not cross a shadow boundary — it is not composed — so a tree cannot hear its grandchildren arrive. Without this, an item appended to a branch is never given a level, an id or a place in the keyboard order; a browser test adds one. |
+| `pfTreeToggle` | `\{ value: string; \}` | Asks the tree to open or close this branch. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the nested `pf-tree-item` children. |
+| `badge` | small trailing content, a count or a status. |
+| `label` | the item's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `children` | the box holding the nested items. |
+| `label` | the label's box. |
+| `row` | the item's own row, without its children. |
+| `toggle` | the twisty, on an item that has children. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-tree-item></pf-tree-item>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTreeItem } from '@pitchfork-ui/elements-react';
+
+<PfTreeItem />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-tree-item></pf-tree-item>
+```
+

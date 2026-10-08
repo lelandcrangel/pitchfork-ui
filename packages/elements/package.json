@@ -1,0 +1,97 @@
+{
+  "name": "@pitchfork-ui/elements",
+  "version": "0.1.0",
+  "description": "Framework-agnostic custom elements for Pitchfork UI \u2014 the design system as standard web components, usable from React, Angular, Vue or plain HTML.",
+  "license": "MIT",
+  "author": "Leland Rangel",
+  "homepage": "https://lelandrangel.com/pitchfork-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lelandcrangel/pitchfork-ui.git",
+    "directory": "packages/elements"
+  },
+  "bugs": {
+    "url": "https://github.com/lelandcrangel/pitchfork-ui/issues"
+  },
+  "keywords": [
+    "web-components",
+    "custom-elements",
+    "design-system",
+    "stencil",
+    "pitchfork-ui",
+    "accessible",
+    "a11y",
+    "angular",
+    "react",
+    "vue"
+  ],
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/pitchfork/pitchfork.esm.js",
+  "files": [
+    "dist",
+    "loader",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "stencil build",
+    "start": "stencil build --dev --watch --serve",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:unit": "vitest run --project unit",
+    "test:browser": "vitest run --project browser"
+  },
+  "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^7.2.0",
+    "@pitchfork-ui/core": "^0.1.0",
+    "@pitchfork-ui/tokens": "^0.4.1",
+    "@stencil/core": "^4.45.1"
+  },
+  "devDependencies": {
+    "@csstools/postcss-global-data": "^4.0.0",
+    "@stencil/angular-output-target": "^1.5.0",
+    "@stencil/postcss": "^2.1.0",
+    "@stencil/react-output-target": "^1.6.2",
+    "@stencil/vitest": "^1.15.1",
+    "@stencil/vue-output-target": "^0.14.3",
+    "@vitest/browser-playwright": "^4.1.11",
+    "postcss-custom-media": "^12.0.0",
+    "postcss-import": "^17.0.0",
+    "vitest": "^4.1.11"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.js"
+    },
+    "./loader": {
+      "types": "./loader/index.d.ts",
+      "import": "./loader/index.js",
+      "require": "./loader/index.cjs.js",
+      "default": "./loader/index.js"
+    },
+    "./dist/components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js",
+      "default": "./dist/components/index.js"
+    },
+    "./dist/components/*": "./dist/components/*",
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js",
+      "default": "./dist/components/index.js"
+    },
+    "./components/*": "./dist/components/*",
+    "./styles.css": "./dist/pitchfork/pitchfork.css",
+    "./metadata": "./dist/elements.json"
+  }
+}

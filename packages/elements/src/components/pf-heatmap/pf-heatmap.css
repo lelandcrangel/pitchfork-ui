@@ -1,0 +1,108 @@
+:host {
+  display: inline-block;
+  font-family: var(--font-family-sans);
+  max-width: 100%;
+  /* A full year is wider than a small screen: scroll rather than overflow. */
+  overflow-x: auto;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.empty {
+  color: var(--pf-heatmap-empty-text);
+  font-size: var(--font-size-sm);
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.body {
+  display: flex;
+  gap: var(--pf-heatmap-cell-gap);
+}
+
+.weekdays {
+  display: flex;
+  flex-direction: column;
+}
+
+.weekday-spacer {
+  display: block;
+  height: calc(var(--font-size-xs) + var(--space-1));
+}
+
+.weekday-grid {
+  display: grid;
+  gap: var(--pf-heatmap-cell-gap);
+  grid-template-rows: repeat(7, var(--pf-heatmap-cell-size));
+}
+
+.weekday {
+  align-items: center;
+  color: var(--pf-heatmap-label-color);
+  display: flex;
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  padding-inline-end: var(--space-1);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.months {
+  display: grid;
+  gap: var(--pf-heatmap-cell-gap);
+  height: var(--font-size-xs);
+}
+
+.month {
+  color: var(--pf-heatmap-label-color);
+  font-size: var(--font-size-xs);
+  line-height: 1;
+}
+
+/*
+ * Columns of seven, filled top to bottom and then left to right, which is
+ * what `grid-auto-flow: column` over seven fixed rows gives.
+ */
+.grid {
+  display: grid;
+  gap: var(--pf-heatmap-cell-gap);
+  grid-auto-columns: var(--pf-heatmap-cell-size);
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, var(--pf-heatmap-cell-size));
+}
+
+.cell {
+  animation: pf-heatmap-cell-in var(--duration-moderate) var(--easing-decelerate) both;
+  border-radius: var(--pf-heatmap-cell-radius);
+  height: var(--pf-heatmap-cell-size);
+  width: var(--pf-heatmap-cell-size);
+}
+
+.cell--empty {
+  background: transparent;
+}
+
+/* Its own copy: `@keyframes` do not cross a shadow boundary. */
+@keyframes pf-heatmap-cell-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell {
+    animation: none;
+  }
+}

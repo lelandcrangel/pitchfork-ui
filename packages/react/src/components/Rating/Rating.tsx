@@ -1,22 +1,8 @@
+import { clampRating, formatRating, starFillPercent } from '@pitchfork-ui/core';
 import { forwardRef, type CSSProperties } from 'react';
 import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Rating.css';
-
-const clampRating = (value: number, max: number) => Math.min(Math.max(value, 0), max);
-
-const getStarFillPercent = (value: number, index: number) => {
-  const position = index + 1;
-  if (value >= position) {
-    return 100;
-  }
-
-  if (value > index) {
-    return Math.round((value - index) * 100);
-  }
-
-  return 0;
-};
 
 export interface RatingStarsProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
@@ -42,7 +28,7 @@ export const RatingStars = forwardRef<HTMLDivElement, RatingStarsProps>(function
     >
       <div className="pf-rating-stars__track" aria-hidden>
         {Array.from({ length: max }, (_, index) => {
-          const fillPercent = getStarFillPercent(clampedValue, index);
+          const fillPercent = starFillPercent(clampedValue, index);
 
           return (
             <span
@@ -70,7 +56,9 @@ export const RatingStars = forwardRef<HTMLDivElement, RatingStarsProps>(function
           );
         })}
       </div>
-      {showValue ? <span className="pf-rating-stars__value">{clampedValue.toFixed(1)}</span> : null}
+      {showValue ? (
+        <span className="pf-rating-stars__value">{formatRating(clampedValue)}</span>
+      ) : null}
     </div>
   );
 });
@@ -97,9 +85,10 @@ export const RatingBadge = forwardRef<HTMLSpanElement, RatingBadgeProps>(functio
     >
       <Icon name="star" aria-hidden className="pf-rating-badge__icon" />
       <span className="pf-rating-badge__value">
-        {clampedValue.toFixed(1)}
+        {/* One decimal either side, core's, so `<pf-rating-badge>` reads the same. */}
+        {formatRating(clampedValue)}
         <span className="pf-rating-badge__separator">/</span>
-        {max.toFixed(1)}
+        {formatRating(max)}
       </span>
       {typeof reviews === 'number' ? (
         <span className="pf-rating-badge__reviews">({reviews.toLocaleString()})</span>

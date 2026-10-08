@@ -1,5 +1,5 @@
+import { clampSplitSize, resolveSplitterKey, splitSizeFromPointer } from '@pitchfork-ui/core';
 import { Children, forwardRef, useId, useRef } from 'react';
-import { Keys } from '../../a11y';
 import { useComposedRefs, useControllableState } from '../../hooks';
 import { cx } from '../../utils/cx';
 import './Resizable.css';
@@ -23,8 +23,6 @@ export interface ResizableProps extends Omit<React.HTMLAttributes<HTMLDivElement
   /** Exactly two children: the first and second panels. */
   children: React.ReactNode;
 }
-
-const clamp = (n: number, min: number, max: number) => Math.min(Math.max(n, min), max);
 
 export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(function Resizable(
   {
@@ -52,7 +50,13 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(function Res
     defaultValue: defaultSize,
     onChange: onSizeChange,
   });
-  const value = clamp(current ?? defaultSize, min, max);
+  /*
+   * Core's, so `<pf-resizable>` clamps the same way — including that a size
+   * which is not a finite number becomes an even split of the bounds rather
+   * than reaching the DOM as `flex-basis: NaN%`, an invalid declaration that
+   * collapses the panel.
+   */
+  const value = clampSplitSize(current ?? defaultSize, { min, max });
 
   const isHorizontal = orientation === 'horizontal';
   const panels = Children.toArray(children);
@@ -63,10 +67,12 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(function Res
     const el = containerRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const pct = isHorizontal
-      ? ((clientX - rect.left) / rect.width) * 100
-      : ((clientY - rect.top) / rect.height) * 100;
-    setCurrent(clamp(Math.round(pct), min, max));
+    // `null` when the container has no length — a splitter dragged before its
+    // first layout — in which case the size it already had stands.
+    const next = isHorizontal
+      ? splitSizeFromPointer(clientX, rect.left, rect.width, { min, max })
+      : splitSizeFromPointer(clientY, rect.top, rect.height, { min, max });
+    if (next !== null) setCurrent(next);
   };
 
   const onPointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
@@ -86,21 +92,15 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(function Res
   };
 
   const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
-    const decKey = isHorizontal ? Keys.ArrowLeft : Keys.ArrowUp;
-    const incKey = isHorizontal ? Keys.ArrowRight : Keys.ArrowDown;
-    if (event.key === decKey) {
-      event.preventDefault();
-      setCurrent(clamp(value - step, min, max));
-    } else if (event.key === incKey) {
-      event.preventDefault();
-      setCurrent(clamp(value + step, min, max));
-    } else if (event.key === Keys.Home) {
-      event.preventDefault();
-      setCurrent(min);
-    } else if (event.key === Keys.End) {
-      event.preventDefault();
-      setCurrent(max);
-    }
+    /*
+     * Core decides, including which arrows this orientation answers to: a
+     * horizontal splitter leaves Up and Down to the page, so Enter and the
+     * arrows it does not handle report `null` and nothing is prevented.
+     */
+    const next = resolveSplitterKey(event.key, { orientation, size: value, min, max, step });
+    if (next === null) return;
+    event.preventDefault();
+    setCurrent(next);
   };
 
   return (

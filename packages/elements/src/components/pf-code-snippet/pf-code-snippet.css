@@ -1,0 +1,164 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.figure {
+  background: var(--pf-code-snippet-bg);
+  /*
+   * Derived borders and header stay as fallback mixes rather than theme.css
+   * aliases, so a scoped `--pf-code-snippet-bg` override re-tints them — the
+   * same arrangement the React stylesheet uses, and the reason the two look
+   * identical under a custom background.
+   */
+  border: 1px solid
+    var(
+      --pf-code-snippet-border,
+      color-mix(in srgb, var(--pf-code-snippet-bg) 82%, var(--pf-mix-base))
+    );
+  border-radius: var(--radius-md);
+  color: var(--pf-code-snippet-text);
+  display: grid;
+  margin: 0;
+  overflow: hidden;
+}
+
+.header {
+  align-items: center;
+  background: var(
+    --pf-code-snippet-header-bg,
+    color-mix(in srgb, var(--pf-code-snippet-bg) 78%, var(--pf-mix-base))
+  );
+  border-bottom: 1px solid
+    var(
+      --pf-code-snippet-header-border,
+      color-mix(in srgb, var(--pf-code-snippet-bg) 65%, var(--pf-mix-base))
+    );
+  display: flex;
+  gap: var(--space-3);
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+}
+
+.meta {
+  align-items: baseline;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.title {
+  color: var(--pf-code-snippet-title);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.language {
+  color: var(--pf-code-snippet-language);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+}
+
+.copy {
+  align-items: center;
+  background: var(
+    --pf-code-snippet-copy-bg,
+    color-mix(in srgb, var(--pf-code-snippet-bg) 70%, var(--pf-mix-base))
+  );
+  border: 1px solid
+    var(
+      --pf-code-snippet-copy-border,
+      color-mix(in srgb, var(--pf-code-snippet-bg) 55%, var(--pf-mix-base))
+    );
+  border-radius: var(--radius-sm);
+  color: var(--pf-code-snippet-copy-text);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: var(--font-size-xs);
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+}
+
+.copy:hover {
+  background: var(
+    --pf-code-snippet-copy-hover-bg,
+    color-mix(in srgb, var(--pf-code-snippet-bg) 58%, var(--pf-mix-base))
+  );
+}
+
+.copy:focus-visible {
+  box-shadow: var(--pf-code-snippet-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.pre {
+  font-family: var(--pf-code-font-family);
+  font-size: var(--font-size-xs);
+  line-height: 1.65;
+  margin: 0;
+  overflow: auto;
+  padding: var(--space-3);
+}
+
+.plain,
+.markup {
+  font: inherit;
+}
+
+/*
+ * Two classes deep, because the ties break on source order and a bare
+ * `.empty` would lose to whatever `display` a later rule gives the box. The
+ * slot itself stays rendered inside it either way, or markup added later
+ * would never fire `slotchange`.
+ */
+.markup.empty {
+  display: none;
+}
+
+/*
+ * A grid, not a table: the numbers only have to line up in a column, and a
+ * row here has no box of its own to need. `white-space: pre` on the content
+ * is what keeps the author's indentation.
+ */
+.numbered {
+  display: grid;
+  font: inherit;
+  grid-template-columns: auto 1fr;
+}
+
+.line {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+}
+
+.line-number {
+  color: var(--pf-code-snippet-line-number);
+  padding-inline-end: var(--space-3);
+  text-align: end;
+  user-select: none;
+}
+
+.line-content {
+  white-space: pre;
+}
+
+/*
+ * Each element needs its own copy: `.pf-sr-only` is declared once in the
+ * React library's global sheet and does not cross a shadow boundary.
+ */
+.sr-only {
+  border: 0;
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

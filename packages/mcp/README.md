@@ -44,7 +44,22 @@ against. Otherwise it falls back to the metadata bundled with the server.
 | `get_examples`      | Every worked example for a component, as copy-ready JSX                      |
 | `get_tokens`        | The design token tree — colours, spacing, radii, typography, shadows, motion |
 | `get_conventions`   | The house rules: naming, the CSS variable chain, breakpoints, forms, a11y    |
-| `validate_usage`    | Check a JSX snippet against the real API                                     |
+| `list_elements`     | Every custom element, optionally filtered by category                        |
+| `get_element`       | Full API for one element: attributes, events, methods, slots, `::part()`s    |
+| `validate_usage`    | Check a JSX snippet or `<pf-*>` markup against the real API                  |
+
+### The two layers
+
+The library ships twice: hand-written React components in `@pitchfork-ui/react`,
+and standard custom elements in `@pitchfork-ui/elements`. Neither wraps the
+other, so the server answers about both. `get_component` names the element for a
+component and `get_element` names the component for an element, including the
+four React components an element absorbed rather than mirrored —
+`get_component AreaChart` says to set `area` on `<pf-line-chart>`.
+
+Use the elements in Angular, Vue or plain HTML; generated bindings exist for all
+three frameworks. `list_elements` marks which elements are form controls and
+which only make sense inside a parent.
 
 ### validate_usage
 
@@ -84,12 +99,38 @@ given component is not flagged. `<Badge type="success">` passes, because `type`
 is real HTML and rejecting it would mean rejecting legitimate passthrough props
 everywhere else.
 
+Element markup is checked too, against the attribute names rather than the prop
+names, and with two findings that have no React equivalent:
+
+```html
+<pf-buton variant="primary">Go</pf-buton>
+<pf-video-player sources="clip.mp4"></pf-video-player>
+<pf-time-picker hourCycle="12"></pf-time-picker>
+```
+
+```
+2 error(s), 1 warning(s).
+
+- error (line 1): `<pf-buton>` is not an element in this library. Did you mean
+  `<pf-button>`?
+- error (line 2): `sources` on `<pf-video-player>` is `PfVideoSource[]`, which
+  has no attribute — setting it in markup does nothing. Assign the property in
+  JavaScript, or pass it as a prop through one of the framework bindings.
+- warning (line 3): `hourCycle` is the property name; the attribute is
+  `hour-cycle`. Correct in a framework binding, inert in plain HTML.
+```
+
+The first of those is the one worth having: the markup parses, the element
+renders, and the value simply never arrives. Angular's `[prop]`/`(event)` and
+Vue's `:prop`/`@event` spellings are recognised and left alone.
+
 ## Configuration
 
-| Variable                | Purpose                                                 |
-| ----------------------- | ------------------------------------------------------- |
-| `PITCHFORK_UI_METADATA` | Path to a `metadata.json` to use instead of the default |
-| `PITCHFORK_UI_TOKENS`   | Path to a `tokens.json` to use instead of the default   |
+| Variable                | Purpose                                                  |
+| ----------------------- | -------------------------------------------------------- |
+| `PITCHFORK_UI_METADATA` | Path to a `metadata.json` to use instead of the default  |
+| `PITCHFORK_UI_TOKENS`   | Path to a `tokens.json` to use instead of the default    |
+| `PITCHFORK_UI_ELEMENTS` | Path to an `elements.json` to use instead of the default |
 
 By default the server answers from the `@pitchfork-ui/react` installed in your
 project, falling back to the copy bundled here. To point it at a specific file:

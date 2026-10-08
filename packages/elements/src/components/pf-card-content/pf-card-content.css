@@ -1,0 +1,8 @@
+:host {
+  display: block;
+  padding: var(--pf-card-section-padding, var(--space-4));
+}
+
+:host([hidden]) {
+  display: none;
+}

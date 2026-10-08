@@ -1,0 +1,75 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfRadioButton" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-radio-button>`
+
+
+One choice inside a `pf-radio-group`.
+
+Not form-associated, and deliberately so: a form-associated custom element
+gets no radio grouping from the browser. Measured — checking a second one
+leaves the first checked and the form submits *both* values, where native
+radios submit one. So `pf-radio-group` owns the single-selection invariant
+and the form value, and this element only asks to be chosen.
+
+The control is a native `<input type="radio">` so the dot is the browser's,
+drawn from `accent-color` exactly as the React component's is. It carries
+`tabindex="-1"` and the host delegates focus, which means the group governs
+the tab order through the host while `:focus-visible` still lands on the
+input the user can see.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `checked` | `checked` | `boolean` | `false` | Whether this is the chosen one. The group sets this — a consumer who sets it directly will have it overwritten the next time the group syncs. |
+| `disabled` | `disabled` | `boolean` | `false` | Disable this choice alone. Reflected so the stylesheet can select on it. |
+| `value` | `value` | `string` | `''` | Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-radio-button[value="..."]` in a React or Angular app finds nothing. The group reads the property, so this was never a live defect here -- it is the same trap that was one in `pf-command-item`. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfRadioSelect` | `\{ value: string; \}` | Asks the group to select this choice. The group decides. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the choice's label. |
+| `description` | secondary text below the label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `description` | the wrapper around the description slot. |
+| `input` | the native radio. |
+| `label` | the label element. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-radio-button></pf-radio-button>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfRadioButton } from '@pitchfork-ui/elements-react';
+
+<PfRadioButton />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-radio-button></pf-radio-button>
+```
+

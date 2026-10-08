@@ -33,6 +33,19 @@ if (!existsSync(metadataPath)) {
 
 const metadata = JSON.parse(readFileSync(metadataPath, 'utf8'));
 const reactPkg = JSON.parse(readFileSync(join(root, 'packages/react/package.json'), 'utf8'));
+
+/*
+ * The elements are the other half of the library, and an agent reading these
+ * files has no other way to learn they exist. Their metadata comes from
+ * Stencil's docs.json via build:elements-metadata; absent, these files are
+ * still written, because the React half is independently useful and the
+ * elements build is slower -- but --strict refuses, since a published llms.txt
+ * missing half the library is worse than a failed build.
+ */
+const elementsPath = join(root, 'packages/elements/dist/elements.json');
+const elementMetadata = existsSync(elementsPath)
+  ? JSON.parse(readFileSync(elementsPath, 'utf8'))
+  : null;
 const site = reactPkg.homepage.endsWith('/') ? reactPkg.homepage : `${reactPkg.homepage}/`;
 
 /* ------------------------------------------------------------------ *
@@ -81,6 +94,16 @@ function docsUrlFor(component) {
   return title ? `${site}?path=/docs/${slugify(title)}--docs` : null;
 }
 
+/**
+ * A generated element page. `scripts/build-elements-docs.mjs` titles every one
+ * `Web components/<PfName>`, so unlike the components these need no lookup --
+ * but they go through the same slugify, and `--verify` checks them against the
+ * ids Storybook actually built, which is what would catch the convention
+ * changing.
+ */
+const elementDocsUrl = (element) =>
+  `${site}?path=/docs/${slugify(`Web components/${element.name}`)}--docs`;
+
 /* ------------------------------------------------------------------ *
  * Rendering helpers
  * ------------------------------------------------------------------ */
@@ -88,10 +111,18 @@ function docsUrlFor(component) {
 /** Pipes inside a type (`'a' | 'b'`) would otherwise split the table cell. */
 const cell = (value) => String(value).replace(/\|/g, '\\|');
 
+/**
+ * Collapse the hard wrapping before looking for the sentence end. `.` does not
+ * match a newline, so on a wrapped doc comment the match fails and the fallback
+ * returns the *entire* description — which put four paragraphs of
+ * `pf-accordion`'s prose into a one-line index bullet. The React descriptions
+ * come from MDX and are single-line, so this changes nothing for them.
+ */
 const firstSentence = (text) => {
   if (!text) return '';
-  const match = text.match(/^.*?[.!?](?=\s|$)/);
-  return (match ? match[0] : text).trim();
+  const flat = text.replace(/\s+/g, ' ').trim();
+  const match = flat.match(/^.*?[.!?](?=\s|$)/);
+  return (match ? match[0] : flat).trim();
 };
 
 function propsTable(props) {
@@ -168,6 +199,42 @@ function buildIndex() {
         firstSentence(component.description) || `Part of ${component.folder}, exported separately.`;
       out.push(
         url ? `- [${component.name}](${url}): ${summary}` : `- ${component.name}: ${summary}`,
+      );
+    }
+    out.push('');
+  }
+
+  if (elementMetadata) {
+    out.push('## Web components');
+    out.push('');
+    out.push(
+      `The same library as standard custom elements in \`${elementMetadata.name}\` — ` +
+        'a first-class layer, not wrappers around the React components. Use them in ' +
+        'Angular, Vue, plain HTML, or anywhere the React components do not fit. ' +
+        `Typed bindings are generated for each framework: \`${elementMetadata.bindings.react}\`, ` +
+        `\`${elementMetadata.bindings.angular}\`, \`${elementMetadata.bindings.vue}\`. ` +
+        `The complete element API is JSON at \`${elementMetadata.name}/metadata\`.`,
+    );
+    out.push('');
+    out.push(
+      'Two things that differ from the React props and have no React equivalent: ' +
+        'a prop typed as an array or a function has **no attribute**, so markup ' +
+        'cannot set it (assign the property, or pass it through a binding); and ' +
+        'a consumer stylesheet cannot reach inside a shadow root, so styling goes ' +
+        'through the `::part()` names each element documents, or through the ' +
+        '`--pf-*` custom properties, which do cross the boundary.',
+    );
+    out.push('');
+    for (const element of elementMetadata.elements) {
+      const notes = [
+        element.childOf ? `goes inside \`<${element.childOf}>\`` : null,
+        element.formAssociated ? 'form control' : null,
+        element.reactCounterpart ? `React: \`${element.reactCounterpart}\`` : null,
+      ].filter(Boolean);
+      out.push(
+        `- [<${element.tag}>](${elementDocsUrl(element)}): ` +
+          `${firstSentence(element.description) || `The \`${element.tag}\` element.`}` +
+          (notes.length ? ` (${notes.join('; ')})` : ''),
       );
     }
     out.push('');
@@ -267,6 +334,100 @@ function buildFull() {
     }
   }
 
+  if (elementMetadata) {
+    out.push('---');
+    out.push('');
+    out.push('## Web components');
+    out.push('');
+    out.push(
+      `${elementMetadata.elements.length} custom elements in ` +
+        `\`${elementMetadata.name}@${elementMetadata.version}\`, with generated bindings for ` +
+        `React, Angular and Vue. The same data is JSON at ` +
+        `\`${elementMetadata.name}/metadata\`.`,
+    );
+    out.push('');
+    out.push('```bash');
+    out.push(`npm install ${elementMetadata.name}`);
+    out.push('```');
+    out.push('');
+    out.push('```html');
+    out.push('<script type="module">');
+    out.push(`  import { defineCustomElements } from '${elementMetadata.name}/loader';`);
+    out.push('  defineCustomElements();');
+    out.push('</script>');
+    out.push('');
+    out.push('<pf-button variant="primary">Save</pf-button>');
+    out.push('```');
+    out.push('');
+
+    for (const element of elementMetadata.elements) {
+      out.push(`### <${element.tag}>`);
+      out.push('');
+      out.push(
+        `Category: ${element.category ?? 'uncategorised'} · ` +
+          `Binding: \`${element.name}\` · [Docs](${elementDocsUrl(element)})` +
+          (element.reactCounterpart ? ` · React: \`${element.reactCounterpart}\`` : '') +
+          (element.childOf ? ` · goes inside \`<${element.childOf}>\`` : ''),
+      );
+      out.push('');
+      if (element.formAssociated) {
+        out.push('Form-associated: submits with a surrounding `<form>` under its `name`.');
+        out.push('');
+      }
+      if (element.description) {
+        out.push(element.description);
+        out.push('');
+      }
+
+      if (element.props.length) {
+        out.push('| Prop | Attribute | Type | Default |');
+        out.push('| --- | --- | --- | --- |');
+        for (const prop of element.props) {
+          out.push(
+            `| \`${prop.name}\` | ${prop.attr ? `\`${prop.attr}\`` : '_property only_'} | ` +
+              `\`${cell(prop.type)}\` | ${prop.default ? `\`${cell(prop.default)}\`` : '—'} |`,
+          );
+        }
+        out.push('');
+      }
+
+      if (element.events.length) {
+        out.push('**Events** (`onPfX` in the React bindings)');
+        out.push('');
+        for (const event of element.events) {
+          out.push(
+            `- \`${event.name}\`${event.detail ? ` — \`${cell(event.detail)}\`` : ''}` +
+              `${event.description ? `: ${firstSentence(event.description)}` : ''}`,
+          );
+        }
+        out.push('');
+      }
+
+      if (element.methods.length) {
+        out.push('**Methods** (all async)');
+        out.push('');
+        for (const method of element.methods) out.push(`- \`${method.signature}\``);
+        out.push('');
+      }
+
+      if (element.slots.length) {
+        out.push('**Slots**');
+        out.push('');
+        for (const slot of element.slots) {
+          out.push(`- ${slot.name ? `\`${slot.name}\`` : '_default_'}: ${slot.description}`);
+        }
+        out.push('');
+      }
+
+      if (element.parts.length) {
+        out.push(`**Parts** — \`${element.tag}::part(name)\``);
+        out.push('');
+        for (const part of element.parts) out.push(`- \`${part.name}\`: ${part.description}`);
+        out.push('');
+      }
+    }
+  }
+
   return out.join('\n');
 }
 
@@ -320,11 +481,24 @@ console.log(`  llms.txt:       ${kb(index)} KB`);
 console.log(`  llms-full.txt:  ${kb(full)} KB`);
 console.log(`  components:     ${metadata.components.length} (${linked} linked to a docs page)`);
 
+if (elementMetadata) {
+  console.log(`  elements:       ${elementMetadata.elements.length}`);
+}
+
 const unlinked = metadata.components.filter((c) => !docsUrlFor(c)).map((c) => c.name);
 if (unlinked.length) console.log(`  no docs page:   ${unlinked.join(', ')}`);
 
 if (process.argv.includes('--strict') && unlinked.length) {
   console.error(`\n--strict: ${unlinked.length} component(s) have no docs page.`);
+  process.exit(1);
+}
+
+if (process.argv.includes('--strict') && !elementMetadata) {
+  console.error(
+    `\n--strict: ${elementsPath.slice(root.length + 1)} not found, so these files ` +
+      'describe only the React half of the library. Run ' +
+      '`npm run build:elements && npm run build:elements-metadata` first.',
+  );
   process.exit(1);
 }
 

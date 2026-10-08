@@ -1,0 +1,118 @@
+/*
+ * The --pf-credit-card-* colours live in theme.css rather than here, so a
+ * scoped override (Storybook's CSS-variable controls, a consumer theming one
+ * card) still reaches them by inheritance through the shadow boundary.
+ */
+:host {
+  aspect-ratio: 1.586;
+  border: 1px solid var(--pf-credit-card-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  color: var(--pf-credit-card-text-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 100%;
+  min-height: 200px;
+  padding: var(--space-4);
+  position: relative;
+  width: 340px;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The React library draws this with `.pf-credit-card::before`. Here it is a
+ * real element, so its position in the stacking order against the `z-index: 1`
+ * content below is explicit rather than resting on how a host pseudo-element
+ * participates in the shadow tree.
+ */
+.glare {
+  background: radial-gradient(circle at 20% 20%, var(--pf-credit-card-glare), transparent 40%);
+  border-radius: inherit;
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+:host([brand='generic']) {
+  background: var(--pf-credit-card-generic-gradient);
+}
+
+:host([brand='visa']) {
+  background: var(--pf-credit-card-visa-gradient);
+}
+
+:host([brand='mastercard']) {
+  background: var(--pf-credit-card-mastercard-gradient);
+}
+
+:host([brand='amex']) {
+  background: var(--pf-credit-card-amex-gradient);
+}
+
+.top-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.chip {
+  background: var(--pf-credit-card-chip-gradient);
+  border-radius: 4px;
+  display: inline-flex;
+  height: 28px;
+  width: 38px;
+}
+
+.brand,
+.number,
+.label,
+.value {
+  color: inherit;
+}
+
+.brand {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+}
+
+.number {
+  font-size: clamp(var(--font-size-lg), 2.6vw, var(--font-size-2xl));
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  line-height: 1.25;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.meta {
+  display: flex;
+  gap: var(--space-4);
+  position: relative;
+  z-index: 1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--font-size-2xs);
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  text-transform: uppercase;
+}
+
+.value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}

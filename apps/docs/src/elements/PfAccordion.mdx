@@ -1,0 +1,71 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfAccordion" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-accordion>`
+
+
+A stack of `pf-accordion-item` children, of which either one or several can
+be open.
+
+The group owns which sections are open and the arrow keys; each item owns
+its own header, panel and animation. Same division as `pf-radio-group` and
+its radios — and for the same reason, since "one open at a time" is not a
+thing a section can decide for itself.
+
+Unlike a tab strip this is **not** a roving tabindex: the ARIA accordion
+pattern puts every header in the tab sequence, and the arrows are an extra
+way to move between them rather than the only one. A header is a real
+`<button>` inside its item's shadow root, so it is tabbable with no help.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `headingLevel` | `heading-level` | `2 \| 3 \| 4 \| 5 \| 6` | `3` | The heading level each item's header is wrapped in. A union-literal type defeats Stencil's attribute coercion — measured on `pf-time-picker`, where `hour-cycle="12"` arrived as the *string* `"12"` — so the value is coerced before it is pushed down rather than compared here. The union stays because it is the useful type for a framework consumer who really does set the number. |
+| `type` | `type` | `"multiple" \| "single"` | `'single'` | `single` closes the others when one opens; `multiple` leaves them. |
+| `value` | `value` | `string` | `''` | The open sections, as one comma-separated string — which is what an attribute can carry. `pfChange` also reports the parsed array, which is what a framework consumer usually wants. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; values: string[]; \}` | Fires when the open set changes, however it was changed. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children, for a consumer who changed one through its *property* — `item.disabled = true` leaves no attribute, moves no node and fires no `slotchange`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-accordion-item` children. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-accordion></pf-accordion>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfAccordion } from '@pitchfork-ui/elements-react';
+
+<PfAccordion />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-accordion></pf-accordion>
+```
+

@@ -1,0 +1,58 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfCreditCard" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-credit-card>`
+
+
+A card-shaped display of payment details. Presentational only — it stores
+nothing and submits nothing.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `brand` | `brand` | `"amex" \| "generic" \| "mastercard" \| "visa"` | `'generic'` | Card network. Reflected so the stylesheet can pick the gradient. |
+| `cardNumber` | `card-number` | `string` | `''` | The number to display. Separators in the input are regrouped. |
+| `cardholderName` | `cardholder-name` | `string` | `''` | Name on the card. |
+| `cvc` | `cvc` | `string \| undefined` | — | Security code. Omit it to leave the field out entirely. |
+| `expiry` | `expiry` | `string` | `''` | Expiry, displayed as given. |
+| `masked` | `masked` | `boolean` | `true` | Hide all but the last four digits, and the CVC with it. Defaults to true, so the careless case is the safe one. Reflected for the stylesheet. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `brand` | the brand wordmark. |
+| `chip` | the decorative chip. |
+| `glare` | the decorative highlight overlay. |
+| `label` | each field's caption. |
+| `meta` | the row of labelled fields. |
+| `number` | the grouped card number. |
+| `value` | each field's value. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-credit-card></pf-credit-card>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfCreditCard } from '@pitchfork-ui/elements-react';
+
+<PfCreditCard />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-credit-card></pf-credit-card>
+```
+

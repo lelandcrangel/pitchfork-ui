@@ -1,0 +1,77 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfResizable" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-resizable>`
+
+
+Two panels with a draggable separator between them.
+
+The panels are slotted — `start` and `end` rather than a default slot taking
+exactly two children, because a slot cannot be told to take only the first
+assigned node and a consumer looping in their own template would otherwise
+find the third child silently ignored, which is what the React `Resizable`
+does with `Children.toArray(children)`.
+
+All of the arithmetic is core's, so this and the React `Resizable` agree on
+which arrow grows the first panel, on where a pointer sits, and on what a
+size outside the bounds becomes.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `handleLabel` | `handle-label` | `string` | `'Resize panels'` | The separator's accessible name. |
+| `max` | `max` | `number` | `90` | Its largest. |
+| `min` | `min` | `number` | `10` | The first panel's smallest share, in percent. |
+| `orientation` | `orientation` | `"horizontal" \| "vertical"` | `'horizontal'` | `horizontal` puts the panels side by side and drags left and right; `vertical` stacks them. Reflected, because the stylesheet selects on it. |
+| `size` | `size` | `number` | `50` | The first panel's share, in percent. |
+| `step` | `step` | `number` | `2` | How far one key press moves it, in percent. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ size: number; \}` | Fires when the split changes, by pointer or by key. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| `end` | the second panel, which takes the rest. |
+| `start` | the first panel: the one whose size this controls. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `end` | the second panel's box. |
+| `grip` | the mark in the middle of the separator. |
+| `handle` | the separator. |
+| `start` | the first panel's box. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-resizable></pf-resizable>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfResizable } from '@pitchfork-ui/elements-react';
+
+<PfResizable />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-resizable></pf-resizable>
+```
+

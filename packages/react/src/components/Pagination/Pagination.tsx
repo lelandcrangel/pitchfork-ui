@@ -1,64 +1,7 @@
+import { clampPage, getPaginationItems } from '@pitchfork-ui/core';
 import * as React from 'react';
 import { cx } from '../../utils/cx';
 import './Pagination.css';
-
-type PaginationItem = number | 'ellipsis-left' | 'ellipsis-right';
-
-function clampPage(page: number, totalPages: number): number {
-  if (totalPages <= 0) {
-    return 1;
-  }
-
-  return Math.min(Math.max(page, 1), totalPages);
-}
-
-function getPaginationItems(
-  currentPage: number,
-  totalPages: number,
-  siblingCount: number,
-  boundaryCount: number,
-): PaginationItem[] {
-  const safeTotal = Math.max(totalPages, 1);
-  const safeCurrent = clampPage(currentPage, safeTotal);
-  const safeSiblingCount = Math.max(siblingCount, 0);
-  const safeBoundaryCount = Math.max(boundaryCount, 0);
-
-  const leftBoundaryEnd = Math.min(safeBoundaryCount, safeTotal);
-  const rightBoundaryStart = Math.max(safeTotal - safeBoundaryCount + 1, 1);
-
-  const start = Math.max(safeCurrent - safeSiblingCount, leftBoundaryEnd + 1);
-  const end = Math.min(safeCurrent + safeSiblingCount, rightBoundaryStart - 1);
-
-  const items: PaginationItem[] = [];
-
-  for (let page = 1; page <= leftBoundaryEnd; page += 1) {
-    items.push(page);
-  }
-
-  if (start > leftBoundaryEnd + 1) {
-    items.push('ellipsis-left');
-  }
-
-  for (let page = start; page <= end; page += 1) {
-    items.push(page);
-  }
-
-  if (end < rightBoundaryStart - 1) {
-    items.push('ellipsis-right');
-  }
-
-  for (let page = rightBoundaryStart; page <= safeTotal; page += 1) {
-    if (page > leftBoundaryEnd) {
-      items.push(page);
-    }
-  }
-
-  if (!items.length) {
-    return [1];
-  }
-
-  return items;
-}
 
 export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   page?: number;

@@ -1,0 +1,75 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfPieChart" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-pie-chart>`
+
+
+A pie or donut over `pf-pie-slice` children.
+
+The chart owns the two things a slice cannot know: its share of the total
+and its colour. Both go to the slice, which draws its own legend row —
+a slot renders its assigned content once and in one place, so a legend
+built in the shadow root could never reach labels that live in the light
+DOM.
+
+All of the arithmetic is core's, so this and the React `PieChart` show the
+same breakdown, down to the legend's percentages summing to 100.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `cutout` | `cutout` | `number` | `0.58` | The hole in the middle, as a fraction of the diameter. |
+| `label` | `label` | `string` | `'Pie chart'` | The chart's accessible name. |
+| `showLegend` | `show-legend` | `boolean` | `true` | Show the legend the slices make up. Reflected. |
+| `size` | `size` | `number` | `192` | Diameter, in pixels. Never below 120, where the ring stops reading. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the slices, for a consumer who changed a value through its *property* — which leaves no attribute and fires no `slotchange`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-pie-slice` children. |
+| `center` | what goes in the hole. |
+| `empty` | what to show when nothing is drawable. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `center` | the hole in the middle. |
+| `gradient` | the layer the wedges are painted on. |
+| `legend` | the list the slices are slotted into. |
+| `visual` | the circle. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-pie-chart></pf-pie-chart>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfPieChart } from '@pitchfork-ui/elements-react';
+
+<PfPieChart />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-pie-chart></pf-pie-chart>
+```
+

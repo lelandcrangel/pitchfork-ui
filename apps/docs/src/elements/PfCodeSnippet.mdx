@@ -1,0 +1,92 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfCodeSnippet" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-code-snippet>`
+
+
+A code block with a copy button.
+
+**No syntax highlighting, deliberately.** The React `CodeSnippet` uses
+`prism-react-renderer`, which is a React renderer and has no equivalent
+here; the alternatives are all large runtime dependencies, and an element in
+a design system should not make a consumer's bundle choose one. A consumer
+who already highlights code slots the markup their highlighter produced into
+the default slot, and this renders that instead of the plain text — it still
+owns the frame, the header, the copy button and the announcement.
+
+Line numbers are offered only for the plain-text path. Aligning a gutter
+with someone else's markup needs to know where their lines break, which only
+they know.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `code` | `code` | `string` | `''` | The code, as plain text. |
+| `copiedLabel` | `copied-label` | `string` | `'Copied'` | — |
+| `copyFailedLabel` | `copy-failed-label` | `string` | `'Copy failed'` | — |
+| `copyLabel` | `copy-label` | `string` | `'Copy'` | — |
+| `feedbackDuration` | `feedback-duration` | `number` | `1600` | How long the button keeps saying what the last press did, in milliseconds. A prop rather than a constant because a live region that still holds "Copied" when the next copy happens announces nothing, so how long it holds is a real decision — and because a test cannot use fake timers here: `vi.useFakeTimers()` replaces `requestAnimationFrame`, which Stencil's render queue runs on, and wedges every test after it. |
+| `heading` | `heading` | `string \| undefined` | — | Shown in the header. |
+| `language` | `language` | `string \| undefined` | — | Shown as a tag in the header, and not used for anything else. |
+| `maxHeight` | `max-height` | `number \| undefined` | — | Scrolls past this height, in pixels. |
+| `showLineNumbers` | `show-line-numbers` | `boolean` | `false` | — |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfCopy` | `\{ code: string; \}` | Fires with the text that reached the clipboard. Not fired on a failure. |
+| `pfCopyError` | `\{ message: string; \}` | Fires when the copy could not be made, with the reason shown. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `copy()` | `copy() =&gt; Promise&lt;boolean&gt;` | Copies the snippet, as pressing the button does. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | pre-highlighted markup, rendered instead of `code`. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `copy` | the copy button. |
+| `figure` | the frame. |
+| `header` | the title, language and copy button. |
+| `language` | the language tag. |
+| `line` | one numbered line, when line numbers are on. |
+| `line-number` | that line's number. |
+| `pre` | the code block. |
+| `title` | the title text. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-code-snippet></pf-code-snippet>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfCodeSnippet } from '@pitchfork-ui/elements-react';
+
+<PfCodeSnippet />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-code-snippet></pf-code-snippet>
+```
+

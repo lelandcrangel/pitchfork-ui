@@ -1,3 +1,4 @@
+import { resolveCurrentNavItem } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './SidebarNavigation.css';
@@ -23,7 +24,7 @@ export interface SidebarNavigationProps extends React.HTMLAttributes<HTMLElement
   footer?: React.ReactNode;
 }
 
-function renderItem(item: SidebarNavigationItem, key: string) {
+function renderItem(item: SidebarNavigationItem, key: string, current: boolean) {
   const content = (
     <>
       {item.icon ? <span className="pf-sidebar-navigation__icon">{item.icon}</span> : null}
@@ -34,7 +35,7 @@ function renderItem(item: SidebarNavigationItem, key: string) {
 
   const className = cx(
     'pf-sidebar-navigation__link',
-    item.active && 'pf-sidebar-navigation__link--active',
+    current && 'pf-sidebar-navigation__link--active',
     item.disabled && 'pf-sidebar-navigation__link--disabled',
   );
 
@@ -45,7 +46,7 @@ function renderItem(item: SidebarNavigationItem, key: string) {
           href={item.href}
           onClick={item.onClick as React.MouseEventHandler<HTMLAnchorElement> | undefined}
           className={className}
-          aria-current={item.active ? 'page' : undefined}
+          aria-current={current ? 'page' : undefined}
         >
           {content}
         </a>
@@ -61,7 +62,7 @@ function renderItem(item: SidebarNavigationItem, key: string) {
           onClick={item.onClick as React.MouseEventHandler<HTMLButtonElement>}
           className={className}
           disabled={item.disabled}
-          aria-current={item.active ? 'page' : undefined}
+          aria-current={current ? 'page' : undefined}
         >
           {content}
         </button>
@@ -71,7 +72,7 @@ function renderItem(item: SidebarNavigationItem, key: string) {
 
   return (
     <li className="pf-sidebar-navigation__item" key={key}>
-      <span className={className} aria-current={item.active ? 'page' : undefined}>
+      <span className={className} aria-current={current ? 'page' : undefined}>
         {content}
       </span>
     </li>
@@ -90,6 +91,23 @@ export const SidebarNavigation = forwardRef<HTMLElement, SidebarNavigationProps>
     },
     ref,
   ) {
+    /*
+     * The resolution runs over every item in every section, not per section:
+     * `aria-current="page"` names the one page the reader is on, and a
+     * sidebar with two marked sections would claim two. Core's, so
+     * `<pf-sidebar-navigation>` marks the same one.
+     */
+    const flat = sections.flatMap((section) => section.items);
+    const currentIndex = resolveCurrentNavItem(flat.map((item) => ({ current: item.active })));
+    /*
+     * Counted rather than compared by identity: nothing stops a consumer
+     * reusing one item object in two sections, and identity would then mark
+     * both.
+     */
+    const offsets = sections.map((_, index) =>
+      sections.slice(0, index).reduce((total, section) => total + section.items.length, 0),
+    );
+
     return (
       <aside ref={ref} className={cx('pf-sidebar-navigation', className)} {...props}>
         {header ? <div className="pf-sidebar-navigation__header">{header}</div> : null}
@@ -104,7 +122,7 @@ export const SidebarNavigation = forwardRef<HTMLElement, SidebarNavigationProps>
               <ul className="pf-sidebar-navigation__list">
                 {section.items.map((item, itemIndex) => {
                   const key = `${sectionIndex}-${itemIndex}-${typeof item.label === 'string' ? item.label : 'item'}`;
-                  return renderItem(item, key);
+                  return renderItem(item, key, offsets[sectionIndex] + itemIndex === currentIndex);
                 })}
               </ul>
             </div>

@@ -1,0 +1,44 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfModalBody" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-modal-body>`
+
+
+The body section of a `pf-modal`.
+
+A separate element rather than a named slot, for the reason `pf-card` gives:
+a named slot would need emptiness detection or leave a padded, bordered
+strip when nothing was slotted into it.
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the section's content. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-modal-body></pf-modal-body>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfModalBody } from '@pitchfork-ui/elements-react';
+
+<PfModalBody />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-modal-body></pf-modal-body>
+```
+

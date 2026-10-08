@@ -1,0 +1,15 @@
+:host {
+  color: var(--pf-tabs-text);
+  display: block;
+  line-height: 1.5;
+  min-width: 0;
+}
+
+/*
+ * The group hides the panels that are not on show with `hidden`, so this is
+ * the rule that does the hiding -- `:host` above would otherwise override the
+ * UA stylesheet's `display: none` for `[hidden]`.
+ */
+:host([hidden]) {
+  display: none;
+}

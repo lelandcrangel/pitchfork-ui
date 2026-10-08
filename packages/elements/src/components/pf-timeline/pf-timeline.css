@@ -1,0 +1,13 @@
+:host {
+  display: grid;
+  gap: 0;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/* The entries have to be grid items of the host, not of a box inside it. */
+slot {
+  display: contents;
+}

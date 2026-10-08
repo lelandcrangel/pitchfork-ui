@@ -203,9 +203,9 @@ const isPassthrough = (name) =>
  * rather than a parser: the input is usually a fragment, not a valid module,
  * so a real parser would reject perfectly reasonable input.
  */
-function findUsages(code) {
+function scanTags(code, pattern) {
   const usages = [];
-  const tag = /<([A-Z][A-Za-z0-9]*)/g;
+  const tag = new RegExp(pattern, 'g');
   let match;
 
   while ((match = tag.exec(code)) !== null) {
@@ -248,6 +248,28 @@ function findUsages(code) {
 
   return usages;
 }
+
+const findUsages = (code) => scanTags(code, '<([A-Z][A-Za-z0-9]*)');
+
+/**
+ * Custom element usage: `<pf-button variant="primary">`. A separate scan
+ * rather than a looser tag pattern, because the checks differ -- an element
+ * takes kebab-case *attributes*, and some of its props have no attribute at
+ * all.
+ */
+const findElementUsages = (code) => scanTags(code, '<(pf-[a-z][a-z0-9-]*)');
+
+/**
+ * An attribute name, including the sigils the framework bindings use.
+ *
+ * Without the sigils the scanner skips the punctuation and reads the bare word,
+ * so `[formControl]="email"` arrives as an attribute called `formControl` and
+ * then one called `email`, and `(pfChange)="onChange($event)"` adds `event` —
+ * four invented-attribute errors on markup that is entirely correct. Capturing
+ * them is what lets `isElementPassthrough` recognise each as a binding rather
+ * than a typo. JSX has none of these forms, so the React scan is unaffected.
+ */
+const ATTRIBUTE_NAME = /^(?:\[\(?[\w.$-]+\)?\]|\(\[?[\w.$-]+\]?\)|[@:#*]?[A-Za-z_][\w:.$-]*)/;
 
 function parseAttrs(attrText) {
   const attrs = [];
@@ -302,7 +324,7 @@ function parseAttrs(attrText) {
       continue;
     }
 
-    const nameMatch = /^[A-Za-z_][\w:.-]*/.exec(attrText.slice(i));
+    const nameMatch = ATTRIBUTE_NAME.exec(attrText.slice(i));
     if (!nameMatch) {
       i += 1;
       continue;
@@ -339,11 +361,21 @@ function parseAttrs(attrText) {
   return attrs;
 }
 
-/** String-literal union members, or null if the prop is not one. */
+/**
+ * String-literal union members, or null if the prop is not one.
+ *
+ * Both quote styles, because the two metadata sources disagree: the React
+ * extractor reproduces the source, which this repo writes with single quotes,
+ * while Stencil normalises every union member to double quotes
+ * (`"ghost" | "primary"`). Accepting only single quotes made every variant
+ * check on every element silently pass -- which is how `variant="ghostly"`
+ * came back clean from a validator whose whole job is to catch it.
+ */
 function unionMembers(type) {
-  if (!type || !type.includes('|') || !type.includes("'")) return null;
+  if (!type || !type.includes('|')) return null;
+  if (!type.includes("'") && !type.includes('"')) return null;
   const members = type.split('|').map((part) => part.trim());
-  if (!members.every((m) => /^'[^']*'$/.test(m))) return null;
+  if (!members.every((m) => /^'[^']*'$/.test(m) || /^"[^"]*"$/.test(m))) return null;
   return members.map((m) => m.slice(1, -1));
 }
 
@@ -354,7 +386,163 @@ function unionMembers(type) {
 const isIconProp = (component, propName) =>
   propName === 'iconName' || (component === 'Icon' && propName === 'name');
 
-export function validateUsage(code, componentsByName, icons = null) {
+/**
+ * Global attributes legitimate on any custom element. Shorter than the React
+ * list on purpose: an element does not spread onto a native node, so an
+ * attribute that is not one of these and not a declared one really is invented.
+ * `on*` is lowercase in HTML and `onPf*` in the generated React bindings, so
+ * both spellings pass.
+ */
+const ELEMENT_GLOBAL_ATTRIBUTES = new Set([
+  'accesskey',
+  'autocapitalize',
+  'autofocus',
+  'class',
+  'className',
+  'contenteditable',
+  'dir',
+  'draggable',
+  'enterkeyhint',
+  'hidden',
+  'id',
+  'inert',
+  'inputmode',
+  'is',
+  'itemid',
+  'itemprop',
+  'itemref',
+  'itemscope',
+  'itemtype',
+  'key',
+  'lang',
+  'nonce',
+  'part',
+  'popover',
+  'ref',
+  'slot',
+  'spellcheck',
+  'style',
+  'tabindex',
+  'title',
+  'translate',
+]);
+
+const isElementPassthrough = (name) =>
+  ELEMENT_GLOBAL_ATTRIBUTES.has(name) ||
+  name.startsWith('data-') ||
+  name.startsWith('aria-') ||
+  // A plain HTML listener, a binding's `onPfChange`, and Vue's `@pf-change`
+  // and `:value` all name something real that is not a declared attribute.
+  /^on[A-Za-z]/.test(name) ||
+  name.startsWith('@') ||
+  name.startsWith(':') ||
+  name.startsWith('v-') ||
+  // Angular's own binding and reference syntax, which the generated
+  // components take: [prop], (event), [(ngModel)], *ngIf, #ref.
+  /^[[(#*]/.test(name);
+
+/**
+ * Checks `<pf-*>` usage against the element metadata.
+ *
+ * Two failures here have no equivalent on the React side, and both are silent:
+ * a prop with **no attribute** cannot be set from markup at all (an array or a
+ * function prop -- `sources`, `isDateDisabled`), and an unreflected prop set as
+ * a property leaves no attribute for a stylesheet or a query to find. The first
+ * is reported, because writing it as an attribute does nothing whatsoever.
+ */
+function validateElements(code, elementsByTag, findings) {
+  const tags = [...elementsByTag.keys()];
+
+  for (const usage of findElementUsages(code)) {
+    const element = elementsByTag.get(usage.name);
+
+    if (!element) {
+      const suggestion = closest(usage.name, tags);
+      findings.push({
+        severity: 'error',
+        line: usage.line,
+        component: usage.name,
+        message:
+          `\`<${usage.name}>\` is not an element in this library.` +
+          (suggestion ? ` Did you mean \`<${suggestion}>\`?` : ''),
+      });
+      continue;
+    }
+
+    const byAttr = new Map();
+    const propsWithoutAttr = new Map();
+    for (const prop of element.props) {
+      if (prop.attr) byAttr.set(prop.attr, prop);
+      else propsWithoutAttr.set(prop.name.toLowerCase(), prop);
+    }
+
+    for (const attr of parseAttrs(usage.attrText)) {
+      if (attr.spread || !attr.name) continue;
+      const prop = byAttr.get(attr.name);
+
+      if (!prop) {
+        // A prop that has no attribute, written as one. The markup parses, the
+        // element renders, and the value never arrives.
+        const propertyOnly = propsWithoutAttr.get(attr.name.toLowerCase());
+        if (propertyOnly) {
+          findings.push({
+            severity: 'error',
+            line: usage.line,
+            component: usage.name,
+            message:
+              `\`${propertyOnly.name}\` on \`<${usage.name}>\` is \`${propertyOnly.type}\`, ` +
+              'which has no attribute — setting it in markup does nothing. Assign the ' +
+              'property in JavaScript, or pass it as a prop through one of the framework ' +
+              'bindings.',
+          });
+          continue;
+        }
+        // The camelCase property name where the attribute is kebab-case. Real
+        // as a *property*, so this is only worth saying in markup.
+        const camel = byAttr.get(attr.name.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`));
+        if (camel) {
+          findings.push({
+            severity: 'warning',
+            line: usage.line,
+            component: usage.name,
+            message:
+              `\`${attr.name}\` is the property name; the attribute is ` +
+              `\`${camel.attr}\`. Correct in a framework binding, inert in plain HTML.`,
+          });
+          continue;
+        }
+        if (isElementPassthrough(attr.name)) continue;
+        const suggestion = closest(attr.name, [...byAttr.keys()]);
+        findings.push({
+          severity: 'error',
+          line: usage.line,
+          component: usage.name,
+          message: suggestion
+            ? `\`<${usage.name}>\` has no attribute \`${attr.name}\`. Did you mean \`${suggestion}\`?`
+            : `\`<${usage.name}>\` has no attribute \`${attr.name}\`. ` +
+              (byAttr.size
+                ? `Its attributes are: ${[...byAttr.keys()].map((n) => `\`${n}\``).join(', ')}.`
+                : 'It takes no attributes of its own.'),
+        });
+        continue;
+      }
+
+      const members = unionMembers(prop.type);
+      if (members && attr.literal && attr.value !== null && !members.includes(attr.value)) {
+        findings.push({
+          severity: 'error',
+          line: usage.line,
+          component: usage.name,
+          message:
+            `\`${attr.name}="${attr.value}"\` is not valid on \`<${usage.name}>\`. ` +
+            `Expected one of: ${members.map((m) => `"${m}"`).join(', ')}.`,
+        });
+      }
+    }
+  }
+}
+
+export function validateUsage(code, componentsByName, icons = null, elementsByTag = null) {
   const findings = [];
   const known = [...componentsByName.keys()];
 
@@ -362,6 +550,29 @@ export function validateUsage(code, componentsByName, icons = null) {
     const component = componentsByName.get(usage.name);
 
     if (!component) {
+      /*
+       * `<PfButton>` is a real component -- from one of the generated bindings
+       * rather than from @pitchfork-ui/react. Saying "not exported by the
+       * library" about it would be wrong and would send an agent looking for a
+       * typo it has not made.
+       */
+      const binding = elementsByTag?.get(toTag(usage.name));
+      if (binding) {
+        findings.push({
+          severity: 'warning',
+          line: usage.line,
+          component: usage.name,
+          message:
+            `\`${usage.name}\` is the generated binding for \`<${binding.tag}>\`, ` +
+            'not a @pitchfork-ui/react component. Import it from ' +
+            '@pitchfork-ui/elements-react (or -angular, -vue), or use ' +
+            (binding.reactCounterpart
+              ? `\`${binding.reactCounterpart}\` from @pitchfork-ui/react.`
+              : 'the element directly.'),
+        });
+        continue;
+      }
+
       const suggestion = closest(usage.name, known);
       findings.push({
         severity: 'error',
@@ -457,6 +668,8 @@ export function validateUsage(code, componentsByName, icons = null) {
     }
   }
 
+  if (elementsByTag) validateElements(code, elementsByTag, findings);
+
   // Hardcoded colours are the single most common design-system violation, and
   // the reason the token chain exists.
   const colour = /#[0-9a-fA-F]{3,8}\b|\brgba?\s*\(|\bhsla?\s*\(/g;
@@ -475,5 +688,12 @@ export function validateUsage(code, componentsByName, icons = null) {
   return findings;
 }
 
+/** `PfNavItem` → `pf-nav-item`, the inverse of what every binding generator does. */
+const toTag = (name) =>
+  name
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .toLowerCase();
+
 // Exported so the scanner and the server's suggestions can be exercised directly.
-export { closest, findUsages, parseAttrs, unionMembers };
+export { closest, findElementUsages, findUsages, parseAttrs, toTag, unionMembers };

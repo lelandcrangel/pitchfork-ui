@@ -1,0 +1,85 @@
+:host {
+  border: 1px solid var(--pf-collapsible-border);
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.trigger {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-md);
+  color: var(--pf-collapsible-trigger-text);
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-weight: var(--font-weight-medium);
+  gap: var(--space-2);
+  justify-content: space-between;
+  padding: var(--space-3);
+  text-align: start;
+  width: 100%;
+}
+
+.trigger:hover:not(:disabled) {
+  background: var(--pf-collapsible-trigger-hover-bg);
+}
+
+.trigger:focus-visible {
+  box-shadow: var(--pf-collapsible-focus-ring, var(--pf-focus-ring));
+  outline: none;
+}
+
+.trigger:disabled {
+  color: var(--pf-control-text-disabled);
+  cursor: not-allowed;
+}
+
+.label {
+  min-width: 0;
+}
+
+.icon {
+  align-items: center;
+  color: var(--pf-collapsible-icon);
+  display: inline-flex;
+  flex-shrink: 0;
+  transition: transform var(--pf-transition-fast);
+}
+
+:host([open]) .icon {
+  transform: rotate(180deg);
+}
+
+/* The 0fr -> 1fr technique, which animates to the content's own height. */
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--pf-transition-medium);
+}
+
+:host([open]) .panel {
+  grid-template-rows: 1fr;
+}
+
+.content {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.inner {
+  border-top: 1px solid var(--pf-collapsible-border);
+  color: var(--pf-collapsible-content-text);
+  padding: var(--space-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon,
+  .panel {
+    transition: none;
+  }
+}

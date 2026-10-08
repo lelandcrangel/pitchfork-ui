@@ -1,0 +1,18 @@
+:host {
+  align-items: center;
+  color: var(--pf-chart-text-muted);
+  display: flex;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.dot {
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  height: 8px;
+  width: 8px;
+}

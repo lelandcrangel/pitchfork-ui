@@ -1,0 +1,84 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTreeView" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-tree-view>`
+
+
+A tree over nested `pf-tree-item` children.
+
+Nesting rather than a `nodes` array, which is what a tree looks like in a
+consumer's template anyway — and the labels are nodes, so they could not
+cross the HTML boundary.
+
+The group owns what no single item can see: which one is selected, which
+are open, the one tab stop, and the keyboard. Every rule the keyboard
+follows is core's `resolveTreeKey`, so this and the React `TreeView` answer
+the arrows identically.
+
+**The tree itself is the tab stop, not the items.** The ARIA tree pattern
+allows either a roving tabindex or a managed `aria-activedescendant`, and
+here only the second one works: measured in Chromium, a `tabindex="0"` host
+slotted into another host's shadow tree is skipped by sequential navigation
+entirely when the outer host's tabindex is negative — which is exactly a
+nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
+and tracks the active item with an IDREF, which resolves because the items
+are its own light-DOM descendants.
+
+The React `TreeView` makes every visible item a tab stop, which is a gap
+recorded in `todo.md`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `expanded` | `expanded` | `string` | `''` | The open branches, as one comma-separated string. |
+| `label` | `label` | `string \| undefined` | — | The tree's accessible name. |
+| `value` | `value` | `string` | `''` | The selected item's value. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; \}` | Fires when the selection changes. |
+| `pfExpandedChange` | `\{ value: string; values: string[]; \}` | Fires when a branch opens or closes, with the open set. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `collapseAll()` | `collapseAll() =&gt; Promise&lt;void&gt;` | Closes every branch. |
+| `expandAll()` | `expandAll() =&gt; Promise&lt;void&gt;` | Opens every branch. |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the tree, for a consumer who changed an item through a property. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-tree-item` children. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-tree-view></pf-tree-view>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTreeView } from '@pitchfork-ui/elements-react';
+
+<PfTreeView />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-tree-view></pf-tree-view>
+```
+

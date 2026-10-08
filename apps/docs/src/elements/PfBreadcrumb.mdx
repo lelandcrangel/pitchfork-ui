@@ -1,0 +1,65 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfBreadcrumb" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-breadcrumb>`
+
+
+One crumb in a `pf-breadcrumbs` trail.
+
+With an `href` it renders a link; without one it renders a plain span, which
+is both what a current page wants and the way to use a framework's own
+router — slot an `<a routerLink>` or a `<Link>` in and leave `href` unset.
+
+`currentPage`, `last` and `separator` are the group's to set: only it can
+see the trail. A consumer asks by setting `current`; the group resolves the
+trail with core's rule and writes the answer to `currentPage`.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `current` | `current` | `boolean` | `false` | Set it to mark this crumb as the current page, rather than letting the last crumb be it. This is the *asking* half, and the group never writes it — `currentPage` below is the answer. Keeping the two apart is what lets the trail change: if the group wrote its answer back here, the crumb that happened to be last would look like a crumb the consumer had marked, and appending another would leave the mark behind on it. |
+| `currentPage` | `current-page` | `boolean` | `false` | Set by the group: the resolved current page, which is the one thing that renders `aria-current="page"`. Exactly one crumb in a trail carries it. |
+| `href` | `href` | `string \| undefined` | — | Where the crumb goes. Reflected; a consumer's stylesheet reads it. |
+| `last` | `last` | `boolean` | `false` | Set by the group: no separator is drawn after the last crumb. |
+| `separator` | `separator` | `string` | `'/'` | Set by the group from its own `separator`. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the crumb's label. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `link` | the link, or the span standing in for one. |
+| `separator` | the separator after this crumb. Absent on the last. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-breadcrumb></pf-breadcrumb>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfBreadcrumb } from '@pitchfork-ui/elements-react';
+
+<PfBreadcrumb />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-breadcrumb></pf-breadcrumb>
+```
+

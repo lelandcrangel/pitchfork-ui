@@ -1,0 +1,98 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.svg {
+  display: block;
+  height: auto;
+  /* The y-axis label is drawn outside the plot, so the box must not clip. */
+  overflow: visible;
+  width: 100%;
+}
+
+.empty {
+  align-items: center;
+  color: var(--pf-chart-text-muted);
+  display: flex;
+  font-size: var(--font-size-sm);
+  height: 120px;
+  justify-content: center;
+}
+
+.grid {
+  stroke: var(--pf-chart-grid);
+  stroke-width: 1;
+}
+
+.tick {
+  fill: var(--pf-chart-text-muted);
+  font-family: inherit;
+  font-size: var(--font-size-2xs);
+}
+
+.tick--y {
+  dominant-baseline: middle;
+  text-anchor: end;
+}
+
+.tick--x {
+  dominant-baseline: hanging;
+  text-anchor: middle;
+}
+
+.axis-label {
+  fill: var(--pf-chart-text-muted);
+  font-family: inherit;
+  font-size: var(--font-size-2xs);
+  text-anchor: middle;
+}
+
+/* The dots appear on hover, so the line reads cleanly at rest. */
+.dot {
+  opacity: 0;
+  transition: opacity 80ms ease;
+}
+
+.svg:hover .dot {
+  opacity: 1;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  list-style: none;
+  margin: 0;
+  /*
+   * Lines the legend's start edge up with the plot area: the SVG is inset by
+   * the y-axis gutter, and the inset is set inline from the chart's geometry.
+   */
+  padding: 0;
+  padding-inline-start: var(--pf-chart-plot-inset-left, 0);
+}
+
+/*
+ * Hidden rather than dropped, so the series stay slotted and `slotchange`
+ * still fires. Two classes deep, because the tie breaks on source order.
+ */
+.legend.legend--hidden {
+  display: none;
+}
+
+/* The series are flex children of the list, not of a box inside it. */
+.legend slot {
+  display: contents;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    transition: none;
+  }
+}

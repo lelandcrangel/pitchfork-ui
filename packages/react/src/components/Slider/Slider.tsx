@@ -1,4 +1,5 @@
-import { forwardRef, useId, useMemo, useState } from 'react';
+import { clampToRange, getRangePercent, normalizeRange } from '@pitchfork-ui/core';
+import { forwardRef, useId, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './Slider.css';
 
@@ -14,10 +15,6 @@ export interface SliderProps extends Omit<
   error?: string;
   showValue?: boolean;
 }
-
-const clamp = (value: number, min: number, max: number) => {
-  return Math.min(Math.max(value, min), max);
-};
 
 export const Slider = forwardRef<HTMLInputElement, SliderProps>(
   (
@@ -47,30 +44,22 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
     const describedBy =
       [ariaDescribedBy, descriptionId, errorId].filter(Boolean).join(' ') || undefined;
 
-    const minNumber = Number(min);
-    const maxNumber = Number(max);
-    const stepNumber = Number(step);
-    const safeMin = Number.isFinite(minNumber) ? minNumber : 0;
-    const safeMax = Number.isFinite(maxNumber) ? maxNumber : safeMin + 100;
-    const normalizedMax = safeMax >= safeMin ? safeMax : safeMin;
-    const normalizedStep = Number.isFinite(stepNumber) && stepNumber > 0 ? stepNumber : 1;
+    const {
+      min: safeMin,
+      max: normalizedMax,
+      step: normalizedStep,
+    } = normalizeRange(Number(min), Number(max), Number(step));
 
     const isControlled = value !== undefined;
-    const initialValue = clamp(defaultValue ?? safeMin, safeMin, normalizedMax);
-    const [internalValue, setInternalValue] = useState(initialValue);
-    const currentValue = clamp(
+    const [internalValue, setInternalValue] = useState(() =>
+      clampToRange(defaultValue ?? safeMin, safeMin, normalizedMax),
+    );
+    const currentValue = clampToRange(
       isControlled ? (value ?? safeMin) : internalValue,
       safeMin,
       normalizedMax,
     );
-
-    const progressPercent = useMemo(() => {
-      const range = normalizedMax - safeMin;
-      if (range <= 0) {
-        return 0;
-      }
-      return ((currentValue - safeMin) / range) * 100;
-    }, [currentValue, normalizedMax, safeMin]);
+    const progressPercent = getRangePercent(currentValue, safeMin, normalizedMax);
 
     const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
       const nextValue = Number(event.target.value);

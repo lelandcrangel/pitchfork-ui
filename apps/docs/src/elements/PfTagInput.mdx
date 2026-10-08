@@ -1,0 +1,97 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfTagInput" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-tag-input>`
+
+
+A form-associated field that collects free-text tags.
+
+Unlike the other multi-value controls here the tags are not chosen from a
+list, so there are no `pf-option` children — the chips are `pf-tag`
+elements this component renders, and `pf-tag` already has the dismiss
+button and the event for it.
+
+The rules are core's: trimming, the case-insensitive dedup (`React` and
+`react` are one tag), the maximum, and `validate`. So is the paste split.
+What stays here is what to do with the draft, which differs per refusal — a
+duplicate clears it, because the tag asked for is already there, while
+hitting the maximum leaves it so nothing is lost.
+
+Submits one entry per tag under one name, the same way `pf-multi-select`
+does.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `allowDuplicates` | `allow-duplicates` | `boolean` | `false` | Accept the same tag twice. The comparison is case-insensitive. |
+| `description` | `description` | `string \| undefined` | — | — |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | — |
+| `label` | `label` | `string \| undefined` | — | — |
+| `max` | `max` | `number \| undefined` | — | Stop accepting tags once there are this many. |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name, once per tag. Reflected. |
+| `placeholder` | `placeholder` | `string` | `'Add a tag…'` | — |
+| `required` | `required` | `boolean` | `false` | — |
+| `tagVariant` | `tag-variant` | `"brand" \| "danger" \| "neutral" \| "success" \| "warning"` | `'neutral'` | Visual variant for the chips, passed through to `pf-tag`. The type is imported from `pf-tag` rather than restated, so the two cannot drift apart — a second copy of the union would compile happily while offering a variant `pf-tag` has never heard of. |
+| `validate` | — | `((tag: string) =&gt; boolean) \| undefined` | — | Refuse a candidate tag. A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a framework consumer passes it like any other. |
+| `value` | `value` | `string` | `''` | The tags, comma-separated. Reflected, so HTML can set it. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; values: string[]; \}` | Fires when the tags change, with both representations. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | nothing; the chips are rendered from `value`. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `control` | the box holding the chips and the draft input. |
+| `description` | the hint text below the control. |
+| `error` | the error message below the control. |
+| `field` | the wrapper around label, control and messages. |
+| `input` | the draft input. |
+| `label` | the label element. |
+| `tag` | each chip. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-tag-input></pf-tag-input>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfTagInput } from '@pitchfork-ui/elements-react';
+
+<PfTagInput />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-tag-input></pf-tag-input>
+```
+

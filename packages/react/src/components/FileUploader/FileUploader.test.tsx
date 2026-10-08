@@ -95,22 +95,64 @@ describe('FileUploader', () => {
 
   // ─── maxFiles truncation ─────────────────────────────────────────────────
 
-  it('silently truncates to maxFiles when more files are selected', () => {
+  /*
+   * It used to truncate to `maxFiles` and then validate the truncated list,
+   * which made its own "up to N files" message unreachable: the extra files
+   * were simply gone, with nothing said. Merging and validating are core's
+   * and are now separate steps, so the selection is refused instead.
+   */
+  it('refuses a selection over maxFiles rather than dropping files from it', () => {
     const onFilesChange = vi.fn();
     render(<FileUploader maxFiles={2} onFilesChange={onFilesChange} />);
     const input = document.querySelector('input[type="file"]') as HTMLInputElement;
     fireEvent.change(input, {
       target: { files: [makeFile('a.pdf'), makeFile('b.pdf'), makeFile('c.pdf')] },
     });
-    // Only the first 2 files are kept; no error shown
-    expect(onFilesChange).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({ name: 'a.pdf' }),
-        expect.objectContaining({ name: 'b.pdf' }),
-      ]),
-    );
+
+    expect(onFilesChange).not.toHaveBeenCalled();
+    expect(screen.getByText(/up to 2 files/i)).toBeInTheDocument();
+  });
+
+  it('accepts a selection up to the limit', () => {
+    const onFilesChange = vi.fn();
+    render(<FileUploader maxFiles={2} onFilesChange={onFilesChange} />);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [makeFile('a.pdf'), makeFile('b.pdf')] } });
+
     expect(onFilesChange.mock.calls[0][0]).toHaveLength(2);
     expect(screen.queryByText(/up to 2 files/i)).not.toBeInTheDocument();
+  });
+
+  /*
+   * A file input fires no `change` for an identical selection, so a rejected
+   * value left in place meant picking the same file again did nothing and the
+   * error stood with no way to retry.
+   */
+  it('clears the input after a rejected selection', () => {
+    render(<FileUploader maxFiles={1} />);
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [makeFile('a.pdf'), makeFile('b.pdf')] } });
+
+    expect(screen.getByText(/up to 1 file/i)).toBeInTheDocument();
+    expect(input.value).toBe('');
+  });
+
+  /*
+   * The internal error id was in `aria-describedby` whether or not there was
+   * an error to point at, so the dropzone described itself with an id that
+   * resolved to nothing.
+   */
+  it('describes itself with the internal error only once there is one', () => {
+    render(<FileUploader maxFiles={1} />);
+    const dropzone = screen.getByRole('button', { name: /upload files/i });
+    expect(dropzone).not.toHaveAttribute('aria-describedby');
+
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [makeFile('a.pdf'), makeFile('b.pdf')] } });
+
+    const describedBy = dropzone.getAttribute('aria-describedby');
+    expect(describedBy).toBeTruthy();
+    expect(document.getElementById(describedBy as string)).toHaveTextContent(/up to 1 file/i);
   });
 
   // ─── maxFileSize validation ───────────────────────────────────────────────
@@ -140,5 +182,39 @@ describe('FileUploader', () => {
   it('displays files from the controlled value prop', () => {
     render(<FileUploader value={[makeFile('controlled.pdf')]} onFilesChange={vi.fn()} />);
     expect(screen.getByText('controlled.pdf')).toBeInTheDocument();
+  });
+});
+
+/*
+ * `accept` filters the file picker and nothing else, so a drop used to get
+ * past it entirely. Core's `fileMatchesAccept` is the check, shared with
+ * `<pf-file-uploader>`.
+ */
+describe('FileUploader and accept', () => {
+  const typedFile = (name: string, type: string) =>
+    new File(['x'], name, { type, lastModified: 1 });
+
+  it('refuses a dropped file of the wrong kind', () => {
+    const onFilesChange = vi.fn();
+    render(<FileUploader accept=".pdf" onFilesChange={onFilesChange} />);
+    const dropzone = screen.getByRole('button', { name: /upload files/i });
+
+    fireEvent.drop(dropzone, {
+      dataTransfer: { files: [typedFile('a.exe', 'application/x-msdownload')] },
+    });
+
+    expect(onFilesChange).not.toHaveBeenCalled();
+    expect(screen.getByText(/not an accepted file type/i)).toBeInTheDocument();
+  });
+
+  it('takes a dropped file of an accepted kind', () => {
+    const onFilesChange = vi.fn();
+    render(<FileUploader accept=".pdf,image/*" onFilesChange={onFilesChange} />);
+    const dropzone = screen.getByRole('button', { name: /upload files/i });
+
+    fireEvent.drop(dropzone, { dataTransfer: { files: [typedFile('shot.png', 'image/png')] } });
+
+    expect(onFilesChange).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText(/not an accepted file type/i)).not.toBeInTheDocument();
   });
 });

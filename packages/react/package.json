@@ -53,8 +53,11 @@
     "react": ">=18.2.0",
     "react-dom": ">=18.2.0"
   },
+  "dependencies": {
+    "@pitchfork-ui/core": "^0.1.0",
+    "@pitchfork-ui/tokens": "^0.4.1"
+  },
   "devDependencies": {
-    "@pitchfork-ui/tokens": "*",
     "@vitejs/plugin-react": "^6.0.2",
     "vite-plugin-dts": "^5.1.2",
     "vite-plugin-lib-inject-css": "^2.2.2"

@@ -1,0 +1,63 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfSparkline" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-sparkline>`
+
+
+A small line or area chart with no axes.
+
+All of the geometry is core's, so this and the React `Sparkline` put the
+same numbers in the same places — including the three edge cases that were
+wrong before the extraction: one value gave `NaN`, a flat series was pinned
+to an edge, and the closing branch of the old path builder interpolated a
+boolean.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `animated` | `animated` | `boolean` | `false` | Draw the line in on first paint. Off by default. Reflected. `animated`, where the React prop is `animate`: `animate` is a **reserved public name** — `Element.prototype.animate` is the Web Animations API — and Stencil refuses to build a prop that shadows a prototype member. The React component is a function taking props and has no such collision. |
+| `color` | `color` | `string \| undefined` | — | Overrides the token colour, for a chart that has to match its data. |
+| `data` | `data` | `number[] \| string` | `[]` | The values to plot. A `number[]` for a framework consumer, and a comma-separated string for plain HTML — `data="1,4,2,8"` — because Stencil coerces an attribute only for the primitive types it recognises, and an array is not one of them. Read through `values` below, never directly. |
+| `endDot` | `end-dot` | `boolean` | `false` | Draw a dot at the last value. |
+| `height` | `height` | `number` | `36` | — |
+| `label` | `label` | `string \| undefined` | — | The chart's accessible name. Without one the chart is `presentation`: a sparkline with no name is decoration beside a number that already says what it means, and announcing an unnamed graphic is worse than skipping it. |
+| `strokeWidth` | `stroke-width` | `number` | `1.5` | — |
+| `variant` | `variant` | `"area" \| "line"` | `'line'` | `line` draws only the stroke; `area` fills under it too. Reflected. |
+| `width` | `width` | `number` | `120` | — |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `area` | the filled region, on the `area` variant. |
+| `dot` | the dot at the last point, when `endDot` is set. |
+| `line` | the line. |
+| `svg` | the chart. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-sparkline></pf-sparkline>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfSparkline } from '@pitchfork-ui/elements-react';
+
+<PfSparkline />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-sparkline></pf-sparkline>
+```
+

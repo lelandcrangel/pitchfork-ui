@@ -1,0 +1,82 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfToaster" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-toaster>`
+
+
+The region toasts appear in, and the queue behind them.
+
+This is the one place the elements layer takes options rather than child
+elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+toast is not data the consumer is rendering, it is an event that happened.
+React expresses that with a context provider and a module-level `toast()`;
+the equivalent for a custom element is a method on the region, since a
+consumer calling `toast()` three times from an event handler cannot
+reasonably be asked to maintain a list of children for it.
+
+Declarative use still works: anything slotted in is laid out in the stack
+alongside the queue, which is how a notification that is part of the page
+rather than a response to an action is placed here.
+
+The region itself is not a live region. Each `pf-notification` is one
+already, so marking the container as well would announce every toast twice.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `duration` | `duration` | `number` | `4000` | Auto-dismiss delay for toasts that do not set their own. `0` disables it. |
+| `placement` | `placement` | `"bottom-left" \| "bottom-right" \| "top-left" \| "top-right"` | `'top-right'` | Which corner the stack sits in. Reflected; the stylesheet positions on it. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfToastDismiss` | `\{ id: string; \}` | Fires when a toast has left, with the id `toast()` returned. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `dismiss()` | `dismiss(id: string) =&gt; Promise&lt;void&gt;` | Dismisses one toast by the id `toast()` returned. |
+| `dismissAll()` | `dismissAll() =&gt; Promise&lt;void&gt;` | Dismisses everything currently showing. |
+| `toast()` | `toast(options?: PfToastOptions) =&gt; Promise&lt;string&gt;` | Shows a toast and returns its id. Newest first, matching the React provider, so a stack in a top corner grows downwards away from the corner. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | notifications placed in the stack declaratively. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `stack` | the positioned container. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-toaster></pf-toaster>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfToaster } from '@pitchfork-ui/elements-react';
+
+<PfToaster />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-toaster></pf-toaster>
+```
+

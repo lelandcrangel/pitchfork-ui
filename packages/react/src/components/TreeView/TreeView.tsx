@@ -1,3 +1,10 @@
+import {
+  expandableTreeValues,
+  firstEnabledTreeValue,
+  type FlatTreeNode,
+  flattenVisibleTree,
+  resolveTreeKey,
+} from '@pitchfork-ui/core';
 import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './TreeView.css';
@@ -26,61 +33,6 @@ export interface TreeViewHandle {
   collapseAll: () => void;
 }
 
-interface FlattenedTreeNode {
-  node: TreeViewNode;
-  level: number;
-  parentValue?: string;
-}
-
-function flattenVisibleNodes(
-  nodes: TreeViewNode[],
-  expandedSet: Set<string>,
-  level = 1,
-  parentValue?: string,
-): FlattenedTreeNode[] {
-  const flattened: FlattenedTreeNode[] = [];
-
-  for (const node of nodes) {
-    flattened.push({ node, level, parentValue });
-
-    if (node.children && node.children.length > 0 && expandedSet.has(node.value)) {
-      flattened.push(...flattenVisibleNodes(node.children, expandedSet, level + 1, node.value));
-    }
-  }
-
-  return flattened;
-}
-
-function findFirstEnabledValue(nodes: TreeViewNode[]): string | undefined {
-  for (const node of nodes) {
-    if (!node.disabled) {
-      return node.value;
-    }
-
-    if (node.children && node.children.length > 0) {
-      const childValue = findFirstEnabledValue(node.children);
-      if (childValue) {
-        return childValue;
-      }
-    }
-  }
-
-  return undefined;
-}
-
-function collectExpandableNodeValues(nodes: TreeViewNode[]): string[] {
-  const values: string[] = [];
-
-  for (const node of nodes) {
-    if (node.children && node.children.length > 0) {
-      values.push(node.value);
-      values.push(...collectExpandableNodeValues(node.children));
-    }
-  }
-
-  return values;
-}
-
 export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeView(
   {
     className,
@@ -99,7 +51,7 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
   const isExpandedControlled = expandedValues !== undefined;
 
   const [internalSelectedValue, setInternalSelectedValue] = useState<string | undefined>(
-    defaultSelectedValue ?? findFirstEnabledValue(nodes),
+    defaultSelectedValue ?? firstEnabledTreeValue(nodes),
   );
   const [internalExpandedValues, setInternalExpandedValues] =
     useState<string[]>(defaultExpandedValues);
@@ -109,12 +61,48 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
 
   const expandedSet = useMemo(() => new Set(resolvedExpandedValues), [resolvedExpandedValues]);
 
+  /*
+   * The visible list, the keyboard rules and the "expand all" sweep are all
+   * core's, so `<pf-tree-view>` walks the same tree the same way — including
+   * the two horizontal rules, which are the ARIA pattern rather than anything
+   * either layer should decide for itself.
+   */
   const flattenedNodes = useMemo(
-    () => flattenVisibleNodes(nodes, expandedSet),
+    () => flattenVisibleTree(nodes, expandedSet),
     [expandedSet, nodes],
   );
 
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+
+  /*
+   * One tab stop, not one per visible node.
+   *
+   * Every visible item was tabbable, so a tree of thirty open nodes was thirty
+   * stops in the page's tab order. The ARIA tree pattern is a single stop with
+   * the arrows moving inside — which this already implemented, so only the
+   * focus management was missing.
+   *
+   * The focused item is its own piece of state: the ARIA pattern lets focus
+   * move without selecting, so it is not the same thing as the selection.
+   * `<pf-tree-view>` names its active item with `aria-activedescendant`
+   * instead, because a `tabindex="0"` host slotted into another host's shadow
+   * tree is skipped by sequential navigation — measured in its browser spec.
+   * Either variant is the pattern; here the nesting is one tree, so the
+   * roving tabindex is the smaller change.
+   */
+  const [storedActiveValue, setStoredActiveValue] = useState<string | undefined>(undefined);
+
+  /*
+   * Derived against the *visible* list rather than stored outright: collapsing
+   * a branch takes its children off screen, and a tab stop on a node that is
+   * no longer rendered leaves the tree with none at all — reachable by mouse
+   * and by nothing else. Same reason `CalendarGrid` derives its focused day.
+   */
+  const activeValue =
+    storedActiveValue && flattenedNodes.some((item) => item.node.value === storedActiveValue)
+      ? storedActiveValue
+      : (flattenedNodes.find((item) => item.node.value === resolvedSelectedValue)?.node.value ??
+        flattenedNodes[0]?.node.value);
 
   const updateExpandedValues = useCallback(
     (nextValues: string[]) => {
@@ -127,7 +115,7 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
   );
 
   const expandAll = useCallback(() => {
-    updateExpandedValues(collectExpandableNodeValues(nodes));
+    updateExpandedValues(expandableTreeValues(nodes));
   }, [nodes, updateExpandedValues]);
 
   const collapseAll = useCallback(() => {
@@ -170,76 +158,39 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
     if (!value) {
       return;
     }
+    setStoredActiveValue(value);
     itemRefs.current[value]?.focus();
   };
 
-  const onItemKeyDown = (current: FlattenedTreeNode, event: React.KeyboardEvent) => {
+  /*
+   * Core decides what the key means; this only carries the intent out. The
+   * keys it does not claim are left to the browser, which is what `null`
+   * means.
+   */
+  const onItemKeyDown = (current: FlatTreeNode<TreeViewNode>, event: React.KeyboardEvent) => {
     const currentIndex = flattenedNodes.findIndex((item) => item.node.value === current.node.value);
-
-    if (currentIndex === -1) {
+    const intent = resolveTreeKey(event.key, flattenedNodes, currentIndex);
+    if (!intent) {
       return;
     }
 
-    const hasChildren = !!(current.node.children && current.node.children.length > 0);
-    const isExpanded = expandedSet.has(current.node.value);
+    event.preventDefault();
 
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      focusNodeByValue(flattenedNodes[currentIndex + 1]?.node.value);
+    if (intent.type === 'focus') {
+      focusNodeByValue(intent.value);
+      return;
+    }
+    if (intent.type === 'expand' || intent.type === 'collapse') {
+      setExpandedState(intent.value, intent.type === 'expand');
       return;
     }
 
-    if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      focusNodeByValue(flattenedNodes[currentIndex - 1]?.node.value);
-      return;
+    // Activation both selects and toggles, as a click on each half would.
+    if (!current.node.disabled) {
+      setSelectedValue(intent.value);
     }
-
-    if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      if (hasChildren && !isExpanded) {
-        setExpandedState(current.node.value, true);
-        return;
-      }
-      if (hasChildren && isExpanded) {
-        const nextNode = flattenedNodes[currentIndex + 1];
-        if (nextNode && nextNode.parentValue === current.node.value) {
-          focusNodeByValue(nextNode.node.value);
-        }
-      }
-      return;
-    }
-
-    if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      if (hasChildren && isExpanded) {
-        setExpandedState(current.node.value, false);
-        return;
-      }
-      focusNodeByValue(current.parentValue);
-      return;
-    }
-
-    if (event.key === 'Home') {
-      event.preventDefault();
-      focusNodeByValue(flattenedNodes[0]?.node.value);
-      return;
-    }
-
-    if (event.key === 'End') {
-      event.preventDefault();
-      focusNodeByValue(flattenedNodes[flattenedNodes.length - 1]?.node.value);
-      return;
-    }
-
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      if (!current.node.disabled) {
-        setSelectedValue(current.node.value);
-      }
-      if (hasChildren) {
-        toggleExpanded(current.node.value);
-      }
+    if (current.hasChildren) {
+      toggleExpanded(intent.value);
     }
   };
 
@@ -247,8 +198,7 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
     <div className={cx('pf-tree-view', className)} role="tree" {...props}>
       <ul className="pf-tree-view__list" role="presentation">
         {flattenedNodes.map((item) => {
-          const hasChildren = !!(item.node.children && item.node.children.length > 0);
-          const isExpanded = expandedSet.has(item.node.value);
+          const { hasChildren, expanded: isExpanded } = item;
           const isSelected = resolvedSelectedValue === item.node.value;
 
           return (
@@ -290,12 +240,28 @@ export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeV
                   aria-level={item.level}
                   aria-expanded={hasChildren ? isExpanded : undefined}
                   aria-selected={isSelected}
-                  disabled={item.node.disabled}
+                  /*
+                   * `aria-disabled`, not `disabled`. Core's `resolveTreeKey`
+                   * returns a focus intent for a disabled node — the ARIA
+                   * pattern is that focus moves freely while activation
+                   * refuses — and a `disabled` button cannot take focus, so
+                   * arrowing onto one dropped focus out of the tree entirely.
+                   * `pf-tree-item` has always used `aria-disabled`, and the
+                   * stylesheet keys off the row's class rather than the
+                   * pseudo-class, so nothing about the look changes.
+                   */
+                  aria-disabled={item.node.disabled || undefined}
+                  tabIndex={item.node.value === activeValue ? 0 : -1}
                   onClick={() => {
+                    setStoredActiveValue(item.node.value);
+                    // An `aria-disabled` button still fires a click.
                     if (!item.node.disabled) {
                       setSelectedValue(item.node.value);
                     }
                   }}
+                  // Tabbing or clicking in moves the tab stop to where focus
+                  // actually landed, so the arrows carry on from there.
+                  onFocus={() => setStoredActiveValue(item.node.value)}
                   onKeyDown={(event) => onItemKeyDown(item, event)}
                 >
                   {item.node.icon ? (

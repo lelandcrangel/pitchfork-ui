@@ -1,3 +1,4 @@
+import { formatCardNumber, maskCardNumber } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './CreditCard.css';
@@ -12,23 +13,6 @@ export interface CreditCardProps extends React.HTMLAttributes<HTMLDivElement> {
   cvc?: string;
   masked?: boolean;
 }
-
-const maskCardNumber = (value: string) => {
-  const digits = value.replace(/\D+/g, '');
-  if (digits.length <= 4) {
-    return digits;
-  }
-
-  const visible = digits.slice(-4);
-  const hiddenLength = digits.length - 4;
-  const hidden = `${'*'.repeat(hiddenLength)}${visible}`;
-  return hidden.replace(/(.{4})/g, '$1 ').trim();
-};
-
-const formatCardNumber = (value: string) => {
-  const digits = value.replace(/\D+/g, '');
-  return digits.replace(/(.{4})/g, '$1 ').trim();
-};
 
 export const CreditCard = forwardRef<HTMLDivElement, CreditCardProps>(
   (

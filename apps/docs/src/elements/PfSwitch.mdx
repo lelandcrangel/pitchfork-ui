@@ -1,0 +1,74 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfSwitch" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-switch>`
+
+
+A form-associated on/off switch.
+
+Built on a native checkbox with `role="switch"`, exactly as the React
+component is: a switch is a checkbox whose two states are "on" and "off"
+rather than "selected" and "not selected", and the role is the only
+difference assistive technology needs.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `checked` | `checked` | `boolean` | `false` | Whether the switch is on. Reflected so the stylesheet can select on it. |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | Error message. Its presence is what marks the control invalid. |
+| `label` | `label` | `string \| undefined` | — | Visible label, rendered in the same root so `for` actually associates. |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected, because a form-associated custom element takes its submission name from the `name` *content attribute* -- not from this property. A framework wrapper that sets properties rather than attributes (the generated React bindings do) would otherwise leave the control nameless and absent from the submission, with every other sign of working. |
+| `required` | `required` | `boolean` | `false` | — |
+| `value` | `value` | `string` | `'on'` | What is submitted when on. Mirrors the native attribute, whose default is also `on` — a checkbox with no value still submits something. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ checked: boolean; value: string; \}` | Fires when the user turns the switch on or off. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | A form-associated custom element does not inherit this. |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | The message explaining why the control is invalid, or an empty string. |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | As `checkValidity`, but also shows the browser's validation message. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `error` | — |
+| `field` | the wrapper around control and label. |
+| `input` | the native checkbox carrying role="switch". |
+| `label` | the label element. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-switch></pf-switch>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfSwitch } from '@pitchfork-ui/elements-react';
+
+<PfSwitch />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-switch></pf-switch>
+```
+

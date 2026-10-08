@@ -1,0 +1,57 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfKbd" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-kbd>`
+
+
+A keyboard key or a combination of them, as `<kbd>` elements.
+
+`keys` renders one cap per entry with separators between; a single key can
+be slotted instead.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `keys` | — | `string[] \| undefined` | — | A key combination rendered as one cap, e.g. `["⌘", "K"]`. |
+| `separator` | `separator` | `string` | `'+'` | Separator between keys in a combination. Defaults to `+`. |
+| `size` | `size` | `"md" \| "sm"` | `'md'` | — |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | a single key, when `keys` is not given. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `kbd` | the native kbd element. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-kbd></pf-kbd>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfKbd } from '@pitchfork-ui/elements-react';
+
+<PfKbd />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-kbd></pf-kbd>
+```
+

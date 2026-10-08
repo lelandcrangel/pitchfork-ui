@@ -1,0 +1,46 @@
+/*
+ * This element is shared by pf-select and pf-combobox, whose React
+ * counterparts have separate alias families with their own values. Rather than
+ * pick one and diverge from the other, the option reads a generic
+ * `--pf-option-*` set that each container defines on itself -- custom
+ * properties inherit through the shadow boundary, so a slotted option picks up
+ * whichever listbox it is inside. Exactly the pf-menu-item arrangement, for
+ * the same reason.
+ */
+:host {
+  border-radius: var(--radius-sm);
+  color: var(--pf-option-text);
+  cursor: pointer;
+  display: block;
+  font-size: var(--font-size-sm);
+  padding: var(--space-2) var(--space-3);
+  user-select: none;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * `active` is the select's, not `:hover` alone: the keyboard and the pointer
+ * share one active option, and the select is what decides which.
+ */
+:host([active]),
+:host(:hover:not([disabled])) {
+  background: var(--pf-option-active-bg);
+  color: var(--pf-option-active-text);
+}
+
+:host([selected]) {
+  font-weight: var(--font-weight-medium);
+}
+
+:host([disabled]) {
+  background: transparent;
+  color: var(--pf-option-text-disabled);
+  cursor: not-allowed;
+}
+
+:host([disabled]:hover) {
+  background: transparent;
+}

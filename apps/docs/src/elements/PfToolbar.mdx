@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfToolbar" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-toolbar>`
+
+
+A group of controls that is one tab stop from outside and navigated
+internally with the arrow keys.
+
+Items are matched in the light DOM, so a native `button`, `a[href]` or form
+control works with no ceremony. A custom element is not a native control and
+has to opt in with `data-toolbar-item` — `<pf-button data-toolbar-item>`.
+Focusing it still reaches the real button inside, because `pf-button`
+delegates focus.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `orientation` | `orientation` | `"horizontal" \| "vertical"` | `'horizontal'` | Layout and arrow-key axis. Reflected so the stylesheet can select on it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the toolbar's controls, and any `pf-toolbar-separator` between them. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-toolbar></pf-toolbar>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfToolbar } from '@pitchfork-ui/elements-react';
+
+<PfToolbar />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-toolbar></pf-toolbar>
+```
+

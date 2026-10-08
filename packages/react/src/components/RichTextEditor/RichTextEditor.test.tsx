@@ -171,3 +171,86 @@ describe('RichTextEditor', () => {
     expect(ref.current).toBe(screen.getByRole('textbox'));
   });
 });
+
+/*
+ * The outer-paragraph strip used to test four conditions that are *all* true
+ * of two paragraphs, so a two-paragraph value was cut into the broken
+ * fragment `a</p><p>b`. Core's `stripOuterParagraph` checks the one thing
+ * that matters: the first closing tag has to be the last.
+ */
+describe('RichTextEditor value normalisation', () => {
+  const editorOf = (container: HTMLElement) =>
+    container.querySelector('[contenteditable]') as HTMLDivElement;
+
+  it('drops a single wrapping paragraph', () => {
+    const { container } = render(<RichTextEditor value="<p>hello</p>" />);
+    expect(editorOf(container).innerHTML).toBe('hello');
+  });
+
+  it('leaves two paragraphs intact', () => {
+    const { container } = render(<RichTextEditor value="<p>first</p><p>second</p>" />);
+    const html = editorOf(container).innerHTML;
+
+    expect(html).toBe('<p>first</p><p>second</p>');
+    expect(html).not.toContain('a</p><p>');
+    expect(editorOf(container).querySelectorAll('p')).toHaveLength(2);
+  });
+
+  it('leaves markup that is not a paragraph alone', () => {
+    const { container } = render(<RichTextEditor value="<ul><li>one</li></ul>" />);
+    expect(editorOf(container).innerHTML).toBe('<ul><li>one</li></ul>');
+  });
+
+  /* ─── Toolbar: one tab stop ────────────────────────────────────────────── *
+   *
+   * Six focusable buttons, so tabbing past the field walked every one before
+   * reaching the text. The ARIA toolbar pattern is one stop with the arrows
+   * moving inside — which the element's own toolbar does, and which both now
+   * get from the same `useRovingTabIndex`.
+   */
+
+  const tools = () => screen.getAllByRole('button');
+
+  it('gives the toolbar one tab stop', () => {
+    render(<RichTextEditor />);
+
+    expect(tools().length).toBeGreaterThan(3);
+    expect(tools().filter((tool) => tool.getAttribute('tabindex') === '0')).toHaveLength(1);
+    expect(tools()[0]).toHaveAttribute('tabindex', '0');
+  });
+
+  it('moves along the toolbar with the arrows, wrapping at both ends', async () => {
+    const user = userEvent.setup();
+    render(<RichTextEditor />);
+    const buttons = tools();
+
+    buttons[0].focus();
+    await user.keyboard('{ArrowRight}');
+    expect(buttons[1]).toHaveFocus();
+
+    await user.keyboard('{ArrowLeft}{ArrowLeft}');
+    expect(buttons.at(-1)).toHaveFocus();
+  });
+
+  it('brings the tab stop to whichever tool was focused', async () => {
+    const user = userEvent.setup();
+    render(<RichTextEditor />);
+    const buttons = tools();
+
+    buttons[0].focus();
+    await user.keyboard('{ArrowRight}{ArrowRight}');
+
+    expect(buttons[2]).toHaveAttribute('tabindex', '0');
+    expect(buttons[0]).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('tabs from the toolbar straight into the editor', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RichTextEditor />);
+
+    tools()[0].focus();
+    await user.tab();
+
+    expect(editorOf(container)).toHaveFocus();
+  });
+});

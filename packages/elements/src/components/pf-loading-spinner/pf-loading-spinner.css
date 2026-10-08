@@ -1,0 +1,51 @@
+/*
+ * `@keyframes` do not cross a shadow boundary. In the React library pf-spin is
+ * declared once in LoadingIndicators.css and every component picks it up from
+ * the global sheet; here each shadow root needs its own copy.
+ */
+@keyframes pf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+:host {
+  animation: pf-spin 0.8s linear infinite;
+  border: 3px solid color-mix(in srgb, var(--pf-loading-border) 75%, transparent);
+  border-radius: 50%;
+  border-top-color: var(--pf-loading-accent);
+  display: inline-block;
+  flex: 0 0 auto;
+  height: var(--pf-spinner-size, 24px);
+  min-height: 12px;
+  min-width: 12px;
+  width: var(--pf-spinner-size, 24px);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * The React library reaches a global `.pf-sr-only` for this. A shadow root
+ * cannot, so each of these elements declares its own copy.
+ */
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+}

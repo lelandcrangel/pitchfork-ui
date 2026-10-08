@@ -1,3 +1,4 @@
+import { avatarGroupLabel, splitAvatarGroup } from '@pitchfork-ui/core';
 import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import { Avatar, type AvatarProps, type AvatarSize } from '../Avatar';
@@ -21,16 +22,21 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(function
   { className, avatars, max = 5, size = 'md', total, label, ...props },
   ref,
 ) {
-  const shown = avatars.slice(0, Math.max(0, max));
-  const overflow = (total ?? avatars.length) - shown.length;
-  const count = total ?? avatars.length;
+  /*
+   * The split is core's, so `<pf-avatar-group>` shows the same faces and
+   * counts the same overflow — including the "5 of 40" case, where the group
+   * knows its size without being handed an avatar for every member.
+   */
+  const split = splitAvatarGroup(avatars.length, max, total);
+  const shown = avatars.slice(0, split.shown);
+  const overflow = split.overflow;
 
   return (
     <div
       ref={ref}
       className={cx('pf-avatar-group', `pf-avatar-group--${size}`, className)}
       role="group"
-      aria-label={label ?? `${count} ${count === 1 ? 'person' : 'people'}`}
+      aria-label={label ?? avatarGroupLabel(split.total)}
       {...props}
     >
       {shown.map((avatar, index) => (

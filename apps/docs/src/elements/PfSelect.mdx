@@ -1,0 +1,101 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfSelect" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-select>`
+
+
+A form-associated single-choice select over `pf-option` children.
+
+The first of Wave 5, and the worked example for §2.1: the options are child
+elements, so a label is a slot and can hold anything, where the React
+`Select`'s `options` array can only hold a string.
+
+**It has typeahead, which the React component does not.** Typing `b` jumps
+to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
+ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
+answers the same keystrokes. `todo.md` has the React fix.
+
+Form-associated, so the value submits by itself. The React component fakes
+that with a hidden `<input>` beside the trigger.
+
+The active option is set as an *element*, not an IDREF: the trigger is in
+this shadow root and the options are slotted light DOM, and a cross-root
+IDREF is absent from the accessibility tree — measured. `aria-controls` does
+work, because the listbox itself is in this same root.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `description` | `description` | `string \| undefined` | — | — |
+| `disabled` | `disabled` | `boolean` | `false` | — |
+| `error` | `error` | `string \| undefined` | — | — |
+| `label` | `label` | `string \| undefined` | — | — |
+| `maxVisibleOptions` | `max-visible-options` | `number \| undefined` | — | Options to show before the listbox scrolls. Unset means it fits them all. |
+| `name` | `name` | `string \| undefined` | — | Submitted under this name. Reflected; the submission reads the attribute. |
+| `open` | `open` | `boolean` | `false` | Whether the listbox is showing. Reflected for the stylesheet. |
+| `placeholder` | `placeholder` | `string` | `'Select an option'` | — |
+| `required` | `required` | `boolean` | `false` | — |
+| `value` | `value` | `string` | `''` | The chosen option's value, or empty. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfChange` | `\{ value: string; \}` | Fires when the chosen value changes. |
+| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the listbox opens or closes, whoever caused it. |
+
+## Methods
+
+| Method | Signature | Description |
+| --- | --- | --- |
+| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
+| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | — |
+| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the options, for a label edited in place (which fires no slotchange). |
+| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `show()` | `show() =&gt; Promise&lt;void&gt;` | — |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the `pf-option` children. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `description` | the hint text below the control. |
+| `error` | the error message below the control. |
+| `field` | the wrapper around label, control and messages. |
+| `label` | the label element. |
+| `listbox` | the floating listbox the options are slotted into. |
+| `trigger` | the combobox button. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-select></pf-select>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfSelect } from '@pitchfork-ui/elements-react';
+
+<PfSelect />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-select></pf-select>
+```
+

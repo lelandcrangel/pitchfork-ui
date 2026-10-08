@@ -30,13 +30,18 @@ export default defineConfig({
     postcss: {
       plugins: [
         globalData({
-          files: [resolve(__dirname, 'src/styles/theme.css')],
+          files: [resolve(__dirname, '../tokens/src/theme.css')],
         }),
         customMedia(),
       ],
     },
   },
-  plugins: [react(), libInjectCss(), dts(), stylesOnlyOutput()],
+  plugins: [
+    react(),
+    libInjectCss(),
+    dts({ entryRoot: 'src', tsconfigPath: 'tsconfig.build.json' }),
+    stylesOnlyOutput(),
+  ],
   build: {
     // Keep JS readable so `preserveModules` output stays debuggable; the
     // consumer's bundler minifies it. CSS, however, ships as-is (the monolithic
@@ -51,6 +56,7 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [
+        '@pitchfork-ui/core',
         'react',
         'react-dom',
         'react/jsx-runtime',

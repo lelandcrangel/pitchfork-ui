@@ -1,0 +1,36 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.legend {
+  color: var(--pf-radiogroup-text);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-1);
+}
+
+.choices {
+  display: grid;
+  gap: var(--space-3);
+}
+
+:host([orientation='horizontal']) .choices {
+  column-gap: var(--space-6);
+  grid-auto-flow: column;
+  justify-content: flex-start;
+}
+
+.error {
+  color: var(--pf-radiogroup-field-error, var(--pf-field-error));
+  font-size: var(--font-size-sm);
+  margin: 0;
+}

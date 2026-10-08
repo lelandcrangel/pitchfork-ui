@@ -1,0 +1,61 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Web components/PfOption" />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree.
+*/}
+
+# `<pf-option>`
+
+
+One choice inside a `pf-select`.
+
+It only reports that it was chosen; the select owns the value, the active
+option and closing — the same division as `pf-radio-group` with its radios
+and `pf-dropdown` with its menu items. The select writes `selected` and
+`active` back onto it, so the stylesheet has reflected attributes to select
+on without the option knowing anything about its container.
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `active` | `active` | `boolean` | `false` | Set by the select: the option the keyboard is on. Reflected likewise. |
+| `disabled` | `disabled` | `boolean` | `false` | Reflected; the stylesheet and the select's own query both read it. |
+| `selected` | `selected` | `boolean` | `false` | Set by the select. Reflected, so the stylesheet can mark the choice. |
+| `value` | `value` | `string` | `''` | The value the select reports when this option is chosen. Reflected, because the generated bindings set props as *properties*: an unreflected prop leaves no attribute, and anything selecting on one — a consumer's stylesheet, or a test — finds nothing. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfOptionSelect` | `\{ value: string; \}` | Asks the select to take this value. The select decides and closes. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the option's label, which is also what typeahead searches. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-option></pf-option>
+```
+
+```tsx
+// React, through the generated bindings
+import { PfOption } from '@pitchfork-ui/elements-react';
+
+<PfOption />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-option></pf-option>
+```
+

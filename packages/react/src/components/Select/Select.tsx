@@ -1,4 +1,5 @@
-import { forwardRef, useEffect, useId, useMemo, useRef } from 'react';
+import { isTypeaheadKey } from '@pitchfork-ui/core';
+import { forwardRef, useCallback, useEffect, useId, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, isActivationKey, Keys } from '../../a11y';
 import {
@@ -8,6 +9,7 @@ import {
   useDisclosure,
   useListNavigation,
   useOutsideInteraction,
+  useTypeahead,
 } from '../../hooks';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
@@ -91,6 +93,22 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 
     const { isOpen } = disclosure;
 
+    /*
+     * The ARIA listbox pattern expects printable-character typeahead, and this
+     * had none: a long list could only be walked one arrow at a time.
+     * `<pf-select>` has it, and the matching is core's, so the two cannot
+     * disagree about what `bbb` means.
+     */
+    const optionLabels = useMemo(() => options.map((option) => option.label), [options]);
+    const isOptionDisabled = useCallback(
+      (index: number) => Boolean(options[index]?.disabled),
+      [options],
+    );
+    const { onTypeaheadKey, clearTypeahead } = useTypeahead({
+      labels: optionLabels,
+      isDisabled: isOptionDisabled,
+    });
+
     const rootRef = useRef<HTMLDivElement>(null);
     const triggerRef = useRef<HTMLButtonElement>(null);
     const menuRef = useRef<HTMLUListElement>(null);
@@ -109,13 +127,15 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 
     useEffect(() => {
       if (!isOpen) {
+        // A closed listbox ends the word, so reopening does not continue it.
+        clearTypeahead();
         return;
       }
 
       const nextIndex =
         selectedIndex >= 0 && !options[selectedIndex]?.disabled ? selectedIndex : firstEnabledIndex;
       setActiveIndex(nextIndex);
-    }, [firstEnabledIndex, isOpen, options, selectedIndex, setActiveIndex]);
+    }, [clearTypeahead, firstEnabledIndex, isOpen, options, selectedIndex, setActiveIndex]);
 
     const selectValue = (nextValue: string) => {
       setSelectedValue(nextValue);
@@ -173,6 +193,24 @@ export const Select = forwardRef<HTMLButtonElement, SelectProps>(
 
       if (event.key === Keys.Escape) {
         disclosure.close();
+        clearTypeahead();
+        return;
+      }
+
+      if (isTypeaheadKey(event.key)) {
+        event.preventDefault();
+        const from = activeIndex >= 0 ? activeIndex : selectedIndex;
+        const match = onTypeaheadKey(event.key, from);
+        if (match === -1) return;
+
+        /*
+         * Closed, typeahead *chooses* rather than highlighting -- what a
+         * native `<select>` does, and with no listbox on screen a highlight
+         * nobody can see would be no feedback at all. The same split
+         * `<pf-select>` makes.
+         */
+        if (isOpen) setActiveIndex(match);
+        else selectValue(options[match].value);
       }
     };
 
