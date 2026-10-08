@@ -23,6 +23,20 @@
  *   node scripts/check-publishable.mjs
  *   node scripts/check-publishable.mjs --publishing core,react
  *
+ * `--publishing` carries a second question, and it is the one that would ruin
+ * a release rather than a later install: can this run publish those packages
+ * at all? Trusted publishing (OIDC) cannot create a package -- a publisher is
+ * configured against a package that already exists -- so a name absent from
+ * the registry needs one publish by hand before CI can ever release it. Five
+ * of this workspace's eight are in that state today.
+ *
+ * Without the check the workflow publishes in dependency order until it meets
+ * the first new name and stops: `tokens` out at its new version, `core` 404,
+ * six packages not published, eight tags already cut. And npm answers 404 for
+ * a missing package *and* for a publisher that does not match the job, so the
+ * error names the wrong cause. Refusing before anything goes out is strictly
+ * better than a half-release, which is why this fails rather than warns.
+ *
  * Reads the registry, so it needs network. A registry that cannot be reached
  * is reported and skipped rather than failed: this guards a real mistake, and
  * turning a transient outage into a red build would only teach people to
@@ -149,6 +163,46 @@ for (const [name, entry] of workspace) {
   }
 }
 
+// The packages this run is about to publish. A name here that is not on the
+// registry cannot be published by OIDC at all, however correct its
+// dependencies are -- so this is checked even when there are no dependency
+// problems, and it is checked before anything is published.
+const needBootstrap = [];
+for (const name of publishing) {
+  if (!workspace.has(name)) {
+    // A typo in --publishing is worse than it looks: it silently excuses
+    // nothing, so the dependency check above goes back to failing on a
+    // sibling that really is shipping in this run.
+    problems.push(
+      `--publishing names ${name}, which is not a package in this workspace. ` +
+        'Check the spelling: an unrecognised name excuses nothing.',
+    );
+    continue;
+  }
+  if (workspace.get(name).pkg.private) {
+    problems.push(`--publishing names ${name}, which is private and cannot be published.`);
+    continue;
+  }
+  const versions = publishedVersions(name);
+  if (versions === null) {
+    unknown.push(name);
+    continue;
+  }
+  if (versions.length === 0) needBootstrap.push(name);
+}
+
+if (needBootstrap.length > 0) {
+  problems.push(
+    `${needBootstrap.length} package(s) in this release have never been published: ` +
+      `${needBootstrap.join(', ')}.\n` +
+      '      Trusted publishing cannot create a package, so this run cannot ship them\n' +
+      '      and would stop partway through, leaving some packages out and all the\n' +
+      '      tags cut. Publish each once by hand (`npm publish --workspace <name>\n' +
+      '      --access public`), then configure its trusted publisher. todo.md has\n' +
+      '      the commands and the two-day window that follows.',
+  );
+}
+
 if (unknown.length > 0) {
   console.warn(
     `check-publishable: could not reach the registry for ${[...new Set(unknown)].join(', ')} — ` +
@@ -157,7 +211,7 @@ if (unknown.length > 0) {
 }
 
 if (problems.length > 0) {
-  console.error(`\n${problems.length} unpublishable workspace dependenc(ies):\n`);
+  console.error(`\n${problems.length} problem(s) that would break this release:\n`);
   for (const problem of problems) console.error(`  - ${problem}`);
   console.error(`\nPublish order for this workspace:\n  ${publishOrder().join('\n  ')}\n`);
   process.exit(1);
