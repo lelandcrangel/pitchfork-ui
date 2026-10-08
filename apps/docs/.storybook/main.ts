@@ -46,6 +46,16 @@ const config: StorybookConfig & { title: string } = {
   },
   addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
   staticDirs: ['../public'],
+  // Storybook writes its own <link rel="icon" href="./favicon.svg"> into the
+  // manager HTML and serves whatever favicon.svg the static dir holds, so
+  // dropping ours into apps/docs/public is enough to replace the Storybook
+  // logo. The .ico and the touch icon are not in that generated markup, so
+  // they are linked here by hand.
+  managerHead: (head) => `${head}
+    <link rel="icon" href="./favicon.ico" sizes="16x16 32x32 48x48" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <meta name="theme-color" content="#0f172a" />
+  `,
   framework: {
     name: '@storybook/react-vite',
     options: {},

@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/react",
-  "version": "0.15.2",
+  "version": "0.15.3",
   "description": "Accessible, themeable React component library — 70+ components backed by a Style Dictionary token system, with dark mode and bundled CSS.",
   "license": "MIT",
   "author": "Leland Rangel",
@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.2",
-    "vite-plugin-dts": "^5.0.2",
+    "vite-plugin-dts": "^5.1.2",
     "vite-plugin-lib-inject-css": "^2.2.2"
   },
   "publishConfig": {

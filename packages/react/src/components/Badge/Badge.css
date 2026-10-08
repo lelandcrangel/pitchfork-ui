@@ -1,12 +1,17 @@
 .pf-badge {
   align-items: center;
   border-radius: var(--radius-full);
+  box-sizing: border-box;
   display: inline-flex;
   font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
   font-weight: var(--font-weight-medium);
+  justify-content: center;
   line-height: 1;
   min-height: 22px;
-  padding: 0 var(--space-2);
+  /* At least as wide as it is tall: a single character is a circle, longer text a pill. */
+  min-width: 22px;
+  padding: 0 0.5em;
 }
 .pf-badge--neutral {
   background: var(--pf-badge-neutral-background);
