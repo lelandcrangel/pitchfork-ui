@@ -12,6 +12,10 @@ concurrency:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    # The whole job finishes in well under 30 minutes when it is healthy. The
+    # default is 360, and a single hung test step burned nearly three hours of
+    # it before anyone could tell which suite was stuck.
+    timeout-minutes: 45
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
@@ -37,7 +41,23 @@ jobs:
       # only before the Storybook smoke test further down.
       - name: Install Chromium for the element browser tests
         run: npx playwright install --with-deps chromium
-      - run: npm run test
+      # Four steps rather than `npm run test`, which chains all of them behind
+      # one name. A hang there says only "Run npm run test" and gives no way to
+      # tell core from react from the two element projects -- and GitHub serves
+      # logs from a host some clients cannot reach, so the step name may be the
+      # only signal available. Each bound is roughly triple the healthy time.
+      - name: Test @pitchfork-ui/core
+        timeout-minutes: 8
+        run: npm run test -w @pitchfork-ui/core
+      - name: Test @pitchfork-ui/react
+        timeout-minutes: 12
+        run: npm run test -w @pitchfork-ui/react
+      - name: Test @pitchfork-ui/elements (unit)
+        timeout-minutes: 10
+        run: npm run test:unit -w @pitchfork-ui/elements
+      - name: Test @pitchfork-ui/elements (browser)
+        timeout-minutes: 15
+        run: npm run test:browser -w @pitchfork-ui/elements
       - name: Build (tokens → react → metadata → llms → docs)
         run: npm run build
 

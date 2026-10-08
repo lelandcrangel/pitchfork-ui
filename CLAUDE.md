@@ -354,9 +354,16 @@ Full reasoning: `WEB-COMPONENTS-PLAN.md`.
 Vitest + Testing Library + jsdom. Setup file: `packages/react/src/test/setup.ts`.
 
 ```bash
-npm run test              # watch mode
-npm run test -- --run     # single pass
+npm run test              # core, then react, then elements -- all single pass
+npx vitest                # watch mode, from the package you are working in
 ```
+
+Every workspace's `test` script is `vitest run`, so the root `test` is a single
+pass and safe in CI. It chains the three packages behind one name, though, so
+`.github/workflows/ci.yml` runs them as four separate steps — core, react,
+elements unit, elements browser — each with its own `timeout-minutes`. A hang
+under the chained name says only "Run npm run test", which is no help at all
+when GitHub serves the logs from a host your client may not be able to reach.
 
 Each component should have at minimum one accessibility-focused test (role presence, keyboard interaction, or aria attribute wiring). See `Button.test.tsx` for a minimal example and `Tooltip.test.tsx` for a more involved one.
 
