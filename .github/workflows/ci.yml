@@ -41,6 +41,15 @@ jobs:
       # only before the Storybook smoke test further down.
       - name: Install Chromium for the element browser tests
         run: npx playwright install --with-deps chromium
+      # packages/elements imports @pitchfork-ui/core's *build*, not its
+      # sources, so with no dist there Vite cannot resolve the entry and every
+      # element spec fails on its first import. The unit project says so in
+      # eight seconds; the browser project, which Vitest runs in the same
+      # `vitest run`, instead sat there -- one run on this branch burned two
+      # hours and forty minutes before it was cancelled. Building core is part
+      # of running an element test, not part of shipping.
+      - name: Build @pitchfork-ui/core for the element tests
+        run: npm run build:core
       # Four steps rather than `npm run test`, which chains all of them behind
       # one name. A hang there says only "Run npm run test" and gives no way to
       # tell core from react from the two element projects -- and GitHub serves

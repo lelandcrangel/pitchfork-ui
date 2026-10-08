@@ -41,6 +41,24 @@ const ANCHOR = {
   describe: 'primary Button',
 };
 
+// One docs page as well as the stories, because the two are compiled by
+// different pipelines and only one of them was ever checked.
+//
+// The 108 generated element reference pages are almost entirely GFM tables,
+// and Storybook's MDX pipeline runs remark with no GFM extension unless
+// `remark-gfm` is wired into addon-docs' `mdxCompileOptions`. Without it a
+// pipe table is a paragraph of pipe characters: no error, no failed request,
+// every story still fine, and the entire web-components reference unreadable.
+// Measured both ways by removing the plugin and rebuilding — the page's
+// `<table>` count goes to zero and the header row turns up as literal text.
+//
+// So this asserts both halves: a table is there, and the raw row is not.
+const DOCS_ANCHOR = {
+  storyId: 'web-components-pfalert--docs',
+  describe: 'the <pf-alert> reference page',
+  rawRow: '| Property | Attribute |',
+};
+
 const CONTENT_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -338,6 +356,52 @@ async function run(args, served) {
       await page.close();
     }
 
+    // A docs page settles differently from a story: MDX renders into
+    // Storybook's own docs wrapper rather than into #storybook-root, so
+    // openStory's readiness condition never holds and the sb-show-* classes
+    // are not the signal here.
+    {
+      const page = await browser.newPage({ viewport: { width: 1024, height: 900 } });
+      const failures = [];
+      watchPage(page, origin, failures);
+      try {
+        await page.goto(`${base}/iframe.html?id=${DOCS_ANCHOR.storyId}&viewMode=docs`, {
+          waitUntil: 'domcontentloaded',
+        });
+        await page.waitForFunction(
+          () => (document.querySelector('.sbdocs-content')?.children.length ?? 0) > 0,
+          undefined,
+          { timeout: 20000 },
+        );
+        const docs = await page.evaluate((raw) => {
+          const content = document.querySelector('.sbdocs-content');
+          return {
+            tables: content.querySelectorAll('table').length,
+            raw: (content.textContent ?? '').includes(raw),
+          };
+        }, DOCS_ANCHOR.rawRow);
+
+        if (docs.tables === 0) {
+          problems.push(
+            `${DOCS_ANCHOR.storyId}: ${DOCS_ANCHOR.describe} rendered no <table> at all` +
+              (docs.raw ? `, and its header row is on the page as literal text` : '') +
+              `. remark-gfm is missing from addon-docs' mdxCompileOptions.`,
+          );
+        } else if (docs.raw) {
+          problems.push(
+            `${DOCS_ANCHOR.storyId}: ${DOCS_ANCHOR.describe} has ${docs.tables} table(s) ` +
+              `but "${DOCS_ANCHOR.rawRow}" is still on the page as text.`,
+          );
+        } else {
+          console.log(`  ${DOCS_ANCHOR.describe}: ${docs.tables} tables rendered`);
+        }
+      } catch {
+        problems.push(`${DOCS_ANCHOR.storyId}: the docs page did not render within 20s`);
+      }
+      if (failures.length) problems.push(`${DOCS_ANCHOR.storyId}: ${failures.join('; ')}`);
+      await page.close();
+    }
+
     // The manager shell is served separately from the story iframe, so a broken
     // upload can leave one working and the other not.
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
@@ -367,7 +431,8 @@ async function run(args, served) {
   }
 
   console.log(
-    `\nSmoke test passed: ${sample.size} stories checked, tokens resolve, nothing failed to load.`,
+    `\nSmoke test passed: ${sample.size} stories and one docs page checked, ` +
+      `tokens resolve, nothing failed to load.`,
   );
 }
 

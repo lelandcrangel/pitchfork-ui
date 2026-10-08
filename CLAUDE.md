@@ -1344,6 +1344,14 @@ Two things that bit while writing it:
 - **The generated pages are in `.prettierignore`**, because `--verify`
   compares the generator's own output. Formatting them afterwards would make
   every build report 108 stale pages.
+- **Storybook's MDX runs remark with no GFM extension**, so a pipe table is a
+  paragraph of pipe characters until `remark-gfm` is in addon-docs'
+  `mdxCompileOptions`. These pages are almost entirely tables, so the whole
+  section rendered as pipe soup — with no error, no failed request and every
+  story fine, because nothing in CI had ever opened a docs page. Measured by
+  removing the plugin and rebuilding: `PfAlert`'s table count goes from 5 to 0
+  and its header row turns up as literal text. `scripts/smoke-storybook.mjs`
+  now asserts both halves on one reference page.
 
 ---
 

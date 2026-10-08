@@ -5,18 +5,29 @@ does not need discussion. Referenced from `CLAUDE.md`.
 
 ---
 
-## Markdown tables do not render in Storybook MDX
+## Markdown tables in Storybook MDX: fixed, and now checked
 
-Storybook's MDX pipeline does not load `remark-gfm`, so a GFM table in an
-`.mdx` file renders as a paragraph of pipe characters rather than a table. The
-one table in the docs — the MCP tool list in `UsingWithAI.mdx` — hit this and
-now uses the library's own `Table` component instead, which looks better
-anyway. But the trap is still there for the next person who writes one.
+Not an open gap. Kept because of how long it hid and how it was found.
 
-**Fix:** add `remark-gfm` to the docs addon's
-`mdxPluginOptions.mdxCompileOptions.remarkPlugins` in
-`apps/docs/.storybook/main.ts`. Worth checking the other MDX pages afterwards,
-since the same plugin also turns on strikethrough, footnotes and autolinks.
+Storybook's MDX pipeline runs remark with no GFM extension, so a pipe table in
+an `.mdx` file rendered as a paragraph of pipe characters. That was a curiosity
+while the docs had one table — the MCP tool list in `UsingWithAI.mdx`, which
+uses the library's own `Table` component and looks better for it. Then the
+element reference generator added 108 pages that are **almost entirely**
+tables, and the whole web-components section of the site was pipe soup: no
+error, no failed request, every story still rendering, and nothing in CI
+looking at a docs page at all.
+
+`remark-gfm` is now wired into addon-docs' `mdxPluginOptions.mdxCompileOptions`
+in `apps/docs/.storybook/main.ts`, and `scripts/smoke-storybook.mjs` opens one
+element reference page and asserts both halves — a `<table>` is there, and the
+header row is **not** on the page as literal text. Measured by removing the
+plugin and rebuilding: the page's table count goes from 5 to 0, the raw row
+appears as text, and the smoke fails with that message.
+
+Checked afterwards, because the same plugin also turns on strikethrough,
+footnotes and autolinks: no hand-written page uses `~~` or `[^`, and the 107
+pages with markdown tables are all generated.
 
 ---
 

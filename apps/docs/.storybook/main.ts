@@ -3,6 +3,7 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import customMedia from 'postcss-custom-media';
+import remarkGfm from 'remark-gfm';
 
 const storybookDir = dirname(fileURLToPath(import.meta.url));
 const reactSourceEntry = resolve(storybookDir, '../../../packages/react/src/index.ts');
@@ -44,7 +45,26 @@ const config: StorybookConfig & { title: string } = {
       excludeFromSidebar: true,
     },
   },
-  addons: ['@storybook/addon-docs', '@storybook/addon-a11y'],
+  addons: [
+    {
+      // Storybook's MDX pipeline runs remark with no GFM extension, so a
+      // pipe table renders as a paragraph of pipe characters. That was a
+      // curiosity while one page had a table; the 108 generated element
+      // reference pages are almost entirely tables, so without this the
+      // whole web-components section of the site is pipe soup. Probed by
+      // removing the plugin again: `<table` disappears from the built
+      // output and the pipes come back as text.
+      name: '@storybook/addon-docs',
+      options: {
+        mdxPluginOptions: {
+          mdxCompileOptions: {
+            remarkPlugins: [remarkGfm],
+          },
+        },
+      },
+    },
+    '@storybook/addon-a11y',
+  ],
   staticDirs: ['../public'],
   // Storybook writes its own <link rel="icon" href="./favicon.svg"> into the
   // manager HTML and serves whatever favicon.svg the static dir holds, so
