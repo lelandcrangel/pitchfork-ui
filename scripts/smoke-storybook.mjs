@@ -53,11 +53,29 @@ const ANCHOR = {
 // `<table>` count goes to zero and the header row turns up as literal text.
 //
 // So this asserts both halves: a table is there, and the raw row is not.
+//
+// It also asserts the thing those pages are now for. Each one carries a live
+// element, which needs `defineCustomElements()` to have run in `preview.ts`
+// and the lazy chunks to have resolved through the bundler. Nothing in a build
+// says whether that happened: an unregistered `<pf-alert>` is a perfectly
+// valid unknown element, so the markup, the tables and the page all look
+// right and the box is simply empty.
+//
+// The signal is Stencil's own `hydrated` class, not a non-empty shadow root.
+// `pf-menu-separator` and `pf-toolbar-separator` render `<Host>` with no
+// children at all — the host *is* the rule, styled through `:host` — so they
+// hydrate correctly with an empty shadow root, and the first version of this
+// check called all three of them broken.
 const DOCS_ANCHOR = {
   storyId: 'web-components-pfalert--docs',
   describe: 'the <pf-alert> reference page',
   rawRow: '| Property | Attribute |',
 };
+
+// A few more reference pages beyond the anchor, sampled the same deterministic
+// way the stories are: registration is global, so the anchor alone proves it,
+// but one element's own example can still be broken on its own page.
+const DOCS_SAMPLE = 5;
 
 const CONTENT_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -252,6 +270,10 @@ async function run(args, served) {
   const base = (served?.base ?? args.base).replace(/\/$/, '');
   const origin = new URL(base).origin;
   const problems = [];
+  // Declared at this scope, not inside the try block: the summary line below
+  // is printed after the browser's `finally` and cannot see a binding made
+  // inside it.
+  const docsSample = new Set();
 
   console.log(`Smoke-testing the built Storybook at ${base}`);
 
@@ -356,16 +378,28 @@ async function run(args, served) {
       await page.close();
     }
 
-    // A docs page settles differently from a story: MDX renders into
-    // Storybook's own docs wrapper rather than into #storybook-root, so
-    // openStory's readiness condition never holds and the sb-show-* classes
-    // are not the signal here.
-    {
+    // Docs pages settle differently from a story: MDX renders into Storybook's
+    // own docs wrapper rather than into #storybook-root, so openStory's
+    // readiness condition never holds and the sb-show-* classes are not the
+    // signal here.
+    const docsIds = Object.values(index.entries ?? {})
+      .filter((e) => e.type === 'docs' && e.id.startsWith('web-components-pf'))
+      .map((e) => e.id)
+      .sort();
+    for (const id of Array.from(
+      { length: Math.min(DOCS_SAMPLE, docsIds.length) },
+      (_, i) => docsIds[Math.round((i * (docsIds.length - 1)) / Math.max(1, DOCS_SAMPLE - 1))],
+    )) {
+      docsSample.add(id);
+    }
+    docsSample.add(DOCS_ANCHOR.storyId);
+
+    for (const id of docsSample) {
       const page = await browser.newPage({ viewport: { width: 1024, height: 900 } });
       const failures = [];
       watchPage(page, origin, failures);
       try {
-        await page.goto(`${base}/iframe.html?id=${DOCS_ANCHOR.storyId}&viewMode=docs`, {
+        await page.goto(`${base}/iframe.html?id=${id}&viewMode=docs`, {
           waitUntil: 'domcontentloaded',
         });
         await page.waitForFunction(
@@ -373,32 +407,114 @@ async function run(args, served) {
           undefined,
           { timeout: 20000 },
         );
-        const docs = await page.evaluate((raw) => {
+        const docs = await page.evaluate(async (raw) => {
           const content = document.querySelector('.sbdocs-content');
+          // The elements load lazily, so the shadow root exists a frame or
+          // more before anything is in it. Poll rather than pick a sleep —
+          // the same reason the element package's own tests do.
+          const deadline = Date.now() + 10000;
+          let hosts = [];
+          while (Date.now() < deadline) {
+            hosts = [...content.querySelectorAll('*')].filter((n) => n.tagName.startsWith('PF-'));
+            if (hosts.length > 0 && hosts.every((h) => h.classList.contains('hydrated'))) break;
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+          // Nothing in a preview may be laid out outside its own box. The
+          // check exists because six examples set `open` on an element that
+          // is a native <dialog> opened with showModal(): that promotes the
+          // panel to the top layer, so it covered the whole page rather than
+          // sitting in the preview. Measured before the fix —
+          // `pf-modal::dialog` at 0,0 1024x900 with the stage collapsed to
+          // 40px tall — and `pf-alert` on the same build escaped nothing,
+          // which is what makes this a real check rather than a tautology.
+          //
+          // The visible panel of a dialog-based element is inside its shadow
+          // root, so the host's own box would say nothing. A zero-sized box
+          // is skipped: a closed dialog has one, and so does
+          // `pf-visually-hidden`, which is clipped by design.
+          const stage = content.querySelector('[style*="border"] > div');
+          const bounds = stage?.getBoundingClientRect();
+          const escaped = [];
+          for (const host of hosts) {
+            const panel = host.shadowRoot?.querySelector('dialog');
+            const box = (panel ?? host).getBoundingClientRect();
+            if (!bounds || box.width === 0 || box.height === 0) continue;
+            if (
+              box.top < bounds.top - 4 ||
+              box.bottom > bounds.bottom + 4 ||
+              box.left < bounds.left - 4 ||
+              box.right > bounds.right + 4
+            ) {
+              escaped.push(
+                `${host.tagName.toLowerCase()}${panel ? '::dialog' : ''} ` +
+                  `${Math.round(box.width)}x${Math.round(box.height)}`,
+              );
+            }
+          }
+
           return {
             tables: content.querySelectorAll('table').length,
             raw: (content.textContent ?? '').includes(raw),
+            hosts: hosts.length,
+            hydrated: hosts.filter((h) => h.classList.contains('hydrated') && h.shadowRoot).length,
+            escaped: [...new Set(escaped)],
+            unhydrated: [
+              ...new Set(
+                hosts
+                  .filter((h) => !h.classList.contains('hydrated') || !h.shadowRoot)
+                  .map((h) => h.tagName.toLowerCase()),
+              ),
+            ],
           };
         }, DOCS_ANCHOR.rawRow);
 
-        if (docs.tables === 0) {
+        if (docs.hosts === 0) {
           problems.push(
-            `${DOCS_ANCHOR.storyId}: ${DOCS_ANCHOR.describe} rendered no <table> at all` +
-              (docs.raw ? `, and its header row is on the page as literal text` : '') +
-              `. remark-gfm is missing from addon-docs' mdxCompileOptions.`,
+            `${id}: no <pf-*> element on the page at all — the generated example is missing.`,
           );
-        } else if (docs.raw) {
+        } else if (docs.unhydrated.length > 0) {
           problems.push(
-            `${DOCS_ANCHOR.storyId}: ${DOCS_ANCHOR.describe} has ${docs.tables} table(s) ` +
-              `but "${DOCS_ANCHOR.rawRow}" is still on the page as text.`,
+            `${id}: ${docs.unhydrated.join(', ')} never hydrated. The elements are not ` +
+              `registered: preview.ts has to call defineCustomElements() from ` +
+              `@pitchfork-ui/elements/loader, and @pitchfork-ui/elements has to be built.`,
           );
-        } else {
-          console.log(`  ${DOCS_ANCHOR.describe}: ${docs.tables} tables rendered`);
+        } else if (docs.escaped.length > 0) {
+          problems.push(
+            `${id}: ${docs.escaped.join(', ')} is laid out outside the preview box. ` +
+              `An example that sets \`open\` on a showModal() element covers the whole ` +
+              `page — show it closed, with a trigger.`,
+          );
+        }
+
+        // Only the anchor is checked for tables: pf-menu-separator has no
+        // props, events, methods, slots or parts, so its page has none, and a
+        // sampled page could be that one.
+        if (id === DOCS_ANCHOR.storyId) {
+          if (docs.tables === 0) {
+            problems.push(
+              `${id}: ${DOCS_ANCHOR.describe} rendered no <table> at all` +
+                (docs.raw ? `, and its header row is on the page as literal text` : '') +
+                `. remark-gfm is missing from addon-docs' mdxCompileOptions.`,
+            );
+          } else if (docs.raw) {
+            problems.push(
+              `${id}: ${DOCS_ANCHOR.describe} has ${docs.tables} table(s) ` +
+                `but "${DOCS_ANCHOR.rawRow}" is still on the page as text.`,
+            );
+          } else {
+            // `hydrated`, not `hosts`: an unregistered `<pf-alert>` is still an
+            // element on the page, so counting hosts here would report "live"
+            // for exactly the build this check exists to catch.
+            console.log(
+              `  ${DOCS_ANCHOR.describe}: ${docs.tables} tables, ` +
+                `${docs.hydrated} of ${docs.hosts} element(s) hydrated`,
+            );
+          }
         }
       } catch {
-        problems.push(`${DOCS_ANCHOR.storyId}: the docs page did not render within 20s`);
+        problems.push(`${id}: the docs page did not render within 20s`);
       }
-      if (failures.length) problems.push(`${DOCS_ANCHOR.storyId}: ${failures.join('; ')}`);
+      if (failures.length) problems.push(`${id}: ${failures.join('; ')}`);
       await page.close();
     }
 
@@ -431,8 +547,8 @@ async function run(args, served) {
   }
 
   console.log(
-    `\nSmoke test passed: ${sample.size} stories and one docs page checked, ` +
-      `tokens resolve, nothing failed to load.`,
+    `\nSmoke test passed: ${sample.size} stories and ${docsSample.size} element reference ` +
+      `pages checked, tokens resolve, elements hydrate, nothing failed to load.`,
   );
 }
 

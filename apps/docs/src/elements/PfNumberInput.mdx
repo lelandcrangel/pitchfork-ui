@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfNumberInput" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-number-input>`
@@ -20,6 +23,10 @@ is an empty field — not zero, which is a value someone chose.
 
 All of the arithmetic is core's, so this and the React `NumberInput` step,
 round and clamp identically: ten steps of `0.1` reach exactly 1 in both.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-number-input']} />
 
 ## Properties
 

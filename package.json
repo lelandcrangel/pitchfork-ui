@@ -45,6 +45,7 @@
     "check:package": "node scripts/check-built-packages.mjs",
     "check:publishable": "node scripts/check-publishable.mjs",
     "check:icons": "node scripts/check-icon-names.mjs",
+    "check:examples": "node scripts/check-element-examples.mjs",
     "build:elements-metadata": "node scripts/build-elements-metadata.mjs"
   },
   "devDependencies": {

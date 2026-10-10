@@ -112,6 +112,13 @@ jobs:
       # have, so the docs site demonstrated broken usage.
       - name: Check every icon name this repository uses resolves
         run: npm run check:icons
+      # And the same question for the element examples on the reference pages.
+      # `validate_usage` exists so an agent can check its own markup; nothing
+      # checked ours, and the first draft of element-examples.ts had nine wrong
+      # enum values in it -- each of which parses, renders, and silently does
+      # nothing. Needs the element metadata, so it runs after the build.
+      - name: Check the element examples against the real element API
+        run: npm run check:examples
       - name: Validate llms.txt (every component and element linked, every link resolves)
         run: npm run build:llms -- --strict --verify
 

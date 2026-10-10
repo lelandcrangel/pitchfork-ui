@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfTabPanel" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-tab-panel>`
@@ -18,6 +21,10 @@ A sibling of its tab rather than a child of it, so that both live in the
 consumer's tree: that is what lets the group point `aria-controls` at this
 panel and `aria-labelledby` back at the tab, since a same-root IDREF is the
 one that resolves.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-tab-panel']} />
 
 ## Properties
 

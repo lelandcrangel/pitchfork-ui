@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfCalendar" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-calendar>`
@@ -25,6 +28,10 @@ Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
 range of a century would mean a hundred custom elements rendered into this
 shadow root for one control, and a `<select>` brings its own keyboard and
 its platform picker on a phone.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-calendar']} />
 
 ## Properties
 

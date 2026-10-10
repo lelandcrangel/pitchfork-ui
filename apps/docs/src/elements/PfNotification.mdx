@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfNotification" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-notification>`
@@ -17,6 +20,10 @@ The role comes from core's `liveRegionRole`, so `warning` and `danger`
 announce assertively and `info` and `success` wait their turn. The React
 component used to be `role="status"` for all four — the rule lived in
 `Alert` and nowhere else — which is why the mapping is now shared.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-notification']} />
 
 ## Properties
 

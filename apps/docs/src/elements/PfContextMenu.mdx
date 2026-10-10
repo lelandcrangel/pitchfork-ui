@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfContextMenu" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-context-menu>`
@@ -16,6 +19,10 @@ A menu opened by right-clicking the region it wraps.
 Unlike `pf-dropdown` there is no anchor element — the menu opens at the
 pointer — so it is placed with core's `clampToViewport` rather than the
 anchoring observer. The same `pf-menu-item` children serve both.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-context-menu']} />
 
 ## Properties
 

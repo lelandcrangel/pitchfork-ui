@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfSparkline" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-sparkline>`
@@ -18,6 +21,10 @@ same numbers in the same places — including the three edge cases that were
 wrong before the extraction: one value gave `NaN`, a flat series was pinned
 to an edge, and the closing branch of the old path builder interpolated a
 boolean.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-sparkline']} />
 
 ## Properties
 

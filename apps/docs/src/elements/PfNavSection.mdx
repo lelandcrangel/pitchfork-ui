@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfNavSection" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-nav-section>`
@@ -22,6 +25,10 @@ answer `pf-command-group` gives.
 The title names the list with a **same-root** IDREF: both the title and the
 `<ul>` are in this shadow root, so the reference resolves. An
 `aria-labelledby` from the host could not point at either of them.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-nav-section']} />
 
 ## Events
 

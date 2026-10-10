@@ -13,6 +13,16 @@
  * The *prose* is not generated: `WebComponents.mdx` is hand-written, because
  * the interesting part of this package is the handful of places the element
  * API deliberately differs from the React one, and no generator knows that.
+ *
+ * Neither are the examples. `docs.json` knows every prop, slot and part and
+ * has no idea that `pf-select` needs `pf-option` children or what a sensible
+ * `data` array looks like, so a generated example would be
+ * `<pf-line-chart></pf-line-chart>` -- an empty box. They live in
+ * `apps/docs/src/element-examples.ts`, and this reads the keys out of it the
+ * way `build-metadata.mjs` reads the icon lists out of `Icon.tsx`: by parsing
+ * the source and throwing a named error when the shape it expects is not
+ * there, so a rename is caught here rather than quietly producing 108 pages
+ * with no previews on them.
  */
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -24,6 +34,41 @@ const outDir = join(root, 'apps/docs/src/elements');
 
 const strict = process.argv.includes('--strict');
 const verify = process.argv.includes('--verify');
+
+const examplesPath = join(root, 'apps/docs/src/element-examples.ts');
+
+/**
+ * The tags `element-examples.ts` has an example for.
+ *
+ * Parsed rather than imported, because this is a plain `.mjs` script and the
+ * file is TypeScript importing a type. Only the keys are needed: the markup
+ * itself never passes through here, which is what keeps the examples' quoting
+ * and escaping entirely the TypeScript file's business.
+ */
+function readExampleTags() {
+  const source = readFileSync(examplesPath, 'utf8');
+  const body = source.match(
+    /export const elementExamples: Record<string, ElementExample> = \{([\s\S]*)\n\};/,
+  );
+  if (!body) {
+    throw new Error(
+      `build-elements-docs: could not find the \`elementExamples\` object in ${examplesPath}. ` +
+        'If it was renamed or its type annotation changed, update this parser to match — ' +
+        'otherwise every page would silently lose its live preview.',
+    );
+  }
+  const tags = new Set();
+  for (const [, tag] of body[1].matchAll(/^ {2}'(pf-[a-z-]+)':/gm)) tags.add(tag);
+  if (tags.size === 0) {
+    throw new Error(
+      `build-elements-docs: found \`elementExamples\` in ${examplesPath} but no \`'pf-*':\` keys ` +
+        'at the top level. The indentation or quoting this parser expects has changed.',
+    );
+  }
+  return tags;
+}
+
+const exampleTags = readExampleTags();
 
 let docsJson;
 try {
@@ -98,20 +143,37 @@ function pageFor(component) {
   const name = toPascal(component.tag);
   const sections = [];
 
-  sections.push(`import { Meta } from '@storybook/addon-docs/blocks';
+  const hasExample = exampleTags.has(component.tag);
+
+  sections.push(`import { Meta } from '@storybook/addon-docs/blocks';${
+    hasExample
+      ? `
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';`
+      : ''
+  }
 
 <Meta title="Web components/${name}" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # \`<${component.tag}>\`
 `);
 
   if (component.docs) sections.push(blockProse(component.docs));
+
+  // Before the tables, because a reader deciding whether to move off the React
+  // component wants to see the element first.
+  if (hasExample) {
+    sections.push(`## Example
+
+<ElementPreview example={elementExamples['${component.tag}']} />`);
+  }
 
   const props = (component.props ?? []).filter((prop) => !prop.internal);
   if (props.length > 0) {
@@ -247,13 +309,39 @@ mkdirSync(outDir, { recursive: true });
 for (const [file, contents] of expected) writeFileSync(join(outDir, file), contents);
 
 const undocumented = components.filter((component) => !component.docs);
+const unexampled = components.filter((component) => !exampleTags.has(component.tag));
+const orphanExamples = [...exampleTags].filter(
+  (tag) => !components.some((component) => component.tag === tag),
+);
+
 if (strict && undocumented.length > 0) {
   console.error(`\n--strict: ${undocumented.length} element(s) have no doc comment:`);
   for (const component of undocumented.slice(0, 20)) console.error(`  - ${component.tag}`);
   process.exit(1);
 }
 
+// A page with no preview is a table describing an element the page cannot
+// render, which is the state this whole mechanism exists to end. An example
+// for an element that no longer exists is the same mistake pointing the other
+// way, and would otherwise sit there unnoticed for ever.
+if (strict && (unexampled.length > 0 || orphanExamples.length > 0)) {
+  if (unexampled.length > 0) {
+    console.error(
+      `\n--strict: ${unexampled.length} element(s) have no example in ${examplesPath}:`,
+    );
+    for (const component of unexampled.slice(0, 20)) console.error(`  - ${component.tag}`);
+  }
+  if (orphanExamples.length > 0) {
+    console.error(
+      `\n--strict: ${orphanExamples.length} example(s) name an element that does not exist:`,
+    );
+    for (const tag of orphanExamples.slice(0, 20)) console.error(`  - ${tag}`);
+  }
+  process.exit(1);
+}
+
 console.log(
   `build-elements-docs: wrote ${expected.size} element pages to apps/docs/src/elements` +
+    ` (${expected.size - unexampled.length} with a live example)` +
     (undocumented.length > 0 ? ` (${undocumented.length} with no doc comment)` : ''),
 );
