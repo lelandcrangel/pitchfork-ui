@@ -209,13 +209,28 @@ regardless), before its trusted publisher can be created at all. `todo.md` has
 the commands and the two-day window that follows.
 _Exit:_ `npm install @pitchfork-ui/elements-react` works in a clean directory.
 
-**Phase 2 — Make the elements viewable.** The Storybook gap stops being
-cosmetic here; it is the migration documentation. Today `apps/docs` does not
-depend on `@pitchfork-ui/elements` and `preview.ts` loads no element bundle, so
-the 108 generated pages are reference tables that render nothing. Someone
-deciding whether to move needs to see the element beside the component it
-replaces.
-_Exit:_ every element renders in Storybook, next to its React counterpart.
+**Phase 2 — Make the elements viewable. Done.** `apps/docs` depends on
+`@pitchfork-ui/elements`, `preview.ts` registers all 108 through
+`defineCustomElements()`, and every generated reference page now carries a
+live element above its tables, rendered from a hand-written example in
+`apps/docs/src/element-examples.ts`. Someone deciding whether to move can see
+the element beside the component it replaces, in the same site, in both
+themes.
+
+Two checks keep it that way, because an unregistered custom element is
+perfectly valid HTML and a wrong attribute renders without complaint:
+`build-elements-docs --strict` fails on an element with no example, and
+`smoke-storybook.mjs` fails when a sampled page's `pf-*` host never hydrates.
+`npm run check:examples` runs `validate_usage` over all 108 examples — it
+found nine wrong enum values in the first draft, and `check:icons` found six
+invented icon names in the same draft.
+
+What is still only in the React half: the elements have no equivalent of the
+`*.stories.tsx` controls panel, so a reader cannot drive an element's props
+from the sidebar the way they can a React component's. That is a bigger piece
+of work than it looks — Storybook's args are per-framework — and it is not
+what someone deciding whether to migrate needs first.
+_Exit:_ met. Every element renders in Storybook.
 
 **Phase 3 — Migration guide and codemod.** The mapping table above is
 generated, so the guide is too. For the 46 drop-ins a codemod is realistic:

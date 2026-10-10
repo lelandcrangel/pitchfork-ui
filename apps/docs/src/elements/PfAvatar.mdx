@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfAvatar" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-avatar>`
@@ -15,6 +18,10 @@ A person or entity, as a photo or as initials.
 
 The initials are derived from `name` by core's `avatarInitials`, so this and
 the React `Avatar` shorten the same name the same way.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-avatar']} />
 
 ## Properties
 

@@ -1,11 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
 
 <Meta title="Web components/PfTimePicker" />
 
 {/*
   Generated from packages/elements/dist/docs.json by
   scripts/build-elements-docs.mjs. Edit the component's doc comments, not
-  this file — CI fails if the two disagree.
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
 */}
 
 # `<pf-time-picker>`
@@ -18,6 +21,10 @@ The submitted value is always canonical 24-hour `HH:mm`, whatever
 `hour-cycle` displays. A control whose submitted value changed with its
 display would be unusable on a server, so the cycle is a rendering choice
 and nothing more — all of that arithmetic is core's.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-time-picker']} />
 
 ## Properties
 

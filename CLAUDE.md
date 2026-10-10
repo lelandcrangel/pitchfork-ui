@@ -1333,6 +1333,61 @@ pages.** `--verify` in CI fails on a stale page, a missing one, or a page for
 an element that no longer exists; `--strict` fails on an element with no doc
 comment at all, which is what got the six earliest elements their prose.
 
+**Each page carries a live element, and the example is hand-written.**
+`preview.ts` calls `defineCustomElements()` from `@pitchfork-ui/elements/loader`
+so all 108 are registered, and each page renders one through
+`ElementPreview`. The markup comes from `apps/docs/src/element-examples.ts`,
+keyed by tag — `docs.json` records every prop and slot and has no idea that
+`pf-select` needs `pf-option` children or what a sensible `data` array looks
+like, so a generated example would be `<pf-line-chart></pf-line-chart>`, an
+empty box. `--strict` fails on an element with no example and on an example
+for an element that no longer exists.
+
+Five things this settled, three of them the hard way:
+
+- **`innerHTML`, not JSX.** `ElementPreview` sets the markup with `innerHTML`
+  and the browser's own parser upgrades the elements, which is the path a
+  consumer writing plain HTML takes. The same markup written as JSX would go
+  through React's custom-element handling, which decides between an attribute
+  and a property per value — a second set of rules, documented nowhere on
+  these pages, between the reader and what they will type. It also means the
+  preview and the code block cannot disagree, because they are one string.
+- **`setup` is for the eight props with no attribute**, and nothing else.
+  `pf-kbd.keys`, `pf-video-player.sources` and the `isDateDisabled` predicates
+  cannot be written in markup at all, so the example assigns the property as a
+  consumer would. Using it to tidy anything else would hide the honest answer
+  behind a nicer preview.
+- **Hydration is `classList.contains('hydrated')`, not a non-empty shadow
+  root.** `pf-menu-separator` and `pf-toolbar-separator` render `<Host>` with
+  no children — the host _is_ the rule, styled through `:host` — so they
+  hydrate correctly with an empty shadow root, and the first version of the
+  check called all three of them broken.
+- **An unregistered element is valid HTML**, so nothing in a build says the
+  registration is missing: the markup, the tables and the page all look right
+  and the box is simply empty. `scripts/smoke-storybook.mjs` samples six
+  reference pages and fails when a `pf-*` host never hydrates. Probed by
+  deleting `defineCustomElements()` and rebuilding — all six fail, naming it.
+- **`npm run check:examples`** runs the MCP server's own `validate_usage` over
+  all 108 examples. `validate_usage` exists so an _agent_ can check its markup
+  before presenting it; nothing checked ours, which is the same gap
+  `check:icons` closes for icon names, and it bit immediately: the first draft
+  had nine wrong enum values — `trend="up"` where `pf-metric-card` takes
+  `positive`, `variant="pill"` where `pf-tabs` takes `pills`, and `sort="asc"`
+  on `pf-table-cell`, which takes the aria-sort vocabulary (`ascending`) while
+  the table's own `sort-direction` really is `asc`. `check:icons` caught six
+  invented icon names in the same draft. Every one of them parses, renders,
+  and does nothing.
+
+`main.ts` has **no alias to the elements' source**, for the same reason
+`apps/consumer-react/vite.config.ts` has none: the docs resolve
+`@pitchfork-ui/elements` through its own exports map, which is the path a
+source alias hides. So `npm run storybook` on a fresh clone needs
+`npm run build:elements` first; `npm run build` already runs them in order.
+And `preview.ts` deliberately does not import `@pitchfork-ui/elements/styles.css`
+— that file is the token sheet, and `main.ts` already aliases
+`@pitchfork-ui/react/styles.css` to the same built `theme.css`. Each element's
+own CSS is injected into its shadow root by the loader, so nothing is missing.
+
 Two things that bit while writing it:
 
 - **MDX is JSX, so a doc comment's `<` and `{` matter** — but only outside
