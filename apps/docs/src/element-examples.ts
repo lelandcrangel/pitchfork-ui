@@ -54,6 +54,12 @@ export const elementExamples: Record<string, ElementExample> = {
     Never opens.
   </pf-accordion-item>
 </pf-accordion>`,
+    interactive: `<pf-accordion style="width: 100%">
+  <pf-accordion-item value="one" expanded>
+    <span slot="title">Section</span>
+    The panel is inert while closed.
+  </pf-accordion-item>
+</pf-accordion>`,
   },
 
   'pf-alert': {
@@ -63,6 +69,9 @@ export const elementExamples: Record<string, ElementExample> = {
 <pf-alert variant="danger" heading="Payment failed" dismissible style="width: 100%">
   We could not charge the card on file.
 </pf-alert>`,
+    interactive: `<pf-alert variant="info" heading="Scheduled maintenance" style="width: 100%">
+  The API will be read-only on Sunday between 02:00 and 04:00 UTC.
+</pf-alert>`,
   },
 
   'pf-avatar': {
@@ -70,6 +79,7 @@ export const elementExamples: Record<string, ElementExample> = {
 <pf-avatar name="Ada Lovelace" src="avatar.jpeg" alt="Ada Lovelace"></pf-avatar>
 <pf-avatar name="Grace Hopper" size="lg" status="online"></pf-avatar>
 <pf-avatar size="xl"></pf-avatar>`,
+    interactive: `<pf-avatar name="Ada Lovelace"></pf-avatar>`,
   },
 
   'pf-avatar-group': {
@@ -88,6 +98,7 @@ export const elementExamples: Record<string, ElementExample> = {
 <pf-badge variant="success">success</pf-badge>
 <pf-badge variant="warning">warning</pf-badge>
 <pf-badge variant="danger">danger</pf-badge>`,
+    interactive: `<pf-badge>Badge</pf-badge>`,
   },
 
   'pf-badge-group': {
@@ -99,6 +110,7 @@ export const elementExamples: Record<string, ElementExample> = {
   appearance="modern"
   badge-position="trailing"
 ></pf-badge-group>`,
+    interactive: `<pf-badge-group label="New" message="Elements are here" color="brand"></pf-badge-group>`,
   },
 
   'pf-bar-chart': {
@@ -119,6 +131,10 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-breadcrumb href="#">Components</pf-breadcrumb>
   <pf-breadcrumb current>Breadcrumb</pf-breadcrumb>
 </pf-breadcrumbs>`,
+    interactive: `<pf-breadcrumbs>
+  <pf-breadcrumb href="#">Home</pf-breadcrumb>
+  <pf-breadcrumb current>Crumb</pf-breadcrumb>
+</pf-breadcrumbs>`,
   },
 
   'pf-breadcrumbs': {
@@ -136,6 +152,7 @@ export const elementExamples: Record<string, ElementExample> = {
 <pf-button variant="destructive">Delete</pf-button>
 <pf-button variant="primary" loading>Saving</pf-button>
 <pf-button variant="primary" disabled>Unavailable</pf-button>`,
+    interactive: `<pf-button>Button</pf-button>`,
   },
 
   'pf-button-group': {
@@ -151,6 +168,10 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-button-group-item value="all">All</pf-button-group-item>
   <pf-button-group-item value="open" dot>Open</pf-button-group-item>
   <pf-button-group-item value="done" disabled>Done</pf-button-group-item>
+</pf-button-group>`,
+    interactive: `<pf-button-group value="week">
+  <pf-button-group-item value="week">Week</pf-button-group-item>
+  <pf-button-group-item value="month">Month</pf-button-group-item>
 </pf-button-group>`,
   },
 
@@ -215,6 +236,11 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-card><pf-card-content><pf-button size="sm">Try tabbing to me</pf-button></pf-card-content></pf-card>
   </pf-carousel-slide>
 </pf-carousel>`,
+    interactive: `<pf-carousel label="One slide" style="width: 100%; max-width: 26rem">
+  <pf-carousel-slide>
+    <pf-card><pf-card-content>A slide</pf-card-content></pf-card>
+  </pf-carousel-slide>
+</pf-carousel>`,
   },
 
   'pf-chart-series': {
@@ -226,12 +252,16 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-chart-series series-key="0" color="var(--color-brand-500)">Visits</pf-chart-series>
   <pf-chart-series series-key="1" color="var(--color-amber-500)" dashed>Forecast</pf-chart-series>
 </pf-line-chart>`,
+    interactive: `<pf-line-chart label="One series" data='[["Mon", 12], ["Tue", 18], ["Wed", 9]]' style="width: 100%">
+  <pf-chart-series series-key="0" color="var(--color-brand-500)">Visits</pf-chart-series>
+</pf-line-chart>`,
   },
 
   'pf-checkbox': {
     html: `<pf-checkbox name="terms" label="I agree to the terms"></pf-checkbox>
 <pf-checkbox name="news" label="Send me product news" checked></pf-checkbox>
 <pf-checkbox name="locked" label="Unavailable" disabled></pf-checkbox>`,
+    interactive: `<pf-checkbox name="terms" label="I agree to the terms"></pf-checkbox>`,
   },
 
   'pf-code-snippet': {
@@ -282,6 +312,12 @@ export const elementExamples: Record<string, ElementExample> = {
         if (palette) palette.open = true;
       });
     },
+    interactive: `<pf-command-palette label="Commands" open>
+  <pf-command-group label="Files">
+    <pf-command-item value="new">New file</pf-command-item>
+    <pf-command-item value="open">Open…</pf-command-item>
+  </pf-command-group>
+</pf-command-palette>`,
   },
 
   'pf-command-item': {
@@ -303,6 +339,9 @@ export const elementExamples: Record<string, ElementExample> = {
         if (palette) palette.open = true;
       });
     },
+    interactive: `<pf-command-palette label="Commands" open>
+  <pf-command-item value="new" description="Create an empty document">New file</pf-command-item>
+</pf-command-palette>`,
   },
 
   'pf-command-palette': {
@@ -324,6 +363,10 @@ export const elementExamples: Record<string, ElementExample> = {
         if (palette) palette.open = true;
       });
     },
+    interactive: `<pf-command-palette label="Command palette" open>
+  <pf-command-item value="new">New file</pf-command-item>
+  <pf-command-item value="open">Open…</pf-command-item>
+</pf-command-palette>`,
   },
 
   'pf-content-divider': {
@@ -433,6 +476,7 @@ export const elementExamples: Record<string, ElementExample> = {
 <pf-icon name="triangle-exclamation" label="Warning"></pf-icon>
 <pf-icon name="calendar"></pf-icon>
 <pf-icon name="chevron-down"></pf-icon>`,
+    interactive: `<pf-icon name="circle-check" label="Done"></pf-icon>`,
   },
 
   'pf-inline-cta': {
@@ -459,6 +503,7 @@ export const elementExamples: Record<string, ElementExample> = {
   error="That postcode is not in our delivery area."
   style="min-width: 18rem"
 ></pf-input>`,
+    interactive: `<pf-input label="Email" name="email" placeholder="you@example.com" style="min-width: 18rem"></pf-input>`,
   },
 
   'pf-kbd': {
@@ -471,6 +516,7 @@ export const elementExamples: Record<string, ElementExample> = {
       const kbd = root.querySelector('#shortcut') as (HTMLElement & { keys?: string[] }) | null;
       if (kbd) kbd.keys = ['⌘', 'K'];
     },
+    interactive: `<pf-kbd>Esc</pf-kbd>`,
   },
 
   'pf-line-chart': {
@@ -489,6 +535,7 @@ export const elementExamples: Record<string, ElementExample> = {
     html: `<pf-loading-dots size="sm" label="Loading"></pf-loading-dots>
 <pf-loading-dots label="Loading"></pf-loading-dots>
 <pf-loading-dots size="lg" label="Loading"></pf-loading-dots>`,
+    interactive: `<pf-loading-dots label="Loading"></pf-loading-dots>`,
   },
 
   'pf-loading-skeleton': {
@@ -498,12 +545,14 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-loading-skeleton width="80%"></pf-loading-skeleton>
   <pf-loading-skeleton width="40" height="40" rounded></pf-loading-skeleton>
 </div>`,
+    interactive: `<pf-loading-skeleton style="width: 100%"></pf-loading-skeleton>`,
   },
 
   'pf-loading-spinner': {
     html: `<pf-loading-spinner size="16" label="Loading"></pf-loading-spinner>
 <pf-loading-spinner label="Loading"></pf-loading-spinner>
 <pf-loading-spinner size="40" label="Loading"></pf-loading-spinner>`,
+    interactive: `<pf-loading-spinner label="Loading"></pf-loading-spinner>`,
   },
 
   'pf-menu-item': {
@@ -522,6 +571,7 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-menu-item value="delete" destructive>Delete</pf-menu-item>
   </div>
 </pf-dropdown>`,
+    interactive: `<pf-menu-item value="edit">Edit</pf-menu-item>`,
   },
 
   'pf-menu-separator': {
@@ -588,6 +638,14 @@ export const elementExamples: Record<string, ElementExample> = {
         });
       }
     },
+    interactive: `<pf-modal label="Delete the workspace" open>
+  <pf-modal-header><strong>Delete the workspace</strong></pf-modal-header>
+  <pf-modal-body>Everything in it goes with it. This cannot be undone.</pf-modal-body>
+  <pf-modal-footer>
+    <pf-button variant="secondary">Cancel</pf-button>
+    <pf-button variant="destructive">Delete</pf-button>
+  </pf-modal-footer>
+</pf-modal>`,
   },
 
   'pf-modal-body': {
@@ -605,6 +663,10 @@ export const elementExamples: Record<string, ElementExample> = {
         if (modal) modal.open = true;
       });
     },
+    interactive: `<pf-modal label="Scrolling body" open>
+  <pf-modal-header><strong>Terms</strong></pf-modal-header>
+  <pf-modal-body>The body is the part that scrolls when the content is taller than the dialog.</pf-modal-body>
+</pf-modal>`,
   },
 
   'pf-modal-footer': {
@@ -625,6 +687,13 @@ export const elementExamples: Record<string, ElementExample> = {
         if (modal) modal.open = true;
       });
     },
+    interactive: `<pf-modal label="With a footer" open>
+  <pf-modal-body>The footer keeps its actions against the bottom edge.</pf-modal-body>
+  <pf-modal-footer>
+    <pf-button variant="secondary">Cancel</pf-button>
+    <pf-button variant="primary">Save</pf-button>
+  </pf-modal-footer>
+</pf-modal>`,
   },
 
   'pf-modal-header': {
@@ -642,6 +711,10 @@ export const elementExamples: Record<string, ElementExample> = {
         if (modal) modal.open = true;
       });
     },
+    interactive: `<pf-modal label="With a header" open>
+  <pf-modal-header><strong>Rename the project</strong></pf-modal-header>
+  <pf-modal-body>The header sits above the rule and beside the close button.</pf-modal-body>
+</pf-modal>`,
   },
 
   'pf-multi-select': {
@@ -671,6 +744,10 @@ export const elementExamples: Record<string, ElementExample> = {
   </pf-nav-item>
   <pf-nav-item disabled>Billing</pf-nav-item>
 </pf-header-navigation>`,
+    interactive: `<pf-header-navigation label="Main" style="width: 100%">
+  <pf-nav-item href="#" current>Docs</pf-nav-item>
+  <pf-nav-item href="#">Components</pf-nav-item>
+</pf-header-navigation>`,
   },
 
   'pf-nav-section': {
@@ -682,6 +759,13 @@ export const elementExamples: Record<string, ElementExample> = {
   </pf-nav-section>
   <pf-nav-section>
     <pf-nav-item href="#" orientation="vertical">Untitled section</pf-nav-item>
+  </pf-nav-section>
+</pf-sidebar-navigation>`,
+    interactive: `<pf-sidebar-navigation label="Sidebar" style="min-width: 14rem">
+  <pf-nav-section>
+    <span slot="title">Workspace</span>
+    <pf-nav-item href="#" orientation="vertical" current>Overview</pf-nav-item>
+    <pf-nav-item href="#" orientation="vertical">Members</pf-nav-item>
   </pf-nav-section>
 </pf-sidebar-navigation>`,
   },
@@ -711,6 +795,7 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-option value="banana">Banana</pf-option>
   <pf-option value="cherry" disabled>Cherry (out of season)</pf-option>
 </pf-select>`,
+    interactive: `<pf-option value="banana">Banana</pf-option>`,
   },
 
   'pf-page-header': {
@@ -746,6 +831,10 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-pie-slice value="1" color="var(--color-teal-500)">Two</pf-pie-slice>
   <pf-pie-slice value="1" color="var(--color-amber-500)">Three</pf-pie-slice>
 </pf-pie-chart>`,
+    interactive: `<pf-pie-chart label="Two slices" size="180">
+  <pf-pie-slice value="48" color="var(--color-brand-500)">Direct</pf-pie-slice>
+  <pf-pie-slice value="52" color="var(--color-teal-500)">Search</pf-pie-slice>
+</pf-pie-chart>`,
   },
 
   'pf-popover': {
@@ -761,11 +850,13 @@ export const elementExamples: Record<string, ElementExample> = {
   'pf-progress-bar': {
     html: `<pf-progress-bar label="Upload" value="64" style="width: 100%"></pf-progress-bar>
 <pf-progress-bar label="Disk" value="18" max="20" style="width: 100%"></pf-progress-bar>`,
+    interactive: `<pf-progress-bar label="Upload" value="64" style="width: 100%"></pf-progress-bar>`,
   },
 
   'pf-progress-circle': {
     html: `<pf-progress-circle label="Sync" value="42"></pf-progress-circle>
 <pf-progress-circle label="Done" value="100" size="88" stroke-width="8"></pf-progress-circle>`,
+    interactive: `<pf-progress-circle label="Sync" value="42"></pf-progress-circle>`,
   },
 
   'pf-progress-step': {
@@ -778,6 +869,15 @@ export const elementExamples: Record<string, ElementExample> = {
     <span slot="description">Where it goes</span>
   </pf-progress-step>
   <pf-progress-step state="upcoming" position="3" last>
+    <span slot="title">Payment</span>
+  </pf-progress-step>
+</pf-progress-steps>`,
+    interactive: `<pf-progress-steps style="width: 100%">
+  <pf-progress-step state="current" position="1">
+    <span slot="title">Delivery</span>
+    <span slot="description">Where it goes</span>
+  </pf-progress-step>
+  <pf-progress-step state="upcoming" position="2" last>
     <span slot="title">Payment</span>
   </pf-progress-step>
 </pf-progress-steps>`,
@@ -804,6 +904,11 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-radar-axis label="Coverage" value="9"></pf-radar-axis>
   <pf-radar-axis label="Cost" value="4"></pf-radar-axis>
 </pf-radar-chart>`,
+    interactive: `<pf-radar-chart label="Three axes" size="240">
+  <pf-radar-axis label="Speed" value="8"></pf-radar-axis>
+  <pf-radar-axis label="Accuracy" value="6"></pf-radar-axis>
+  <pf-radar-axis label="Coverage" value="9"></pf-radar-axis>
+</pf-radar-chart>`,
   },
 
   'pf-radar-chart': {
@@ -828,6 +933,13 @@ export const elementExamples: Record<string, ElementExample> = {
   </pf-radio-button>
   <pf-radio-button value="team" disabled>Team (invite only)</pf-radio-button>
 </pf-radio-group>`,
+    interactive: `<pf-radio-group name="plan" legend="Plan" value="pro">
+  <pf-radio-button value="pro">
+    Pro
+    <span slot="description">Unlimited projects.</span>
+  </pf-radio-button>
+  <pf-radio-button value="free">Free</pf-radio-button>
+</pf-radio-group>`,
   },
 
   'pf-radio-group': {
@@ -840,11 +952,13 @@ export const elementExamples: Record<string, ElementExample> = {
   'pf-rating-badge': {
     html: `<pf-rating-badge value="4.6" reviews="1204"></pf-rating-badge>
 <pf-rating-badge value="3.2" size="sm"></pf-rating-badge>`,
+    interactive: `<pf-rating-badge value="4.6" reviews="1204"></pf-rating-badge>`,
   },
 
   'pf-rating-stars': {
     html: `<pf-rating-stars label="Average rating" value="4.5" show-value></pf-rating-stars>
 <pf-rating-stars label="Out of ten" value="7" max="10" size="14"></pf-rating-stars>`,
+    interactive: `<pf-rating-stars label="Average rating" value="4.5" show-value></pf-rating-stars>`,
   },
 
   'pf-resizable': {
@@ -946,6 +1060,7 @@ export const elementExamples: Record<string, ElementExample> = {
   description="Per month, in pounds."
   style="min-width: 18rem"
 ></pf-slider>`,
+    interactive: `<pf-slider label="Volume" name="volume" value="40" style="min-width: 18rem"></pf-slider>`,
   },
 
   'pf-sparkline': {
@@ -957,12 +1072,14 @@ export const elementExamples: Record<string, ElementExample> = {
   color="var(--color-teal-500)"
   data="[12, 9, 14, 11, 16, 13, 18]"
 ></pf-sparkline>`,
+    interactive: `<pf-sparkline label="Last fourteen days" data="[4, 7, 5, 9, 8, 12, 10, 14, 11, 16, 15, 19, 17, 22]"></pf-sparkline>`,
   },
 
   'pf-switch': {
     html: `<pf-switch name="notify" label="Email me about replies"></pf-switch>
 <pf-switch name="beta" label="Join the beta" checked></pf-switch>
 <pf-switch name="locked" label="Managed by your admin" disabled></pf-switch>`,
+    interactive: `<pf-switch name="notify" label="Email me about replies"></pf-switch>`,
   },
 
   'pf-tab': {
@@ -976,6 +1093,12 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-tab value="settings" disabled>Settings</pf-tab>
   <pf-tab-panel value="settings">Not available.</pf-tab-panel>
 </pf-tabs>`,
+    interactive: `<pf-tabs value="overview" style="width: 100%">
+  <pf-tab value="overview">Overview</pf-tab>
+  <pf-tab-panel value="overview">What the project is for.</pf-tab-panel>
+  <pf-tab value="activity" count="12">Activity</pf-tab>
+  <pf-tab-panel value="activity">Twelve things happened.</pf-tab-panel>
+</pf-tabs>`,
   },
 
   'pf-tab-panel': {
@@ -984,6 +1107,10 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-tab-panel value="first">Only the active panel is in the DOM flow.</pf-tab-panel>
   <pf-tab value="second">Second</pf-tab>
   <pf-tab-panel value="second">Switch tabs to see this one.</pf-tab-panel>
+</pf-tabs>`,
+    interactive: `<pf-tabs value="first" style="width: 100%">
+  <pf-tab value="first">First</pf-tab>
+  <pf-tab-panel value="first">Only the active panel is in the DOM flow.</pf-tab-panel>
 </pf-tabs>`,
   },
 
@@ -1026,6 +1153,16 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-table-cell align="right">£9.00</pf-table-cell>
   </pf-table-row>
 </pf-table>`,
+    interactive: `<pf-table label="Two cells" style="width: 100%">
+  <pf-table-row head>
+    <pf-table-cell head width="160">Item</pf-table-cell>
+    <pf-table-cell head align="right">Total</pf-table-cell>
+  </pf-table-row>
+  <pf-table-row last>
+    <pf-table-cell>Item 1</pf-table-cell>
+    <pf-table-cell align="right">£24.00</pf-table-cell>
+  </pf-table-row>
+</pf-table>`,
   },
 
   'pf-table-row': {
@@ -1047,6 +1184,16 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-table-cell>last — no rule beneath</pf-table-cell>
   </pf-table-row>
 </pf-table>`,
+    interactive: `<pf-table label="One body row" striped style="width: 100%">
+  <pf-table-row head>
+    <pf-table-cell head>Row</pf-table-cell>
+    <pf-table-cell head>State</pf-table-cell>
+  </pf-table-row>
+  <pf-table-row last>
+    <pf-table-cell>First</pf-table-cell>
+    <pf-table-cell>even</pf-table-cell>
+  </pf-table-row>
+</pf-table>`,
   },
 
   'pf-tabs': {
@@ -1063,6 +1210,7 @@ export const elementExamples: Record<string, ElementExample> = {
 <pf-tag variant="brand">brand</pf-tag>
 <pf-tag variant="success" dismissible>success</pf-tag>
 <pf-tag variant="danger" dismissible>danger</pf-tag>`,
+    interactive: `<pf-tag>Tag</pf-tag>`,
   },
 
   'pf-tag-input': {
@@ -1097,6 +1245,7 @@ export const elementExamples: Record<string, ElementExample> = {
   hour-cycle="12"
   minute-step="15"
 ></pf-time-picker>`,
+    interactive: `<pf-time-picker label="Start" name="start" value="14:30"></pf-time-picker>`,
   },
 
   'pf-timeline': {
@@ -1128,6 +1277,13 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-timeline-item last>
     <span slot="title">No icon</span>
     <span slot="description">A plain dot, measured in the real build rather than guessed from CSS.</span>
+  </pf-timeline-item>
+</pf-timeline>`,
+    interactive: `<pf-timeline label="One event" style="width: 100%">
+  <pf-timeline-item tone="success" last>
+    <pf-icon slot="icon" name="circle-check"></pf-icon>
+    <span slot="title">Delivered</span>
+    <span slot="timestamp">14 March, 09:12</span>
   </pf-timeline-item>
 </pf-timeline>`,
   },
@@ -1203,6 +1359,14 @@ export const elementExamples: Record<string, ElementExample> = {
     <span slot="label">README.md</span>
   </pf-tree-item>
 </pf-tree-view>`,
+    interactive: `<pf-tree-view label="Files" expanded="src" style="min-width: 16rem">
+  <pf-tree-item value="src" has-children expanded>
+    <span slot="label">src</span>
+    <pf-tree-item value="index.ts">
+      <span slot="label">index.ts</span>
+    </pf-tree-item>
+  </pf-tree-item>
+</pf-tree-view>`,
   },
 
   'pf-tree-view': {
@@ -1231,6 +1395,9 @@ export const elementExamples: Record<string, ElementExample> = {
 </pf-utility-button>
 <pf-utility-button label="Search" tooltip="Search" disabled>
   <pf-icon slot="icon" name="magnifying-glass"></pf-icon>
+</pf-utility-button>`,
+    interactive: `<pf-utility-button label="Copy" tooltip="Copy to clipboard">
+  <pf-icon slot="icon" name="copy"></pf-icon>
 </pf-utility-button>`,
   },
 

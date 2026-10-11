@@ -1333,7 +1333,12 @@ pages.** `--verify` in CI fails on a stale page, a missing one, or a page for
 an element that no longer exists; `--strict` fails on an element with no doc
 comment at all, which is what got the six earliest elements their prose.
 
-**Each page carries a live element, and the example is hand-written.**
+**Each element has a `Docs` page and an `Interactive` story**, which is the
+shape `Components/Button` has on the React side — and it is the same mechanism:
+the generated `PfAlert.stories.tsx` holds the title, and `PfAlert.mdx` attaches
+to it with `<Meta of={PfAlertStories} />` rather than a title of its own. A
+title in both would make two sidebar entries instead of one with two children.
+
 `preview.ts` calls `defineCustomElements()` from `@pitchfork-ui/elements/loader`
 so all 108 are registered, and each page renders one through
 `ElementPreview`. The markup comes from `apps/docs/src/element-examples.ts`,
@@ -1342,6 +1347,50 @@ keyed by tag — `docs.json` records every prop and slot and has no idea that
 like, so a generated example would be `<pf-line-chart></pf-line-chart>`, an
 empty box. `--strict` fails on an element with no example and on an example
 for an element that no longer exists.
+
+**The controls come from `docs.json`, because there is nothing to infer.**
+Storybook reads a React component's props for itself; a custom element exposes
+none a React renderer can see, so the generator derives `argTypes` from each
+prop's recorded type — a quoted union becomes a select, a numeric union a
+numeric select, a function gets `control: false` because a text box for a
+predicate invites a reader to type a string. `ElementPlayground` then applies
+the args as **properties** on the element, which is what a consumer's
+framework does and the one path that works for an array or a function.
+
+Four things that shape those stories:
+
+- **Two effects, and in that order.** Storybook hands a fresh `args` object on
+  every render, so writing the markup and applying the args in one effect
+  would re-run `innerHTML` for each keystroke in the panel — rebuilding the
+  element and losing its state. Split, a control change writes a property onto
+  the live element, which is the thing being demonstrated.
+- **`interactive` is a single instance, and optional.** 65 of the examples are
+  already one instance, so the story falls back to `html` and no copy exists to
+  drift. `--strict` requires it for the other 43: controls that drive the first
+  of six buttons while five sit unchanged are worse than no controls. It is
+  also where `pf-modal` and `pf-command-palette` are **`open`** — both are a
+  native `<dialog>` opened with `showModal()`, so an open one fills the
+  viewport, which is wrong inside a docs page and exactly right in a story.
+- **Args are seeded from the instance's attributes, not just the prop
+  defaults.** `pf-alert`'s instance carries `heading="Scheduled maintenance"`,
+  which the element renders while `heading` has no default in `docs.json` — so
+  without this the panel showed an empty text box beside a visible heading.
+  The attribute is the truth about what is on screen, so it wins.
+- **`children` is the one arg that is not a prop**, and it is offered only
+  where the instance holds text and nothing else. An element's default slot is
+  not part of its API the way React's `children` is, and assigning
+  `textContent` to an element whose slot holds child elements would delete
+  them.
+
+Every prop is offered as a control, including the ones a parent normally sets
+(`pf-pie-slice.drawn`, `pf-table-row.odd`): they are real props, the reference
+table above lists them, and a hand-maintained list of exceptions would be
+judgement with no check behind it.
+
+`apps/docs/src/elements/` is in `eslint.config.js`'s ignores as well as
+`.prettierignore` now, for the same reason the generated bindings are — but it
+is still covered by `tsc -b`, which is what proves 108 generated stories
+compile.
 
 Five things this settled, three of them the hard way:
 
@@ -1365,10 +1414,18 @@ Five things this settled, three of them the hard way:
 - **An unregistered element is valid HTML**, so nothing in a build says the
   registration is missing: the markup, the tables and the page all look right
   and the box is simply empty. `scripts/smoke-storybook.mjs` samples six
-  reference pages and fails when a `pf-*` host never hydrates. Probed by
-  deleting `defineCustomElements()` and rebuilding — all six fail, naming it.
+  reference pages and fails when a `pf-*` host never hydrates, and makes the
+  same check on whichever stories its deterministic sample lands on. Probed by
+  deleting `defineCustomElements()` and rebuilding — all six pages fail,
+  naming it.
+- **A sweep of all 108 Interactive stories** found exactly one that rendered
+  nothing usable, and it was the assertion that was wrong:
+  `pf-visually-hidden` is 1x1 by design. Worth knowing before writing a
+  "renders at a usable size" check over this library.
 - **`npm run check:examples`** runs the MCP server's own `validate_usage` over
-  all 108 examples. `validate_usage` exists so an _agent_ can check its markup
+  every example **and** every `interactive` instance beside it — checking only
+  `html` would have left 48 hand-written instances unvalidated, which is
+  exactly the state that produced the nine wrong enum values below. `validate_usage` exists so an _agent_ can check its markup
   before presenting it; nothing checked ours, which is the same gap
   `check:icons` closes for icon names, and it bit immediately: the first draft
   had nine wrong enum values — `trend="up"` where `pf-metric-card` takes

@@ -25,6 +25,22 @@ export interface ElementExample {
   /** The markup. Rendered live, and shown verbatim underneath. */
   html: string;
   /**
+   * One instance for the `Interactive` story, where Storybook's controls drive
+   * the first `<tag>` in it.
+   *
+   * Optional, and `html` is used when it is absent — which is right for the
+   * 65 examples that are already a single instance, and avoids 65 copies that
+   * could drift from the thing they copy. `--strict` requires it wherever the
+   * example shows the element more than once: controls that drive the first of
+   * six buttons while five sit unchanged are worse than no controls.
+   *
+   * It is also where `pf-modal` and `pf-command-palette` are `open`. Both are
+   * a native `<dialog>` opened with `showModal()`, so an open one fills the
+   * viewport — which is wrong inside a docs page and exactly right in a story,
+   * where the canvas is the whole iframe.
+   */
+  interactive?: string;
+  /**
    * Anything HTML cannot express, given the preview's root.
    *
    * Eight props across the library are typed as an array or a function and so

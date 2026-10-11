@@ -225,12 +225,36 @@ perfectly valid HTML and a wrong attribute renders without complaint:
 found nine wrong enum values in the first draft, and `check:icons` found six
 invented icon names in the same draft.
 
-What is still only in the React half: the elements have no equivalent of the
-`*.stories.tsx` controls panel, so a reader cannot drive an element's props
-from the sidebar the way they can a React component's. That is a bigger piece
-of work than it looks — Storybook's args are per-framework — and it is not
-what someone deciding whether to migrate needs first.
-_Exit:_ met. Every element renders in Storybook.
+Each element now has the same two sidebar children as a React component, a
+`Docs` page and an `Interactive` story, through the same mechanism: a generated
+`*.stories.tsx` holds the title and the MDX attaches to it with `<Meta of>`.
+The controls are derived from `docs.json`, since a custom element exposes no
+props Storybook can read, and `ElementPlayground` applies the args as
+properties — the one path that works for an array or a function. A sweep of all
+108 in Chromium found one story rendering nothing usable, and it was the
+assertion that was wrong: `pf-visually-hidden` is 1x1 by design.
+_Exit:_ met. Every element renders in Storybook, with a controls panel.
+
+**Phase 2b — Elements take over the `Components` namespace.** Not done. Two
+halves that only make sense together: remove the React components from
+Storybook, and rename the element pages from `Web components/PfButton` to
+`Components/Button`, which cannot happen while React occupies that namespace.
+
+Only the **page names** lose the prefix. A custom element tag must contain a
+hyphen, so `pf-button` stays, and `pf-` is this library's namespace in a
+consumer's HTML. The generated binding class names (`PfButton` in
+`elements-react`) come from the tag through Stencil's output targets; changing
+those is a published-API change and a separate decision.
+
+What the removal touches beyond deleting 273 files: `UsingWithAI.mdx` and three
+other pages render React components, `CssVariableDecorator` imports `Icon`,
+`sync-changelog` mirrors `packages/react/CHANGELOG.md` into the site, and
+`build-llms-txt --strict` asserts every React component is linked to a docs
+page — that assertion is the one that breaks, and deciding what `llms.txt`
+should say about a package that is still published but no longer documented is
+the real question in this phase, not the file deletions.
+_Exit:_ nothing in `apps/docs` imports `@pitchfork-ui/react`, and the sidebar
+reads `Components/Button`.
 
 **Phase 3 — Migration guide and codemod.** The mapping table above is
 generated, so the guide is too. For the 46 drop-ins a codemod is realistic:
