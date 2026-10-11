@@ -58,5 +58,6 @@
       "bump-patch-for-minor-pre-major": false
     }
   },
-  "separate-pull-requests": false
+  "separate-pull-requests": false,
+  "plugins": ["node-workspace"]
 }

@@ -207,7 +207,28 @@ Each of the five therefore needs one publish by hand, as an owner of the scope
 and with `--access public` (a scoped package is private on its first publish
 regardless), before its trusted publisher can be created at all. `todo.md` has
 the commands and the two-day window that follows.
-_Exit:_ `npm install @pitchfork-ui/elements-react` works in a clean directory.
+_Closed, and it was the one that would have shipped._ **Release-please does not
+rewrite intra-workspace dependency ranges by itself**, and a caret on a 0.x
+version is a patch range: `^0.1.0` is `>=0.1.0 <0.2.0`. So the pending 0.2.0
+release would have bumped every version and left every range alone, publishing
+five packages that resolve their sibling to the _older_ copy — the three
+bindings against `elements`, and `elements` and `react` against `tokens` at
+`^0.4.1` going to 0.5.0. A binding generated from an element build, paired with
+the previous element, is a silent mismatch on the registry.
+
+`plugins: ["node-workspace"]` fixes it: the plugin preserves the range prefix,
+so `^0.1.0` becomes `^0.2.0`. It also patch-bumps a dependent whose dependency
+moved even when that dependent had no commits of its own, so releases are more
+all-or-nothing than before — worth knowing, and the right trade here.
+
+`check-publishable.mjs` was blind to all five: it skipped a dependency outright
+when that dependency was in the same release, which skipped the range question
+along with the registry question it meant to skip. It now compares the declared
+range against the version being published.
+
+_Exit:_ `npm install @pitchfork-ui/elements-react` works in a clean directory,
+and the installed `@pitchfork-ui/elements` is the version released alongside
+it.
 
 **Phase 2 — Make the elements viewable. Done.** `apps/docs` depends on
 `@pitchfork-ui/elements`, `preview.ts` registers all 108 through

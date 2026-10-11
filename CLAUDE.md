@@ -1711,6 +1711,34 @@ produced a range nothing can satisfy: the install stayed green off the
 existing lockfile, and `npm audit fix` was the thing that reported the
 conflict, because it is the command that re-resolves.
 
+**A caret on a 0.x version is a patch range, and release-please does not
+rewrite ranges by itself.** `^0.1.0` is `>=0.1.0 <0.2.0` — measured, not
+assumed — so a release that takes `elements` to 0.2.0 while `elements-react`
+still declares `^0.1.0` publishes a binding that resolves to the **old**
+element. The bindings are generated from the element build, so that is a silent
+mismatch, and it lands on the registry where it cannot be taken back. The
+pending 0.2.0 release had **five** of them: the three bindings against
+`elements`, and `elements` and `react` against `tokens` at `^0.4.1` going to
+0.5.0.
+
+`plugins: ["node-workspace"]` in `release-please-config.json` is the fix. Its
+`newVersionWithRange` **preserves the range prefix** (`^0.1.0` + `0.2.0` →
+`^0.2.0`) and skips anything carrying an npm protocol (`/^[a-z]+:/`), read out
+of the plugin's own source rather than guessed. Two things follow: a range with
+**no** prefix would be rewritten to a bare pinned version, and the plugin only
+walks the packages listed in the config — so the `"*"` siblings in `apps/*`
+are untouched and the idiom above survives. Every intra-workspace range in the
+eight published packages is a caret, which is what makes this safe.
+
+`check-publishable.mjs` could not see any of it: it skipped a dependency
+entirely when that dependency was part of the same release
+(`if (publishing.has(dep.name)) continue`), which skipped the registry question
+it meant to skip **and** the range question it did not. It now compares the
+declared range against the version the release is about to publish, which both
+halves of are on disk by then. Probed both ways: it names all five mismatches
+and exits 1 against a simulated 0.2.0 release, and goes quiet once the ranges
+read `^0.2.0`.
+
 **Regenerate the lockfile incrementally.** `npm install --package-lock-only` on
 top of the committed lockfile gives a 33-line diff of specifier strings.
 Deleting it first and letting npm rebuild it gives a 24,000-line diff with no
