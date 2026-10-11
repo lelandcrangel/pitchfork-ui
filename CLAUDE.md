@@ -1491,6 +1491,25 @@ Two things that bit while writing it:
   and its header row turns up as literal text. `scripts/smoke-storybook.mjs`
   now asserts both halves on one reference page.
 
+**`vw` in a docs page is the iframe, not the window.** The Introduction hero
+borrows `pf-page-header`, whose heading is
+`clamp(--font-size-3xl, 3vw, --font-size-5xl)` — and Storybook's docs iframe is
+about 300px narrower than the browser window, so the landing title measured
+**29.4px at a 1280px window** against the 24px `<h2>` directly below it: a page
+title 1.2x its own section headings. The element is right for the job it has,
+which is an application page header; a landing hero is a different job, so the
+page overrides the size through `::part(heading)` — the one mechanism that
+reaches a shadow-internal box — scoped to a wrapper class so it cannot touch
+any other page header. Verified by driving a real SPA navigation away from the
+page: the `<style>` unmounts and a page header elsewhere is back to the
+element's own 34.2px.
+
+`scripts/smoke-storybook.mjs` asserts the hero against the page's own `<h2>`
+rather than against a pixel count, because the ratio is what a reader
+perceives and it separates the two states cleanly — 1.28x without the
+override, 2.56x with it. Probed by deleting the rule and rebuilding, which
+fails the smoke and names the cause.
+
 ### The seven patterns
 
 `apps/docs/src/patterns/` holds the worked compositions, and they are elements
