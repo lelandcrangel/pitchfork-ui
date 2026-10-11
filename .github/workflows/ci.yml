@@ -138,6 +138,14 @@ jobs:
       # counterpart at all.
       - name: Check the generated migration guide is current
         run: npm run build:migration-guide -- --verify --strict
+      # The codemod, over real files in a temp directory. Two of its tests
+      # exist because the first implementation got them wrong and both were
+      # silent: the import scan masked string literals and then looked for
+      # one, so every file reported "imports nothing" while the tool reported
+      # success; and the renames ran over the raw source, so an identifier in
+      # a string or a comment was rewritten.
+      - name: Test the migration codemod
+        run: npm run test:codemod
       - name: Test MCP server
         run: npm run test:mcp
       # The generated element pages' pairing invariants, in jsdom. The root
