@@ -128,8 +128,36 @@ for (const [name, entry] of workspace) {
 
   for (const dep of siblingDeps(entry)) {
     // A sibling going out in this same release is not yet on the registry and
-    // is not supposed to be.
-    if (publishing.has(dep.name)) continue;
+    // is not supposed to be -- so the registry question below does not apply.
+    //
+    // But a *second* question does, and skipping the whole dependency used to
+    // skip it too: does the declared range still match the version this run is
+    // about to publish? By the time this runs, release-please has already
+    // written the new versions into the manifests, so both halves are on disk.
+    //
+    // It is the caret-on-0.x case that bites. `^0.1.0` is `>=0.1.0 <0.2.0`, so
+    // a release that takes `elements` to 0.2.0 while `elements-react` still
+    // declares `^0.1.0` publishes a binding that resolves to the *old*
+    // element -- the bindings are generated from the element build, so that is
+    // a silent mismatch, and it lands on the registry where it cannot be taken
+    // back. `plugins: ["node-workspace"]` in release-please-config.json is what
+    // keeps the ranges in step; this is the check that notices when it has not.
+    if (publishing.has(dep.name)) {
+      if (dep.range === '*' || dep.range.startsWith('workspace:')) continue;
+      const shipping = workspace.get(dep.name)?.pkg?.version;
+      if (!shipping) continue;
+      checked += 1;
+      if (!semver.satisfies(shipping, dep.range)) {
+        problems.push(
+          `${name} declares ${dep.name}@${dep.range} in ${dep.field}, but this release ` +
+            `publishes ${dep.name}@${shipping}, which that range does not match ` +
+            `(${dep.range} is ${semver.validRange(dep.range)}).` +
+            `\n      A consumer installing ${name} would resolve an older ${dep.name}.` +
+            `\n      Widen the range, or let the node-workspace plugin rewrite it.`,
+        );
+      }
+      continue;
+    }
 
     const target = workspace.get(dep.name);
     if (target.pkg.private) {
