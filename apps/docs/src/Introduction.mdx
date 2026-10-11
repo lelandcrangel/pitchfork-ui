@@ -1,57 +1,79 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { PageHeader } from '@pitchfork-ui/react';
 
 <Meta title="Foundations/Introduction" />
 
 {/* ── Hero ─────────────────────────────────────────────────────────────── */}
 
 <div style={{ marginBottom: '2rem' }}>
-  <PageHeader
-    heading="Pitchfork UI"
-    description="An accessible, themeable component library for building product interfaces in React — 70+ components backed by a design-token system, with first-class dark mode, TypeScript types, and bundled styles."
-  >
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
-      {['@pitchfork-ui/react', '70+ components', 'TypeScript', 'MIT licensed'].map((chip) => (
+  <pf-page-header>
+    Pitchfork UI
+    <span slot="description">
+      An accessible, themeable library of 108 custom elements for building product interfaces —
+      backed by a design-token system, with first-class dark mode and generated bindings for React,
+      Angular and Vue.
+    </span>
+    <div
+      slot="metadata"
+      style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}
+    >
+      {['@pitchfork-ui/elements', '108 elements', 'Framework-free', 'MIT licensed'].map((chip) => (
         <span
           key={chip}
           style={{
+            border: '1px solid var(--color-semantic-border-default)',
+            borderRadius: 999,
+            padding: '0.2rem 0.6rem',
             fontSize: '0.8rem',
             color: 'var(--color-semantic-text-muted)',
-            background: 'var(--color-semantic-background-subtle)',
-            border: '1px solid var(--color-semantic-border-default)',
-            borderRadius: 8,
-            padding: '0.3rem 0.6rem',
           }}
         >
           {chip}
         </span>
       ))}
     </div>
-  </PageHeader>
+  </pf-page-header>
 </div>
 
 ## Get started
 
-Install the package:
+Install the elements:
 
 ```bash
-npm install @pitchfork-ui/react
+npm install @pitchfork-ui/elements
 ```
 
-Import the stylesheet once at your app's entry point, then use components anywhere:
+Import the stylesheet once at your app's entry point, register the elements, and
+use them anywhere — including in plain HTML:
+
+```js
+import '@pitchfork-ui/elements/styles.css';
+import { defineCustomElements } from '@pitchfork-ui/elements/loader';
+
+defineCustomElements();
+```
+
+```html
+<pf-button variant="primary">Get started</pf-button>
+```
+
+The stylesheet carries the design tokens, so there is no separate theme package
+to install, and each element's own CSS travels with it into its shadow root.
+
+For a framework, the generated binding packages add typed props and real event
+handlers over the same elements:
+
+```bash
+npm install @pitchfork-ui/elements-react    # or -angular, or -vue
+```
 
 ```tsx
-import '@pitchfork-ui/react/styles.css';
-import { Button } from '@pitchfork-ui/react';
+import { PfButton } from '@pitchfork-ui/elements-react';
 
-export function Example() {
-  return <Button variant="primary">Get started</Button>;
-}
+<PfButton variant="primary">Get started</PfButton>;
 ```
 
-The stylesheet bundles the design tokens, so there's no separate theme package to
-install. Components are tree-shakeable and ship with `"use client"` directives,
-so they work in React Server Component frameworks like Next.js App Router.
+See **Web components** for the install options in full, and for the handful of
+places an element's API deliberately differs from a React component's.
 
 ## What's inside
 
@@ -66,7 +88,7 @@ so they work in React Server Component frameworks like Next.js App Router.
   {[
     {
       title: 'Accessible by default',
-      body: 'Semantic HTML and ARIA patterns, verified with automated axe checks across light and dark themes.',
+      body: 'Semantic HTML and ARIA patterns, verified with automated axe checks across light and dark themes, and in a real browser.',
     },
     {
       title: 'Token-driven theming',
@@ -77,8 +99,8 @@ so they work in React Server Component frameworks like Next.js App Router.
       body: 'Every component adapts via a single data-theme attribute — no per-component overrides.',
     },
     {
-      title: 'Typed end to end',
-      body: 'Written in TypeScript with exported prop types for every component.',
+      title: 'Typed in every framework',
+      body: 'Stencil-authored, with generated React, Angular and Vue bindings that carry the types.',
     },
     {
       title: 'Responsive & mobile-first',
@@ -124,8 +146,9 @@ so they work in React Server Component frameworks like Next.js App Router.
 ## Explore the docs
 
 - **Foundations** — design tokens, color, typography, theming, and dark mode.
-- **Components** — the full library, each with an interactive playground and a “Show code” panel.
+- **Components** — all 108 elements, each with a reference page and an interactive playground.
 - **Patterns** — complete compositions like login, settings, pricing, and checkout.
+- **Web components** — installing them, the custom-property-versus-`::part()` split, and where the element API differs from the React one on purpose.
 - **Changelog** — release history, generated from the published package.
 - **Using with AI** — the MCP server, `llms.txt` and `metadata.json`, so a coding
   agent works from the library's real API instead of guessing at it.

@@ -235,10 +235,56 @@ properties — the one path that works for an array or a function. A sweep of al
 assertion that was wrong: `pf-visually-hidden` is 1x1 by design.
 _Exit:_ met. Every element renders in Storybook, with a controls panel.
 
-**Phase 2b — Elements take over the `Components` namespace.** Not done. Two
-halves that only make sense together: remove the React components from
-Storybook, and rename the element pages from `Web components/PfButton` to
-`Components/Button`, which cannot happen while React occupies that namespace.
+**Phase 2b — Elements take over the `Components` namespace. Done.** The sidebar
+is three sections now: `Foundations` (6 pages), `Patterns` (7) and `Components`
+(108 elements, each with Docs and Interactive). 225 React docs files went —
+14,678 lines — and nothing in `apps/docs` imports `@pitchfork-ui/react`.
+
+What it cost, and it is worth stating plainly: `metadata.json` read its
+**examples and descriptions** from `*.examples.stories.tsx` and `*.mdx`, so 69
+of 91 components lost both. The React half of the metadata is props, types,
+defaults and resolved variable chains now. The depth moved rather than
+vanishing — `elements.json` carries a worked example for all 108, and
+`get_examples` answers for an element tag or name — but anyone maintaining
+React code gets less from the server than they did.
+
+Three things were reframed rather than deleted, because deleting them would
+have made the artifacts lie:
+
+- **`llms.txt` leads with the elements** and keeps a `Retiring:
+@pitchfork-ui/react` section that names all 91 components, says the package
+  is still published, and points at `get_component`. A link to a page that no
+  longer exists would be worse than no link, so the components are listed
+  unlinked. `--strict` now asserts every _element_ has a docs page, which is
+  the question that can go wrong.
+- **The changelog page** prefers `packages/elements/CHANGELOG.md` and falls
+  back to the React library's, because release-please writes one only at a
+  package's first release and the elements have not had one. It flips by
+  itself, and the page says which package it is describing.
+- **`theme.starter.css` moved to `packages/tokens`**, which is where
+  `theme.css` already lives because neither rendering layer owns it. The docs
+  pointed at `@pitchfork-ui/react/theme.starter.css`; pointing them at a
+  tokens path that did not exist yet was caught before it shipped.
+
+Three MCP tests were retargeted at the elements rather than deleted: the
+false-positive corpus (`validate_usage` over every documented example) is the
+elements' 156 strings now instead of the React examples, and it is a stronger
+corpus than what it replaced. One test could only have passed vacuously — it
+pinned `build-metadata.mjs`'s handling of shorthand `args` in an example story,
+and there are no example stories left — so it was replaced by the property it
+was really protecting: that no element reaches the server with nothing to show.
+
+`storybook-project.spec.ts` was broken by the deletions and had **never failed
+a build**, because nothing invoked the root `vitest.config.ts`. It asserts the
+generated pages' pairing invariants now, and `npm run test:docs` is in CI.
+
+_Still open:_ the dead example-parsing code in `build-metadata.mjs`, which goes
+with Phase 5.
+
+**Phase 2b's original note.** Two halves that only made sense together: remove
+the React components from Storybook, and rename the element pages from
+`Web components/PfButton` to `Components/Button`, which could not happen while
+React occupied that namespace.
 
 Only the **page names** lose the prefix. A custom element tag must contain a
 hyphen, so `pf-button` stays, and `pf-` is this library's namespace in a

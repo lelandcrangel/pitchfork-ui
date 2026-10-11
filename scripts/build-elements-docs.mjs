@@ -115,12 +115,27 @@ try {
   process.exit(1);
 }
 
-/** `pf-nav-item` → `PfNavItem`, which is both the page name and the binding's. */
+/** `pf-nav-item` → `PfNavItem`, which is the generated binding's name. */
 const toPascal = (tag) =>
   tag
     .split('-')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join('');
+
+/**
+ * `pf-nav-item` → `NavItem`, the name these pages are filed under.
+ *
+ * The prefix is dropped now that the elements *are* the components and own the
+ * `Components` section: a sidebar reading `PfButton` under `Components` would
+ * be saying `pf-` twice.
+ *
+ * Only the page and the file lose it. The tag keeps it because a custom
+ * element's name must contain a hyphen and `pf-` is this library's namespace
+ * in a consumer's HTML, and the binding class keeps it because Stencil's
+ * output targets derive `PfButton` from the tag. Every tag starts with `pf-`,
+ * so no two pages can collide on the shortened name.
+ */
+const pageName = (tag) => toPascal(tag).replace(/^Pf/, '');
 
 /**
  * MDX is JSX, so a brace or an angle bracket in a doc comment is parsed as an
@@ -340,7 +355,7 @@ function argsFromInstance(component, html) {
  * check behind it.
  */
 function storiesFor(component) {
-  const name = toPascal(component.tag);
+  const name = pageName(component.tag);
   const example = elementExamples[component.tag];
   const html = example?.interactive ?? example?.html ?? '';
 
@@ -374,7 +389,7 @@ import { elementExamples } from '../element-examples';
 const example = elementExamples['${component.tag}'];
 
 const meta = {
-  title: 'Web components/${name}',
+  title: 'Components/${name}',
   args: ${literal(args)},
   argTypes: ${literal(argTypes)},
   render: (args) => (
@@ -394,7 +409,7 @@ export const Interactive: StoryObj<typeof meta> = {};
 }
 
 function pageFor(component) {
-  const name = toPascal(component.tag);
+  const name = pageName(component.tag);
   const sections = [];
 
   const hasExample = exampleTags.has(component.tag);
@@ -521,7 +536,7 @@ import { ${name} } from '@pitchfork-ui/elements-react';
 const components = [...docsJson.components].sort((a, b) => a.tag.localeCompare(b.tag));
 const expected = new Map();
 for (const component of components) {
-  const name = toPascal(component.tag);
+  const name = pageName(component.tag);
   expected.set(`${name}.mdx`, pageFor(component));
   // One stories file per element, so the MDX has something to attach to.
   if (exampleTags.has(component.tag)) {

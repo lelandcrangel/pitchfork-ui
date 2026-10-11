@@ -132,6 +132,11 @@ jobs:
         run: npm run build:elements-docs -- --verify
       - name: Test MCP server
         run: npm run test:mcp
+      # The generated element pages' pairing invariants, in jsdom. The root
+      # vitest.config.ts held these assertions and nothing ever invoked it, so
+      # they had never failed a build.
+      - name: Test the generated docs pages
+        run: npm run test:docs
 
       # The unit suite renders components from source in jsdom, where theme.css
       # is imported directly, so it cannot see a bundler regression: 933 tests

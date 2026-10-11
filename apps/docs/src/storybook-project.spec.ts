@@ -2,57 +2,61 @@ import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import * as BadgeStories from './Badge.stories';
-import * as ButtonStories from './Button.stories';
-import * as CardStories from './Card.stories';
-import * as CheckboxStories from './Checkbox.stories';
-import * as AlertStories from './Alert.stories';
-import * as InputStories from './Input.stories';
-import * as SwitchStories from './Switch.stories';
 
-const docsDir = dirname(fileURLToPath(import.meta.url));
-const nonComponentDocs = new Set(['CHANGELOG.mdx', 'Introduction.mdx', 'Tokens.mdx']);
+/**
+ * The invariants the generated element pages depend on, checked without a
+ * browser or a Storybook build.
+ *
+ * This file used to assert that the React component pages kept their
+ * Interactive controls out of the MDX. Those pages are gone, and the
+ * equivalent for the generated pages is enforced far more strongly by
+ * `build-elements-docs --verify`, which compares the generator's own bytes.
+ * What is left worth checking is the pairing: a page and a story per element,
+ * each attached the one way that produces a single sidebar entry with two
+ * children.
+ *
+ * It is also now actually run. `npm run test:docs` is in CI; before, nothing
+ * invoked the root `vitest.config.ts` at all, so these assertions had never
+ * failed a build in their lives.
+ */
+const elementsDir = join(dirname(fileURLToPath(import.meta.url)), 'elements');
+const files = readdirSync(elementsDir);
+const pages = files.filter((file) => file.endsWith('.mdx'));
+const stories = files.filter((file) => file.endsWith('.stories.tsx'));
 
-describe('storybook project stories', () => {
-  it('loads core story modules', () => {
-    expect(BadgeStories.default).toBeDefined();
-    expect(ButtonStories.default).toBeDefined();
-    expect(CardStories.default).toBeDefined();
-    expect(CheckboxStories.default).toBeDefined();
-    expect(AlertStories.default).toBeDefined();
-    expect(InputStories.default).toBeDefined();
-    expect(SwitchStories.default).toBeDefined();
+describe('generated element pages', () => {
+  it('pairs every page with a stories file', () => {
+    expect(pages.length).toBeGreaterThan(100);
+    expect(stories.length).toBe(pages.length);
+
+    const storyNames = new Set(stories.map((file) => file.replace('.stories.tsx', '')));
+    for (const page of pages) {
+      expect(storyNames.has(page.replace('.mdx', '')), `${page} has no stories file`).toBe(true);
+    }
   });
 
-  it('contains interactive stories for core components', () => {
-    expect(ButtonStories.Interactive).toBeDefined();
-    expect(InputStories.Interactive).toBeDefined();
-    expect(SwitchStories.Interactive).toBeDefined();
+  it('attaches each page to its stories rather than naming a title', () => {
+    // A title in both the MDX and the stories file makes two sidebar entries
+    // instead of one entry with Docs and Interactive under it.
+    for (const page of pages) {
+      const name = page.replace('.mdx', '');
+      const mdx = readFileSync(join(elementsDir, page), 'utf8');
+      expect(mdx, `${page} should attach with <Meta of=>`).toContain(
+        `<Meta of={${name}Stories} />`,
+      );
+      expect(mdx, `${page} should not carry a title of its own`).not.toContain('<Meta title=');
+    }
   });
 
-  it('keeps interactive controls out of component docs pages', () => {
-    const componentDocs = readdirSync(docsDir).filter(
-      (filename) => filename.endsWith('.mdx') && !nonComponentDocs.has(filename),
-    );
-
-    for (const filename of componentDocs) {
-      const componentName = filename.replace(/\.mdx$/, '');
-      const mdx = readFileSync(join(docsDir, filename), 'utf8');
-      const story = readFileSync(join(docsDir, `${componentName}.stories.tsx`), 'utf8');
-
-      expect(mdx, `${filename} should not import Controls`).not.toContain('Controls');
-      expect(mdx, `${filename} should not have an Interactive section`).not.toContain(
-        '## Interactive',
+  it('files every element under Components, with no Pf prefix', () => {
+    for (const file of stories) {
+      const name = file.replace('.stories.tsx', '');
+      const source = readFileSync(join(elementsDir, file), 'utf8');
+      expect(source, `${file} should be titled Components/${name}`).toContain(
+        `title: 'Components/${name}',`,
       );
-      expect(mdx, `${filename} should not render the Interactive story`).not.toContain(
-        `<Canvas of={${componentName}Stories.Interactive}`,
-      );
-      expect(mdx, `${filename} should not show Interactive controls`).not.toContain(
-        `<Controls of={${componentName}Stories.Interactive}`,
-      );
-      expect(story, `${componentName}.stories.tsx exports Interactive`).toContain(
-        'export const Interactive',
-      );
+      expect(name.startsWith('Pf'), `${file} still carries the Pf prefix`).toBe(false);
+      expect(source, `${file} should export Interactive`).toContain('export const Interactive');
     }
   });
 });

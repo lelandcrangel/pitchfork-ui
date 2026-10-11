@@ -1,6 +1,13 @@
 # Pitchfork UI — Claude Context
 
-Component library for lelandrangel.com. React components backed by a Style Dictionary token system, documented with Storybook.
+Component library for lelandrangel.com. **108 standard custom elements** backed
+by a Style Dictionary token system, with generated React, Angular and Vue
+bindings, documented with Storybook.
+
+`@pitchfork-ui/react` is being retired. It is still published and still builds,
+but the elements are the library: the Storybook site documents them and nothing
+else, `llms.txt` describes them, and `REACT-RETIREMENT-PLAN.md` carries the
+remaining phases.
 
 ---
 
@@ -28,7 +35,11 @@ pitchfork-ui/
 │           └── theme.css # Global token aliases (:root vars), breakpoints, dark mode
 └── apps/
     ├── docs/           # Storybook site (@pitchfork-ui/docs)
-    │   └── src/        # *.stories.tsx, *.examples.stories.tsx, *.mdx per component
+    │   └── src/
+    │       ├── elements/        # Generated: one .mdx + .stories.tsx per element
+    │       ├── patterns/        # Seven worked compositions
+    │       ├── element-examples.ts  # Hand-written markup per element
+    │       └── *.mdx            # Foundations prose (hand-written)
     ├── consumer-react/   # Vite app that smoke-tests the React bindings
     ├── consumer-angular/ # Angular CLI app that smoke-tests the Angular bindings
     └── consumer-vue/     # Vite app that smoke-tests the Vue bindings
@@ -60,6 +71,14 @@ Tokens must be built before react. The `build` script enforces this order.
 
 ## Adding a component
 
+**Add an element, not a React component.** `packages/react` is in retirement and
+takes no new components; everything below describes the layer that is being
+replaced, and is kept because the package is still published and still gets
+fixes. For a new element, see **Web components** further down: the component
+folder in `packages/elements/src/components/`, an entry in
+`apps/docs/src/element-examples.ts`, and the docs page and Interactive story
+are generated.
+
 ### 1. Component files (`packages/react/src/components/ComponentName/`)
 
 ```
@@ -77,30 +96,22 @@ Add to `packages/react/src/index.ts`:
 export * from './components/ComponentName';
 ```
 
-### 3. Storybook docs (`apps/docs/src/`)
+### 3. Storybook docs
 
-Three files per component:
+**There are none for a React component any more.** The 75 `*.stories.tsx`, 75
+`*.examples.stories.tsx` and 75 `*.mdx` files were deleted when the elements
+took over the `Components` section — 225 files, 14,678 lines. Two consequences
+worth knowing:
 
-```
-ComponentName.stories.tsx          # Controls/args stories
-ComponentName.examples.stories.tsx # Example compositions
-ComponentName.mdx                  # Documentation page
-```
-
-Every story in `*.examples.stories.tsx` **must** include `parameters.docs.source.code` with a plain JSX string — no imports, no `render:` wrapper, no story boilerplate. This is what appears in the "Show code" panel and should look like application code:
-
-```tsx
-export const Basic: Story = {
-  render: () => <MyComponent>...</MyComponent>,
-  parameters: {
-    docs: {
-      source: {
-        code: `<MyComponent>...</MyComponent>`,
-      },
-    },
-  },
-};
-```
+- `metadata.json` read its **examples and descriptions** from those files, so
+  the React half now carries props, types, defaults and resolved variable
+  chains only. 69 of 91 components lost their examples and descriptions. That
+  was a deliberate trade: the elements carry the depth now, in `elements.json`,
+  and the MCP server answers `get_examples` for an element tag or name.
+- `build-metadata.mjs` still contains the code that parses example stories. It
+  finds nothing, so that path is unreachable; it goes when `packages/react`
+  does, and `REACT-RETIREMENT-PLAN.md` records it rather than leaving it to be
+  rediscovered.
 
 ---
 

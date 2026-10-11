@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
+import * as ProgressBarStories from './ProgressBar.stories';
+
+<Meta of={ProgressBarStories} />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
+*/}
+
+# `<pf-progress-bar>`
+
+
+A horizontal determinate progress track.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-progress-bar']} />
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `label` | `string \| undefined` | — | Accessible name. |
+| `max` | `max` | `number` | `100` | The top of the scale. |
+| `showValue` | `show-value` | `boolean` | `true` | Show the percentage beside the track. Reflected for the stylesheet. |
+| `value` | `value` | `number` | `0` | How far along, on the 0..max scale. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `fill` | the filled portion. |
+| `track` | the unfilled groove. |
+| `value` | the percentage readout. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-progress-bar></pf-progress-bar>
+```
+
+```tsx
+// React, through the generated bindings
+import { ProgressBar } from '@pitchfork-ui/elements-react';
+
+<ProgressBar />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-progress-bar></pf-progress-bar>
+```
+

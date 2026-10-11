@@ -34,6 +34,7 @@
     "test": "npm run test -w @pitchfork-ui/core && npm run test -w @pitchfork-ui/react && npm run test -w @pitchfork-ui/elements",
     "test:angular": "npm run test -w @pitchfork-ui/elements-angular",
     "test:mcp": "npm run test -w @pitchfork-ui/mcp",
+    "test:docs": "vitest run --config vitest.config.ts --project storybook-smoke",
     "test:smoke": "node scripts/smoke-storybook.mjs",
     "test:coverage": "npm run test:coverage -w @pitchfork-ui/react",
     "lint": "eslint .",
