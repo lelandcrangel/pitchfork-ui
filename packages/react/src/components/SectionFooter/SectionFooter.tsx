@@ -10,6 +10,7 @@ export interface SectionFooterProps extends React.HTMLAttributes<HTMLElement> {
   align?: 'start' | 'between' | 'end';
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-section-footer>`, or `PfSectionFooter` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const SectionFooter = forwardRef<HTMLElement, SectionFooterProps>(function SectionFooter(
   {
     className,

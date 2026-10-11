@@ -28,6 +28,7 @@ export interface RadarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   fillColor?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-radar-chart>`, or `PfRadarChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function RadarChart(
   {
     className,

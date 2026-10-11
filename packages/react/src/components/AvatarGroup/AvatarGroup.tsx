@@ -18,6 +18,7 @@ export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-avatar-group>`, or `PfAvatarGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(function AvatarGroup(
   { className, avatars, max = 5, size = 'md', total, label, ...props },
   ref,

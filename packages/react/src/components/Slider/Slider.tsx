@@ -16,6 +16,7 @@ export interface SliderProps extends Omit<
   showValue?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-slider>`, or `PfSlider` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Slider = forwardRef<HTMLInputElement, SliderProps>(
   (
     {

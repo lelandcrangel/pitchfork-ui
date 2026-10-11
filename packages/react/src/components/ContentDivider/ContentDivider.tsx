@@ -10,6 +10,7 @@ export interface ContentDividerProps extends React.HTMLAttributes<HTMLDivElement
   inset?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-content-divider>`, or `PfContentDivider` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ContentDivider = forwardRef<HTMLDivElement, ContentDividerProps>(
   ({ className, label, orientation = 'horizontal', inset = false, ...props }, ref) => {
     if (orientation === 'vertical') {

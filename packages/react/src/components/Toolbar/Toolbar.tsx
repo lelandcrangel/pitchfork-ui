@@ -10,6 +10,7 @@ export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: ToolbarOrientation;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toolbar>`, or `PfToolbar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(function Toolbar(
   { className, orientation = 'horizontal', onKeyDown, onFocus, children, ...props },
   ref,
@@ -52,6 +53,7 @@ Toolbar.displayName = 'Toolbar';
 
 export type ToolbarSeparatorProps = React.HTMLAttributes<HTMLSpanElement>;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toolbar-separator>`, or `PfToolbarSeparator` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ToolbarSeparator = forwardRef<HTMLSpanElement, ToolbarSeparatorProps>(
   function ToolbarSeparator({ className, ...props }, ref) {
     return (

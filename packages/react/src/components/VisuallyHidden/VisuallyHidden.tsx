@@ -16,6 +16,8 @@ export interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLElement> {
  * Hides content visually while keeping it available to screen readers and other
  * assistive technology. Use for labels, instructions, and status text that are
  * implied visually but need to be announced.
+ *
+ * @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-visually-hidden>`, or `PfVisuallyHidden` from `@pitchfork-ui/elements-react`. See Foundations → Migrating.
  */
 export const VisuallyHidden = forwardRef<HTMLElement, VisuallyHiddenProps>(function VisuallyHidden(
   { as = 'span', focusable = false, className, ...props },

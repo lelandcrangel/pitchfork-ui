@@ -32,6 +32,7 @@ export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   endYear?: number;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-calendar>`, or `PfCalendar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calendar(
   {
     className,

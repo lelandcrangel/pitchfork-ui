@@ -42,6 +42,7 @@ export interface SelectProps extends Omit<
   required?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-select>`, or `PfSelect` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Select = forwardRef<HTMLButtonElement, SelectProps>(
   (
     {

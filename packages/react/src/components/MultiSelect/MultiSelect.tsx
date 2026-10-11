@@ -37,6 +37,7 @@ export interface MultiSelectProps extends Omit<
   required?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-multi-select>`, or `PfMultiSelect` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const MultiSelect = forwardRef<HTMLButtonElement, MultiSelectProps>(
   (
     {

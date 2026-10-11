@@ -50,6 +50,7 @@ const sameDayIn = (month: Date, day: number) => {
 const isSameMonth = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-calendar>` absorbed it — `pf-calendar` is one element; the React layer splits the grid out as a sub-component. See Foundations → Migrating. */
 export function CalendarGrid({
   monthDate,
   classPrefix,

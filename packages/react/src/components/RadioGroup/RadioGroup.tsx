@@ -23,6 +23,7 @@ export interface RadioGroupProps extends Omit<
   orientation?: 'vertical' | 'horizontal';
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-radio-group>`, or `PfRadioGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
   (
     {

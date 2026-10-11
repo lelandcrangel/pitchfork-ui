@@ -159,6 +159,7 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-icon>`, or `PfIcon` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function Icon({ name, label, className, style, ...props }: IconProps) {
   const normalizedName = normalizeIconName(name);
 

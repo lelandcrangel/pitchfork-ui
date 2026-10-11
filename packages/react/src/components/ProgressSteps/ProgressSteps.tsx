@@ -17,6 +17,7 @@ export interface ProgressStepsProps extends React.HTMLAttributes<HTMLOListElemen
   orientation?: 'horizontal' | 'vertical';
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-progress-steps>`, or `PfProgressSteps` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ProgressSteps = forwardRef<HTMLOListElement, ProgressStepsProps>(
   function ProgressSteps({ className, steps, orientation = 'horizontal', ...props }, ref) {
     /*

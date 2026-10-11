@@ -9,6 +9,7 @@ export interface RadioButtonProps extends Omit<
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-radio-button>`, or `PfRadioButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const RadioButton = forwardRef<HTMLInputElement, RadioButtonProps>(
   ({ id, label, className, ...props }, ref) => {
     const generatedId = useId();

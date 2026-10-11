@@ -23,6 +23,7 @@ export interface PieChartProps extends React.HTMLAttributes<HTMLDivElement> {
   emptyLabel?: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-pie-chart>`, or `PfPieChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const PieChart = forwardRef<HTMLDivElement, PieChartProps>(function PieChart(
   {
     className,

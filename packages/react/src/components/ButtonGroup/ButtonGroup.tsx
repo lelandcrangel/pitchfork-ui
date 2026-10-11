@@ -32,6 +32,7 @@ const isSelected = (
   return currentValue === itemValue;
 };
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-button-group>`, or `PfButtonGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(
   (
     {

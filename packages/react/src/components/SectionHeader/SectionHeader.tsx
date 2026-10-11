@@ -12,6 +12,7 @@ export interface SectionHeaderProps extends React.HTMLAttributes<HTMLElement> {
   align?: 'start' | 'between' | 'end';
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-section-header>`, or `PfSectionHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const SectionHeader = forwardRef<HTMLElement, SectionHeaderProps>(function SectionHeader(
   {
     className,

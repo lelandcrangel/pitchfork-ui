@@ -35,6 +35,7 @@ const Spinner = () => (
   </svg>
 );
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-button>`, or `PfButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {

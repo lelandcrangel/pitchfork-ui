@@ -16,6 +16,7 @@ export interface CollapsibleProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   showChevron?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-collapsible>`, or `PfCollapsible` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(function Collapsible(
   {
     className,

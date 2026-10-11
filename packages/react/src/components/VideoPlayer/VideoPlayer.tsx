@@ -28,6 +28,7 @@ export interface VideoPlayerProps extends Omit<
   tracks?: VideoTrack[];
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-video-player>`, or `PfVideoPlayer` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const VideoPlayer = forwardRef<HTMLVideoElement, VideoPlayerProps>(
   (
     {

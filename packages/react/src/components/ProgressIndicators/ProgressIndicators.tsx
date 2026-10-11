@@ -23,6 +23,7 @@ export interface ProgressCircleProps extends React.HTMLAttributes<HTMLDivElement
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-progress-bar>`, or `PfProgressBar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(function ProgressBar(
   { value, max = 100, showValue = true, label, className, ...props },
   ref,
@@ -52,6 +53,7 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(function
 });
 ProgressBar.displayName = 'ProgressBar';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-progress-circle>`, or `PfProgressCircle` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ProgressCircle = forwardRef<HTMLDivElement, ProgressCircleProps>(
   function ProgressCircle(
     { value, max = 100, size = 64, strokeWidth = 6, showValue = true, label, className, ...props },

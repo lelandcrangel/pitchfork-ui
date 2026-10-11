@@ -12,6 +12,7 @@ export interface RatingStarsProps extends React.HTMLAttributes<HTMLDivElement> {
   ariaLabel?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-rating-stars>`, or `PfRatingStars` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const RatingStars = forwardRef<HTMLDivElement, RatingStarsProps>(function RatingStars(
   { value, max = 5, size = 18, showValue = false, ariaLabel, className, ...props },
   ref,
@@ -71,6 +72,7 @@ export interface RatingBadgeProps extends React.HTMLAttributes<HTMLSpanElement> 
   size?: 'sm' | 'md';
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-rating-badge>`, or `PfRatingBadge` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const RatingBadge = forwardRef<HTMLSpanElement, RatingBadgeProps>(function RatingBadge(
   { value, max = 5, reviews, size = 'md', className, ...props },
   ref,

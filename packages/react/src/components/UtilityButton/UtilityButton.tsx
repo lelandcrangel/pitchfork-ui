@@ -12,6 +12,7 @@ export interface UtilityButtonProps extends React.ButtonHTMLAttributes<HTMLButto
   tooltip?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-utility-button>`, or `PfUtilityButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const UtilityButton = forwardRef<HTMLButtonElement, UtilityButtonProps>(
   (
     {

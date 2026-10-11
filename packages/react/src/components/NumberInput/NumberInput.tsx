@@ -35,6 +35,7 @@ export interface NumberInputProps extends Omit<
   name?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-number-input>`, or `PfNumberInput` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(function NumberInput(
   {
     id,

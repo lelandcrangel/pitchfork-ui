@@ -17,6 +17,7 @@ export interface InlineCTAProps extends React.HTMLAttributes<HTMLDivElement> {
   onDismiss?: () => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-inline-cta>`, or `PfInlineCta` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const InlineCTA = forwardRef<HTMLDivElement, InlineCTAProps>(function InlineCTA(
   {
     className,

@@ -21,6 +21,7 @@ export interface SparklineProps extends React.HTMLAttributes<SVGSVGElement> {
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-sparkline>`, or `PfSparkline` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Sparkline = forwardRef<SVGSVGElement, SparklineProps>(function Sparkline(
   {
     className,

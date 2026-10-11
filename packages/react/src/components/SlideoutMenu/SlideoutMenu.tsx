@@ -22,6 +22,7 @@ export interface SlideoutMenuProps extends Omit<React.HTMLAttributes<HTMLDivElem
   'aria-label'?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-slideout-menu>`, or `PfSlideoutMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function SlideoutMenu({
   className,
   open,

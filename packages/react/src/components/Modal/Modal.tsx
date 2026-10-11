@@ -22,6 +22,7 @@ export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
 
 export type ModalSectionProps = React.HTMLAttributes<HTMLDivElement>;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-modal-header>`, or `PfModalHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ModalHeader = forwardRef<HTMLDivElement, ModalSectionProps>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cx('pf-modal__header', className)} {...props} />
@@ -29,6 +30,7 @@ export const ModalHeader = forwardRef<HTMLDivElement, ModalSectionProps>(
 );
 ModalHeader.displayName = 'ModalHeader';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-modal-body>`, or `PfModalBody` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ModalBody = forwardRef<HTMLDivElement, ModalSectionProps>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cx('pf-modal__body', className)} {...props} />
@@ -36,6 +38,7 @@ export const ModalBody = forwardRef<HTMLDivElement, ModalSectionProps>(
 );
 ModalBody.displayName = 'ModalBody';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-modal-footer>`, or `PfModalFooter` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ModalFooter = forwardRef<HTMLDivElement, ModalSectionProps>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cx('pf-modal__footer', className)} {...props} />
@@ -43,6 +46,7 @@ export const ModalFooter = forwardRef<HTMLDivElement, ModalSectionProps>(
 );
 ModalFooter.displayName = 'ModalFooter';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-modal>`, or `PfModal` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
   {
     className,

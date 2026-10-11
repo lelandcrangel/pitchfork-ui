@@ -7,11 +7,13 @@ export type CardProps = React.HTMLAttributes<HTMLDivElement>;
 
 export type CardSectionProps = CardProps;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-card>`, or `PfCard` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Card = forwardRef<HTMLDivElement, CardProps>(({ className, ...props }, ref) => (
   <div ref={ref} className={cx('pf-card', className)} {...props} />
 ));
 Card.displayName = 'Card';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-card-header>`, or `PfCardHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const CardHeader = forwardRef<HTMLDivElement, CardSectionProps>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cx('pf-card__header', className)} {...props} />
@@ -19,6 +21,7 @@ export const CardHeader = forwardRef<HTMLDivElement, CardSectionProps>(
 );
 CardHeader.displayName = 'CardHeader';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-card-content>`, or `PfCardContent` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const CardContent = forwardRef<HTMLDivElement, CardSectionProps>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cx('pf-card__content', className)} {...props} />
@@ -26,6 +29,7 @@ export const CardContent = forwardRef<HTMLDivElement, CardSectionProps>(
 );
 CardContent.displayName = 'CardContent';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-card-footer>`, or `PfCardFooter` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const CardFooter = forwardRef<HTMLDivElement, CardSectionProps>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cx('pf-card__footer', className)} {...props} />

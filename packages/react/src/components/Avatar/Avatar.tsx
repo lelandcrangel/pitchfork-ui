@@ -14,6 +14,7 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLSpanElement> {
   status?: AvatarStatus;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-avatar>`, or `PfAvatar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Avatar = forwardRef<HTMLSpanElement, AvatarProps>(
   ({ src, alt, name, size = 'md', status, className, children, ...props }, ref) => {
     const initials = children ?? getAvatarInitials(name);

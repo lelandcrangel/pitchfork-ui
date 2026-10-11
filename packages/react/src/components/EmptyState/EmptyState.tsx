@@ -14,6 +14,7 @@ export interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: EmptyStateSize;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-empty-state>`, or `PfEmptyState` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(function EmptyState(
   { className, heading, description, icon, iconName, action, size = 'md', ...props },
   ref,

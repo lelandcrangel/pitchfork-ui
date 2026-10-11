@@ -20,6 +20,7 @@ export interface TimelineProps extends React.HTMLAttributes<HTMLOListElement> {
   items: TimelineItem[];
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-timeline>`, or `PfTimeline` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Timeline = forwardRef<HTMLOListElement, TimelineProps>(function Timeline(
   { className, items, ...props },
   ref,

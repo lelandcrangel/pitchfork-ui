@@ -35,6 +35,7 @@ export interface AccordionProps extends Omit<
   headingLevel?: 2 | 3 | 4 | 5 | 6;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-accordion>`, or `PfAccordion` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(function Accordion(
   {
     className,

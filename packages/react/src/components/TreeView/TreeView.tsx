@@ -33,6 +33,7 @@ export interface TreeViewHandle {
   collapseAll: () => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tree-view>`, or `PfTreeView` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const TreeView = forwardRef<TreeViewHandle, TreeViewProps>(function TreeView(
   {
     className,

@@ -20,6 +20,7 @@ export interface GaugeChartProps extends React.HTMLAttributes<HTMLDivElement> {
   color?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-gauge-chart>`, or `PfGaugeChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const GaugeChart = forwardRef<HTMLDivElement, GaugeChartProps>(function GaugeChart(
   {
     className,

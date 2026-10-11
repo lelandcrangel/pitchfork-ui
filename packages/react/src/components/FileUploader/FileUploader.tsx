@@ -30,6 +30,7 @@ export interface FileUploaderProps extends Omit<
   onFilesChange?: (files: File[]) => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-file-uploader>`, or `PfFileUploader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(function FileUploader(
   {
     id,
