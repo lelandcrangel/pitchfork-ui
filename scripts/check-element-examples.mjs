@@ -51,19 +51,30 @@ for (const [tag, example] of Object.entries(elementExamples)) {
     continue;
   }
 
-  // An example that never mentions its own element.
-  if (!new RegExp(`<${tag}[\\s>]`).test(example.html)) {
-    errors.push(`${tag}: the example never renders <${tag}>. It documents a different element.`);
-  }
+  // Both strings, because both are markup a reader sees: `html` on the
+  // reference page and `interactive` behind the controls panel. Checking only
+  // `html` would have left 48 hand-written instances unvalidated, which is
+  // precisely the state that put nine wrong enum values in the first draft.
+  for (const [field, markup] of [
+    ['html', example.html],
+    ['interactive', example.interactive],
+  ]) {
+    if (!markup) continue;
+    const where = field === 'html' ? tag : `${tag} (interactive)`;
 
-  const findings = validateUsage(
-    example.html,
-    componentsByName,
-    { available: iconRegistryAvailable, resolves: resolvesIconName, names: iconNames },
-    elementsByTag,
-  );
-  for (const finding of findings) {
-    (finding.severity === 'error' ? errors : warnings).push(`${tag}: ${finding.message}`);
+    if (!new RegExp(`<${tag}[\\s>]`).test(markup)) {
+      errors.push(`${where}: never renders <${tag}>. It documents a different element.`);
+    }
+
+    const findings = validateUsage(
+      markup,
+      componentsByName,
+      { available: iconRegistryAvailable, resolves: resolvesIconName, names: iconNames },
+      elementsByTag,
+    );
+    for (const finding of findings) {
+      (finding.severity === 'error' ? errors : warnings).push(`${where}: ${finding.message}`);
+    }
   }
 }
 
@@ -86,6 +97,7 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `check-element-examples: all ${count} element examples check out against elements.json` +
+  `check-element-examples: all ${count} element examples, and every \`interactive\` instance ` +
+    `beside them, check out against elements.json` +
     (warnings.length > 0 ? ` (${warnings.length} warning(s) above)` : ''),
 );

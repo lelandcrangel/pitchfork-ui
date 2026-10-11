@@ -18,7 +18,17 @@ export default defineConfig({
     browser: {
       enabled: true,
       headless: true,
-      provider: playwright({}),
+      // PW_CHROMIUM_PATH, the same way packages/elements' browser project and
+      // the three Playwright scripts read it. This was the one entry point
+      // that did not, so in an environment whose Chromium does not match
+      // Playwright's pinned build it failed with Playwright's own "run npx
+      // playwright install" banner -- which points at the wrong cause when the
+      // documented variable is already set.
+      provider: playwright(
+        process.env.PW_CHROMIUM_PATH
+          ? { launchOptions: { executablePath: process.env.PW_CHROMIUM_PATH } }
+          : {},
+      ),
       instances: [{ browser: 'chromium' }],
     },
     setupFiles: ['./.storybook/vitest-dark-setup.ts'],

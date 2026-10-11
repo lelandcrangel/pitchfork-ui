@@ -340,6 +340,36 @@ async function run(args, served) {
         continue;
       }
 
+      // Any sampled story may now be an element's Interactive story, and a
+      // story rendering a dead custom element looks the same as one rendering
+      // nothing: valid HTML, no error. The docs-page check below samples six
+      // reference pages; this covers whichever stories the sample lands on.
+      const dead = await page.evaluate(async () => {
+        const root = document.querySelector('#storybook-root');
+        if (!root) return [];
+        const deadline = Date.now() + 8000;
+        let hosts = [];
+        while (Date.now() < deadline) {
+          hosts = [...root.querySelectorAll('*')].filter((n) => n.tagName.startsWith('PF-'));
+          if (hosts.length === 0) break;
+          if (hosts.every((h) => h.classList.contains('hydrated'))) break;
+          await new Promise((resolve) => requestAnimationFrame(resolve));
+        }
+        return [
+          ...new Set(
+            hosts
+              .filter((h) => !h.classList.contains('hydrated'))
+              .map((h) => h.tagName.toLowerCase()),
+          ),
+        ];
+      });
+
+      if (dead.length) {
+        problems.push(
+          `${id}: ${dead.join(', ')} rendered but never hydrated — the elements are not registered.`,
+        );
+      }
+
       const empty = await page.evaluate((tokens) => {
         const root = getComputedStyle(document.documentElement);
         return tokens.filter((t) => !root.getPropertyValue(t).trim());
