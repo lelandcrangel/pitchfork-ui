@@ -563,6 +563,82 @@ async function run(args, served) {
       await page.close();
     }
 
+    // The Introduction hero's title. `pf-page-header` sizes its heading with
+    // `clamp(--font-size-3xl, 3vw, --font-size-5xl)`, and `vw` in a docs page
+    // is the *iframe*, not the window — so the landing hero came out at 29.4px
+    // against the 24px `<h2>` directly below it, a page title 1.2x its own
+    // section headings. The page overrides it through `::part(heading)`, which
+    // is the one mechanism that can reach a shadow-internal box.
+    //
+    // No Vitest project can see any of this: it is a computed font size in a
+    // real build. The ratio against the page's own `<h2>` is what a reader
+    // actually perceives, and it separates the two states cleanly — measured
+    // at a 1024 iframe: 1.28x without the override, 2.56x with it. Probed by
+    // removing the rule from Introduction.mdx and rebuilding.
+    {
+      const page = await browser.newPage({ viewport: { width: 1024, height: 900 } });
+      const failures = [];
+      watchPage(page, origin, failures);
+      try {
+        await page.goto(`${base}/iframe.html?id=foundations-introduction--docs&viewMode=docs`, {
+          waitUntil: 'domcontentloaded',
+        });
+        await page.waitForFunction(
+          () => (document.querySelector('.sbdocs-content')?.children.length ?? 0) > 0,
+          undefined,
+          { timeout: 20000 },
+        );
+        const hero = await page.evaluate(async () => {
+          const deadline = Date.now() + 10000;
+          let host = null;
+          while (Date.now() < deadline) {
+            host = document.querySelector('pf-page-header');
+            if (host?.classList.contains('hydrated') && host.shadowRoot) break;
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+          }
+          if (!host?.shadowRoot) return { missing: true };
+          const heading = host.shadowRoot.querySelector('.heading');
+          const h2 = document.querySelector('.sbdocs-content h2');
+          // A slot's own textContent is its fallback, not what was slotted,
+          // so the title is read through assignedNodes().
+          const slot = heading.querySelector('slot:not([name])');
+          return {
+            title: (slot ? slot.assignedNodes() : [])
+              .map((n) => n.textContent)
+              .join('')
+              .trim(),
+            heading: Number.parseFloat(getComputedStyle(heading).fontSize),
+            h2: h2 ? Number.parseFloat(getComputedStyle(h2).fontSize) : null,
+          };
+        });
+
+        if (hero.missing) {
+          problems.push('the Introduction hero: no hydrated <pf-page-header> rendered');
+        } else if (hero.title !== 'Pitchfork UI') {
+          problems.push(
+            `the Introduction hero: expected the title "Pitchfork UI", read "${hero.title}"`,
+          );
+        } else if (!hero.h2) {
+          problems.push('the Introduction hero: no <h2> on the page to size the title against');
+        } else if (hero.heading / hero.h2 < 1.8) {
+          problems.push(
+            `the Introduction hero: the title is ${hero.heading}px against a ${hero.h2}px <h2> ` +
+              `(${(hero.heading / hero.h2).toFixed(2)}x) — the ::part(heading) override is not ` +
+              `applying, so the page title reads no larger than its own section headings.`,
+          );
+        } else {
+          console.log(
+            `  the Introduction hero: title ${hero.heading}px vs ${hero.h2}px <h2> ` +
+              `(${(hero.heading / hero.h2).toFixed(2)}x)`,
+          );
+        }
+      } catch {
+        problems.push('the Introduction hero: the docs page did not render within 20s');
+      }
+      if (failures.length) problems.push(`the Introduction hero: ${failures.join('; ')}`);
+      await page.close();
+    }
+
     // The manager shell is served separately from the story iframe, so a broken
     // upload can leave one working and the other not.
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });

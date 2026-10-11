@@ -4,7 +4,25 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 {/* ── Hero ─────────────────────────────────────────────────────────────── */}
 
-<div style={{ marginBottom: '2rem' }}>
+{/*
+A landing hero, not an application page header. `pf-page-header` sizes its
+title with `clamp(--font-size-3xl, 3vw, --font-size-5xl)`, and `vw` here is
+the *docs iframe*, which is ~300px narrower than the window -- so at a 1280px
+window the title measured 29.4px against the 24px `<h2>` right below it, a
+page title barely larger than its own section headings. The element is right
+for the job it has; this page wants a bigger one, which is exactly what
+`::part(heading)` is exposed for. Scoped to the wrapper so it reaches this
+hero and no other page header.
+*/}
+
+<style>{`
+  .pf-docs-hero pf-page-header::part(heading) {
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    letter-spacing: -0.04em;
+  }
+`}</style>
+
+<div className="pf-docs-hero" style={{ marginBottom: '2rem' }}>
   <pf-page-header>
     Pitchfork UI
     <span slot="description">
