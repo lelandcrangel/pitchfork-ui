@@ -77,7 +77,7 @@ const preview: Preview = {
       storySort: {
         order: [
           'Foundations',
-          ['Introduction', 'Theming', 'Tokens', 'Web components', 'Changelog'],
+          ['Introduction', 'Migrating', 'Theming', 'Tokens', 'Web components', 'Changelog'],
           'Patterns',
           'Components',
         ],

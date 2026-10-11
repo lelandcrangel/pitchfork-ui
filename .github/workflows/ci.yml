@@ -130,6 +130,14 @@ jobs:
       # --strict fails on an element with no doc comment at all.
       - name: Check the generated element docs are current
         run: npm run build:elements-docs -- --verify
+      # The migration guide is generated from both metadata artifacts, so its
+      # tables cannot drift from the two APIs they describe -- but a committed
+      # copy can go stale the moment a prop changes type, and a guide that
+      # calls a reshaped component a drop-in sends a reader down a path that
+      # does not work. --strict fails on a component with no element
+      # counterpart at all.
+      - name: Check the generated migration guide is current
+        run: npm run build:migration-guide -- --verify --strict
       - name: Test MCP server
         run: npm run test:mcp
       # The generated element pages' pairing invariants, in jsdom. The root

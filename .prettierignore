@@ -19,3 +19,8 @@ packages/elements-vue/src/components.ts
 # keeps them honest, and it compares the generator's own output -- so
 # reformatting them here would make every build report 108 stale pages.
 apps/docs/src/elements/
+
+# Generated from both metadata artifacts by scripts/build-migration-guide.mjs,
+# for the same reason: `--verify` compares the generator's own output, so
+# formatting it here would make every build report it stale.
+apps/docs/src/Migrating.mdx
