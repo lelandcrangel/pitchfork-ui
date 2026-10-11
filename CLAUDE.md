@@ -1528,11 +1528,29 @@ elements and checks the three things only a Vue binding can get wrong:
 Three artifacts exist so an agent can build with this library from its real API
 rather than from guesswork, and all three now cover both layers:
 
-| Artifact                | Built by                      | Source                          |
-| ----------------------- | ----------------------------- | ------------------------------- |
-| `metadata.json`         | `build-metadata.mjs`          | the React TypeScript, docs, CSS |
-| `elements.json`         | `build-elements-metadata.mjs` | Stencil's `docs.json`           |
-| `llms.txt`, `-full.txt` | `build-llms-txt.mjs`          | both of the above               |
+| Artifact                | Built by                      | Source                                        |
+| ----------------------- | ----------------------------- | --------------------------------------------- |
+| `metadata.json`         | `build-metadata.mjs`          | the React TypeScript, docs, CSS               |
+| `elements.json`         | `build-elements-metadata.mjs` | Stencil's `docs.json` + `element-examples.ts` |
+| `llms.txt`, `-full.txt` | `build-llms-txt.mjs`          | both of the above                             |
+
+**The element examples are one file, read by four things.** `docs.json` has
+every prop and slot and no idea that `pf-select` needs `pf-option` children, so
+the markup is hand-written in `apps/docs/src/element-examples.ts` — and the
+reference pages, the `Interactive` stories, `elements.json` and
+`llms-full.txt` all read that same file. A second copy written for the MCP
+server would be a second copy to drift, which is the whole reason the React
+half gets its examples by parsing the docs app's stories rather than keeping
+its own.
+
+`build-elements-metadata.mjs` imports it and throws a named error when the
+export is gone, because an empty object would publish metadata with no
+examples in it and nothing would say so. `get_examples` answers for a
+component name, an element tag or an element name, and prints the single
+`interactive` instance only where it differs from the example — repeating a
+one-instance example as "a single instance of itself" says nothing. Three MCP
+tests cover it, probed by emptying the examples out of the metadata: all three
+fail, and the other 47 pass.
 
 The React metadata is _parsed_, because nothing else records that API. The
 element metadata is _read_: Stencil writes every prop, attribute, event,

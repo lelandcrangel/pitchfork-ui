@@ -164,6 +164,38 @@ const isFormAssociated = (filePath) => {
 /** Collapse a doc comment's hard wrapping; the prose is one paragraph of it. */
 const clean = (text) => (text ?? '').replace(/\r\n/g, '\n').trim();
 
+const examplesPath = join(root, 'apps/docs/src/element-examples.ts');
+
+/**
+ * The worked markup for each element, from the one place it is written down.
+ *
+ * `docs.json` has every prop and slot and no idea that `pf-select` needs
+ * `pf-option` children, so the examples are hand-written in
+ * `apps/docs/src/element-examples.ts` for the reference pages. An agent asking
+ * `get_examples` needs the same thing, and a second copy written for the MCP
+ * server would be a second copy to drift -- the React half got its examples by
+ * parsing the docs app's stories for exactly this reason.
+ *
+ * Imported rather than parsed: Node strips the types itself from 22.18 onwards
+ * and CI runs 24. A named error when the export is gone, because an empty
+ * object would silently publish metadata with no examples in it -- the same
+ * failure `build-metadata.mjs` guards against for the icon lists.
+ */
+async function readExamples() {
+  const module = await import(examplesPath);
+  const examples = module.elementExamples;
+  if (!examples || typeof examples !== 'object' || Object.keys(examples).length === 0) {
+    throw new Error(
+      `build-elements-metadata: no \`elementExamples\` export in ${examplesPath}. ` +
+        'If it was renamed, update this import — otherwise every element would ' +
+        'ship with no example.',
+    );
+  }
+  return examples;
+}
+
+const elementExamples = await readExamples();
+
 const elements = docsJson.components
   .map((component) => {
     const { tag } = component;
@@ -209,6 +241,13 @@ const elements = docsJson.components
         name: part.name,
         description: clean(part.docs),
       })),
+      // `example` is the markup the reference page shows, which may hold
+      // several variants. `interactive` is the single instance the Interactive
+      // story drives, and it is absent where the example already is one --
+      // `example` is then the answer to both questions, so there is nothing to
+      // repeat here either.
+      example: clean(elementExamples[tag]?.html) || null,
+      interactive: clean(elementExamples[tag]?.interactive) || null,
     };
   })
   .sort((a, b) => a.tag.localeCompare(b.tag));

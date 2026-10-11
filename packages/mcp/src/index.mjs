@@ -191,6 +191,13 @@ function renderElement(element) {
     lines.push('');
   }
 
+  // The worked markup, which is the half the prop table cannot give: a table
+  // says `pf-select` has a default slot, and only an example says it takes
+  // `pf-option` children.
+  if (element.example) {
+    lines.push('## Example', '', '```html', element.example, '```', '');
+  }
+
   return lines.join('\n');
 }
 
@@ -350,11 +357,50 @@ server.registerTool(
 server.registerTool(
   'get_examples',
   {
-    title: 'Get component examples',
-    description: 'Every worked example for a component, as copy-ready JSX.',
-    inputSchema: { name: z.string().describe('Component name, e.g. "Table"') },
+    title: 'Get component or element examples',
+    description:
+      'Every worked example for a component, as copy-ready JSX — or for a ' +
+      'custom element, as copy-ready HTML. Takes a component name ("Table"), ' +
+      'an element tag ("pf-table") or an element name ("PfTable").',
+    inputSchema: {
+      name: z.string().describe('Component name, element tag, or element name'),
+    },
   },
   async ({ name }) => {
+    // Elements first by tag, because `pf-table` can only mean one thing, and
+    // a component name cannot collide with it.
+    const element = elementsByTag.get(name) ?? elementsByName.get(name);
+    if (element) {
+      if (!element.example) {
+        return text(`\`<${element.tag}>\` has no example. Use \`get_element\` for its props.`);
+      }
+      const lines = [
+        `# <${element.tag}> examples`,
+        '',
+        '## Markup',
+        '',
+        '```html',
+        element.example,
+        '```',
+        '',
+      ];
+      // Only where it differs. Most examples are already a single instance,
+      // and repeating one as "a single instance of itself" says nothing.
+      if (element.interactive) {
+        lines.push(
+          '## One instance',
+          '',
+          'The example above shows several variants together; this is one on its own.',
+          '',
+          '```html',
+          element.interactive,
+          '```',
+          '',
+        );
+      }
+      return text(lines.join('\n'));
+    }
+
     const component = componentsByName.get(name);
     if (!component) return notFound(name);
     if (!component.examples?.length) {

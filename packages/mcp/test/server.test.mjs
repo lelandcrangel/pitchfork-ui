@@ -294,6 +294,34 @@ test('list_elements marks a child element and a form control', async () => {
   assert.match(out, /<pf-input>.*form control/);
 });
 
+test('get_examples answers for an element, by tag and by name', async () => {
+  // A prop table says pf-select has a default slot. Only an example says the
+  // slot takes `pf-option` children, which is the half an agent cannot guess.
+  const byTag = await call('get_examples', { name: 'pf-select' });
+  assert.match(byTag, /# <pf-select> examples/);
+  assert.match(byTag, /<pf-option value="banana">/);
+
+  const byName = await call('get_examples', { name: 'PfSelect' });
+  assert.equal(byName, byTag, 'the element name and its tag should answer alike');
+});
+
+test('get_examples adds a single instance only where it differs', async () => {
+  // pf-button's example shows six variants, so the one instance is worth
+  // printing; pf-select's example is already one, and repeating it as "a
+  // single instance of itself" would say nothing.
+  const many = await call('get_examples', { name: 'pf-button' });
+  assert.match(many, /## One instance/);
+
+  const one = await call('get_examples', { name: 'pf-select' });
+  assert.doesNotMatch(one, /## One instance/);
+});
+
+test('get_element includes the worked markup', async () => {
+  const out = await call('get_element', { name: 'pf-select' });
+  assert.match(out, /## Example/);
+  assert.match(out, /<pf-option value="banana">/);
+});
+
 test('get_element returns props with their attributes, events, slots and parts', async () => {
   const out = await call('get_element', { name: 'pf-input' });
   assert.match(out, /# <pf-input>/);
