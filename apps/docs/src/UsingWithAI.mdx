@@ -4,14 +4,19 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Using Pitchfork UI with AI
 
-Coding agents are good at React and know nothing about _this_ library. Ask one
-for a settings page and it will invent `severity` on an alert, guess that a
-button size is `"medium"`, and drop a hex colour into a `style` prop — because
-those are the odds-on answers across every component library it has ever seen.
+Coding agents know a great deal about component libraries in general and
+nothing about _this_ one. Ask for a settings page and you get `severity` on an
+alert, a button size of `"medium"`, and a hex colour in a `style` attribute —
+because those are the odds-on answers across every library it has ever seen.
 
 Pitchfork UI publishes its real API in three machine-readable forms so an agent
 does not have to guess. All three are generated from source on every build, so
 none of them can drift from the library.
+
+They describe **the 108 custom elements**, which are the library. The
+deprecated `@pitchfork-ui/react` is still covered, because it is still
+published — but an agent writing new code should be writing elements, and the
+preamble of each artifact says so.
 
 ---
 
@@ -19,61 +24,60 @@ none of them can drift from the library.
 
 Here is what an agent typically writes without the API:
 
-```tsx
-<Card padding="large">
-  <Badge type="success">Active</Badge>
-  <Alert severity="error" title="Payment failed" />
-  <Button variant="default" size="medium">
-    Retry
-  </Button>
-  <div role="button" onClick={onDismiss} style={{ color: '#4f46e5' }}>
-    Dismiss
-  </div>
-</Card>
+```html
+<pf-card padding="large">
+  <pf-badge type="success">Active</pf-badge>
+  <pf-alert severity="error" title="Payment failed"></pf-alert>
+  <pf-button variant="default" size="medium">Retry</pf-button>
+  <div role="button" onclick="dismiss()" style="color: #4f46e5">Dismiss</div>
+</pf-card>
 ```
 
-Every line of that is wrong in a way that type-checks cleanly at a glance and
-fails in review. Running it through the `validate_usage` tool gives:
+Every line of that parses, renders, and is wrong. An unknown attribute on a
+custom element is not an error in HTML — it is simply ignored — so there is no
+console warning and nothing fails to build. Running it through the
+`validate_usage` tool gives:
 
 ```
-4 error(s), 1 warning(s).
+5 error(s), 1 warning(s).
 
-- error (line 1): `Card` has no prop `padding`, and it is not a DOM attribute.
-  It takes no props of its own — only React.HTMLAttributes<HTMLDivElement> attributes.
-- error (line 3): `Alert` has no prop `severity`, and it is not a DOM attribute.
-  Its props are: `variant`, `heading`, `description`, `dismissible`, `onDismiss`, `icon`.
-- error (line 4): `variant="default"` is not valid on `Button`.
-  Expected one of: "primary", "secondary", "ghost", "destructive".
-- error (line 4): `size="medium"` is not valid on `Button`.
-  Expected one of: "sm", "md", "lg".
-- warning (line 5): Hardcoded colour `#4f46e5`. Use a CSS variable instead —
-  component styles go through a `--pf-*` alias, never a raw value.
+- error (line 1): `<pf-card>` has no attribute `padding`. It takes no attributes of its own.
+- error (line 2): `<pf-badge>` has no attribute `type`. Its attributes are: `variant`.
+- error (line 3): `<pf-alert>` has no attribute `severity`. Its attributes are: `description`, `dismiss-label`, `dismissible`, `heading`, `variant`.
+- error (line 4): `variant="default"` is not valid on `<pf-button>`. Expected one of: "destructive", "ghost", "primary", "secondary".
+- error (line 4): `size="medium"` is not valid on `<pf-button>`. Expected one of: "lg", "md", "sm".
+- warning (line 5): Hardcoded colour `#4f46e5`. Use a CSS variable instead — component styles go through a `--pf-*` alias, never a raw value.
 ```
 
 The same request, with the agent grounded in the library's API:
 
-```tsx
-<Card>
-  <Badge variant="success">Active</Badge>
-  <Alert variant="danger" heading="Payment failed" />
-  <Button variant="primary" size="md">
-    Retry
-  </Button>
-  <Button variant="ghost" onClick={onDismiss}>
-    Dismiss
-  </Button>
-</Card>
+```html
+<pf-card>
+  <pf-badge variant="success">Active</pf-badge>
+  <pf-alert variant="danger" heading="Payment failed"></pf-alert>
+  <pf-button variant="primary" size="md">Retry</pf-button>
+  <pf-button variant="ghost">Dismiss</pf-button>
+</pf-card>
 ```
 
 ```
-No problems found. Components, props and values all check out.
+0 error(s), 0 warning(s).
+
+No problems found.
 ```
 
-One honest caveat: `<Badge type="success">` in the first snippet is **not**
-flagged. `type` is a real DOM attribute, so the validator cannot prove it is
-wrong without rejecting legitimate passthrough props on every other component.
-The validator is deliberately tuned to stay quiet when it cannot be sure — a
-tool that cries wolf gets switched off.
+**The element side catches one the React side could not.**
+`<pf-badge type="success">` is reported, where `<Badge type="success">` was
+not: a React component extends `HTMLAttributes`, so `type` is a legitimate
+passthrough prop and the validator could not call it wrong without crying wolf
+on every other component. A custom element's attribute set is closed, so the
+same mistake becomes provable. That is five errors here against four for the
+equivalent React snippet.
+
+What it still cannot tell you is whether `title` on `<pf-alert>` was meant to
+be `heading` — `title` is a global HTML attribute and valid on anything, so it
+passes. The validator stays quiet wherever it cannot be sure, because a tool
+that cries wolf gets switched off.
 
 ---
 
@@ -122,17 +126,24 @@ picked the server up — check its MCP panel or logs.
 
 ### The tools
 
+The first four are where an agent should live. The next three cover the
+deprecated React package, for maintaining code that already uses it.
+
 | Tool                | What it answers                                                           |
 | ------------------- | ------------------------------------------------------------------------- |
-| `list_components`   | What is in the library, by category                                       |
-| `search_components` | “I need something for uploading a file”                                   |
-| `get_component`     | Props, defaults, accessibility contract, theme variables                  |
-| `get_examples`      | Working markup for an element, or JSX for a component                     |
-| `list_elements`     | Every custom element, by category                                         |
+| `list_elements`     | Every custom element, by category — **start here**                        |
 | `get_element`       | An element's props, attributes, events, methods, slots, parts and example |
+| `get_examples`      | Copy-ready markup for an element, by tag, element name or React name      |
+| `validate_usage`    | Check a snippet against the real API — `<pf-*>` markup or JSX             |
 | `get_tokens`        | Colours, spacing, radii, typography, shadows, motion                      |
 | `get_conventions`   | The house rules — naming, the variable chain, breakpoints, a11y           |
-| `validate_usage`    | Check a snippet against the real API — JSX or `<pf-*>` markup             |
+| `list_components`   | The deprecated React components, by category                              |
+| `search_components` | “I need something for uploading a file” — searches the React components   |
+| `get_component`     | A React component's props, defaults, a11y contract, theme variables       |
+
+`get_examples` is the bridge off the deprecated package: handed a React name
+like `Table` it answers with the element that replaces it and that element's
+markup, because the React examples were removed along with their docs pages.
 
 ### Getting the most out of it
 
@@ -201,10 +212,18 @@ worked example, plus the category each belongs to and its React counterpart.
 This is one of the two artifacts the files above are generated from — use it if
 you are building codegen, a linter, or a docs site of your own.
 
-The other is `@pitchfork-ui/react/metadata`, which carries the retiring React
-API: props, types, defaults and resolved CSS variable chains. It no longer
-carries examples or descriptions, because those were read from the docs pages
-that have been removed.
+The other is `@pitchfork-ui/react/metadata`, which carries the **deprecated**
+React API: props, types, defaults and resolved CSS variable chains. It is still
+generated because the package is still published, so an agent maintaining
+existing React code can still be grounded in the real props — but it carries no
+examples or descriptions any more, since those were read from docs pages that
+no longer exist, and it is not what new code should be written against.
+
+For moving that code across, the server's `get_examples` answers for a React
+component name as well as an element tag or element name, so asking it about
+`Alert` shows you the `pf-alert` markup. `get_element` itself takes the tag
+(`pf-alert`) or the element name (`PfAlert`), not the React name.
+**Foundations → Migrating** has the component-by-component mapping.
 
 ---
 

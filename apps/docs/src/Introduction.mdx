@@ -4,16 +4,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 {/* ── Hero ─────────────────────────────────────────────────────────────── */}
 
-{/*
-A landing hero, not an application page header. `pf-page-header` sizes its
-title with `clamp(--font-size-3xl, 3vw, --font-size-5xl)`, and `vw` here is
-the *docs iframe*, which is ~300px narrower than the window -- so at a 1280px
-window the title measured 29.4px against the 24px `<h2>` right below it, a
-page title barely larger than its own section headings. The element is right
-for the job it has; this page wants a bigger one, which is exactly what
-`::part(heading)` is exposed for. Scoped to the wrapper so it reaches this
-hero and no other page header.
-*/}
+{/* A landing hero, not an application page header: pf-page-header's own clamp reads the docs iframe, not the window, so the title came out at 29.4px. Scoped to the wrapper. Full reasoning in CLAUDE.md. */}
 
 <style>{`
   .pf-docs-hero pf-page-header::part(heading) {
@@ -52,6 +43,27 @@ hero and no other page header.
   </pf-page-header>
 </div>
 
+{/* Above the install commands, not in a footnote. Styled inline rather than with pf-alert: see CLAUDE.md. */}
+
+<div
+  style={{
+    border: '1px solid var(--color-semantic-border-default)',
+    borderLeft: '3px solid var(--color-semantic-action-primary)',
+    borderRadius: 8,
+    padding: '0.85rem 1rem',
+    margin: '0 0 2rem',
+    background: 'var(--color-semantic-background-subtle)',
+    fontSize: '0.9rem',
+    lineHeight: 1.55,
+  }}
+>
+  <strong>`@pitchfork-ui/react` is deprecated.</strong> The custom elements are the library now, and
+  this site documents them and nothing else. The React package is still published and still gets
+  fixes — nothing you have built on it stops working — but it takes no new components and will be
+  removed after a stated window. A React app does not have to leave React to move off it; see{' '}
+  <strong>Foundations → Migrating</strong> for the component-by-component mapping and the codemod.
+</div>
+
 ## Get started
 
 Install the elements:
@@ -78,7 +90,8 @@ The stylesheet carries the design tokens, so there is no separate theme package
 to install, and each element's own CSS travels with it into its shadow root.
 
 For a framework, the generated binding packages add typed props and real event
-handlers over the same elements:
+handlers over the same elements. They are generated from the elements on every
+build, never hand-written, so they cannot drift from what they wrap:
 
 ```bash
 npm install @pitchfork-ui/elements-react    # or -angular, or -vue
@@ -90,8 +103,9 @@ import { PfButton } from '@pitchfork-ui/elements-react';
 <PfButton variant="primary">Get started</PfButton>;
 ```
 
-See **Web components** for the install options in full, and for the handful of
-places an element's API deliberately differs from a React component's.
+See **Web components** for the install options in full, the
+custom-property-versus-`::part()` split, and the handful of places the element
+API deliberately differs from the React one it replaces.
 
 ## What's inside
 
@@ -118,7 +132,7 @@ places an element's API deliberately differs from a React component's.
     },
     {
       title: 'Typed in every framework',
-      body: 'Stencil-authored, with generated React, Angular and Vue bindings that carry the types.',
+      body: 'Stencil-authored, with generated React, Angular and Vue bindings that carry the types — and plain HTML needs no wrapper at all.',
     },
     {
       title: 'Responsive & mobile-first',
@@ -167,6 +181,7 @@ places an element's API deliberately differs from a React component's.
 - **Components** — all 108 elements, each with a reference page and an interactive playground.
 - **Patterns** — complete compositions like login, settings, pricing, and checkout.
 - **Web components** — installing them, the custom-property-versus-`::part()` split, and where the element API differs from the React one on purpose.
+- **Migrating** — moving off the deprecated `@pitchfork-ui/react`, component by component, with a codemod for the mechanical part.
 - **Changelog** — release history, generated from the published package.
 - **Using with AI** — the MCP server, `llms.txt` and `metadata.json`, so a coding
   agent works from the library's real API instead of guessing at it.

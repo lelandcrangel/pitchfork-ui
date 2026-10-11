@@ -4,19 +4,25 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Web components
 
-Every component in this library ships twice: as the hand-written React
-components documented throughout this site, and as standard custom elements in
-`@pitchfork-ui/elements`. Both are first-class. Neither is a wrapper around the
-other.
+**The 108 custom elements in `@pitchfork-ui/elements` are the library.** They
+are standard custom elements, so they work in any framework and in a plain HTML
+file, and the `Components` section of this site documents them and nothing
+else.
 
-The behaviour they share is not duplicated — it lives in
-`@pitchfork-ui/core`, which imports nothing and owns the parts of the system
-that are about the DOM and about arithmetic rather than about a framework:
-anchored positioning, focus trapping, list-navigation index maths, date
-stepping, chart geometry, the icon registry. Each layer owns only its own
-template and its own reactivity. That is what keeps a `<pf-tabs>` and a
-`<Tabs>` from drifting: when one of them is fixed, the fix is usually in core
-and both get it.
+`@pitchfork-ui/react` — the hand-written React component library this started
+as — is **deprecated**. It is still published and still gets fixes, and nothing
+you have built on it stops working. But it takes no new components, its
+documentation pages are gone, and it will be removed after a stated window.
+A React application does not have to leave React to move off it: the generated
+`@pitchfork-ui/elements-react` bindings give every element a typed component.
+**Foundations → Migrating** has the component-by-component mapping.
+
+Behaviour that is not about a template lives in `@pitchfork-ui/core`, which
+imports nothing: anchored positioning, focus trapping, list-navigation index
+maths, date stepping, chart geometry, the icon registry. The elements own their
+templates and their reactivity and nothing else, which is why a fix usually
+lands in core and why the three binding packages are **generated** from the
+same build rather than written by hand.
 
 ## Installing
 
@@ -55,9 +61,9 @@ import { PfButton } from '@pitchfork-ui/elements-react';
 </PfButton>;
 ```
 
-These bindings are what a React application uses now. `@pitchfork-ui/react` is
-being retired — it is still published and still works, but the elements are the
-library, and every component has an element answer.
+These bindings are what a React application uses now, and they are generated
+from the elements by Stencil's output target rather than hand-written — so they
+cannot drift from the element they wrap.
 
 ### Angular
 

@@ -249,8 +249,10 @@ server.registerTool(
   {
     title: 'List components',
     description:
-      'List every component in Pitchfork UI, optionally filtered to one category. ' +
-      'Start here to find out what the library offers.',
+      'List the components of @pitchfork-ui/react, which is DEPRECATED. Use this ' +
+      'only to work on code that already imports it; for anything new call ' +
+      '`list_elements`, which lists the 108 custom elements that are the library ' +
+      'now. Every component here has an element that replaces it.',
     inputSchema: { category: z.enum(metadata.categories).optional() },
   },
   async ({ category }) => {
@@ -282,8 +284,10 @@ server.registerTool(
   {
     title: 'Search components',
     description:
-      'Find components by describing what you need in plain language, e.g. ' +
-      '"upload a file", "show a loading state", "pick a date range".',
+      'Find something by describing what you need in plain language, e.g. ' +
+      '"upload a file", "show a loading state", "pick a date range". Searches ' +
+      'the deprecated @pitchfork-ui/react components; each result names the ' +
+      'element that replaces it, and `get_element` has that element API.',
     inputSchema: {
       query: z.string().min(1).describe('What you are trying to build'),
       limit: z.number().int().min(1).max(25).optional(),
@@ -343,9 +347,11 @@ server.registerTool(
   {
     title: 'Get a component API',
     description:
-      'The full API for one component: props with types and defaults, what it ' +
-      'extends, its accessibility contract, its theme variables and an example. ' +
-      'Read this before writing code that uses the component.',
+      'The full API for one component of the DEPRECATED @pitchfork-ui/react: ' +
+      'props with types and defaults, what it extends, its accessibility ' +
+      'contract and its theme variables. Use it to maintain existing React ' +
+      'code; for new code call `get_element` instead. The reply names the ' +
+      'element that replaces this component.',
     inputSchema: { name: z.string().describe('Component name, e.g. "Button"') },
   },
   async ({ name }) => {
@@ -359,9 +365,10 @@ server.registerTool(
   {
     title: 'Get component or element examples',
     description:
-      'Every worked example for a component, as copy-ready JSX — or for a ' +
-      'custom element, as copy-ready HTML. Takes a component name ("Table"), ' +
-      'an element tag ("pf-table") or an element name ("PfTable").',
+      'Copy-ready markup for a custom element. Takes an element tag ' +
+      '("pf-table"), an element name ("PfTable"), or a deprecated React ' +
+      'component name ("Table") — which answers with the element that ' +
+      'replaces it, since the React examples went with their docs pages.',
     inputSchema: {
       name: z.string().describe('Component name, element tag, or element name'),
     },
@@ -403,15 +410,50 @@ server.registerTool(
 
     const component = componentsByName.get(name);
     if (!component) return notFound(name);
-    if (!component.examples?.length) {
-      return text(`\`${name}\` has no examples. Use \`get_component\` for its props.`);
+
+    if (component.examples?.length) {
+      const lines = [`# ${name} examples`, ''];
+      for (const example of component.examples) {
+        lines.push(`## ${example.name}`, '', '```tsx', example.code, '```', '');
+      }
+      return text(lines.join('\n'));
     }
 
-    const lines = [`# ${name} examples`, ''];
-    for (const example of component.examples) {
-      lines.push(`## ${example.name}`, '', '```tsx', example.code, '```', '');
+    // A React component name with no examples of its own, which since the
+    // React docs pages were removed is *all 91 of them*. Answering "no
+    // examples" is a dead end for the one question an agent asks here, so
+    // route to the element that replaced it and show that markup instead.
+    // `@pitchfork-ui/react` is deprecated; an agent writing new code wants the
+    // element, and an agent maintaining old code needs to know what to move to.
+    const coverage = elementForComponent.get(component.name);
+    const replacement = coverage?.tag ? elementsByTag.get(coverage.tag) : undefined;
+    if (!replacement?.example) {
+      return text(
+        `\`${name}\` is from the deprecated \`@pitchfork-ui/react\`, and carries no ` +
+          `examples. Use \`get_component\` for its props` +
+          (coverage?.tag ? `, or \`get_element\` for \`<${coverage.tag}>\`.` : '.'),
+      );
     }
-    return text(lines.join('\n'));
+
+    return text(
+      [
+        `# ${name} is deprecated — use \`<${replacement.tag}>\``,
+        '',
+        `\`@pitchfork-ui/react\` is deprecated and its examples were removed with its ` +
+          `docs pages. \`<${replacement.tag}>\` is what replaces \`${name}\``,
+        coverage.absorbed ? `, and it absorbed it rather than mirroring it: ${coverage.how}` : '.',
+        '',
+        'In React, the generated binding is ' +
+          `\`import { ${replacement.name} } from '@pitchfork-ui/elements-react'\`.`,
+        '',
+        '## Markup',
+        '',
+        '```html',
+        replacement.example,
+        '```',
+        '',
+      ].join('\n'),
+    );
   },
 );
 
@@ -420,10 +462,11 @@ server.registerTool(
   {
     title: 'List custom elements',
     description:
-      'List every custom element in @pitchfork-ui/elements, the framework-free ' +
-      'half of the library. Use these in Angular, Vue, plain HTML, or anywhere ' +
-      'the React components do not fit — they are a first-class layer, not ' +
-      'wrappers around the React components.',
+      'List every custom element in @pitchfork-ui/elements. These ARE the ' +
+      'library: standard custom elements that work in React, Angular, Vue and ' +
+      'plain HTML. Start here. In React, use the generated bindings from ' +
+      '@pitchfork-ui/elements-react (`PfButton`), not the deprecated ' +
+      '@pitchfork-ui/react.',
     inputSchema: { category: z.enum(elementMetadata.categories).optional() },
   },
   async ({ category }) => {
