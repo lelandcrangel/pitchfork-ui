@@ -1310,6 +1310,21 @@ What each project cannot do, measured rather than assumed:
   the consumer apps' job — `scripts/smoke-consumer.mjs` asserts them against a
   real build, which is where a missing `--pf-*` alias actually shows up.
 
+- **A dep Vite discovers mid-run reloads the page and kills a suite.** Browser
+  mode serves the suites off a real Vite dev server, so every bare specifier
+  has to be pre-bundled; `@stencil/core/internal/client` is reached through the
+  runtime rather than through an import the dep scanner can see, so on a **cold**
+  `node_modules/.vite` Vite finds it part-way through the run, re-optimizes and
+  reloads. Whichever suite is mid-fetch then dies with "Failed to fetch
+  dynamically imported module" and **zero tests**, while every test that did run
+  passes — so the summary reads `1 failed | 51 passed` with `620 passed` and no
+  assertion failure anywhere. It is a different suite each time, and it never
+  reproduces locally, because the cache is warm from the previous run: delete
+  `packages/elements/node_modules/.vite` to see it. The config declares the dep
+  in the browser project's `optimizeDeps.include`, which is what Vite's own
+  warning asks for. Any dep that only ever shows up in that warning belongs
+  there too.
+
 **Rebuild `@pitchfork-ui/core` before running these tests.** The elements
 package imports core's _build_, not its sources, so a function added to core
 and not yet built is `undefined` here — and Stencil's `safeCall` swallows the
