@@ -242,8 +242,35 @@ jobs:
         run: |
           set -euo pipefail
           base="https://lelandrangel.com/pitchfork-ui"
-          version=$(node -p "require('./packages/react/package.json').version")
           static_dir=apps/docs/storybook-static
+
+          # Both markers used to be keyed to packages/react's version, which is
+          # the DEPRECATED package. One of them had already broken: the
+          # elements-first rewrite of llms.txt dropped the "Version X.Y.Z."
+          # sentence that named the React package, so the local grep below
+          # failed and the deploy stopped with the live site left on the
+          # previous build. The other was one release away from the same fate --
+          # sync-changelog prefers packages/elements/CHANGELOG.md and only falls
+          # back to React's because the elements have not been released yet, so
+          # `react-v$version` stops appearing the moment they are.
+          #
+          # So each marker now comes from the thing it is actually checking:
+          # the elements version for llms.txt, and the changelog page's own
+          # first compare tag for the compiled chunk. The second is
+          # self-synchronising -- whatever tag the page was generated with is
+          # the tag the chunk must contain, whichever package it came from.
+          version=$(node -p "require('./packages/elements/package.json').version")
+          # The RIGHT-hand side of the first compare link. A heading reads
+          # `## [0.15.3](.../compare/react-v0.15.2...react-v0.15.3)`, so the
+          # first bare tag match is the PREVIOUS version and the last is the
+          # oldest release in the file -- a marker that would be present in any
+          # build of this page and so could not prove this one is being served.
+          changelog_tag=$(grep -oE 'compare/[a-z-]+-v[0-9.]+\.\.\.[a-z-]+-v[0-9.]+' apps/docs/src/CHANGELOG.mdx | head -1 | sed 's/.*\.\.\.//')
+          if [ -z "$changelog_tag" ]; then
+            echo "::error::No <package>-v<version> compare tag in apps/docs/src/CHANGELOG.mdx -- sync-changelog produced a page with no release in it."
+            exit 1
+          fi
+          echo "Canary: llms.txt must carry \"Version $version.\"; the changelog chunk must carry \"$changelog_tag\"."
 
           changelog_chunk=$(cd "$static_dir/assets" && ls | grep -E '^CHANGELOG-[A-Za-z0-9_-]+\.js$' | head -1)
           if [ -z "$changelog_chunk" ]; then
@@ -257,8 +284,8 @@ jobs:
             echo "::error::Local llms.txt does not carry version $version -- the canary is broken, not the deploy."
             exit 1
           }
-          grep -qF "react-v$version" "$static_dir/assets/$changelog_chunk" || {
-            echo "::error::Local $changelog_chunk has no $version entry -- CHANGELOG.mdx is out of sync with packages/react/CHANGELOG.md."
+          grep -qF "$changelog_tag" "$static_dir/assets/$changelog_chunk" || {
+            echo "::error::Local $changelog_chunk has no $changelog_tag entry -- the compiled changelog page is out of sync with apps/docs/src/CHANGELOG.mdx."
             exit 1
           }
 
@@ -322,7 +349,7 @@ jobs:
           for attempt in $(seq 1 $attempts); do
             echo "Attempt $attempt:"
             if check "$base/llms.txt" "Version $version." \
-               && check "$base/assets/$changelog_chunk" "react-v$version"; then
+               && check "$base/assets/$changelog_chunk" "$changelog_tag"; then
               echo "$base serves version $version, docs bundle included."
               exit 0
             fi

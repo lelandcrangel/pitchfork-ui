@@ -173,6 +173,16 @@ function buildIndex() {
   );
   out.push('');
   if (elementMetadata) {
+    // `Version X.Y.Z.` is the deploy's canary: `.github/workflows/deploy.yml`
+    // greps the built llms.txt for it, then fetches the live copy and greps
+    // again, which is how a sync that uploaded to the wrong directory is
+    // caught. It used to name `@pitchfork-ui/react` and the elements-first
+    // rewrite dropped the whole sentence, so the canary had nothing to match
+    // and the deploy failed with the live site left on the previous build.
+    // It names the ELEMENTS version now: that is the library, and the React
+    // package's version stops moving when the package goes.
+    out.push(`Version ${elementMetadata.version}.`);
+    out.push('');
     out.push(
       `Install \`${elementMetadata.name}\`, import the stylesheet from ` +
         `\`${elementMetadata.name}/styles.css\` and register the elements with ` +
