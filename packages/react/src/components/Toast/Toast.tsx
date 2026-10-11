@@ -81,6 +81,7 @@ export interface ToastProviderProps {
   defaultDuration?: number | false;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toaster>`, or `PfToaster` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function ToastProvider({
   children,
   placement = 'top-right',

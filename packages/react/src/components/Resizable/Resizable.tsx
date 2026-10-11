@@ -24,6 +24,7 @@ export interface ResizableProps extends Omit<React.HTMLAttributes<HTMLDivElement
   children: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-resizable>`, or `PfResizable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(function Resizable(
   {
     className,

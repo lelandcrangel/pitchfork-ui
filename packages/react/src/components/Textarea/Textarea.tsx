@@ -9,6 +9,7 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   error?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-textarea>`, or `PfTextarea` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {

@@ -16,6 +16,7 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   nextLabel?: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-pagination>`, or `PfPagination` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Pagination = React.forwardRef<HTMLElement, PaginationProps>(function Pagination(
   {
     className,

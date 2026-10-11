@@ -33,6 +33,7 @@ type TriggerProps = {
   onClick?: (event: React.MouseEvent) => void;
 };
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-popover>`, or `PfPopover` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function Popover({
   trigger,
   children,

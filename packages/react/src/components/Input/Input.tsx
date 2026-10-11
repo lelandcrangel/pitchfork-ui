@@ -9,6 +9,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   error?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-input>`, or `PfInput` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     { id, label, description, error, className, 'aria-describedby': ariaDescribedBy, ...props },

@@ -41,6 +41,7 @@ export interface TableProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   getRowKey?: (row: TableRow, index: number) => React.Key;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-table>`, or `PfTable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function Table({
   className,
   columns,

@@ -15,6 +15,7 @@ export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   focusable?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-scroll-area>`, or `PfScrollArea` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ScrollArea = forwardRef<HTMLDivElement, ScrollAreaProps>(function ScrollArea(
   { className, orientation = 'vertical', focusable = true, tabIndex, children, ...props },
   ref,

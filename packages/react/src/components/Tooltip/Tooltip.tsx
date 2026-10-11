@@ -53,6 +53,7 @@ const getTooltipPosition = (
   return { placement: side, style: { left, top, visibility: 'visible' } };
 };
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tooltip>`, or `PfTooltip` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Tooltip = forwardRef<HTMLSpanElement, TooltipProps>(function Tooltip(
   { content, children, open, placement = 'top', delay = 120, disabled = false, className },
   ref,

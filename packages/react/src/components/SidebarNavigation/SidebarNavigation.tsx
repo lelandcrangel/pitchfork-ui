@@ -79,6 +79,7 @@ function renderItem(item: SidebarNavigationItem, key: string, current: boolean) 
   );
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-sidebar-navigation>`, or `PfSidebarNavigation` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const SidebarNavigation = forwardRef<HTMLElement, SidebarNavigationProps>(
   function SidebarNavigation(
     {

@@ -22,6 +22,7 @@ export interface NotificationProps extends Omit<React.HTMLAttributes<HTMLDivElem
   onDismiss?: () => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-toaster>` absorbed it — `pf-toaster` is the positioned stack, with `placement` where the React component takes `position`. See Foundations → Migrating. */
 export const NotificationStack = forwardRef<HTMLDivElement, NotificationStackProps>(
   ({ className, placement = 'top-right', ...props }, ref) => (
     <div
@@ -33,6 +34,7 @@ export const NotificationStack = forwardRef<HTMLDivElement, NotificationStackPro
 );
 NotificationStack.displayName = 'NotificationStack';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-notification>`, or `PfNotification` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Notification = forwardRef<HTMLDivElement, NotificationProps>(
   (
     {

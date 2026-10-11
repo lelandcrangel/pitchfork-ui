@@ -11,6 +11,7 @@ export interface TagProps extends React.HTMLAttributes<HTMLSpanElement> {
   onDismiss?: () => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tag>`, or `PfTag` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Tag = forwardRef<HTMLSpanElement, TagProps>(
   ({ className, variant = 'neutral', dismissible = false, onDismiss, children, ...props }, ref) => (
     <span ref={ref} className={cx('pf-tag', `pf-tag--${variant}`, className)} {...props}>

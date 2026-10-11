@@ -13,6 +13,7 @@ export interface KbdProps extends React.HTMLAttributes<HTMLElement> {
   separator?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-kbd>`, or `PfKbd` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Kbd = forwardRef<HTMLElement, KbdProps>(function Kbd(
   { className, keys, size = 'md', separator = '+', children, ...props },
   ref,

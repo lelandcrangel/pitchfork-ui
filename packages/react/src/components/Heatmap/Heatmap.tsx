@@ -41,6 +41,7 @@ export interface HeatmapProps extends React.HTMLAttributes<HTMLDivElement> {
   emptyLabel?: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-heatmap>`, or `PfHeatmap` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Heatmap = forwardRef<HTMLDivElement, HeatmapProps>(function Heatmap(
   {
     className,

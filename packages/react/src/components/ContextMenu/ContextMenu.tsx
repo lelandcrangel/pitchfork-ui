@@ -39,6 +39,7 @@ const isSeparator = (entry: ContextMenuEntry): entry is ContextMenuSeparator =>
 
 const VIEWPORT_PADDING = 8;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-context-menu>`, or `PfContextMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const ContextMenu = forwardRef<HTMLDivElement, ContextMenuProps>(function ContextMenu(
   { className, items, disabled = false, onOpenChange, children, onContextMenu, ...props },
   ref,

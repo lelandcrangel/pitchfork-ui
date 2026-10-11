@@ -16,6 +16,7 @@ export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-alert>`, or `PfAlert` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Alert = forwardRef<HTMLDivElement, AlertProps>(
   (
     {

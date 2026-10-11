@@ -14,6 +14,7 @@ export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   onIndexChange?: (index: number) => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-carousel>`, or `PfCarousel` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carousel(
   {
     className,

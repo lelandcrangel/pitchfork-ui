@@ -25,6 +25,7 @@ export interface LoadingSkeletonProps extends Omit<
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-loading-spinner>`, or `PfLoadingSpinner` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const LoadingSpinner = forwardRef<HTMLDivElement, LoadingSpinnerProps>(
   function LoadingSpinner({ className, size = 24, label = 'Loading', ...props }, ref) {
     return (
@@ -43,6 +44,7 @@ export const LoadingSpinner = forwardRef<HTMLDivElement, LoadingSpinnerProps>(
 );
 LoadingSpinner.displayName = 'LoadingSpinner';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-loading-dots>`, or `PfLoadingDots` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const LoadingDots = forwardRef<HTMLDivElement, LoadingDotsProps>(function LoadingDots(
   { className, size = 'md', label = 'Loading', ...props },
   ref,
@@ -64,6 +66,7 @@ export const LoadingDots = forwardRef<HTMLDivElement, LoadingDotsProps>(function
 });
 LoadingDots.displayName = 'LoadingDots';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-loading-skeleton>`, or `PfLoadingSkeleton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const LoadingSkeleton = forwardRef<HTMLDivElement, LoadingSkeletonProps>(
   function LoadingSkeleton(
     {

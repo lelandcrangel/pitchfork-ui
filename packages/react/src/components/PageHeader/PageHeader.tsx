@@ -14,6 +14,7 @@ export interface PageHeaderProps extends React.HTMLAttributes<HTMLElement> {
 
 export type PageHeaderMetaProps = React.HTMLAttributes<HTMLDivElement>;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-page-header>` absorbed it — slot into `pf-page-header`'s `metadata` slot. See Foundations → Migrating. */
 export const PageHeaderMeta = forwardRef<HTMLDivElement, PageHeaderMetaProps>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cx('pf-page-header__meta', className)} {...props} />
@@ -21,6 +22,7 @@ export const PageHeaderMeta = forwardRef<HTMLDivElement, PageHeaderMetaProps>(
 );
 PageHeaderMeta.displayName = 'PageHeaderMeta';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-page-header>`, or `PfPageHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const PageHeader = forwardRef<HTMLElement, PageHeaderProps>(function PageHeader(
   { className, eyebrow, heading, description, breadcrumbs, metadata, actions, children, ...props },
   ref,

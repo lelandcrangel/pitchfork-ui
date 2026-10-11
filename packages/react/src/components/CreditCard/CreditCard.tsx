@@ -14,6 +14,7 @@ export interface CreditCardProps extends React.HTMLAttributes<HTMLDivElement> {
   masked?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-credit-card>`, or `PfCreditCard` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const CreditCard = forwardRef<HTMLDivElement, CreditCardProps>(
   (
     {

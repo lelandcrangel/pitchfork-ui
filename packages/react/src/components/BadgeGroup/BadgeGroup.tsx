@@ -14,6 +14,7 @@ export interface BadgeGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   badgePosition?: BadgeGroupBadgePosition;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-badge-group>`, or `PfBadgeGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const BadgeGroup = forwardRef<HTMLDivElement, BadgeGroupProps>(
   (
     {

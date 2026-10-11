@@ -39,6 +39,7 @@ export interface RichTextEditorProps extends Omit<
 const normalizeHtml = (value: string | undefined) => stripOuterParagraph(value ?? '');
 const getTextLength = (element: HTMLDivElement) => element.textContent?.length ?? 0;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-rich-text-editor>`, or `PfRichTextEditor` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const RichTextEditor = forwardRef<HTMLDivElement, RichTextEditorProps>(
   (
     {

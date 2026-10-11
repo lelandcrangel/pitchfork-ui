@@ -33,6 +33,7 @@ export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
   maxVisibleItems?: number;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-dropdown>`, or `PfDropdown` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
   (
     { label = 'Actions', items, align = 'start', disabled, className, maxVisibleItems, ...props },

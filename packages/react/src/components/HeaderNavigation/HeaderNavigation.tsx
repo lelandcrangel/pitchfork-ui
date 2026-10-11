@@ -16,6 +16,7 @@ export interface HeaderNavigationProps extends React.HTMLAttributes<HTMLElement>
   actions?: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-header-navigation>`, or `PfHeaderNavigation` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const HeaderNavigation = forwardRef<HTMLElement, HeaderNavigationProps>(
   function HeaderNavigation(
     { className, brand, items, actions, 'aria-label': ariaLabel = 'Header navigation', ...props },

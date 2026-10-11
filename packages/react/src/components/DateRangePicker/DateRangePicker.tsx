@@ -151,6 +151,7 @@ function RangeCalendar({
 
 // ─── DateRangePicker ──────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-date-range-picker>`, or `PfDateRangePicker` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
   function DateRangePicker(
     {

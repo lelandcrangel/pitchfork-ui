@@ -34,6 +34,7 @@ export interface DatePickerProps extends Omit<
   endYear?: number;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-date-picker>`, or `PfDatePicker` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function DatePicker(
   {
     id,

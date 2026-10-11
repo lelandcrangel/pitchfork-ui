@@ -54,6 +54,7 @@ export interface TimePickerProps extends Omit<
 
 // ─── component ───────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-time-picker>`, or `PfTimePicker` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(function TimePicker(
   {
     id,

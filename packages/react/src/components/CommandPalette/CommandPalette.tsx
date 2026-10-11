@@ -31,6 +31,7 @@ export interface CommandPaletteProps {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-command-palette>`, or `PfCommandPalette` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function CommandPalette({
   open,
   onOpenChange,

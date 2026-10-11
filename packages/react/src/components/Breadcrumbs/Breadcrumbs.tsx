@@ -15,6 +15,7 @@ export interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
   separator?: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-breadcrumbs>`, or `PfBreadcrumbs` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Breadcrumbs = forwardRef<HTMLElement, BreadcrumbsProps>(
   (
     { className, items, separator = '/', 'aria-label': ariaLabel = 'Breadcrumb', ...props },

@@ -24,6 +24,7 @@ const trendSymbol: Record<MetricTrend, string> = {
   neutral: '=',
 };
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-metric-grid>`, or `PfMetricGrid` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const MetricGrid = forwardRef<HTMLDivElement, MetricGridProps>(
   ({ className, ...props }, ref) => (
     <div ref={ref} className={cx('pf-metric-grid', className)} {...props} />
@@ -31,6 +32,7 @@ export const MetricGrid = forwardRef<HTMLDivElement, MetricGridProps>(
 );
 MetricGrid.displayName = 'MetricGrid';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-metric-card>`, or `PfMetricCard` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const MetricCard = forwardRef<HTMLDivElement, MetricCardProps>(function MetricCard(
   {
     className,

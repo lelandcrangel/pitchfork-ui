@@ -151,6 +151,7 @@ export interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   valueFormatter?: (value: number) => string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-line-chart>`, or `PfLineChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const LineChart = forwardRef<HTMLDivElement, LineChartProps>(function LineChart(
   {
     className,
@@ -257,6 +258,7 @@ LineChart.displayName = 'LineChart';
 
 export type AreaChartProps = Omit<LineChartProps, 'area'>;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-line-chart>` absorbed it — set `area` on `pf-line-chart`. See Foundations → Migrating. */
 export const AreaChart = forwardRef<HTMLDivElement, AreaChartProps>(function AreaChart(props, ref) {
   return <LineChart {...props} area ref={ref} />;
 });
@@ -274,6 +276,7 @@ export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   valueFormatter?: (value: number) => string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-bar-chart>`, or `PfBarChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const BarChart = forwardRef<HTMLDivElement, BarChartProps>(function BarChart(
   {
     className,

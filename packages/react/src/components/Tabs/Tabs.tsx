@@ -55,6 +55,7 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'o
   fullWidth?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tabs>`, or `PfTabs` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   {
     className,

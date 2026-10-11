@@ -16,6 +16,7 @@ export interface CodeSnippetProps extends Omit<React.HTMLAttributes<HTMLElement>
   onCodeCopy?: (code: string) => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-code-snippet>`, or `PfCodeSnippet` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(function CodeSnippet(
   {
     className,

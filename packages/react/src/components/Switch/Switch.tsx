@@ -6,6 +6,7 @@ export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-switch>`, or `PfSwitch` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
   ({ id, label, className, ...props }, ref) => {
     const generatedId = useId();

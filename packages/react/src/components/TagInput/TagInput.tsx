@@ -32,6 +32,7 @@ export interface TagInputProps extends Omit<
   required?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tag-input>`, or `PfTagInput` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const TagInput = forwardRef<HTMLInputElement, TagInputProps>(function TagInput(
   {
     id,

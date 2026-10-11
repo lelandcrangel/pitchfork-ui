@@ -43,6 +43,7 @@ export interface ComboboxProps extends Omit<
   clearLabel?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-combobox>`, or `PfCombobox` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Combobox(
   {
     id,

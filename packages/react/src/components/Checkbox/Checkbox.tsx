@@ -6,6 +6,7 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-checkbox>`, or `PfCheckbox` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ id, label, className, ...props }, ref) => {
     const generatedId = useId();
