@@ -40,7 +40,9 @@ import { validateUsage } from '../packages/mcp/src/validate.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const examplesPath = resolve(root, 'apps/docs/src/element-examples.ts');
+const patternsPath = resolve(root, 'apps/docs/src/patterns/pattern-markup.ts');
 const { elementExamples } = await import(examplesPath);
+const { patternMarkup } = await import(patternsPath);
 
 const errors = [];
 const warnings = [];
@@ -78,7 +80,24 @@ for (const [tag, example] of Object.entries(elementExamples)) {
   }
 }
 
+// The seven worked compositions get the same treatment, and need it more:
+// each one puts a dozen elements together, so a wrong attribute has a dozen
+// chances to hide. These are markup the docs site presents as the way to
+// build something, which is exactly what `validate_usage` is for.
+for (const [name, pattern] of Object.entries(patternMarkup)) {
+  const findings = validateUsage(
+    pattern.html,
+    componentsByName,
+    { available: iconRegistryAvailable, resolves: resolvesIconName, names: iconNames },
+    elementsByTag,
+  );
+  for (const finding of findings) {
+    (finding.severity === 'error' ? errors : warnings).push(`pattern ${name}: ${finding.message}`);
+  }
+}
+
 const count = Object.keys(elementExamples).length;
+const patterns = Object.keys(patternMarkup).length;
 const where = relative(root, examplesPath);
 
 if (warnings.length > 0) {
@@ -97,7 +116,7 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `check-element-examples: all ${count} element examples, and every \`interactive\` instance ` +
-    `beside them, check out against elements.json` +
+  `check-element-examples: ${count} element examples, every \`interactive\` instance beside ` +
+    `them, and ${patterns} patterns check out against elements.json` +
     (warnings.length > 0 ? ` (${warnings.length} warning(s) above)` : ''),
 );

@@ -1465,6 +1465,46 @@ Two things that bit while writing it:
   and its header row turns up as literal text. `scripts/smoke-storybook.mjs`
   now asserts both halves on one reference page.
 
+### The seven patterns
+
+`apps/docs/src/patterns/` holds the worked compositions, and they are elements
+now rather than React components. `pattern-markup.ts` is the one place each is
+written down — the story canvas, the "Show code" panel and `check:examples`
+all read it, the same arrangement as `element-examples.ts`.
+
+**The React versions kept two copies of themselves**, a JSX `render` and a
+`parameters.docs.source.code` string written to match it, and they had already
+drifted: the login form's row lost its `flexWrap` and `gap` in the copy a
+reader was shown. Nothing could have caught it, because nothing compares a
+story's output with the code printed beside it. One string cannot disagree with
+itself.
+
+Four are static. Three are not, and that is the part worth reading:
+
+- **`checkout-form`** listens for `pfInput` and writes three properties onto
+  `pf-credit-card`. The value has to be written back to the control as well —
+  the element holds its own, so nothing else will reformat it.
+- **`data-table`** is the worked example of the rule `pf-table` is built on:
+  the element reports a sort and reorders nothing. The handler does the
+  reordering with core's own `sortRowsBy`, so the order matches what the React
+  `Table` produced for itself.
+- **`multi-step-wizard`** keeps one `pf-modal` open while its
+  `pf-progress-step` states advance.
+
+`settings-page` is deliberately in the static four: `pf-tabs` owns which panel
+shows through its own `value`, and each `pf-switch` keeps its own state, so
+there is nothing to wire. That is worth noticing rather than assuming a tab
+strip needs a handler.
+
+A pattern with wiring shows its `setup` source in the "Show code" panel through
+`Function.prototype.toString()`, so the code beside the demo is the code
+running it. That depends on `main.ts` setting `minify: false`, which it already
+does for other reasons.
+
+`check:examples` validates all seven against `elements.json` as well as the 108
+examples — each puts a dozen elements together, so a wrong attribute has a
+dozen places to hide. Probed with `variant="hero"` on a `pf-button`.
+
 ---
 
 ## Framework bindings
