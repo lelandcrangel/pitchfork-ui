@@ -425,6 +425,19 @@ function buildFull() {
         for (const part of element.parts) out.push(`- \`${part.name}\`: ${part.description}`);
         out.push('');
       }
+
+      // The React half of this file carries worked examples, and the element
+      // half did not -- so an agent reading it got every prop of `pf-select`
+      // and no hint that the default slot takes `pf-option` children, which is
+      // the one thing a prop table cannot say.
+      if (element.example) {
+        out.push('**Example**');
+        out.push('');
+        out.push('```html');
+        out.push(element.example);
+        out.push('```');
+        out.push('');
+      }
     }
   }
 
