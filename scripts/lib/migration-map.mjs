@@ -80,19 +80,40 @@ export function loadMigrationMap({
       (element?.slots ?? []).map((slot) => slot.name).filter((name) => Boolean(name)),
     );
 
+    // `onPfDismiss` is only a valid rename if the element emits `pfDismiss`.
+    const elementEvents = new Set((element?.events ?? []).map((event) => event.name));
+
     const becomesSlot = [];
     const staysTextProp = [];
     const unmapped = [];
     const becomesChildren = [];
     const staysProperty = [];
     const events = [];
+    const unhandledEvents = [];
 
     for (const prop of component.props ?? []) {
       // `children` maps to the default slot untouched, so it is never work.
       if (prop.name === 'children') continue;
 
       if (isEventProp(prop)) {
-        events.push({ from: prop.name, to: eventPropName(prop.name) });
+        // Only a rename the element can honour. `onFoo` -> `onPfFoo` is a
+        // string rule, and a string rule invents props: the React `Button`
+        // has no `onClick` of its own (it extends `ButtonHTMLAttributes`, so
+        // that is React's native handler) and `pf-button` emits no events at
+        // all, so an unconditional rename would produce an `onPfClick` that
+        // nothing fires and silently drop the handler.
+        //
+        // The event and the prop are spelled differently and comparing the
+        // wrong one is silent: `onDismiss` becomes the prop `onPfDismiss` and
+        // the element emits `pfDismiss`, so checking the prop name against the
+        // event names matches nothing and reported all 91 components as having
+        // no renames at all.
+        const expectedEvent = `pf${prop.name.slice(2)}`;
+        if (elementEvents.has(expectedEvent)) {
+          events.push({ from: prop.name, to: eventPropName(prop.name), event: expectedEvent });
+        } else {
+          unhandledEvents.push(prop.name);
+        }
         continue;
       }
 
@@ -113,7 +134,19 @@ export function loadMigrationMap({
     // stands. It is only work when the value is markup, which is a judgement
     // about the *call site*, not about the component -- so the codemod warns at
     // the call site and the component still counts as a drop-in here.
-    const reshaped = becomesSlot.length > 0 || becomesChildren.length > 0 || unmapped.length > 0;
+    //
+    // An unhandled event prop *is* work, and it is the quietest kind. Seven
+    // components would otherwise pass as drop-ins while carrying one:
+    // `<Slider onValueChange={...} />` renamed to `<PfSlider onValueChange=
+    // {...} />` compiles, renders, and never calls the handler, because
+    // `pf-slider` emits `pfChange`. Everything in `unhandledEvents` is a prop
+    // the component declares itself, so none of them is React's native
+    // passthrough -- `onClick` on `Button` never reaches this list.
+    const reshaped =
+      becomesSlot.length > 0 ||
+      becomesChildren.length > 0 ||
+      unmapped.length > 0 ||
+      unhandledEvents.length > 0;
 
     return {
       name: component.name,
@@ -126,6 +159,9 @@ export function loadMigrationMap({
       // that is cannot be derived from a name. Showing the destinations lets a
       // reader choose instead of guessing.
       elementSlots: (element?.slots ?? []).map((slot) => slot.name ?? '(default)'),
+      // Printed beside a prop with no matching event, so a reader can see
+      // which event to point the handler at instead of guessing.
+      elementEvents: [...elementEvents],
       // An element absorbed this component rather than mirroring it, so there
       // is no binding of its own to rename to; `how` says what to do instead.
       absorbed: coverage?.absorbed === true,
@@ -137,6 +173,10 @@ export function loadMigrationMap({
       becomesChildren,
       staysProperty,
       events,
+      // An `on*` prop with no matching element event. Usually React's own
+      // synthetic handler passed through to the host, which keeps working --
+      // so it is reported, not renamed.
+      unhandledEvents,
     };
   });
 
