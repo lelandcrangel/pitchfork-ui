@@ -35,10 +35,17 @@ const TOKENS = [
 
 // One concrete end-to-end proof to go with the token check. A primary button
 // with a transparent background is the exact symptom this script exists for.
+//
+// The id is unchanged by the React components leaving -- `pf-button`'s page is
+// `Components/Button` now, so it answers to the same slug. What changed is
+// where the painted box is: the React component put `.pf-button` in the
+// document, and the element paints a `<button>` inside its shadow root, which
+// no document-level selector can reach. Hence `shadow`.
 const ANCHOR = {
   storyId: 'components-button--interactive',
-  selector: '.pf-button',
-  describe: 'primary Button',
+  selector: 'pf-button',
+  shadow: 'button',
+  describe: 'primary pf-button',
 };
 
 // One docs page as well as the stories, because the two are compiled by
@@ -67,7 +74,7 @@ const ANCHOR = {
 // hydrate correctly with an empty shadow root, and the first version of this
 // check called all three of them broken.
 const DOCS_ANCHOR = {
-  storyId: 'web-components-pfalert--docs',
+  storyId: 'components-alert--docs',
   describe: 'the <pf-alert> reference page',
   rawRow: '| Property | Attribute |',
 };
@@ -383,12 +390,17 @@ async function run(args, served) {
       }
 
       if (id === ANCHOR.storyId) {
-        const anchor = await page.evaluate((sel) => {
-          const el = document.querySelector(sel);
-          if (!el) return null;
-          const s = getComputedStyle(el);
+        const anchor = await page.evaluate(({ selector, shadow }) => {
+          const host = document.querySelector(selector);
+          if (!host) return null;
+          // The element's own box is a plain inline-flex wrapper; the painted
+          // surface is the button in its shadow root, so reading the host
+          // would report a transparent background on a perfectly good build.
+          const painted = shadow ? host.shadowRoot?.querySelector(shadow) : host;
+          if (!painted) return null;
+          const s = getComputedStyle(painted);
           return { bg: s.backgroundColor, radius: s.borderRadius, padding: s.padding };
-        }, ANCHOR.selector);
+        }, ANCHOR);
 
         if (!anchor) {
           problems.push(`${id}: no ${ANCHOR.selector} element rendered`);
@@ -413,7 +425,10 @@ async function run(args, served) {
     // readiness condition never holds and the sb-show-* classes are not the
     // signal here.
     const docsIds = Object.values(index.entries ?? {})
-      .filter((e) => e.type === 'docs' && e.id.startsWith('web-components-pf'))
+      // Every reference page is under `Components` now that the elements own
+      // that section; the Foundations pages are hand-written prose and carry
+      // no element, so they are not what this samples.
+      .filter((e) => e.type === 'docs' && e.id.startsWith('components-'))
       .map((e) => e.id)
       .sort();
     for (const id of Array.from(

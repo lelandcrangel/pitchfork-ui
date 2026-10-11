@@ -6,26 +6,13 @@ import customMedia from 'postcss-custom-media';
 import remarkGfm from 'remark-gfm';
 
 const storybookDir = dirname(fileURLToPath(import.meta.url));
-const reactSourceEntry = resolve(storybookDir, '../../../packages/react/src/index.ts');
-// The published package ships a single styles.css; from source, the equivalent
-// entry point is @pitchfork-ui/tokens' theme.css, which defines the design
-// tokens and every --pf-* alias on :root. Aliasing the stylesheet specifier to
-// the TypeScript entry instead made preview.ts's
-// `import '@pitchfork-ui/react/styles.css'` a side-effect-only import of a
-// module Rollup treats as side-effect-free, so the whole chain -- theme.css
-// included -- was tree-shaken out of the build. Every component class still
-// landed, so the site rendered with correct markup and no token values at all,
-// and nothing failed loudly enough to notice.
-//
-// This is the built copy, not the source: it is served as a stylesheet, so its
-// `@import './variables.css'` has to resolve to a file beside it, which only
-// holds in dist/css.
-const themeCssBuilt = resolve(storybookDir, '../../../packages/tokens/dist/css/theme.css');
 // Read only for its `@custom-media` definitions, which are authored in src.
+// `preview.ts` loads the built `theme.css` through the package's own exports
+// map, which is where the token values come from.
 const themeCssSource = resolve(storybookDir, '../../../packages/tokens/src/theme.css');
-// react's source imports @pitchfork-ui/core; without this alias Storybook would
-// resolve it to core's dist, which means `npm run storybook` on a fresh clone
-// fails until core has been built.
+// The patterns import `sortRowsBy` from core. Pointing at the source means
+// `npm run storybook` does not need core built first -- the elements do need
+// their own build, but that is their exports map, not an alias.
 const coreSourceEntry = resolve(storybookDir, '../../../packages/core/src/index.ts');
 
 const rawBasePath = process.env.STORYBOOK_BASE_PATH ?? '/';
@@ -103,14 +90,6 @@ const config: StorybookConfig & { title: string } = {
     config.resolve = {
       ...(config.resolve ?? {}),
       alias: [
-        {
-          find: '@pitchfork-ui/react/styles.css',
-          replacement: themeCssBuilt,
-        },
-        {
-          find: '@pitchfork-ui/react',
-          replacement: reactSourceEntry,
-        },
         {
           find: '@pitchfork-ui/core',
           replacement: coreSourceEntry,

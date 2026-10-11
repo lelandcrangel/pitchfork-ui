@@ -27,9 +27,10 @@
     "dist/**/*.css"
   ],
   "files": [
-    "dist",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "dist",
+    "theme.starter.css"
   ],
   "publishConfig": {
     "access": "public"
@@ -38,7 +39,8 @@
     "./css": "./dist/css/variables.css",
     "./variables.css": "./dist/css/variables.css",
     "./tokens": "./dist/json/tokens.json",
-    "./theme.css": "./dist/css/theme.css"
+    "./theme.css": "./dist/css/theme.css",
+    "./theme.starter.css": "./theme.starter.css"
   },
   "scripts": {
     "build": "style-dictionary build --config style-dictionary.config.mjs && cp src/theme.css dist/css/theme.css",

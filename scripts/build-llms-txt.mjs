@@ -96,13 +96,17 @@ function docsUrlFor(component) {
 
 /**
  * A generated element page. `scripts/build-elements-docs.mjs` titles every one
- * `Web components/<PfName>`, so unlike the components these need no lookup --
- * but they go through the same slugify, and `--verify` checks them against the
- * ids Storybook actually built, which is what would catch the convention
- * changing.
+ * `Components/<Name>` -- the elements own that section now, and the `Pf` is
+ * dropped from the page name because a sidebar reading `PfButton` under
+ * `Components` says `pf-` twice. `elements.json` still records the binding's
+ * `PfButton`, so the prefix comes off here.
+ *
+ * No lookup, unlike the components -- but it goes through the same slugify,
+ * and `--verify` checks every one against the ids Storybook actually built,
+ * which is what catches this convention changing.
  */
 const elementDocsUrl = (element) =>
-  `${site}?path=/docs/${slugify(`Web components/${element.name}`)}--docs`;
+  `${site}?path=/docs/${slugify(`Components/${element.name.replace(/^Pf/, '')}`)}--docs`;
 
 /* ------------------------------------------------------------------ *
  * Rendering helpers
@@ -163,21 +167,37 @@ function buildIndex() {
   const out = [];
   out.push('# Pitchfork UI');
   out.push('');
-  out.push(`> ${reactPkg.description}`);
-  out.push('');
   out.push(
-    `Version ${metadata.version}. Install \`${metadata.name}\`, import components from ` +
-      `\`${metadata.name}\` and the stylesheet from \`${metadata.name}/styles.css\`. ` +
-      `Every component is typed, forwards its ref where it wraps a real element, and spreads ` +
-      `unknown props onto that element.`,
+    '> An accessible, themeable library of standard custom elements, backed by a ' +
+      'design-token system, with generated bindings for React, Angular and Vue.',
   );
   out.push('');
-  out.push(
-    `The complete API is published as JSON at \`${metadata.name}/metadata\` — props, ` +
-      `variants, theme variables and worked examples for all ${metadata.components.length} ` +
-      `exported components. Prefer it over scraping these files.`,
-  );
-  out.push('');
+  if (elementMetadata) {
+    out.push(
+      `Install \`${elementMetadata.name}\`, import the stylesheet from ` +
+        `\`${elementMetadata.name}/styles.css\` and register the elements with ` +
+        `\`defineCustomElements()\` from \`${elementMetadata.name}/loader\`. For a ` +
+        `framework, the generated bindings add typed props and real event handlers over ` +
+        `the same elements: \`${elementMetadata.bindings.react}\`, ` +
+        `\`${elementMetadata.bindings.angular}\`, \`${elementMetadata.bindings.vue}\`.`,
+    );
+    out.push('');
+    out.push(
+      `The complete API is published as JSON at \`${elementMetadata.name}/metadata\` — ` +
+        `every prop, attribute, event, method, slot, part and a worked example for all ` +
+        `${elementMetadata.elements.length} elements. Prefer it over scraping these files.`,
+    );
+    out.push('');
+    out.push(
+      'Two things have no React equivalent and are easy to get wrong: a prop typed as ' +
+        'an array or a function has **no attribute**, so markup cannot set it (assign ' +
+        'the property, or pass it through a binding); and a consumer stylesheet cannot ' +
+        'reach inside a shadow root, so styling goes through the `::part()` names each ' +
+        'element documents, or through the `--pf-*` custom properties, which do cross ' +
+        'the boundary.',
+    );
+    out.push('');
+  }
   out.push('## Conventions');
   out.push('');
   out.push('- Never hardcode a colour, radius or spacing value. Use the CSS variables.');
@@ -187,58 +207,53 @@ function buildIndex() {
   out.push('- Prefer semantic HTML — a `<button>`, not a `<div role="button">`.');
   out.push('');
 
-  for (const category of metadata.categories) {
-    const members = metadata.components.filter((c) => c.category === category);
-    if (!members.length) continue;
-
-    out.push(`## ${category[0].toUpperCase()}${category.slice(1)}`);
-    out.push('');
-    for (const component of members) {
-      const url = docsUrlFor(component);
-      const summary =
-        firstSentence(component.description) || `Part of ${component.folder}, exported separately.`;
-      out.push(
-        url ? `- [${component.name}](${url}): ${summary}` : `- ${component.name}: ${summary}`,
-      );
-    }
-    out.push('');
-  }
-
   if (elementMetadata) {
-    out.push('## Web components');
-    out.push('');
-    out.push(
-      `The same library as standard custom elements in \`${elementMetadata.name}\` — ` +
-        'a first-class layer, not wrappers around the React components. Use them in ' +
-        'Angular, Vue, plain HTML, or anywhere the React components do not fit. ' +
-        `Typed bindings are generated for each framework: \`${elementMetadata.bindings.react}\`, ` +
-        `\`${elementMetadata.bindings.angular}\`, \`${elementMetadata.bindings.vue}\`. ` +
-        `The complete element API is JSON at \`${elementMetadata.name}/metadata\`.`,
-    );
-    out.push('');
-    out.push(
-      'Two things that differ from the React props and have no React equivalent: ' +
-        'a prop typed as an array or a function has **no attribute**, so markup ' +
-        'cannot set it (assign the property, or pass it through a binding); and ' +
-        'a consumer stylesheet cannot reach inside a shadow root, so styling goes ' +
-        'through the `::part()` names each element documents, or through the ' +
-        '`--pf-*` custom properties, which do cross the boundary.',
-    );
-    out.push('');
-    for (const element of elementMetadata.elements) {
-      const notes = [
-        element.childOf ? `goes inside \`<${element.childOf}>\`` : null,
-        element.formAssociated ? 'form control' : null,
-        element.reactCounterpart ? `React: \`${element.reactCounterpart}\`` : null,
-      ].filter(Boolean);
-      out.push(
-        `- [<${element.tag}>](${elementDocsUrl(element)}): ` +
-          `${firstSentence(element.description) || `The \`${element.tag}\` element.`}` +
-          (notes.length ? ` (${notes.join('; ')})` : ''),
-      );
+    for (const category of elementMetadata.categories) {
+      const members = elementMetadata.elements.filter((e) => e.category === category);
+      if (!members.length) continue;
+
+      out.push(`## ${category[0].toUpperCase()}${category.slice(1)}`);
+      out.push('');
+      for (const element of members) {
+        const notes = [
+          element.childOf ? `goes inside \`<${element.childOf}>\`` : null,
+          element.formAssociated ? 'form control' : null,
+        ].filter(Boolean);
+        out.push(
+          `- [<${element.tag}>](${elementDocsUrl(element)}): ` +
+            `${firstSentence(element.description) || `The \`${element.tag}\` element.`}` +
+            (notes.length ? ` (${notes.join('; ')})` : ''),
+        );
+      }
+      out.push('');
     }
-    out.push('');
   }
+
+  /*
+   * The React components are no longer documented on the site, so they are no
+   * longer linked here -- a link to a page that does not exist is worse than
+   * none. They are still *published*, though, and someone maintaining code
+   * written against them needs to know where the API went, which is why this
+   * section exists rather than the components simply vanishing.
+   */
+  out.push('## Retiring: @pitchfork-ui/react');
+  out.push('');
+  out.push(
+    `\`${metadata.name}\` ${metadata.version} is still on npm and still works. It is ` +
+      'being retired in favour of the elements above, and its documentation pages have ' +
+      'been removed from the site — every component has an element answer, which ' +
+      `\`${elementMetadata ? elementMetadata.name : '@pitchfork-ui/elements'}/metadata\` ` +
+      'records under `reactCoverage`. The MCP server still answers `get_component` and ' +
+      '`validate_usage` for the React API, from ' +
+      `\`${metadata.name}/metadata\`.`,
+  );
+  out.push('');
+  out.push(
+    `The ${metadata.components.length} exported components: ` +
+      metadata.components.map((c) => `\`${c.name}\``).join(', ') +
+      '.',
+  );
+  out.push('');
 
   out.push('## Optional');
   out.push('');
@@ -259,28 +274,45 @@ function buildFull() {
   const out = [];
   out.push('# Pitchfork UI — full reference');
   out.push('');
-  out.push(`> ${reactPkg.description}`);
-  out.push('');
   out.push(
-    `Generated from ${metadata.name}@${metadata.version}. ` +
-      `${metadata.components.length} exported components. ` +
-      `The same data is available as JSON at \`${metadata.name}/metadata\`.`,
+    '> An accessible, themeable library of standard custom elements, backed by a ' +
+      'design-token system, with generated bindings for React, Angular and Vue.',
   );
   out.push('');
-  out.push('```bash');
-  out.push(`npm install ${metadata.name}`);
-  out.push('```');
-  out.push('');
-  out.push('```tsx');
-  out.push(`import { Button } from '${metadata.name}';`);
-  out.push(`import '${metadata.name}/styles.css';`);
-  out.push('```');
-  out.push('');
+  if (elementMetadata) {
+    out.push(
+      `Generated from ${elementMetadata.name}@${elementMetadata.version}. ` +
+        `${elementMetadata.elements.length} elements. The same data is available as ` +
+        `JSON at \`${elementMetadata.name}/metadata\`.`,
+    );
+    out.push('');
+    out.push('```bash');
+    out.push(`npm install ${elementMetadata.name}`);
+    out.push('```');
+    out.push('');
+    out.push('```js');
+    out.push(`import '${elementMetadata.name}/styles.css';`);
+    out.push(`import { defineCustomElements } from '${elementMetadata.name}/loader';`);
+    out.push('');
+    out.push('defineCustomElements();');
+    out.push('```');
+    out.push('');
+  }
   out.push(metadata.conventions);
   out.push('');
   out.push('---');
   out.push('');
-  out.push('## Components');
+  // The React half comes last and is framed as what it is. It is still
+  // published, so dropping it would leave anyone maintaining code against it
+  // with nothing; it is no longer the library, so it does not lead.
+  out.push('## Retiring: @pitchfork-ui/react');
+  out.push('');
+  out.push(
+    `\`${metadata.name}\` ${metadata.version} is still on npm and still works, and is ` +
+      'being retired in favour of the elements below. Its documentation pages have been ' +
+      'removed from the site, so the props here are the reference; the MCP server also ' +
+      'answers `get_component` and `validate_usage` for it.',
+  );
   out.push('');
 
   for (const component of metadata.components) {
@@ -492,18 +524,29 @@ function verifyLinks(text) {
 console.log('llms.txt written to apps/docs/public/');
 console.log(`  llms.txt:       ${kb(index)} KB`);
 console.log(`  llms-full.txt:  ${kb(full)} KB`);
-console.log(`  components:     ${metadata.components.length} (${linked} linked to a docs page)`);
+console.log(
+  `  components:     ${metadata.components.length} (retiring, no docs pages — ${linked} linked)`,
+);
 
 if (elementMetadata) {
   console.log(`  elements:       ${elementMetadata.elements.length}`);
 }
 
-const unlinked = metadata.components.filter((c) => !docsUrlFor(c)).map((c) => c.name);
-if (unlinked.length) console.log(`  no docs page:   ${unlinked.join(', ')}`);
-
-if (process.argv.includes('--strict') && unlinked.length) {
-  console.error(`\n--strict: ${unlinked.length} component(s) have no docs page.`);
-  process.exit(1);
+/*
+ * This used to assert that every React component had a docs page, which was
+ * the right question while the site documented them. It does not any more, so
+ * the question that can go wrong is the elements': a page title changing under
+ * `elementDocsUrl` would silently publish 108 dead links, and `--verify`
+ * catches that only when a Storybook build is there to compare against.
+ */
+if (process.argv.includes('--strict') && elementMetadata) {
+  const unlinked = elementMetadata.elements
+    .filter((element) => !elementDocsUrl(element))
+    .map((element) => element.tag);
+  if (unlinked.length) {
+    console.error(`\n--strict: ${unlinked.length} element(s) have no docs page.`);
+    process.exit(1);
+  }
 }
 
 if (process.argv.includes('--strict') && !elementMetadata) {

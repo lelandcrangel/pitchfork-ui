@@ -1,5 +1,4 @@
 import { type CSSProperties, useEffect, useRef, useState, type ReactNode } from 'react';
-import { Icon } from '@pitchfork-ui/react';
 import { createPortal } from 'react-dom';
 import colorTokens from '../../../packages/tokens/src/tokens/color.json';
 import sizeTokens from '../../../packages/tokens/src/tokens/size.json';
@@ -2180,9 +2179,9 @@ function TokenSelect({
         }}
       >
         <span style={{ flexGrow: 1 }}>{selectedOption.label}</span>
-        <Icon
+        <pf-icon
           name="chevron-down"
-          aria-hidden
+          aria-hidden="true"
           style={{
             color: 'var(--color-semantic-text-muted)',
             fontSize: '16px',
@@ -2312,9 +2311,9 @@ function ColorSelect({
           }}
         />
         <span style={{ flexGrow: 1 }}>{selectedOption.label}</span>
-        <Icon
+        <pf-icon
           name="chevron-down"
-          aria-hidden
+          aria-hidden="true"
           style={{
             color: 'var(--color-semantic-text-muted)',
             fontSize: '16px',

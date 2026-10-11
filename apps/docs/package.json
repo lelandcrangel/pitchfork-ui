@@ -11,8 +11,8 @@
     "test:a11y-dark": "vitest run --config vitest.storybook.dark.config.ts"
   },
   "dependencies": {
+    "@pitchfork-ui/core": "*",
     "@pitchfork-ui/elements": "*",
-    "@pitchfork-ui/react": "*",
     "@pitchfork-ui/tokens": "*",
     "@storybook/addon-a11y": "^10.6.1",
     "@storybook/addon-docs": "^10.6.1",

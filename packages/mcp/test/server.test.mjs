@@ -51,12 +51,16 @@ test('exposes every documented tool', async () => {
   ]);
 });
 
-test('get_component returns props, theme variables and an example', async () => {
+test('get_component returns props and theme variables', async () => {
+  // No example assertion: metadata.json's React examples were read from
+  // apps/docs/src/*.examples.stories.tsx, and those pages are gone with the
+  // rest of the React documentation. The props and the resolved variable
+  // chains are parsed from the library's own source, so they are unaffected --
+  // and `get_element` carries the worked markup now.
   const out = await call('get_component', { name: 'Badge' });
   assert.match(out, /# Badge/);
   assert.match(out, /'neutral'/, 'variant union should be expanded');
   assert.match(out, /--pf-badge-brand-background/, 'theme aliases should be listed');
-  assert.match(out, /```tsx/, 'an example should be included');
 });
 
 test('get_component suggests a near match for a typo', async () => {
@@ -205,26 +209,33 @@ test('validate_usage stays quiet when a prop list is known to be partial', async
 });
 
 test('validate_usage accepts every documented example', async () => {
-  // The strongest false-positive check available: every extracted example is
-  // real, working code lifted from the docs.
-  const { metadata } = await import('../src/data.mjs');
+  // The strongest false-positive check available: every example is real,
+  // working markup lifted from the docs.
+  //
+  // This used to walk the React components' examples. They came from the docs
+  // pages, which are gone, so the corpus is the elements' now -- one worked
+  // example and, where it differs, one single instance, for all 108.
+  const { elementMetadata, elementsByTag, componentsByName } = await import('../src/data.mjs');
   const { validateUsage } = await import('../src/validate.mjs');
-  const { componentsByName } = await import('../src/data.mjs');
 
   const failures = [];
   let checked = 0;
-  for (const component of metadata.components) {
-    for (const example of component.examples ?? []) {
+  for (const element of elementMetadata.elements) {
+    for (const [field, markup] of [
+      ['example', element.example],
+      ['interactive', element.interactive],
+    ]) {
+      if (!markup) continue;
       checked += 1;
-      for (const finding of validateUsage(example.code, componentsByName)) {
+      for (const finding of validateUsage(markup, componentsByName, null, elementsByTag)) {
         if (finding.severity === 'error') {
-          failures.push(`${component.name}/${example.name}: ${finding.message}`);
+          failures.push(`${element.tag}/${field}: ${finding.message}`);
         }
       }
     }
   }
 
-  assert.ok(checked > 200, `expected a substantial corpus, got ${checked}`);
+  assert.ok(checked > 100, `expected a substantial corpus, got ${checked}`);
   assert.deepEqual(failures, [], 'no documented example should fail validation');
 });
 
@@ -259,11 +270,23 @@ test('validate_usage still checks written attributes alongside a spread', async 
   assert.match(out, /not valid on `Badge`/);
 });
 
-test('get_examples includes stories whose args use shorthand properties', async () => {
-  // Carousel's meta supplies its required prop as `args: { slides }`, a
-  // shorthand property. Dropping those leaves it with no usable example.
-  const out = await call('get_examples', { name: 'Carousel' });
-  assert.match(out, /slides=\{slides\}/);
+test('every element reaches the server with an example', async () => {
+  // This replaces a test that pinned build-metadata.mjs's handling of
+  // shorthand `args: { slides }` in a React example story. There are no
+  // example stories left to parse, so that code path is unreachable and the
+  // assertion could only pass vacuously.
+  //
+  // What matters now is the property it was really protecting: that no
+  // element arrives with nothing to show. `build-elements-docs --strict`
+  // enforces it at the source; this is the same question asked of the
+  // published metadata.
+  const { elementMetadata } = await import('../src/data.mjs');
+  const without = elementMetadata.elements.filter((element) => !element.example);
+  assert.deepEqual(
+    without.map((element) => element.tag),
+    [],
+    'every element should carry a worked example',
+  );
 });
 
 /* ------------------------------------------------------------------ *
