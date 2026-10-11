@@ -47,7 +47,8 @@
     "check:publishable": "node scripts/check-publishable.mjs",
     "check:icons": "node scripts/check-icon-names.mjs",
     "check:examples": "node scripts/check-element-examples.mjs",
-    "build:elements-metadata": "node scripts/build-elements-metadata.mjs"
+    "build:elements-metadata": "node scripts/build-elements-metadata.mjs",
+    "build:migration-guide": "node scripts/build-migration-guide.mjs"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",
