@@ -2,6 +2,28 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.16.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.3...react-v0.16.0) (2026-10-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **react:** every export of @pitchfork-ui/react is marked @deprecated. The package still builds and behaves identically; editors and any tooling that reads JSDoc will now flag its use.
+* **docs:** @pitchfork-ui/react's documentation pages are removed from the Storybook site, and metadata.json no longer carries React examples or descriptions. The package is unchanged and still published.
+
+### Features
+
+* **docs:** the elements take over Components; React docs removed ([383c11f](https://github.com/lelandcrangel/pitchfork-ui/commit/383c11f4d0288ffb3a6c66beecc2b8bdeb47665e))
+* **elements:** add 108 custom elements with React, Angular and Vue bindings ([#114](https://github.com/lelandcrangel/pitchfork-ui/issues/114)) ([50ed57a](https://github.com/lelandcrangel/pitchfork-ui/commit/50ed57ab3d9cdbda02258475be07c87c81ff5e43))
+* **react:** mark every component [@deprecated](https://github.com/deprecated) ([9b38398](https://github.com/lelandcrangel/pitchfork-ui/commit/9b3839825d2f4a015da320c255451d6a2cc05cab))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/core bumped from ^0.1.0 to ^0.2.0
+    * @pitchfork-ui/tokens bumped from ^0.4.1 to ^0.5.0
+
 ## [0.15.3](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.2...react-v0.15.3) (2026-10-04)
 
 
