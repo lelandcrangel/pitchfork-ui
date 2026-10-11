@@ -1479,6 +1479,16 @@ Two things that bit while writing it:
   the content literally: escaping there renders `&lt;Link>` as visible
   mojibake, while _not_ escaping outside there lets MDX parse `<Link>` as a
   component and fail the build. The first draft managed both in one file.
+- **A multi-line `{/* */}` comment in an MDX file is mangled by Prettier.**
+  Measured both ways: Prettier reads the `/*` and `*/` as a markdown emphasis
+  span and normalises it, so `{/* ... */}` becomes **`{/_ ... _/}`** — which is
+  not valid JS, and the Storybook build fails with "Could not parse expression
+  with acorn" naming the file. A comment that happens to contain an
+  `*emphasis*` pair of its own survives, because the inner `*` pairs first;
+  that is luck, not correctness, and deleting the emphasis breaks the build.
+  Keep an MDX comment on **one line**. The long reasoning goes here instead,
+  which is where the rest of it lives anyway. The generated pages escape this
+  only because they are in `.prettierignore`.
 - **The generated pages are in `.prettierignore`**, because `--verify`
   compares the generator's own output. Formatting them afterwards would make
   every build report 108 stale pages.

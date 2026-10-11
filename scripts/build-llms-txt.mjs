@@ -236,14 +236,16 @@ function buildIndex() {
    * written against them needs to know where the API went, which is why this
    * section exists rather than the components simply vanishing.
    */
-  out.push('## Retiring: @pitchfork-ui/react');
+  out.push('## Deprecated: @pitchfork-ui/react');
   out.push('');
   out.push(
-    `\`${metadata.name}\` ${metadata.version} is still on npm and still works. It is ` +
-      'being retired in favour of the elements above, and its documentation pages have ' +
-      'been removed from the site — every component has an element answer, which ' +
-      `\`${elementMetadata ? elementMetadata.name : '@pitchfork-ui/elements'}/metadata\` ` +
-      'records under `reactCoverage`. The MCP server still answers `get_component` and ' +
+    `\`${metadata.name}\` ${metadata.version} is **deprecated**. Do not write new code ` +
+      'against it: use the elements above, through the generated ' +
+      '`@pitchfork-ui/elements-react` bindings in a React app. It is still on npm and ' +
+      'still works, its documentation pages have been removed from the site, and it ' +
+      'will be removed after a stated window. Every component has an element answer, ' +
+      `which \`${elementMetadata ? elementMetadata.name : '@pitchfork-ui/elements'}/metadata\` ` +
+      'records under `reactCoverage`; the MCP server still answers `get_component` and ' +
       '`validate_usage` for the React API, from ' +
       `\`${metadata.name}/metadata\`.`,
   );
@@ -305,11 +307,12 @@ function buildFull() {
   // The React half comes last and is framed as what it is. It is still
   // published, so dropping it would leave anyone maintaining code against it
   // with nothing; it is no longer the library, so it does not lead.
-  out.push('## Retiring: @pitchfork-ui/react');
+  out.push('## Deprecated: @pitchfork-ui/react');
   out.push('');
   out.push(
-    `\`${metadata.name}\` ${metadata.version} is still on npm and still works, and is ` +
-      'being retired in favour of the elements below. Its documentation pages have been ' +
+    `\`${metadata.name}\` ${metadata.version} is **deprecated** — write new code ` +
+      'against the elements below instead. It is still on npm and still works, and ' +
+      'will be removed after a stated window. Its documentation pages have been ' +
       'removed from the site, so the props here are the reference; the MCP server also ' +
       'answers `get_component` and `validate_usage` for it.',
   );
@@ -525,7 +528,7 @@ console.log('llms.txt written to apps/docs/public/');
 console.log(`  llms.txt:       ${kb(index)} KB`);
 console.log(`  llms-full.txt:  ${kb(full)} KB`);
 console.log(
-  `  components:     ${metadata.components.length} (retiring, no docs pages — ${linked} linked)`,
+  `  components:     ${metadata.components.length} (deprecated, no docs pages — ${linked} linked)`,
 );
 
 if (elementMetadata) {

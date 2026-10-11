@@ -339,6 +339,28 @@ test('get_examples adds a single instance only where it differs', async () => {
   assert.doesNotMatch(one, /## One instance/);
 });
 
+test('get_examples routes a deprecated React name to its element', async () => {
+  // Every one of the 91 React components lost its examples when the React docs
+  // pages went, so this path used to answer "`Alert` has no examples" -- a dead
+  // end for the one question asked here. It now answers with the element that
+  // replaces it, because `@pitchfork-ui/react` is deprecated and the useful
+  // reply is the markup to write instead.
+  const out = await call('get_examples', { name: 'Alert' });
+  assert.match(out, /deprecated/);
+  assert.match(out, /<pf-alert>/);
+  assert.match(out, /@pitchfork-ui\/elements-react/);
+  // The markup itself, not just a pointer to it.
+  assert.match(out, /```html/);
+});
+
+test('get_examples says how an absorbed component was taken in', async () => {
+  // `NotificationStack` has no element of its own -- `pf-toaster` absorbed it
+  // -- so naming the tag without saying that would read as a straight rename.
+  const out = await call('get_examples', { name: 'NotificationStack' });
+  assert.match(out, /<pf-toaster>/);
+  assert.match(out, /absorbed it rather than mirroring it/);
+});
+
 test('get_element includes the worked markup', async () => {
   const out = await call('get_element', { name: 'pf-select' });
   assert.match(out, /## Example/);
