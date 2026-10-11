@@ -50,7 +50,8 @@
     "build:elements-metadata": "node scripts/build-elements-metadata.mjs",
     "build:migration-guide": "node scripts/build-migration-guide.mjs",
     "codemod:elements": "node scripts/codemod-react-to-elements.mjs",
-    "test:codemod": "node --test scripts/test/codemod.test.mjs"
+    "test:codemod": "node --test scripts/test/codemod.test.mjs",
+    "setup:publishers": "node scripts/setup-trusted-publishers.mjs"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",
