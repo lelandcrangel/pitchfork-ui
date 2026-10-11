@@ -31,6 +31,17 @@ export default defineVitestConfig({
       },
       {
         plugins: [stencilVitestPlugin()],
+        // Browser mode serves the suites off a real Vite dev server, and
+        // `@stencil/core/internal/client` is reached through the runtime rather
+        // than through an import the dep scanner can see -- so on a cold cache
+        // Vite discovers it mid-run, re-optimizes and *reloads the page*.
+        // Whichever suite is mid-fetch when the reload lands dies with
+        // "Failed to fetch dynamically imported module" and zero tests, which
+        // is a different suite each time and never reproduces on a warm cache.
+        // Declaring it here optimizes it before the run starts.
+        optimizeDeps: {
+          include: ['@stencil/core/internal/client'],
+        },
         test: {
           name: 'browser',
           include: ['src/**/*.browser.spec.{ts,tsx}'],
