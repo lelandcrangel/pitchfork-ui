@@ -10,6 +10,17 @@
  *   2. the component name, `Button` -> `PfButton`
  *   3. the event props, `onClick` -> `onPfClick`
  *
+ * And it audits the call sites of every `Pf*` element in the files it scans,
+ * ported or not, for a handler the element cannot fire. That audit exists
+ * because the rename alone shipped a silent defect: `Switch.onChange` is
+ * React's own synthetic handler, inherited from `InputHTMLAttributes` rather
+ * than declared by the component, so it is in no metadata and the migration
+ * map never sees it. Renaming `Switch` to `PfSwitch` leaves
+ * `onChange={(e) => set(e.target.checked)}` in place, where it type-checks,
+ * renders, and never fires -- `pf-switch` emits `pfChange` and no native
+ * `change`. The theme-builder's dark-mode toggle was exactly that, and nothing
+ * else in the repo would have reported it.
+ *
  * **It refuses and annotates wherever the call site has to change shape.** A
  * wrong automatic rewrite of a content prop is worse than a `// TODO` pointing
  * at the right page: turning `heading={<b>x</b>}` into a slotted child means
@@ -51,6 +62,7 @@ if (targets.length === 0) {
 
 const map = loadMigrationMap();
 const byName = new Map(map.components.map((c) => [c.name, c]));
+const byBinding = new Map(map.components.filter((c) => c.binding).map((c) => [c.binding, c]));
 
 /**
  * Blank out comments, and optionally string literals, so a pattern never
@@ -154,6 +166,133 @@ function readImports(source, masked) {
     results.push({ start: match.index, end: match.index + match[0].length, names });
   }
   return results;
+}
+
+/**
+ * React event props that a custom element host really does fire, because they
+ * are DOM events that bubble out of the shadow root or are dispatched on the
+ * host itself. Anything outside this set has to be one of the element's own
+ * `pf*` events.
+ *
+ * `onChange` and `onInput` are deliberately **not** here. The form elements
+ * emit `pfChange`/`pfInput` and no native equivalent, so a React `onChange`
+ * left on one is the silent case this audit exists for -- which is also why
+ * the set is a list of what works rather than a list of what does not: a new
+ * React event prop is far more likely to be a DOM one than an element one, and
+ * a false report is cheaper than a silent miss.
+ */
+const HOST_DOM_EVENTS = new Set([
+  'onClick',
+  'onDoubleClick',
+  'onContextMenu',
+  'onMouseDown',
+  'onMouseUp',
+  'onMouseEnter',
+  'onMouseLeave',
+  'onMouseMove',
+  'onMouseOver',
+  'onMouseOut',
+  'onPointerDown',
+  'onPointerUp',
+  'onPointerMove',
+  'onPointerEnter',
+  'onPointerLeave',
+  'onPointerCancel',
+  'onKeyDown',
+  'onKeyUp',
+  'onKeyPress',
+  'onFocus',
+  'onBlur',
+  'onFocusCapture',
+  'onBlurCapture',
+  'onWheel',
+  'onScroll',
+  'onTouchStart',
+  'onTouchMove',
+  'onTouchEnd',
+  'onTouchCancel',
+  'onDragStart',
+  'onDragEnd',
+  'onDragEnter',
+  'onDragLeave',
+  'onDragOver',
+  'onDrop',
+  'onCopy',
+  'onCut',
+  'onPaste',
+  'onAnimationStart',
+  'onAnimationEnd',
+  'onAnimationIteration',
+  'onTransitionEnd',
+]);
+
+/**
+ * The attribute names on one JSX opening tag, found by walking forward from
+ * the tag and balancing braces so a `>` inside an expression does not end it.
+ *
+ * Written out rather than regexed for the reason the rest of this file is
+ * regexed: `<PfInput ... onChange={(e) => e.target.value} />` contains a `>`
+ * in an arrow function, so `<PfInput[^>]*>` stops in the middle of the tag and
+ * reads half its attributes.
+ */
+function openingTagAttributes(masked, from) {
+  let depth = 0;
+  let index = from;
+  const names = [];
+
+  for (; index < masked.length; index += 1) {
+    const char = masked[index];
+    if (char === '{') depth += 1;
+    else if (char === '}') depth -= 1;
+    else if (char === '>' && depth === 0) break;
+    else if (depth === 0 && /[A-Za-z]/.test(char)) {
+      const rest = masked.slice(index);
+      const match = /^([A-Za-z][A-Za-z0-9_-]*)\s*=/.exec(rest);
+      if (match) {
+        names.push({ name: match[1], at: index });
+        index += match[1].length;
+      }
+    }
+  }
+
+  return names;
+}
+
+/** The 1-based line a character index falls on, for a readable report. */
+const lineAt = (source, index) => source.slice(0, index).split('\n').length;
+
+/**
+ * Every handler in this file that its element cannot fire.
+ *
+ * Runs over `Pf*` tags whichever way they got there, so it audits a file this
+ * run rewrote and a file ported by hand months ago alike.
+ */
+function auditHandlers(source, byBinding) {
+  const masked = mask(source, { strings: true });
+  const findings = [];
+
+  for (const [binding, component] of byBinding) {
+    const tag = new RegExp(`<${binding}(?=[\\s/>])`, 'g');
+    for (const match of masked.matchAll(tag)) {
+      for (const { name, at } of openingTagAttributes(masked, match.index + binding.length + 1)) {
+        if (!/^on[A-Z]/.test(name)) continue;
+        if (HOST_DOM_EVENTS.has(name)) continue;
+        // `onPfChange` for `pfChange`, which is what the bindings expose.
+        const expected = `pf${name.slice(4)}`;
+        if (name.startsWith('onPf') && component.elementEvents.includes(expected)) continue;
+
+        findings.push({
+          line: lineAt(source, at),
+          binding,
+          prop: name,
+          events: component.elementEvents,
+          tag: component.tag,
+        });
+      }
+    }
+  }
+
+  return findings.sort((a, b) => a.line - b.line);
 }
 
 function processFile(path) {
@@ -390,6 +529,19 @@ function walk(target, found = []) {
 const files = targets.flatMap((t) => walk(t));
 const results = files.map(processFile).filter(Boolean);
 
+/*
+ * The audit reads the file from disk *after* the rewrite, so with `--write` it
+ * sees the renamed call sites this run produced -- which is the case that
+ * matters, since the rename is what strands an `onChange` on an element. On a
+ * dry run it reports what is already there, which is the same check a ported
+ * app wants on its own.
+ */
+const handlerFindings = files.flatMap((path) => {
+  const current = readFileSync(path, 'utf8');
+  if (!current.includes(ELEMENTS_PACKAGE)) return [];
+  return auditHandlers(current, byBinding).map((finding) => ({ ...finding, path }));
+});
+
 const changed = results.filter((r) => r.changed);
 const blocked = results.filter((r) => r.refusals?.length);
 const skipped = results.filter((r) => r.skipped);
@@ -452,6 +604,21 @@ if (undeclared.size > 0 && !quiet) {
         `before anyone installs this from the registry.`,
     );
   }
+}
+
+if (handlerFindings.length > 0) {
+  console.log(
+    `\n${handlerFindings.length} handler(s) the element cannot fire — these ` +
+      'type-check, render and never run:',
+  );
+  for (const finding of handlerFindings) {
+    const events = finding.events.length > 0 ? finding.events.join(', ') : 'no events at all';
+    console.log(
+      `  ${relative(process.cwd(), finding.path)}:${finding.line}  ` +
+        `<${finding.binding} ${finding.prop}> — ${finding.tag} emits ${events}`,
+    );
+  }
+  process.exitCode = 1;
 }
 
 const verb = write ? 'rewrote' : 'would rewrite';
