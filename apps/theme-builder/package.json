@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pitchfork-ui/react": "*",
+    "@pitchfork-ui/elements": "*",
+    "@pitchfork-ui/elements-react": "*",
     "@pitchfork-ui/tokens": "*",
     "culori": "^4.0.2",
     "react": "^19.3.0",

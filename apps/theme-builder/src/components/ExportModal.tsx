@@ -1,4 +1,12 @@
-import { Button, CodeSnippet, Modal } from '@pitchfork-ui/react';
+import { PfButton } from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - CodeSnippet: the call site changes shape: title -> needs a destination; onCodeCopy -> no matching event on pf-code-snippet; pick the right one
+ * - Modal: the call site changes shape: title -> needs a destination; description -> needs a destination; footer -> needs a destination
+ */
+import { CodeSnippet, Modal } from '@pitchfork-ui/react';
 
 interface Props {
   css: string;
@@ -26,10 +34,10 @@ export function ExportModal({ css, onClose }: Props) {
     >
       <CodeSnippet code={css} language="css" title="pitchfork-theme.css" />
       <div style={{ display: 'flex', gap: 8, marginTop: 16, justifyContent: 'flex-end' }}>
-        <Button variant="secondary" onClick={onClose}>
+        <PfButton variant="secondary" onClick={onClose}>
           Close
-        </Button>
-        <Button onClick={download}>Download .css</Button>
+        </PfButton>
+        <PfButton onClick={download}>Download .css</PfButton>
       </div>
     </Modal>
   );

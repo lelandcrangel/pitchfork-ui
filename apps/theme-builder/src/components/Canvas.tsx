@@ -1,22 +1,28 @@
 import { forwardRef } from 'react';
 import {
-  Alert,
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Checkbox,
-  Input,
-  LoadingDots,
-  LoadingSkeleton,
-  LoadingSpinner,
-  RadioGroup,
-  Select,
-  Switch,
-  Tag,
-} from '@pitchfork-ui/react';
+  PfAvatar,
+  PfBadge,
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardHeader,
+  PfCheckbox,
+  PfInput,
+  PfLoadingDots,
+  PfLoadingSkeleton,
+  PfLoadingSpinner,
+  PfSwitch,
+  PfTag,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - Alert: the call site changes shape: icon -> slot
+ * - RadioGroup: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-radio-group; pick the right one
+ * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
+ */
+import { Alert, RadioGroup, Select } from '@pitchfork-ui/react';
 import './Canvas.css';
 
 interface CanvasProps {
@@ -33,18 +39,18 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
         {show('Buttons') && (
           <Section title="Buttons">
             <Row wrap>
-              <Button>Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="ghost">Ghost</Button>
-              <Button variant="destructive">Destructive</Button>
-              <Button disabled>Disabled</Button>
+              <PfButton>Primary</PfButton>
+              <PfButton variant="secondary">Secondary</PfButton>
+              <PfButton variant="ghost">Ghost</PfButton>
+              <PfButton variant="destructive">Destructive</PfButton>
+              <PfButton disabled>Disabled</PfButton>
             </Row>
             <Row wrap>
-              <Button size="sm">Small</Button>
-              <Button size="sm" variant="secondary">
+              <PfButton size="sm">Small</PfButton>
+              <PfButton size="sm" variant="secondary">
                 Small secondary
-              </Button>
-              <Button size="lg">Large</Button>
+              </PfButton>
+              <PfButton size="lg">Large</PfButton>
             </Row>
           </Section>
         )}
@@ -52,8 +58,12 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
         {show('Form Controls') && (
           <Section title="Form Controls">
             <Row align="start">
-              <Input label="Email address" placeholder="you@example.com" />
-              <Input label="Error state" defaultValue="bad input" error="This field is required." />
+              <PfInput label="Email address" placeholder="you@example.com" />
+              <PfInput
+                label="Error state"
+                defaultValue="bad input"
+                error="This field is required."
+              />
             </Row>
             <Row align="start">
               <Select
@@ -77,10 +87,10 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
               />
             </Row>
             <Row>
-              <Checkbox label="Remember me" defaultChecked />
-              <Checkbox label="Send notifications" />
-              <Switch label="Dark mode" />
-              <Switch label="Auto-save" defaultChecked />
+              <PfCheckbox label="Remember me" defaultChecked />
+              <PfCheckbox label="Send notifications" />
+              <PfSwitch label="Dark mode" />
+              <PfSwitch label="Auto-save" defaultChecked />
             </Row>
           </Section>
         )}
@@ -109,18 +119,18 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
         {show('Badges & Tags') && (
           <Section title="Badges & Tags">
             <Row wrap>
-              <Badge variant="brand">Brand</Badge>
-              <Badge variant="success">Success</Badge>
-              <Badge variant="warning">Warning</Badge>
-              <Badge variant="danger">Danger</Badge>
-              <Badge variant="neutral">Neutral</Badge>
+              <PfBadge variant="brand">Brand</PfBadge>
+              <PfBadge variant="success">Success</PfBadge>
+              <PfBadge variant="warning">Warning</PfBadge>
+              <PfBadge variant="danger">Danger</PfBadge>
+              <PfBadge variant="neutral">Neutral</PfBadge>
             </Row>
             <Row wrap>
-              <Tag variant="brand">Brand</Tag>
-              <Tag variant="success">Success</Tag>
-              <Tag variant="warning">Warning</Tag>
-              <Tag variant="danger">Danger</Tag>
-              <Tag variant="neutral">Neutral</Tag>
+              <PfTag variant="brand">Brand</PfTag>
+              <PfTag variant="success">Success</PfTag>
+              <PfTag variant="warning">Warning</PfTag>
+              <PfTag variant="danger">Danger</PfTag>
+              <PfTag variant="neutral">Neutral</PfTag>
             </Row>
           </Section>
         )}
@@ -128,16 +138,16 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
         {show('Avatar') && (
           <Section title="Avatar">
             <Row>
-              <Avatar name="John Smith" size="sm" />
-              <Avatar name="John Smith" size="md" />
-              <Avatar name="John Smith" size="lg" />
-              <Avatar name="John Smith" size="xl" />
+              <PfAvatar name="John Smith" size="sm" />
+              <PfAvatar name="John Smith" size="md" />
+              <PfAvatar name="John Smith" size="lg" />
+              <PfAvatar name="John Smith" size="xl" />
             </Row>
             <Row>
-              <Avatar name="Online" status="online" />
-              <Avatar name="Away" status="away" />
-              <Avatar name="Busy" status="busy" />
-              <Avatar name="Offline" status="offline" />
+              <PfAvatar name="Online" status="online" />
+              <PfAvatar name="Away" status="away" />
+              <PfAvatar name="Busy" status="busy" />
+              <PfAvatar name="Offline" status="offline" />
             </Row>
           </Section>
         )}
@@ -145,32 +155,32 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
         {show('Card') && (
           <Section title="Card">
             <div className="canvas__card-row">
-              <Card>
+              <PfCard>
                 <div className="canvas__card-content">
                   <p className="canvas__card-title">Monthly Revenue</p>
                   <p className="canvas__card-value">$12,430</p>
                   <p className="canvas__card-sub">+8.2% from last month</p>
                   <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-                    <Button size="sm">View report</Button>
-                    <Button size="sm" variant="ghost">
+                    <PfButton size="sm">View report</PfButton>
+                    <PfButton size="sm" variant="ghost">
                       Dismiss
-                    </Button>
+                    </PfButton>
                   </div>
                 </div>
-              </Card>
-              <Card>
+              </PfCard>
+              <PfCard>
                 <div className="canvas__card-content">
                   <p className="canvas__card-title">New signups</p>
                   <p className="canvas__card-value">1,284</p>
                   <p className="canvas__card-sub">+3.1% from last month</p>
                   <div style={{ marginTop: 16, display: 'flex', gap: 8 }}>
-                    <Button size="sm">View users</Button>
-                    <Button size="sm" variant="ghost">
+                    <PfButton size="sm">View users</PfButton>
+                    <PfButton size="sm" variant="ghost">
                       Dismiss
-                    </Button>
+                    </PfButton>
                   </div>
                 </div>
-              </Card>
+              </PfCard>
             </div>
           </Section>
         )}
@@ -178,11 +188,11 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
         {show('Loading') && (
           <Section title="Loading">
             <Row>
-              <LoadingSpinner size={16} />
-              <LoadingSpinner size={24} />
-              <LoadingSpinner size={32} />
-              <LoadingDots />
-              <LoadingSkeleton style={{ width: 120, height: 16, borderRadius: 4 }} />
+              <PfLoadingSpinner size={16} />
+              <PfLoadingSpinner size={24} />
+              <PfLoadingSpinner size={32} />
+              <PfLoadingDots />
+              <PfLoadingSkeleton style={{ width: 120, height: 16, borderRadius: 4 }} />
             </Row>
           </Section>
         )}
@@ -197,14 +207,14 @@ Canvas.displayName = 'Canvas';
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <Card>
-      <CardHeader>
+    <PfCard>
+      <PfCardHeader>
         <span className="canvas__section-title">{title}</span>
-      </CardHeader>
-      <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      </PfCardHeader>
+      <PfCardContent style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         {children}
-      </CardContent>
-    </Card>
+      </PfCardContent>
+    </PfCard>
   );
 }
 
