@@ -7,19 +7,16 @@ import {
   PfCardHeader,
   PfCreditCard,
   PfInput,
+  PfOption,
+  PfPageHeader,
+  PfSectionHeader,
+  PfSelect,
   PfSwitch,
+  PfTab,
+  PfTabPanel,
+  PfTabs,
   PfTextarea,
 } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - PageHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
- * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
- * - SectionHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
- * - Tabs: the call site changes shape: items -> child elements; onValueChange -> no matching event on pf-tabs; pick the right one
- */
-import { PageHeader, SectionHeader, Select, Tabs } from '@pitchfork-ui/react';
 import { useNotifications } from '../context/NotificationContext';
 
 const timezoneOptions = [
@@ -59,12 +56,17 @@ function ProfileTab() {
         />
       </div>
       <PfInput label="Company" value={company} onChange={(e) => setCompany(e.target.value)} />
-      <Select
+      <PfSelect
         label="Timezone"
-        options={timezoneOptions}
         value={timezone}
-        onValueChange={setTimezone}
-      />
+        onPfChange={(event) => setTimezone(event.detail.value)}
+      >
+        {timezoneOptions.map((option) => (
+          <PfOption key={option.value} value={option.value}>
+            {option.label}
+          </PfOption>
+        ))}
+      </PfSelect>
       <PfTextarea
         label="Bio"
         description="A short description shown on your public profile."
@@ -308,7 +310,7 @@ function BillingTab() {
 
       <PfCard>
         <PfCardHeader>
-          <SectionHeader heading="Payment method" />
+          <PfSectionHeader>Payment method</PfSectionHeader>
         </PfCardHeader>
         <PfCardContent>
           <PfCreditCard
@@ -325,16 +327,43 @@ function BillingTab() {
 }
 
 export function SettingsPage() {
-  const tabItems = [
-    { value: 'profile', label: 'Profile', content: <ProfileTab /> },
-    { value: 'notifications', label: 'Notifications', content: <NotificationsTab /> },
-    { value: 'billing', label: 'Billing', content: <BillingTab /> },
-  ];
+  const [tab, setTab] = useState('profile');
 
   return (
     <div className="demo-section" style={{ gap: 'var(--space-6)' }}>
-      <PageHeader heading="Settings" description="Manage your account, preferences, and billing." />
-      <Tabs items={tabItems} defaultValue="profile" />
+      {/* A page header's heading is its default slot, and `description` is a slot of its own. */}
+      <PfPageHeader>
+        Settings
+        <span slot="description">Manage your account, preferences, and billing.</span>
+      </PfPageHeader>
+
+      {/*
+       * The React `Tabs` took an `items` array of `{ value, label, content }`.
+       * `pf-tabs` takes the strip and the panels as children, written
+       * interleaved -- `pf-tab` assigns itself `slot="tab"` in
+       * `connectedCallback`, which is what lets one pair per item land in two
+       * different places.
+       *
+       * Held in React state rather than left to the element: `pf-tabs` does own
+       * its `value`, but a constant `value="profile"` from a React render is an
+       * invitation to the "controlled consumer overwrites what you assign"
+       * problem the moment anything else makes this component re-render.
+       */}
+      <PfTabs value={tab} onPfChange={(event) => setTab(event.detail.value)}>
+        <PfTab value="profile">Profile</PfTab>
+        <PfTab value="notifications">Notifications</PfTab>
+        <PfTab value="billing">Billing</PfTab>
+
+        <PfTabPanel value="profile">
+          <ProfileTab />
+        </PfTabPanel>
+        <PfTabPanel value="notifications">
+          <NotificationsTab />
+        </PfTabPanel>
+        <PfTabPanel value="billing">
+          <BillingTab />
+        </PfTabPanel>
+      </PfTabs>
     </div>
   );
 }
