@@ -44,3 +44,11 @@ body {
   display: grid;
   gap: var(--space-4);
 }
+
+/* The small caption above a value in the signup detail dialog. Four copies of
+   the same inline style before the port; one class now. */
+.demo-field-label {
+  margin-bottom: var(--space-1);
+  color: var(--color-semantic-text-muted);
+  font-size: var(--font-size-xs);
+}
