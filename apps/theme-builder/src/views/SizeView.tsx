@@ -6,17 +6,12 @@ import {
   PfCardHeader,
   PfCheckbox,
   PfInput,
+  PfOption,
+  PfSelect,
+  PfSlider,
   PfTag,
+  PfUtilityButton,
 } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
- * - Slider: an event prop has no equivalent on `pf-slider`: onValueChange -> no matching event on pf-slider; pick the right one
- * - UtilityButton: the call site changes shape: icon -> slot
- */
-import { Select, Slider, UtilityButton } from '@pitchfork-ui/react';
 import { useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 import '../styles/controls.css';
@@ -129,21 +124,26 @@ function RadiusControl({ label, cssVar, theme, max, hint, isFull }: RadiusContro
         </div>
         <span className="control__value">{displayValue}</span>
         {modified && (
-          <UtilityButton
+          <PfUtilityButton
             size="sm"
             onClick={() => theme.resetVar(cssVar)}
-            aria-label={`Reset ${label}`}
+            label={`Reset ${label}`}
           >
             ↺
-          </UtilityButton>
+          </PfUtilityButton>
         )}
       </div>
-      <Slider
+      <PfSlider
         min={0}
         max={max}
         step={1}
         value={Math.min(px, max)}
-        onValueChange={(n) => theme.set(cssVar, isFull && n >= max ? '9999px' : `${n}px`)}
+        onPfInput={(event) =>
+          theme.set(
+            cssVar,
+            isFull && event.detail.value >= max ? '9999px' : `${event.detail.value}px`,
+          )
+        }
         aria-label={label}
       />
     </div>
@@ -180,21 +180,21 @@ function SpacingControl({ label, cssVar, theme, max, hint }: SpacingControlProps
         </div>
         <span className="control__value">{px}px</span>
         {modified && (
-          <UtilityButton
+          <PfUtilityButton
             size="sm"
             onClick={() => theme.resetVar(cssVar)}
-            aria-label={`Reset ${label}`}
+            label={`Reset ${label}`}
           >
             ↺
-          </UtilityButton>
+          </PfUtilityButton>
         )}
       </div>
-      <Slider
+      <PfSlider
         min={0}
         max={max}
         step={1}
         value={px}
-        onValueChange={(n) => theme.set(cssVar, `${+(n / 16).toFixed(4)}rem`)}
+        onPfInput={(event) => theme.set(cssVar, `${+(event.detail.value / 16).toFixed(4)}rem`)}
         aria-label={label}
       />
     </div>
@@ -305,24 +305,29 @@ function SizeCanvas() {
               label="Project name"
               placeholder="My design system"
               value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
+              onPfInput={(event) => setInputVal(event.detail.value)}
             />
-            <Select
+            <PfSelect
               label="Tool"
-              options={FORM_OPTIONS}
               value={selectVal}
-              onValueChange={setSelectVal}
-            />
+              onPfChange={(event) => setSelectVal(event.detail.value)}
+            >
+              {FORM_OPTIONS.map((option) => (
+                <PfOption key={option.value} value={option.value}>
+                  {option.label}
+                </PfOption>
+              ))}
+            </PfSelect>
             <div className="size-canvas__checkbox-row">
               <PfCheckbox
                 label="Enable dark mode"
                 checked={checked1}
-                onChange={(e) => setChecked1(e.target.checked)}
+                onPfChange={(event) => setChecked1(event.detail.checked)}
               />
               <PfCheckbox
                 label="Auto-publish on save"
                 checked={checked2}
-                onChange={(e) => setChecked2(e.target.checked)}
+                onPfChange={(event) => setChecked2(event.detail.checked)}
               />
             </div>
           </PfCardContent>
