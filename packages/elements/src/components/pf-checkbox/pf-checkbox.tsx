@@ -1,6 +1,7 @@
 import {
   AttachInternals,
   Component,
+  Element,
   Event,
   EventEmitter,
   h,
@@ -11,6 +12,7 @@ import {
 } from '@stencil/core';
 
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 
 /**
  * A form-associated checkbox.
@@ -26,6 +28,8 @@ import { applyControlValidity } from '../../form-validity';
   shadow: { delegatesFocus: true },
 })
 export class PfCheckbox {
+  @Element() el!: HTMLElement;
+
   @AttachInternals() internals!: ElementInternals;
 
   /**
@@ -121,6 +125,7 @@ export class PfCheckbox {
         <div class="field" part="field">
           <input
             id="input"
+            aria-label={controlAriaLabel(this.el, this.label)}
             part="input"
             class="input"
             type="checkbox"

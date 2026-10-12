@@ -10,6 +10,7 @@ import {
 } from '@pitchfork-ui/core';
 
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 import { placePopover } from '../../place-popover';
 import {
   AttachInternals,
@@ -425,6 +426,7 @@ export class PfCombobox {
           <div class={{ control: true, 'control--invalid': Boolean(this.error) }} part="control">
             <input
               id="input"
+              aria-label={controlAriaLabel(this.el, this.label)}
               part="input"
               class="input"
               type="text"

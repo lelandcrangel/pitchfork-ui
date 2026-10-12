@@ -7,6 +7,7 @@ import {
 import {
   AttachInternals,
   Component,
+  Element,
   Event,
   EventEmitter,
   h,
@@ -17,6 +18,7 @@ import {
 } from '@stencil/core';
 
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 
 /**
  * A form-associated range slider.
@@ -40,6 +42,8 @@ import { applyControlValidity } from '../../form-validity';
   shadow: { delegatesFocus: true },
 })
 export class PfSlider {
+  @Element() el!: HTMLElement;
+
   @AttachInternals() internals!: ElementInternals;
 
   /**
@@ -174,6 +178,7 @@ export class PfSlider {
 
           <input
             id="input"
+            aria-label={controlAriaLabel(this.el, this.label)}
             part="input"
             class={{ slider: true, 'slider--invalid': Boolean(this.error) }}
             type="range"

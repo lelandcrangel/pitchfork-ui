@@ -1,8 +1,10 @@
 import { composeDescribedBy } from '@pitchfork-ui/core';
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 import {
   AttachInternals,
   Component,
+  Element,
   Event,
   EventEmitter,
   h,
@@ -35,6 +37,8 @@ export type PfInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'ur
   shadow: { delegatesFocus: true },
 })
 export class PfInput {
+  @Element() el!: HTMLElement;
+
   @AttachInternals() internals!: ElementInternals;
 
   /**
@@ -161,6 +165,7 @@ export class PfInput {
           )}
           <input
             id="input"
+            aria-label={controlAriaLabel(this.el, this.label)}
             part="input"
             class={{ input: true, 'input--invalid': Boolean(this.error) }}
             type={this.type}

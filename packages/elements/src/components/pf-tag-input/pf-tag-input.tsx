@@ -9,6 +9,7 @@ import {
 } from '@pitchfork-ui/core';
 
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 import type { PfTagVariant } from '../pf-tag/pf-tag';
 import {
   AttachInternals,
@@ -270,6 +271,7 @@ export class PfTagInput {
 
             <input
               id="input"
+              aria-label={controlAriaLabel(this.el, this.label)}
               part="input"
               class="input"
               type="text"
