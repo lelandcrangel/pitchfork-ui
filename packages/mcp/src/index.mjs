@@ -2,12 +2,18 @@
 /**
  * Pitchfork UI MCP server.
  *
- * Serves the generated component metadata, design tokens and house conventions
+ * Serves the generated element metadata, design tokens and house conventions
  * over the Model Context Protocol, so a coding agent can build with the library
  * from its real API rather than from guesswork.
  *
  * Everything it returns is derived from source at build time — see
- * scripts/build-metadata.mjs. This process holds no knowledge of its own.
+ * `scripts/build-elements-metadata.mjs`. This process holds no knowledge of its
+ * own.
+ *
+ * The 108 custom elements are the library. The 91 `@pitchfork-ui/react`
+ * components are deprecated, and the three tools that answer for them say so
+ * and keep working while the package is installed -- and say the layer is gone,
+ * rather than failing, once it is not.
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -16,8 +22,10 @@ import { z } from 'zod';
 
 import {
   componentsByName,
+  hasReactLayer,
   elementForComponent,
   elementMetadata,
+  elementMetadataPath,
   elementsByName,
   elementsByTag,
   iconNames,
@@ -242,7 +250,33 @@ const elementNotFound = (name) => {
   );
 };
 
-const server = new McpServer({ name: 'pitchfork-ui', version: metadata.version });
+const server = new McpServer({ name: 'pitchfork-ui', version: elementMetadata.version });
+
+/**
+ * The answer the three React tools give once the layer is gone.
+ *
+ * A tool that vanishes from the list is worse than one that explains itself: an
+ * agent holding a `Button` it found in the consumer's own code would otherwise
+ * get "no such tool" and no idea where the API went.
+ */
+const reactLayerRetired = () =>
+  text(
+    [
+      '# @pitchfork-ui/react has been retired',
+      '',
+      'Its metadata is not installed, so there is no React component API to ' +
+        'answer from. The library is the ' +
+        `${elementMetadata.elements.length} custom elements in ` +
+        `\`${elementMetadata.name}\` — call \`list_elements\` or \`get_element\`.`,
+      '',
+      'In a React app, use the generated bindings in ' +
+        `\`${elementMetadata.bindings?.react ?? '@pitchfork-ui/elements-react'}\`: ` +
+        'a `<PfButton>` per `<pf-button>`, with `onPfChange` for `pfChange`.',
+      '',
+      'To read the old API anyway, install `@pitchfork-ui/react` or point ' +
+        '`PITCHFORK_UI_METADATA` at a `metadata.json` from a version that had it.',
+    ].join('\n'),
+  );
 
 server.registerTool(
   'list_components',
@@ -253,9 +287,11 @@ server.registerTool(
       'only to work on code that already imports it; for anything new call ' +
       '`list_elements`, which lists the 108 custom elements that are the library ' +
       'now. Every component here has an element that replaces it.',
-    inputSchema: { category: z.enum(metadata.categories).optional() },
+    inputSchema: { category: z.enum(elementMetadata.categories).optional() },
   },
   async ({ category }) => {
+    if (!hasReactLayer) return reactLayerRetired();
+
     const matches = category
       ? metadata.components.filter((c) => c.category === category)
       : metadata.components;
@@ -294,6 +330,8 @@ server.registerTool(
     },
   },
   async ({ query, limit = 8 }) => {
+    if (!hasReactLayer) return reactLayerRetired();
+
     const terms = query
       .toLowerCase()
       .split(/\W+/)
@@ -355,6 +393,7 @@ server.registerTool(
     inputSchema: { name: z.string().describe('Component name, e.g. "Button"') },
   },
   async ({ name }) => {
+    if (!hasReactLayer) return reactLayerRetired();
     const component = componentsByName.get(name);
     return component ? text(renderComponent(component)) : notFound(name);
   },
@@ -558,12 +597,30 @@ server.registerTool(
     title: 'Get house conventions',
     description:
       'The rules that make code look like it belongs in this design system: ' +
-      'TypeScript and forwardRef patterns, CSS class naming, the CSS variable ' +
-      'inheritance chain, responsive breakpoints, icons, form fields and ' +
-      'accessibility. Read this before writing or reviewing component code.',
+      'how to install and register the elements, the custom-property-versus-' +
+      '`::part()` split, where the element API deliberately differs from the ' +
+      'React one, the CSS variable inheritance chain, responsive breakpoints, ' +
+      'icons and accessibility. Read this before writing or reviewing code ' +
+      'against the library.',
     inputSchema: {},
   },
-  async () => text(metadata.conventions),
+  /*
+   * The elements' set leads, and the React set is appended under its own
+   * heading while the package is installed. It used to be only the React set,
+   * so an agent writing `<pf-input>` was handed rules about `forwardRef` and
+   * the `pf-field` wrapper -- every one of them about a layer it was not using.
+   */
+  async () =>
+    text(
+      [
+        elementMetadata.conventions,
+        hasReactLayer && metadata.conventions
+          ? `---\n\n# Deprecated: ${metadata.name}\n\nThese apply only to existing code that imports it.\n\n${metadata.conventions}`
+          : null,
+      ]
+        .filter(Boolean)
+        .join('\n\n'),
+    ),
 );
 
 server.registerTool(
@@ -612,8 +669,11 @@ await server.connect(transport);
 
 // stdout is the protocol channel; anything informational has to go to stderr.
 console.error(
-  `pitchfork-ui MCP server ready — ${metadata.components.length} components ` +
-    `from ${metadata.name}@${metadata.version} (${metadataPath}) and ` +
-    `${elementMetadata.elements.length} elements from ` +
-    `${elementMetadata.name}@${elementMetadata.version}`,
+  `pitchfork-ui MCP server ready — ${elementMetadata.elements.length} elements ` +
+    `from ${elementMetadata.name}@${elementMetadata.version} ` +
+    `(${elementMetadataPath}); ` +
+    (hasReactLayer
+      ? `${metadata.components.length} deprecated components from ` +
+        `${metadata.name}@${metadata.version} (${metadataPath})`
+      : 'the deprecated React layer is not installed'),
 );

@@ -7,8 +7,12 @@
  *   llms.txt       an index — what exists, one line each, linked to its docs page
  *   llms-full.txt  the whole library in one fetch — props, theming, examples
  *
- * Both are derived from packages/react/dist/metadata.json and CLAUDE.md, so
- * neither can drift from the library. Run build:metadata first.
+ * Both are derived from `packages/elements/dist/elements.json`, so neither can
+ * drift from the library. Run build:elements-metadata first.
+ *
+ * The React half is **optional** and comes last, framed as deprecated. That
+ * order is the point of Phase 5: until it inverted, every agent reading these
+ * files generated code for the layer being retired.
  *
  * Output: apps/docs/public/, which Storybook copies to the site root, so the
  * files land at <homepage>llms.txt and <homepage>llms-full.txt.
@@ -24,29 +28,31 @@ const metadataPath = join(root, 'packages/react/dist/metadata.json');
 const docsSrc = join(root, 'apps/docs/src');
 const outDir = join(root, 'apps/docs/public');
 
-if (!existsSync(metadataPath)) {
+/*
+ * The elements are the library, so their metadata is what these files cannot
+ * be written without. It used to be the other way round -- React required,
+ * elements optional -- which meant a build with no elements metadata happily
+ * published an llms.txt describing only the deprecated half.
+ */
+const elementsPath = join(root, 'packages/elements/dist/elements.json');
+if (!existsSync(elementsPath)) {
   console.error(
-    'packages/react/dist/metadata.json not found — run `npm run build:metadata` first.',
+    'packages/elements/dist/elements.json not found — run ' +
+      '`npm run build:elements-metadata` first.',
   );
   process.exit(1);
 }
-
-const metadata = JSON.parse(readFileSync(metadataPath, 'utf8'));
-const reactPkg = JSON.parse(readFileSync(join(root, 'packages/react/package.json'), 'utf8'));
+const elementMetadata = JSON.parse(readFileSync(elementsPath, 'utf8'));
 
 /*
- * The elements are the other half of the library, and an agent reading these
- * files has no other way to learn they exist. Their metadata comes from
- * Stencil's docs.json via build:elements-metadata; absent, these files are
- * still written, because the React half is independently useful and the
- * elements build is slower -- but --strict refuses, since a published llms.txt
- * missing half the library is worse than a failed build.
+ * The React half is optional, and absent once `packages/react` goes. While it
+ * is published someone maintaining code against it needs to know where the API
+ * went, which is why the section exists rather than the components simply
+ * vanishing; when it is gone there is nothing to say and nothing is said.
  */
-const elementsPath = join(root, 'packages/elements/dist/elements.json');
-const elementMetadata = existsSync(elementsPath)
-  ? JSON.parse(readFileSync(elementsPath, 'utf8'))
-  : null;
-const site = reactPkg.homepage.endsWith('/') ? reactPkg.homepage : `${reactPkg.homepage}/`;
+const metadata = existsSync(metadataPath) ? JSON.parse(readFileSync(metadataPath, 'utf8')) : null;
+const elementsPkg = JSON.parse(readFileSync(join(root, 'packages/elements/package.json'), 'utf8'));
+const site = elementsPkg.homepage.endsWith('/') ? elementsPkg.homepage : `${elementsPkg.homepage}/`;
 
 /* ------------------------------------------------------------------ *
  * Documentation links
@@ -246,26 +252,28 @@ function buildIndex() {
    * written against them needs to know where the API went, which is why this
    * section exists rather than the components simply vanishing.
    */
-  out.push('## Deprecated: @pitchfork-ui/react');
-  out.push('');
-  out.push(
-    `\`${metadata.name}\` ${metadata.version} is **deprecated**. Do not write new code ` +
-      'against it: use the elements above, through the generated ' +
-      '`@pitchfork-ui/elements-react` bindings in a React app. It is still on npm and ' +
-      'still works, its documentation pages have been removed from the site, and it ' +
-      'will be removed after a stated window. Every component has an element answer, ' +
-      `which \`${elementMetadata ? elementMetadata.name : '@pitchfork-ui/elements'}/metadata\` ` +
-      'records under `reactCoverage`; the MCP server still answers `get_component` and ' +
-      '`validate_usage` for the React API, from ' +
-      `\`${metadata.name}/metadata\`.`,
-  );
-  out.push('');
-  out.push(
-    `The ${metadata.components.length} exported components: ` +
-      metadata.components.map((c) => `\`${c.name}\``).join(', ') +
-      '.',
-  );
-  out.push('');
+  if (metadata) {
+    out.push('## Deprecated: @pitchfork-ui/react');
+    out.push('');
+    out.push(
+      `\`${metadata.name}\` ${metadata.version} is **deprecated**. Do not write new code ` +
+        'against it: use the elements above, through the generated ' +
+        '`@pitchfork-ui/elements-react` bindings in a React app. It is still on npm and ' +
+        'still works, its documentation pages have been removed from the site, and it ' +
+        'will be removed after a stated window. Every component has an element answer, ' +
+        `which \`${elementMetadata.name}/metadata\` ` +
+        'records under `reactCoverage`; the MCP server still answers `get_component` and ' +
+        '`validate_usage` for the React API, from ' +
+        `\`${metadata.name}/metadata\`.`,
+    );
+    out.push('');
+    out.push(
+      `The ${metadata.components.length} exported components: ` +
+        metadata.components.map((c) => `\`${c.name}\``).join(', ') +
+        '.',
+    );
+    out.push('');
+  }
 
   out.push('## Optional');
   out.push('');
@@ -273,7 +281,9 @@ function buildIndex() {
     `- [Full reference](${site}llms-full.txt): every component's props, theme variables and examples in one file.`,
   );
   out.push(`- [Storybook](${site}): live examples, controls and accessibility checks.`);
-  out.push(`- [Source](${reactPkg.repository.url.replace(/^git\+|\.git$/g, '')}): the repository.`);
+  out.push(
+    `- [Source](${elementsPkg.repository.url.replace(/^git\+|\.git$/g, '')}): the repository.`,
+  );
   out.push('');
 
   return out.join('\n');
@@ -310,178 +320,175 @@ function buildFull() {
     out.push('```');
     out.push('');
   }
-  out.push(metadata.conventions);
+  out.push(elementMetadata.conventions);
   out.push('');
   out.push('---');
   out.push('');
-  // The React half comes last and is framed as what it is. It is still
-  // published, so dropping it would leave anyone maintaining code against it
-  // with nothing; it is no longer the library, so it does not lead.
-  out.push('## Deprecated: @pitchfork-ui/react');
+  out.push('## Web components');
   out.push('');
   out.push(
-    `\`${metadata.name}\` ${metadata.version} is **deprecated** — write new code ` +
-      'against the elements below instead. It is still on npm and still works, and ' +
-      'will be removed after a stated window. Its documentation pages have been ' +
-      'removed from the site, so the props here are the reference; the MCP server also ' +
-      'answers `get_component` and `validate_usage` for it.',
+    `${elementMetadata.elements.length} custom elements in ` +
+      `\`${elementMetadata.name}@${elementMetadata.version}\`, with generated bindings for ` +
+      `React, Angular and Vue. The same data is JSON at ` +
+      `\`${elementMetadata.name}/metadata\`.`,
   );
   out.push('');
+  out.push('```bash');
+  out.push(`npm install ${elementMetadata.name}`);
+  out.push('```');
+  out.push('');
+  out.push('```html');
+  out.push('<script type="module">');
+  out.push(`  import { defineCustomElements } from '${elementMetadata.name}/loader';`);
+  out.push('  defineCustomElements();');
+  out.push('</script>');
+  out.push('');
+  out.push('<pf-button variant="primary">Save</pf-button>');
+  out.push('```');
+  out.push('');
 
-  for (const component of metadata.components) {
-    const url = docsUrlFor(component);
-    out.push(`### ${component.name}`);
+  for (const element of elementMetadata.elements) {
+    out.push(`### <${element.tag}>`);
     out.push('');
     out.push(
-      `Category: ${component.category} · Import: \`import { ${component.name} } from '${metadata.name}'\`` +
-        (url ? ` · [Docs](${url})` : ''),
+      `Category: ${element.category ?? 'uncategorised'} · ` +
+        `Binding: \`${element.name}\` · [Docs](${elementDocsUrl(element)})` +
+        (element.reactCounterpart ? ` · React: \`${element.reactCounterpart}\`` : '') +
+        (element.childOf ? ` · goes inside \`<${element.childOf}>\`` : ''),
     );
     out.push('');
-
-    if (component.description) {
-      out.push(component.description);
+    if (element.formAssociated) {
+      out.push('Form-associated: submits with a surrounding `<form>` under its `name`.');
       out.push('');
     }
-    if (component.extends?.length) {
-      out.push(`Also accepts every prop of \`${component.extends.join('`, `')}\`.`);
-      out.push('');
-    }
-
-    out.push(propsTable(component.props));
-    out.push('');
-
-    if (component.a11y?.length) {
-      out.push('**Accessibility**');
-      out.push('');
-      for (const note of component.a11y) out.push(`- ${note}`);
+    if (element.description) {
+      out.push(element.description);
       out.push('');
     }
 
-    const vars = themeVars(component.cssVars);
-    if (vars) {
-      out.push('**Theme variables**');
-      out.push('');
-      out.push(vars);
-      out.push('');
-    }
-
-    if (component.examples?.length) {
-      out.push('**Examples**');
-      out.push('');
-      for (const example of component.examples) {
-        out.push(`_${example.name}_`);
-        out.push('');
-        out.push('```tsx');
-        out.push(example.code);
-        out.push('```');
-        out.push('');
+    if (element.props.length) {
+      out.push('| Prop | Attribute | Type | Default |');
+      out.push('| --- | --- | --- | --- |');
+      for (const prop of element.props) {
+        out.push(
+          `| \`${prop.name}\` | ${prop.attr ? `\`${prop.attr}\`` : '_property only_'} | ` +
+            `\`${cell(prop.type)}\` | ${prop.default ? `\`${cell(prop.default)}\`` : '—'} |`,
+        );
       }
+      out.push('');
+    }
+
+    if (element.events.length) {
+      out.push('**Events** (`onPfX` in the React bindings)');
+      out.push('');
+      for (const event of element.events) {
+        out.push(
+          `- \`${event.name}\`${event.detail ? ` — \`${cell(event.detail)}\`` : ''}` +
+            `${event.description ? `: ${firstSentence(event.description)}` : ''}`,
+        );
+      }
+      out.push('');
+    }
+
+    if (element.methods.length) {
+      out.push('**Methods** (all async)');
+      out.push('');
+      for (const method of element.methods) out.push(`- \`${method.signature}\``);
+      out.push('');
+    }
+
+    if (element.slots.length) {
+      out.push('**Slots**');
+      out.push('');
+      for (const slot of element.slots) {
+        out.push(`- ${slot.name ? `\`${slot.name}\`` : '_default_'}: ${slot.description}`);
+      }
+      out.push('');
+    }
+
+    if (element.parts.length) {
+      out.push(`**Parts** — \`${element.tag}::part(name)\``);
+      out.push('');
+      for (const part of element.parts) out.push(`- \`${part.name}\`: ${part.description}`);
+      out.push('');
+    }
+
+    // The React half of this file carries worked examples, and the element
+    // half did not -- so an agent reading it got every prop of `pf-select`
+    // and no hint that the default slot takes `pf-option` children, which is
+    // the one thing a prop table cannot say.
+    if (element.example) {
+      out.push('**Example**');
+      out.push('');
+      out.push('```html');
+      out.push(element.example);
+      out.push('```');
+      out.push('');
     }
   }
 
-  if (elementMetadata) {
+  if (metadata) {
     out.push('---');
     out.push('');
-    out.push('## Web components');
+    out.push('## Deprecated: @pitchfork-ui/react');
     out.push('');
     out.push(
-      `${elementMetadata.elements.length} custom elements in ` +
-        `\`${elementMetadata.name}@${elementMetadata.version}\`, with generated bindings for ` +
-        `React, Angular and Vue. The same data is JSON at ` +
-        `\`${elementMetadata.name}/metadata\`.`,
+      `\`${metadata.name}\` ${metadata.version} is **deprecated** — write new code ` +
+        'against the elements below instead. It is still on npm and still works, and ' +
+        'will be removed after a stated window. Its documentation pages have been ' +
+        'removed from the site, so the props here are the reference; the MCP server also ' +
+        'answers `get_component` and `validate_usage` for it.',
     );
     out.push('');
-    out.push('```bash');
-    out.push(`npm install ${elementMetadata.name}`);
-    out.push('```');
-    out.push('');
-    out.push('```html');
-    out.push('<script type="module">');
-    out.push(`  import { defineCustomElements } from '${elementMetadata.name}/loader';`);
-    out.push('  defineCustomElements();');
-    out.push('</script>');
-    out.push('');
-    out.push('<pf-button variant="primary">Save</pf-button>');
-    out.push('```');
-    out.push('');
 
-    for (const element of elementMetadata.elements) {
-      out.push(`### <${element.tag}>`);
+    for (const component of metadata.components) {
+      const url = docsUrlFor(component);
+      out.push(`### ${component.name}`);
       out.push('');
       out.push(
-        `Category: ${element.category ?? 'uncategorised'} · ` +
-          `Binding: \`${element.name}\` · [Docs](${elementDocsUrl(element)})` +
-          (element.reactCounterpart ? ` · React: \`${element.reactCounterpart}\`` : '') +
-          (element.childOf ? ` · goes inside \`<${element.childOf}>\`` : ''),
+        `Category: ${component.category} · Import: \`import { ${component.name} } from '${metadata.name}'\`` +
+          (url ? ` · [Docs](${url})` : ''),
       );
       out.push('');
-      if (element.formAssociated) {
-        out.push('Form-associated: submits with a surrounding `<form>` under its `name`.');
+
+      if (component.description) {
+        out.push(component.description);
         out.push('');
       }
-      if (element.description) {
-        out.push(element.description);
+      if (component.extends?.length) {
+        out.push(`Also accepts every prop of \`${component.extends.join('`, `')}\`.`);
         out.push('');
       }
 
-      if (element.props.length) {
-        out.push('| Prop | Attribute | Type | Default |');
-        out.push('| --- | --- | --- | --- |');
-        for (const prop of element.props) {
-          out.push(
-            `| \`${prop.name}\` | ${prop.attr ? `\`${prop.attr}\`` : '_property only_'} | ` +
-              `\`${cell(prop.type)}\` | ${prop.default ? `\`${cell(prop.default)}\`` : '—'} |`,
-          );
+      out.push(propsTable(component.props));
+      out.push('');
+
+      if (component.a11y?.length) {
+        out.push('**Accessibility**');
+        out.push('');
+        for (const note of component.a11y) out.push(`- ${note}`);
+        out.push('');
+      }
+
+      const vars = themeVars(component.cssVars);
+      if (vars) {
+        out.push('**Theme variables**');
+        out.push('');
+        out.push(vars);
+        out.push('');
+      }
+
+      if (component.examples?.length) {
+        out.push('**Examples**');
+        out.push('');
+        for (const example of component.examples) {
+          out.push(`_${example.name}_`);
+          out.push('');
+          out.push('```tsx');
+          out.push(example.code);
+          out.push('```');
+          out.push('');
         }
-        out.push('');
-      }
-
-      if (element.events.length) {
-        out.push('**Events** (`onPfX` in the React bindings)');
-        out.push('');
-        for (const event of element.events) {
-          out.push(
-            `- \`${event.name}\`${event.detail ? ` — \`${cell(event.detail)}\`` : ''}` +
-              `${event.description ? `: ${firstSentence(event.description)}` : ''}`,
-          );
-        }
-        out.push('');
-      }
-
-      if (element.methods.length) {
-        out.push('**Methods** (all async)');
-        out.push('');
-        for (const method of element.methods) out.push(`- \`${method.signature}\``);
-        out.push('');
-      }
-
-      if (element.slots.length) {
-        out.push('**Slots**');
-        out.push('');
-        for (const slot of element.slots) {
-          out.push(`- ${slot.name ? `\`${slot.name}\`` : '_default_'}: ${slot.description}`);
-        }
-        out.push('');
-      }
-
-      if (element.parts.length) {
-        out.push(`**Parts** — \`${element.tag}::part(name)\``);
-        out.push('');
-        for (const part of element.parts) out.push(`- \`${part.name}\`: ${part.description}`);
-        out.push('');
-      }
-
-      // The React half of this file carries worked examples, and the element
-      // half did not -- so an agent reading it got every prop of `pf-select`
-      // and no hint that the default slot takes `pf-option` children, which is
-      // the one thing a prop table cannot say.
-      if (element.example) {
-        out.push('**Example**');
-        out.push('');
-        out.push('```html');
-        out.push(element.example);
-        out.push('```');
-        out.push('');
       }
     }
   }
@@ -501,7 +508,7 @@ writeFileSync(join(outDir, 'llms.txt'), `${index.trimEnd()}\n`);
 writeFileSync(join(outDir, 'llms-full.txt'), `${full.trimEnd()}\n`);
 
 const kb = (text) => (Buffer.byteLength(text) / 1024).toFixed(0);
-const linked = metadata.components.filter((c) => docsUrlFor(c)).length;
+const linked = (metadata?.components ?? []).filter((c) => docsUrlFor(c)).length;
 
 /**
  * Cross-check every generated link against the ids Storybook actually built.
@@ -537,12 +544,13 @@ function verifyLinks(text) {
 console.log('llms.txt written to apps/docs/public/');
 console.log(`  llms.txt:       ${kb(index)} KB`);
 console.log(`  llms-full.txt:  ${kb(full)} KB`);
-console.log(
-  `  components:     ${metadata.components.length} (deprecated, no docs pages — ${linked} linked)`,
-);
-
-if (elementMetadata) {
-  console.log(`  elements:       ${elementMetadata.elements.length}`);
+console.log(`  elements:       ${elementMetadata.elements.length}`);
+if (metadata) {
+  console.log(
+    `  components:     ${metadata.components.length} (deprecated, no docs pages — ${linked} linked)`,
+  );
+} else {
+  console.log('  components:     none on disk — the elements are the whole file');
 }
 
 /*
@@ -552,7 +560,7 @@ if (elementMetadata) {
  * `elementDocsUrl` would silently publish 108 dead links, and `--verify`
  * catches that only when a Storybook build is there to compare against.
  */
-if (process.argv.includes('--strict') && elementMetadata) {
+if (process.argv.includes('--strict')) {
   const unlinked = elementMetadata.elements
     .filter((element) => !elementDocsUrl(element))
     .map((element) => element.tag);
@@ -562,13 +570,11 @@ if (process.argv.includes('--strict') && elementMetadata) {
   }
 }
 
-if (process.argv.includes('--strict') && !elementMetadata) {
-  console.error(
-    `\n--strict: ${elementsPath.slice(root.length + 1)} not found, so these files ` +
-      'describe only the React half of the library. Run ' +
-      '`npm run build:elements && npm run build:elements-metadata` first.',
-  );
-  process.exit(1);
-}
+/*
+ * The branch that used to be here refused a build with no elements metadata,
+ * because the files would then have described only the deprecated half. It is
+ * unreachable now: that metadata is read at the top and the script exits
+ * without it, which is the stronger version of the same rule.
+ */
 
 if (process.argv.includes('--verify')) verifyLinks(index);
