@@ -981,8 +981,34 @@ try {
 
       await settle(40);
       const dialog = modal.shadowRoot.querySelector('dialog');
-      const result = {
+      const afterOpen = {
         dialogOpen: Boolean(dialog?.open),
+        focusWithin: Boolean(dialog?.matches(':focus-within')),
+        activeElement: document.activeElement?.tagName.toLowerCase() ?? null,
+        innerActive: modal.shadowRoot.activeElement?.tagName.toLowerCase() ?? null,
+      };
+
+      /*
+       * And the invariant behind the second half of the fix: focus cannot be
+       * left outside an open modal dialog.
+       *
+       * Blurring is how to set that up deterministically. What happens in the
+       * wild is subtler and timing-dependent, which is why the obvious probe
+       * for it is vacuous: the trace of a real click showed `showModal()`
+       * focusing `div[part=panel]`, then a frame later a `focusout` with
+       * `relatedTarget: null` dropping it -- Chromium's focus fixup running
+       * over the new flattened tree and finding the panel no longer a valid
+       * target, with nothing removed from the shadow root. Whether the
+       * `requestAnimationFrame` above lands before the fixup (so focus is
+       * already on the close button, which stays valid) or after it (so the
+       * guard sees focus inside and bails) is a race. A deliberate blur is
+       * the same end state with none of the timing, and it is a real claim in
+       * its own right: an open modal with focus on `<body>` leaves a reader
+       * outside the dialog with the page inert around them.
+       */
+      document.activeElement?.blur?.();
+      await settle(20);
+      const afterBlur = {
         focusWithin: Boolean(dialog?.matches(':focus-within')),
         activeElement: document.activeElement?.tagName.toLowerCase() ?? null,
         innerActive: modal.shadowRoot.activeElement?.tagName.toLowerCase() ?? null,
@@ -992,7 +1018,7 @@ try {
       await settle(20);
       host.remove();
       // The probe borrowed the page's scroll lock; give it back either way.
-      return result;
+      return { ...afterOpen, afterBlur };
     })
     .catch((error) => ({ error: String(error) }));
 
@@ -1005,6 +1031,13 @@ try {
       'pf-modal did not move focus into the dialog when the content and the open ' +
         `arrived in one task (activeElement "${raced.activeElement}", inner ` +
         `"${raced.innerActive}") — every framework consumer is in this case`,
+    );
+  } else if (!raced.afterBlur.focusWithin) {
+    problems.push(
+      'pf-modal left focus outside the open dialog after it was blurred ' +
+        `(activeElement "${raced.afterBlur.activeElement}", inner ` +
+        `"${raced.afterBlur.innerActive}") — a reader is outside the dialog with ` +
+        'the page inert around them',
     );
   }
 

@@ -144,23 +144,58 @@ export class PfModal {
    * still inert, so the only symptom is that a reader is not taken to the
    * dialog and the first Tab is needed. Porting `apps/demo` is what found it.
    *
-   * One frame later, focus is put inside if it is not already there. A frame
-   * rather than a microtask because Stencil's queue renders on
-   * `requestAnimationFrame`, and `showModal()`'s own attempt is left to win
-   * wherever it works, so this changes nothing in the cases that were right.
+   * What the trace shows, with element identity and a `MutationObserver` on
+   * the shadow root: `showModal()` **does** focus, onto `div[part=panel]`,
+   * and one frame later a `focusout` with `relatedTarget: null` drops it,
+   * with nothing removed from the shadow root. That is Chromium's focus
+   * fixup running once the appended children are assigned to the slot and
+   * finding the panel is no longer a valid target -- so it is not a render
+   * that loses focus, and re-asserting after a render does not catch it
+   * (measured: `componentDidRender` alone changes nothing here).
+   *
+   * So the dialog watches for exactly that: a `focusout` that goes nowhere
+   * while the modal is open puts focus back. `requestAnimationFrame` after
+   * `showModal()` covers the case where focus never arrived at all, and
+   * `componentDidRender` covers a render that discards the focused node. All
+   * three are the same guarded call, and the `:focus-within` guard makes it a
+   * no-op whenever focus is already inside -- so none of them moves focus
+   * that the platform or a consumer placed.
    */
   private showDialog() {
     const dialog = this.dialog;
     if (!dialog || dialog.open) return;
     dialog.showModal();
     this.lockScroll();
+    requestAnimationFrame(() => this.ensureFocusInside());
+  }
 
+  componentDidRender() {
+    this.ensureFocusInside();
+  }
+
+  /**
+   * Focus left the dialog for nothing while it is open, which the platform
+   * does when its focus fixup runs after the slotted content changes.
+   *
+   * `relatedTarget` is the test: a Tab or a click inside names where focus
+   * went, and a modal dialog means it cannot have gone outside. The window
+   * losing focus also reports null, hence the `document.hasFocus()` guard --
+   * without it, switching tabs would pull focus back on return.
+   */
+  private onFocusOut = (event: FocusEvent) => {
+    if (!this.open || event.relatedTarget) return;
     requestAnimationFrame(() => {
-      if (!this.open || !dialog.isConnected || !dialog.open) return;
-      if (dialog.matches(':focus-within')) return;
-      const [first] = getFocusableElements(dialog);
-      (first ?? dialog).focus();
+      if (document.hasFocus()) this.ensureFocusInside();
     });
+  };
+
+  /** Focus inside the open dialog, unless it is already there. */
+  private ensureFocusInside() {
+    const dialog = this.dialog;
+    if (!this.open || !dialog?.isConnected || !dialog.open) return;
+    if (dialog.matches(':focus-within')) return;
+    const [first] = getFocusableElements(dialog);
+    (first ?? dialog).focus();
   }
 
   private closeDialog() {
@@ -211,6 +246,7 @@ export class PfModal {
           class="dialog"
           aria-label={this.accessibleName()}
           onCancel={this.onCancel}
+          onFocusout={this.onFocusOut}
           onClose={this.onClose}
           onClick={this.onDialogClick}
         >
