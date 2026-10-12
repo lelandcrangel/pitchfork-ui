@@ -11,7 +11,12 @@ const example = elementExamples['pf-bar-chart'];
 const meta = {
   title: 'Components/BarChart',
   args: {
-    data: [['Q1', 120, 80], ['Q2', 180, 140], ['Q3', 150, 190], ['Q4', 240, 210]],
+    data: [
+      { label: 'Q1', direct: 120, referral: 80 },
+      { label: 'Q2', direct: 180, referral: 140 },
+      { label: 'Q3', direct: 150, referral: 190 },
+      { label: 'Q4', direct: 240, referral: 210 },
+    ],
     showLegend: true,
     stacked: false,
     label: 'Signups by quarter',

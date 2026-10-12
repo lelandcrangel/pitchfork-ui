@@ -13,7 +13,7 @@ const meta = {
   args: {
     children: 'Visits',
     dashed: false,
-    seriesKey: '0',
+    seriesKey: 'visits',
     swatch: '',
     color: 'var(--color-brand-500)',
   },
