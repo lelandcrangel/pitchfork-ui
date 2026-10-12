@@ -41,6 +41,20 @@ import { REACT_CONVENTION_SECTIONS, readConventions } from './lib/conventions.mj
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const componentsDir = join(root, 'packages/react/src/components');
+
+/*
+ * Nothing to describe once the package is gone. Exits 0 rather than 1: the
+ * chains in `package.json` run this unconditionally, and a retired package is
+ * not a failed build. `scripts/build-mcp-data.mjs` deletes the stale bundled
+ * copy, so nothing is left claiming to describe it.
+ */
+if (!existsSync(componentsDir)) {
+  console.log(
+    'build-metadata: packages/react is not in this workspace — nothing to extract. ' +
+      'The elements are the library; see build-elements-metadata.mjs.',
+  );
+  process.exit(0);
+}
 const themeCssPath = join(root, 'packages/tokens/src/theme.css');
 const outDir = join(root, 'packages/react/dist');
 const outFile = join(outDir, 'metadata.json');
