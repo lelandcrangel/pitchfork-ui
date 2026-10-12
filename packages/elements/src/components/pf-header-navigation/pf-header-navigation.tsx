@@ -1,5 +1,5 @@
 import { resolveCurrentNavItem } from '@pitchfork-ui/core';
-import { Component, Element, h, Host, Method, Prop, State } from '@stencil/core';
+import { Component, Element, h, Host, Listen, Method, Prop, State } from '@stencil/core';
 
 /**
  * A header navigation over `pf-nav-item` children.
@@ -56,8 +56,22 @@ export class PfHeaderNavigation {
   }
 
   /**
-   * Re-reads the items, for a consumer who marked one current through its
-   * *property* — which leaves no attribute and fires no `slotchange`.
+   * An item's `current` changed, so the resolution has to run again.
+   *
+   * The items are this navigation's own light-DOM children, so nothing is
+   * retargeted and a host listener is safe — the same reason the sidebar can
+   * listen for a section's copy of this event. `refresh()` stays for a
+   * consumer who changes something else the group reads.
+   */
+  @Listen('pfNavStructure')
+  handleStructureChange(event: CustomEvent<void>) {
+    event.stopPropagation();
+    this.sync();
+  }
+
+  /**
+   * Re-reads the items, for a consumer who changed something the group reads
+   * and has no event for.
    */
   @Method()
   async refresh() {

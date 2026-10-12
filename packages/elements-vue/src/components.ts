@@ -677,7 +677,10 @@ export const PfNavItem: StencilVueComponent<JSX.PfNavItem> = /*@__PURE__*/ defin
   'current',
   'currentPage',
   'disabled',
-  'orientation'
+  'orientation',
+  'pfNavStructure'
+], [
+  'pfNavStructure'
 ]);
 
 

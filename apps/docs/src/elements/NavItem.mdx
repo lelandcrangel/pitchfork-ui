@@ -29,7 +29,9 @@ is how a framework's own router is used — slot an `<a routerLink>` or a
 
 `currentPage` and `orientation` are the group's to set. A consumer asks by
 setting `current`; the group resolves every item with core's rule and
-writes the answer to `currentPage`.
+writes the answer to `currentPage`. Changing the ask tells the group, so
+the answer follows a framework's re-render without the consumer calling
+anything.
 
 ## Example
 
@@ -46,6 +48,12 @@ writes the answer to `currentPage`.
 | `orientation` | `orientation` | `"horizontal" \| "vertical"` | `'horizontal'` | Set by the group, which is the only one that knows which it is. |
 | `rel` | `rel` | `string \| undefined` | — | Goes on the anchor as-is. Ignored without an `href`. |
 | `target` | `target` | `string \| undefined` | — | Opens elsewhere, as on a plain anchor. Ignored without an `href`. |
+
+## Events
+
+| Event | Detail | Description |
+| --- | --- | --- |
+| `pfNavStructure` | `void` | Tells the group the ask changed, so it can resolve again. The same event `pf-nav-section` emits when its items move, because the groups do the same thing with both: re-read every item and resolve the one current page. Without this a navigation resolves at load and never again for a consumer who marks items through the *property*, which is every framework consumer — the generated bindings set props as properties, so there is no attribute change and no `slotchange` either. The symptom is a navigation whose highlight never moves while the router works perfectly, which is what porting `apps/demo` ran into. `current` only. Watching `currentPage` would loop, since that is what the group writes back. |
 
 ## Slots
 

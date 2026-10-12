@@ -117,3 +117,63 @@ test('a second asking item survives the first being removed', async () => {
   await until(() => currentLabels(el).length === 1, 'the second item to take over');
   expect(currentLabels(el)).toEqual(['About']);
 });
+
+/*
+ * The case every framework consumer is in. The generated bindings set props as
+ * properties, so moving the mark produces no attribute change and no
+ * `slotchange` — and before `pf-nav-item` emitted `pfNavStructure` for it, the
+ * navigation resolved once at load and never again. The symptom was a
+ * highlight that never moved while the router worked perfectly, which is what
+ * porting `apps/demo` ran into.
+ *
+ * Reverting the item's `@Watch('current')` fails this and the next test and
+ * nothing else.
+ */
+test('moving the mark by property re-resolves without a refresh() call', async () => {
+  const el = await mount(FIXTURE);
+  expect(currentLabels(el)).toEqual(['About']);
+
+  const [home, about] = items(el) as (HTMLElement & { current: boolean })[];
+  about.current = false;
+  home.current = true;
+
+  await until(() => currentLabels(el).join() === 'Home', 'the mark to move');
+});
+
+/*
+ * Clearing the only ask leaves nothing current — `resolveCurrentNavItem`
+ * returns -1 rather than falling back to an item, because every item in a
+ * navigation points somewhere the reader is not.
+ */
+test('clearing the mark by property leaves nothing current', async () => {
+  const el = await mount(FIXTURE);
+  expect(currentLabels(el)).toEqual(['About']);
+
+  (items(el)[1] as HTMLElement & { current: boolean }).current = false;
+
+  await until(() => currentLabels(el).length === 0, 'the mark to clear');
+});
+
+/*
+ * The group writes `currentPage`, and the item watches `current`. Watching the
+ * answer instead would emit from inside the group's own sync and loop; this
+ * counts the events to prove it settles.
+ */
+test('the resolution settles rather than looping', async () => {
+  const el = await mount(FIXTURE);
+
+  let emitted = 0;
+  el.addEventListener('pfNavStructure', () => {
+    emitted += 1;
+  });
+
+  (items(el)[0] as HTMLElement & { current: boolean }).current = true;
+  await until(() => currentLabels(el).join() === 'Home', 'the mark to move');
+
+  const settled = emitted;
+  await frame();
+  await frame();
+  await frame();
+  expect(emitted).toBe(settled);
+  expect(emitted).toBe(1);
+});

@@ -1,4 +1,4 @@
-import { Component, h, Host, Prop } from '@stencil/core';
+import { Component, Event, EventEmitter, h, Host, Prop, Watch } from '@stencil/core';
 
 /**
  * One item in a `pf-header-navigation` or a `pf-sidebar-navigation`.
@@ -15,7 +15,9 @@ import { Component, h, Host, Prop } from '@stencil/core';
  *
  * `currentPage` and `orientation` are the group's to set. A consumer asks by
  * setting `current`; the group resolves every item with core's rule and
- * writes the answer to `currentPage`.
+ * writes the answer to `currentPage`. Changing the ask tells the group, so
+ * the answer follows a framework's re-render without the consumer calling
+ * anything.
  *
  * @slot - the item's label.
  * @slot icon - a leading icon.
@@ -46,6 +48,28 @@ export class PfNavItem {
    * behind on an item the consumer had not marked.
    */
   @Prop({ reflect: true }) current = false;
+
+  /**
+   * Tells the group the ask changed, so it can resolve again.
+   *
+   * The same event `pf-nav-section` emits when its items move, because the
+   * groups do the same thing with both: re-read every item and resolve the
+   * one current page. Without this a navigation resolves at load and never
+   * again for a consumer who marks items through the *property*, which is
+   * every framework consumer — the generated bindings set props as
+   * properties, so there is no attribute change and no `slotchange` either.
+   * The symptom is a navigation whose highlight never moves while the router
+   * works perfectly, which is what porting `apps/demo` ran into.
+   *
+   * `current` only. Watching `currentPage` would loop, since that is what the
+   * group writes back.
+   */
+  @Event() pfNavStructure!: EventEmitter<void>;
+
+  @Watch('current')
+  handleCurrentChange() {
+    this.pfNavStructure.emit();
+  }
 
   /**
    * Set by the group: the resolved current page, which is the one thing that
