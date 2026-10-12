@@ -1,89 +1,67 @@
 import {
+  PfAccordion,
+  PfAccordionItem,
+  PfAlert,
   PfAvatar,
+  PfAvatarGroup,
   PfBadge,
   PfBadgeGroup,
+  PfBreadcrumb,
+  PfBreadcrumbs,
   PfButton,
+  PfButtonGroup,
+  PfButtonGroupItem,
   PfCard,
   PfCardContent,
   PfCardFooter,
   PfCardHeader,
   PfCheckbox,
+  PfCodeSnippet,
+  PfCollapsible,
+  PfContentDivider,
+  PfDropdown,
+  PfEmptyState,
   PfIcon,
   PfInput,
   PfKbd,
   PfLoadingDots,
   PfLoadingSpinner,
+  PfMenuItem,
+  PfMetricCard,
   PfMetricGrid,
+  PfNotification,
+  PfNumberInput,
+  PfOption,
+  PfPageHeader,
+  PfPagination,
   PfProgressBar,
   PfProgressCircle,
+  PfProgressStep,
+  PfProgressSteps,
   PfRadioButton,
+  PfRadioGroup,
   PfRatingBadge,
   PfRatingStars,
+  PfSectionFooter,
+  PfSectionHeader,
+  PfSelect,
+  PfSlider,
   PfSwitch,
+  PfTab,
+  PfTabPanel,
+  PfTable,
+  PfTableCell,
+  PfTableRow,
+  PfTabs,
   PfTag,
   PfTextarea,
+  PfTimeline,
+  PfTimelineItem,
+  PfTooltip,
+  PfTreeItem,
+  PfTreeView,
+  PfUtilityButton,
 } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - Accordion: the call site changes shape: items -> child elements; defaultValue -> child elements; onValueChange -> no matching event on pf-accordion; pick the right one
- * - Alert: the call site changes shape: icon -> slot
- * - AvatarGroup: the call site changes shape: avatars -> child elements
- * - Breadcrumbs: the call site changes shape: items -> child elements
- * - ButtonGroup: the call site changes shape: items -> child elements; defaultValue -> child elements; onValueChange -> no matching event on pf-button-group; pick the right one
- * - CodeSnippet: the call site changes shape: title -> needs a destination; onCodeCopy -> no matching event on pf-code-snippet; pick the right one
- * - Collapsible: the call site changes shape: trigger -> slot
- * - ContentDivider: the call site changes shape: label -> needs a destination
- * - Dropdown: the call site changes shape: items -> child elements
- * - EmptyState: the call site changes shape: description -> slot; icon -> slot; action -> slot; heading -> needs a destination
- * - MetricCard: the call site changes shape: heading -> slot; description -> slot; icon -> slot; action -> slot; value -> needs a destination; trendLabel -> needs a destination
- * - Notification: the call site changes shape: icon -> slot; action -> slot
- * - NumberInput: the call site changes shape: locale -> child elements; onValueChange -> no matching event on pf-number-input; pick the right one
- * - PageHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
- * - Pagination: the call site changes shape: prevLabel -> needs a destination; nextLabel -> needs a destination
- * - ProgressSteps: the call site changes shape: steps -> child elements
- * - RadioGroup: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-radio-group; pick the right one
- * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
- * - SectionFooter: the call site changes shape: description -> slot; actions -> slot; heading -> needs a destination
- * - SectionHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
- * - Slider: an event prop has no equivalent on `pf-slider`: onValueChange -> no matching event on pf-slider; pick the right one
- * - Table: the call site changes shape: caption -> slot; columns -> child elements; rows -> child elements; emptyState -> needs a destination; onSortStateChange -> no matching event on pf-table; pick the right one
- * - Tabs: the call site changes shape: items -> child elements; onValueChange -> no matching event on pf-tabs; pick the right one
- * - Timeline: the call site changes shape: items -> child elements
- * - Tooltip: the call site changes shape: content -> slot
- * - TreeView: the call site changes shape: nodes -> child elements; expandedValues -> child elements; defaultExpandedValues -> child elements; onSelectedValueChange -> no matching event on pf-tree-view; pick the right one; onExpandedValuesChange -> no matching event on pf-tree-view; pick the right one
- * - UtilityButton: the call site changes shape: icon -> slot
- */
-import {
-  Accordion,
-  Alert,
-  AvatarGroup,
-  Breadcrumbs,
-  ButtonGroup,
-  CodeSnippet,
-  Collapsible,
-  ContentDivider,
-  Dropdown,
-  EmptyState,
-  MetricCard,
-  Notification,
-  NumberInput,
-  PageHeader,
-  Pagination,
-  ProgressSteps,
-  RadioGroup,
-  SectionFooter,
-  SectionHeader,
-  Select,
-  Slider,
-  Table,
-  Tabs,
-  Timeline,
-  Tooltip,
-  TreeView,
-  UtilityButton,
-} from '@pitchfork-ui/react';
 import { type ReactElement, useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 import '../styles/controls.css';
@@ -1069,9 +1047,9 @@ function ColorVarControl({ def, theme, resetKey, onReset }: VarControlProps) {
         <code className="comp-var-code">{def.var}</code>
       </div>
       {isModified && (
-        <UtilityButton size="sm" onClick={() => onReset(def.var)} aria-label={`Reset ${def.label}`}>
+        <PfUtilityButton size="sm" onClick={() => onReset(def.var)} label={`Reset ${def.label}`}>
           ↺
-        </UtilityButton>
+        </PfUtilityButton>
       )}
     </div>
   );
@@ -1091,9 +1069,9 @@ function SizeVarControl({ def, theme, onReset }: VarControlProps) {
         <code className="comp-var-code">{def.var}</code>
       </div>
       {isModified && (
-        <UtilityButton size="sm" onClick={() => onReset(def.var)} aria-label={`Reset ${def.label}`}>
+        <PfUtilityButton size="sm" onClick={() => onReset(def.var)} label={`Reset ${def.label}`}>
           ↺
-        </UtilityButton>
+        </PfUtilityButton>
       )}
     </div>
   );
@@ -1117,17 +1095,31 @@ const ACCORDION_ITEMS = [
 ];
 
 function AccordionPreview() {
-  const [value, setValue] = useState<string[]>(['a']);
-  return <Accordion items={ACCORDION_ITEMS} type="single" value={value} onValueChange={setValue} />;
+  // One string: `pf-accordion`'s `value` is the open item, not a list.
+  const [value, setValue] = useState('a');
+  return (
+    <PfAccordion type="single" value={value} onPfChange={(event) => setValue(event.detail.value)}>
+      {ACCORDION_ITEMS.map((item) => (
+        <PfAccordionItem key={item.value} value={item.value}>
+          <span slot="title">{item.title}</span>
+          {item.content}
+        </PfAccordionItem>
+      ))}
+    </PfAccordion>
+  );
 }
 
 function AlertPreview() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <Alert variant="info" heading="Information" description="Your settings have been saved." />
-      <Alert variant="success" heading="Success" description="The action completed successfully." />
-      <Alert variant="warning" heading="Warning" description="This action cannot be undone." />
-      <Alert
+      <PfAlert variant="info" heading="Information" description="Your settings have been saved." />
+      <PfAlert
+        variant="success"
+        heading="Success"
+        description="The action completed successfully."
+      />
+      <PfAlert variant="warning" heading="Warning" description="This action cannot be undone." />
+      <PfAlert
         variant="danger"
         heading="Error"
         description="Something went wrong. Please try again."
@@ -1149,16 +1141,11 @@ function AvatarPreview() {
 
 function AvatarGroupPreview() {
   return (
-    <AvatarGroup
-      avatars={[
-        { name: 'Alice J.' },
-        { name: 'Bob S.' },
-        { name: 'Charlie D.' },
-        { name: 'Dana W.' },
-        { name: 'Eve R.' },
-      ]}
-      max={3}
-    />
+    <PfAvatarGroup max={3}>
+      {['Alice J.', 'Bob S.', 'Charlie D.', 'Dana W.', 'Eve R.'].map((name) => (
+        <PfAvatar key={name} name={name} />
+      ))}
+    </PfAvatarGroup>
   );
 }
 
@@ -1197,13 +1184,16 @@ function BadgeGroupPreview() {
 
 function BreadcrumbsPreview() {
   return (
-    <Breadcrumbs
-      items={[
-        { label: 'Home', href: '#' },
-        { label: 'Settings', href: '#' },
-        { label: 'Theme', current: true },
-      ]}
-    />
+    /*
+     * `current` is the ask and `currentPage` is the group's answer, which the
+     * consumer never sets -- a group that wrote its answer back would leave
+     * the mark on a crumb that had merely happened to be last.
+     */
+    <PfBreadcrumbs>
+      <PfBreadcrumb href="#">Home</PfBreadcrumb>
+      <PfBreadcrumb href="#">Settings</PfBreadcrumb>
+      <PfBreadcrumb current>Theme</PfBreadcrumb>
+    </PfBreadcrumbs>
   );
 }
 
@@ -1219,17 +1209,13 @@ function ButtonPreview() {
 }
 
 function ButtonGroupPreview() {
-  const [selected, setSelected] = useState<string | string[]>('list');
+  const [selected, setSelected] = useState('list');
   return (
-    <ButtonGroup
-      value={selected}
-      onValueChange={setSelected}
-      items={[
-        { value: 'list', label: 'List' },
-        { value: 'grid', label: 'Grid' },
-        { value: 'table', label: 'Table' },
-      ]}
-    />
+    <PfButtonGroup value={selected} onPfChange={(event) => setSelected(event.detail.value)}>
+      <PfButtonGroupItem value="list">List</PfButtonGroupItem>
+      <PfButtonGroupItem value="grid">Grid</PfButtonGroupItem>
+      <PfButtonGroupItem value="table">Table</PfButtonGroupItem>
+    </PfButtonGroup>
   );
 }
 
@@ -1263,12 +1249,20 @@ function CheckboxPreview() {
   const [c, setC] = useState(true);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <PfCheckbox label="Enable dark mode" checked={a} onChange={(e) => setA(e.target.checked)} />
-      <PfCheckbox label="Auto-save drafts" checked={b} onChange={(e) => setB(e.target.checked)} />
+      <PfCheckbox
+        label="Enable dark mode"
+        checked={a}
+        onPfChange={(event) => setA(event.detail.checked)}
+      />
+      <PfCheckbox
+        label="Auto-save drafts"
+        checked={b}
+        onPfChange={(event) => setB(event.detail.checked)}
+      />
       <PfCheckbox
         label="Send email notifications"
         checked={c}
-        onChange={(e) => setC(e.target.checked)}
+        onPfChange={(event) => setC(event.detail.checked)}
       />
     </div>
   );
@@ -1276,9 +1270,9 @@ function CheckboxPreview() {
 
 function CodeSnippetPreview() {
   return (
-    <CodeSnippet
+    <PfCodeSnippet
       language="css"
-      title="theme-override.css"
+      heading="theme-override.css"
       code={`:root {\n  --pf-button-primary-bg: #7c3aed;\n  --pf-button-primary-bg-hover: #6d28d9;\n}`}
     />
   );
@@ -1287,21 +1281,23 @@ function CodeSnippetPreview() {
 function CollapsiblePreview() {
   const [open, setOpen] = useState(false);
   return (
-    <Collapsible trigger="Show advanced options" open={open} onOpenChange={setOpen}>
+    <PfCollapsible open={open} onPfOpenChange={(event) => setOpen(event.detail.open)}>
+      <span slot="trigger">Show advanced options</span>
       <div style={{ padding: '12px 0', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <PfInput label="Custom CSS class" placeholder="my-custom-class" />
         <PfSwitch label="Enable reduced motion" />
       </div>
-    </Collapsible>
+    </PfCollapsible>
   );
 }
 
 function ContentDividerPreview() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <ContentDivider />
-      <ContentDivider label="or" />
-      <ContentDivider label="continue with" />
+      {/* `label` was a prop; the element takes the text as its default slot. */}
+      <PfContentDivider />
+      <PfContentDivider>or</PfContentDivider>
+      <PfContentDivider>continue with</PfContentDivider>
     </div>
   );
 }
@@ -1314,17 +1310,33 @@ const DROPDOWN_ITEMS = [
 ];
 
 function DropdownPreview() {
-  return <Dropdown label="Actions" items={DROPDOWN_ITEMS} />;
+  return (
+    <PfDropdown label="Actions">
+      <PfButton variant="secondary">Actions</PfButton>
+      <div slot="menu">
+        {DROPDOWN_ITEMS.map((item) => (
+          <PfMenuItem key={item.value} value={item.value} destructive={item.destructive}>
+            {item.label}
+          </PfMenuItem>
+        ))}
+      </div>
+    </PfDropdown>
+  );
 }
 
 function EmptyStatePreview() {
   return (
-    <EmptyState
-      iconName="folder-open"
-      heading="No components overridden"
-      description="Select a component from the sidebar and adjust its CSS variables to see overrides appear here."
-      size="sm"
-    />
+    /*
+     * The heading is the default slot and the description is a slot of its
+     * own; `iconName` is `icon`, a name the element resolves itself.
+     */
+    <PfEmptyState icon="folder-open" size="sm">
+      No components overridden
+      <span slot="description">
+        Select a component from the sidebar and adjust its CSS variables to see overrides appear
+        here.
+      </span>
+    </PfEmptyState>
   );
 }
 
@@ -1336,7 +1348,7 @@ function InputPreview() {
         label="Email address"
         placeholder="you@example.com"
         value={v}
-        onChange={(e) => setV(e.target.value)}
+        onPfInput={(event) => setV(event.detail.value)}
       />
       <PfInput label="Password" type="password" placeholder="••••••••" />
       <PfInput label="Invalid field" placeholder="Bad input" error="This field has an error." />
@@ -1384,20 +1396,19 @@ function LoadingIndicatorsPreview() {
 function MetricPreview() {
   return (
     <PfMetricGrid>
-      <MetricCard
-        heading="Total revenue"
-        value="$48,295"
-        description="Last 30 days"
-        trend="positive"
-        trendLabel="+12.4%"
-      />
-      <MetricCard
-        heading="Active users"
-        value="3,841"
-        description="vs. 3,210 last month"
-        trend="positive"
-        trendLabel="+19.7%"
-      />
+      {/* The value is the default slot; everything else has a named one. */}
+      <PfMetricCard trend="positive">
+        <span slot="heading">Total revenue</span>
+        $48,295
+        <span slot="trend">+12.4%</span>
+        <span slot="description">Last 30 days</span>
+      </PfMetricCard>
+      <PfMetricCard trend="positive">
+        <span slot="heading">Active users</span>
+        3,841
+        <span slot="trend">+19.7%</span>
+        <span slot="description">vs. 3,210 last month</span>
+      </PfMetricCard>
     </PfMetricGrid>
   );
 }
@@ -1405,63 +1416,81 @@ function MetricPreview() {
 function NotificationPreview() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <Notification
+      {/* `dismissible` on the React component; `dismissable` on the element. */}
+      <PfNotification
         variant="info"
         heading="Update available"
         description="Version 2.4.0 is ready to install."
       />
-      <Notification
+      <PfNotification
         variant="success"
         heading="Published"
         description="Your changes are live."
-        dismissible
+        dismissable
       />
-      <Notification
+      <PfNotification
         variant="warning"
         heading="Approaching limit"
         description="You've used 80% of your storage."
       />
-      <Notification
+      <PfNotification
         variant="danger"
         heading="Build failed"
         description="3 errors found. See the logs for details."
-        dismissible
+        dismissable
       />
     </div>
   );
 }
 
 function NumberInputPreview() {
-  const [v, setV] = useState<number | null>(42);
+  /*
+   * A string, because `pf-number-input.value` is the text in the field --
+   * which is what lets a half-typed "1." exist -- and `pfChange` carries both
+   * that and the parsed `number`, null when the text is not a number.
+   */
+  const [v, setV] = useState('42');
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <NumberInput label="Quantity" value={v} onValueChange={setV} min={0} max={100} />
-      <NumberInput label="Price" value={0} min={0} step={0.01} />
+      <PfNumberInput
+        label="Quantity"
+        value={v}
+        onPfChange={(event) => setV(event.detail.value)}
+        min={0}
+        max={100}
+      />
+      <PfNumberInput label="Price" value="0" min={0} step={0.01} />
     </div>
   );
 }
 
 function PageHeaderPreview() {
   return (
-    <PageHeader
-      eyebrow="Design system"
-      heading="Theme Builder"
-      description="Customize CSS variables to match your brand. Export your overrides as a single :root block."
-      actions={
-        <div style={{ display: 'flex', gap: 8 }}>
-          <PfButton variant="secondary" size="sm">
-            Reset
-          </PfButton>
-          <PfButton size="sm">Export CSS</PfButton>
-        </div>
-      }
-    />
+    <PfPageHeader>
+      <span slot="eyebrow">Design system</span>
+      Theme Builder
+      <span slot="description">
+        Customize CSS variables to match your brand. Export your overrides as a single :root block.
+      </span>
+      <div slot="actions" style={{ display: 'flex', gap: 8 }}>
+        <PfButton variant="secondary" size="sm">
+          Reset
+        </PfButton>
+        <PfButton size="sm">Export CSS</PfButton>
+      </div>
+    </PfPageHeader>
   );
 }
 
 function PaginationPreview() {
   const [page, setPage] = useState(3);
-  return <Pagination page={page} totalPages={12} onPageChange={setPage} />;
+  return (
+    <PfPagination
+      page={page}
+      totalPages={12}
+      onPfPageChange={(event) => setPage(event.detail.page)}
+    />
+  );
 }
 
 function ProgressIndicatorsPreview() {
@@ -1485,44 +1514,55 @@ const PROGRESS_STEPS = [
 ];
 
 function ProgressStepsPreview() {
-  return <ProgressSteps steps={PROGRESS_STEPS} orientation="vertical" />;
+  return (
+    <PfProgressSteps orientation="vertical">
+      {PROGRESS_STEPS.map((step) => (
+        <PfProgressStep key={step.title} status={step.status}>
+          <span slot="title">{step.title}</span>
+          {step.description && <span slot="description">{step.description}</span>}
+        </PfProgressStep>
+      ))}
+    </PfProgressSteps>
+  );
 }
 
 function RadioButtonPreview() {
   const [v, setV] = useState('light');
+  /*
+   * Loose radio buttons sharing a `name` is the React arrangement and has no
+   * equivalent here: a form-associated custom element gets no radio grouping
+   * from the browser, so the group has to own the `name` and the single
+   * selection. `pf-radio-button` has no `name` or `label` of its own -- it
+   * takes its label as its default slot and only asks to be chosen.
+   */
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {[
-        { value: 'light', label: 'Light theme' },
-        { value: 'dark', label: 'Dark theme' },
-        { value: 'system', label: 'System preference' },
-      ].map((opt) => (
-        <PfRadioButton
-          key={opt.value}
-          value={opt.value}
-          label={opt.label}
-          name="theme-mode"
-          checked={v === opt.value}
-          onChange={(e) => setV(e.target.value)}
-        />
-      ))}
-    </div>
+    <PfRadioGroup name="theme-mode" value={v} onPfChange={(event) => setV(event.detail.value)}>
+      <PfRadioButton value="light">Light theme</PfRadioButton>
+      <PfRadioButton value="dark">Dark theme</PfRadioButton>
+      <PfRadioButton value="system">System preference</PfRadioButton>
+    </PfRadioGroup>
   );
 }
 
 function RadioGroupPreview() {
   const [v, setV] = useState('md');
   return (
-    <RadioGroup
+    <PfRadioGroup
       legend="Component size"
       value={v}
-      onValueChange={setV}
-      options={[
+      onPfChange={(event) => setV(event.detail.value)}
+    >
+      {[
         { value: 'sm', label: 'Small', description: 'Compact layout' },
         { value: 'md', label: 'Medium', description: 'Default size' },
         { value: 'lg', label: 'Large', description: 'More padding' },
-      ]}
-    />
+      ].map((option) => (
+        <PfRadioButton key={option.value} value={option.value}>
+          {option.label}
+          <span slot="description">{option.description}</span>
+        </PfRadioButton>
+      ))}
+    </PfRadioGroup>
   );
 }
 
@@ -1539,50 +1579,46 @@ function RatingPreview() {
 function SelectPreview() {
   const [v, setV] = useState('');
   return (
-    <Select
+    <PfSelect
       label="Font family"
       placeholder="Choose a typeface…"
       value={v}
-      onValueChange={setV}
-      options={[
-        { value: 'inter', label: 'Inter' },
-        { value: 'geist', label: 'Geist' },
-        { value: 'roboto', label: 'Roboto' },
-        { value: 'system', label: 'System UI' },
-      ]}
-    />
+      onPfChange={(event) => setV(event.detail.value)}
+    >
+      <PfOption value="inter">Inter</PfOption>
+      <PfOption value="geist">Geist</PfOption>
+      <PfOption value="roboto">Roboto</PfOption>
+      <PfOption value="system">System UI</PfOption>
+    </PfSelect>
   );
 }
 
 function SectionHeaderPreview() {
   return (
-    <SectionHeader
-      eyebrow="Components"
-      heading="Button"
-      description="Primary action trigger for forms, dialogs, and toolbars."
-      divider
-      actions={
-        <PfButton size="sm" variant="secondary">
-          View in Storybook
-        </PfButton>
-      }
-    />
+    <PfSectionHeader divider>
+      <span slot="eyebrow">Components</span>
+      Button
+      <span slot="description">Primary action trigger for forms, dialogs, and toolbars.</span>
+      <PfButton slot="actions" size="sm" variant="secondary">
+        View in Storybook
+      </PfButton>
+    </PfSectionHeader>
   );
 }
 
 function SectionFooterPreview() {
   return (
-    <SectionFooter>
+    <PfSectionFooter>
       <span style={{ fontSize: 13, color: 'var(--color-semantic-text-muted)' }}>
         Last updated 3 minutes ago
       </span>
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div slot="actions" style={{ display: 'flex', gap: 8 }}>
         <PfButton size="sm" variant="secondary">
           Cancel
         </PfButton>
         <PfButton size="sm">Save changes</PfButton>
       </div>
-    </SectionFooter>
+    </PfSectionFooter>
   );
 }
 
@@ -1591,15 +1627,22 @@ function SliderPreview() {
   const [blur, setBlur] = useState(12);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-      <Slider
+      <PfSlider
         label="Opacity"
         min={0}
         max={100}
         value={opacity}
-        onValueChange={setOpacity}
+        onPfInput={(event) => setOpacity(event.detail.value)}
         showValue
       />
-      <Slider label="Blur radius" min={0} max={40} value={blur} onValueChange={setBlur} showValue />
+      <PfSlider
+        label="Blur radius"
+        min={0}
+        max={40}
+        value={blur}
+        onPfInput={(event) => setBlur(event.detail.value)}
+        showValue
+      />
     </div>
   );
 }
@@ -1610,9 +1653,21 @@ function SwitchPreview() {
   const [c, setC] = useState(true);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <PfSwitch label="Enable notifications" checked={a} onChange={(e) => setA(e.target.checked)} />
-      <PfSwitch label="Auto-save drafts" checked={b} onChange={(e) => setB(e.target.checked)} />
-      <PfSwitch label="Compact view" checked={c} onChange={(e) => setC(e.target.checked)} />
+      <PfSwitch
+        label="Enable notifications"
+        checked={a}
+        onPfChange={(event) => setA(event.detail.checked)}
+      />
+      <PfSwitch
+        label="Auto-save drafts"
+        checked={b}
+        onPfChange={(event) => setB(event.detail.checked)}
+      />
+      <PfSwitch
+        label="Compact view"
+        checked={c}
+        onPfChange={(event) => setC(event.detail.checked)}
+      />
     </div>
   );
 }
@@ -1642,61 +1697,57 @@ const TABLE_ROWS = [
 ];
 
 function TablePreview() {
-  return <Table columns={TABLE_COLUMNS} rows={TABLE_ROWS} />;
+  return (
+    <PfTable label="CSS variables per component" style={{ width: '100%' }}>
+      <PfTableRow head>
+        {TABLE_COLUMNS.map((column) => (
+          <PfTableCell key={column.key} head width={column.width}>
+            {column.header}
+          </PfTableCell>
+        ))}
+      </PfTableRow>
+      {TABLE_ROWS.map((row) => (
+        <PfTableRow key={row.name}>
+          {TABLE_COLUMNS.map((column) => (
+            <PfTableCell key={column.key}>
+              {row[column.key as 'name' | 'vars' | 'status' | 'modified']}
+            </PfTableCell>
+          ))}
+        </PfTableRow>
+      ))}
+    </PfTable>
+  );
 }
 
+const TAB_ITEMS = [
+  { value: 'overview', label: 'Overview', content: 'Overview content goes here.' },
+  { value: 'tokens', label: 'Tokens', content: 'Token documentation here.' },
+  { value: 'examples', label: 'Examples', content: 'Usage examples here.' },
+];
+
 function TabsPreview() {
+  const [value, setValue] = useState('overview');
   return (
-    <Tabs
-      defaultValue="overview"
-      items={[
-        {
-          value: 'overview',
-          label: 'Overview',
-          content: (
-            <p
-              style={{
-                margin: '12px 0 0',
-                fontSize: 14,
-                color: 'var(--color-semantic-text-muted)',
-              }}
-            >
-              Overview content goes here.
-            </p>
-          ),
-        },
-        {
-          value: 'tokens',
-          label: 'Tokens',
-          content: (
-            <p
-              style={{
-                margin: '12px 0 0',
-                fontSize: 14,
-                color: 'var(--color-semantic-text-muted)',
-              }}
-            >
-              Token documentation here.
-            </p>
-          ),
-        },
-        {
-          value: 'examples',
-          label: 'Examples',
-          content: (
-            <p
-              style={{
-                margin: '12px 0 0',
-                fontSize: 14,
-                color: 'var(--color-semantic-text-muted)',
-              }}
-            >
-              Usage examples here.
-            </p>
-          ),
-        },
-      ]}
-    />
+    <PfTabs value={value} onPfChange={(event) => setValue(event.detail.value)}>
+      {TAB_ITEMS.map((item) => (
+        <PfTab key={item.value} value={item.value}>
+          {item.label}
+        </PfTab>
+      ))}
+      {TAB_ITEMS.map((item) => (
+        <PfTabPanel key={item.value} value={item.value}>
+          <p
+            style={{
+              margin: '12px 0 0',
+              fontSize: 14,
+              color: 'var(--color-semantic-text-muted)',
+            }}
+          >
+            {item.content}
+          </p>
+        </PfTabPanel>
+      ))}
+    </PfTabs>
   );
 }
 
@@ -1719,7 +1770,7 @@ function TextareaPreview() {
       label="Component notes"
       placeholder="Add any notes about this component's customizations…"
       value={v}
-      onChange={(e) => setV(e.target.value)}
+      onPfInput={(event) => setV(event.detail.value)}
       rows={4}
     />
   );
@@ -1751,32 +1802,51 @@ const TIMELINE_ITEMS = [
 ];
 
 function TimelinePreview() {
-  return <Timeline items={TIMELINE_ITEMS} />;
+  return (
+    <PfTimeline>
+      {TIMELINE_ITEMS.map((item) => (
+        <PfTimelineItem key={item.id} tone={item.tone}>
+          <span slot="title">{item.title}</span>
+          {item.description && <span slot="description">{item.description}</span>}
+          <span slot="timestamp">{item.timestamp}</span>
+        </PfTimelineItem>
+      ))}
+    </PfTimeline>
+  );
 }
 
 function TooltipPreview() {
   return (
     <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-      <Tooltip content="Top tooltip" placement="top">
+      <PfTooltip placement="top">
         <PfButton variant="secondary" size="sm">
           Hover top
         </PfButton>
-      </Tooltip>
-      <Tooltip content="Right tooltip" placement="right">
+        <span slot="content">Top tooltip</span>
+      </PfTooltip>
+      <PfTooltip placement="right">
         <PfButton variant="secondary" size="sm">
           Hover right
         </PfButton>
-      </Tooltip>
-      <Tooltip content="Bottom tooltip" placement="bottom">
+        <span slot="content">Right tooltip</span>
+      </PfTooltip>
+      <PfTooltip placement="bottom">
         <PfButton variant="secondary" size="sm">
           Hover bottom
         </PfButton>
-      </Tooltip>
+        <span slot="content">Bottom tooltip</span>
+      </PfTooltip>
     </div>
   );
 }
 
-const TREE_NODES = [
+interface TreeNode {
+  value: string;
+  label: string;
+  children?: TreeNode[];
+}
+
+const TREE_NODES: TreeNode[] = [
   {
     value: 'components',
     label: 'components',
@@ -1799,25 +1869,48 @@ const TREE_NODES = [
 ];
 
 function TreeViewPreview() {
-  return <TreeView nodes={TREE_NODES} defaultExpandedValues={['components', 'form']} />;
+  /*
+   * `pf-tree-item`s nest, which is what the `children` array was expressing.
+   * `hasChildren` is the element's own ask -- it cannot see its slotted
+   * children at first paint -- and `expanded` on the item is the equivalent of
+   * the React `defaultExpandedValues` entry. The tree holds the one tab stop
+   * and names the active item with `aria-activedescendant`, because a nested
+   * host cannot take a roving tabindex: Chromium skips a `tabindex="0"` host
+   * slotted into another host's shadow tree entirely.
+   */
+  const item = (node: TreeNode) => (
+    <PfTreeItem
+      key={node.value}
+      value={node.value}
+      hasChildren={Boolean(node.children)}
+      expanded={node.value === 'components' || node.value === 'form'}
+    >
+      <span slot="label">{node.label}</span>
+      {node.children?.map(item)}
+    </PfTreeItem>
+  );
+
+  return <PfTreeView label="Repository">{TREE_NODES.map(item)}</PfTreeView>;
 }
 
 function UtilityButtonPreview() {
   return (
     <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-      <UtilityButton variant="neutral">Neutral</UtilityButton>
-      <UtilityButton variant="brand">Brand</UtilityButton>
-      <UtilityButton variant="destructive">Destructive</UtilityButton>
-      <UtilityButton
-        variant="neutral"
-        icon={<PfIcon name="ellipsis" aria-hidden />}
-        aria-label="More options"
-      />
-      <UtilityButton
-        variant="brand"
-        icon={<PfIcon name="star" aria-hidden />}
-        aria-label="Favorite"
-      />
+      <PfUtilityButton variant="neutral">Neutral</PfUtilityButton>
+      <PfUtilityButton variant="brand">Brand</PfUtilityButton>
+      <PfUtilityButton variant="destructive">Destructive</PfUtilityButton>
+      {/*
+        `icon` was a `ReactNode` prop; it is the `icon` slot, and an icon-only
+        button is one with nothing in the default slot. `label` rather than
+        `aria-label`, since the host's attribute does not name the `<button>`
+        in the shadow root.
+      */}
+      <PfUtilityButton variant="neutral" label="More options">
+        <PfIcon slot="icon" name="ellipsis" aria-hidden />
+      </PfUtilityButton>
+      <PfUtilityButton variant="brand" label="Favorite">
+        <PfIcon slot="icon" name="star" aria-hidden />
+      </PfUtilityButton>
     </div>
   );
 }
@@ -1982,7 +2075,7 @@ export function ComponentsView({ theme }: ComponentsViewProps) {
           <PfInput
             placeholder="Search components…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onPfInput={(event) => setSearch(event.detail.value)}
             aria-label="Search components"
           />
         </div>
