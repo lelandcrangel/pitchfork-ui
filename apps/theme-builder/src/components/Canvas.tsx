@@ -1,5 +1,6 @@
 import { forwardRef } from 'react';
 import {
+  PfAlert,
   PfAvatar,
   PfBadge,
   PfButton,
@@ -11,18 +12,13 @@ import {
   PfLoadingDots,
   PfLoadingSkeleton,
   PfLoadingSpinner,
+  PfOption,
+  PfRadioButton,
+  PfRadioGroup,
+  PfSelect,
   PfSwitch,
   PfTag,
 } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - Alert: the call site changes shape: icon -> slot
- * - RadioGroup: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-radio-group; pick the right one
- * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
- */
-import { Alert, RadioGroup, Select } from '@pitchfork-ui/react';
 import './Canvas.css';
 
 interface CanvasProps {
@@ -59,58 +55,60 @@ export const Canvas = forwardRef<HTMLDivElement, CanvasProps>(({ sections, child
           <Section title="Form Controls">
             <Row align="start">
               <PfInput label="Email address" placeholder="you@example.com" />
-              <PfInput
-                label="Error state"
-                defaultValue="bad input"
-                error="This field is required."
-              />
+              {/*
+                `value`, not `defaultValue`: the element holds its own value,
+                so there is no uncontrolled/controlled pair to choose between.
+                Nothing re-renders this canvas, so nothing writes it back.
+              */}
+              <PfInput label="Error state" value="bad input" error="This field is required." />
             </Row>
             <Row align="start">
-              <Select
-                label="Country"
-                options={[
-                  { value: 'us', label: 'United States' },
-                  { value: 'gb', label: 'United Kingdom' },
-                  { value: 'ca', label: 'Canada' },
-                ]}
-                defaultValue="us"
-              />
-              <RadioGroup
-                legend="Plan"
-                name="plan"
-                defaultValue="pro"
-                options={[
-                  { value: 'free', label: 'Free' },
-                  { value: 'pro', label: 'Pro' },
-                  { value: 'enterprise', label: 'Enterprise' },
-                ]}
-              />
+              <PfSelect label="Country" value="us">
+                <PfOption value="us">United States</PfOption>
+                <PfOption value="gb">United Kingdom</PfOption>
+                <PfOption value="ca">Canada</PfOption>
+              </PfSelect>
+              {/*
+                A form-associated custom element gets no radio grouping from
+                the browser, so `pf-radio-group` is the form control: it holds
+                the one `name` and the one `value`, and each
+                `pf-radio-button` only asks to be chosen.
+              */}
+              <PfRadioGroup legend="Plan" name="plan" value="pro">
+                <PfRadioButton value="free">Free</PfRadioButton>
+                <PfRadioButton value="pro">Pro</PfRadioButton>
+                <PfRadioButton value="enterprise">Enterprise</PfRadioButton>
+              </PfRadioGroup>
             </Row>
             <Row>
-              <PfCheckbox label="Remember me" defaultChecked />
+              <PfCheckbox label="Remember me" checked />
               <PfCheckbox label="Send notifications" />
               <PfSwitch label="Dark mode" />
-              <PfSwitch label="Auto-save" defaultChecked />
+              <PfSwitch label="Auto-save" checked />
             </Row>
           </Section>
         )}
 
         {show('Alerts') && (
           <Section title="Alerts">
-            <Alert variant="info" title="Heads up" description="Your trial expires in 3 days." />
-            <Alert
+            <PfAlert
+              variant="info"
+              heading="Heads up"
+              description="Your trial expires in 3 days."
+            />
+            <PfAlert
               variant="success"
-              title="Changes saved"
+              heading="Changes saved"
               description="Your profile has been updated."
             />
-            <Alert
+            <PfAlert
               variant="warning"
-              title="Storage low"
+              heading="Storage low"
               description="You have used 90% of your quota."
             />
-            <Alert
+            <PfAlert
               variant="danger"
-              title="Action required"
+              heading="Action required"
               description="Verify your email to continue."
             />
           </Section>
