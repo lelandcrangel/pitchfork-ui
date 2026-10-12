@@ -21,6 +21,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readIconRegistry } from './lib/icon-registry.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const elementsDir = join(root, 'packages/elements');
@@ -44,10 +45,25 @@ const read = (path, howToBuild) => {
 };
 
 const docsJson = read(docsJsonPath, 'npm run build:elements');
-const reactMetadata = read(reactMetadataPath, 'npm run build:metadata');
 const elementsPkg = JSON.parse(readFileSync(join(elementsDir, 'package.json'), 'utf8'));
 
-const reactByName = new Map(reactMetadata.components.map((c) => [c.name, c]));
+/*
+ * The React metadata is **optional**, and this is the whole shape of Phase 5
+ * in one place. It used to be required, and every element's category came out
+ * of it, so `packages/react` going away took the taxonomy with it and left
+ * `--strict` failing with no categories at all.
+ *
+ * Now it is only ever used to *check* this file's own tables -- the counterpart
+ * names, the absorptions, and the category of each element. While it is on
+ * disk those checks run and the tables cannot drift. Once it is gone the
+ * output is the same minus `reactCoverage`, which is the one part that is
+ * genuinely about React and has nothing left to describe.
+ */
+const reactMetadata = existsSync(reactMetadataPath)
+  ? JSON.parse(readFileSync(reactMetadataPath, 'utf8'))
+  : null;
+
+const reactByName = new Map((reactMetadata?.components ?? []).map((c) => [c.name, c]));
 
 /** `pf-nav-item` → `PfNavItem`, which is the name all three bindings use. */
 const toPascal = (tag) =>
@@ -55,6 +71,155 @@ const toPascal = (tag) =>
     .split('-')
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join('');
+
+/**
+ * The ten categories, in the order an agent should read them.
+ *
+ * Owned here rather than read out of the React metadata, which is where they
+ * used to come from: the elements are the layer that survives, so the taxonomy
+ * has to live with them. The order is deliberate -- `list_elements` groups by
+ * it, and "forms, actions, display" is the order someone building a screen
+ * works in, not alphabetical.
+ */
+const CATEGORIES = [
+  'forms',
+  'actions',
+  'display',
+  'navigation',
+  'overlays',
+  'feedback',
+  'dataviz',
+  'media',
+  'layout',
+  'utility',
+];
+
+/**
+ * Which category each element belongs to.
+ *
+ * This table used to be derived: an element took its React counterpart's
+ * category, and a child element took its parent's. The second half still
+ * holds (`CHILD_OF` below), and it is the better rule -- a child has no
+ * category of its own to get wrong. The first half cannot survive
+ * `packages/react`, so the 87 non-child elements are written down.
+ *
+ * Generated from the React-derived output rather than retyped, and
+ * `checkAgainstReact` below asserts the two still agree for as long as the
+ * React metadata is on disk. So this cannot drift while there is something to
+ * drift from, and when there is not, it is the source.
+ *
+ * `--strict` fails on an element in neither this table nor `CHILD_OF`, which
+ * is the same check as before against a different table: a new element with no
+ * category is the thing that goes wrong silently.
+ */
+const CATEGORY = {
+  // forms
+  'pf-checkbox': 'forms',
+  'pf-combobox': 'forms',
+  'pf-date-picker': 'forms',
+  'pf-date-range-picker': 'forms',
+  'pf-file-uploader': 'forms',
+  'pf-input': 'forms',
+  'pf-multi-select': 'forms',
+  'pf-number-input': 'forms',
+  'pf-radio-button': 'forms',
+  'pf-radio-group': 'forms',
+  'pf-rating-badge': 'forms',
+  'pf-rating-stars': 'forms',
+  'pf-rich-text-editor': 'forms',
+  'pf-select': 'forms',
+  'pf-slider': 'forms',
+  'pf-switch': 'forms',
+  'pf-tag-input': 'forms',
+  'pf-textarea': 'forms',
+  'pf-time-picker': 'forms',
+
+  // actions
+  'pf-button': 'actions',
+  'pf-button-group': 'actions',
+  'pf-inline-cta': 'actions',
+  'pf-kbd': 'actions',
+  'pf-utility-button': 'actions',
+
+  // display
+  'pf-accordion': 'display',
+  'pf-avatar': 'display',
+  'pf-avatar-group': 'display',
+  'pf-badge': 'display',
+  'pf-badge-group': 'display',
+  'pf-card': 'display',
+  'pf-card-content': 'display',
+  'pf-card-footer': 'display',
+  'pf-card-header': 'display',
+  'pf-code-snippet': 'display',
+  'pf-collapsible': 'display',
+  'pf-content-divider': 'display',
+  'pf-credit-card': 'display',
+  'pf-empty-state': 'display',
+  'pf-icon': 'display',
+  'pf-metric-card': 'display',
+  'pf-metric-grid': 'display',
+  'pf-tag': 'display',
+  'pf-timeline': 'display',
+  'pf-tooltip': 'display',
+
+  // navigation
+  'pf-breadcrumbs': 'navigation',
+  'pf-header-navigation': 'navigation',
+  'pf-pagination': 'navigation',
+  'pf-progress-steps': 'navigation',
+  'pf-sidebar-navigation': 'navigation',
+  'pf-tabs': 'navigation',
+  'pf-toolbar': 'navigation',
+  'pf-toolbar-separator': 'navigation',
+  'pf-tree-view': 'navigation',
+
+  // overlays
+  'pf-calendar': 'overlays',
+  'pf-command-palette': 'overlays',
+  'pf-context-menu': 'overlays',
+  'pf-dropdown': 'overlays',
+  'pf-modal': 'overlays',
+  'pf-modal-body': 'overlays',
+  'pf-modal-footer': 'overlays',
+  'pf-modal-header': 'overlays',
+  'pf-notification': 'overlays',
+  'pf-popover': 'overlays',
+  'pf-slideout-menu': 'overlays',
+  'pf-toaster': 'overlays',
+
+  // feedback
+  'pf-alert': 'feedback',
+  'pf-gauge-chart': 'feedback',
+  'pf-loading-dots': 'feedback',
+  'pf-loading-skeleton': 'feedback',
+  'pf-loading-spinner': 'feedback',
+  'pf-progress-bar': 'feedback',
+  'pf-progress-circle': 'feedback',
+
+  // dataviz
+  'pf-bar-chart': 'dataviz',
+  'pf-heatmap': 'dataviz',
+  'pf-line-chart': 'dataviz',
+  'pf-pie-chart': 'dataviz',
+  'pf-radar-chart': 'dataviz',
+  'pf-sparkline': 'dataviz',
+  'pf-table': 'dataviz',
+
+  // media
+  'pf-carousel': 'media',
+  'pf-video-player': 'media',
+
+  // layout
+  'pf-page-header': 'layout',
+  'pf-resizable': 'layout',
+  'pf-scroll-area': 'layout',
+  'pf-section-footer': 'layout',
+  'pf-section-header': 'layout',
+
+  // utility
+  'pf-visually-hidden': 'utility',
+};
 
 /**
  * The React counterpart, where pascal-casing the tag does not find it.
@@ -123,9 +288,16 @@ const CHILD_OF = {
   'pf-tree-item': 'pf-tree-view',
 };
 
-/** The React component this element is the counterpart of, if there is one. */
+/**
+ * The React component this element is the counterpart of, if there is one.
+ *
+ * `null` for every element once the React metadata is gone, which is correct
+ * rather than a degradation: there is no counterpart to point at. The
+ * `COUNTERPART` warning is only raised while there is a list to check against,
+ * or it would fire for all 108.
+ */
 function counterpartOf(tag) {
-  if (CHILD_OF[tag]) return null;
+  if (!reactMetadata || CHILD_OF[tag]) return null;
   const name = COUNTERPART[tag] ?? toPascal(tag).replace(/^Pf/, '');
   if (reactByName.has(name)) return name;
   if (COUNTERPART[tag]) {
@@ -141,11 +313,10 @@ function categoryOf(tag) {
     if (!category) warn(`${tag} is a child of ${parent}, which has no category.`);
     return category;
   }
-  const counterpart = counterpartOf(tag);
-  if (counterpart) return reactByName.get(counterpart).category;
+  if (CATEGORY[tag]) return CATEGORY[tag];
   warn(
-    `${tag} has no React counterpart and is not in CHILD_OF, so it has no ` +
-      'category. Add it to one or the other.',
+    `${tag} is in neither CATEGORY nor CHILD_OF, so it has no category. ` +
+      'Add it to one or the other.',
   );
   return null;
 }
@@ -261,7 +432,7 @@ const elementByCounterpart = new Map(
 );
 
 const reactCoverage = {};
-for (const component of reactMetadata.components) {
+for (const component of reactMetadata?.components ?? []) {
   const counterpart = elementByCounterpart.get(component.name);
   if (counterpart) {
     reactCoverage[component.name] = { tag: counterpart };
@@ -279,20 +450,72 @@ for (const component of reactMetadata.components) {
 }
 
 for (const [name, { tag }] of Object.entries(ABSORBED)) {
-  if (!reactByName.has(name)) warn(`ABSORBED names React ${name}, which does not exist.`);
+  if (reactMetadata && !reactByName.has(name)) {
+    warn(`ABSORBED names React ${name}, which does not exist.`);
+  }
   if (!elements.some((element) => element.tag === tag)) {
     warn(`ABSORBED points ${name} at ${tag}, which is not an element.`);
   }
 }
+
+/*
+ * The table above against the derivation it replaced, for as long as there is
+ * something to compare with.
+ *
+ * `CATEGORY` was generated from this script's own React-derived output, so the
+ * two agree today by construction. What this catches is the gap afterwards: a
+ * React component moved between categories, or a new element added to
+ * `CATEGORY` under a category its counterpart does not share. Either would be
+ * a silent disagreement between two layers that are supposed to answer one
+ * question the same way -- and once `packages/react` is gone there is no way
+ * to notice it at all, so it is worth noticing now.
+ */
+if (reactMetadata) {
+  for (const element of elements) {
+    if (!element.reactCounterpart) continue;
+    const theirs = reactByName.get(element.reactCounterpart)?.category;
+    if (theirs && theirs !== element.category) {
+      warn(
+        `${element.tag} is "${element.category}" in CATEGORY but its React ` +
+          `counterpart ${element.reactCounterpart} is "${theirs}".`,
+      );
+    }
+  }
+
+  const missing = reactMetadata.categories.filter((name) => !CATEGORIES.includes(name));
+  const extra = CATEGORIES.filter((name) => !reactMetadata.categories.includes(name));
+  if (missing.length > 0 || extra.length > 0) {
+    warn(
+      `CATEGORIES disagrees with the React metadata's taxonomy: ` +
+        `${missing.length > 0 ? `missing ${missing.join(', ')}` : ''}` +
+        `${missing.length > 0 && extra.length > 0 ? '; ' : ''}` +
+        `${extra.length > 0 ? `extra ${extra.join(', ')}` : ''}.`,
+    );
+  }
+}
+
+/**
+ * What `<pf-icon>` draws with nothing registered.
+ *
+ * It used to come from the React metadata, where `validate_usage` read it --
+ * so a name was checked against the *React* registry whichever layer the
+ * markup was for. That was harmless only because the two lists agree, and
+ * `scripts/lib/icon-registry.mjs` is now the thing that makes them agree: it
+ * asserts each layer's `name: faXxx` map against core's
+ * `BUNDLED_FA_ICON_NAMES` and throws when they diverge.
+ */
+const icons = readIconRegistry({
+  bundledFile: 'packages/elements/src/components/pf-icon/bundled-icons.ts',
+  declaration: 'const bundled = {',
+});
 
 const output = {
   $schema: 'https://lelandrangel.com/pitchfork-ui/schema/elements.json',
   name: elementsPkg.name,
   version: elementsPkg.version,
   generatedBy: 'scripts/build-elements-metadata.mjs',
-  // The same taxonomy the React metadata uses, so one question gets one answer
-  // whichever layer it is asked about.
-  categories: reactMetadata.categories,
+  categories: CATEGORIES,
+  icons,
   bindings: {
     react: '@pitchfork-ui/elements-react',
     angular: '@pitchfork-ui/elements-angular',
@@ -311,10 +534,14 @@ console.log(
     `(${elements.filter((e) => e.reactCounterpart).length} with a React counterpart, ` +
     `${formAssociated} form-associated) → ${outFile.slice(root.length + 1)}`,
 );
-console.log(
-  `  react coverage: ${Object.keys(reactCoverage).length}/${reactMetadata.components.length} ` +
-    `components, ${Object.values(reactCoverage).filter((e) => e.absorbed).length} absorbed`,
-);
+if (reactMetadata) {
+  console.log(
+    `  react coverage: ${Object.keys(reactCoverage).length}/${reactMetadata.components.length} ` +
+      `components, ${Object.values(reactCoverage).filter((e) => e.absorbed).length} absorbed`,
+  );
+} else {
+  console.log('  no React metadata on disk, so no coverage map — the elements stand alone');
+}
 
 if (warnings.length > 0) {
   console.error(`\n${warnings.length} warning(s):`);
