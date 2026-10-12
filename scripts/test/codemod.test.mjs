@@ -47,15 +47,29 @@ function run(files, { write = true, args = [] } = {}) {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, content);
   }
-  const stdout = execFileSync(
-    process.execPath,
-    [CODEMOD, ...(write ? ['--write'] : []), ...args, dir],
-    { cwd: ROOT, encoding: 'utf8' },
-  );
+  /*
+   * The handler audit exits 1 when it finds something, so a fixture written
+   * to trigger it would make `execFileSync` throw and take the assertions
+   * with it. The output is what the test is about either way, so both are
+   * read off the error.
+   */
+  let stdout;
+  let exitCode = 0;
+  try {
+    stdout = execFileSync(
+      process.execPath,
+      [CODEMOD, ...(write ? ['--write'] : []), ...args, dir],
+      { cwd: ROOT, encoding: 'utf8' },
+    );
+  } catch (error) {
+    if (error.stdout === undefined) throw error;
+    stdout = error.stdout;
+    exitCode = error.status;
+  }
   const after = Object.fromEntries(
     Object.keys(files).map((name) => [name, readFileSync(join(dir, name), 'utf8')]),
   );
-  return { stdout, after, dir };
+  return { stdout, after, dir, exitCode };
 }
 
 test('renames a drop-in component and the import specifier', () => {
@@ -232,4 +246,108 @@ test('leaves a non-component export alone', () => {
   });
   assert.match(after['a.tsx'], /registerIcons: not a component in the metadata/);
   assert.match(after['a.tsx'], /import \{ registerIcons \} from '@pitchfork-ui\/react';/);
+});
+
+/*
+ * The handler audit. It exists because the rename alone ships a silent
+ * defect: `Switch.onChange` is React's own synthetic handler, inherited from
+ * `InputHTMLAttributes` rather than declared, so it is in no metadata and the
+ * migration map never sees it -- and `pf-switch` emits `pfChange` and no
+ * native `change`. The renamed call site type-checks, renders and never fires.
+ */
+test('reports a handler the element cannot fire, and exits 1', () => {
+  const { stdout, exitCode } = run({
+    'a.tsx': [
+      "import { Switch } from '@pitchfork-ui/react';",
+      'export const Toggle = () => <Switch checked={on} onChange={(e) => set(e.target.checked)} />;',
+    ].join('\n'),
+  });
+
+  assert.match(stdout, /<PfSwitch onChange>/);
+  assert.match(stdout, /pf-switch emits pfChange/);
+  assert.equal(exitCode, 1);
+});
+
+test('accepts the element own event, renamed', () => {
+  const { stdout, exitCode } = run({
+    'a.tsx': [
+      "import { Switch } from '@pitchfork-ui/elements-react';",
+      "import { PfSwitch } from '@pitchfork-ui/elements-react';",
+      'export const Toggle = () => <PfSwitch onPfChange={(e) => set(e.detail.checked)} />;',
+    ].join('\n'),
+  });
+
+  assert.doesNotMatch(stdout, /cannot fire/);
+  assert.equal(exitCode, 0);
+});
+
+/*
+ * A DOM event a host really fires is not a finding. `onClick` on a `pf-button`
+ * is the common case, and reporting it would bury the real ones.
+ */
+test('accepts a DOM event on a host', () => {
+  const { stdout, exitCode } = run({
+    'a.tsx': [
+      "import { PfButton } from '@pitchfork-ui/elements-react';",
+      'export const Save = () => <PfButton onClick={save} onKeyDown={keys}>Save</PfButton>;',
+    ].join('\n'),
+  });
+
+  assert.doesNotMatch(stdout, /cannot fire/);
+  assert.equal(exitCode, 0);
+});
+
+/*
+ * The audit runs on a file this run never rewrote, which is what makes it
+ * useful on an app ported months ago -- and is how it found five dead handlers
+ * in `apps/demo` after that port was already committed.
+ */
+test('audits an already-ported file that mentions neither rename', () => {
+  const { stdout, exitCode } = run({
+    'a.tsx': [
+      "import { PfInput } from '@pitchfork-ui/elements-react';",
+      'export const Field = () => <PfInput onChange={(e) => set(e.target.value)} />;',
+    ].join('\n'),
+  });
+
+  assert.match(stdout, /<PfInput onChange>/);
+  assert.match(stdout, /pf-input emits pfChange, pfInput/);
+  assert.equal(exitCode, 1);
+});
+
+/*
+ * The tag scan balances braces rather than matching `<PfInput[^>]*>`: the
+ * handler's own arrow function contains a `>`, so the regex stops in the
+ * middle of the tag and reads half its attributes. This fixture puts the
+ * handler first, so a `[^>]*` scan would never reach `onBogus`.
+ */
+test('reads attributes past a > inside an expression', () => {
+  const { stdout } = run({
+    'a.tsx': [
+      "import { PfInput } from '@pitchfork-ui/elements-react';",
+      'export const Field = () => (',
+      '  <PfInput',
+      '    onClick={(e) => e.preventDefault()}',
+      '    value={v}',
+      '    onBogusThing={handler}',
+      '  />',
+      ');',
+    ].join('\n'),
+  });
+
+  assert.match(stdout, /<PfInput onBogusThing>/);
+});
+
+test('leaves a handler inside a string or a comment alone', () => {
+  const { stdout, exitCode } = run({
+    'a.tsx': [
+      "import { PfButton } from '@pitchfork-ui/elements-react';",
+      "const doc = '<PfInput onChange={x} />';",
+      '// <PfSwitch onChange={y} />',
+      'export const Save = () => <PfButton>{doc}</PfButton>;',
+    ].join('\n'),
+  });
+
+  assert.doesNotMatch(stdout, /cannot fire/);
+  assert.equal(exitCode, 0);
 });
