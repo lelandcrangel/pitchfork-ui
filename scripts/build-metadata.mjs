@@ -19,10 +19,10 @@
  */
 
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import ts from 'typescript';
+import { readIconRegistry } from './lib/icon-registry.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
@@ -943,109 +943,18 @@ function main() {
    * spelling (`chartBar`). A validator holding only the canonical list rejects
    * both, which is worse than not checking at all.
    *
-   * Read from the source, the same way this script reads everything else --
-   * except the aliases, which come from the Font Awesome definitions
-   * themselves rather than being transcribed here.
+   * The reading moved to `scripts/lib/icon-registry.mjs` when
+   * `build-elements-metadata.mjs` needed the same answer: three of its four
+   * inputs are in core and survive `packages/react`, and the fourth is the
+   * `name: faXxx` map, which each layer writes out itself so a consumer's
+   * bundle carries only the icons in use. Only that file's path differs
+   * between the two callers.
    */
-  function readIconNames() {
-    const source = readFileSync(join(componentsDir, 'Icon/Icon.tsx'), 'utf8');
-    // The registry moved to @pitchfork-ui/core so React components and custom
-    // elements resolve the same names; the spellings table went with it, and
-    // so did the custom glyphs, since both layers drew their own copy of the
-    // same thirteen shapes. What stays with the component is the bundled
-    // Font Awesome list, because each layer imports those glyphs individually.
-    const coreSource = readFileSync(join(root, 'packages/core/src/icons.ts'), 'utf8');
-    const glyphSource = readFileSync(join(root, 'packages/core/src/custom-glyphs.ts'), 'utf8');
-
-    const blockAfter = (declaration, text = source) => {
-      const start = text.indexOf(declaration);
-      if (start === -1) {
-        throw new Error(
-          `build-metadata: \`${declaration}\` not found. The icon ` +
-            'registry was renamed or restructured; update readIconNames().',
-        );
-      }
-
-      // Match braces from the opening one so a nested object or JSX cannot end
-      // the block early.
-      let depth = 0;
-      for (let i = text.indexOf('{', start); i < text.length; i += 1) {
-        if (text[i] === '{') depth += 1;
-        else if (text[i] === '}') {
-          depth -= 1;
-          if (depth === 0) return text.slice(start, i);
-        }
-      }
-      throw new Error(`build-metadata: unbalanced braces after \`${declaration}\``);
-    };
-
-    /** Keys at one level of indentation: `name:` or `'kebab-name':`. */
-    const keysIn = (declaration, text = source) =>
-      [...blockAfter(declaration, text).matchAll(/^ {2}'?([a-zA-Z][a-zA-Z0-9-]*)'?:/gm)].map(
-        (m) => m[1],
-      );
-
-    const custom = keysIn('export const CUSTOM_GLYPHS = {', glyphSource);
-
-    // name -> the `faXxx` export it is bound to.
-    const bundled = new Map(
-      [
-        ...blockAfter('const bundledRegularIcons = {').matchAll(
-          /^ {2}'?([a-zA-Z][a-zA-Z0-9-]*)'?:\s*(fa[A-Za-z0-9]+)/gm,
-        ),
-      ].map((m) => [m[1], m[2]]),
-    );
-
-    const legacyAliases = Object.fromEntries(
-      [
-        ...blockAfter('const legacySpellings: Record<string, string> = {', coreSource).matchAll(
-          /^ {2}([a-zA-Z][a-zA-Z0-9]*):\s*'([^']+)'/gm,
-        ),
-      ].map((m) => [m[1], m[2]]),
-    );
-
-    if (custom.length === 0 || bundled.size === 0) {
-      throw new Error(
-        'build-metadata: parsed an empty icon registry from Icon.tsx or custom-glyphs.ts',
-      );
-    }
-
-    // A synchronous require: this script is otherwise entirely sync, and the
-    // package is CJS, so there is nothing to gain from making the whole call
-    // chain async for one lookup table.
-    const fontAwesomeIcons = createRequire(import.meta.url)('@fortawesome/free-regular-svg-icons');
-    const aliases = new Set();
-
-    for (const [name, exportName] of bundled) {
-      const definition = fontAwesomeIcons[exportName];
-      if (!definition) {
-        throw new Error(
-          `build-metadata: Icon.tsx binds "${name}" to ${exportName}, which ` +
-            '@fortawesome/free-regular-svg-icons does not export.',
-        );
-      }
-      // Font Awesome keeps an icon's former names in `icon[2]`, mixed in with
-      // the unicode codepoints it also renders under.
-      for (const alias of definition.icon?.[2] ?? []) {
-        if (typeof alias === 'string') aliases.add(alias);
-      }
-    }
-
-    const fontAwesome = [...bundled.keys()].sort();
-
-    return {
-      custom: [...custom].sort(),
-      fontAwesome,
-      aliases: [...aliases].sort(),
-      legacyAliases,
-      all: [...new Set([...custom, ...fontAwesome])].sort(),
-      note:
-        '`all` is what getAvailableIconNames() returns. Icon also resolves ' +
-        'every entry in `aliases`, every key of `legacyAliases`, and a ' +
-        'camelCase spelling of any of them. Anything else renders nothing ' +
-        'until the consumer adds it with registerIcons().',
-    };
-  }
+  const readIconNames = () =>
+    readIconRegistry({
+      bundledFile: 'packages/react/src/components/Icon/Icon.tsx',
+      declaration: 'const bundledRegularIcons = {',
+    });
 
   const metadata = {
     $schema: 'https://lelandrangel.com/pitchfork-ui/metadata.schema.json',

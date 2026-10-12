@@ -8,9 +8,14 @@
  * of them rendering an empty slot in the docs site — and how `FileUploader`
  * shipped rendering nothing for `file-arrow-up` before that.
  *
- * Resolution is mirrored from Icon.tsx via metadata.json, which carries the
- * canonical names, the Font Awesome aliases and the legacy camelCase map. Run
- * after `build:metadata`.
+ * Resolution is mirrored from `elements.json`, which carries the canonical
+ * names, the Font Awesome aliases and the legacy camelCase map. Read from the
+ * elements rather than from the React metadata, which is where it used to come
+ * from: three of the registry's four inputs are in `@pitchfork-ui/core` and
+ * the fourth is each layer's own `name: faXxx` map, and
+ * `scripts/lib/icon-registry.mjs` asserts the two maps against core's list --
+ * so either artifact gives the same answer and only one of them survives.
+ * Run after `build:elements-metadata`.
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { readdir } from 'node:fs/promises';
@@ -18,16 +23,18 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const metadataPath = join(repoRoot, 'packages/react/dist/metadata.json');
+const metadataPath = join(repoRoot, 'packages/elements/dist/elements.json');
 
 if (!existsSync(metadataPath)) {
-  console.error('packages/react/dist/metadata.json is missing — run build:metadata first.');
+  console.error(
+    'packages/elements/dist/elements.json is missing — run build:elements-metadata first.',
+  );
   process.exit(1);
 }
 
 const { icons } = JSON.parse(readFileSync(metadataPath, 'utf8'));
 if (!icons?.all?.length) {
-  console.error('metadata.json carries no icon registry — build:metadata is out of date.');
+  console.error('elements.json carries no icon registry — build:elements-metadata is out of date.');
   process.exit(1);
 }
 
