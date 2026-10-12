@@ -924,6 +924,91 @@ try {
   }
 
   /*
+   * A modal whose content and `open` arrive in the **same task**, which is
+   * what every framework's commit does and what the consumer apps' static
+   * markup does not.
+   *
+   * `showModal()` does not focus into the dialog in that case. Measured in
+   * Chromium against a real build: append the three `pf-modal-*` sections to
+   * a long-mounted empty `pf-modal` and set `open` in one task, and the
+   * dialog opens with `document.activeElement` still on `<body>` and
+   * `:focus-within` false. Leave one frame between the two, or mount the
+   * element with its children and `open` already set, and focus lands inside.
+   *
+   * This is here rather than in a browser spec because neither Vitest project
+   * applies `styleUrl` CSS, and without it `showModal()` focuses correctly in
+   * all three cases -- probed by writing the spec, reverting the element's fix
+   * and watching all 19 tests still pass. A check that cannot fail is worse
+   * than no check.
+   *
+   * The symptom is quiet, which is how it survived: the page really is inert,
+   * so the modal works for a mouse and the only cost is that a reader is not
+   * taken to the dialog and the first Tab is needed.
+   */
+  const raced = await page
+    .evaluate(async () => {
+      const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+      const settle = async (count) => {
+        for (let i = 0; i < count; i += 1) await frame();
+      };
+
+      const host = document.createElement('div');
+      const modal = document.createElement('pf-modal');
+      modal.setAttribute('label', 'Raced open');
+      host.appendChild(modal);
+      document.body.appendChild(host);
+
+      // Mounted and empty for a while, as a framework's modal is.
+      await settle(30);
+      if (!modal.shadowRoot) {
+        host.remove();
+        return { error: 'pf-modal never hydrated' };
+      }
+
+      const section = (tag, html) => {
+        const node = document.createElement(tag);
+        node.innerHTML = html;
+        return node;
+      };
+
+      // One task: the content and the open, with no frame in between.
+      modal.append(
+        section('pf-modal-header', '<strong>Raced open</strong>'),
+        section('pf-modal-body', 'The content and the open arrived together.'),
+        section('pf-modal-footer', '<pf-button variant="secondary">Cancel</pf-button>'),
+      );
+      modal.open = true;
+
+      await settle(40);
+      const dialog = modal.shadowRoot.querySelector('dialog');
+      const result = {
+        dialogOpen: Boolean(dialog?.open),
+        focusWithin: Boolean(dialog?.matches(':focus-within')),
+        activeElement: document.activeElement?.tagName.toLowerCase() ?? null,
+        innerActive: modal.shadowRoot.activeElement?.tagName.toLowerCase() ?? null,
+      };
+
+      modal.open = false;
+      await settle(20);
+      host.remove();
+      // The probe borrowed the page's scroll lock; give it back either way.
+      return result;
+    })
+    .catch((error) => ({ error: String(error) }));
+
+  if (raced.error) {
+    problems.push(`pf-modal (raced open): ${raced.error}`);
+  } else if (!raced.dialogOpen) {
+    problems.push('pf-modal (raced open): the dialog did not open at all');
+  } else if (!raced.focusWithin) {
+    problems.push(
+      'pf-modal did not move focus into the dialog when the content and the open ' +
+        `arrived in one task (activeElement "${raced.activeElement}", inner ` +
+        `"${raced.innerActive}") — every framework consumer is in this case`,
+    );
+  }
+
+  /*
    * The slideout, opened through the host app's own state: pinned to the edge
    * its `placement` names, animating, scroll-locked, and giving the scroll back.
    * Every one of these is a claim packages/elements cannot make — no component

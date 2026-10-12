@@ -1772,9 +1772,12 @@ export namespace Components {
      * A modal dialog.
      * A native `<dialog>` opened with `showModal()`, which from inside a shadow
      * root gives the focus trap, Escape and the backdrop for nothing — all
-     * measured: focus moves inside on open and cannot be taken by a light-DOM
-     * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
-     * core is not needed here, unlike in the React component.
+     * measured: focus cannot be taken by a light-DOM button, and a real Escape
+     * fires `cancel` then `close`. So `trapFocus` from core is not needed here,
+     * unlike in the React component.
+     * The one part of `showModal()` that cannot be relied on is where it puts
+     * focus, and the gap is exactly the case every framework consumer is in. See
+     * `showDialog` below.
      * What `showModal()` does *not* do is lock page scroll — measured: a real
      * wheel still scrolled the page behind an open modal — so this element locks
      * it, exactly as the React component does.
@@ -5032,9 +5035,12 @@ declare global {
      * A modal dialog.
      * A native `<dialog>` opened with `showModal()`, which from inside a shadow
      * root gives the focus trap, Escape and the backdrop for nothing — all
-     * measured: focus moves inside on open and cannot be taken by a light-DOM
-     * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
-     * core is not needed here, unlike in the React component.
+     * measured: focus cannot be taken by a light-DOM button, and a real Escape
+     * fires `cancel` then `close`. So `trapFocus` from core is not needed here,
+     * unlike in the React component.
+     * The one part of `showModal()` that cannot be relied on is where it puts
+     * focus, and the gap is exactly the case every framework consumer is in. See
+     * `showDialog` below.
      * What `showModal()` does *not* do is lock page scroll — measured: a real
      * wheel still scrolled the page behind an open modal — so this element locks
      * it, exactly as the React component does.
@@ -8006,9 +8012,12 @@ declare namespace LocalJSX {
      * A modal dialog.
      * A native `<dialog>` opened with `showModal()`, which from inside a shadow
      * root gives the focus trap, Escape and the backdrop for nothing — all
-     * measured: focus moves inside on open and cannot be taken by a light-DOM
-     * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
-     * core is not needed here, unlike in the React component.
+     * measured: focus cannot be taken by a light-DOM button, and a real Escape
+     * fires `cancel` then `close`. So `trapFocus` from core is not needed here,
+     * unlike in the React component.
+     * The one part of `showModal()` that cannot be relied on is where it puts
+     * focus, and the gap is exactly the case every framework consumer is in. See
+     * `showDialog` below.
      * What `showModal()` does *not* do is lock page scroll — measured: a real
      * wheel still scrolled the page behind an open modal — so this element locks
      * it, exactly as the React component does.
@@ -11387,9 +11396,12 @@ declare module "@stencil/core" {
              * A modal dialog.
              * A native `<dialog>` opened with `showModal()`, which from inside a shadow
              * root gives the focus trap, Escape and the backdrop for nothing — all
-             * measured: focus moves inside on open and cannot be taken by a light-DOM
-             * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
-             * core is not needed here, unlike in the React component.
+             * measured: focus cannot be taken by a light-DOM button, and a real Escape
+             * fires `cancel` then `close`. So `trapFocus` from core is not needed here,
+             * unlike in the React component.
+             * The one part of `showModal()` that cannot be relied on is where it puts
+             * focus, and the gap is exactly the case every framework consumer is in. See
+             * `showDialog` below.
              * What `showModal()` does *not* do is lock page scroll — measured: a real
              * wheel still scrolled the page behind an open modal — so this element locks
              * it, exactly as the React component does.

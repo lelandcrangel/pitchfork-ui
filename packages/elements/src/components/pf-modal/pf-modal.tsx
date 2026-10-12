@@ -1,4 +1,4 @@
-import { lockPageScroll } from '@pitchfork-ui/core';
+import { getFocusableElements, lockPageScroll } from '@pitchfork-ui/core';
 
 import {
   Component,
@@ -19,9 +19,13 @@ export type PfModalSize = 'sm' | 'md' | 'lg';
  *
  * A native `<dialog>` opened with `showModal()`, which from inside a shadow
  * root gives the focus trap, Escape and the backdrop for nothing — all
- * measured: focus moves inside on open and cannot be taken by a light-DOM
- * button, and a real Escape fires `cancel` then `close`. So `trapFocus` from
- * core is not needed here, unlike in the React component.
+ * measured: focus cannot be taken by a light-DOM button, and a real Escape
+ * fires `cancel` then `close`. So `trapFocus` from core is not needed here,
+ * unlike in the React component.
+ *
+ * The one part of `showModal()` that cannot be relied on is where it puts
+ * focus, and the gap is exactly the case every framework consumer is in. See
+ * `showDialog` below.
  *
  * What `showModal()` does *not* do is lock page scroll — measured: a real
  * wheel still scrolled the page behind an open modal — so this element locks
@@ -121,11 +125,42 @@ export class PfModal {
     this.releaseScroll = null;
   }
 
+  /**
+   * Opens the dialog, and makes sure focus actually went into it.
+   *
+   * `showModal()` focuses the dialog or its first focusable descendant — but
+   * **not** when light-DOM children were appended in the same task as the
+   * open. Measured in Chromium with no framework involved: append the three
+   * `pf-modal-*` sections to a long-mounted `pf-modal` and set `open` in the
+   * same task, and the dialog opens with `document.activeElement` still on
+   * `<body>` and `:focus-within` false. Leave one frame between the two and
+   * focus lands inside; mount the element with its children and `open`
+   * already set and focus lands inside. So it is the append racing the open,
+   * and the flattened tree `showModal()`'s focusing steps read.
+   *
+   * That race is not an edge case: React, Angular and Vue all commit a
+   * modal's content and its `open` in one go, so every framework consumer got
+   * an open modal with focus outside it and nothing to say so — the page is
+   * still inert, so the only symptom is that a reader is not taken to the
+   * dialog and the first Tab is needed. Porting `apps/demo` is what found it.
+   *
+   * One frame later, focus is put inside if it is not already there. A frame
+   * rather than a microtask because Stencil's queue renders on
+   * `requestAnimationFrame`, and `showModal()`'s own attempt is left to win
+   * wherever it works, so this changes nothing in the cases that were right.
+   */
   private showDialog() {
     const dialog = this.dialog;
     if (!dialog || dialog.open) return;
     dialog.showModal();
     this.lockScroll();
+
+    requestAnimationFrame(() => {
+      if (!this.open || !dialog.isConnected || !dialog.open) return;
+      if (dialog.matches(':focus-within')) return;
+      const [first] = getFocusableElements(dialog);
+      (first ?? dialog).focus();
+    });
   }
 
   private closeDialog() {
