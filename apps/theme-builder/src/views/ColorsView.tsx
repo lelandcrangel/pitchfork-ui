@@ -38,16 +38,11 @@ import {
   PfCardContent,
   PfCardFooter,
   PfCardHeader,
+  PfTable,
+  PfTableCell,
+  PfTableRow,
+  PfUtilityButton,
 } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - Table: the call site changes shape: caption -> slot; columns -> child elements; rows -> child elements; emptyState -> needs a destination; onSortStateChange -> no matching event on pf-table; pick the right one
- * - UtilityButton: the call site changes shape: icon -> slot
- */
-import { Table, UtilityButton } from '@pitchfork-ui/react';
-import type { TableColumn } from '@pitchfork-ui/react';
 import { Canvas } from '../components/Canvas';
 import { formatHex, oklch } from 'culori';
 import {
@@ -393,14 +388,14 @@ const ScaleEditor = function ScaleEditor({
         </div>
 
         {anyModified && (
-          <UtilityButton
+          <PfUtilityButton
             size="sm"
             onClick={resetScale}
-            aria-label={`Reset ${name} scale`}
-            title="Reset all stops"
+            label={`Reset ${name} scale`}
+            tooltip="Reset all stops"
           >
             ↺
-          </UtilityButton>
+          </PfUtilityButton>
         )}
       </div>
 
@@ -506,12 +501,18 @@ function HarmonyChips({ seedHex, onApply }: { seedHex: string; onApply: (hex: st
 
 // ── Contrast Panel ───────────────────────────────────────
 
-const CONTRAST_COLUMNS: TableColumn[] = [
-  { key: 'preview', header: '', width: 48 },
-  { key: 'name', header: 'Pair' },
-  { key: 'note', header: 'Colors' },
-  { key: 'ratio', header: 'Ratio', align: 'right', width: 72 },
-  { key: 'level', header: 'WCAG', align: 'center', width: 72 },
+/*
+ * The columns stay a list -- they are the header row now, with `width` and
+ * `align` moving onto each header cell. `width` is a string on
+ * `pf-table-cell`, because it goes straight into the CSS table's column
+ * sizing rather than through a number-to-px step of its own.
+ */
+const CONTRAST_COLUMNS = [
+  { key: 'preview', header: '', width: '48px', align: 'left' as const },
+  { key: 'name', header: 'Pair', align: 'left' as const },
+  { key: 'note', header: 'Colors', align: 'left' as const },
+  { key: 'ratio', header: 'Ratio', align: 'right' as const, width: '72px' },
+  { key: 'level', header: 'WCAG', align: 'center' as const, width: '72px' },
 ];
 
 function ContrastPanel({ theme }: { theme: ThemeState }) {
@@ -519,8 +520,8 @@ function ContrastPanel({ theme }: { theme: ThemeState }) {
     const fgHex = theme.getValue(pair.fg);
     const bgHex = theme.getValue(pair.bg);
     const ratio = getContrastRatio(fgHex, bgHex);
-    const level = getWCAGLevel(ratio);
     return {
+      key: pair.name,
       preview: (
         <div
           className="contrast-preview"
@@ -533,7 +534,7 @@ function ContrastPanel({ theme }: { theme: ThemeState }) {
       name: pair.name,
       note: <span className="contrast-note">{pair.note}</span>,
       ratio: `${ratio.toFixed(1)}:1`,
-      level: <WCAGBadge level={level} />,
+      level: <WCAGBadge level={getWCAGLevel(ratio)} />,
     };
   });
 
@@ -543,7 +544,29 @@ function ContrastPanel({ theme }: { theme: ThemeState }) {
         <span className="canvas__section-title">Accessibility — WCAG Contrast</span>
       </PfCardHeader>
       <PfCardContent>
-        <Table columns={CONTRAST_COLUMNS} rows={rows} dense hoverable={false} />
+        <PfTable
+          label="WCAG contrast of each colour pair"
+          dense
+          hoverable={false}
+          style={{ width: '100%' }}
+        >
+          <PfTableRow head>
+            {CONTRAST_COLUMNS.map((column) => (
+              <PfTableCell key={column.key} head align={column.align} width={column.width}>
+                {column.header}
+              </PfTableCell>
+            ))}
+          </PfTableRow>
+          {rows.map((row) => (
+            <PfTableRow key={row.key}>
+              {CONTRAST_COLUMNS.map((column) => (
+                <PfTableCell key={column.key} align={column.align}>
+                  {row[column.key as 'preview' | 'name' | 'note' | 'ratio' | 'level']}
+                </PfTableCell>
+              ))}
+            </PfTableRow>
+          ))}
+        </PfTable>
       </PfCardContent>
       <PfCardFooter>
         <span className="contrast-panel__footnote">
@@ -594,13 +617,13 @@ function BaseColorsSection({ theme }: { theme: ThemeState }) {
               </div>
               <span className="base-color__label">{label}</span>
               {modified && (
-                <UtilityButton
+                <PfUtilityButton
                   size="sm"
                   onClick={() => theme.resetVar(v)}
-                  aria-label={`Reset ${label}`}
+                  label={`Reset ${label}`}
                 >
                   ↺
-                </UtilityButton>
+                </PfUtilityButton>
               )}
             </div>
           );

@@ -6,20 +6,18 @@ import {
   PfInput,
   PfLoadingDots,
   PfLoadingSpinner,
+  PfAccordion,
+  PfAccordionItem,
+  PfModal,
+  PfModalBody,
+  PfModalHeader,
+  PfOption,
+  PfSelect,
+  PfSlider,
   PfSwitch,
+  PfTooltip,
+  PfUtilityButton,
 } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - Accordion: the call site changes shape: items -> child elements; defaultValue -> child elements; onValueChange -> no matching event on pf-accordion; pick the right one
- * - Modal: the call site changes shape: title -> needs a destination; description -> needs a destination; footer -> needs a destination
- * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
- * - Slider: an event prop has no equivalent on `pf-slider`: onValueChange -> no matching event on pf-slider; pick the right one
- * - Tooltip: the call site changes shape: content -> slot
- * - UtilityButton: the call site changes shape: icon -> slot
- */
-import { Accordion, Modal, Select, Slider, Tooltip, UtilityButton } from '@pitchfork-ui/react';
 import { useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 import '../styles/controls.css';
@@ -98,21 +96,21 @@ function DurationControl({ label, cssVar, theme, max = 600 }: ControlProps) {
         <label className="control__label">{label}</label>
         <span className="control__value">{ms}ms</span>
         {modified && (
-          <UtilityButton
+          <PfUtilityButton
             size="sm"
             onClick={() => theme.resetVar(cssVar)}
-            aria-label={`Reset ${label}`}
+            label={`Reset ${label}`}
           >
             ↺
-          </UtilityButton>
+          </PfUtilityButton>
         )}
       </div>
-      <Slider
+      <PfSlider
         min={0}
         max={max}
         step={10}
         value={ms}
-        onValueChange={(n) => theme.set(cssVar, `${n}ms`)}
+        onPfInput={(event) => theme.set(cssVar, `${event.detail.value}ms`)}
         aria-label={label}
       />
     </div>
@@ -184,13 +182,13 @@ function EasingControl({ label, cssVar, theme, description }: ControlProps) {
       <div className="control__row">
         <label className="control__label">{label}</label>
         {modified && (
-          <UtilityButton
+          <PfUtilityButton
             size="sm"
             onClick={() => theme.resetVar(cssVar)}
-            aria-label={`Reset ${label}`}
+            label={`Reset ${label}`}
           >
             ↺
-          </UtilityButton>
+          </PfUtilityButton>
         )}
       </div>
       <div className="easing-chips">
@@ -212,8 +210,7 @@ function EasingControl({ label, cssVar, theme, description }: ControlProps) {
           <PfInput
             value={value}
             aria-label={`${label} easing value`}
-            onChange={(e) => theme.set(cssVar, e.target.value)}
-            spellCheck={false}
+            onPfInput={(event) => theme.set(cssVar, event.detail.value)}
           />
         </div>
       </div>
@@ -283,7 +280,8 @@ const SELECT_OPTIONS = [
 ];
 
 function MotionCanvas() {
-  const [accordionValue, setAccordionValue] = useState<string[]>(['why-motion']);
+  // One string, not an array: `pf-accordion`'s `value` is the open item.
+  const [accordionValue, setAccordionValue] = useState('why-motion');
   const [switches, setSwitches] = useState({
     notifications: true,
     autosave: false,
@@ -331,17 +329,21 @@ function MotionCanvas() {
             <PfSwitch
               label="Enable notifications"
               checked={switches.notifications}
-              onChange={(e) => setSwitches((s) => ({ ...s, notifications: e.target.checked }))}
+              onPfChange={(event) =>
+                setSwitches((s) => ({ ...s, notifications: event.detail.checked }))
+              }
             />
             <PfSwitch
               label="Auto-save drafts"
               checked={switches.autosave}
-              onChange={(e) => setSwitches((s) => ({ ...s, autosave: e.target.checked }))}
+              onPfChange={(event) => setSwitches((s) => ({ ...s, autosave: event.detail.checked }))}
             />
             <PfSwitch
               label="Reduce animations"
               checked={switches.animations}
-              onChange={(e) => setSwitches((s) => ({ ...s, animations: e.target.checked }))}
+              onPfChange={(event) =>
+                setSwitches((s) => ({ ...s, animations: event.detail.checked }))
+              }
             />
           </PfCardContent>
         </PfCard>
@@ -356,12 +358,25 @@ function MotionCanvas() {
               </code>
             </div>
           </PfCardHeader>
-          <Accordion
-            items={ACCORDION_ITEMS}
+          {/*
+            The React `Accordion` took an `items` array and a `string[]` value
+            even in single mode. `pf-accordion` takes `pf-accordion-item`
+            children, its `value` is the one open item's value, and its
+            `pfChange` detail carries both -- `value` for single mode and
+            `values` for multiple -- so the two modes read the same event.
+          */}
+          <PfAccordion
             type="single"
             value={accordionValue}
-            onValueChange={setAccordionValue}
-          />
+            onPfChange={(event) => setAccordionValue(event.detail.value)}
+          >
+            {ACCORDION_ITEMS.map((item) => (
+              <PfAccordionItem key={item.value} value={item.value}>
+                <span slot="title">{item.title}</span>
+                {item.content}
+              </PfAccordionItem>
+            ))}
+          </PfAccordion>
         </PfCard>
 
         {/* Select — enter animation */}
@@ -375,13 +390,18 @@ function MotionCanvas() {
             </div>
           </PfCardHeader>
           <PfCardContent>
-            <Select
+            <PfSelect
               label="Component"
-              options={SELECT_OPTIONS}
               value={selectedComponent}
-              onValueChange={setSelectedComponent}
+              onPfChange={(event) => setSelectedComponent(event.detail.value)}
               placeholder="Open to see enter animation"
-            />
+            >
+              {SELECT_OPTIONS.map((option) => (
+                <PfOption key={option.value} value={option.value}>
+                  {option.label}
+                </PfOption>
+              ))}
+            </PfSelect>
           </PfCardContent>
         </PfCard>
 
@@ -397,9 +417,14 @@ function MotionCanvas() {
           </PfCardHeader>
           <PfCardContent>
             <div className="motion-canvas__row motion-canvas__row--wrap">
-              <Tooltip content="Appears with --duration-fast + --easing-decelerate" placement="top">
+              {/*
+                `content` was a prop; it is the `content` slot here. The
+                trigger stays the default slot, so the nesting is unchanged.
+              */}
+              <PfTooltip placement="top">
                 <PfButton variant="secondary">Hover for tooltip</PfButton>
-              </Tooltip>
+                <span slot="content">Appears with --duration-fast + --easing-decelerate</span>
+              </PfTooltip>
               <PfButton variant="secondary" onClick={() => setModalOpen(true)}>
                 Open modal
               </PfButton>
@@ -408,14 +433,23 @@ function MotionCanvas() {
         </PfCard>
       </div>
 
-      <Modal open={modalOpen} onOpenChange={setModalOpen} title="Motion in action">
-        <p className="motion-canvas__modal-text">
-          This modal entered with <code>--duration-moderate</code> +{' '}
-          <code>--easing-decelerate</code>
-          &nbsp;and will exit with <code>--duration-fast</code> + <code>--easing-accelerate</code>.
-          Try adjusting the sliders on the left, then close and reopen.
-        </p>
-      </Modal>
+      <PfModal
+        open={modalOpen}
+        label="Motion in action"
+        onPfOpenChange={(event) => setModalOpen(event.detail.open)}
+      >
+        <PfModalHeader>
+          <strong>Motion in action</strong>
+        </PfModalHeader>
+        <PfModalBody>
+          <p className="motion-canvas__modal-text">
+            This modal entered with <code>--duration-moderate</code> +{' '}
+            <code>--easing-decelerate</code>
+            &nbsp;and will exit with <code>--duration-fast</code> + <code>--easing-accelerate</code>
+            . Try adjusting the sliders on the left, then close and reopen.
+          </p>
+        </PfModalBody>
+      </PfModal>
     </div>
   );
 }
