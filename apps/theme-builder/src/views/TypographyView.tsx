@@ -4,14 +4,8 @@ import {
   PfCardContent,
   PfCardHeader,
   PfInput,
+  PfUtilityButton,
 } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - UtilityButton: the call site changes shape: icon -> slot
- */
-import { UtilityButton } from '@pitchfork-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 import '../styles/controls.css';
@@ -166,7 +160,7 @@ function FontPicker({ label, cssVar, category, theme }: FontPickerProps) {
   }, [fonts]);
 
   const [customStack, setCustomStack] = useState('');
-  const customRef = useRef<HTMLInputElement>(null);
+  const customRef = useRef<HTMLPfInputElement>(null);
 
   const handleSelect = async (font: FontOption) => {
     const current = statuses[font.name];
@@ -203,13 +197,13 @@ function FontPicker({ label, cssVar, category, theme }: FontPickerProps) {
           {label}
         </div>
         {modified && (
-          <UtilityButton
+          <PfUtilityButton
             size="sm"
             onClick={() => theme.resetVar(cssVar)}
-            aria-label={`Reset ${label}`}
+            label={`Reset ${label}`}
           >
             ↺
-          </UtilityButton>
+          </PfUtilityButton>
         )}
       </div>
 
@@ -261,9 +255,8 @@ function FontPicker({ label, cssVar, category, theme }: FontPickerProps) {
             value={customStack}
             placeholder={currentStack}
             aria-label="Custom font stack"
-            spellCheck={false}
-            onChange={(e) => setCustomStack(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleCustomSubmit()}
+            onPfInput={(event) => setCustomStack(event.detail.value)}
+            onKeyDown={(event) => event.key === 'Enter' && handleCustomSubmit()}
           />
           <PfButton size="sm" onClick={handleCustomSubmit} disabled={!customStack.trim()}>
             Apply

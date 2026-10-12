@@ -1,12 +1,11 @@
-import { PfButton } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - CodeSnippet: the call site changes shape: title -> needs a destination; onCodeCopy -> no matching event on pf-code-snippet; pick the right one
- * - Modal: the call site changes shape: title -> needs a destination; description -> needs a destination; footer -> needs a destination
- */
-import { CodeSnippet, Modal } from '@pitchfork-ui/react';
+import {
+  PfButton,
+  PfCodeSnippet,
+  PfModal,
+  PfModalBody,
+  PfModalFooter,
+  PfModalHeader,
+} from '@pitchfork-ui/elements-react';
 
 interface Props {
   css: string;
@@ -25,20 +24,31 @@ export function ExportModal({ css, onClose }: Props) {
   }
 
   return (
-    <Modal
+    <PfModal
       open
-      onOpenChange={(open) => !open && onClose()}
-      title="Export theme"
-      description="Paste this CSS after your @pitchfork-ui/react/styles.css import, or download it as a file."
+      label="Export theme"
       size="lg"
+      onPfOpenChange={(event) => {
+        if (!event.detail.open) onClose();
+      }}
     >
-      <CodeSnippet code={css} language="css" title="pitchfork-theme.css" />
-      <div style={{ display: 'flex', gap: 8, marginTop: 16, justifyContent: 'flex-end' }}>
+      <PfModalHeader>
+        <strong>Export theme</strong>
+        <p style={{ margin: 'var(--space-1) 0 0', color: 'var(--color-semantic-text-muted)' }}>
+          Paste this CSS after your <code>@pitchfork-ui/elements/styles.css</code> import, or
+          download it as a file.
+        </p>
+      </PfModalHeader>
+      <PfModalBody>
+        {/* `title` on the React component; `heading` on the element. */}
+        <PfCodeSnippet code={css} language="css" heading="pitchfork-theme.css" />
+      </PfModalBody>
+      <PfModalFooter>
         <PfButton variant="secondary" onClick={onClose}>
           Close
         </PfButton>
         <PfButton onClick={download}>Download .css</PfButton>
-      </div>
-    </Modal>
+      </PfModalFooter>
+    </PfModal>
   );
 }

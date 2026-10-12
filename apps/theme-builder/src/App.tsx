@@ -1,13 +1,6 @@
 import { useState } from 'react';
 import '@pitchfork-ui/elements/styles.css';
-import { PfButton, PfSwitch } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - Tabs: the call site changes shape: items -> child elements; onValueChange -> no matching event on pf-tabs; pick the right one
- */
-import { Tabs } from '@pitchfork-ui/react';
+import { PfButton, PfSwitch, PfTab, PfTabPanel, PfTabs } from '@pitchfork-ui/elements-react';
 import { ExportModal } from './components/ExportModal';
 import { useTheme } from './hooks/useTheme';
 import { ColorsView } from './views/ColorsView';
@@ -18,9 +11,24 @@ import { SizeView } from './views/SizeView';
 import { TypographyView } from './views/TypographyView';
 import './App.css';
 
+/*
+ * One list, so the strip and the panels cannot disagree about which views
+ * exist -- the `items` array did that job for the React `Tabs` and nothing
+ * does it once the two become separate children.
+ */
+const VIEWS = [
+  { value: 'colors', label: 'Colors', View: ColorsView },
+  { value: 'motion', label: 'Motion', View: MotionView },
+  { value: 'shadows', label: 'Shadows', View: ShadowsView },
+  { value: 'size', label: 'Size', View: SizeView },
+  { value: 'typography', label: 'Typography', View: TypographyView },
+  { value: 'components', label: 'Components', View: ComponentsView },
+] as const;
+
 export function App() {
   const theme = useTheme();
   const [showExport, setShowExport] = useState(false);
+  const [view, setView] = useState<string>(VIEWS[0].value);
   const modifiedCount = Object.keys(theme.overrides).length;
 
   return (
@@ -38,7 +46,7 @@ export function App() {
           <PfSwitch
             label="Dark mode"
             checked={theme.darkMode}
-            onChange={(e) => theme.setDarkMode(e.target.checked)}
+            onPfChange={(event) => theme.setDarkMode(event.detail.checked)}
           />
           {modifiedCount > 0 && (
             <PfButton variant="secondary" size="sm" onClick={theme.resetAll}>
@@ -51,42 +59,25 @@ export function App() {
         </div>
       </header>
 
-      <Tabs
-        className="app-tabs"
-        defaultValue="colors"
-        items={[
-          {
-            value: 'colors',
-            label: 'Colors',
-            content: <ColorsView theme={theme} />,
-          },
-          {
-            value: 'motion',
-            label: 'Motion',
-            content: <MotionView theme={theme} />,
-          },
-          {
-            value: 'shadows',
-            label: 'Shadows',
-            content: <ShadowsView theme={theme} />,
-          },
-          {
-            value: 'size',
-            label: 'Size',
-            content: <SizeView theme={theme} />,
-          },
-          {
-            value: 'typography',
-            label: 'Typography',
-            content: <TypographyView theme={theme} />,
-          },
-          {
-            value: 'components',
-            label: 'Components',
-            content: <ComponentsView theme={theme} />,
-          },
-        ]}
-      />
+      {/*
+       * The React `Tabs` took an `items` array of `{ value, label, content }`.
+       * `pf-tabs` takes the strip and the panels as children, written
+       * interleaved -- `pf-tab` assigns itself `slot="tab"` in
+       * `connectedCallback`, which is what lets one pair per view land in two
+       * different places.
+       */}
+      <PfTabs className="app-tabs" value={view} onPfChange={(event) => setView(event.detail.value)}>
+        {VIEWS.map(({ value, label }) => (
+          <PfTab key={value} value={value}>
+            {label}
+          </PfTab>
+        ))}
+        {VIEWS.map(({ value, View }) => (
+          <PfTabPanel key={value} value={value}>
+            <View theme={theme} />
+          </PfTabPanel>
+        ))}
+      </PfTabs>
 
       {showExport && <ExportModal css={theme.exportCSS()} onClose={() => setShowExport(false)} />}
     </div>

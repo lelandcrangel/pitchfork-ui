@@ -3,17 +3,12 @@ import {
   PfCard,
   PfCardContent,
   PfCardHeader,
+  PfDropdown,
   PfInput,
+  PfMenuItem,
+  PfSlider,
+  PfUtilityButton,
 } from '@pitchfork-ui/elements-react';
-/*
- * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
- * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
- *
- * - Dropdown: the call site changes shape: items -> child elements
- * - Slider: an event prop has no equivalent on `pf-slider`: onValueChange -> no matching event on pf-slider; pick the right one
- * - UtilityButton: the call site changes shape: icon -> slot
- */
-import { Dropdown, Slider, UtilityButton } from '@pitchfork-ui/react';
 import { useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 
@@ -136,9 +131,9 @@ function ShadowControl({ label, hint, cssVar, mode, theme }: ShadowControlProps)
           <span className="shadow-control__hint">{hint}</span>
         </div>
         {modified && (
-          <UtilityButton size="sm" onClick={handleReset} aria-label={`Reset ${label}`}>
+          <PfUtilityButton size="sm" onClick={handleReset} label={`Reset ${label}`}>
             ↺
-          </UtilityButton>
+          </PfUtilityButton>
         )}
       </div>
 
@@ -235,7 +230,19 @@ function SliderRow({ label, value, min, max, unit, onChange }: SliderRowProps) {
           {unit}
         </span>
       </div>
-      <Slider min={min} max={max} value={value} onValueChange={onChange} aria-label={label} />
+      {/*
+        `pfInput` rather than `pfChange`: the React `Slider`'s `onValueChange`
+        fired on every move, and `pfChange` is the commit at the end of a drag.
+        Both exist on the element; this control redraws a live preview, so it
+        wants the stream.
+      */}
+      <PfSlider
+        min={min}
+        max={max}
+        value={value}
+        onPfInput={(event) => onChange(event.detail.value)}
+        aria-label={label}
+      />
     </div>
   );
 }
@@ -307,7 +314,21 @@ function ShadowCanvas() {
               Dropdown menus use <code>--shadow-md</code> to float above the page. Open it to see
               the shadow in context.
             </p>
-            <Dropdown label="Actions" items={DROPDOWN_ITEMS} />
+            {/*
+              The React `Dropdown` took an `items` array. `pf-dropdown` takes
+              its trigger as the default slot and its menu as the `menu` slot,
+              with one `pf-menu-item` per entry -- the consumer loops.
+            */}
+            <PfDropdown label="Actions" onPfSelect={() => {}}>
+              <PfButton variant="secondary">Actions</PfButton>
+              <div slot="menu">
+                {DROPDOWN_ITEMS.map((item) => (
+                  <PfMenuItem key={item.value} value={item.value} destructive={item.destructive}>
+                    {item.label}
+                  </PfMenuItem>
+                ))}
+              </div>
+            </PfDropdown>
           </PfCardContent>
         </PfCard>
 
