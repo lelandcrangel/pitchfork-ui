@@ -1,50 +1,84 @@
 import {
+  PfAvatar,
+  PfBadge,
+  PfBadgeGroup,
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardFooter,
+  PfCardHeader,
+  PfCheckbox,
+  PfIcon,
+  PfInput,
+  PfKbd,
+  PfLoadingDots,
+  PfLoadingSpinner,
+  PfMetricGrid,
+  PfProgressBar,
+  PfProgressCircle,
+  PfRadioButton,
+  PfRatingBadge,
+  PfRatingStars,
+  PfSwitch,
+  PfTag,
+  PfTextarea,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - Accordion: the call site changes shape: items -> child elements; defaultValue -> child elements; onValueChange -> no matching event on pf-accordion; pick the right one
+ * - Alert: the call site changes shape: icon -> slot
+ * - AvatarGroup: the call site changes shape: avatars -> child elements
+ * - Breadcrumbs: the call site changes shape: items -> child elements
+ * - ButtonGroup: the call site changes shape: items -> child elements; defaultValue -> child elements; onValueChange -> no matching event on pf-button-group; pick the right one
+ * - CodeSnippet: the call site changes shape: title -> needs a destination; onCodeCopy -> no matching event on pf-code-snippet; pick the right one
+ * - Collapsible: the call site changes shape: trigger -> slot
+ * - ContentDivider: the call site changes shape: label -> needs a destination
+ * - Dropdown: the call site changes shape: items -> child elements
+ * - EmptyState: the call site changes shape: description -> slot; icon -> slot; action -> slot; heading -> needs a destination
+ * - MetricCard: the call site changes shape: heading -> slot; description -> slot; icon -> slot; action -> slot; value -> needs a destination; trendLabel -> needs a destination
+ * - Notification: the call site changes shape: icon -> slot; action -> slot
+ * - NumberInput: the call site changes shape: locale -> child elements; onValueChange -> no matching event on pf-number-input; pick the right one
+ * - PageHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
+ * - Pagination: the call site changes shape: prevLabel -> needs a destination; nextLabel -> needs a destination
+ * - ProgressSteps: the call site changes shape: steps -> child elements
+ * - RadioGroup: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-radio-group; pick the right one
+ * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
+ * - SectionFooter: the call site changes shape: description -> slot; actions -> slot; heading -> needs a destination
+ * - SectionHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
+ * - Slider: an event prop has no equivalent on `pf-slider`: onValueChange -> no matching event on pf-slider; pick the right one
+ * - Table: the call site changes shape: caption -> slot; columns -> child elements; rows -> child elements; emptyState -> needs a destination; onSortStateChange -> no matching event on pf-table; pick the right one
+ * - Tabs: the call site changes shape: items -> child elements; onValueChange -> no matching event on pf-tabs; pick the right one
+ * - Timeline: the call site changes shape: items -> child elements
+ * - Tooltip: the call site changes shape: content -> slot
+ * - TreeView: the call site changes shape: nodes -> child elements; expandedValues -> child elements; defaultExpandedValues -> child elements; onSelectedValueChange -> no matching event on pf-tree-view; pick the right one; onExpandedValuesChange -> no matching event on pf-tree-view; pick the right one
+ * - UtilityButton: the call site changes shape: icon -> slot
+ */
+import {
   Accordion,
   Alert,
-  Avatar,
   AvatarGroup,
-  Badge,
-  BadgeGroup,
   Breadcrumbs,
-  Button,
   ButtonGroup,
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  Checkbox,
   CodeSnippet,
   Collapsible,
   ContentDivider,
   Dropdown,
   EmptyState,
-  Icon,
-  Input,
-  Kbd,
-  LoadingDots,
-  LoadingSpinner,
   MetricCard,
-  MetricGrid,
   Notification,
   NumberInput,
   PageHeader,
   Pagination,
-  ProgressBar,
-  ProgressCircle,
   ProgressSteps,
-  RadioButton,
   RadioGroup,
-  RatingBadge,
-  RatingStars,
-  Select,
   SectionFooter,
   SectionHeader,
+  Select,
   Slider,
-  Switch,
   Table,
   Tabs,
-  Tag,
-  Textarea,
   Timeline,
   Tooltip,
   TreeView,
@@ -1105,10 +1139,10 @@ function AlertPreview() {
 function AvatarPreview() {
   return (
     <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-      <Avatar name="Alice Johnson" status="online" size="sm" />
-      <Avatar name="Bob Smith" status="away" size="md" />
-      <Avatar name="Charlie D" status="busy" size="lg" />
-      <Avatar name="Dana White" status="offline" size="xl" />
+      <PfAvatar name="Alice Johnson" status="online" size="sm" />
+      <PfAvatar name="Bob Smith" status="away" size="md" />
+      <PfAvatar name="Charlie D" status="busy" size="lg" />
+      <PfAvatar name="Dana White" status="offline" size="xl" />
     </div>
   );
 }
@@ -1131,11 +1165,11 @@ function AvatarGroupPreview() {
 function BadgePreview() {
   return (
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-      <Badge variant="neutral">Neutral</Badge>
-      <Badge variant="brand">Brand</Badge>
-      <Badge variant="success">Success</Badge>
-      <Badge variant="warning">Warning</Badge>
-      <Badge variant="danger">Danger</Badge>
+      <PfBadge variant="neutral">Neutral</PfBadge>
+      <PfBadge variant="brand">Brand</PfBadge>
+      <PfBadge variant="success">Success</PfBadge>
+      <PfBadge variant="warning">Warning</PfBadge>
+      <PfBadge variant="danger">Danger</PfBadge>
     </div>
   );
 }
@@ -1143,14 +1177,14 @@ function BadgePreview() {
 function BadgeGroupPreview() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <BadgeGroup label="New" message="Pitchfork UI v2.0 is out" color="brand" />
-      <BadgeGroup
+      <PfBadgeGroup label="New" message="Pitchfork UI v2.0 is out" color="brand" />
+      <PfBadgeGroup
         label="3 errors"
         message="Build failed on main"
         color="error"
         appearance="modern"
       />
-      <BadgeGroup
+      <PfBadgeGroup
         label="Done"
         message="Deploy completed"
         color="success"
@@ -1176,10 +1210,10 @@ function BreadcrumbsPreview() {
 function ButtonPreview() {
   return (
     <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-      <Button>Primary</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="ghost">Ghost</Button>
-      <Button variant="destructive">Destructive</Button>
+      <PfButton>Primary</PfButton>
+      <PfButton variant="secondary">Secondary</PfButton>
+      <PfButton variant="ghost">Ghost</PfButton>
+      <PfButton variant="destructive">Destructive</PfButton>
     </div>
   );
 }
@@ -1201,12 +1235,12 @@ function ButtonGroupPreview() {
 
 function CardPreview() {
   return (
-    <Card>
-      <CardHeader>
+    <PfCard>
+      <PfCardHeader>
         <strong>Design tokens</strong>
-        <Badge variant="brand">v2</Badge>
-      </CardHeader>
-      <CardContent>
+        <PfBadge variant="brand">v2</PfBadge>
+      </PfCardHeader>
+      <PfCardContent>
         <p
           style={{
             margin: 0,
@@ -1218,8 +1252,8 @@ function CardPreview() {
           Cards use <code>--pf-card-background</code> and <code>--pf-card-border</code> for their
           surface. Override them here to detach this component from the global theme.
         </p>
-      </CardContent>
-    </Card>
+      </PfCardContent>
+    </PfCard>
   );
 }
 
@@ -1229,9 +1263,9 @@ function CheckboxPreview() {
   const [c, setC] = useState(true);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <Checkbox label="Enable dark mode" checked={a} onChange={(e) => setA(e.target.checked)} />
-      <Checkbox label="Auto-save drafts" checked={b} onChange={(e) => setB(e.target.checked)} />
-      <Checkbox
+      <PfCheckbox label="Enable dark mode" checked={a} onChange={(e) => setA(e.target.checked)} />
+      <PfCheckbox label="Auto-save drafts" checked={b} onChange={(e) => setB(e.target.checked)} />
+      <PfCheckbox
         label="Send email notifications"
         checked={c}
         onChange={(e) => setC(e.target.checked)}
@@ -1255,8 +1289,8 @@ function CollapsiblePreview() {
   return (
     <Collapsible trigger="Show advanced options" open={open} onOpenChange={setOpen}>
       <div style={{ padding: '12px 0', display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <Input label="Custom CSS class" placeholder="my-custom-class" />
-        <Switch label="Enable reduced motion" />
+        <PfInput label="Custom CSS class" placeholder="my-custom-class" />
+        <PfSwitch label="Enable reduced motion" />
       </div>
     </Collapsible>
   );
@@ -1298,14 +1332,14 @@ function InputPreview() {
   const [v, setV] = useState('');
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <Input
+      <PfInput
         label="Email address"
         placeholder="you@example.com"
         value={v}
         onChange={(e) => setV(e.target.value)}
       />
-      <Input label="Password" type="password" placeholder="••••••••" />
-      <Input label="Invalid field" placeholder="Bad input" error="This field has an error." />
+      <PfInput label="Password" type="password" placeholder="••••••••" />
+      <PfInput label="Invalid field" placeholder="Bad input" error="This field has an error." />
     </div>
   );
 }
@@ -1313,17 +1347,17 @@ function InputPreview() {
 function KbdPreview() {
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-      <Kbd>⌘</Kbd>
+      <PfKbd>⌘</PfKbd>
       <span style={{ fontSize: 13, color: 'var(--color-semantic-text-muted)' }}>+</span>
-      <Kbd>K</Kbd>
+      <PfKbd>K</PfKbd>
       <span style={{ fontSize: 13, color: 'var(--color-semantic-text-muted)', margin: '0 8px' }}>
         or
       </span>
-      <Kbd>Ctrl</Kbd>
+      <PfKbd>Ctrl</PfKbd>
       <span style={{ fontSize: 13, color: 'var(--color-semantic-text-muted)' }}>+</span>
-      <Kbd>Shift</Kbd>
+      <PfKbd>Shift</PfKbd>
       <span style={{ fontSize: 13, color: 'var(--color-semantic-text-muted)' }}>+</span>
-      <Kbd>P</Kbd>
+      <PfKbd>P</PfKbd>
     </div>
   );
 }
@@ -1332,16 +1366,16 @@ function LoadingIndicatorsPreview() {
   return (
     <div style={{ display: 'flex', gap: 32, alignItems: 'center', flexWrap: 'wrap' }}>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-        <LoadingSpinner size={32} />
+        <PfLoadingSpinner size={32} />
         <span style={{ fontSize: 11, color: 'var(--color-semantic-text-muted)' }}>Spinner</span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-        <LoadingDots />
+        <PfLoadingDots />
         <span style={{ fontSize: 11, color: 'var(--color-semantic-text-muted)' }}>Dots</span>
       </div>
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <ProgressBar value={65} label="Upload progress" />
-        <ProgressBar value={30} label="Processing" />
+        <PfProgressBar value={65} label="Upload progress" />
+        <PfProgressBar value={30} label="Processing" />
       </div>
     </div>
   );
@@ -1349,7 +1383,7 @@ function LoadingIndicatorsPreview() {
 
 function MetricPreview() {
   return (
-    <MetricGrid>
+    <PfMetricGrid>
       <MetricCard
         heading="Total revenue"
         value="$48,295"
@@ -1364,7 +1398,7 @@ function MetricPreview() {
         trend="positive"
         trendLabel="+19.7%"
       />
-    </MetricGrid>
+    </PfMetricGrid>
   );
 }
 
@@ -1415,10 +1449,10 @@ function PageHeaderPreview() {
       description="Customize CSS variables to match your brand. Export your overrides as a single :root block."
       actions={
         <div style={{ display: 'flex', gap: 8 }}>
-          <Button variant="secondary" size="sm">
+          <PfButton variant="secondary" size="sm">
             Reset
-          </Button>
-          <Button size="sm">Export CSS</Button>
+          </PfButton>
+          <PfButton size="sm">Export CSS</PfButton>
         </div>
       }
     />
@@ -1433,11 +1467,11 @@ function PaginationPreview() {
 function ProgressIndicatorsPreview() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <ProgressBar value={75} label="Project completion" showValue />
-      <ProgressBar value={40} label="Upload" showValue />
+      <PfProgressBar value={75} label="Project completion" showValue />
+      <PfProgressBar value={40} label="Upload" showValue />
       <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
-        <ProgressCircle value={75} size={64} showValue label="Progress" />
-        <ProgressCircle value={40} size={48} showValue={false} label="Progress" />
+        <PfProgressCircle value={75} size={64} showValue label="Progress" />
+        <PfProgressCircle value={40} size={48} showValue={false} label="Progress" />
       </div>
     </div>
   );
@@ -1463,7 +1497,7 @@ function RadioButtonPreview() {
         { value: 'dark', label: 'Dark theme' },
         { value: 'system', label: 'System preference' },
       ].map((opt) => (
-        <RadioButton
+        <PfRadioButton
           key={opt.value}
           value={opt.value}
           label={opt.label}
@@ -1495,9 +1529,9 @@ function RadioGroupPreview() {
 function RatingPreview() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <RatingBadge value={4.3} reviews={284} />
-      <RatingStars value={4.3} showValue />
-      <RatingStars value={3} max={5} size={24} />
+      <PfRatingBadge value={4.3} reviews={284} />
+      <PfRatingStars value={4.3} showValue />
+      <PfRatingStars value={3} max={5} size={24} />
     </div>
   );
 }
@@ -1528,9 +1562,9 @@ function SectionHeaderPreview() {
       description="Primary action trigger for forms, dialogs, and toolbars."
       divider
       actions={
-        <Button size="sm" variant="secondary">
+        <PfButton size="sm" variant="secondary">
           View in Storybook
-        </Button>
+        </PfButton>
       }
     />
   );
@@ -1543,10 +1577,10 @@ function SectionFooterPreview() {
         Last updated 3 minutes ago
       </span>
       <div style={{ display: 'flex', gap: 8 }}>
-        <Button size="sm" variant="secondary">
+        <PfButton size="sm" variant="secondary">
           Cancel
-        </Button>
-        <Button size="sm">Save changes</Button>
+        </PfButton>
+        <PfButton size="sm">Save changes</PfButton>
       </div>
     </SectionFooter>
   );
@@ -1576,9 +1610,9 @@ function SwitchPreview() {
   const [c, setC] = useState(true);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <Switch label="Enable notifications" checked={a} onChange={(e) => setA(e.target.checked)} />
-      <Switch label="Auto-save drafts" checked={b} onChange={(e) => setB(e.target.checked)} />
-      <Switch label="Compact view" checked={c} onChange={(e) => setC(e.target.checked)} />
+      <PfSwitch label="Enable notifications" checked={a} onChange={(e) => setA(e.target.checked)} />
+      <PfSwitch label="Auto-save drafts" checked={b} onChange={(e) => setB(e.target.checked)} />
+      <PfSwitch label="Compact view" checked={c} onChange={(e) => setC(e.target.checked)} />
     </div>
   );
 }
@@ -1591,10 +1625,20 @@ const TABLE_COLUMNS = [
 ];
 
 const TABLE_ROWS = [
-  { name: 'Button', vars: '13', status: <Badge variant="success">Stable</Badge>, modified: 'Yes' },
-  { name: 'Badge', vars: '10', status: <Badge variant="success">Stable</Badge>, modified: 'No' },
-  { name: 'Input', vars: '6', status: <Badge variant="success">Stable</Badge>, modified: 'No' },
-  { name: 'Card', vars: '3', status: <Badge variant="brand">New</Badge>, modified: 'Yes' },
+  {
+    name: 'Button',
+    vars: '13',
+    status: <PfBadge variant="success">Stable</PfBadge>,
+    modified: 'Yes',
+  },
+  {
+    name: 'Badge',
+    vars: '10',
+    status: <PfBadge variant="success">Stable</PfBadge>,
+    modified: 'No',
+  },
+  { name: 'Input', vars: '6', status: <PfBadge variant="success">Stable</PfBadge>, modified: 'No' },
+  { name: 'Card', vars: '3', status: <PfBadge variant="brand">New</PfBadge>, modified: 'Yes' },
 ];
 
 function TablePreview() {
@@ -1659,11 +1703,11 @@ function TabsPreview() {
 function TagPreview() {
   return (
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-      <Tag variant="neutral">Neutral</Tag>
-      <Tag variant="brand">Brand</Tag>
-      <Tag variant="success">Success</Tag>
-      <Tag variant="warning">Warning</Tag>
-      <Tag variant="danger">Danger</Tag>
+      <PfTag variant="neutral">Neutral</PfTag>
+      <PfTag variant="brand">Brand</PfTag>
+      <PfTag variant="success">Success</PfTag>
+      <PfTag variant="warning">Warning</PfTag>
+      <PfTag variant="danger">Danger</PfTag>
     </div>
   );
 }
@@ -1671,7 +1715,7 @@ function TagPreview() {
 function TextareaPreview() {
   const [v, setV] = useState('');
   return (
-    <Textarea
+    <PfTextarea
       label="Component notes"
       placeholder="Add any notes about this component's customizations…"
       value={v}
@@ -1714,19 +1758,19 @@ function TooltipPreview() {
   return (
     <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
       <Tooltip content="Top tooltip" placement="top">
-        <Button variant="secondary" size="sm">
+        <PfButton variant="secondary" size="sm">
           Hover top
-        </Button>
+        </PfButton>
       </Tooltip>
       <Tooltip content="Right tooltip" placement="right">
-        <Button variant="secondary" size="sm">
+        <PfButton variant="secondary" size="sm">
           Hover right
-        </Button>
+        </PfButton>
       </Tooltip>
       <Tooltip content="Bottom tooltip" placement="bottom">
-        <Button variant="secondary" size="sm">
+        <PfButton variant="secondary" size="sm">
           Hover bottom
-        </Button>
+        </PfButton>
       </Tooltip>
     </div>
   );
@@ -1766,12 +1810,12 @@ function UtilityButtonPreview() {
       <UtilityButton variant="destructive">Destructive</UtilityButton>
       <UtilityButton
         variant="neutral"
-        icon={<Icon name="ellipsis" aria-hidden />}
+        icon={<PfIcon name="ellipsis" aria-hidden />}
         aria-label="More options"
       />
       <UtilityButton
         variant="brand"
-        icon={<Icon name="star" aria-hidden />}
+        icon={<PfIcon name="star" aria-hidden />}
         aria-label="Favorite"
       />
     </div>
@@ -1840,12 +1884,12 @@ function ComponentsIntro({
 
   return (
     <div className="comp-intro">
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <span className="comp-canvas__section-label">Component overrides</span>
-        </CardHeader>
+        </PfCardHeader>
 
-        <CardContent>
+        <PfCardContent>
           <p className="comp-intro__description">
             Every component in Pitchfork UI exposes its own set of <code>--pf-*</code> CSS custom
             properties — a layer between the component's styles and the global design tokens.
@@ -1899,16 +1943,16 @@ function ComponentsIntro({
               </li>
             </ol>
           </div>
-        </CardContent>
+        </PfCardContent>
 
-        <CardFooter>
+        <PfCardFooter>
           <p className="comp-intro__tip">
             <strong>Tip:</strong> Component overrides cascade on top of global token changes.
             Setting <code>--pf-button-primary-bg</code> here will take precedence over whatever{' '}
             <code>--color-semantic-action-primary</code> resolves to everywhere else.
           </p>
-        </CardFooter>
-      </Card>
+        </PfCardFooter>
+      </PfCard>
     </div>
   );
 }
@@ -1935,7 +1979,7 @@ export function ComponentsView({ theme }: ComponentsViewProps) {
     <div className="view-layout">
       <div className="view-layout__editor components-sidebar">
         <div className="components-search">
-          <Input
+          <PfInput
             placeholder="Search components…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -2027,18 +2071,18 @@ function ComponentCanvas({ component, theme }: ComponentCanvasProps) {
           )}
         </div>
         {overrideCount > 0 && (
-          <Button variant="ghost" size="sm" onClick={handleResetAll}>
+          <PfButton variant="ghost" size="sm" onClick={handleResetAll}>
             Reset all
-          </Button>
+          </PfButton>
         )}
       </div>
 
       {/* Live preview */}
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <span className="comp-canvas__section-label">Live preview</span>
-        </CardHeader>
-        <CardContent>
+        </PfCardHeader>
+        <PfCardContent>
           {PreviewComponent ? (
             <PreviewComponent />
           ) : (
@@ -2057,12 +2101,12 @@ function ComponentCanvas({ component, theme }: ComponentCanvasProps) {
               </span>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </PfCardContent>
+      </PfCard>
 
       {/* CSS Variables */}
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <span className="comp-canvas__section-label">
             CSS Variables <span className="comp-canvas__var-count">({component.vars.length})</span>
           </span>
@@ -2070,8 +2114,8 @@ function ComponentCanvas({ component, theme }: ComponentCanvasProps) {
             Click a swatch to override the variable with a concrete color. Live swatches always show
             the resolved current value.
           </p>
-        </CardHeader>
-        <CardContent>
+        </PfCardHeader>
+        <PfCardContent>
           <div className="comp-vars-list">
             {component.vars.map((def) =>
               def.type === 'color' ? (
@@ -2093,8 +2137,8 @@ function ComponentCanvas({ component, theme }: ComponentCanvasProps) {
               ),
             )}
           </div>
-        </CardContent>
-      </Card>
+        </PfCardContent>
+      </PfCard>
     </div>
   );
 }

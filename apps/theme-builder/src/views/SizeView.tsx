@@ -1,16 +1,22 @@
 import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Checkbox,
-  Input,
-  Select,
-  Slider,
-  Tag,
-  UtilityButton,
-} from '@pitchfork-ui/react';
+  PfBadge,
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardHeader,
+  PfCheckbox,
+  PfInput,
+  PfTag,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
+ * - Slider: an event prop has no equivalent on `pf-slider`: onValueChange -> no matching event on pf-slider; pick the right one
+ * - UtilityButton: the call site changes shape: icon -> slot
+ */
+import { Select, Slider, UtilityButton } from '@pitchfork-ui/react';
 import { useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 import '../styles/controls.css';
@@ -215,8 +221,8 @@ function SizeCanvas() {
     <div className="size-canvas">
       <div className="size-canvas__grid">
         {/* Shape scale */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="size-canvas__section-header">
               <span className="size-canvas__section-title">Shape scale</span>
               <span className="size-canvas__token-group">
@@ -226,8 +232,8 @@ function SizeCanvas() {
                 <code className="size-canvas__token-badge">--radius-full</code>
               </span>
             </div>
-          </CardHeader>
-          <CardContent>
+          </PfCardHeader>
+          <PfCardContent>
             <div className="size-canvas__shape-row">
               {(
                 [
@@ -246,12 +252,12 @@ function SizeCanvas() {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Buttons — radius-md + space-2/3/4 */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="size-canvas__section-header">
               <span className="size-canvas__section-title">Buttons</span>
               <span className="size-canvas__token-group">
@@ -259,33 +265,33 @@ function SizeCanvas() {
                 <code className="size-canvas__token-badge">--space-2 –4</code>
               </span>
             </div>
-          </CardHeader>
-          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          </PfCardHeader>
+          <PfCardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="size-canvas__row">
-              <Button size="sm">Small</Button>
-              <Button size="md">Medium</Button>
-              <Button size="lg">Large</Button>
+              <PfButton size="sm">Small</PfButton>
+              <PfButton size="md">Medium</PfButton>
+              <PfButton size="lg">Large</PfButton>
             </div>
             <div className="size-canvas__row">
-              <Button variant="secondary" size="md">
+              <PfButton variant="secondary" size="md">
                 Secondary
-              </Button>
-              <Button variant="ghost" size="md">
+              </PfButton>
+              <PfButton variant="ghost" size="md">
                 Ghost
-              </Button>
-              <Button
+              </PfButton>
+              <PfButton
                 size="md"
                 style={{ borderRadius: 'var(--radius-full)' } as React.CSSProperties}
               >
                 Pill
-              </Button>
+              </PfButton>
             </div>
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Form controls — radius-md + space-3 */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="size-canvas__section-header">
               <span className="size-canvas__section-title">Form controls</span>
               <span className="size-canvas__token-group">
@@ -293,9 +299,9 @@ function SizeCanvas() {
                 <code className="size-canvas__token-badge">--space-3</code>
               </span>
             </div>
-          </CardHeader>
-          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <Input
+          </PfCardHeader>
+          <PfCardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <PfInput
               label="Project name"
               placeholder="My design system"
               value={inputVal}
@@ -308,23 +314,23 @@ function SizeCanvas() {
               onValueChange={setSelectVal}
             />
             <div className="size-canvas__checkbox-row">
-              <Checkbox
+              <PfCheckbox
                 label="Enable dark mode"
                 checked={checked1}
                 onChange={(e) => setChecked1(e.target.checked)}
               />
-              <Checkbox
+              <PfCheckbox
                 label="Auto-publish on save"
                 checked={checked2}
                 onChange={(e) => setChecked2(e.target.checked)}
               />
             </div>
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Badges & Tags — radius-sm + space-2 */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="size-canvas__section-header">
               <span className="size-canvas__section-title">Badges &amp; Tags</span>
               <span className="size-canvas__token-group">
@@ -332,60 +338,60 @@ function SizeCanvas() {
                 <code className="size-canvas__token-badge">--space-2</code>
               </span>
             </div>
-          </CardHeader>
-          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          </PfCardHeader>
+          <PfCardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             <div className="size-canvas__row size-canvas__row--wrap">
               {BADGE_VARIANTS.map((v) => (
-                <Badge key={v} variant={v}>
+                <PfBadge key={v} variant={v}>
                   {v.charAt(0).toUpperCase() + v.slice(1)}
-                </Badge>
+                </PfBadge>
               ))}
             </div>
             <div className="size-canvas__row size-canvas__row--wrap">
               {TAG_VARIANTS.map((v) => (
-                <Tag key={v} variant={v}>
+                <PfTag key={v} variant={v}>
                   {v.charAt(0).toUpperCase() + v.slice(1)}
-                </Tag>
+                </PfTag>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Card — radius-lg + space-4 */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="size-canvas__section-header">
-              <span className="size-canvas__section-title">Card</span>
+              <span className="size-canvas__section-title">PfCard</span>
               <span className="size-canvas__token-group">
                 <code className="size-canvas__token-badge">--radius-lg</code>
                 <code className="size-canvas__token-badge">--space-4</code>
               </span>
             </div>
-          </CardHeader>
-          <CardContent>
-            <Card>
-              <CardHeader>
+          </PfCardHeader>
+          <PfCardContent>
+            <PfCard>
+              <PfCardHeader>
                 <div className="size-canvas__card-header-row">
                   <strong>Design tokens</strong>
-                  <Badge variant="brand">New</Badge>
+                  <PfBadge variant="brand">New</PfBadge>
                 </div>
-              </CardHeader>
-              <CardContent>
+              </PfCardHeader>
+              <PfCardContent>
                 <p className="size-canvas__card-text">
-                  Card corners use <code>--radius-lg</code>. Each section's padding comes from{' '}
+                  PfCard corners use <code>--radius-lg</code>. Each section's padding comes from{' '}
                   <code>--space-4</code> — drag that slider to see the internal breathing room
                   change.
                 </p>
                 <div className="size-canvas__card-actions">
-                  <Button size="sm" variant="secondary">
+                  <PfButton size="sm" variant="secondary">
                     Cancel
-                  </Button>
-                  <Button size="sm">Apply</Button>
+                  </PfButton>
+                  <PfButton size="sm">Apply</PfButton>
                 </div>
-              </CardContent>
-            </Card>
-          </CardContent>
-        </Card>
+              </PfCardContent>
+            </PfCard>
+          </PfCardContent>
+        </PfCard>
       </div>
     </div>
   );

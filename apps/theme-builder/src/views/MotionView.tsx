@@ -1,19 +1,25 @@
 import {
-  Accordion,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  LoadingDots,
-  LoadingSpinner,
-  Input,
-  Modal,
-  Select,
-  Slider,
-  Switch,
-  Tooltip,
-  UtilityButton,
-} from '@pitchfork-ui/react';
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardHeader,
+  PfInput,
+  PfLoadingDots,
+  PfLoadingSpinner,
+  PfSwitch,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - Accordion: the call site changes shape: items -> child elements; defaultValue -> child elements; onValueChange -> no matching event on pf-accordion; pick the right one
+ * - Modal: the call site changes shape: title -> needs a destination; description -> needs a destination; footer -> needs a destination
+ * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
+ * - Slider: an event prop has no equivalent on `pf-slider`: onValueChange -> no matching event on pf-slider; pick the right one
+ * - Tooltip: the call site changes shape: content -> slot
+ * - UtilityButton: the call site changes shape: icon -> slot
+ */
+import { Accordion, Modal, Select, Slider, Tooltip, UtilityButton } from '@pitchfork-ui/react';
 import { useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 import '../styles/controls.css';
@@ -203,7 +209,7 @@ function EasingControl({ label, cssVar, theme, description }: ControlProps) {
       <div className="easing-value-row">
         <EasingCurve value={value} />
         <div className="easing-input-wrap">
-          <Input
+          <PfInput
             value={value}
             aria-label={`${label} easing value`}
             onChange={(e) => theme.set(cssVar, e.target.value)}
@@ -290,85 +296,85 @@ function MotionCanvas() {
     <div className="motion-canvas">
       <div className="motion-canvas__grid">
         {/* Always animating */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="motion-canvas__section-header">
               <span className="motion-canvas__section-title">Continuous</span>
               <code className="motion-canvas__token-badge">keyframe animation</code>
             </div>
-          </CardHeader>
-          <CardContent>
+          </PfCardHeader>
+          <PfCardContent>
             <div className="motion-canvas__row">
               <div className="motion-canvas__item">
                 <span className="motion-canvas__item-label">Spinner</span>
-                <LoadingSpinner size={24} />
+                <PfLoadingSpinner size={24} />
               </div>
               <div className="motion-canvas__item">
                 <span className="motion-canvas__item-label">Dots</span>
-                <LoadingDots />
+                <PfLoadingDots />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Switch — fast */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="motion-canvas__section-header">
               <span className="motion-canvas__section-title">Toggle</span>
               <code className="motion-canvas__token-badge">
                 --duration-fast + --easing-standard
               </code>
             </div>
-          </CardHeader>
-          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <Switch
+          </PfCardHeader>
+          <PfCardContent style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <PfSwitch
               label="Enable notifications"
               checked={switches.notifications}
               onChange={(e) => setSwitches((s) => ({ ...s, notifications: e.target.checked }))}
             />
-            <Switch
+            <PfSwitch
               label="Auto-save drafts"
               checked={switches.autosave}
               onChange={(e) => setSwitches((s) => ({ ...s, autosave: e.target.checked }))}
             />
-            <Switch
+            <PfSwitch
               label="Reduce animations"
               checked={switches.animations}
               onChange={(e) => setSwitches((s) => ({ ...s, animations: e.target.checked }))}
             />
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Accordion — moderate */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="motion-canvas__section-header">
               <span className="motion-canvas__section-title">Expand / collapse</span>
               <code className="motion-canvas__token-badge">
                 --duration-moderate + --easing-standard
               </code>
             </div>
-          </CardHeader>
+          </PfCardHeader>
           <Accordion
             items={ACCORDION_ITEMS}
             type="single"
             value={accordionValue}
             onValueChange={setAccordionValue}
           />
-        </Card>
+        </PfCard>
 
         {/* Select — enter animation */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="motion-canvas__section-header">
               <span className="motion-canvas__section-title">Dropdown enter</span>
               <code className="motion-canvas__token-badge">
                 --duration-fast + --easing-decelerate
               </code>
             </div>
-          </CardHeader>
-          <CardContent>
+          </PfCardHeader>
+          <PfCardContent>
             <Select
               label="Component"
               options={SELECT_OPTIONS}
@@ -376,30 +382,30 @@ function MotionCanvas() {
               onValueChange={setSelectedComponent}
               placeholder="Open to see enter animation"
             />
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Tooltip + Modal — overlay enter/exit */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="motion-canvas__section-header">
               <span className="motion-canvas__section-title">Overlay enter / exit</span>
               <code className="motion-canvas__token-badge">
                 --pf-transition-enter / --pf-transition-exit
               </code>
             </div>
-          </CardHeader>
-          <CardContent>
+          </PfCardHeader>
+          <PfCardContent>
             <div className="motion-canvas__row motion-canvas__row--wrap">
               <Tooltip content="Appears with --duration-fast + --easing-decelerate" placement="top">
-                <Button variant="secondary">Hover for tooltip</Button>
+                <PfButton variant="secondary">Hover for tooltip</PfButton>
               </Tooltip>
-              <Button variant="secondary" onClick={() => setModalOpen(true)}>
+              <PfButton variant="secondary" onClick={() => setModalOpen(true)}>
                 Open modal
-              </Button>
+              </PfButton>
             </div>
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
       </div>
 
       <Modal open={modalOpen} onOpenChange={setModalOpen} title="Motion in action">

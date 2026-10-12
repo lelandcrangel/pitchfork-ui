@@ -1,6 +1,13 @@
 import { useState } from 'react';
-import '@pitchfork-ui/react/styles.css';
-import { Button, Switch, Tabs } from '@pitchfork-ui/react';
+import '@pitchfork-ui/elements/styles.css';
+import { PfButton, PfSwitch } from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - Tabs: the call site changes shape: items -> child elements; onValueChange -> no matching event on pf-tabs; pick the right one
+ */
+import { Tabs } from '@pitchfork-ui/react';
 import { ExportModal } from './components/ExportModal';
 import { useTheme } from './hooks/useTheme';
 import { ColorsView } from './views/ColorsView';
@@ -28,19 +35,19 @@ export function App() {
           )}
         </div>
         <div className="toolbar__actions">
-          <Switch
+          <PfSwitch
             label="Dark mode"
             checked={theme.darkMode}
             onChange={(e) => theme.setDarkMode(e.target.checked)}
           />
           {modifiedCount > 0 && (
-            <Button variant="secondary" size="sm" onClick={theme.resetAll}>
+            <PfButton variant="secondary" size="sm" onClick={theme.resetAll}>
               Reset all
-            </Button>
+            </PfButton>
           )}
-          <Button size="sm" onClick={() => setShowExport(true)}>
+          <PfButton size="sm" onClick={() => setShowExport(true)}>
             Export CSS
-          </Button>
+          </PfButton>
         </div>
       </header>
 

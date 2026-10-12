@@ -1,4 +1,17 @@
-import { Button, Card, CardContent, CardHeader, Input, UtilityButton } from '@pitchfork-ui/react';
+import {
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardHeader,
+  PfInput,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - UtilityButton: the call site changes shape: icon -> slot
+ */
+import { UtilityButton } from '@pitchfork-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 import '../styles/controls.css';
@@ -243,7 +256,7 @@ function FontPicker({ label, cssVar, category, theme }: FontPickerProps) {
           Custom font stack — type any font installed on your system, or paste a font-family string.
         </p>
         <div className="font-custom__row">
-          <Input
+          <PfInput
             ref={customRef}
             value={customStack}
             placeholder={currentStack}
@@ -252,9 +265,9 @@ function FontPicker({ label, cssVar, category, theme }: FontPickerProps) {
             onChange={(e) => setCustomStack(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleCustomSubmit()}
           />
-          <Button size="sm" onClick={handleCustomSubmit} disabled={!customStack.trim()}>
+          <PfButton size="sm" onClick={handleCustomSubmit} disabled={!customStack.trim()}>
             Apply
-          </Button>
+          </PfButton>
         </div>
       </div>
     </div>
@@ -271,11 +284,11 @@ function TypographySpecimen({ theme }: { theme: ThemeState }) {
 
   return (
     <div className="type-specimen">
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <span className="type-specimen__section-title">Sans — {sansName}</span>
-        </CardHeader>
-        <CardContent>
+        </PfCardHeader>
+        <PfCardContent>
           <div className="type-specimen__section" style={{ fontFamily: sans }}>
             <p className="type-specimen__display">The quick brown fox</p>
             <p className="type-specimen__heading">Jumps over the lazy dog</p>
@@ -294,21 +307,21 @@ function TypographySpecimen({ theme }: { theme: ThemeState }) {
               Label · Helper text · Caption — 11px / 12px / 14px / 16px / 20px
             </p>
           </div>
-        </CardContent>
-      </Card>
+        </PfCardContent>
+      </PfCard>
 
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <span className="type-specimen__section-title">Mono — {monoName}</span>
-        </CardHeader>
-        <CardContent>
+        </PfCardHeader>
+        <PfCardContent>
           <div className="type-specimen__section" style={{ fontFamily: mono }}>
             <p className="type-specimen__code">{'const theme = { brand: "#6366f1" };'}</p>
             <p className="type-specimen__code">{'--color-brand-500: oklch(59% 0.204 277);'}</p>
             <p className="type-specimen__code">{'0 O o 1 l I { } ( ) [ ] = > =>'}</p>
           </div>
-        </CardContent>
-      </Card>
+        </PfCardContent>
+      </PfCard>
     </div>
   );
 }

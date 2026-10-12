@@ -33,14 +33,20 @@ function StableColorInput({
   );
 }
 import {
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  Table,
-  UtilityButton,
-} from '@pitchfork-ui/react';
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardFooter,
+  PfCardHeader,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - Table: the call site changes shape: caption -> slot; columns -> child elements; rows -> child elements; emptyState -> needs a destination; onSortStateChange -> no matching event on pf-table; pick the right one
+ * - UtilityButton: the call site changes shape: icon -> slot
+ */
+import { Table, UtilityButton } from '@pitchfork-ui/react';
 import type { TableColumn } from '@pitchfork-ui/react';
 import { Canvas } from '../components/Canvas';
 import { formatHex, oklch } from 'culori';
@@ -170,14 +176,14 @@ export function ColorsView({ theme }: ColorsViewProps) {
           <div className="palette-section">
             <div className="palette-section__header">
               <span className="palette-section__label">Palette</span>
-              <Button
+              <PfButton
                 size="sm"
                 variant="secondary"
                 onClick={handleGeneratePalette}
                 title="Derive gray and status scales from the current brand color"
               >
                 Generate from brand
-              </Button>
+              </PfButton>
             </div>
             <PaletteStrip theme={theme} onScaleClick={scrollToScale} />
             <p className="palette-section__hint">
@@ -361,7 +367,7 @@ const ScaleEditor = function ScaleEditor({
         <span className="scale-editor__name">{name}</span>
 
         {showTintFromBrand && (
-          <Button
+          <PfButton
             variant="ghost"
             size="sm"
             onClick={tintGrayFromBrand}
@@ -369,7 +375,7 @@ const ScaleEditor = function ScaleEditor({
             disabled={!brandModified}
           >
             Tint from brand ↗
-          </Button>
+          </PfButton>
         )}
 
         <div
@@ -532,19 +538,19 @@ function ContrastPanel({ theme }: { theme: ThemeState }) {
   });
 
   return (
-    <Card>
-      <CardHeader>
+    <PfCard>
+      <PfCardHeader>
         <span className="canvas__section-title">Accessibility — WCAG Contrast</span>
-      </CardHeader>
-      <CardContent>
+      </PfCardHeader>
+      <PfCardContent>
         <Table columns={CONTRAST_COLUMNS} rows={rows} dense hoverable={false} />
-      </CardContent>
-      <CardFooter>
+      </PfCardContent>
+      <PfCardFooter>
         <span className="contrast-panel__footnote">
           AA requires 4.5:1 (normal text) · 3:1 (large text / UI). AAA requires 7:1.
         </span>
-      </CardFooter>
-    </Card>
+      </PfCardFooter>
+    </PfCard>
   );
 }
 

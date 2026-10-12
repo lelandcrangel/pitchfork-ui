@@ -1,13 +1,19 @@
 import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Dropdown,
-  Input,
-  Slider,
-  UtilityButton,
-} from '@pitchfork-ui/react';
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardHeader,
+  PfInput,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - Dropdown: the call site changes shape: items -> child elements
+ * - Slider: an event prop has no equivalent on `pf-slider`: onValueChange -> no matching event on pf-slider; pick the right one
+ * - UtilityButton: the call site changes shape: icon -> slot
+ */
+import { Dropdown, Slider, UtilityButton } from '@pitchfork-ui/react';
 import { useState } from 'react';
 import type { ThemeState } from '../hooks/useTheme';
 
@@ -239,14 +245,14 @@ function ShadowCanvas() {
     <div className="shadow-canvas">
       <div className="shadow-canvas__grid">
         {/* Elevation scale */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="shadow-canvas__section-header">
               <span className="shadow-canvas__section-title">Elevation scale</span>
               <code className="shadow-canvas__token-badge">Visual depth hierarchy</code>
             </div>
-          </CardHeader>
-          <CardContent>
+          </PfCardHeader>
+          <PfCardContent>
             <div className="shadow-canvas__elevation-row">
               {(
                 [
@@ -262,81 +268,81 @@ function ShadowCanvas() {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Card — shadow-sm */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="shadow-canvas__section-header">
-              <span className="shadow-canvas__section-title">Card</span>
+              <span className="shadow-canvas__section-title">PfCard</span>
               <code className="shadow-canvas__token-badge">--shadow-sm</code>
             </div>
-          </CardHeader>
-          <CardContent>
-            <Card>
-              <CardHeader>
+          </PfCardHeader>
+          <PfCardContent>
+            <PfCard>
+              <PfCardHeader>
                 <strong>Design tokens</strong>
-              </CardHeader>
-              <CardContent>
+              </PfCardHeader>
+              <PfCardContent>
                 <p className="shadow-canvas__card-text">
                   Cards use <code>--shadow-sm</code> to sit just above the page surface. Drag the Y
                   offset and blur sliders to change how cards lift off the background.
                 </p>
-              </CardContent>
-            </Card>
-          </CardContent>
-        </Card>
+              </PfCardContent>
+            </PfCard>
+          </PfCardContent>
+        </PfCard>
 
         {/* Dropdown — shadow-md */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="shadow-canvas__section-header">
               <span className="shadow-canvas__section-title">Dropdown</span>
               <code className="shadow-canvas__token-badge">--shadow-md</code>
             </div>
-          </CardHeader>
-          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          </PfCardHeader>
+          <PfCardContent style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <p className="shadow-canvas__card-text">
               Dropdown menus use <code>--shadow-md</code> to float above the page. Open it to see
               the shadow in context.
             </p>
             <Dropdown label="Actions" items={DROPDOWN_ITEMS} />
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
         {/* Focus ring — shadow-focus */}
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <div className="shadow-canvas__section-header">
               <span className="shadow-canvas__section-title">Focus ring</span>
               <code className="shadow-canvas__token-badge">--shadow-focus</code>
             </div>
-          </CardHeader>
-          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          </PfCardHeader>
+          <PfCardContent style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <p className="shadow-canvas__card-text">
               <code>--shadow-focus</code> is the keyboard focus indicator applied to all interactive
               elements. Adjust spread, opacity, and color in the sidebar to see changes here in real
               time.
             </p>
             <div className="shadow-canvas__focus-row">
-              <Button className="shadow-canvas__focus-demo">Primary</Button>
-              <Button variant="secondary" className="shadow-canvas__focus-demo">
+              <PfButton className="shadow-canvas__focus-demo">Primary</PfButton>
+              <PfButton variant="secondary" className="shadow-canvas__focus-demo">
                 Secondary
-              </Button>
-              <Button variant="ghost" className="shadow-canvas__focus-demo">
+              </PfButton>
+              <PfButton variant="ghost" className="shadow-canvas__focus-demo">
                 Ghost
-              </Button>
+              </PfButton>
             </div>
             <div className="shadow-canvas__focus-row">
-              <Input
+              <PfInput
                 label="Email address"
                 placeholder="you@example.com"
                 className="shadow-canvas__focus-demo-input"
               />
             </div>
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
       </div>
     </div>
   );
