@@ -125,9 +125,27 @@ import { PfButton } from '@pitchfork-ui/elements-react';
 <PfButton variant="primary" onPfClick={save}>Save</PfButton>;
 \`\`\`
 
-\`npm run codemod:elements -- <paths>\` does exactly those three and refuses
-everything else. It is deliberately narrow: a wrong automatic rewrite of a
-content prop is worse than a \`// TODO\` pointing at the right page.
+A codemod does exactly those three and refuses everything else. It is
+deliberately narrow: a wrong automatic rewrite of a content prop is worse than
+a \`// TODO\` pointing at the right page. It also audits the call sites it
+leaves behind for a handler the element cannot fire — \`onChange\` on a form
+component is React's own synthetic handler, declared in no metadata, so a
+rename leaves it in place where it type-checks, renders and never runs.
+
+**It lives in this repository rather than on npm**, which is worth saying
+plainly: it reads both metadata artifacts to decide what is safe to rename, so
+it is a workspace script and not an \`npx\` away. To use it, clone
+[the repository](https://github.com/lelandcrangel/pitchfork-ui), \`npm install\`,
+and run it against your own checkout:
+
+\`\`\`bash
+npm run codemod:elements -- /path/to/your/app/src          # report, change nothing
+npm run codemod:elements -- --write /path/to/your/app/src  # apply
+\`\`\`
+
+Nothing is written without \`--write\`. The three renames are lexical and the
+refusals are reported rather than attempted, so the report on its own is a
+usable worklist even if you then do the edits by hand.
 
 ## What the numbers are
 

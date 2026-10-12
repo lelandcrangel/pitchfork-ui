@@ -1,7 +1,7 @@
 {
   "name": "@pitchfork-ui/react",
   "version": "0.16.0",
-  "description": "Accessible, themeable React component library \u2014 70+ components backed by a Style Dictionary token system, with dark mode and bundled CSS.",
+  "description": "DEPRECATED \u2014 use @pitchfork-ui/elements instead. The former React component library for Pitchfork UI; still installable and patched for security until 30 April 2027.",
   "license": "MIT",
   "author": "Leland Rangel",
   "homepage": "https://lelandrangel.com/pitchfork-ui/",

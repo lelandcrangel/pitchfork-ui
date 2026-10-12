@@ -51,7 +51,8 @@
     "build:migration-guide": "node scripts/build-migration-guide.mjs",
     "codemod:elements": "node scripts/codemod-react-to-elements.mjs",
     "test:codemod": "node --test scripts/test/codemod.test.mjs",
-    "setup:publishers": "node scripts/setup-trusted-publishers.mjs"
+    "setup:publishers": "node scripts/setup-trusted-publishers.mjs",
+    "deprecate:react": "node scripts/deprecate-react.mjs"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",
