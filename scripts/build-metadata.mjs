@@ -8,10 +8,23 @@
  *   props        <- TS interfaces under packages/react/src/components
  *   defaults     <- destructuring defaults in the component render function
  *   cssVars      <- component .css files, resolved through tokens/src/theme.css
- *   examples     <- apps/docs/src/*.examples.stories.tsx
- *   description  <- apps/docs/src/*.mdx
+ *   icons        <- scripts/lib/icon-registry.mjs, from core and Icon.tsx
+ *   conventions  <- scripts/lib/conventions.mjs, from CLAUDE.md
  *
  * Output: packages/react/dist/metadata.json
+ *
+ * **This describes the deprecated layer.** `build-elements-metadata.mjs` is
+ * the one that matters; this one lives on for as long as
+ * `@pitchfork-ui/react` is published, so the MCP server can still answer
+ * `get_component` for someone maintaining code against it.
+ *
+ * It used to read examples from `apps/docs/src/*.examples.stories.tsx` and
+ * descriptions from `apps/docs/src/*.mdx`, 246 lines between them. Both paths
+ * are gone: those 150 files were deleted when the elements took over the
+ * `Components` section of the docs site, so the extractors ran over nothing
+ * and reported `described: 0` and `examples: 0` on every build. Code that can
+ * only ever produce nothing reads as something that might, which is worse
+ * than an honest gap -- the elements carry the depth now, in `elements.json`.
  *
  * Nothing here is hand-maintained; if a component gains a prop or a variant,
  * rerunning this picks it up. If it doesn't, the extractor has a gap — fix the
@@ -29,7 +42,6 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const componentsDir = join(root, 'packages/react/src/components');
 const themeCssPath = join(root, 'packages/tokens/src/theme.css');
-const docsDir = join(root, 'apps/docs/src');
 const outDir = join(root, 'packages/react/dist');
 const outFile = join(outDir, 'metadata.json');
 
@@ -611,252 +623,6 @@ function extractComponents(theme) {
 }
 
 /* ------------------------------------------------------------------ *
- * Examples
- *
- * Two shapes exist in apps/docs/src. 53 of 75 example files carry an explicit
- * parameters.docs.source.code string (the documented convention); the other 22
- * are args-only. Rather than block on hand-editing those, synthesize JSX from
- * the args — mechanical, and it keeps the extractor honest about what's there.
- * ------------------------------------------------------------------ */
-/**
- * The name and value of an object-literal property, covering the shorthand
- * form. `args: { slides }` is a ShorthandPropertyAssignment, not a
- * PropertyAssignment — filtering on the latter silently drops it, which is how
- * Carousel ended up with no usable examples.
- */
-function propertyEntry(node, sourceFile) {
-  if (ts.isPropertyAssignment(node)) {
-    return {
-      name: node.name.getText(sourceFile).replace(/^['"]|['"]$/g, ''),
-      initializer: node.initializer,
-    };
-  }
-  if (ts.isShorthandPropertyAssignment(node)) {
-    // `{ slides }` means `slides={slides}` — the value is the name itself.
-    return { name: node.name.getText(sourceFile), initializer: node.name };
-  }
-  return null;
-}
-
-function literalToJsx(name, node, sourceFile) {
-  if (node.kind === ts.SyntaxKind.TrueKeyword) return name;
-  if (node.kind === ts.SyntaxKind.FalseKeyword) return `${name}={false}`;
-  if (ts.isStringLiteral(node)) return `${name}="${node.text.replace(/"/g, '&quot;')}"`;
-  if (ts.isNumericLiteral(node)) return `${name}={${node.text}}`;
-  // Storybook's fn() mocks stand in for handlers; emit a real stub instead.
-  if (ts.isCallExpression(node) && node.expression.getText(sourceFile) === 'fn') {
-    return `${name}={() => {}}`;
-  }
-  return `${name}={${node.getText(sourceFile).replace(/\s+/g, ' ')}}`;
-}
-
-function synthesizeJsx(componentName, args, sourceFile) {
-  const attrs = [];
-  let children = null;
-
-  for (const prop of args) {
-    const entry = propertyEntry(prop, sourceFile);
-    if (!entry) continue;
-    const { name: key, initializer } = entry;
-    if (key === 'children') {
-      children = ts.isStringLiteral(initializer)
-        ? initializer.text
-        : initializer.getText(sourceFile);
-      continue;
-    }
-    attrs.push(literalToJsx(key, initializer, sourceFile));
-  }
-
-  const open = attrs.length ? `<${componentName} ${attrs.join(' ')}` : `<${componentName}`;
-  return children ? `${open}>${children}</${componentName}>` : `${open} />`;
-}
-
-function findProperty(objectLiteral, path, sourceFile) {
-  let current = objectLiteral;
-  for (const segment of path) {
-    if (!current || !ts.isObjectLiteralExpression(current)) return undefined;
-    const match = current.properties
-      .map((p) => propertyEntry(p, sourceFile))
-      .find((entry) => entry?.name === segment);
-    if (!match) return undefined;
-    current = match.initializer;
-  }
-  return current;
-}
-
-/**
- * Collect module-level `const x = 'string'` bindings so a source.code template
- * that interpolates them (`${monthlyCode}\n<AreaChart ... />`) can be resolved
- * to the literal text a reader would see in the docs.
- */
-function collectStringConsts(sourceFile) {
-  const consts = new Map();
-  ts.forEachChild(sourceFile, (node) => {
-    if (!ts.isVariableStatement(node)) return;
-    for (const decl of node.declarationList.declarations) {
-      if (!ts.isIdentifier(decl.name) || !decl.initializer) continue;
-      const init = decl.initializer;
-      if (ts.isStringLiteral(init) || ts.isNoSubstitutionTemplateLiteral(init)) {
-        consts.set(decl.name.text, init.text);
-      } else if (ts.isTemplateExpression(init)) {
-        consts.set(decl.name.text, init);
-      }
-    }
-  });
-  return consts;
-}
-
-/** Flatten a template literal, substituting known string consts. */
-function resolveTemplate(node, consts, depth = 0) {
-  if (typeof node === 'string') return node;
-  if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
-  if (!ts.isTemplateExpression(node) || depth > 5) return null;
-
-  let out = node.head.text;
-  for (const span of node.templateSpans) {
-    const expression = span.expression;
-    let value = null;
-    if (ts.isIdentifier(expression) && consts.has(expression.text)) {
-      value = resolveTemplate(consts.get(expression.text), consts, depth + 1);
-    }
-    if (value === null) return null; // an unresolvable span makes the whole thing untrustworthy
-    out += value + span.literal.text;
-  }
-  return out;
-}
-
-function extractExamples() {
-  const byComponent = new Map();
-  if (!existsSync(docsDir)) return byComponent;
-
-  const files = readdirSync(docsDir).filter((f) => f.endsWith('.examples.stories.tsx'));
-
-  for (const file of files) {
-    const componentName = file.replace('.examples.stories.tsx', '');
-    const sourceFile = ts.createSourceFile(
-      file,
-      readFileSync(join(docsDir, file), 'utf8'),
-      ts.ScriptTarget.ESNext,
-      true,
-      ts.ScriptKind.TSX,
-    );
-
-    const stringConsts = collectStringConsts(sourceFile);
-    let metaArgs = [];
-    let metaComponent = componentName;
-    const examples = [];
-
-    ts.forEachChild(sourceFile, (node) => {
-      if (!ts.isVariableStatement(node)) return;
-
-      for (const decl of node.declarationList.declarations) {
-        if (!decl.initializer) continue;
-        const declName = ts.isIdentifier(decl.name) ? decl.name.text : null;
-        if (!declName) continue;
-
-        // `const meta = {...} satisfies Meta<typeof X>`
-        const initializer =
-          ts.isSatisfiesExpression(decl.initializer) || ts.isAsExpression(decl.initializer)
-            ? decl.initializer.expression
-            : decl.initializer;
-        if (!ts.isObjectLiteralExpression(initializer)) continue;
-
-        if (declName === 'meta') {
-          const args = findProperty(initializer, ['args'], sourceFile);
-          if (args && ts.isObjectLiteralExpression(args)) metaArgs = [...args.properties];
-          const component = findProperty(initializer, ['component'], sourceFile);
-          if (component) metaComponent = component.getText(sourceFile);
-          continue;
-        }
-
-        const isExported = ts.getCombinedModifierFlags(decl) & ts.ModifierFlags.Export;
-        if (!isExported) continue;
-
-        // Preferred: the documented parameters.docs.source.code string.
-        const explicit = findProperty(
-          initializer,
-          ['parameters', 'docs', 'source', 'code'],
-          sourceFile,
-        );
-        if (explicit) {
-          const code = resolveTemplate(explicit, stringConsts);
-          if (code !== null) {
-            examples.push({ name: declName, code: code.trim(), source: 'explicit' });
-            continue;
-          }
-          warn(
-            `${file}: story "${declName}" has a source.code template that could not be resolved`,
-          );
-        }
-
-        // Fallback: synthesize from args. A story's own args layer over the
-        // meta-level ones, and a story with no args of its own (`= {}`) still
-        // renders with the meta args — so those are synthesizable too.
-        const storyArgs = findProperty(initializer, ['args'], sourceFile);
-        const storyProperties =
-          storyArgs && ts.isObjectLiteralExpression(storyArgs) ? storyArgs.properties : [];
-
-        if (metaArgs.length || storyProperties.length) {
-          const merged = new Map();
-          for (const property of [...metaArgs, ...storyProperties]) {
-            const entry = propertyEntry(property, sourceFile);
-            if (entry) merged.set(entry.name, property);
-          }
-          examples.push({
-            name: declName,
-            code: synthesizeJsx(metaComponent, [...merged.values()], sourceFile),
-            source: 'synthesized',
-            args: [...merged.keys()],
-          });
-          continue;
-        }
-
-        warn(
-          `${file}: story "${declName}" has no source.code, no args, and no meta args — skipped`,
-        );
-      }
-    });
-
-    if (examples.length) byComponent.set(componentName, examples);
-  }
-
-  return byComponent;
-}
-
-/* ------------------------------------------------------------------ *
- * MDX prose
- * ------------------------------------------------------------------ */
-const A11Y_PATTERN = /\brole=|aria-|screen reader|keyboard|focus|announce|assistive|tab order/i;
-
-function extractDocs() {
-  const byComponent = new Map();
-  if (!existsSync(docsDir)) return byComponent;
-
-  for (const file of readdirSync(docsDir).filter((f) => f.endsWith('.mdx'))) {
-    const componentName = file.replace('.mdx', '');
-    const raw = readFileSync(join(docsDir, file), 'utf8');
-
-    // Everything between the H1 and the first H2 is the component's own prose.
-    const body = raw.split(/^##\s/m)[0];
-    const afterHeading = body.split(/^#\s+.*$/m)[1] ?? '';
-
-    const paragraphs = afterHeading
-      .split(/\n\s*\n/)
-      .map((p) => p.replace(/\s+/g, ' ').trim())
-      .filter((p) => p && !p.startsWith('<') && !p.startsWith('import'));
-
-    if (!paragraphs.length) continue;
-
-    const entry = { description: paragraphs[0] };
-    const a11y = paragraphs.slice(1).filter((p) => A11Y_PATTERN.test(p));
-    if (a11y.length) entry.a11y = a11y;
-    byComponent.set(componentName, entry);
-  }
-
-  return byComponent;
-}
-
-/* ------------------------------------------------------------------ *
  * Assemble
  * ------------------------------------------------------------------ */
 function main() {
@@ -864,35 +630,8 @@ function main() {
     readFileSync(join(root, 'packages/react/package.json'), 'utf8'),
   ).version;
 
-  let skippedExamples = 0;
   const theme = parseThemeAliases();
   const components = extractComponents(theme);
-  const examples = extractExamples();
-  const docs = extractDocs();
-
-  for (const component of components) {
-    const doc = docs.get(component.name);
-    if (doc) {
-      component.description = doc.description;
-      if (doc.a11y) component.a11y = doc.a11y;
-    }
-    const found = examples.get(component.name);
-    if (found) {
-      // A synthesised example is built from a story's args. When the story
-      // supplies a required prop through `render` instead, synthesis produces
-      // something that does not actually work (`<Carousel />`). Publishing that
-      // to an agent is worse than publishing nothing.
-      const required = component.props.filter((p) => p.required && p.name !== 'children');
-      const usable = found.filter((example) => {
-        if (example.source !== 'synthesized') return true;
-        const supplied = new Set(example.args ?? []);
-        return required.every((p) => supplied.has(p.name));
-      });
-      skippedExamples += found.length - usable.length;
-      for (const example of usable) delete example.args;
-      if (usable.length) component.examples = usable;
-    }
-  }
 
   /**
    * Everything `Icon` will actually resolve, in the shapes it resolves them.
@@ -935,19 +674,8 @@ function main() {
   mkdirSync(outDir, { recursive: true });
   writeFileSync(outFile, `${JSON.stringify(metadata, null, 2)}\n`);
 
-  const documented = components.filter((c) => c.description).length;
-  const withExamples = components.filter((c) => c.examples?.length).length;
-  const synthesized = components
-    .flatMap((c) => c.examples ?? [])
-    .filter((e) => e.source === 'synthesized').length;
-
   console.log(`metadata.json written to packages/react/dist/`);
   console.log(`  components:  ${components.length}`);
-  console.log(`  described:   ${documented}`);
-  console.log(`  w/ examples: ${withExamples}`);
-  console.log(
-    `  examples:    ${components.flatMap((c) => c.examples ?? []).length} (${synthesized} synthesized, ${skippedExamples} skipped as incomplete)`,
-  );
   console.log(
     `  css vars:    ${new Set(components.flatMap((c) => c.cssVars.map((v) => v.name))).size} distinct`,
   );
