@@ -381,13 +381,54 @@ and run that way: exit 0, with `llms-full.txt` at 184 KB of elements,
 answering all six element tools, and typecheck, lint, `check:icons`,
 `check:examples` and `check:package` all passing.
 
-**Phase 6 — Deprecate.** `npm deprecate @pitchfork-ui/react` with a message
-pointing at the guide. Keep it publishable for a stated window so a security
-patch remains possible. The package keeps working the whole time; deprecation
-is a notice, not a removal.
+**Phase 6 — Deprecate. Prepared; the registry write is the owner's.**
+`npm run deprecate:react` reports what it would do;
+`npm run deprecate:react -- --apply` writes it. It is a script and not a
+command in a commit message for three reasons, each of which is a way to get
+this wrong once and not find out:
 
-**Phase 7 — Delete `packages/react`.** Only after the window. This is the one
-irreversible step and there is no reason to take it early.
+- **The range has to be `*`.** `npm deprecate <pkg> <message>` with no range
+  deprecates _nothing_ and exits 0 — it reads the bare name as the spec and
+  matches no version. There are 18 published versions (0.1.9 to 0.15.3) and
+  someone pinning an old one has to be told too.
+- **The message is the only thing a consumer sees**, on every install of every
+  version, and changing it means running the command again. It is built from
+  the window and the guide's real URL rather than typed at a terminal.
+- **Nothing checks it afterwards.** Deprecation is metadata and the package
+  keeps installing, so the script reads the registry back and names the
+  versions that still carry no notice — through the cached packument's lag,
+  which is why it retries.
+
+**The window ends 30 April 2027.** Two quarters: long enough for a consumer to
+migrate on their own schedule, and it lands well after the elements have had
+time to settle. Until then the package stays installable _and publishable_, so
+a security patch remains possible. Deprecation is a notice, not a removal.
+
+**Re-run the script after any further publish.** The registry stores the flag
+per version, not per package, so a patch release arrives undeprecated and
+silently. `latest` is 0.15.3 today while the repository is at 0.16.0 — the
+release that adds the `@deprecated` JSDoc tags is cut and waiting on an
+approval — so the first run should come after that publish, not before.
+
+Two things found while preparing it, both in the thing Phase 6 announces:
+
+- **The guide told consumers to run a command they do not have.** It said
+  `npm run codemod:elements -- <paths>` with nothing to say that is a script in
+  _this_ workspace, so anyone following it got `Missing script`. It now says
+  where the codemod lives and how to run it against their own checkout.
+  Publishing it is a real option and a separate decision: it reads both
+  metadata artifacts, and `@pitchfork-ui/mcp` already ships both and already
+  has a `bin`.
+- **The README had no notice at all**, which is the surface npm actually
+  renders. It has one now, and the `description` — which is what npm search
+  shows, where a README does not reach — leads with `DEPRECATED`. Both reach
+  the registry only on the _next_ publish, since `react-v0.16.0` is already
+  cut; the `npm deprecate` notice is the one that covers every version at once,
+  which is why it is the primary mechanism and these are secondary.
+
+**Phase 7 — Delete `packages/react`.** Only after the window closes on
+30 April 2027. This is the one irreversible step and there is no reason to take
+it early. §3 names the four references left for it.
 
 ---
 
