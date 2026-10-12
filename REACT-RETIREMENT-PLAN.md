@@ -355,9 +355,31 @@ was five defects nothing else would have reported:
 
 _Exit:_ nothing in `apps/` imports `@pitchfork-ui/react`. **Met.**
 
-**Phase 5 — Flip the agent surface and unpick the coupling.** Both halves are
-easy to forget and both bite later. See §3.
-_Exit:_ `npm run build` succeeds with `packages/react` renamed away.
+**Phase 5 — Flip the agent surface and unpick the coupling. Done.** Both halves
+are easy to forget and both bite later. See §3, which is now a record of what
+actually broke rather than a prediction.
+
+The agent surface was further from flipped than the prose suggested. Three
+things were measured, not reasoned about:
+
+- **`llms-full.txt` put 89.5 KB of deprecated React components before the
+  elements began**, and served the React `Component conventions` and
+  `Form field pattern` as its house rules — while its own comment claimed "The
+  React half comes last". The elements now start at byte 13,438.
+- **The MCP server required the React metadata and threw without it**, so a
+  consumer who had installed only `@pitchfork-ui/elements` got a server that
+  refused to start over an artifact belonging to a package they had no reason
+  to have.
+- **`validate_usage` never checked an icon name in element markup.**
+  `<pf-icon name="paper-plane">` — a real Font Awesome regular icon this
+  library does not bundle — validated as "No problems found" and renders
+  nothing. `isIconProp` knew only `iconName` anywhere and `name` on `Icon`.
+
+_Exit:_ `npm run build` succeeds with `packages/react` renamed away. **Met**,
+and run that way: exit 0, with `llms-full.txt` at 184 KB of elements,
+`elements.json` reporting "0 with a React counterpart", the MCP server
+answering all six element tools, and typecheck, lint, `check:icons`,
+`check:examples` and `check:package` all passing.
 
 **Phase 6 — Deprecate.** `npm deprecate @pitchfork-ui/react` with a message
 pointing at the guide. Keep it publishable for a stated window so a security
@@ -371,27 +393,76 @@ irreversible step and there is no reason to take it early.
 
 ## 3. What breaks when `packages/react` goes
 
-Four scripts read it, and three of them produce the artifacts an agent uses to
-write code against this library:
+This section predicted four scripts. **Eleven things broke**, and the four
+scripts were the easy half — the rest were found only by moving the package out
+of the workspace and running everything. All eleven are fixed; the list is kept
+because the shape of the miss is the useful part.
 
-- **`scripts/build-elements-metadata.mjs`** reads
+The four that were predicted:
+
+- **`scripts/build-elements-metadata.mjs`** read
   `packages/react/dist/metadata.json` for its category taxonomy, its
-  `reactCounterpart` mapping and its `reactCoverage` check. Without React the
-  element metadata has no categories at all, and `--strict` fails. The
-  taxonomy has to move — probably into the elements builder itself, since it
-  is the layer that survives.
-- **`scripts/build-llms-txt.mjs`** reads the same file and
+  `reactCounterpart` mapping and its `reactCoverage` check. Every element's
+  category was derived from its React counterpart's, so the taxonomy went with
+  the package and `--strict` failed with no categories at all. The ten names
+  and the 87 non-child assignments are written down in the elements builder
+  now, generated from its own React-derived output and cross-checked against
+  it while there is something to check against.
+- **`scripts/build-llms-txt.mjs`** read the same file, plus
   `packages/react/package.json` for the site URL and description.
-- **`scripts/build-mcp-data.mjs`** bundles `metadata.json` into
-  `@pitchfork-ui/mcp`.
-- **`scripts/check-built-packages.mjs`** has `packages/react` in its list and
-  checks React's bundle for the `Icon` warning and ambient type leaks.
+- **`scripts/build-mcp-data.mjs`** bundled `metadata.json` into
+  `@pitchfork-ui/mcp`. It now _deletes_ a stale bundled copy when the source is
+  gone, because the fallback copy is exactly what makes `npx` work with no
+  install — and would otherwise keep answering for a package that no longer
+  exists.
+- **`scripts/check-built-packages.mjs`** had `packages/react` in its list.
 
-And the agent surface itself: the MCP server and `llms.txt` currently present
-91 React components as the primary API. Until that inverts, every agent writing
-against this library keeps generating code for the layer being retired. That
-is Phase 5 and it is not optional — it is the difference between a deprecation
-and a deprecation nobody follows.
+Three more scripts, unlisted:
+
+- **`scripts/check-icon-names.mjs`** read the icon registry out of the React
+  metadata, as did the MCP server's `validate_usage`. Three of the registry's
+  four inputs are in `@pitchfork-ui/core`; the fourth is each layer's own
+  `name: faXxx` map, which has to stay per-layer so a consumer's bundle carries
+  only the icons in use. `scripts/lib/icon-registry.mjs` reads either layer and
+  asserts its map against core's `BUNDLED_FA_ICON_NAMES`.
+- **`scripts/build-metadata.mjs`** reads `packages/react/src/components`, so it
+  threw rather than exiting.
+- **`scripts/lib/conventions.mjs`** — the house rules travelled only inside the
+  React metadata, so an agent writing `<pf-input>` was handed rules about
+  `forwardRef` and the `pf-field` wrapper.
+
+And four things that are not scripts at all:
+
+- **The build chains.** `npm run build -w @pitchfork-ui/react` fails outright
+  when the directory is gone, killing `build`, `build:hostinger`, `build:demo`
+  and `test` at that step. `scripts/run-workspace.mjs` makes those four
+  tolerant; `build:react` and `test:coverage` still address the workspace
+  directly, so asking for it by name still gets npm's own error.
+- **The root `tsconfig.json`'s project reference**, which broke the _docs
+  build_, not `tsc`: `main.ts` aliases `@pitchfork-ui/core` to its sources, so
+  the bundler resolves a file outside `apps/docs`, walks up to the root
+  tsconfig and tries to resolve its references — "Tsconfig not found
+  .../packages/react" out of rolldown. `npm run typecheck` chains the tolerant
+  runner instead, so the package is still type-checked while it exists.
+- **`vitest.config.ts`.** A `projects` entry naming a file that is not there is
+  a startup error, not a skipped project: `npm run test:docs` died even though
+  it filters to `--project storybook-smoke` and never runs the React one.
+  Loading the list is what fails.
+- **The docs app's CSS-variable scrape**, which globbed
+  `packages/react/src/components/**/*.css` to generate Storybook controls. It
+  worked only because both layers declare the same `--pf-*` names, and would
+  have stopped silently.
+
+And the agent surface itself: the MCP server and `llms.txt` presented 91 React
+components as the primary API. Until that inverted, every agent writing against
+this library kept generating code for the layer being retired — the difference
+between a deprecation and a deprecation nobody follows.
+
+What is **left** for Phase 7, because each one is part of deleting the package
+rather than decoupling from it: `eslint.config.js`'s three React rules,
+`vitest.config.ts`'s now-conditional entry, CI's "Test @pitchfork-ui/react"
+step, and `release-please.yml`'s publish job. All four are correct while the
+package is published.
 
 The Storybook host is `@storybook/react-vite`. That can stay: React remains a
 fine way to _render_ a docs site for custom elements, and the element pages are

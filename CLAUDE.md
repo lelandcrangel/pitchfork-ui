@@ -56,16 +56,27 @@ resolve a relative CSS import can consume the built copy directly.
 
 ```bash
 npm run storybook        # Start Storybook dev server (port 6006)
-npm run test             # Run Vitest (core, then react)
+npm run test             # Run Vitest (core, then react, then elements)
 npm run typecheck        # tsc --build across all packages
 npm run lint             # ESLint across workspace
 npm run format           # Prettier across workspace
-npm run build            # tokens → react → docs (in order)
+npm run build            # tokens → core → react → elements → bindings → metadata → docs
 npm run build:tokens     # Style Dictionary → dist/css/variables.css + dist/json/tokens.json
+npm run build:elements   # Stencil build + the three generated bindings
 npm run build:react      # Vite lib build → dist/ (ESM + types + styles.css; no CJS)
 ```
 
-Tokens must be built before react. The `build` script enforces this order.
+The order is enforced by the `build` script and matters twice: tokens before
+anything that reads a CSS variable, and `build:elements` before
+`build:elements-metadata`, which reads Stencil's `docs.json`.
+
+**The chains step over `packages/react` when it is not there.** `build`,
+`build:hostinger`, `build:demo` and `test` call it through
+`scripts/run-workspace.mjs`, because `npm run build -w @pitchfork-ui/react`
+fails outright on a missing workspace and would kill the chain at that step for
+a package that had been deliberately retired. `build:react` and `test:coverage`
+still address the workspace directly, so asking for that package by name gets
+npm's own error rather than a shrug.
 
 ---
 
@@ -108,10 +119,11 @@ worth knowing:
   chains only. 69 of 91 components lost their examples and descriptions. That
   was a deliberate trade: the elements carry the depth now, in `elements.json`,
   and the MCP server answers `get_examples` for an element tag or name.
-- `build-metadata.mjs` still contains the code that parses example stories. It
-  finds nothing, so that path is unreachable; it goes when `packages/react`
-  does, and `REACT-RETIREMENT-PLAN.md` records it rather than leaving it to be
-  rediscovered.
+- `build-metadata.mjs` used to contain both extractors — `extractExamples` over
+  `*.examples.stories.tsx` and `extractDocs` over `*.mdx`, 246 lines between
+  them. Both ran over nothing on every build and reported `described: 0` and
+  `examples: 0`, and both are gone. Code that can only produce nothing reads as
+  code that might.
 
 ---
 
@@ -1621,22 +1633,65 @@ elements and checks the three things only a Vue binding can get wrong:
 ## What the agent-facing artifacts know
 
 Three artifacts exist so an agent can build with this library from its real API
-rather than from guesswork, and all three now cover both layers:
+rather than from guesswork. **`elements.json` is the one that matters**, and
+every consumer of it treats the React metadata as optional:
 
-| Artifact                | Built by                      | Source                                        |
-| ----------------------- | ----------------------------- | --------------------------------------------- |
-| `metadata.json`         | `build-metadata.mjs`          | the React TypeScript, docs, CSS               |
-| `elements.json`         | `build-elements-metadata.mjs` | Stencil's `docs.json` + `element-examples.ts` |
-| `llms.txt`, `-full.txt` | `build-llms-txt.mjs`          | both of the above                             |
+| Artifact                | Built by                      | Source                                              |
+| ----------------------- | ----------------------------- | --------------------------------------------------- |
+| `elements.json`         | `build-elements-metadata.mjs` | Stencil's `docs.json` + `element-examples.ts`       |
+| `metadata.json`         | `build-metadata.mjs`          | the React TypeScript and CSS (**deprecated layer**) |
+| `llms.txt`, `-full.txt` | `build-llms-txt.mjs`          | `elements.json`, plus `metadata.json` if present    |
+
+**Which artifact is required is the whole of Phase 5.** It used to be
+`metadata.json`: the MCP server threw without it, so a consumer who had
+installed only `@pitchfork-ui/elements` got a server that refused to start over
+an artifact belonging to a package they had no reason to have. Three things
+lived only in the React half and had to move, and the first was invisible until
+the package was taken away:
+
+- **The category taxonomy.** Every element's category was _derived_ from its
+  React counterpart's, so the ten names and all 108 assignments went with the
+  package. `CATEGORY` in the elements builder is the source now — generated
+  from that builder's own React-derived output, so the first rebuild was
+  byte-identical, and cross-checked against the derivation for as long as the
+  React metadata is on disk.
+- **The icon registry.** `validate_usage` and `check:icons` checked a name
+  against the _React_ registry whichever layer the markup was for.
+  `scripts/lib/icon-registry.mjs` reads either layer, and is the thing that
+  makes them agree rather than the thing that assumes it: it asserts each
+  layer's `name: faXxx` map against core's `BUNDLED_FA_ICON_NAMES` and throws
+  on a divergence. Three of the registry's four inputs are in core and survive;
+  the fourth cannot be shared, because each layer imports its Font Awesome
+  glyphs individually to keep a consumer's bundle to the icons in use.
+- **The house conventions.** They travelled only inside the React metadata, so
+  an agent writing `<pf-input>` was handed rules about `forwardRef` and the
+  `pf-field` wrapper. `scripts/lib/conventions.mjs` serves a different set per
+  layer, picked at **H3** where an H2 mixes them: `Component conventions` holds
+  the token chain and the breakpoints, which apply to anyone, alongside
+  `forwardRef` and BEM class names, which do not. The elements' set leads with
+  `WebComponents.mdx`, because that is the consumer-facing prose — CLAUDE.md's
+  own `Web components` section is 74 KB written for someone editing this
+  repository and is deliberately excluded.
+
+Two measurements worth keeping:
+
+- **`llms-full.txt` put 89.5 KB of deprecated React components before the
+  elements began**, with the React conventions as its house rules, while its
+  own comment claimed "The React half comes last". The elements start at byte
+  13,438 now.
+- **`validate_usage` never checked an icon name in element markup.**
+  `<pf-icon name="paper-plane">` — a real Font Awesome regular icon this
+  library does not bundle — validated as "No problems found" and renders
+  nothing. `isIconProp` knew only `iconName` anywhere and `name` on `Icon`;
+  `validateElements` had no icon check at all. The element rule is derived
+  rather than listed: `name` on `pf-icon`, `icon` on any element.
 
 **The element examples are one file, read by four things.** `docs.json` has
 every prop and slot and no idea that `pf-select` needs `pf-option` children, so
 the markup is hand-written in `apps/docs/src/element-examples.ts` — and the
 reference pages, the `Interactive` stories, `elements.json` and
 `llms-full.txt` all read that same file. A second copy written for the MCP
-server would be a second copy to drift, which is the whole reason the React
-half gets its examples by parsing the docs app's stories rather than keeping
-its own.
+server would be a second copy to drift.
 
 `build-elements-metadata.mjs` imports it and throws a named error when the
 export is gone, because an empty object would publish metadata with no
@@ -1652,8 +1707,11 @@ element metadata is _read_: Stencil writes every prop, attribute, event,
 method, slot and part into `docs.json` at build time, so the only judgement the
 builder adds is the category — Stencil has no concept of one, and an agent
 asking "what is there for navigation?" needs both layers to answer the same
-way. Three tables carry that judgement, and `--strict` checks each:
+way. Four tables carry that judgement, and `--strict` checks each:
 
+- **`CATEGORY`** gives each of the 87 non-child elements its category. The
+  three tables below are still derivations; this one is the only written-down
+  answer, because the thing it used to be derived from is going away.
 - **`CHILD_OF`** maps a child element to its parent _tag_, not to a category,
   so moving a parent between categories takes its children with it.
 - **`COUNTERPART`** covers the two names pascal-casing does not find
@@ -1664,7 +1722,8 @@ way. Three tables carry that judgement, and `--strict` checks each:
   answer "there is no element for `AreaChart`", which is wrong in the way that
   matters. `--strict` fails on a React component in neither table nor a
   counterpart, which is what keeps "every React component has an element
-  answer" true as components are added.
+  answer" true as components are added — and which, like every other React
+  check here, only runs while the React metadata is on disk.
 
 **A new check that catches nothing is the failure mode here, and two of them
 were shipping.** Both were found by writing the test that should fail and
