@@ -1526,6 +1526,15 @@ any other page header. Verified by driving a real SPA navigation away from the
 page: the `<style>` unmounts and a page header elsewhere is back to the
 element's own 34.2px.
 
+The override's own `vw` is iframe-relative too, which is the thing to remember
+when picking a number: `7.5vw` is **73.5px at a 1280px window**, not 96px,
+because the iframe is 980px there. Measured at four widths, it reads
+80 / 73.5 / 54.3 / 44px at windows of 1440 / 1280 / 1024 / 600, on one line
+with no horizontal overflow at any of them. The first pass at this was a third
+smaller and tracked at `-0.04em`, which is display tracking for 100px type and
+reads as squeezed at 60 — `-0.02em` is the setting that holds up across the
+whole clamp.
+
 `scripts/smoke-storybook.mjs` asserts the hero against the page's own `<h2>`
 rather than against a pixel count, because the ratio is what a reader
 perceives and it separates the two states cleanly — 1.28x without the
