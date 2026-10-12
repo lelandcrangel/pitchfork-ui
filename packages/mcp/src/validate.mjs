@@ -387,6 +387,21 @@ const isIconProp = (component, propName) =>
   propName === 'iconName' || (component === 'Icon' && propName === 'name');
 
 /**
+ * The same question for an element, derived from the metadata rather than
+ * listed: `pf-icon` takes `name`, and every element that draws one internally
+ * takes `icon`. Both are `string`, because an icon name is not an enum --
+ * `registerIcons()` can add one at runtime -- which is exactly why the type
+ * cannot catch a wrong one and this has to.
+ *
+ * Derived so it does not go stale. Six elements take `icon` today
+ * (`pf-button-group-item`, `pf-empty-state`, `pf-inline-cta`,
+ * `pf-metric-card`, `pf-tab`, `pf-tree-item`) and a seventh would otherwise
+ * have to be remembered here.
+ */
+const isElementIconAttr = (tag, attrName) =>
+  attrName === 'icon' || (tag === 'pf-icon' && attrName === 'name');
+
+/**
  * Global attributes legitimate on any custom element. Shorter than the React
  * list on purpose: an element does not spread onto a native node, so an
  * attribute that is not one of these and not a declared one really is invented.
@@ -450,7 +465,7 @@ const isElementPassthrough = (name) =>
  * a property leaves no attribute for a stylesheet or a query to find. The first
  * is reported, because writing it as an attribute does nothing whatsoever.
  */
-function validateElements(code, elementsByTag, findings) {
+function validateElements(code, elementsByTag, icons, findings) {
   const tags = [...elementsByTag.keys()];
 
   for (const usage of findElementUsages(code)) {
@@ -523,6 +538,36 @@ function validateElements(code, elementsByTag, findings) {
               (byAttr.size
                 ? `Its attributes are: ${[...byAttr.keys()].map((n) => `\`${n}\``).join(', ')}.`
                 : 'It takes no attributes of its own.'),
+        });
+        continue;
+      }
+
+      /*
+       * An icon name the library does not resolve. This check existed only for
+       * the React side, so `<pf-icon name="paper-plane">` -- a real Font
+       * Awesome regular icon that this library does not bundle -- validated
+       * clean and rendered nothing. Measured against the server before the
+       * fix: "No problems found."
+       */
+      if (
+        icons?.available &&
+        isElementIconAttr(usage.name, attr.name) &&
+        attr.literal &&
+        attr.value !== null &&
+        !icons.resolves(attr.value)
+      ) {
+        const suggestion = closest(attr.value, [...icons.names]);
+        findings.push({
+          severity: 'error',
+          line: usage.line,
+          component: usage.name,
+          message:
+            `\`${attr.name}="${attr.value}"\` is not an icon the library resolves, ` +
+            'so it renders nothing. ' +
+            (suggestion
+              ? `Did you mean \`"${suggestion}"\`?`
+              : 'Pitchfork UI bundles a set of icons rather than all of Font Awesome.') +
+            ' Add it with `registerIconGlyphs()` if you need it.',
         });
         continue;
       }
@@ -668,7 +713,7 @@ export function validateUsage(code, componentsByName, icons = null, elementsByTa
     }
   }
 
-  if (elementsByTag) validateElements(code, elementsByTag, findings);
+  if (elementsByTag) validateElements(code, elementsByTag, icons, findings);
 
   // Hardcoded colours are the single most common design-system violation, and
   // the reason the token chain exists.

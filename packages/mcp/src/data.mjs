@@ -1,10 +1,16 @@
 /**
  * Locating the data the server answers from.
  *
- * Order matters. An agent asking "what props does Button take?" wants the
+ * Order matters. An agent asking "what props does `pf-select` take?" wants the
  * answer for the version in *their* project, not whichever version this server
- * happens to ship with, so a locally installed @pitchfork-ui/react wins. The
- * bundled copy is what makes `npx @pitchfork-ui/mcp` work with no install.
+ * happens to ship with, so a locally installed `@pitchfork-ui/elements` wins.
+ * The bundled copy is what makes `npx @pitchfork-ui/mcp` work with no install.
+ *
+ * The element metadata is **required** and the React metadata is **optional**.
+ * That was the other way round until `packages/react` was put on its way out,
+ * and the old arrangement had a real consequence: a consumer who had installed
+ * only `@pitchfork-ui/elements` got a server that refused to start, because the
+ * artifact it insisted on belonged to a package they had no reason to have.
  */
 
 import { createRequire } from 'node:module';
@@ -26,7 +32,7 @@ function fromConsumer(specifier) {
   }
 }
 
-function load(kind, { env, specifier, fallback }) {
+function load(kind, { env, specifier, fallback, install, optional = false }) {
   const candidates = [
     process.env[env] ? resolve(process.env[env]) : null,
     fromConsumer(specifier),
@@ -44,36 +50,51 @@ function load(kind, { env, specifier, fallback }) {
     }
   }
 
+  if (optional) return { data: null, path: null };
+
   throw new Error(
-    `Could not find ${kind}. Install @pitchfork-ui/react, or set ${env} to a ${fallback} path.`,
+    `Could not find ${kind}. Install ${install}, or set ${env} to a ${fallback} path.`,
   );
 }
 
-export const { data: metadata, path: metadataPath } = load('component metadata', {
-  env: 'PITCHFORK_UI_METADATA',
-  specifier: '@pitchfork-ui/react/metadata',
-  fallback: 'metadata.json',
+/*
+ * The elements are the library, so this is the artifact the server cannot run
+ * without. Derived from Stencil's `docs.json` rather than parsed out of
+ * TypeScript, which is why it records every prop, event, method, slot and part
+ * without anyone maintaining a list.
+ */
+export const { data: elementMetadata, path: elementMetadataPath } = load('element metadata', {
+  env: 'PITCHFORK_UI_ELEMENTS',
+  specifier: '@pitchfork-ui/elements/metadata',
+  install: '@pitchfork-ui/elements',
+  fallback: 'elements.json',
 });
 
 export const { data: tokens, path: tokensPath } = load('design tokens', {
   env: 'PITCHFORK_UI_TOKENS',
   specifier: '@pitchfork-ui/tokens/tokens',
+  install: '@pitchfork-ui/tokens',
   fallback: 'tokens.json',
 });
 
 /*
- * The elements are a second first-class layer, not a wrapper, so the server
- * answers about them from their own artifact -- derived from Stencil's
- * docs.json rather than parsed out of TypeScript, and preferring the copy in
- * the consumer's own project for the same reason the React metadata does.
+ * The deprecated React layer, and `null` once it is gone. The three tools that
+ * answer from it say so rather than failing, which is the whole reason it is
+ * optional: a consumer on the elements alone should not have to install a
+ * retired package to start the server.
  */
-export const { data: elementMetadata, path: elementMetadataPath } = load('element metadata', {
-  env: 'PITCHFORK_UI_ELEMENTS',
-  specifier: '@pitchfork-ui/elements/metadata',
-  fallback: 'elements.json',
+export const { data: metadata, path: metadataPath } = load('component metadata', {
+  env: 'PITCHFORK_UI_METADATA',
+  specifier: '@pitchfork-ui/react/metadata',
+  install: '@pitchfork-ui/react',
+  fallback: 'metadata.json',
+  optional: true,
 });
 
-export const componentsByName = new Map(metadata.components.map((c) => [c.name, c]));
+/** True while the deprecated React layer's metadata is available to answer from. */
+export const hasReactLayer = metadata !== null;
+
+export const componentsByName = new Map((metadata?.components ?? []).map((c) => [c.name, c]));
 
 /** Keyed by tag (`pf-button`) and by binding name (`PfButton`), since an agent has either. */
 export const elementsByTag = new Map(elementMetadata.elements.map((e) => [e.tag, e]));
@@ -83,16 +104,22 @@ export const elementsByName = new Map(elementMetadata.elements.map((e) => [e.nam
 export const elementForComponent = new Map(Object.entries(elementMetadata.reactCoverage ?? {}));
 
 /**
- * What `Icon` resolves without the consumer registering anything.
+ * What an icon name resolves to without the consumer registering anything.
  *
  * Checking a name against the canonical list alone produces false positives:
- * `Icon` also accepts a Font Awesome alias (`bar-chart` for `chart-bar`), a
+ * both layers also accept a Font Awesome alias (`bar-chart` for `chart-bar`), a
  * legacy camelCase spelling (`circleCheck`), and a camelCase spelling of any
- * name at all (`chartBar`), because it kebab-cases before looking up. This
+ * name at all (`chartBar`), because both kebab-case before looking up. This
  * mirrors that resolution order exactly -- a validator that rejects working
  * code is worse than one that checks nothing.
+ *
+ * From the element metadata, falling back to the React metadata for an older
+ * artifact that predates `icons` being carried there. It used to be the other
+ * way round, so a name in `<pf-icon>` was checked against the *React*
+ * registry -- harmless only because `scripts/lib/icon-registry.mjs` asserts
+ * the two layers' lists against core's and fails the build when they diverge.
  */
-const iconRegistry = metadata.icons ?? {};
+const iconRegistry = elementMetadata.icons ?? metadata?.icons ?? {};
 
 const customIconNames = new Set(iconRegistry.custom ?? []);
 const fontAwesomeIconNames = new Set([

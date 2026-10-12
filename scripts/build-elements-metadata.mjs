@@ -22,6 +22,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readIconRegistry } from './lib/icon-registry.mjs';
+import {
+  ELEMENT_CONVENTION_SECTIONS,
+  readConventions,
+  readMdxConventions,
+} from './lib/conventions.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const elementsDir = join(root, 'packages/elements');
@@ -509,12 +514,34 @@ const icons = readIconRegistry({
   declaration: 'const bundled = {',
 });
 
+/**
+ * The house rules an agent writing element markup needs, which travel in the
+ * artifact because CLAUDE.md is in no npm package.
+ *
+ * They used to come only from the React metadata, so an agent writing
+ * `<pf-input>` was handed rules about `forwardRef` and the `pf-field` wrapper
+ * — every one of them about a layer it was not using.
+ *
+ * `WebComponents.mdx` leads because it is the consumer-facing prose: how to
+ * install, the custom-property-versus-`::part()` split, and where the element
+ * API deliberately differs from the React one. CLAUDE.md's own
+ * `Web components` section is deliberately **not** here — 74 KB written for
+ * someone editing this repository, none of it actionable for a consumer.
+ */
+const conventions = [
+  readMdxConventions('apps/docs/src/WebComponents.mdx', warn),
+  readConventions(ELEMENT_CONVENTION_SECTIONS, warn),
+]
+  .filter(Boolean)
+  .join('\n\n');
+
 const output = {
   $schema: 'https://lelandrangel.com/pitchfork-ui/schema/elements.json',
   name: elementsPkg.name,
   version: elementsPkg.version,
   generatedBy: 'scripts/build-elements-metadata.mjs',
   categories: CATEGORIES,
+  conventions,
   icons,
   bindings: {
     react: '@pitchfork-ui/elements-react',

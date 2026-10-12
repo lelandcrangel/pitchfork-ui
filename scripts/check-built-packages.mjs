@@ -23,16 +23,21 @@ import { fileURLToPath } from 'node:url';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
+/*
+ * `packages/react` is in the list but is **optional**, like everything else
+ * about it here: it is checked while it is on disk and skipped once it is
+ * gone. Every other entry is required -- a missing one is a build that did not
+ * run, not a package that was retired.
+ */
 const PACKAGES = [
   'packages/core',
   'packages/elements',
   'packages/elements-react',
   'packages/elements-angular',
   'packages/elements-vue',
-  'packages/react',
   'packages/tokens',
   'packages/mcp',
-];
+].concat(existsSync(join(repoRoot, 'packages/react/package.json')) ? ['packages/react'] : []);
 
 const reactDist = join(repoRoot, 'packages/react/dist');
 
@@ -165,7 +170,10 @@ for (const file of bundledFiles) {
   }
 }
 
-if (bundledFiles.length === 0) {
+if (!existsSync(reactDist)) {
+  // Retired rather than unbuilt: there is nothing to check and nothing wrong.
+  console.log('@pitchfork-ui/react: not on disk, so no bundle to check');
+} else if (bundledFiles.length === 0) {
   console.error('\npackages/react/dist has no JavaScript -- build it first.');
   process.exitCode = 1;
 } else if (!diagnosticFound) {
