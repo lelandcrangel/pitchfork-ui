@@ -154,3 +154,39 @@ test('resets to empty when it started empty', async () => {
 
   expect(el.value).toBe('');
 });
+
+/*
+ * Naming the control with no visible label. The React `Input` extends
+ * `InputHTMLAttributes`, so `aria-label` lands on the real `<input>`; here it
+ * lands on the **host**, and the host is not the control. Without the bridge
+ * in `src/control-label.ts` the `<input>` has no accessible name at all and
+ * nothing says so -- measured against Chromium's accessibility tree through
+ * CDP, where the host reported the name and the textbox inside it reported
+ * none, for all 13 labelled controls. `scripts/smoke-consumer.mjs` reads the
+ * tree; this reads the attribute the tree is built from.
+ */
+test('copies the host aria-label onto the control when there is no visible label', async () => {
+  const root = await mount(`<pf-input aria-label="Custom font stack"></pf-input>`);
+
+  expect(root.shadowRoot?.querySelector('label')).toBeNull();
+  expect(control(root)?.getAttribute('aria-label')).toBe('Custom font stack');
+});
+
+/*
+ * A visible label wins. It is both the name and a `for` target in the
+ * control's own root -- the kind of reference that resolves -- so copying an
+ * `aria-label` over it would override the visible text with something a
+ * sighted reader cannot see.
+ */
+test('a visible label wins over a host aria-label', async () => {
+  const root = await mount(`<pf-input label="Email" aria-label="Something else"></pf-input>`);
+
+  expect(root.shadowRoot?.querySelector('label')?.textContent).toContain('Email');
+  expect(control(root)?.getAttribute('aria-label')).toBeNull();
+});
+
+test('ignores a blank host aria-label rather than naming the control with it', async () => {
+  const root = await mount(`<pf-input aria-label="   "></pf-input>`);
+
+  expect(control(root)?.getAttribute('aria-label')).toBeNull();
+});

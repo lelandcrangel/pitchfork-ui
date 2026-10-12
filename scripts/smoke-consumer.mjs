@@ -924,6 +924,96 @@ try {
   }
 
   /*
+   * Every labelled form control, named with nothing but a host `aria-label`,
+   * read back out of Chromium's own accessibility tree.
+   *
+   * The React components extend `InputHTMLAttributes`, so
+   * `<Input aria-label="Search" />` puts the attribute on the real `<input>`.
+   * An element cannot: `aria-label` on the host names the **host**, and the
+   * control is in the shadow root with nothing pointing at it -- and
+   * `aria-labelledby` has no answer either, because an IDREF cannot point
+   * into a shadow root. So `src/control-label.ts` copies the text across, the
+   * same thing `pf-tooltip` does for its trigger's description.
+   *
+   * The tree is the only thing that can answer this, which is why the check
+   * is here: a spec can see the attribute, not that it names anything.
+   * Measured both ways against a real build -- 0 of 13 controls had a named
+   * control before the bridge, 13 of 13 after.
+   */
+  const LABELLED_CONTROLS = [
+    'pf-input',
+    'pf-textarea',
+    'pf-number-input',
+    'pf-select',
+    'pf-slider',
+    'pf-checkbox',
+    'pf-switch',
+    'pf-combobox',
+    'pf-tag-input',
+    'pf-multi-select',
+    'pf-date-picker',
+    'pf-date-range-picker',
+    'pf-time-picker',
+  ];
+
+  // A role the control itself reports. The host reports `generic`, so counting
+  // names alone would pass on the host's own and see nothing.
+  const CONTROL_ROLES = new Set([
+    'textbox',
+    'combobox',
+    'slider',
+    'checkbox',
+    'switch',
+    'button',
+    'spinbutton',
+    'listbox',
+  ]);
+
+  const probeId = 'pf-aria-label-probe';
+  const mounted = await page
+    .evaluate(
+      async ([tags, id]) => {
+        const box = document.createElement('div');
+        box.id = id;
+        box.innerHTML = tags.map((tag) => `<${tag} aria-label="Named ${tag}"></${tag}>`).join('\n');
+        document.body.appendChild(box);
+        for (let i = 0; i < 80; i += 1) await new Promise((r) => requestAnimationFrame(r));
+        return tags.filter((tag) => !box.querySelector(tag)?.classList.contains('hydrated'));
+      },
+      [LABELLED_CONTROLS, probeId],
+    )
+    .catch((error) => ({ error: String(error) }));
+
+  if (mounted?.error) {
+    problems.push(`aria-label bridge: ${mounted.error}`);
+  } else {
+    if (mounted.length > 0) {
+      problems.push(`aria-label bridge: ${mounted.join(', ')} never hydrated`);
+    }
+
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Accessibility.enable');
+    const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+
+    const unnamed = LABELLED_CONTROLS.filter((tag) => {
+      const name = `Named ${tag}`;
+      return !nodes.some(
+        (node) => node.name?.value === name && CONTROL_ROLES.has(node.role?.value),
+      );
+    });
+
+    if (unnamed.length > 0) {
+      problems.push(
+        `${unnamed.length} control(s) took no accessible name from a host aria-label: ` +
+          `${unnamed.join(', ')} — the host carries the name and the control inside it ` +
+          'has none, so a reader meets an unlabelled field',
+      );
+    }
+
+    await page.evaluate((id) => document.getElementById(id)?.remove(), probeId);
+  }
+
+  /*
    * A modal whose content and `open` arrive in the **same task**, which is
    * what every framework's commit does and what the consumer apps' static
    * markup does not.

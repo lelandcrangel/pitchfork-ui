@@ -1,5 +1,6 @@
 import { composeDescribedBy } from '@pitchfork-ui/core';
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 import {
   AttachInternals,
   Component,
@@ -178,6 +179,7 @@ export class PfTextarea {
           )}
           <textarea
             id="input"
+            aria-label={controlAriaLabel(this.el, this.label)}
             part="textarea"
             class={{ textarea: true, 'textarea--invalid': Boolean(this.error) }}
             name={this.name}

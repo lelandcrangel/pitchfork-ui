@@ -13,6 +13,7 @@ import {
 } from '@pitchfork-ui/core';
 
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 import { placePopover } from '../../place-popover';
 import {
   AttachInternals,
@@ -394,6 +395,7 @@ export class PfMultiSelect {
 
           <button
             id="trigger"
+            aria-label={controlAriaLabel(this.el, this.label)}
             part="trigger"
             class={{ trigger: true, 'trigger--invalid': Boolean(this.error) }}
             type="button"

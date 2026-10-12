@@ -22,6 +22,7 @@ import {
 } from '@stencil/core';
 
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 
 /**
  * A form-associated stepper field.
@@ -274,6 +275,7 @@ export class PfNumberInput {
 
             <input
               id="input"
+              aria-label={controlAriaLabel(this.el, this.label)}
               part="input"
               class="input"
               type="text"
