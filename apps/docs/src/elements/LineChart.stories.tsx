@@ -13,7 +13,13 @@ const meta = {
   args: {
     area: true,
     curved: true,
-    data: [['Mon', 12], ['Tue', 18], ['Wed', 9], ['Thu', 22], ['Fri', 17]],
+    data: [
+      { label: 'Mon', visits: 12 },
+      { label: 'Tue', visits: 18 },
+      { label: 'Wed', visits: 9 },
+      { label: 'Thu', visits: 22 },
+      { label: 'Fri', visits: 17 },
+    ],
     showLegend: true,
     label: 'Weekly visits',
     yAxisLabel: 'Visits',

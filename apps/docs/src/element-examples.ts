@@ -117,11 +117,11 @@ export const elementExamples: Record<string, ElementExample> = {
     html: `<pf-bar-chart
   label="Signups by quarter"
   y-axis-label="Signups"
-  data='[["Q1", 120, 80], ["Q2", 180, 140], ["Q3", 150, 190], ["Q4", 240, 210]]'
+  data='[{"label": "Q1", "direct": 120, "referral": 80}, {"label": "Q2", "direct": 180, "referral": 140}, {"label": "Q3", "direct": 150, "referral": 190}, {"label": "Q4", "direct": 240, "referral": 210}]'
   style="width: 100%"
 >
-  <pf-chart-series series-key="0" color="var(--color-brand-500)">Direct</pf-chart-series>
-  <pf-chart-series series-key="1" color="var(--color-teal-500)">Referral</pf-chart-series>
+  <pf-chart-series series-key="direct" color="var(--color-brand-500)">Direct</pf-chart-series>
+  <pf-chart-series series-key="referral" color="var(--color-teal-500)">Referral</pf-chart-series>
 </pf-bar-chart>`,
   },
 
@@ -246,14 +246,14 @@ export const elementExamples: Record<string, ElementExample> = {
   'pf-chart-series': {
     html: `<pf-line-chart
   label="Two named series"
-  data='[["Mon", 12, 8], ["Tue", 18, 11], ["Wed", 9, 14], ["Thu", 22, 16]]'
+  data='[{"label": "Mon", "visits": 12, "forecast": 8}, {"label": "Tue", "visits": 18, "forecast": 11}, {"label": "Wed", "visits": 9, "forecast": 14}, {"label": "Thu", "visits": 22, "forecast": 16}]'
   style="width: 100%"
 >
-  <pf-chart-series series-key="0" color="var(--color-brand-500)">Visits</pf-chart-series>
-  <pf-chart-series series-key="1" color="var(--color-amber-500)" dashed>Forecast</pf-chart-series>
+  <pf-chart-series series-key="visits" color="var(--color-brand-500)">Visits</pf-chart-series>
+  <pf-chart-series series-key="forecast" color="var(--color-amber-500)" dashed>Forecast</pf-chart-series>
 </pf-line-chart>`,
-    interactive: `<pf-line-chart label="One series" data='[["Mon", 12], ["Tue", 18], ["Wed", 9]]' style="width: 100%">
-  <pf-chart-series series-key="0" color="var(--color-brand-500)">Visits</pf-chart-series>
+    interactive: `<pf-line-chart label="One series" data='[{"label": "Mon", "visits": 12}, {"label": "Tue", "visits": 18}, {"label": "Wed", "visits": 9}]' style="width: 100%">
+  <pf-chart-series series-key="visits" color="var(--color-brand-500)">Visits</pf-chart-series>
 </pf-line-chart>`,
   },
 
@@ -524,10 +524,10 @@ export const elementExamples: Record<string, ElementExample> = {
   label="Weekly visits"
   y-axis-label="Visits"
   area
-  data='[["Mon", 12], ["Tue", 18], ["Wed", 9], ["Thu", 22], ["Fri", 17]]'
+  data='[{"label": "Mon", "visits": 12}, {"label": "Tue", "visits": 18}, {"label": "Wed", "visits": 9}, {"label": "Thu", "visits": 22}, {"label": "Fri", "visits": 17}]'
   style="width: 100%"
 >
-  <pf-chart-series series-key="0" color="var(--color-brand-500)">Visits</pf-chart-series>
+  <pf-chart-series series-key="visits" color="var(--color-brand-500)">Visits</pf-chart-series>
 </pf-line-chart>`,
   },
 

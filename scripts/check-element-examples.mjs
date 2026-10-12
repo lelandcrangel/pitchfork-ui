@@ -14,7 +14,7 @@
  * renders, and silently does nothing — a docs site demonstrating broken usage,
  * exactly what `check:icons` found in the React examples.
  *
- * Two questions, and the second is the cheap one worth having:
+ * Three questions, and the last two are the cheap ones worth having:
  *
  * 1. Does the markup check out against `elements.json`? Unknown tags,
  *    attributes that do not exist, invalid enum values, and props with no
@@ -22,6 +22,16 @@
  * 2. Does each example actually contain the element its page documents? An
  *    example copied from a sibling renders perfectly and documents the wrong
  *    thing, and nothing else here would notice.
+ * 3. Does a cartesian chart's `data` match the series keyed off it? This is
+ *    the one thing here that is about a *value* rather than a name, and it is
+ *    here because all four chart examples were wrong: they were written as
+ *    `[["Mon", 12], …]` tuples against a `series-key="0"`, where a row is
+ *    `{ label } & Record<string, number>`. Measured in a real build rather
+ *    than reasoned about: the line chart drew a **flat line on the baseline**
+ *    with y-ticks 0-5 and blank x labels, and the bar chart drew one of its
+ *    two series, because `series-key="1"` happened to land on the first
+ *    number while `"0"` landed on the label and came out `NaN`. Every
+ *    attribute in all four is valid, so questions 1 and 2 pass them.
  *
  * The examples are TypeScript and this imports them directly: Node strips the
  * types itself from 22.18 onwards, and CI runs 24.
@@ -94,6 +104,109 @@ for (const [name, pattern] of Object.entries(patternMarkup)) {
   for (const finding of findings) {
     (finding.severity === 'error' ? errors : warnings).push(`pattern ${name}: ${finding.message}`);
   }
+}
+
+/**
+ * A cartesian chart's rows and the series keyed off them.
+ *
+ * `pf-line-chart` and `pf-bar-chart` share `pf-chart-series`, and share the
+ * row type: `{ label: string } & Record<string, number>`. Both read
+ * `row.label` for the x axis and `row[seriesKey]` for the value, and both fail
+ * **silently** when handed something else -- a missing `label` renders an
+ * empty `<text>`, and a missing key goes through `Number(undefined) || 0` to
+ * the baseline. So the markup validates and the chart is blank.
+ *
+ * Regexes rather than a parser: this is hand-written markup a few lines long,
+ * and the alternative is a DOM dependency for one check. The non-greedy body
+ * match is safe because a chart never nests a chart.
+ */
+const CHART_TAGS = ['pf-line-chart', 'pf-bar-chart'];
+
+function checkChartData(markup, where) {
+  const found = [];
+
+  for (const tag of CHART_TAGS) {
+    const pattern = new RegExp(`<${tag}\\b([^>]*)>([\\s\\S]*?)</${tag}>`, 'g');
+    for (const match of markup.matchAll(pattern)) {
+      const [, attributes, body] = match;
+
+      const dataMatch = /\bdata='([^']*)'/.exec(attributes) ?? /\bdata="([^"]*)"/.exec(attributes);
+      const keys = [...body.matchAll(/series-key="([^"]*)"/g)].map((m) => m[1]);
+
+      if (keys.length === 0) {
+        found.push(
+          `${where}: <${tag}> has no <pf-chart-series> child, so it renders its empty state.`,
+        );
+        continue;
+      }
+
+      // No `data` attribute at all is legitimate: `interactive` instances and
+      // the patterns may assign the property in `setup` instead.
+      if (!dataMatch) continue;
+
+      let rows;
+      try {
+        rows = JSON.parse(dataMatch[1]);
+      } catch (error) {
+        found.push(`${where}: <${tag}> data is not valid JSON (${error.message}).`);
+        continue;
+      }
+
+      if (!Array.isArray(rows) || rows.length === 0) {
+        found.push(`${where}: <${tag}> data is not a non-empty array of rows.`);
+        continue;
+      }
+
+      rows.forEach((row, index) => {
+        if (Array.isArray(row) || typeof row !== 'object' || row === null) {
+          found.push(
+            `${where}: <${tag}> data row ${index} is ${
+              Array.isArray(row) ? 'an array' : typeof row
+            }, not an object. A row is \`{ label, [seriesKey]: number }\` — a tuple draws ` +
+              'a flat line with blank axis labels.',
+          );
+          return;
+        }
+
+        if (typeof row.label !== 'string' || row.label.length === 0) {
+          found.push(
+            `${where}: <${tag}> data row ${index} has no \`label\`, so its x-axis tick is blank.`,
+          );
+        }
+
+        for (const key of keys) {
+          if (!(key in row)) {
+            found.push(
+              `${where}: <${tag}> has series-key="${key}", which row ${index} does not have. ` +
+                `It plots as 0. Row ${index} has: ${Object.keys(row).join(', ') || '(nothing)'}.`,
+            );
+          } else if (!Number.isFinite(Number(row[key]))) {
+            found.push(
+              `${where}: <${tag}> row ${index}'s "${key}" is ${JSON.stringify(row[key])}, ` +
+                'which is not a number. It plots as 0.',
+            );
+          }
+        }
+      });
+    }
+  }
+
+  return found;
+}
+
+for (const [tag, example] of Object.entries(elementExamples)) {
+  for (const [field, markup] of [
+    ['html', example.html],
+    ['interactive', example.interactive],
+  ]) {
+    if (!markup) continue;
+    const where = field === 'html' ? tag : `${tag} (interactive)`;
+    errors.push(...checkChartData(markup, where));
+  }
+}
+
+for (const [name, pattern] of Object.entries(patternMarkup)) {
+  errors.push(...checkChartData(pattern.html, `pattern ${name}`));
 }
 
 const count = Object.keys(elementExamples).length;
