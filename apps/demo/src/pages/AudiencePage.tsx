@@ -1,11 +1,19 @@
 import { useState } from 'react';
+import { PfCard, PfCardContent, PfCardHeader, PfProgressBar } from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - BarChart: the call site changes shape: series -> child elements
+ * - PageHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
+ * - RadarChart: the call site changes shape: data -> child elements
+ * - SectionHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
+ * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
+ * - Table: the call site changes shape: caption -> slot; columns -> child elements; rows -> child elements; emptyState -> needs a destination; onSortStateChange -> no matching event on pf-table; pick the right one
+ */
 import {
   BarChart,
-  Card,
-  CardContent,
-  CardHeader,
   PageHeader,
-  ProgressBar,
   RadarChart,
   SectionHeader,
   Select,
@@ -64,11 +72,11 @@ export function AudiencePage() {
       />
 
       <div className="demo-grid-2">
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <SectionHeader heading="Session Depth" />
-          </CardHeader>
-          <CardContent>
+          </PfCardHeader>
+          <PfCardContent>
             <BarChart
               data={sessionDepthData}
               series={[{ key: 'depth', label: 'Sessions' }]}
@@ -76,34 +84,34 @@ export function AudiencePage() {
               showLegend={false}
               valueFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v))}
             />
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <SectionHeader heading="Content Interest" />
-          </CardHeader>
-          <CardContent style={{ display: 'flex', justifyContent: 'center' }}>
+          </PfCardHeader>
+          <PfCardContent style={{ display: 'flex', justifyContent: 'center' }}>
             <RadarChart data={radarSingleSeries} size={240} />
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
       </div>
 
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <SectionHeader
             heading="Goal Completion"
             description="Progress toward your conversion goals this period."
           />
-        </CardHeader>
-        <CardContent>
+        </PfCardHeader>
+        <PfCardContent>
           <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
             {goals.map((g) => (
-              <ProgressBar key={g.label} label={g.label} value={g.value} max={g.max} showValue />
+              <PfProgressBar key={g.label} label={g.label} value={g.value} max={g.max} showValue />
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </PfCardContent>
+      </PfCard>
 
       <div>
         <SectionHeader

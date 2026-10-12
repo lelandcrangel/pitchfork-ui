@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@pitchfork-ui/elements": "*",
+    "@pitchfork-ui/elements-react": "*",
     "@pitchfork-ui/react": "*",
     "@pitchfork-ui/tokens": "*",
     "react": "^19.3.0",
