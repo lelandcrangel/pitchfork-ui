@@ -71,7 +71,17 @@ const TOKEN_OPTIONS: Record<'radius' | 'shadow' | 'space', TokenOption[]> = {
 
 // ─── Auto-extract controls from component CSS ────────────────────────────────
 
-const cssFiles = import.meta.glob<string>('../../../packages/react/src/components/**/*.css', {
+/*
+ * The elements' component CSS, scraped for `--pf-*` declarations so a scope
+ * with no curated entry below still gets controls.
+ *
+ * It read the React library's CSS until `packages/react` started being retired.
+ * That worked only because the two layers declare the same `--pf-*` names --
+ * the element stylesheets read the same theme aliases -- so the scrape happened
+ * to produce the right variables for element stories. It would have stopped
+ * working silently the moment the package went.
+ */
+const cssFiles = import.meta.glob<string>('../../../packages/elements/src/components/**/*.css', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -124,9 +134,17 @@ function extractControlsFromCss(cssContent: string, scope: string): CssVariableC
   return controls;
 }
 
+/**
+ * The scope a file's variables belong to, from its folder name.
+ *
+ * The `pf-` prefix comes off, because the scopes are keyed off story titles --
+ * `Components/Button` maps to `button` -- while the element folders are named
+ * after their tags. Leaving it on makes every scope `pf-button`, which matches
+ * nothing in `scopeByStoryTitle` and silently contributes no controls at all.
+ */
 function scopeFromPath(path: string): string {
   const match = path.match(/components\/([^/]+)\//);
-  return match ? match[1].toLowerCase() : '';
+  return match ? match[1].replace(/^pf-/, '').toLowerCase() : '';
 }
 
 function buildGeneratedControls(existingScopes: Set<string>): CssVariableControl[] {

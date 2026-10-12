@@ -5,13 +5,30 @@
 
 import assert from 'node:assert/strict';
 import { test, after, before } from 'node:test';
+import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
+import { hasReactLayer } from '../src/data.mjs';
+
 const pkgRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+/*
+ * 28 of these tests are about the deprecated React layer -- `get_component`,
+ * `search_components`, and `validate_usage` over JSX, which needs the
+ * component list. They are real tests of a layer that is still published, and
+ * they have to skip rather than fail once it is not: a suite that cannot pass
+ * in both worlds would have to be deleted at Phase 7 instead of just stopping.
+ *
+ * Resolved the same way the server resolves it, from the same cwd, so the two
+ * cannot disagree -- and `the React gate matches what is on disk` below checks
+ * it against the filesystem, because a gate that wrongly read false would skip
+ * all 28 silently and report a green suite.
+ */
+const whenReact = { skip: hasReactLayer ? false : 'the deprecated React layer is not installed' };
 
 let client;
 
@@ -35,6 +52,33 @@ const call = async (name, args = {}) => {
   return result.content[0].text;
 };
 
+/*
+ * The gate against the filesystem, which is the one fact neither the gate nor
+ * the server derives: is there a `metadata.json` for them to read at all.
+ *
+ * It has to be independent, and the first version was not. It asked the server
+ * whether it considered the layer retired and compared that with
+ * `hasReactLayer` -- but the server branches on `hasReactLayer` too, so both
+ * sides read one variable and agreed on whatever it said. Probed by forcing it
+ * to `false` with the package installed: 28 tests skipped and the suite
+ * reported green. A check that cannot fail is worse than no check.
+ */
+test('the React gate matches what is on disk', () => {
+  const reachable =
+    existsSync(join(pkgRoot, 'data/metadata.json')) ||
+    existsSync(join(pkgRoot, '../react/dist/metadata.json'));
+
+  assert.equal(
+    hasReactLayer,
+    reachable,
+    reachable
+      ? 'a metadata.json is on disk but the gate says the React layer is retired, ' +
+          'so 28 tests would skip for no reason'
+      : 'the gate says the React layer is available but there is no metadata.json ' +
+          'for it to have come from',
+  );
+});
+
 test('exposes every documented tool', async () => {
   const { tools } = await client.listTools();
   const names = tools.map((t) => t.name).sort();
@@ -51,7 +95,7 @@ test('exposes every documented tool', async () => {
   ]);
 });
 
-test('get_component returns props and theme variables', async () => {
+test('get_component returns props and theme variables', whenReact, async () => {
   // No example assertion: metadata.json's React examples were read from
   // apps/docs/src/*.examples.stories.tsx, and those pages are gone with the
   // rest of the React documentation. The props and the resolved variable
@@ -63,19 +107,19 @@ test('get_component returns props and theme variables', async () => {
   assert.match(out, /--pf-badge-brand-background/, 'theme aliases should be listed');
 });
 
-test('get_component suggests a near match for a typo', async () => {
+test('get_component suggests a near match for a typo', whenReact, async () => {
   const out = await call('get_component', { name: 'Buttonn' });
   assert.match(out, /Did you mean: Button\?/);
 });
 
-test('search_components matches on whole words, not substrings', async () => {
+test('search_components matches on whole words, not substrings', whenReact, async () => {
   const out = await call('search_components', { query: 'upload a file' });
   assert.match(out, /FileUploader/);
   // "file" must not match inside "profile" (Avatar's description).
   assert.doesNotMatch(out, /Avatar/);
 });
 
-test('list_components can filter by category', async () => {
+test('list_components can filter by category', whenReact, async () => {
   const out = await call('list_components', { category: 'feedback' });
   assert.match(out, /Alert/);
   assert.doesNotMatch(out, /\*\*Button\*\*/);
@@ -92,26 +136,26 @@ test('get_conventions returns the house rules', async () => {
   assert.match(out, /CSS variable inheritance chain/);
 });
 
-test('validate_usage accepts correct code', async () => {
+test('validate_usage accepts correct code', whenReact, async () => {
   const out = await call('validate_usage', {
     code: '<Badge variant="brand">New</Badge>\n<Alert variant="info" heading="Hi" />',
   });
   assert.match(out, /No problems found/);
 });
 
-test('validate_usage catches an invalid variant value', async () => {
+test('validate_usage catches an invalid variant value', whenReact, async () => {
   const out = await call('validate_usage', { code: '<Badge variant="primary">New</Badge>' });
   assert.match(out, /not valid on `Badge`/);
   assert.match(out, /"neutral"/);
 });
 
-test('validate_usage catches an unknown component', async () => {
+test('validate_usage catches an unknown component', whenReact, async () => {
   const out = await call('validate_usage', { code: '<Buton>Go</Buton>' });
   assert.match(out, /not exported by the library/);
   assert.match(out, /Did you mean `Button`\?/);
 });
 
-test('validate_usage catches a misspelled prop', async () => {
+test('validate_usage catches a misspelled prop', whenReact, async () => {
   const out = await call('validate_usage', { code: '<Alert varient="info" />' });
   assert.match(out, /has no prop `varient`/);
   assert.match(out, /Did you mean `variant`\?/);
@@ -120,18 +164,18 @@ test('validate_usage catches a misspelled prop', async () => {
 // Icon resolves an explicit registry, not all of Font Awesome, and `IconName`
 // widens to `string` -- so an unregistered name typechecks, renders nothing,
 // and is exactly the kind of mistake this tool exists to catch.
-test('validate_usage catches an icon name the library does not resolve', async () => {
+test('validate_usage catches an icon name the library does not resolve', whenReact, async () => {
   const out = await call('validate_usage', { code: '<Icon name="paper-plane" />' });
   assert.match(out, /is not an icon the library resolves/);
   assert.match(out, /registerIcons/);
 });
 
-test('validate_usage suggests the nearest icon name', async () => {
+test('validate_usage suggests the nearest icon name', whenReact, async () => {
   const out = await call('validate_usage', { code: '<Icon name="circle-chek" />' });
   assert.match(out, /Did you mean `"circle-check"`\?/);
 });
 
-test('validate_usage checks iconName on components that render one', async () => {
+test('validate_usage checks iconName on components that render one', whenReact, async () => {
   const out = await call('validate_usage', {
     code: '<MetricCard heading="Applications" value={5} iconName="hourglass" />',
   });
@@ -141,7 +185,7 @@ test('validate_usage checks iconName on components that render one', async () =>
 // Icon kebab-cases a name and honours Font Awesome's own aliases before
 // looking it up, so checking the raw literal against the canonical list alone
 // rejects working code — which is worse than not checking at all.
-test('validate_usage accepts the spellings Icon actually resolves', async () => {
+test('validate_usage accepts the spellings Icon actually resolves', whenReact, async () => {
   const out = await call('validate_usage', {
     code: [
       '<Icon name="bar-chart" />',
@@ -155,7 +199,7 @@ test('validate_usage accepts the spellings Icon actually resolves', async () => 
   assert.match(out, /No problems found/);
 });
 
-test('validate_usage accepts a registered icon name', async () => {
+test('validate_usage accepts a registered icon name', whenReact, async () => {
   const out = await call('validate_usage', {
     code: '<Icon name="circle-check" />\n<EmptyState heading="None" iconName="chart-bar" />',
   });
@@ -167,42 +211,42 @@ test('validate_usage flags a hardcoded colour', async () => {
   assert.match(out, /Hardcoded colour/);
 });
 
-test('validate_usage does not flag legitimate passthrough props', async () => {
+test('validate_usage does not flag legitimate passthrough props', whenReact, async () => {
   const out = await call('validate_usage', {
     code: '<Badge className="x" data-testid="y" aria-label="z" onClick={fn} id="q" />',
   });
   assert.match(out, /No problems found/);
 });
 
-test('validate_usage does not require children when they are nested', async () => {
+test('validate_usage does not require children when they are nested', whenReact, async () => {
   const out = await call('validate_usage', {
     code: '<Popover label="About" trigger={<Button>Why?</Button>}>\n  <p>Detail</p>\n</Popover>',
   });
   assert.match(out, /No problems found/);
 });
 
-test('validate_usage handles escaped quotes in an attribute value', async () => {
+test('validate_usage handles escaped quotes in an attribute value', whenReact, async () => {
   const out = await call('validate_usage', {
     code: '<EmptyState heading="No results for \\"dashboard\\"" />',
   });
   assert.match(out, /No problems found/);
 });
 
-test('validate_usage does not mistake nested JSX for attributes', async () => {
+test('validate_usage does not mistake nested JSX for attributes', whenReact, async () => {
   const out = await call('validate_usage', {
     code: '<Modal open title="Confirm" footer={<><Button>Cancel</Button><Button>OK</Button></>} />',
   });
   assert.match(out, /No problems found/);
 });
 
-test('validate_usage reports an invented prop even with no near match', async () => {
+test('validate_usage reports an invented prop even with no near match', whenReact, async () => {
   const out = await call('validate_usage', { code: '<Alert severity="error" />' });
   assert.match(out, /has no prop `severity`/);
   assert.match(out, /not a DOM attribute/);
   assert.match(out, /`variant`/, 'should list the real props');
 });
 
-test('validate_usage stays quiet when a prop list is known to be partial', async () => {
+test('validate_usage stays quiet when a prop list is known to be partial', whenReact, async () => {
   // Icon extends FontAwesomeIconProps, which we cannot enumerate.
   const out = await call('validate_usage', { code: '<Icon name="circle-check" spin />' });
   assert.match(out, /No problems found/);
@@ -239,30 +283,42 @@ test('validate_usage accepts every documented example', async () => {
   assert.deepEqual(failures, [], 'no documented example should fail validation');
 });
 
-test('validate_usage still sees attributes after an escaped quote containing ">"', async () => {
-  // The tag scanner must not treat `\"` as ending the string, or it terminates
-  // the tag at the wrong `>` and silently stops checking the rest.
-  const out = await call('validate_usage', {
-    code: '<Alert heading="x \\" > y" variant="nonsense" />',
-  });
-  assert.match(out, /not valid on `Alert`/);
-});
+test(
+  'validate_usage still sees attributes after an escaped quote containing ">"',
+  whenReact,
+  async () => {
+    // The tag scanner must not treat `\"` as ending the string, or it terminates
+    // the tag at the wrong `>` and silently stops checking the rest.
+    const out = await call('validate_usage', {
+      code: '<Alert heading="x \\" > y" variant="nonsense" />',
+    });
+    assert.match(out, /not valid on `Alert`/);
+  },
+);
 
-test('validate_usage still sees attributes after a braced value with an escaped quote', async () => {
-  // skipBraced must skip escapes too, or `\"` closes the string, the closing
-  // `}` is read as part of it, and every later attribute is swallowed.
-  const out = await call('validate_usage', {
-    code: '<Alert heading={"x \\" y"} variant="nonsense" />',
-  });
-  assert.match(out, /not valid on `Alert`/);
-});
+test(
+  'validate_usage still sees attributes after a braced value with an escaped quote',
+  whenReact,
+  async () => {
+    // skipBraced must skip escapes too, or `\"` closes the string, the closing
+    // `}` is read as part of it, and every later attribute is swallowed.
+    const out = await call('validate_usage', {
+      code: '<Alert heading={"x \\" y"} variant="nonsense" />',
+    });
+    assert.match(out, /not valid on `Alert`/);
+  },
+);
 
-test('validate_usage does not demand a required prop when a spread could supply it', async () => {
-  const out = await call('validate_usage', { code: '<Carousel {...props} />' });
-  assert.match(out, /No problems found/);
-});
+test(
+  'validate_usage does not demand a required prop when a spread could supply it',
+  whenReact,
+  async () => {
+    const out = await call('validate_usage', { code: '<Carousel {...props} />' });
+    assert.match(out, /No problems found/);
+  },
+);
 
-test('validate_usage still checks written attributes alongside a spread', async () => {
+test('validate_usage still checks written attributes alongside a spread', whenReact, async () => {
   // A spread excuses a *missing* required prop, not an invalid written value.
   const out = await call('validate_usage', {
     code: '<Badge {...rest} variant="primary">New</Badge>',
@@ -339,7 +395,7 @@ test('get_examples adds a single instance only where it differs', async () => {
   assert.doesNotMatch(one, /## One instance/);
 });
 
-test('get_examples routes a deprecated React name to its element', async () => {
+test('get_examples routes a deprecated React name to its element', whenReact, async () => {
   // Every one of the 91 React components lost its examples when the React docs
   // pages went, so this path used to answer "`Alert` has no examples" -- a dead
   // end for the one question asked here. It now answers with the element that
@@ -353,7 +409,7 @@ test('get_examples routes a deprecated React name to its element', async () => {
   assert.match(out, /```html/);
 });
 
-test('get_examples says how an absorbed component was taken in', async () => {
+test('get_examples says how an absorbed component was taken in', whenReact, async () => {
   // `NotificationStack` has no element of its own -- `pf-toaster` absorbed it
   // -- so naming the tag without saying that would read as a straight rename.
   const out = await call('get_examples', { name: 'NotificationStack' });
@@ -393,7 +449,7 @@ test('get_element says which props have no attribute', async () => {
   assert.match(out, /Writing them in markup does nothing/);
 });
 
-test('get_element points at the React counterpart, and get_component back', async () => {
+test('get_element points at the React counterpart, and get_component back', whenReact, async () => {
   const element = await call('get_element', { name: 'pf-button' });
   assert.match(element, /React counterpart: `Button`/);
 
@@ -406,13 +462,13 @@ test('get_element points at the React counterpart, and get_component back', asyn
  * for one. "There is no element for AreaChart" is wrong in the way that
  * matters: there is, it is a prop.
  */
-test('get_component says how an absorbed component maps to an element', async () => {
+test('get_component says how an absorbed component maps to an element', whenReact, async () => {
   const out = await call('get_component', { name: 'AreaChart' });
   assert.match(out, /`<pf-line-chart>`/);
   assert.match(out, /set `area`/);
 });
 
-test('get_element redirects a React component name to its element', async () => {
+test('get_element redirects a React component name to its element', whenReact, async () => {
   const out = await call('get_element', { name: 'Button' });
   assert.match(out, /is a React component, not an element/);
   assert.match(out, /`<pf-button>`/);

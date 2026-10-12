@@ -1,7 +1,7 @@
 {
   "name": "@pitchfork-ui/react",
   "version": "0.16.0",
-  "description": "Accessible, themeable React component library — 70+ components backed by a Style Dictionary token system, with dark mode and bundled CSS.",
+  "description": "Accessible, themeable React component library \u2014 70+ components backed by a Style Dictionary token system, with dark mode and bundled CSS.",
   "license": "MIT",
   "author": "Leland Rangel",
   "homepage": "https://lelandrangel.com/pitchfork-ui/",
@@ -40,6 +40,7 @@
   ],
   "scripts": {
     "build": "vite build && node ../../scripts/fix-dts-extensions.mjs",
+    "typecheck": "tsc -b tsconfig.json",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest"
