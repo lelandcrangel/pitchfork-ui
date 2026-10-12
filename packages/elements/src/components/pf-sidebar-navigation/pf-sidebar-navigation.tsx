@@ -61,13 +61,16 @@ export class PfSidebarNavigation {
   }
 
   /**
-   * A section's own slot changed, so the items below it have moved.
+   * A section's items moved, or an item's `current` changed. Either way the
+   * resolution has to run again.
    *
    * `slotchange` is not composed, so this is the only way the navigation
-   * hears about an item appended inside a section. The event comes from a
-   * slotted child in the navigation's own tree, so `event.target` is the
-   * section rather than the host — nothing is retargeted, which is what makes
-   * a host listener safe here and not on a child in the shadow root.
+   * hears about an item appended inside a section — and an item's `current`
+   * arriving as a *property* fires no DOM event at all, which is why the item
+   * emits this too. The event comes from a slotted child in the navigation's
+   * own tree, so `event.target` is the section or the item rather than the
+   * host — nothing is retargeted, which is what makes a host listener safe
+   * here and not on a child in the shadow root.
    */
   @Listen('pfNavStructure')
   handleStructureChange(event: CustomEvent<void>) {
@@ -76,8 +79,8 @@ export class PfSidebarNavigation {
   }
 
   /**
-   * Re-reads the items, for a consumer who marked one current through its
-   * *property* — which leaves no attribute and fires no `slotchange`.
+   * Re-reads the items, for a consumer who changed something the group reads
+   * and has no event for.
    */
   @Method()
   async refresh() {

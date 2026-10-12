@@ -158,3 +158,21 @@ test('the footer box appears only when something is slotted into it', async () =
 
   await until(() => !part(el, 'footer').className.includes('empty'), 'the footer box');
 });
+
+/*
+ * The mark moving between *sections* by property, which is the sidebar's half
+ * of the defect porting `apps/demo` found: the resolution runs across every
+ * section, so a property change in one has to reach the navigation through
+ * both boundaries — the item's `@Watch('current')` emits `pfNavStructure` and
+ * it bubbles out through the section, which stops its own copy no further.
+ */
+test('moving the mark across sections by property re-resolves', async () => {
+  const el = await mount(FIXTURE);
+  expect(currentLabels(el)).toEqual(['Home']);
+
+  const [home, users] = items(el) as (HTMLElement & { current: boolean })[];
+  home.current = false;
+  users.current = true;
+
+  await until(() => currentLabels(el).join() === 'Users', 'the mark to cross sections');
+});

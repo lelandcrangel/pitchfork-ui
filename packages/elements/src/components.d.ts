@@ -1417,7 +1417,7 @@ export namespace Components {
          */
         "label": string;
         /**
-          * Re-reads the items, for a consumer who marked one current through its *property* — which leaves no attribute and fires no `slotchange`.
+          * Re-reads the items, for a consumer who changed something the group reads and has no event for.
          */
         "refresh": () => Promise<void>;
     }
@@ -1907,7 +1907,9 @@ export namespace Components {
      * `<Link>` in and leave `href` unset.
      * `currentPage` and `orientation` are the group's to set. A consumer asks by
      * setting `current`; the group resolves every item with core's rule and
-     * writes the answer to `currentPage`.
+     * writes the answer to `currentPage`. Changing the ask tells the group, so
+     * the answer follows a framework's re-render without the consumer calling
+     * anything.
      */
     interface PfNavItem {
         /**
@@ -2827,7 +2829,7 @@ export namespace Components {
          */
         "label": string;
         /**
-          * Re-reads the items, for a consumer who marked one current through its *property* — which leaves no attribute and fires no `slotchange`.
+          * Re-reads the items, for a consumer who changed something the group reads and has no event for.
          */
         "refresh": () => Promise<void>;
     }
@@ -3946,6 +3948,10 @@ export interface PfModalCustomEvent<T> extends CustomEvent<T> {
 export interface PfMultiSelectCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfMultiSelectElement;
+}
+export interface PfNavItemCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfNavItemElement;
 }
 export interface PfNavSectionCustomEvent<T> extends CustomEvent<T> {
     detail: T;
@@ -5115,6 +5121,9 @@ declare global {
         prototype: HTMLPfMultiSelectElement;
         new (): HTMLPfMultiSelectElement;
     };
+    interface HTMLPfNavItemElementEventMap {
+        "pfNavStructure": void;
+    }
     /**
      * One item in a `pf-header-navigation` or a `pf-sidebar-navigation`.
      * Shared by both, because the React library's `HeaderNavigationItem` and
@@ -5127,9 +5136,19 @@ declare global {
      * `<Link>` in and leave `href` unset.
      * `currentPage` and `orientation` are the group's to set. A consumer asks by
      * setting `current`; the group resolves every item with core's rule and
-     * writes the answer to `currentPage`.
+     * writes the answer to `currentPage`. Changing the ask tells the group, so
+     * the answer follows a framework's re-render without the consumer calling
+     * anything.
      */
     interface HTMLPfNavItemElement extends Components.PfNavItem, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfNavItemElementEventMap>(type: K, listener: (this: HTMLPfNavItemElement, ev: PfNavItemCustomEvent<HTMLPfNavItemElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfNavItemElementEventMap>(type: K, listener: (this: HTMLPfNavItemElement, ev: PfNavItemCustomEvent<HTMLPfNavItemElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLPfNavItemElement: {
         prototype: HTMLPfNavItemElement;
@@ -8121,7 +8140,9 @@ declare namespace LocalJSX {
      * `<Link>` in and leave `href` unset.
      * `currentPage` and `orientation` are the group's to set. A consumer asks by
      * setting `current`; the group resolves every item with core's rule and
-     * writes the answer to `currentPage`.
+     * writes the answer to `currentPage`. Changing the ask tells the group, so
+     * the answer follows a framework's re-render without the consumer calling
+     * anything.
      */
     interface PfNavItem {
         /**
@@ -8143,6 +8164,10 @@ declare namespace LocalJSX {
           * Where the item goes. Reflected; a consumer's stylesheet reads it.
          */
         "href"?: string;
+        /**
+          * Tells the group the ask changed, so it can resolve again.  The same event `pf-nav-section` emits when its items move, because the groups do the same thing with both: re-read every item and resolve the one current page. Without this a navigation resolves at load and never again for a consumer who marks items through the *property*, which is every framework consumer — the generated bindings set props as properties, so there is no attribute change and no `slotchange` either. The symptom is a navigation whose highlight never moves while the router works perfectly, which is what porting `apps/demo` ran into.  `current` only. Watching `currentPage` would loop, since that is what the group writes back.
+         */
+        "onPfNavStructure"?: (event: PfNavItemCustomEvent<void>) => void;
         /**
           * Set by the group, which is the only one that knows which it is.
           * @default 'horizontal'
@@ -11418,7 +11443,9 @@ declare module "@stencil/core" {
              * `<Link>` in and leave `href` unset.
              * `currentPage` and `orientation` are the group's to set. A consumer asks by
              * setting `current`; the group resolves every item with core's rule and
-             * writes the answer to `currentPage`.
+             * writes the answer to `currentPage`. Changing the ask tells the group, so
+             * the answer follows a framework's re-render without the consumer calling
+             * anything.
              */
             "pf-nav-item": LocalJSX.IntrinsicElements["pf-nav-item"] & JSXBase.HTMLAttributes<HTMLPfNavItemElement>;
             /**
