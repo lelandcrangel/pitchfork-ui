@@ -330,11 +330,30 @@ rewrite the import, PascalCase to `Pf`-prefixed, `onFoo` to `onPfFoo`. For the
 `ReactNode` prop is worse than a `// TODO` pointing at the right page.
 _Exit:_ the codemod runs clean over `apps/demo`.
 
-**Phase 4 — Migrate the in-repo apps.** `apps/theme-builder`, `apps/demo` and
-`apps/docs` are the only consumers under this roof and the only honest test of
-the guide. If the 45 do not migrate cleanly here, the guide is wrong, and
-finding that out internally is the entire point of doing them first.
-_Exit:_ nothing in `apps/` imports `@pitchfork-ui/react`.
+**Phase 4 — Migrate the in-repo apps. Done.** `apps/demo` and
+`apps/theme-builder` are off the package; `apps/docs` never imported it. The
+guide held up: the codemod moved what it could and the refusals named the right
+props. What the port actually found is the reason to do it internally, and it
+was five defects nothing else would have reported:
+
+- **`pf-nav-item` never told its navigation that `current` had changed**, so
+  the highlight and `aria-current="page"` stayed on whichever item the initial
+  HTML marked -- for every framework consumer, since the bindings set props as
+  properties.
+- **`pf-modal` left focus outside the dialog** when its content and its `open`
+  arrived in the same commit, which is what every framework does.
+- **No form control could be named without a visible label.** `aria-label` on
+  the host names the host; 0 of 13 controls had a named control, measured
+  through Chromium's accessibility tree.
+- **Four of the chart examples drew a flat line at zero**, because the rows
+  were written as tuples where a row is `{ label } & Record<string, number>`.
+- **24 renamed call sites carried a handler the element cannot fire.** The
+  codemod's rename alone is not enough: `onChange` on a form component is
+  React's own synthetic handler, declared nowhere, so no metadata sees it and
+  nothing was reported. It audits call sites now, which is also how five
+  already-committed ones in `apps/demo` turned up.
+
+_Exit:_ nothing in `apps/` imports `@pitchfork-ui/react`. **Met.**
 
 **Phase 5 — Flip the agent surface and unpick the coupling.** Both halves are
 easy to forget and both bite later. See §3.
