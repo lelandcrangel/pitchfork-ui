@@ -1,4 +1,11 @@
 import { useState } from 'react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - Notification: the call site changes shape: icon -> slot; action -> slot
+ * - NotificationStack: absorbed by `pf-toaster` — `pf-toaster` is the positioned stack, with `placement` where the React component takes `position`.
+ */
 import { Notification, NotificationStack } from '@pitchfork-ui/react';
 import { NotificationProvider, useNotifications } from './context/NotificationContext';
 import { AppShell } from './components/AppShell';

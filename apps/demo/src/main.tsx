@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import '@pitchfork-ui/react/styles.css';
+import '@pitchfork-ui/elements/styles.css';
 import './index.css';
 import { App } from './App';
 

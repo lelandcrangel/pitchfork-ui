@@ -1,19 +1,25 @@
 import { useState } from 'react';
 import {
-  Button,
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CreditCard,
-  Input,
-  PageHeader,
-  Select,
-  SectionHeader,
-  Switch,
-  Tabs,
-  Textarea,
-} from '@pitchfork-ui/react';
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardFooter,
+  PfCardHeader,
+  PfCreditCard,
+  PfInput,
+  PfSwitch,
+  PfTextarea,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - PageHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
+ * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
+ * - SectionHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
+ * - Tabs: the call site changes shape: items -> child elements; onValueChange -> no matching event on pf-tabs; pick the right one
+ */
+import { PageHeader, SectionHeader, Select, Tabs } from '@pitchfork-ui/react';
 import { useNotifications } from '../context/NotificationContext';
 
 const timezoneOptions = [
@@ -44,22 +50,22 @@ function ProfileTab() {
   return (
     <div style={{ display: 'grid', gap: 'var(--space-5)', maxWidth: 560 }}>
       <div className="demo-grid-2">
-        <Input label="Full name" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input
+        <PfInput label="Full name" value={name} onChange={(e) => setName(e.target.value)} />
+        <PfInput
           label="Email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
-      <Input label="Company" value={company} onChange={(e) => setCompany(e.target.value)} />
+      <PfInput label="Company" value={company} onChange={(e) => setCompany(e.target.value)} />
       <Select
         label="Timezone"
         options={timezoneOptions}
         value={timezone}
         onValueChange={setTimezone}
       />
-      <Textarea
+      <PfTextarea
         label="Bio"
         description="A short description shown on your public profile."
         value={bio}
@@ -68,10 +74,10 @@ function ProfileTab() {
         placeholder="Tell us a bit about yourself…"
       />
       <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-        <Button onClick={handleSave}>Save changes</Button>
-        <Button variant="secondary" onClick={() => {}}>
+        <PfButton onClick={handleSave}>Save changes</PfButton>
+        <PfButton variant="secondary" onClick={() => {}}>
           Cancel
-        </Button>
+        </PfButton>
       </div>
     </div>
   );
@@ -133,8 +139,8 @@ function NotificationsTab() {
 
   return (
     <div style={{ display: 'grid', gap: 'var(--space-5)', maxWidth: 560 }}>
-      <Card>
-        <CardContent>
+      <PfCard>
+        <PfCardContent>
           <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
             {items.map((item, i) => (
               <div key={item.key}>
@@ -173,7 +179,7 @@ function NotificationsTab() {
                       {item.description}
                     </div>
                   </div>
-                  <Switch
+                  <PfSwitch
                     checked={prefs[item.key]}
                     onChange={() => toggle(item.key)}
                     aria-label={item.label}
@@ -182,10 +188,10 @@ function NotificationsTab() {
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
+        </PfCardContent>
+      </PfCard>
       <div>
-        <Button onClick={handleSave}>Save preferences</Button>
+        <PfButton onClick={handleSave}>Save preferences</PfButton>
       </div>
     </div>
   );
@@ -204,8 +210,8 @@ function BillingTab() {
 
   return (
     <div style={{ display: 'grid', gap: 'var(--space-5)', maxWidth: 560 }}>
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
               <div
@@ -235,12 +241,12 @@ function BillingTab() {
                 $49 / month
               </span>
             </div>
-            <Button variant="secondary" size="sm" onClick={handleUpgrade}>
+            <PfButton variant="secondary" size="sm" onClick={handleUpgrade}>
               Upgrade to Enterprise
-            </Button>
+            </PfButton>
           </div>
-        </CardHeader>
-        <CardContent>
+        </PfCardHeader>
+        <PfCardContent>
           <div
             style={{
               fontSize: 'var(--font-size-xs)',
@@ -271,9 +277,9 @@ function BillingTab() {
               </div>
             ))}
           </div>
-        </CardContent>
-        <CardFooter style={{ display: 'flex', gap: 'var(--space-2)' }}>
-          <Button
+        </PfCardContent>
+        <PfCardFooter style={{ display: 'flex', gap: 'var(--space-2)' }}>
+          <PfButton
             variant="secondary"
             onClick={() =>
               push({
@@ -284,8 +290,8 @@ function BillingTab() {
             }
           >
             Manage billing
-          </Button>
-          <Button
+          </PfButton>
+          <PfButton
             variant="ghost"
             onClick={() =>
               push({
@@ -296,24 +302,24 @@ function BillingTab() {
             }
           >
             Download invoices
-          </Button>
-        </CardFooter>
-      </Card>
+          </PfButton>
+        </PfCardFooter>
+      </PfCard>
 
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <SectionHeader heading="Payment method" />
-        </CardHeader>
-        <CardContent>
-          <CreditCard
+        </PfCardHeader>
+        <PfCardContent>
+          <PfCreditCard
             brand="visa"
             cardNumber="4111111111111111"
             cardholderName="Leland Rangel"
             expiry="09/28"
             masked
           />
-        </CardContent>
-      </Card>
+        </PfCardContent>
+      </PfCard>
     </div>
   );
 }

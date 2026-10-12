@@ -1,23 +1,39 @@
 import { useState } from 'react';
 import {
-  Avatar,
-  Badge,
+  PfAvatar,
+  PfBadge,
+  PfButton,
+  PfCard,
+  PfCardContent,
+  PfCardHeader,
+  PfIcon,
+  PfMetricGrid,
+  PfTag,
+} from '@pitchfork-ui/elements-react';
+/*
+ * TODO(pitchfork-ui): still on @pitchfork-ui/react, which is being retired.
+ * Each of these needs the call site reshaped by hand -- see Foundations/Migrating in Storybook.
+ *
+ * - BarChart: the call site changes shape: series -> child elements
+ * - LineChart: the call site changes shape: series -> child elements
+ * - MetricCard: the call site changes shape: heading -> slot; description -> slot; icon -> slot; action -> slot; value -> needs a destination; trendLabel -> needs a destination
+ * - Modal: the call site changes shape: title -> needs a destination; description -> needs a destination; footer -> needs a destination
+ * - PageHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
+ * - PieChart: the call site changes shape: data -> child elements; centerLabel -> needs a destination; emptyLabel -> needs a destination
+ * - SectionHeader: the call site changes shape: eyebrow -> slot; description -> slot; metadata -> slot; actions -> slot; heading -> needs a destination
+ * - Select: the call site changes shape: options -> child elements; onValueChange -> no matching event on pf-select; pick the right one
+ * - Table: the call site changes shape: caption -> slot; columns -> child elements; rows -> child elements; emptyState -> needs a destination; onSortStateChange -> no matching event on pf-table; pick the right one
+ */
+import {
   BarChart,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Icon,
   LineChart,
   MetricCard,
-  MetricGrid,
   Modal,
   PageHeader,
   PieChart,
   SectionHeader,
   Select,
   Table,
-  Tag,
 } from '@pitchfork-ui/react';
 import {
   channelData,
@@ -53,7 +69,7 @@ export function OverviewPage() {
   const tableRows = recentSignups.map((s) => ({
     user: (
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-        <Avatar name={s.name} size="sm" />
+        <PfAvatar name={s.name} size="sm" />
         <span style={{ fontWeight: 'var(--font-weight-medium)' }}>{s.name}</span>
       </div>
     ),
@@ -62,14 +78,14 @@ export function OverviewPage() {
         {s.email}
       </span>
     ),
-    plan: <Badge variant={planColors[s.plan]}>{s.plan}</Badge>,
-    status: <Tag variant={statusColors[s.status]}>{s.status}</Tag>,
+    plan: <PfBadge variant={planColors[s.plan]}>{s.plan}</PfBadge>,
+    status: <PfTag variant={statusColors[s.status]}>{s.status}</PfTag>,
     date: <span style={{ fontSize: 'var(--font-size-sm)' }}>{s.date}</span>,
     country: <span style={{ fontSize: 'var(--font-size-sm)' }}>{s.country}</span>,
     actions: (
-      <Button variant="ghost" size="sm" onClick={() => setSelectedUser(s)}>
+      <PfButton variant="ghost" size="sm" onClick={() => setSelectedUser(s)}>
         View
-      </Button>
+      </PfButton>
     ),
   }));
 
@@ -91,15 +107,15 @@ export function OverviewPage() {
         actions={
           <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
             <Select options={dateRangeOptions} value={dateRange} onValueChange={setDateRange} />
-            <Button variant="secondary">
-              <Icon name="file-arrow-down" aria-hidden />
+            <PfButton variant="secondary">
+              <PfIcon name="file-arrow-down" aria-hidden />
               Export
-            </Button>
+            </PfButton>
           </div>
         }
       />
 
-      <MetricGrid>
+      <PfMetricGrid>
         {kpiMetrics.map((m) => (
           <MetricCard
             key={m.heading}
@@ -111,14 +127,14 @@ export function OverviewPage() {
             iconName={m.iconName}
           />
         ))}
-      </MetricGrid>
+      </PfMetricGrid>
 
       <div className="demo-grid-2">
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <SectionHeader heading="Sessions & Users" />
-          </CardHeader>
-          <CardContent>
+          </PfCardHeader>
+          <PfCardContent>
             <LineChart
               data={monthlyData}
               series={[
@@ -130,14 +146,14 @@ export function OverviewPage() {
               curved
               valueFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v))}
             />
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
 
-        <Card>
-          <CardHeader>
+        <PfCard>
+          <PfCardHeader>
             <SectionHeader heading="Traffic by Channel" />
-          </CardHeader>
-          <CardContent>
+          </PfCardHeader>
+          <PfCardContent>
             <BarChart
               data={channelData}
               series={[{ key: 'visits', label: 'Visits' }]}
@@ -145,15 +161,15 @@ export function OverviewPage() {
               showLegend={false}
               valueFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(0)}k` : String(v))}
             />
-          </CardContent>
-        </Card>
+          </PfCardContent>
+        </PfCard>
       </div>
 
-      <Card>
-        <CardHeader>
+      <PfCard>
+        <PfCardHeader>
           <SectionHeader heading="Device Breakdown" />
-        </CardHeader>
-        <CardContent style={{ display: 'flex', justifyContent: 'center' }}>
+        </PfCardHeader>
+        <PfCardContent style={{ display: 'flex', justifyContent: 'center' }}>
           <PieChart
             data={deviceData}
             size={200}
@@ -168,8 +184,8 @@ export function OverviewPage() {
               </span>
             }
           />
-        </CardContent>
-      </Card>
+        </PfCardContent>
+      </PfCard>
 
       <div>
         <SectionHeader
@@ -196,9 +212,9 @@ export function OverviewPage() {
         description={selectedUser?.email}
         size="sm"
         footer={
-          <Button variant="secondary" onClick={() => setSelectedUser(null)}>
+          <PfButton variant="secondary" onClick={() => setSelectedUser(null)}>
             Close
-          </Button>
+          </PfButton>
         }
       >
         {selectedUser && (
@@ -214,7 +230,7 @@ export function OverviewPage() {
                 >
                   Plan
                 </div>
-                <Badge variant={planColors[selectedUser.plan]}>{selectedUser.plan}</Badge>
+                <PfBadge variant={planColors[selectedUser.plan]}>{selectedUser.plan}</PfBadge>
               </div>
               <div>
                 <div
@@ -226,11 +242,11 @@ export function OverviewPage() {
                 >
                   Status
                 </div>
-                <Tag
+                <PfTag
                   variant={statusColors[selectedUser.status] as 'success' | 'warning' | 'neutral'}
                 >
                   {selectedUser.status}
-                </Tag>
+                </PfTag>
               </div>
               <div>
                 <div
