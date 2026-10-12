@@ -19,6 +19,15 @@ import {
 } from '@pitchfork-ui/elements-react';
 import { useNotifications } from '../context/NotificationContext';
 
+/*
+ * `onPfInput`/`onPfChange`, never `onChange`. `pf-input`, `pf-textarea` and
+ * `pf-switch` emit `pfInput`/`pfChange` and no native `change`, so a React
+ * `onChange` left on one type-checks, renders and never fires -- the state
+ * stops updating while the control still looks right, until something
+ * re-renders and writes the stale value back. `npm run codemod:elements` now
+ * reports it; it is what found these five.
+ */
+
 const timezoneOptions = [
   { value: 'utc-8', label: 'Pacific Time (UTC-8)' },
   { value: 'utc-5', label: 'Eastern Time (UTC-5)' },
@@ -47,15 +56,23 @@ function ProfileTab() {
   return (
     <div style={{ display: 'grid', gap: 'var(--space-5)', maxWidth: 560 }}>
       <div className="demo-grid-2">
-        <PfInput label="Full name" value={name} onChange={(e) => setName(e.target.value)} />
+        <PfInput
+          label="Full name"
+          value={name}
+          onPfInput={(event) => setName(event.detail.value)}
+        />
         <PfInput
           label="Email"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onPfInput={(event) => setEmail(event.detail.value)}
         />
       </div>
-      <PfInput label="Company" value={company} onChange={(e) => setCompany(e.target.value)} />
+      <PfInput
+        label="Company"
+        value={company}
+        onPfInput={(event) => setCompany(event.detail.value)}
+      />
       <PfSelect
         label="Timezone"
         value={timezone}
@@ -71,7 +88,7 @@ function ProfileTab() {
         label="Bio"
         description="A short description shown on your public profile."
         value={bio}
-        onChange={(e) => setBio(e.target.value)}
+        onPfInput={(event) => setBio(event.detail.value)}
         rows={4}
         placeholder="Tell us a bit about yourself…"
       />
@@ -183,8 +200,8 @@ function NotificationsTab() {
                   </div>
                   <PfSwitch
                     checked={prefs[item.key]}
-                    onChange={() => toggle(item.key)}
-                    aria-label={item.label}
+                    onPfChange={() => toggle(item.key)}
+                    label={item.label}
                   />
                 </div>
               </div>
