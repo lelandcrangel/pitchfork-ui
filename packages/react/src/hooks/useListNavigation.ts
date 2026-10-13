@@ -2,18 +2,21 @@ import {
   getEnabledIndexes,
   getNextEnabledIndex as resolveNextEnabledIndex,
   resolveListMove,
-  type ListNavigationAction,
+  type ListNavigationAction as CoreListNavigationAction,
 } from '@pitchfork-ui/core';
 import { useCallback, useMemo, useState } from 'react';
 
-export type { ListNavigationAction };
+/** @deprecated `@pitchfork-ui/react` is deprecated. Import `ListNavigationAction` from `@pitchfork-ui/core`, where it lives and is not deprecated. */
+export type ListNavigationAction = CoreListNavigationAction;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The index arithmetic is `resolveListMove` and `getNextEnabledIndex` in `@pitchfork-ui/core`. */
 export interface UseListNavigationOptions<T> {
   items: T[];
   isDisabled?: (item: T, index: number) => boolean;
   initialIndex?: number;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The index arithmetic is `resolveListMove` and `getNextEnabledIndex` in `@pitchfork-ui/core`. */
 export function useListNavigation<T>({
   items,
   isDisabled = () => false,

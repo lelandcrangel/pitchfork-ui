@@ -95,12 +95,14 @@ const bundledRegularIcons = {
   user: faUser,
 } satisfies Record<string, IconDefinition>;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-icon>`, or `PfIcon` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type RegisteredIconName = CustomGlyphName | keyof typeof bundledRegularIcons;
 
 /**
  * A registered name, or any other string: `registerIcons()` can add names at
  * runtime that no type here can know about. The union is what editors offer;
  * the `string` keeps a registered name from being a type error.
+ * @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-icon>`, or `PfIcon` from `@pitchfork-ui/elements-react`. See Foundations → Migrating.
  */
 export type IconName = RegisteredIconName | (string & {});
 
@@ -112,6 +114,7 @@ export type IconName = RegisteredIconName | (string & {});
  */
 registerIconGlyphs(bundledRegularIcons);
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The registry itself lives in `@pitchfork-ui/core`; import `registerIcons` from there and one call covers both `Icon` and `<pf-icon>`. */
 export const registerIcons = (icons: Record<string, IconDefinition>) => {
   registerIconGlyphs(icons);
 
@@ -148,12 +151,15 @@ const warnUnknownIcon = (name: string) => {
   );
 };
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Import `getAvailableIconNames` from `@pitchfork-ui/core`. */
 export const getAvailableIconNames = () => {
   return [...new Set([...getRegisteredIconNames(), ...getCustomGlyphNames()])].sort();
 };
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Import `getCustomIconNames` from `@pitchfork-ui/core`. */
 export const getCustomIconNames = () => getCustomGlyphNames();
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-icon>`, or `PfIcon` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
   name: IconName;
   label?: string;

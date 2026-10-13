@@ -6,6 +6,7 @@ import {
 } from '@pitchfork-ui/core';
 import { useCallback, useEffect, useRef } from 'react';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The buffer and matching are `nextTypeaheadBuffer` and `findTypeaheadMatch` in `@pitchfork-ui/core`. */
 export interface UseTypeaheadOptions {
   /** The option labels, in source order. */
   labels: string[];
@@ -28,6 +29,7 @@ export interface UseTypeaheadOptions {
  * is the active index the caller sets from the match. Holding it in state
  * would re-render on every keystroke to show exactly the same markup.
  */
+/** @deprecated `@pitchfork-ui/react` is deprecated. The buffer and matching are `nextTypeaheadBuffer` and `findTypeaheadMatch` in `@pitchfork-ui/core`. */
 export function useTypeahead({
   labels,
   isDisabled = () => false,

@@ -5,6 +5,7 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Collapsible.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-collapsible>`, or `PfCollapsible` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface CollapsibleProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onToggle'> {
   /** The clickable header content (text or rich nodes). */
   trigger: React.ReactNode;

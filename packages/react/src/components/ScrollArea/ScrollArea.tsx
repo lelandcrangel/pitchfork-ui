@@ -2,8 +2,10 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './ScrollArea.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-scroll-area>`, or `PfScrollArea` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ScrollAreaOrientation = 'vertical' | 'horizontal' | 'both';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-scroll-area>`, or `PfScrollArea` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Which axis scrolls. Defaults to `'vertical'`. */
   orientation?: ScrollAreaOrientation;

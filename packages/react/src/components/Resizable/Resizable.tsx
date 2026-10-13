@@ -4,8 +4,10 @@ import { useComposedRefs, useControllableState } from '../../hooks';
 import { cx } from '../../utils/cx';
 import './Resizable.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-resizable>`, or `PfResizable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ResizableOrientation = 'horizontal' | 'vertical';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-resizable>`, or `PfResizable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ResizableProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** `horizontal` = side-by-side panels (drag left/right). `vertical` = stacked (drag up/down). */
   orientation?: ResizableOrientation;

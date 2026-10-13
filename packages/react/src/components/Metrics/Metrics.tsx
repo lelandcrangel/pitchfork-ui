@@ -3,10 +3,13 @@ import { cx } from '../../utils/cx';
 import { Icon, type IconName } from '../Icon';
 import './Metrics.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-metric-grid>`, or `PfMetricGrid` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type MetricTrend = 'positive' | 'negative' | 'neutral';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-metric-grid>`, or `PfMetricGrid` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type MetricGridProps = React.HTMLAttributes<HTMLDivElement>;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-metric-grid>`, or `PfMetricGrid` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface MetricCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   heading: React.ReactNode;
   value: React.ReactNode;

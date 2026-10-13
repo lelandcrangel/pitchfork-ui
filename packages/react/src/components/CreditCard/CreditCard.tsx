@@ -3,8 +3,10 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './CreditCard.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-credit-card>`, or `PfCreditCard` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type CreditCardBrand = 'generic' | 'visa' | 'mastercard' | 'amex';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-credit-card>`, or `PfCreditCard` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface CreditCardProps extends React.HTMLAttributes<HTMLDivElement> {
   brand?: CreditCardBrand;
   cardNumber: string;

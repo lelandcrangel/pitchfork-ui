@@ -14,11 +14,13 @@ import { CalendarGrid } from '../Calendar/CalendarGrid';
 import { addMonths, nextDateRangeSelection, rangeDayState, startOfMonth } from '@pitchfork-ui/core';
 import './DateRangePicker.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-date-range-picker>`, or `PfDateRangePicker` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface DateRange {
   start: Date | null;
   end: Date | null;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-date-range-picker>`, or `PfDateRangePicker` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface DateRangePickerProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'defaultValue'

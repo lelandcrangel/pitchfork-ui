@@ -5,13 +5,17 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Notification.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-toaster>` absorbed it — `pf-toaster` is the positioned stack, with `placement` where the React component takes `position`. See Foundations → Migrating. */
 export type NotificationVariant = 'info' | 'success' | 'warning' | 'danger';
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-toaster>` absorbed it — `pf-toaster` is the positioned stack, with `placement` where the React component takes `position`. See Foundations → Migrating. */
 export type NotificationPlacement = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-toaster>` absorbed it — `pf-toaster` is the positioned stack, with `placement` where the React component takes `position`. See Foundations → Migrating. */
 export interface NotificationStackProps extends React.HTMLAttributes<HTMLDivElement> {
   placement?: NotificationPlacement;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-toaster>` absorbed it — `pf-toaster` is the positioned stack, with `placement` where the React component takes `position`. See Foundations → Migrating. */
 export interface NotificationProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   variant?: NotificationVariant;
   heading?: React.ReactNode;

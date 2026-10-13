@@ -1,12 +1,14 @@
 import { observeAnchoredPosition, type AnchoredPositionOptions } from '@pitchfork-ui/core';
 import { useEffect, useState } from 'react';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The positioning itself is `observeAnchoredPosition` in `@pitchfork-ui/core`; `<pf-tooltip>`, `<pf-popover>` and `<pf-dropdown>` already use it. */
 export interface UseAnchoredPositionOptions extends AnchoredPositionOptions {
   anchorRef: React.RefObject<HTMLElement | null>;
   floatingRef?: React.RefObject<HTMLElement | null>;
   enabled?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The positioning itself is `observeAnchoredPosition` in `@pitchfork-ui/core`; `<pf-tooltip>`, `<pf-popover>` and `<pf-dropdown>` already use it. */
 export function useAnchoredPosition({
   anchorRef,
   floatingRef,

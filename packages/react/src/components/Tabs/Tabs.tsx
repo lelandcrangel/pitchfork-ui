@@ -22,6 +22,7 @@ interface IndicatorRect {
   height: number;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tabs>`, or `PfTabs` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TabsItem {
   value: string;
   label: React.ReactNode;
@@ -42,9 +43,12 @@ export interface TabsItem {
   badgePlacement?: 'start' | 'end';
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tabs>`, or `PfTabs` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TabsVariant = 'underline' | 'pills';
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tabs>`, or `PfTabs` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TabsSize = 'sm' | 'md';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tabs>`, or `PfTabs` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   items: TabsItem[];
   value?: string;

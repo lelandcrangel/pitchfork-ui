@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './SectionHeader.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-section-header>`, or `PfSectionHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SectionHeaderProps extends React.HTMLAttributes<HTMLElement> {
   eyebrow?: React.ReactNode;
   heading: React.ReactNode;

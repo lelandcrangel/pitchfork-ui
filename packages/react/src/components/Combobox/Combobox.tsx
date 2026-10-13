@@ -15,12 +15,14 @@ import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
 import './Combobox.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-combobox>`, or `PfCombobox` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ComboboxOption {
   value: string;
   label: string;
   disabled?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-combobox>`, or `PfCombobox` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ComboboxProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   'value' | 'defaultValue' | 'onChange'

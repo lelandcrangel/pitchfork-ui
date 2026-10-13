@@ -52,6 +52,7 @@
     "codemod:elements": "node scripts/codemod-react-to-elements.mjs",
     "test:codemod": "node --test scripts/test/codemod.test.mjs",
     "setup:publishers": "node scripts/setup-trusted-publishers.mjs",
+    "check:deprecated": "node scripts/check-deprecated-exports.mjs",
     "deprecate:react": "node scripts/deprecate-react.mjs"
   },
   "devDependencies": {

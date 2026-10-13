@@ -3,8 +3,10 @@ import { useComposedRefs, useRovingTabIndex } from '../../hooks';
 import { cx } from '../../utils/cx';
 import './Toolbar.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toolbar>`, or `PfToolbar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ToolbarOrientation = 'horizontal' | 'vertical';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toolbar>`, or `PfToolbar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Layout + arrow-key axis. Defaults to `'horizontal'`. */
   orientation?: ToolbarOrientation;
@@ -51,6 +53,7 @@ export const Toolbar = forwardRef<HTMLDivElement, ToolbarProps>(function Toolbar
 
 Toolbar.displayName = 'Toolbar';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toolbar>`, or `PfToolbar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ToolbarSeparatorProps = React.HTMLAttributes<HTMLSpanElement>;
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toolbar-separator>`, or `PfToolbarSeparator` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */

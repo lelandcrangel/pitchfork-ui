@@ -13,6 +13,7 @@ import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
 import './NumberInput.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-number-input>`, or `PfNumberInput` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface NumberInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   'value' | 'defaultValue' | 'onChange' | 'type' | 'min' | 'max' | 'step'

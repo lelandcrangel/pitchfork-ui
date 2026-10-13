@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './LoadingIndicators.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-loading-spinner>`, or `PfLoadingSpinner` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface LoadingSpinnerProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'children'
@@ -10,11 +11,13 @@ export interface LoadingSpinnerProps extends Omit<
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-loading-spinner>`, or `PfLoadingSpinner` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface LoadingDotsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   size?: 'sm' | 'md' | 'lg';
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-loading-spinner>`, or `PfLoadingSpinner` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface LoadingSkeletonProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'children'

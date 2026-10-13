@@ -5,8 +5,10 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Alert.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-alert>`, or `PfAlert` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type AlertVariant = 'info' | 'success' | 'warning' | 'danger';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-alert>`, or `PfAlert` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: AlertVariant;
   heading?: React.ReactNode;

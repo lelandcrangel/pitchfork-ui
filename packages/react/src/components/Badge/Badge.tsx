@@ -2,8 +2,10 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Badge.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-badge>`, or `PfBadge` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type BadgeVariant = 'neutral' | 'brand' | 'success' | 'warning' | 'danger';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-badge>`, or `PfBadge` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
 }

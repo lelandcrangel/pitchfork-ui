@@ -8,12 +8,14 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './PieChart.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-pie-chart>`, or `PfPieChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface PieChartDatum {
   label: React.ReactNode;
   value: number;
   color?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-pie-chart>`, or `PfPieChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface PieChartProps extends React.HTMLAttributes<HTMLDivElement> {
   data: PieChartDatum[];
   size?: number;

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { cx } from '../../utils/cx';
 import './Pagination.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-pagination>`, or `PfPagination` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   page?: number;
   defaultPage?: number;

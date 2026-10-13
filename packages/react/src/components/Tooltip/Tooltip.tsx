@@ -13,8 +13,10 @@ import { usePresence } from '../../hooks';
 import { cx } from '../../utils/cx';
 import './Tooltip.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tooltip>`, or `PfTooltip` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tooltip>`, or `PfTooltip` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TooltipProps {
   content: React.ReactNode;
   children?: React.ReactNode;

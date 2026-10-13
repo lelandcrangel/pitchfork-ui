@@ -14,6 +14,7 @@ import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import './RichTextEditor.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-rich-text-editor>`, or `PfRichTextEditor` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface RichTextEditorProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'onChange' | 'defaultValue'

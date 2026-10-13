@@ -2,9 +2,12 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Button.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-button>`, or `PfButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-button>`, or `PfButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-button>`, or `PfButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;

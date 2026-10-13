@@ -3,8 +3,10 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Card.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-card>`, or `PfCard` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type CardProps = React.HTMLAttributes<HTMLDivElement>;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-card>`, or `PfCard` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type CardSectionProps = CardProps;
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-card>`, or `PfCard` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */

@@ -12,12 +12,14 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Heatmap.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-heatmap>`, or `PfHeatmap` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface HeatmapDatum {
   /** ISO date string, `YYYY-MM-DD` */
   date: string;
   value: number;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-heatmap>`, or `PfHeatmap` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface HeatmapProps extends React.HTMLAttributes<HTMLDivElement> {
   data: HeatmapDatum[];
   /** First day to render (ISO). Defaults to the earliest date in `data`. */

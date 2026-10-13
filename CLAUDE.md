@@ -1875,6 +1875,53 @@ from the nested copies.
 
 ---
 
+## Deprecating a package's public API
+
+`@pitchfork-ui/react` is deprecated, and the notice a developer actually meets
+is the editor's strikethrough — the `npm deprecate` flag shows once at install,
+the README shows on a page they may never open, and the JSDoc tag shows every
+time they type the name. `npm run check:deprecated` asserts that all **282**
+public exports carry `@deprecated`; it skips itself once `packages/react` is
+gone, which is Phase 7.
+
+Three things it measures that the obvious version does not, each found by
+writing a check that passed when it should not have:
+
+- **The tag belongs to the exported symbol, not the file.** A grep counts the
+  string and cannot tell which declaration it attaches to. The check walks the
+  real public API through the TypeScript checker. The first honest count was
+  **90 of 282**: the components had tags and nothing else did, while the
+  changelog announced that every export had one.
+- **A check that resolves a sibling package through its build moves with the
+  build.** `HourCycle` and `ListNavigationAction` are `export type { X }`
+  re-exports of core types, and they read as tagged until core's `dist`
+  existed and the alias resolved to the real declaration. The check maps
+  `@pitchfork-ui/core` to its **sources** so the answer is the same on every
+  machine.
+- **A JSDoc tag on an export specifier does not cross the package boundary.**
+  `export { Keys } from '@pitchfork-ui/core'` with the tag on the name is
+  honoured when that file is opened as a path and **lost** when the same file
+  is reached as `@pitchfork-ui/react` — measured both ways on one
+  `dist/index.d.ts`, which reported `own=[deprecated]` and then `own=[]`. A
+  consumer only ever does the second, so six exports were tagged for nobody.
+  Re-declare instead: `import { Keys as coreKeys }` then
+  `/** @deprecated … */ export const Keys = coreKeys`, which keeps
+  `Keys === core.Keys` and puts the tag on a declaration the package owns. The
+  check rejects the specifier shape and says so by name.
+
+**Name the replacement that is right for the export, not one message for all
+of them.** A component points at its element; a hook points at the core
+function it wraps (`useFocusTrap` → `trapFocus`), or says plainly that there is
+no framework-free half and no element replaces it (`useDisclosure`); anything
+that only lives in this package as a re-export points at
+`@pitchfork-ui/core`, where it is not deprecated. The first pass generated the
+types' messages from the first tag in each file, which told a reader reaching
+for `IconName` to import a registry function — plausible, wrong, and worth
+catching before it shipped. `RegisteredIconName` was pointed at core until
+core turned out not to export it.
+
+---
+
 ## Known gaps
 
 See `todo.md` at the repo root.

@@ -3,6 +3,7 @@ import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import './Input.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-input>`, or `PfInput` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   description?: string;

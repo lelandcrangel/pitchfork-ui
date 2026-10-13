@@ -2,10 +2,14 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './BadgeGroup.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-badge-group>`, or `PfBadgeGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type BadgeGroupColor = 'gray' | 'brand' | 'error' | 'warning' | 'success';
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-badge-group>`, or `PfBadgeGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type BadgeGroupAppearance = 'pill' | 'modern';
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-badge-group>`, or `PfBadgeGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type BadgeGroupBadgePosition = 'leading' | 'trailing';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-badge-group>`, or `PfBadgeGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface BadgeGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   label: string;
   message: string;

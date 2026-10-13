@@ -7,6 +7,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './ProgressIndicators.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-progress-bar>`, or `PfProgressBar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
   max?: number;
@@ -14,6 +15,7 @@ export interface ProgressBarProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-progress-bar>`, or `PfProgressBar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ProgressCircleProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
   max?: number;

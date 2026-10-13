@@ -2,8 +2,10 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Timeline.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-timeline>`, or `PfTimeline` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TimelineTone = 'default' | 'success' | 'warning' | 'danger';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-timeline>`, or `PfTimeline` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TimelineItem {
   id?: string;
   title: React.ReactNode;
@@ -16,6 +18,7 @@ export interface TimelineItem {
   tone?: TimelineTone;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-timeline>`, or `PfTimeline` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TimelineProps extends React.HTMLAttributes<HTMLOListElement> {
   items: TimelineItem[];
 }

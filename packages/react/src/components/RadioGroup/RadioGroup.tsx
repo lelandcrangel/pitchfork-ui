@@ -2,6 +2,7 @@ import { forwardRef, useId, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './RadioGroup.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-radio-group>`, or `PfRadioGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface RadioGroupOption {
   value: string;
   label: string;
@@ -9,6 +10,7 @@ export interface RadioGroupOption {
   disabled?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-radio-group>`, or `PfRadioGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface RadioGroupProps extends Omit<
   React.HTMLAttributes<HTMLFieldSetElement>,
   'onChange'

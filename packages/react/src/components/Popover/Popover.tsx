@@ -11,6 +11,7 @@ import {
 import { cx } from '../../utils/cx';
 import './Popover.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-popover>`, or `PfPopover` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface PopoverProps {
   /** The element the popover anchors to and toggles from (e.g. a Button). */
   trigger: ReactElement;

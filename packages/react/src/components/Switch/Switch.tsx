@@ -2,6 +2,7 @@ import { forwardRef, useId } from 'react';
 import { cx } from '../../utils/cx';
 import './Switch.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-switch>`, or `PfSwitch` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SwitchProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string;
 }

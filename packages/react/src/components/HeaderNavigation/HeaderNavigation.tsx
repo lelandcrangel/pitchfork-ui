@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './HeaderNavigation.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-header-navigation>`, or `PfHeaderNavigation` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface HeaderNavigationItem {
   label: React.ReactNode;
   href?: string;
@@ -10,6 +11,7 @@ export interface HeaderNavigationItem {
   active?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-header-navigation>`, or `PfHeaderNavigation` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface HeaderNavigationProps extends React.HTMLAttributes<HTMLElement> {
   brand?: React.ReactNode;
   items: HeaderNavigationItem[];

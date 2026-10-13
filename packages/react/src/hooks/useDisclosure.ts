@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useControllableState } from './useControllableState';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. A `useState` boolean. There is no framework-free half to move to, and no element replaces it. */
 export interface UseDisclosureOptions {
   open?: boolean;
   defaultOpen?: boolean;
@@ -8,6 +9,7 @@ export interface UseDisclosureOptions {
   disabled?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. A `useState` boolean. There is no framework-free half to move to, and no element replaces it. */
 export function useDisclosure({
   open,
   defaultOpen = false,

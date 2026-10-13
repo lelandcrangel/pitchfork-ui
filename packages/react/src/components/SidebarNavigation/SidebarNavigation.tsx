@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './SidebarNavigation.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-sidebar-navigation>`, or `PfSidebarNavigation` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SidebarNavigationItem {
   label: React.ReactNode;
   href?: string;
@@ -13,11 +14,13 @@ export interface SidebarNavigationItem {
   disabled?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-sidebar-navigation>`, or `PfSidebarNavigation` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SidebarNavigationSection {
   title?: React.ReactNode;
   items: SidebarNavigationItem[];
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-sidebar-navigation>`, or `PfSidebarNavigation` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SidebarNavigationProps extends React.HTMLAttributes<HTMLElement> {
   sections: SidebarNavigationSection[];
   header?: React.ReactNode;

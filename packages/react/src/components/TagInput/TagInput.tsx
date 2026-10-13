@@ -7,6 +7,7 @@ import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Tag, type TagVariant } from '../Tag';
 import './TagInput.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tag-input>`, or `PfTagInput` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TagInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   'value' | 'defaultValue' | 'onChange'

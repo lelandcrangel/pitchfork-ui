@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './VisuallyHidden.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-visually-hidden>`, or `PfVisuallyHidden` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface VisuallyHiddenProps extends React.HTMLAttributes<HTMLElement> {
   /** Element to render. Defaults to `span`. */
   as?: 'span' | 'div' | 'p' | 'label' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';

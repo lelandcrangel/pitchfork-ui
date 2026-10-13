@@ -3,8 +3,10 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Tag.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tag>`, or `PfTag` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TagVariant = 'neutral' | 'brand' | 'success' | 'warning' | 'danger';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tag>`, or `PfTag` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TagProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: TagVariant;
   dismissible?: boolean;

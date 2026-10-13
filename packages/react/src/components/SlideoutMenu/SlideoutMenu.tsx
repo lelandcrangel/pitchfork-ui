@@ -5,9 +5,12 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './SlideoutMenu.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-slideout-menu>`, or `PfSlideoutMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type SlideoutMenuPlacement = 'left' | 'right';
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-slideout-menu>`, or `PfSlideoutMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type SlideoutMenuSize = 'sm' | 'md' | 'lg';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-slideout-menu>`, or `PfSlideoutMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SlideoutMenuProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   open: boolean;
   onOpenChange?: (open: boolean) => void;

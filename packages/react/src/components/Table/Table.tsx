@@ -10,12 +10,17 @@ import { useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './Table.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-table>`, or `PfTable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TableAlignment = 'left' | 'center' | 'right';
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-table>`, or `PfTable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TableRow = Record<string, React.ReactNode>;
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-table>`, or `PfTable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TableSortDirection = SortDirection;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-table>`, or `PfTable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type TableSortState = SortState;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-table>`, or `PfTable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TableColumn {
   key: string;
   header: React.ReactNode;
@@ -26,6 +31,7 @@ export interface TableColumn {
   sortValue?: (row: TableRow) => string | number | Date | null | undefined;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-table>`, or `PfTable` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TableProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   columns: TableColumn[];
   rows: TableRow[];

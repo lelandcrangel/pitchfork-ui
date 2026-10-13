@@ -3,11 +3,13 @@ import { composeDescribedBy } from '../../a11y';
 import { cx } from '../../utils/cx';
 import './VideoPlayer.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-video-player>`, or `PfVideoPlayer` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface VideoSource {
   src: string;
   type?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-video-player>`, or `PfVideoPlayer` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface VideoTrack {
   src: string;
   kind: 'captions' | 'chapters' | 'descriptions' | 'metadata' | 'subtitles';
@@ -16,6 +18,7 @@ export interface VideoTrack {
   default?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-video-player>`, or `PfVideoPlayer` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface VideoPlayerProps extends Omit<
   React.VideoHTMLAttributes<HTMLVideoElement>,
   'children'
