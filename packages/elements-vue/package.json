@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/elements-vue",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Vue bindings for @pitchfork-ui/elements — typed Vue components generated from the Pitchfork UI custom elements.",
   "license": "MIT",
   "author": "Leland Rangel",
@@ -35,7 +35,7 @@
     "build": "vite build && node ../../scripts/fix-dts-extensions.mjs dist"
   },
   "dependencies": {
-    "@pitchfork-ui/elements": "^0.2.0",
+    "@pitchfork-ui/elements": "^0.2.1",
     "@stencil/vue-output-target": "^0.14.3"
   },
   "peerDependencies": {

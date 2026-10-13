@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.3.0...mcp-v0.4.0) (2026-10-13)
+
+
+### Features
+
+* **mcp:** the elements are the required layer, React the optional one ([018fec5](https://github.com/lelandcrangel/pitchfork-ui/commit/018fec570a294fb7378d7887018226405b16a02a))
+
 ## [0.3.0](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.2.1...mcp-v0.3.0) (2026-10-11)
 
 

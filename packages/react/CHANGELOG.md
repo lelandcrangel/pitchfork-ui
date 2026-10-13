@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.17.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.16.0...react-v0.17.0) (2026-10-13)
+
+
+### Features
+
+* **react:** every export says it is deprecated, and a check that it does ([05275c8](https://github.com/lelandcrangel/pitchfork-ui/commit/05275c8a5ef55d33b1f5dc179295a8bdd82af51a))
+
 ## [0.16.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.15.3...react-v0.16.0) (2026-10-11)
 
 
