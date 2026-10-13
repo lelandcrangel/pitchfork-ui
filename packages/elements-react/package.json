@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/elements-react",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "React bindings for @pitchfork-ui/elements — typed React components generated from the Pitchfork UI custom elements.",
   "license": "MIT",
   "author": "Leland Rangel",
@@ -35,7 +35,7 @@
     "build": "vite build && node ../../scripts/fix-dts-extensions.mjs dist"
   },
   "dependencies": {
-    "@pitchfork-ui/elements": "^0.2.0",
+    "@pitchfork-ui/elements": "^0.2.1",
     "@stencil/react-output-target": "^1.6.2"
   },
   "peerDependencies": {

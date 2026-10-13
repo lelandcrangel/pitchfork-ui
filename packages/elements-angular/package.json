@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/elements-angular",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Angular bindings for @pitchfork-ui/elements — standalone components and ControlValueAccessor directives generated from the Pitchfork UI custom elements.",
   "license": "MIT",
   "author": "Leland Rangel",
@@ -27,7 +27,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@pitchfork-ui/elements": "^0.2.0",
+    "@pitchfork-ui/elements": "^0.2.1",
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
