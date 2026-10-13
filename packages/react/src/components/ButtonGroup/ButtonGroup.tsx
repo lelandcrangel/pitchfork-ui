@@ -3,6 +3,7 @@ import { forwardRef, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './ButtonGroup.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-button-group>`, or `PfButtonGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ButtonGroupItem {
   value: string;
   label: string;
@@ -11,6 +12,7 @@ export interface ButtonGroupItem {
   dot?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-button-group>`, or `PfButtonGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   items: ButtonGroupItem[];
   value?: string | string[];

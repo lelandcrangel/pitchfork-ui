@@ -16,12 +16,14 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Select.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-select>`, or `PfSelect` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SelectOption {
   value: string;
   label: string;
   disabled?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-select>`, or `PfSelect` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SelectProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   'children' | 'defaultValue' | 'onChange' | 'value'

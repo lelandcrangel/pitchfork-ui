@@ -3,8 +3,10 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Kbd.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-kbd>`, or `PfKbd` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type KbdSize = 'sm' | 'md';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-kbd>`, or `PfKbd` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface KbdProps extends React.HTMLAttributes<HTMLElement> {
   /** Render a key combination joined into a single cap (e.g. `['⌘', 'K']`). */
   keys?: string[];

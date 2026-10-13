@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './Breadcrumbs.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-breadcrumbs>`, or `PfBreadcrumbs` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface BreadcrumbItem {
   label: React.ReactNode;
   href?: string;
@@ -10,6 +11,7 @@ export interface BreadcrumbItem {
   current?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-breadcrumbs>`, or `PfBreadcrumbs` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
   items: BreadcrumbItem[];
   separator?: React.ReactNode;

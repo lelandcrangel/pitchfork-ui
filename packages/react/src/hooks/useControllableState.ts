@@ -1,12 +1,14 @@
 import { isControlledValue, resolveNextValue } from '@pitchfork-ui/core';
 import { useCallback, useState } from 'react';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The controlled/uncontrolled decision is `isControlledValue` and `resolveNextValue` in `@pitchfork-ui/core`; the `useState` around them is yours. */
 export interface UseControllableStateOptions<T> {
   value?: T;
   defaultValue?: T;
   onChange?: (value: T) => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The controlled/uncontrolled decision is `isControlledValue` and `resolveNextValue` in `@pitchfork-ui/core`; the `useState` around them is yours. */
 export function useControllableState<T>({
   value,
   defaultValue,

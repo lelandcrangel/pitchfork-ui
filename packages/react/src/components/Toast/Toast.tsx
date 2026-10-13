@@ -5,6 +5,7 @@ import type { NotificationPlacement, NotificationVariant } from '../Notification
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toaster>`, or `PfToaster` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ToastOptions {
   variant?: NotificationVariant;
   heading?: React.ReactNode;
@@ -23,6 +24,7 @@ interface ToastEntry extends ToastOptions {
   dismissible: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toaster>`, or `PfToaster` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ToastContextValue {
   toast: (options: ToastOptions) => string;
   dismiss: (id: string) => void;
@@ -74,6 +76,7 @@ function ToastItem({ entry, onRemove }: { entry: ToastEntry; onRemove: (id: stri
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toaster>`, or `PfToaster` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ToastProviderProps {
   children?: React.ReactNode;
   placement?: NotificationPlacement;
@@ -175,6 +178,7 @@ export function ToastProvider({
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toaster>`, or `PfToaster` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function useToast(): ToastContextValue {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error('useToast must be used inside <ToastProvider>.');
@@ -187,6 +191,7 @@ export function useToast(): ToastContextValue {
  * Fire a toast imperatively from anywhere — no hook needed.
  * Requires a `<ToastProvider>` to be mounted somewhere in the tree.
  */
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-toaster>`, or `PfToaster` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function toast(options: ToastOptions): string {
   if (!_emit) {
     console.warn('[pitchfork-ui] toast() called before <ToastProvider> is mounted.');

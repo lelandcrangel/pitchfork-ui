@@ -2,6 +2,7 @@ import { forwardRef, useId } from 'react';
 import { cx } from '../../utils/cx';
 import './RadioButton.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-radio-button>`, or `PfRadioButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface RadioButtonProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   'type'

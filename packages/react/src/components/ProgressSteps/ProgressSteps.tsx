@@ -3,8 +3,10 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './ProgressSteps.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-progress-steps>`, or `PfProgressSteps` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ProgressStepStatus = StepStatus;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-progress-steps>`, or `PfProgressSteps` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ProgressStepItem {
   title: React.ReactNode;
   description?: React.ReactNode;
@@ -12,6 +14,7 @@ export interface ProgressStepItem {
   id?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-progress-steps>`, or `PfProgressSteps` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ProgressStepsProps extends React.HTMLAttributes<HTMLOListElement> {
   steps: ProgressStepItem[];
   orientation?: 'horizontal' | 'vertical';

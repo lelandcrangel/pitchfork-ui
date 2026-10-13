@@ -2,6 +2,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './SectionFooter.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-section-footer>`, or `PfSectionFooter` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SectionFooterProps extends React.HTMLAttributes<HTMLElement> {
   heading?: React.ReactNode;
   description?: React.ReactNode;

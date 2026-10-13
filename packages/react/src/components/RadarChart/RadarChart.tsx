@@ -12,11 +12,13 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './RadarChart.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-radar-chart>`, or `PfRadarChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface RadarChartDatum {
   label: React.ReactNode;
   value: number;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-radar-chart>`, or `PfRadarChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface RadarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   data: RadarChartDatum[];
   size?: number;

@@ -2,9 +2,12 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './UtilityButton.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-utility-button>`, or `PfUtilityButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type UtilityButtonVariant = 'neutral' | 'brand' | 'destructive';
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-utility-button>`, or `PfUtilityButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type UtilityButtonSize = 'sm' | 'md';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-utility-button>`, or `PfUtilityButton` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface UtilityButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: UtilityButtonVariant;
   size?: UtilityButtonSize;

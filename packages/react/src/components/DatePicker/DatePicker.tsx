@@ -14,6 +14,7 @@ import { Calendar } from '../Calendar';
 import { Icon } from '../Icon';
 import './DatePicker.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-date-picker>`, or `PfDatePicker` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface DatePickerProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'defaultValue'

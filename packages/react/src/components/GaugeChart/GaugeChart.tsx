@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './GaugeChart.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-gauge-chart>`, or `PfGaugeChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface GaugeChartProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Current value */
   value: number;

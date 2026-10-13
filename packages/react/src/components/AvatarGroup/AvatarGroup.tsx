@@ -4,8 +4,10 @@ import { cx } from '../../utils/cx';
 import { Avatar, type AvatarProps, type AvatarSize } from '../Avatar';
 import './AvatarGroup.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-avatar-group>`, or `PfAvatarGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type AvatarGroupItem = Pick<AvatarProps, 'src' | 'alt' | 'name'>;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-avatar-group>`, or `PfAvatarGroup` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   avatars: AvatarGroupItem[];
   /** Max avatars to show before collapsing into a +N chip. Default 5. */

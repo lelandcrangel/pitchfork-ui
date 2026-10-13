@@ -2,8 +2,10 @@ import { forwardRef } from 'react';
 import { cx } from '../../utils/cx';
 import './ContentDivider.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-content-divider>`, or `PfContentDivider` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ContentDividerOrientation = 'horizontal' | 'vertical';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-content-divider>`, or `PfContentDivider` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ContentDividerProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: React.ReactNode;
   orientation?: ContentDividerOrientation;

@@ -8,7 +8,7 @@ import {
   timeRange,
   toHour12,
   toHour24,
-  type HourCycle,
+  type HourCycle as CoreHourCycle,
   type Meridiem,
   type TimeParts,
 } from '@pitchfork-ui/core';
@@ -29,9 +29,14 @@ import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
 import './TimePicker.css';
 
-/** Re-exported so `TimePickerProps` keeps naming a type from this module. */
-export type { HourCycle };
+/**
+ * Re-exported so `TimePickerProps` keeps naming a type from this module.
+ * Declared rather than re-exported, so the tag survives the package boundary.
+ */
+/** @deprecated `@pitchfork-ui/react` is deprecated. Import `HourCycle` from `@pitchfork-ui/core`, where it lives and is not deprecated. */
+export type HourCycle = CoreHourCycle;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-time-picker>`, or `PfTimePicker` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TimePickerProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   'value' | 'defaultValue' | 'onChange'

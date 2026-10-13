@@ -4,6 +4,7 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Carousel.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-carousel>`, or `PfCarousel` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
   slides: React.ReactNode[];
   initialIndex?: number;

@@ -5,6 +5,7 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './CodeSnippet.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-code-snippet>`, or `PfCodeSnippet` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface CodeSnippetProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
   code: string;
   language?: string;

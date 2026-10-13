@@ -10,8 +10,10 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Accordion.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-accordion>`, or `PfAccordion` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type AccordionType = 'single' | 'multiple';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-accordion>`, or `PfAccordion` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface AccordionItemData {
   value: string;
   title: React.ReactNode;
@@ -19,6 +21,7 @@ export interface AccordionItemData {
   disabled?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-accordion>`, or `PfAccordion` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface AccordionProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'onChange' | 'defaultValue'

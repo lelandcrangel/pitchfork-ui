@@ -3,6 +3,7 @@ import { forwardRef, useId, useState } from 'react';
 import { cx } from '../../utils/cx';
 import './Slider.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-slider>`, or `PfSlider` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SliderProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   'type' | 'value' | 'defaultValue' | 'onChange'

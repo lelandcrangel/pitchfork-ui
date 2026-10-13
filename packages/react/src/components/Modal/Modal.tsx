@@ -5,8 +5,10 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Modal.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-modal-header>`, or `PfModalHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ModalSize = 'sm' | 'md' | 'lg';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-modal-header>`, or `PfModalHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   open: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -20,6 +22,7 @@ export interface ModalProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   'aria-label'?: string;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-modal-header>`, or `PfModalHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ModalSectionProps = React.HTMLAttributes<HTMLDivElement>;
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-modal-header>`, or `PfModalHeader` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */

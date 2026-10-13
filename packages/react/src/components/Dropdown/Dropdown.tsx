@@ -12,6 +12,7 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Dropdown.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-dropdown>`, or `PfDropdown` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface DropdownItem {
   id?: string;
   label: string;
@@ -22,6 +23,7 @@ export interface DropdownItem {
   destructive?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-dropdown>`, or `PfDropdown` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface DropdownProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string;
   items: DropdownItem[];

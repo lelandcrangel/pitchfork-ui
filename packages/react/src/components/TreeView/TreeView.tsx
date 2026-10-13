@@ -9,6 +9,7 @@ import { forwardRef, useCallback, useImperativeHandle, useMemo, useRef, useState
 import { cx } from '../../utils/cx';
 import './TreeView.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tree-view>`, or `PfTreeView` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TreeViewNode {
   value: string;
   label: React.ReactNode;
@@ -18,6 +19,7 @@ export interface TreeViewNode {
   badge?: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tree-view>`, or `PfTreeView` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TreeViewProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   nodes: TreeViewNode[];
   selectedValue?: string;
@@ -28,6 +30,7 @@ export interface TreeViewProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   onExpandedValuesChange?: (values: string[]) => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-tree-view>`, or `PfTreeView` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TreeViewHandle {
   expandAll: () => void;
   collapseAll: () => void;

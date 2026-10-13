@@ -4,8 +4,10 @@ import { cx } from '../../utils/cx';
 import { Icon, type IconName } from '../Icon';
 import './InlineCTA.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-inline-cta>`, or `PfInlineCta` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type InlineCTATone = 'default' | 'info' | 'success' | 'warning' | 'danger';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-inline-cta>`, or `PfInlineCta` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface InlineCTAProps extends React.HTMLAttributes<HTMLDivElement> {
   heading?: React.ReactNode;
   description?: React.ReactNode;

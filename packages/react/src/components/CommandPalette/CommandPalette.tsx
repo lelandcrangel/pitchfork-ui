@@ -10,6 +10,7 @@ import './CommandPalette.css';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-command-palette>`, or `PfCommandPalette` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface CommandItem {
   id: string;
   label: string;
@@ -21,6 +22,7 @@ export interface CommandItem {
   onSelect: () => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-command-palette>`, or `PfCommandPalette` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface CommandPaletteProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

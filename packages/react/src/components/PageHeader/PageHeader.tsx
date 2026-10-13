@@ -3,6 +3,7 @@ import { cx } from '../../utils/cx';
 import { Breadcrumbs, type BreadcrumbsProps } from '../Breadcrumbs';
 import './PageHeader.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-page-header>` absorbed it — slot into `pf-page-header`'s `metadata` slot. See Foundations → Migrating. */
 export interface PageHeaderProps extends React.HTMLAttributes<HTMLElement> {
   eyebrow?: React.ReactNode;
   heading: React.ReactNode;
@@ -12,6 +13,7 @@ export interface PageHeaderProps extends React.HTMLAttributes<HTMLElement> {
   actions?: React.ReactNode;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-page-header>` absorbed it — slot into `pf-page-header`'s `metadata` slot. See Foundations → Migrating. */
 export type PageHeaderMetaProps = React.HTMLAttributes<HTMLDivElement>;
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-page-header>` absorbed it — slot into `pf-page-header`'s `metadata` slot. See Foundations → Migrating. */

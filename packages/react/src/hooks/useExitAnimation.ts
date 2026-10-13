@@ -1,11 +1,13 @@
 import { animationsFinished, prefersReducedMotion } from '@pitchfork-ui/core';
 import { useCallback, useRef, useState } from 'react';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `animationsFinished` from `@pitchfork-ui/core`, which is what this hook waits on. */
 export interface UseExitAnimationOptions {
   /** Called once the exit animation has finished, or immediately if there is none. */
   onExited?: () => void;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `animationsFinished` from `@pitchfork-ui/core`, which is what this hook waits on. */
 export interface UseExitAnimation<T extends HTMLElement = HTMLElement> {
   /** True while the exit animation is playing — apply your `--exiting` class. */
   isExiting: boolean;
@@ -30,6 +32,7 @@ export interface UseExitAnimation<T extends HTMLElement = HTMLElement> {
  * Attach `ref` to the element the animation runs on, which is the one the
  * `isExiting` class goes to.
  */
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `animationsFinished` from `@pitchfork-ui/core`, which is what this hook waits on. */
 export function useExitAnimation<T extends HTMLElement = HTMLElement>({
   onExited,
 }: UseExitAnimationOptions = {}): UseExitAnimation<T> {

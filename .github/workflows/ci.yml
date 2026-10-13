@@ -47,6 +47,13 @@ jobs:
       # published changelog page sat on 0.13.2 while the library was on 0.15.0.
       - name: Check dark mode contrast (WCAG AA)
         run: npm run check:contrast
+
+      # The deprecation notice a developer actually meets is the editor's
+      # strikethrough, and the 0.16.0 changelog announces that every export of
+      # @pitchfork-ui/react carries it. Nothing checked that and it was not
+      # true: 90 of 282. Skips itself once Phase 7 deletes the package.
+      - name: Check every @pitchfork-ui/react export is marked deprecated
+        run: npm run check:deprecated
       # packages/elements runs its form-associated components in a real
       # browser -- Stencil's mock DOM and jsdom both lack a working
       # ElementInternals -- so Chromium has to be here, before the tests, not

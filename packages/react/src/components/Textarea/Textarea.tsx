@@ -3,6 +3,7 @@ import { FieldWrapper } from '../../utils/FieldWrapper';
 import { cx } from '../../utils/cx';
 import './Textarea.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-textarea>`, or `PfTextarea` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   description?: string;

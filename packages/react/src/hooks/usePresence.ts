@@ -1,6 +1,7 @@
 import { prefersReducedMotion } from '@pitchfork-ui/core';
 import { useEffect, useRef, useState } from 'react';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `animationsFinished` from `@pitchfork-ui/core` to wait out the exit, and your own state for the rest. */
 export interface UsePresence {
   /** Whether the element should be rendered (true while open and while exiting). */
   isMounted: boolean;
@@ -14,6 +15,7 @@ export interface UsePresence {
  * flips to false, the element stays mounted with `isExiting` true for `duration`
  * ms, then unmounts. Reduced motion unmounts immediately.
  */
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `animationsFinished` from `@pitchfork-ui/core` to wait out the exit, and your own state for the rest. */
 export function usePresence(present: boolean, duration = 200): UsePresence {
   const [isExiting, setIsExiting] = useState(false);
   const wasPresent = useRef(false);

@@ -410,6 +410,41 @@ silently. `latest` is 0.15.3 today while the repository is at 0.16.0 — the
 release that adds the `@deprecated` JSDoc tags is cut and waiting on an
 approval — so the first run should come after that publish, not before.
 
+**The editor tag is the notice that was not true.** 0.16.0's BREAKING CHANGE
+says "every export of `@pitchfork-ui/react` is marked `@deprecated`". Nothing
+checked it: **90 of 282** carried the tag, and the 90 were the components. The
+other 192 were 172 exported types and — the ones that matter — 20 runtime
+values: every hook, the four a11y helpers, the three icon-registry functions,
+`toast` and `useToast`. A consumer importing `useDisclosure` or `registerIcons`
+got no signal at all, and those are exactly the exports somebody uses without
+touching a component. All 282 carry it now, each naming the replacement that
+is actually right for it: the element for a component, and
+`@pitchfork-ui/core` for the twenty-odd things that only live here as a
+re-export.
+
+`npm run check:deprecated` is the thing that makes the claim checkable, and it
+took three goes to measure the right surface — worth writing down, because
+each wrong version passed:
+
+- A **grep** would have counted the string. The tag has to be on the exported
+  _symbol_, which a grep cannot see.
+- A **source-only** check read the tags but resolved `@pitchfork-ui/core`
+  through whatever was on disk, so `HourCycle` and `ListNavigationAction` read
+  as tagged until core's `dist` existed. It maps core to its sources now, so
+  the answer cannot move with the build state.
+- The version that passed while **six exports were invisible to consumers**.
+  `export { Keys } from '@pitchfork-ui/core'` with the JSDoc on the specifier
+  is honoured when the file is opened as a path and lost when the same file is
+  reached as `@pitchfork-ui/react` — measured both ways on this package's own
+  `dist/index.d.ts`, `own=[deprecated]` against `own=[]`. A consumer only ever
+  does the second. The six are re-declared now
+  (`export const Keys = coreKeys`, same value, so `Keys === core.Keys`), and
+  the check rejects the specifier shape by name.
+
+Each leg was probed by breaking it: a removed tag, a specifier-only tag, and
+`packages/react` moved away, which the check skips rather than failing on —
+Phase 7 deletes the package and a check for something gone is not a failure.
+
 Two things found while preparing it, both in the thing Phase 6 announces:
 
 - **The guide told consumers to run a command they do not have.** It said

@@ -4,6 +4,7 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './Rating.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-rating-stars>`, or `PfRatingStars` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface RatingStarsProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
   max?: number;
@@ -65,6 +66,7 @@ export const RatingStars = forwardRef<HTMLDivElement, RatingStarsProps>(function
 });
 RatingStars.displayName = 'RatingStars';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-rating-stars>`, or `PfRatingStars` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface RatingBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   value: number;
   max?: number;

@@ -1,6 +1,7 @@
 import { trapFocus } from '@pitchfork-ui/core';
 import { useEffect } from 'react';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `trapFocus` from `@pitchfork-ui/core` — or nothing: `<pf-modal>` is a native `<dialog>` opened with `showModal()`, which traps focus itself. */
 export interface UseFocusTrapOptions {
   containerRef: React.RefObject<HTMLElement | null>;
   enabled?: boolean;
@@ -8,6 +9,7 @@ export interface UseFocusTrapOptions {
   restoreFocus?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `trapFocus` from `@pitchfork-ui/core` — or nothing: `<pf-modal>` is a native `<dialog>` opened with `showModal()`, which traps focus itself. */
 export function useFocusTrap({
   containerRef,
   enabled = true,

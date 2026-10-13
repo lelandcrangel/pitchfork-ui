@@ -15,12 +15,14 @@ import { cx } from '../../utils/cx';
 import { Icon } from '../Icon';
 import './MultiSelect.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-multi-select>`, or `PfMultiSelect` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface MultiSelectOption {
   value: string;
   label: string;
   disabled?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-multi-select>`, or `PfMultiSelect` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface MultiSelectProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   'children' | 'defaultValue' | 'onChange' | 'value'

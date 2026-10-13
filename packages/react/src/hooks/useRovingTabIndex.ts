@@ -6,8 +6,10 @@ import {
 } from '@pitchfork-ui/core';
 import { useEffect, type RefObject } from 'react';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The tab-stop arithmetic is `syncRovingTabIndex` and `resolveRovingKey` in `@pitchfork-ui/core`. */
 export type RovingOrientation = 'horizontal' | 'vertical';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. The tab-stop arithmetic is `syncRovingTabIndex` and `resolveRovingKey` in `@pitchfork-ui/core`. */
 export interface UseRovingTabIndexOptions {
   /** The container whose focusable children form the group. */
   ref: RefObject<HTMLElement | null>;
@@ -28,6 +30,7 @@ export interface UseRovingTabIndexOptions {
  * the element layer already keeps `pf-toolbar` and
  * `pf-rich-text-editor`'s toolbar on one implementation.
  */
+/** @deprecated `@pitchfork-ui/react` is deprecated. The tab-stop arithmetic is `syncRovingTabIndex` and `resolveRovingKey` in `@pitchfork-ui/core`. */
 export function useRovingTabIndex({ ref, orientation = 'horizontal' }: UseRovingTabIndexOptions) {
   const getItems = () => (ref.current ? getRovingItems(ref.current) : []);
 

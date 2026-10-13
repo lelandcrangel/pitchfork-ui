@@ -11,6 +11,7 @@ import {
 import { cx } from '../../utils/cx';
 import './ContextMenu.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-context-menu>`, or `PfContextMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ContextMenuItem {
   id?: string;
   label: string;
@@ -21,12 +22,15 @@ export interface ContextMenuItem {
   destructive?: boolean;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-context-menu>`, or `PfContextMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ContextMenuSeparator {
   separator: true;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-context-menu>`, or `PfContextMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type ContextMenuEntry = ContextMenuItem | ContextMenuSeparator;
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-context-menu>`, or `PfContextMenu` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ContextMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   items: ContextMenuEntry[];
   /** Disable the menu entirely (right-click falls back to the native menu). */

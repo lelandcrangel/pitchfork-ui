@@ -3,9 +3,12 @@ import { forwardRef, useMemo } from 'react';
 import { cx } from '../../utils/cx';
 import './Sparkline.css';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-sparkline>`, or `PfSparkline` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type SparklineVariant = 'line' | 'area';
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-sparkline>`, or `PfSparkline` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type SparklineTrend = 'up' | 'down' | 'neutral';
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-sparkline>`, or `PfSparkline` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface SparklineProps extends React.HTMLAttributes<SVGSVGElement> {
   data: number[];
   width?: number;

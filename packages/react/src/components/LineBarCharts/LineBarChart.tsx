@@ -19,11 +19,13 @@ import './LineBarChart.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-line-chart>`, or `PfLineChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ChartDataPoint {
   label: string;
   [key: string]: string | number;
 }
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-line-chart>`, or `PfLineChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface ChartSeries {
   key: string;
   label: string;
@@ -141,6 +143,7 @@ function Axes({ yTicks, xLabels, xPositions, maxTick, yAxisLabel, valueFormatter
 
 // ─── LineChart ────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-line-chart>`, or `PfLineChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface LineChartProps extends React.HTMLAttributes<HTMLDivElement> {
   data: ChartDataPoint[];
   series: ChartSeries[];
@@ -256,6 +259,7 @@ LineChart.displayName = 'LineChart';
 
 // ─── AreaChart ────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-line-chart>`, or `PfLineChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export type AreaChartProps = Omit<LineChartProps, 'area'>;
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. `<pf-line-chart>` absorbed it — set `area` on `pf-line-chart`. See Foundations → Migrating. */
@@ -267,6 +271,7 @@ AreaChart.displayName = 'AreaChart';
 
 // ─── BarChart ─────────────────────────────────────────────────────────────
 
+/** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-line-chart>`, or `PfLineChart` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface BarChartProps extends React.HTMLAttributes<HTMLDivElement> {
   data: ChartDataPoint[];
   series: ChartSeries[];
