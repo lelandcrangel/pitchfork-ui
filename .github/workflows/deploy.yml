@@ -107,10 +107,19 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run typecheck
-
       - name: Build site (tokens → react → metadata → llms → docs + theme builder)
         run: npm run build:hostinger
+
+      # After the build, not before it. apps/theme-builder is in the root
+      # tsconfig's references and imports @pitchfork-ui/elements-react, which
+      # resolves only through its exports map to a generated, gitignored
+      # dist/index.d.ts -- so on a clean checkout there is nothing for tsc to
+      # resolve and the typecheck refuses. build:hostinger writes that dist on
+      # its way through, so this ordering costs nothing, where ci.yml has to
+      # build the elements itself to keep the typecheck an early gate.
+      # Everything that uploads comes after this step, so it still gates the
+      # deploy.
+      - run: npm run typecheck
 
       - name: Verify build output
         run: |
