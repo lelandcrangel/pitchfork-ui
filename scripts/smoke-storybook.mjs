@@ -570,11 +570,23 @@ async function run(args, served) {
     // section headings. The page overrides it through `::part(heading)`, which
     // is the one mechanism that can reach a shadow-internal box.
     //
+    // **Measure the box the text is in, not the box that sizes it.** The first
+    // version of this check read the shadow `.heading`, and the shadow
+    // `.heading` was never what rendered: MDX wraps the title line in a `<p>`,
+    // that `<p>` is what gets slotted, and Storybook's own
+    // `:where(p:not(…, .sb-unstyled p))` pinned it to 14px. The h1 measured a
+    // perfect 58.8px over text that was drawn at 14 — and the heading's
+    // `letter-spacing`, an *absolute* -2.352px computed from that 58.8px, did
+    // inherit into the `<p>`, so the live title read 14px tracked at -0.17em
+    // with the letters touching and the word space closed. The check passed
+    // through all of it. It reads the slotted node now, and it asserts the
+    // tracking as a fraction of the size the text is actually drawn at.
+    //
     // No Vitest project can see any of this: it is a computed font size in a
     // real build. The ratio against the page's own `<h2>` is what a reader
     // actually perceives, and it separates the two states cleanly — measured
     // at a 1024 iframe: 1.28x without the override, 2.56x with it. Probed by
-    // removing the rule from Introduction.mdx and rebuilding.
+    // removing each of the two rules from Introduction.mdx and rebuilding.
     {
       const page = await browser.newPage({ viewport: { width: 1024, height: 900 } });
       const failures = [];
@@ -602,12 +614,23 @@ async function run(args, served) {
           // A slot's own textContent is its fallback, not what was slotted,
           // so the title is read through assignedNodes().
           const slot = heading.querySelector('slot:not([name])');
+          const assigned = slot ? slot.assignedNodes() : [];
+          // The box the title is actually drawn in: the slotted element when
+          // there is one, and the heading itself when the text is a bare node.
+          const drawn = assigned.find((node) => node.nodeType === Node.ELEMENT_NODE) ?? heading;
+          const style = getComputedStyle(drawn);
+          const size = Number.parseFloat(style.fontSize);
+          const tracking = Number.parseFloat(style.letterSpacing);
           return {
-            title: (slot ? slot.assignedNodes() : [])
+            title: assigned
               .map((n) => n.textContent)
               .join('')
               .trim(),
-            heading: Number.parseFloat(getComputedStyle(heading).fontSize),
+            drawnIn:
+              drawn === heading ? 'the heading' : `a slotted <${drawn.tagName.toLowerCase()}>`,
+            heading: size,
+            // `normal` parses as NaN, which is the no-tracking case.
+            tracking: Number.isNaN(tracking) ? 0 : tracking / size,
             h2: h2 ? Number.parseFloat(getComputedStyle(h2).fontSize) : null,
           };
         });
@@ -622,14 +645,21 @@ async function run(args, served) {
           problems.push('the Introduction hero: no <h2> on the page to size the title against');
         } else if (hero.heading / hero.h2 < 1.8) {
           problems.push(
-            `the Introduction hero: the title is ${hero.heading}px against a ${hero.h2}px <h2> ` +
-              `(${(hero.heading / hero.h2).toFixed(2)}x) — the ::part(heading) override is not ` +
-              `applying, so the page title reads no larger than its own section headings.`,
+            `the Introduction hero: the title is drawn in ${hero.drawnIn} at ${hero.heading}px ` +
+              `against a ${hero.h2}px <h2> (${(hero.heading / hero.h2).toFixed(2)}x) — the ` +
+              `page title reads no larger than its own section headings.`,
+          );
+        } else if (hero.tracking < -0.06) {
+          problems.push(
+            `the Introduction hero: the title is tracked at ${hero.tracking.toFixed(3)}em of the ` +
+              `${hero.heading}px it is drawn at, in ${hero.drawnIn} — tight enough to close the ` +
+              `word space, which is what an absolute letter-spacing inherited from a larger box does.`,
           );
         } else {
           console.log(
-            `  the Introduction hero: title ${hero.heading}px vs ${hero.h2}px <h2> ` +
-              `(${(hero.heading / hero.h2).toFixed(2)}x)`,
+            `  the Introduction hero: title ${hero.heading}px in ${hero.drawnIn} vs ` +
+              `${hero.h2}px <h2> (${(hero.heading / hero.h2).toFixed(2)}x), tracked ` +
+              `${hero.tracking.toFixed(3)}em`,
           );
         }
       } catch {

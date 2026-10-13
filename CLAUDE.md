@@ -1535,11 +1535,35 @@ smaller and tracked at `-0.04em`, which is display tracking for 100px type and
 reads as squeezed at 60 — `-0.02em` is the setting that holds up across the
 whole clamp.
 
+**And none of that was what a reader saw, because MDX wraps the title line in a
+`<p>`.** That `<p>` is the node that gets slotted, and Storybook's docs CSS
+pins every unescaped paragraph —
+`.css-… :where(p:not(.sb-anchor, .sb-unstyled, .sb-unstyled p))` — to 14px.
+`font-size` does not reach it, because that rule wins over inheritance;
+`letter-spacing` does, because it had already computed to an **absolute**
+-2.352px from the heading's 58.8px. So the live title rendered at 14px tracked
+at -0.17em, with the letters touching and the word space closed to nothing —
+"PitchforkUI" — while `getComputedStyle` on the `::part(heading)` box reported
+a perfect 58.8px. Both measured on the deployed site. The fix is one rule,
+`.pf-docs-hero pf-page-header p { font: inherit; letter-spacing: inherit;
+margin: 0 }`, which hands the paragraph back to whichever box it was slotted
+into; `:where()` has zero specificity, so Storybook's selector is only
+`.css-…` and a two-class rule beats it.
+
+The lesson is bigger than this page: **a `::part()` override sizes the part,
+and the part is not always what the text is in.** Whenever a slot is filled
+from MDX, measure the slotted node.
+
 `scripts/smoke-storybook.mjs` asserts the hero against the page's own `<h2>`
 rather than against a pixel count, because the ratio is what a reader
 perceives and it separates the two states cleanly — 1.28x without the
-override, 2.56x with it. Probed by deleting the rule and rebuilding, which
-fails the smoke and names the cause.
+override, 3.20x with it. It reads the **slotted element** rather than the
+shadow heading, and asserts the tracking as a fraction of the size the text is
+actually drawn at, which is the only form in which an inherited absolute
+letter-spacing is visible. Its first version read the heading and so passed
+through the entire 14px defect. Probed three ways, each by rebuilding: without
+the `<p>` reset it reports 14px at 0.58x, without the `::part` override 30.72px
+at 1.28x, and at `-0.1em` it reports the tracking.
 
 ### The seven patterns
 

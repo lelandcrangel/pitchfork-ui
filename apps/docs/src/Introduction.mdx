@@ -6,11 +6,19 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 {/* A landing hero, not an application page header: pf-page-header's own clamp reads the docs iframe, not the window, so the title came out at 29.4px. The vw here is iframe-relative too — 7.5vw is 73.5px at a 1280px window, not 96px. Scoped to the wrapper. Full reasoning in CLAUDE.md. */}
 
+{/* MDX wraps the title line in a <p>, and that <p> is what gets slotted — so Storybook's own `.css-… :where(p:not(.sb-unstyled p))` pinned the rendered text to 14px while only the heading's letter-spacing, an absolute -2.352px computed from its 58.8px, inherited down. The title read 14px with -0.17em tracking: letters touching, the word space closed up. Measured on the deployed site. `font: inherit` hands the <p> back to the box it is slotted into. */}
+
 <style>{`
   .pf-docs-hero pf-page-header::part(heading) {
     font-size: clamp(2.75rem, 7.5vw, 5rem);
     letter-spacing: -0.02em;
     line-height: 1.04;
+  }
+
+  .pf-docs-hero pf-page-header p {
+    font: inherit;
+    letter-spacing: inherit;
+    margin: 0;
   }
 `}</style>
 
