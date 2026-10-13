@@ -70,6 +70,28 @@ The order is enforced by the `build` script and matters twice: tokens before
 anything that reads a CSS variable, and `build:elements` before
 `build:elements-metadata`, which reads Stencil's `docs.json`.
 
+**`npm run typecheck` needs the bindings built too**, which is new and is not
+obvious from either end. `apps/theme-builder` is in the root tsconfig's
+references and imports `@pitchfork-ui/elements-react`, and that package
+resolves only through its `exports` map to `dist/index.d.ts` — generated, with
+`src/components/` gitignored and `dist/` never committed. So a clean checkout
+has nothing for `tsc` to resolve, and the failure is **50 errors**: eight
+`TS2307: Cannot find module` and forty-two `TS7006: Parameter 'event'
+implicitly has an 'any' type` falling out of them, not one of which says
+"build first". Reading that as a type error in the theme builder is the
+obvious and wrong conclusion, and it is what CI reported the first time this
+branch was opened as a PR — green locally, because the bindings were already
+on disk from an earlier build.
+
+`scripts/check-generated-bindings.mjs` runs ahead of `tsc -b` and names the
+command instead, and `.github/workflows/ci.yml` builds tokens, core and the
+elements before the typecheck step — roughly 70 seconds against a job that is
+well under 30 minutes when healthy, and the full build further down redoes it.
+The guard refuses rather than building: a `typecheck` that quietly starts a
+66-second Stencil build is a worse surprise than one that says which command
+to run. Probed by moving `dist` away — it exits 1 with one message and zero TS
+errors.
+
 **The chains step over `packages/react` when it is not there.** `build`,
 `build:hostinger`, `build:demo` and `test` call it through
 `scripts/run-workspace.mjs`, because `npm run build -w @pitchfork-ui/react`
