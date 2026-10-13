@@ -84,8 +84,14 @@ branch was opened as a PR — green locally, because the bindings were already
 on disk from an earlier build.
 
 `scripts/check-generated-bindings.mjs` runs ahead of `tsc -b` and names the
-command instead, and `.github/workflows/ci.yml` builds tokens, core and the
-elements before the typecheck step — roughly 70 seconds against a job that is
+command instead. **Two workflows run the typecheck and they need different
+answers.** `.github/workflows/deploy.yml` runs `build:hostinger`, which writes
+that `dist` on its way through, so its typecheck simply moved to _after_ the
+build — no extra work, and everything that uploads comes later, so it still
+gates the deploy. `.github/workflows/ci.yml` cannot do that: its full build is
+behind twenty minutes of tests, and a type error that surfaces there instead
+of in the first minute is a worse trade than the rebuild. So it builds tokens,
+core and the elements before the typecheck step — roughly 70 seconds against a job that is
 well under 30 minutes when healthy, and the full build further down redoes it.
 The guard refuses rather than building: a `typecheck` that quietly starts a
 66-second Stencil build is a worse surprise than one that says which command
