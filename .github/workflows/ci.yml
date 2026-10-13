@@ -25,6 +25,18 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+
+      # apps/theme-builder is in the root tsconfig's references and imports
+      # @pitchfork-ui/elements-react, which resolves only through its exports
+      # map to dist/index.d.ts. That package is generated -- src/components/ is
+      # gitignored and dist/ has never been committed -- so on a clean checkout
+      # there is nothing for tsc to resolve and the typecheck fails with eight
+      # TS2307s and forty-two TS7006s falling out of them, none of which says
+      # "build first". Roughly 70 seconds, against a job that is well under 30
+      # minutes when healthy; the full build further down redoes it.
+      - name: Build the elements and their bindings for the typecheck
+        run: npm run build:tokens && npm run build:core && npm run build:elements
+
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run format:check

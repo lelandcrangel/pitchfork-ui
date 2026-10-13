@@ -38,7 +38,7 @@
     "test:smoke": "node scripts/smoke-storybook.mjs",
     "test:coverage": "npm run test:coverage -w @pitchfork-ui/react",
     "lint": "eslint .",
-    "typecheck": "tsc -b && node scripts/run-workspace.mjs @pitchfork-ui/react typecheck",
+    "typecheck": "node scripts/check-generated-bindings.mjs && tsc -b && node scripts/run-workspace.mjs @pitchfork-ui/react typecheck",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "check:contrast": "node scripts/check-dark-contrast.mjs",
