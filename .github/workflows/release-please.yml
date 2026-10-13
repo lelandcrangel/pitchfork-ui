@@ -145,32 +145,39 @@ jobs:
           node scripts/check-publishable.mjs --publishing="${shipping#,}"
 
       # No NODE_AUTH_TOKEN: auth + provenance come from OIDC via the trusted publisher.
+      #
+      # Each step skips a version already on the registry, which is what makes
+      # this job resumable. It stops at the first failure, so a partial publish
+      # used to wedge it: tokens@0.5.0 went out, core@0.2.0 was refused for want
+      # of a trusted publisher, and the re-run then died on tokens with "cannot
+      # publish over" without ever reaching core. Fix the cause, press re-run,
+      # and it now carries on from where it stopped.
       - name: Publish @pitchfork-ui/tokens
         if: needs.release-please.outputs.tokens_released == 'true'
-        run: npm publish --workspace @pitchfork-ui/tokens --access public
+        run: node scripts/publish-if-needed.mjs tokens
       - name: Publish @pitchfork-ui/core
         if: needs.release-please.outputs.core_released == 'true'
-        run: npm publish --workspace @pitchfork-ui/core --access public
+        run: node scripts/publish-if-needed.mjs core
       # react depends on core, so core must reach the registry first -- a
       # consumer installing react before core exists gets an unresolvable tree.
       - name: Publish @pitchfork-ui/react
         if: needs.release-please.outputs.react_released == 'true'
-        run: npm publish --workspace @pitchfork-ui/react --access public
+        run: node scripts/publish-if-needed.mjs react
       # elements depends on core and tokens, and each binding package depends
       # on elements, so the order below is the dependency order and not a
       # preference. `check-publishable` enforces it rather than trusting it.
       - name: Publish @pitchfork-ui/elements
         if: needs.release-please.outputs.elements_released == 'true'
-        run: npm publish --workspace @pitchfork-ui/elements --access public
+        run: node scripts/publish-if-needed.mjs elements
       - name: Publish @pitchfork-ui/elements-react
         if: needs.release-please.outputs.elements_react_released == 'true'
-        run: npm publish --workspace @pitchfork-ui/elements-react --access public
+        run: node scripts/publish-if-needed.mjs elements-react
       - name: Publish @pitchfork-ui/elements-angular
         if: needs.release-please.outputs.elements_angular_released == 'true'
-        run: npm publish --workspace @pitchfork-ui/elements-angular --access public
+        run: node scripts/publish-if-needed.mjs elements-angular
       - name: Publish @pitchfork-ui/elements-vue
         if: needs.release-please.outputs.elements_vue_released == 'true'
-        run: npm publish --workspace @pitchfork-ui/elements-vue --access public
+        run: node scripts/publish-if-needed.mjs elements-vue
       - name: Publish @pitchfork-ui/mcp
         if: needs.release-please.outputs.mcp_released == 'true'
-        run: npm publish --workspace @pitchfork-ui/mcp --access public
+        run: node scripts/publish-if-needed.mjs mcp
