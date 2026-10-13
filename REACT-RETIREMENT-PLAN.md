@@ -196,17 +196,61 @@ changelogs, tagged them, and published none of them. A release that looks
 complete and puts nothing on the registry. All eight are wired now, in
 dependency order, with `check-publishable` gating the step.
 
-_Open, and the actual blocker._ **Trusted publishing cannot create a package.**
-Five of the eight names are not on the registry at all, and a trusted publisher
-is configured per package against a package that already exists — so there is
-nothing for the workflow's OIDC identity to match. npm answers a 404, which is
-also what it answers when a publisher exists and does not match, so the error
-points at the wrong cause. And it arrives after eight tags have been pushed.
+_Closed._ **Trusted publishing cannot create a package.** Five of the eight
+names were not on the registry at all, and a trusted publisher is configured
+per package against a package that already exists — so there was nothing for
+the workflow's OIDC identity to match. Each needed one publish by hand, as an
+owner of the scope and with `--access public` (a scoped package is private on
+its first publish regardless). All eight names now exist; the five sit at
+0.1.0.
 
-Each of the five therefore needs one publish by hand, as an owner of the scope
-and with `--access public` (a scoped package is private on its first publish
-regardless), before its trusted publisher can be created at all. `todo.md` has
-the commands and the two-day window that follows.
+_Open, and the actual blocker now._ **Existing is not the same as configured.**
+The first real publish run, 13 October, got through every build and every
+pre-flight check and then did this:
+
+- `@pitchfork-ui/tokens@0.5.0` — **published**.
+- `@pitchfork-ui/core@0.2.0` — `npm error 404 Not Found - PUT`, which is npm
+  masking an unauthorised write. `verify-npm-publisher.yml`'s own header
+  classifies that signature as _no trusted publisher at all_.
+- react, elements, the three bindings and mcp — **skipped**, because the job
+  stops at the first failure and the steps run in dependency order.
+
+So the publisher is configured for `tokens` and not for `core`, and the other
+six are simply untested. They go through the same OIDC identity and the same
+`environment: release`, so the difference is per-package configuration on
+npmjs.com: repository `lelandcrangel/pitchfork-ui`, workflow
+`release-please.yml`, environment `release`, and the separate "Allow npm
+publish" tick, which has its own distinguishable error.
+
+**And `verify-npm-publisher.yml` cannot answer this, for the seven packages it
+was written for.** Two constraints compound, and each is invisible until you
+try:
+
+- **Its guard needs the local version to be already published**, which is what
+  makes it unable to ship anything. The repository is ahead of the registry on
+  seven of eight packages, so from `main` the guard refuses all but `tokens` —
+  the one package already known to work.
+- **It declares `environment: release`, which appears to permit only `main`.**
+  Dispatched at `react-v0.15.3` and `mcp-v0.2.1` — tags where the version does
+  match the registry — both runs failed in **five seconds with zero steps and
+  no annotations**, the signature of an environment refusing the deployment,
+  while the same workflow dispatched at `main` queued for approval normally.
+  Inferred rather than measured: the environments API is not readable from
+  here.
+
+The two cannot both be satisfied today. A version that is published is only
+reachable at a tag, and a tag cannot deploy to `release`. Routing around it
+failed too: `50ed57ab` has core and all four element packages at the published
+0.1.0 _with_ the verifier present, which would have covered five of the seven
+in one ref, but creating a tag there was refused both by `git push` and by the
+refs API.
+
+**The fix is to let the `release` environment accept tags as well as `main`**
+(Settings → Environments → release → deployment branches and tags). Until
+then the workflow is unusable for exactly the packages it exists to check, and
+the practical route is the other one: configure all seven publishers in one
+sitting, then re-run the failed publish job, which resumes at `core`, walks
+the dependency order, and names the next gap if there is one.
 _Closed, and it was the one that would have shipped._ **Release-please does not
 rewrite intra-workspace dependency ranges by itself**, and a caret on a 0.x
 version is a patch range: `^0.1.0` is `>=0.1.0 <0.2.0`. So the pending 0.2.0
