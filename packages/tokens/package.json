@@ -47,6 +47,6 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "style-dictionary": "^5.6.0"
+    "style-dictionary": "^5.6.1"
   }
 }
