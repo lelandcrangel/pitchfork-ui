@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - main
+  # A release can be tagged and still not reach the registry — a publish that
+  # fails part-way leaves exactly that. release-please will not re-release a
+  # version it has already cut, so without a manual trigger the only way to
+  # publish the gap is to invent a release that nothing needed.
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -33,8 +38,10 @@ jobs:
 
   publish:
     needs: release-please
-    # Whenever release-please cut a release for a package we publish.
+    # Whenever release-please cut a release for a package we publish, or by
+    # hand to publish whatever the registry is missing.
     if: >-
+      github.event_name == 'workflow_dispatch' ||
       needs.release-please.outputs.core_released == 'true' ||
       needs.release-please.outputs.react_released == 'true' ||
       needs.release-please.outputs.mcp_released == 'true' ||
@@ -117,32 +124,21 @@ jobs:
       # leaving some packages published, the rest not, and every tag cut.
       # Refusing here costs a re-run; a half-release costs a version number.
       - name: Check every workspace dependency can be installed
-        env:
-          CORE_RELEASED: ${{ needs.release-please.outputs.core_released }}
-          REACT_RELEASED: ${{ needs.release-please.outputs.react_released }}
-          MCP_RELEASED: ${{ needs.release-please.outputs.mcp_released }}
-          TOKENS_RELEASED: ${{ needs.release-please.outputs.tokens_released }}
-          ELEMENTS_RELEASED: ${{ needs.release-please.outputs.elements_released }}
-          ELEMENTS_REACT_RELEASED: ${{ needs.release-please.outputs.elements_react_released }}
-          ELEMENTS_ANGULAR_RELEASED: ${{ needs.release-please.outputs.elements_angular_released }}
-          ELEMENTS_VUE_RELEASED: ${{ needs.release-please.outputs.elements_vue_released }}
         run: |
           set -euo pipefail
-          # `if`, not `[ … ] && …`. Under `set -e` a failing test inside an
-          # AND list is exempt while another command follows it, so the `&&`
-          # form works here — but only by position: move one of these lines
-          # last and the step starts failing whenever that package is not
-          # being released. Measured both ways rather than assumed.
-          shipping=""
-          if [ "${CORE_RELEASED:-}" = "true" ]; then shipping="$shipping,core"; fi
-          if [ "${REACT_RELEASED:-}" = "true" ]; then shipping="$shipping,react"; fi
-          if [ "${MCP_RELEASED:-}" = "true" ]; then shipping="$shipping,mcp"; fi
-          if [ "${TOKENS_RELEASED:-}" = "true" ]; then shipping="$shipping,tokens"; fi
-          if [ "${ELEMENTS_RELEASED:-}" = "true" ]; then shipping="$shipping,elements"; fi
-          if [ "${ELEMENTS_REACT_RELEASED:-}" = "true" ]; then shipping="$shipping,elements-react"; fi
-          if [ "${ELEMENTS_ANGULAR_RELEASED:-}" = "true" ]; then shipping="$shipping,elements-angular"; fi
-          if [ "${ELEMENTS_VUE_RELEASED:-}" = "true" ]; then shipping="$shipping,elements-vue"; fi
-          node scripts/check-publishable.mjs --publishing="${shipping#,}"
+          # Every package in dependency order, not just the ones release-please
+          # cut this time. Each publish step skips a version already on the
+          # registry, so "shipping" now means "whatever the registry is
+          # missing" — and that is what this check has to be told, or it
+          # refuses a release for a gap the same run is about to fill.
+          #
+          # It refused exactly that: core@0.2.0 was tagged by an earlier
+          # release and never published, because that run 404'd on it.
+          # release-please will not re-release a version it has already cut,
+          # so core was absent from --publishing while elements and react
+          # declared ^0.2.0 against it, and every later release was blocked by
+          # a dependency only this job could have satisfied.
+          node scripts/check-publishable.mjs --publishing="core,tokens,elements,elements-angular,elements-react,elements-vue,mcp,react"
 
       # No NODE_AUTH_TOKEN: auth + provenance come from OIDC via the trusted publisher.
       #
@@ -153,31 +149,23 @@ jobs:
       # publish over" without ever reaching core. Fix the cause, press re-run,
       # and it now carries on from where it stopped.
       - name: Publish @pitchfork-ui/tokens
-        if: needs.release-please.outputs.tokens_released == 'true'
         run: node scripts/publish-if-needed.mjs tokens
       - name: Publish @pitchfork-ui/core
-        if: needs.release-please.outputs.core_released == 'true'
         run: node scripts/publish-if-needed.mjs core
       # react depends on core, so core must reach the registry first -- a
       # consumer installing react before core exists gets an unresolvable tree.
       - name: Publish @pitchfork-ui/react
-        if: needs.release-please.outputs.react_released == 'true'
         run: node scripts/publish-if-needed.mjs react
       # elements depends on core and tokens, and each binding package depends
       # on elements, so the order below is the dependency order and not a
       # preference. `check-publishable` enforces it rather than trusting it.
       - name: Publish @pitchfork-ui/elements
-        if: needs.release-please.outputs.elements_released == 'true'
         run: node scripts/publish-if-needed.mjs elements
       - name: Publish @pitchfork-ui/elements-react
-        if: needs.release-please.outputs.elements_react_released == 'true'
         run: node scripts/publish-if-needed.mjs elements-react
       - name: Publish @pitchfork-ui/elements-angular
-        if: needs.release-please.outputs.elements_angular_released == 'true'
         run: node scripts/publish-if-needed.mjs elements-angular
       - name: Publish @pitchfork-ui/elements-vue
-        if: needs.release-please.outputs.elements_vue_released == 'true'
         run: node scripts/publish-if-needed.mjs elements-vue
       - name: Publish @pitchfork-ui/mcp
-        if: needs.release-please.outputs.mcp_released == 'true'
         run: node scripts/publish-if-needed.mjs mcp
