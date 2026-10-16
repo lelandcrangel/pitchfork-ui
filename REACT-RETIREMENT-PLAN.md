@@ -425,16 +425,20 @@ and run that way: exit 0, with `llms-full.txt` at 184 KB of elements,
 answering all six element tools, and typecheck, lint, `check:icons`,
 `check:examples` and `check:package` all passing.
 
-**Phase 6 — Deprecate. Prepared; the registry write is the owner's.**
-`npm run deprecate:react` reports what it would do;
+**Phase 6 — Deprecate. Done.** All eight packages are on the registry and all
+19 published versions of `@pitchfork-ui/react` carry the notice. What it cost
+to get there is at the end of this section, because none of it was the
+deprecation itself.
+
+_The mechanism._ `npm run deprecate:react` reports what it would do;
 `npm run deprecate:react -- --apply` writes it. It is a script and not a
 command in a commit message for three reasons, each of which is a way to get
 this wrong once and not find out:
 
 - **The range has to be `*`.** `npm deprecate <pkg> <message>` with no range
   deprecates _nothing_ and exits 0 — it reads the bare name as the spec and
-  matches no version. There are 18 published versions (0.1.9 to 0.15.3) and
-  someone pinning an old one has to be told too.
+  matches no version. There are 19 published versions (0.1.9 to 0.17.0) and
+  someone pinning an old one has to be told too; all 19 carry the notice now.
 - **The message is the only thing a consumer sees**, on every install of every
   version, and changing it means running the command again. It is built from
   the window and the guide's real URL rather than typed at a terminal.
@@ -450,9 +454,8 @@ a security patch remains possible. Deprecation is a notice, not a removal.
 
 **Re-run the script after any further publish.** The registry stores the flag
 per version, not per package, so a patch release arrives undeprecated and
-silently. `latest` is 0.15.3 today while the repository is at 0.16.0 — the
-release that adds the `@deprecated` JSDoc tags is cut and waiting on an
-approval — so the first run should come after that publish, not before.
+silently. That is the one piece of this phase that is not finished for good:
+0.17.0 needed covering after it published, and so will 0.18.0.
 
 **The editor tag is the notice that was not true.** 0.16.0's BREAKING CHANGE
 says "every export of `@pitchfork-ui/react` is marked `@deprecated`". Nothing
@@ -504,6 +507,51 @@ Two things found while preparing it, both in the thing Phase 6 announces:
   the registry only on the _next_ publish, since `react-v0.16.0` is already
   cut; the `npm deprecate` notice is the one that covers every version at once,
   which is why it is the primary mechanism and these are secondary.
+
+**Publishing the eight took five rounds, and none of them were about the
+deprecation.** Worth writing down, because every one of them is a thing that
+looks like a credential problem and is not:
+
+- **A tagged version that never published cannot be re-released.** `core@0.2.0`
+  was cut, then refused by npm. release-please does not re-cut a version it has
+  already released, so `core_released` stayed false, `core` never entered
+  `--publishing`, and `check-publishable` correctly refused every _later_
+  release because `elements` and `react` declare `^0.2.0` against a version the
+  registry did not have. A deadlock no release could break. The per-step
+  `if: *_released == 'true'` gates were the cause — they ask "did this run cut
+  it?" when the question is "is it on the registry?" — and they are gone.
+  `scripts/publish-if-needed.mjs` answers the second, every step, every run.
+
+- **A partial publish used to wedge the job permanently.** It stops at the
+  first failure, so the packages that did go out then fail the retry with "You
+  cannot publish over the previously published versions". Skipping an
+  already-published version is what makes the fix-and-re-run loop work at all.
+
+- **A re-run replays the original workflow file**, so a fix to the publish job
+  does not reach the run that needs it. Hence `workflow_dispatch`: a
+  tagged-but-unpublished version is otherwise unreachable, because
+  release-please will not re-cut it and inventing a release nothing needed is
+  the only alternative.
+
+- **npm masks every authorisation failure as `404 Not Found - PUT`.** Three
+  separate causes produced that one error across the rounds: a trusted
+  publisher that had never been created, one that had **expired** (npm gives a
+  new configuration two days to complete its first successful publish, after
+  which it cannot be used _or edited_ — only deleted and recreated), and one
+  with **`pitchfork` misspelled in the repository field**. The error is
+  identical in all three. `verify-npm-publisher.yml`'s header is the decision
+  table, and the fastest diagnosis in practice was diffing a broken publisher
+  against a known-good one field by field.
+
+- **A publish is not visible the moment it succeeds.** npm says so itself —
+  "Your package is being processed and may take a few minutes to become
+  available" — and in the meantime the version endpoint 404s, the packument
+  omits the version, and `time.modified` still reads the previous publish.
+  Three times that was mistaken here for a failed write, once loudly enough to
+  claim the registry was inconsistent. `Cache-Control: no-cache` does not
+  defeat it; a query-string cache-bust mostly does; the only reliable evidence
+  is the job log, where a real publish prints a signed provenance statement and
+  `+ <name>@<version>`. **Read the log before believing the registry.**
 
 **Phase 7 — Delete `packages/react`.** Only after the window closes on
 30 April 2027. This is the one irreversible step and there is no reason to take
