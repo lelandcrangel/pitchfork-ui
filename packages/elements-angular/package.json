@@ -31,9 +31,9 @@
     "tslib": "^2.3.0"
   },
   "peerDependencies": {
-    "@angular/common": ">=18.0.0",
-    "@angular/core": ">=18.0.0",
-    "@angular/forms": ">=18.0.0",
+    "@angular/common": "^21.2.25",
+    "@angular/core": "^21.2.25",
+    "@angular/forms": "^22.2.2",
     "rxjs": ">=7.0.0"
   },
   "publishConfig": {
@@ -44,7 +44,7 @@
     "@angular/build": "^21.2.24",
     "@angular/compiler": "^21.2.25",
     "@angular/compiler-cli": "^21.2.25",
-    "@angular/platform-browser": "^21.2.25",
+    "@angular/platform-browser": "^22.2.2",
     "@vitest/browser-playwright": "^4.1.11",
     "ng-packagr": "^21.2.7",
     "vitest": "^4.1.11",

@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@pitchfork-ui/elements": "^0.2.1",
-    "@stencil/react-output-target": "^1.6.2"
+    "@stencil/react-output-target": "^1.6.5"
   },
   "peerDependencies": {
     "react": ">=18.2.0",
