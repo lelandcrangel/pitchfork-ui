@@ -10,9 +10,12 @@ file, and the `Components` section of this site documents them and nothing
 else.
 
 `@pitchfork-ui/react` — the hand-written React component library this started
-as — is **deprecated**. It is still published and still gets fixes, and nothing
-you have built on it stops working. But it takes no new components, its
-documentation pages are gone, and it will be removed after a stated window.
+as — is **deprecated**. The notice is on npm against every published version,
+and every one of its exports carries a `@deprecated` tag, so an editor strikes
+the import through as you type it. It is still published and still gets fixes,
+and nothing you have built on it stops working. But it takes no new components,
+its documentation pages are gone, and it is removed from the repository after
+**30 April 2027**.
 A React application does not have to leave React to move off it: the generated
 `@pitchfork-ui/elements-react` bindings give every element a typed component.
 **Foundations → Migrating** has the component-by-component mapping.
@@ -27,13 +30,16 @@ same build rather than written by hand.
 ## Installing
 
 ```bash
-npm install @pitchfork-ui/elements @pitchfork-ui/tokens
+npm install @pitchfork-ui/elements
 ```
 
-The elements package ships the token stylesheet it needs. Load it once:
+`@pitchfork-ui/tokens` is one of its dependencies, so the token stylesheet
+arrives with it and there is nothing else to install. Load it once, by the name
+the package exports — the file inside `dist/` is not an exported subpath and a
+deep import of it fails to resolve:
 
 ```ts
-import '@pitchfork-ui/elements/dist/pitchfork/pitchfork.css';
+import '@pitchfork-ui/elements/styles.css';
 ```
 
 ### Plain HTML

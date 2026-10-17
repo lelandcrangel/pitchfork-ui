@@ -1,0 +1,48 @@
+name: TypeScript ceiling
+
+# The `typescript` ignore in .github/dependabot.yml has no expiry of its own,
+# and an ignore with no expiry is a `// TODO` in a config file. This is the
+# expiry: `check:ts-ceiling` fails once every package in the tree that peers
+# `typescript` has a release accepting the version the ignore skips, so a red
+# run here is the signal to delete four lines of config, this workflow and the
+# check.
+#
+# It is deliberately not part of CI. The answer depends on what upstream
+# published this week rather than on the diff, so a PR that reds out because
+# `typescript-eslint` cut a release that morning would be failing for something
+# its author did not do.
+#
+# Mondays, an hour after Dependabot's own weekly pass, on a minute of its own
+# so it is not queued behind everything else that runs at the hour.
+
+on:
+  schedule:
+    - cron: '41 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: typescript-ceiling
+  cancel-in-progress: true
+
+jobs:
+  ceiling:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      # The check reads `peerDependencies` off the installed tree, so it needs
+      # the tree -- but nothing is built or run, so `--ignore-scripts` is
+      # enough and skips the husky install this repo's `prepare` does.
+      - run: npm ci --ignore-scripts
+
+      - run: npm run check:ts-ceiling

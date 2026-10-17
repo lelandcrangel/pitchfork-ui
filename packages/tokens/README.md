@@ -10,11 +10,12 @@ colour, spacing, radii, typography, shadow and motion, built with
 
 ## Do you need this package?
 
-Probably not. If you are using `@pitchfork-ui/react`, every one of these tokens
-is already inlined into its stylesheet:
+Probably not. If you are using `@pitchfork-ui/elements`, every one of these
+tokens is already inlined into the stylesheet it ships — and that package
+depends on this one, so you have it either way:
 
 ```ts
-import '@pitchfork-ui/react/styles.css';
+import '@pitchfork-ui/elements/styles.css';
 ```
 
 Install this package when you want the tokens as **data** rather than CSS — a

@@ -54,6 +54,24 @@ jobs:
       # true: 90 of 282. Skips itself once Phase 7 deletes the package.
       - name: Check every @pitchfork-ui/react export is marked deprecated
         run: npm run check:deprecated
+
+      # Dependabot rewrites a peerDependencies range like any other
+      # requirement. On #131 it narrowed @pitchfork-ui/elements-angular's
+      # Angular peers from >=18.0.0 to ^21.2.25 -- dropping Angular 18, 19 and
+      # 20 from a package whose major does not change -- and took @angular/forms
+      # to ^22.2.2 while leaving core at ^21, which Angular's exact
+      # inter-package peers make unsatisfiable. Both manifests parse and the
+      # workspace installs; only the registry would have found out.
+      - name: Check the bindings' host-framework peers are still open
+        run: npm run check:peers
+
+      # WebComponents.mdx told every reader to import the token stylesheet by
+      # its path inside dist/, which the package's exports map does not define
+      # -- so the one install instruction on the page could not resolve. The
+      # page built, the snippet is prose, and the workspace's own apps import
+      # the exported name.
+      - name: Check the documented package subpaths and the retirement window
+        run: npm run check:docs
       # packages/elements runs its form-associated components in a real
       # browser -- Stencil's mock DOM and jsdom both lack a working
       # ElementInternals -- so Chromium has to be here, before the tests, not

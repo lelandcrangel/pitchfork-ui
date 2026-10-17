@@ -36,11 +36,10 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
+import { WINDOW_ENDS } from './lib/retirement.mjs';
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PACKAGE = '@pitchfork-ui/react';
-
-/** The date the package stops being publishable. Phase 7 waits for it. */
-const WINDOW_ENDS = '30 April 2027';
 
 const apply = process.argv.includes('--apply');
 

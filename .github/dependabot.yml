@@ -5,8 +5,37 @@ updates:
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 5
+    # TypeScript majors nothing in the tree can accept yet. `typescript-eslint`
+    # peers `typescript >=4.8.4 <6.1.0` -- on its canary too, measured -- and
+    # `@angular/compiler-cli@21` peers `>=5.9 <6.1`, so a bump to 7.x produces a
+    # PR that cannot install. #132 is that PR: `typescript@^7.0.2` in four
+    # manifests beside `typescript-eslint@^8.71.2`, which excludes it.
+    #
+    # Skipped, not forgotten: `npm run check:ts-ceiling` asks the registry
+    # whether every package in the tree that peers `typescript` has since
+    # released a version accepting what this range skips, and **fails once they
+    # all have** -- so the signal to delete these four lines is a red run rather
+    # than someone remembering. `.github/workflows/typescript-ceiling.yml` runs
+    # it weekly, on the same cadence as Dependabot itself.
+    ignore:
+      - dependency-name: 'typescript'
+        versions: ['>= 6.1.0']
     # Group related bumps into a single PR to avoid a flood of individual PRs.
+    #
+    # Angular comes first and by name, because grouping it by dependency-type
+    # splits it in half: `@angular/common`, `core` and `forms` are peers of
+    # `@pitchfork-ui/elements-angular` and so production, while `compiler`,
+    # `compiler-cli`, `build` and `ng-packagr` are devDependencies. An Angular
+    # major has to move as one -- `@angular/forms@22.2.2` peers
+    # `@angular/core@"22.2.2"`, pinned exactly -- and #131 and #132 are what the
+    # split looks like: one PR took the peers to 21/22 and the other the build
+    # tooling to 22, and neither is installable on its own.
     groups:
+      angular:
+        patterns:
+          - '@angular*'
+          - 'ng-packagr'
+          - 'zone.js'
       production-dependencies:
         dependency-type: 'production'
       dev-dependencies:
