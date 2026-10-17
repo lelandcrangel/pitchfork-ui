@@ -157,13 +157,29 @@ calls for it. Two things make that reliable:
   the settings panel, then run `validate_usage` on it and fix anything it
   reports." The agent then catches its own mistakes before you read the diff.
 
-If your project has `@pitchfork-ui/react` or `@pitchfork-ui/elements`
-installed, the server answers from _that_ copy, so it describes the version you
-are actually building against rather than the newest one.
+### Which copy it answers from
 
-To point it somewhere else, set `PITCHFORK_UI_METADATA` in the client's `env`
-block. The client is what launches the server, so exporting the variable in your
-own shell has no effect on an already-configured client:
+If your project has `@pitchfork-ui/elements` installed, the server answers from
+_that_ copy, so it describes the version you are actually building against
+rather than the newest one. It looks for three artifacts, in this order for
+each: an explicit path, then your project's `node_modules`, then the copy
+bundled in the server package.
+
+| Variable                | The artifact                                              |
+| ----------------------- | --------------------------------------------------------- |
+| `PITCHFORK_UI_ELEMENTS` | `@pitchfork-ui/elements/metadata` — the 108 elements      |
+| `PITCHFORK_UI_TOKENS`   | `@pitchfork-ui/tokens/tokens` — the design tokens         |
+| `PITCHFORK_UI_METADATA` | `@pitchfork-ui/react/metadata` — the deprecated React API |
+
+The last one is **optional**, and it is the only one that is: a project on the
+elements alone gets a server that starts normally and says the React layer is
+gone when a React tool is called. The other two always resolve, because the
+bundled copy is the floor — which is what makes `npx` work with nothing
+installed.
+
+Set whichever you need in the client's `env` block. The client is what launches
+the server, so exporting the variable in your own shell has no effect on an
+already-configured client:
 
 ```json
 {
@@ -172,7 +188,7 @@ own shell has no effect on an already-configured client:
       "command": "npx",
       "args": ["-y", "@pitchfork-ui/mcp"],
       "env": {
-        "PITCHFORK_UI_METADATA": "/absolute/path/to/metadata.json"
+        "PITCHFORK_UI_ELEMENTS": "/absolute/path/to/elements.json"
       }
     }
   }
@@ -181,15 +197,15 @@ own shell has no effect on an already-configured client:
 
 Use an absolute path there. A relative one resolves against the client's working
 directory, which is rarely your project, and a path that does not exist is not
-an error — the server quietly falls back to its bundled copy and answers as if
+an error — the server quietly falls back to the next candidate and answers as if
 nothing were wrong. The startup line on stderr names the file it actually
 loaded, so check that if an override seems to have no effect.
 
-To check a metadata file by hand, where the working directory _is_ yours, pass
-it on the command line:
+To check an artifact by hand, where the working directory _is_ yours, pass it on
+the command line:
 
 ```bash
-PITCHFORK_UI_METADATA=./node_modules/@pitchfork-ui/react/dist/metadata.json \
+PITCHFORK_UI_ELEMENTS=./node_modules/@pitchfork-ui/elements/dist/elements.json \
   npx -y @pitchfork-ui/mcp
 ```
 
@@ -229,10 +245,22 @@ component name as well as an element tag or element name, so asking it about
 
 ## Why it stays correct
 
-Nothing above is hand-maintained. A build step reads the TypeScript source, the
-component stylesheets, the Storybook examples and the contributor guide, and
-emits the metadata; everything else is a projection of it. Add a prop and it
+Almost nothing above is hand-maintained. Every element's props, attributes,
+events, methods, slots and parts come out of the Stencil build's own
+`docs.json`, the tokens out of Style Dictionary, the React half out of the
+TypeScript source and the component stylesheets, and the house rules out of the
+contributor guide. Everything else is a projection of that. Add a prop and it
 appears in all three surfaces on the next build.
+
+The exception is the **worked examples**, which are written by hand in one
+file — `docs.json` records that `pf-select` has a default slot and has no idea
+it wants `pf-option` children, so a generated example would be an empty box.
+That file is the only copy: this site's reference pages, the interactive
+stories, `elements.json` and `llms-full.txt` all read it. And because it is
+hand-written, it is checked — `npm run check:examples` runs the server's own
+`validate_usage` over every example and every interactive instance, which
+caught nine wrong attribute values and six invented icon names on its first
+run.
 
 CI fails if a component is missing from the category list, if a CSS variable
 resolves to nothing, if a documentation link points at a page that does not

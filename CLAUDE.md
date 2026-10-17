@@ -1391,6 +1391,34 @@ split, and the handful of places the element API deliberately differs from the
 React one. That last part is the whole value of the page, and no generator
 knows it.
 
+**A hand-written page's install snippet is code nothing runs.** That page told
+every reader to load the token stylesheet with
+`import '@pitchfork-ui/elements/dist/pitchfork/pitchfork.css'`. The file is
+real and is in the published tarball, and the import **cannot resolve**: the
+package has an `exports` map, so a subpath the map does not name is blocked —
+`ERR_PACKAGE_PATH_NOT_EXPORTED`, measured against the workspace's own copy.
+The exported name is `./styles.css` and maps to the same file, which is what
+`Introduction.mdx` and `Theming.mdx` already said, so the two pages disagreed
+and the one a consumer reads first was the wrong one. Nothing could have caught
+it: the page builds, the snippet is prose, and this workspace's own apps import
+the exported name.
+
+`scripts/check-docs.mjs` now reads every `@pitchfork-ui/*` **subpath** out of
+the docs pages and the published READMEs and checks it against that package's
+own `exports` map. It reads the map rather than calling `require.resolve`,
+because half of those targets are build output and a resolver cannot tell "not
+part of the public API" from "not built yet" — the answer has to be the same on
+a clean checkout. A **bare** package name is skipped on purpose: it appears in
+prose everywhere, and `@pitchfork-ui/tokens` has no `.` export at all.
+
+It also asserts the retirement window. Four surfaces promised that
+`@pitchfork-ui/react` would be removed "after a stated window" and **no surface
+stated it** — the date lived in `deprecate-react.mjs`, where it reached npm's
+deprecation notice and nothing else. `scripts/lib/retirement.mjs` holds it now,
+the three generators import it, and the two hand-written pages have it typed in
+with this check behind them. Probed three ways: the deep import, the date
+removed, and a package name that does not exist.
+
 Everything else is generated. `scripts/build-elements-docs.mjs` reads Stencil's
 own `dist/docs.json` and writes one page per element to
 `apps/docs/src/elements/`, with its doc comment, its properties, events,
@@ -1872,6 +1900,55 @@ lockfile, which does not happen any more: the lockfile records every binding
 for every consumer, nested, with its `cpu` and `os`. Verified by removing
 them, regenerating, running a real `npm ci`, and confirming both modules load
 from the nested copies.
+
+### What Dependabot gets wrong here
+
+Three findings, all from one week's group PRs, and each invisible to every
+other check in the repository.
+
+**A `peerDependencies` range is a requirement to Dependabot, so it narrows
+one.** On #131 it took `@pitchfork-ui/elements-angular`'s Angular peers from
+`>=18.0.0` to `^21.2.25` — dropping Angular 18, 19 and 20 from a package whose
+own major does not change — and in the same diff took `@angular/forms` to
+`^22.2.2` while leaving `common` and `core` at `^21.2.25`. That second one is
+not merely narrow: `@angular/forms@22.2.2` peers `@angular/core@"22.2.2"`,
+pinned exactly, so the set **cannot be satisfied by any consumer**, and it
+would have gone to the registry where it cannot be taken back. The manifests
+parse, the workspace installs from its own lockfile, and nothing here builds or
+tests a consumer on the version that was just excluded.
+`scripts/check-binding-peers.mjs` refuses it: a binding's host-framework peer
+is an open floor (`>=x.y.z`), and all of one package's `@angular/*` peers are
+one range. Probed against #131's own tree — five findings, the Vue narrowing
+(`>=3.4.38` → `^3.5.44`) among them.
+
+**A framework major cannot be split across two group PRs.** The npm groups were
+`production-dependencies` and `dev-dependencies` by `dependency-type`, which
+cuts Angular in half: `common`, `core` and `forms` are peers of
+`elements-angular` and so production, while `compiler`, `compiler-cli`, `build`
+and `ng-packagr` are devDependencies. #131 and #132 are what that looks like —
+one PR moving the peers, the other the build tooling, neither installable
+alone. An `angular` group by `patterns` now comes **first**, because Dependabot
+puts a dependency in the first group it matches.
+
+**An ignore with no expiry is a `// TODO` in a config file.** `typescript` is
+ignored at `>= 6.1.0` because nothing in the tree accepts 7.x:
+`typescript-eslint` peers `>=4.8.4 <6.1.0` on its canary as well as its latest,
+`@angular/compiler-cli@22` peers `>=6.0 <6.1`, and
+`@joshwooding/vite-plugin-react-docgen-typescript` peers
+`>=4.3.0 <7 || >=7.1.0-0 <8`, which excludes 7.0.x and nothing else.
+`scripts/check-typescript-ceiling.mjs` is the expiry: it reads the range out of
+`dependabot.yml` rather than hard-coding it, asks the registry whether every
+installed package that peers `typescript` has since released a version
+accepting what the range skips, and **fails once they all have**. It is not in
+CI — the answer depends on what upstream published that morning rather than on
+the diff — but in a weekly workflow, where a red run is the notification.
+
+Two things it does not use, deliberately. There is no `semver` dependency:
+`npm view "typescript@<range>" version` resolves a range against the registry's
+real version list, so "does this peer range accept 7.0.2?" is "is 7.0.2 in that
+answer?". And it does not trust `npm install`'s exit code — npm 10 resolves this
+conflict by _overriding_ the peer and exiting **0** with a warning, where CI's
+npm 11 fails, so a local dry run proves nothing.
 
 ---
 

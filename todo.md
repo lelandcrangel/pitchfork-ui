@@ -766,3 +766,38 @@ Found by sweeping the library rather than by a report: the three
 `aria-disabled` fixes made it worth asking which other components navigate a
 list by hand. `ContextMenu`, `Select`, `MultiSelect` and `CommandPalette` were
 all already on the core helpers; `Dropdown` was the only one left.
+
+---
+
+## Angular 22 has to land in one commit, and it is still Angular 21 here
+
+The dependency bumps for it exist, split across two Dependabot PRs that cannot
+be merged in either order:
+[#131](https://github.com/lelandcrangel/pitchfork-ui/pull/131) carries the
+production half (`@angular/common`, `core`, `forms` — peers of
+`@pitchfork-ui/elements-angular`) and
+[#132](https://github.com/lelandcrangel/pitchfork-ui/pull/132) the development
+half (`compiler`, `compiler-cli`, `build`, `cli`, `ng-packagr`). Angular's
+packages peer each other at an **exact** version, so half a major is not a
+state the workspace can install from.
+
+`.github/dependabot.yml` now groups `@angular*`, `ng-packagr` and `zone.js`
+into one `angular` group ahead of the two `dependency-type` groups, so the next
+pass proposes it as one PR. Three things that PR will need looked at by hand,
+none of which Dependabot can decide:
+
+- **The peers stay `>=18.0.0`.** `scripts/check-binding-peers.mjs` enforces
+  that now; the binding wraps custom elements and has no reason to care which
+  Angular major is on the other side. Raising that floor is a major of our own.
+- **`@angular/compiler-cli@22` peers `typescript >=6.0 <6.1`**, which is where
+  the root already sits (6.0.3) — but `apps/consumer-angular` nests TypeScript
+  5.9.3 for `@angular/build@21`'s `>=5.9 <6.0`. The nested pin comes out with
+  the same commit, or the install picks a version one of the two refuses.
+- **`apps/consumer-angular` and `packages/elements-angular` move together.**
+  The smoke script renders all 108 elements through the Angular bindings, so a
+  version skew between the app and the package it exercises fails there rather
+  than at build time.
+
+Not urgent: Angular 21 is current here, everything builds, and
+`npm run check:ts-ceiling` is what will say when the TypeScript half of this
+can move at all.

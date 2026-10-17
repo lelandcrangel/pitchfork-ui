@@ -19,6 +19,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { loadMigrationMap } from './lib/migration-map.mjs';
+import { WINDOW_ENDS } from './lib/retirement.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'apps', 'docs', 'src', 'Migrating.mdx');
@@ -328,10 +329,12 @@ its button into a shadow root. Every element exposes the boxes worth styling as
 ## Timeline
 
 \`@pitchfork-ui/react\` is still published and still gets fixes. It is
-deprecated on npm with a pointer to this page, kept publishable for a stated
-window so a security patch stays possible, and removed from the repository only
-after that window. Deprecation is a notice, not a removal — nothing breaks on
-the day it lands.
+deprecated on npm with a pointer to this page — every published version carries
+the notice — and it stays publishable until **${WINDOW_ENDS}** so a security
+patch remains possible, then comes out of the repository. Deprecation is a
+notice, not a removal: nothing breaks on the day it lands, and nothing breaks
+on the day the package leaves the repository either, because the versions
+already on npm stay installable.
 `;
 
 if (problems.length > 0 && strict) {

@@ -22,6 +22,8 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { WINDOW_ENDS } from './lib/retirement.mjs';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 const metadataPath = join(root, 'packages/react/dist/metadata.json');
@@ -260,7 +262,8 @@ function buildIndex() {
         'against it: use the elements above, through the generated ' +
         '`@pitchfork-ui/elements-react` bindings in a React app. It is still on npm and ' +
         'still works, its documentation pages have been removed from the site, and it ' +
-        'will be removed after a stated window. Every component has an element answer, ' +
+        `will be removed from the repository after ${WINDOW_ENDS}. Every component has an ` +
+        'element answer, ' +
         `which \`${elementMetadata.name}/metadata\` ` +
         'records under `reactCoverage`; the MCP server still answers `get_component` and ' +
         '`validate_usage` for the React API, from ' +
@@ -435,7 +438,8 @@ function buildFull() {
     out.push(
       `\`${metadata.name}\` ${metadata.version} is **deprecated** — write new code ` +
         'against the elements below instead. It is still on npm and still works, and ' +
-        'will be removed after a stated window. Its documentation pages have been ' +
+        `will be removed from the repository after ${WINDOW_ENDS}. Its documentation pages ` +
+        'have been ' +
         'removed from the site, so the props here are the reference; the MCP server also ' +
         'answers `get_component` and `validate_usage` for it.',
     );

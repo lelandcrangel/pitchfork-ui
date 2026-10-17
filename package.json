@@ -53,6 +53,9 @@
     "test:codemod": "node --test scripts/test/codemod.test.mjs",
     "setup:publishers": "node scripts/setup-trusted-publishers.mjs",
     "check:deprecated": "node scripts/check-deprecated-exports.mjs",
+    "check:ts-ceiling": "node scripts/check-typescript-ceiling.mjs",
+    "check:peers": "node scripts/check-binding-peers.mjs",
+    "check:docs": "node scripts/check-docs.mjs",
     "deprecate:react": "node scripts/deprecate-react.mjs"
   },
   "devDependencies": {
