@@ -26,6 +26,6 @@
     "@angular/cli": "^21.2.24",
     "@angular/compiler": "^21.2.25",
     "typescript": "^5.9.3",
-    "vite": "^7.3.6"
+    "vite": "^8.1.6"
   }
 }
