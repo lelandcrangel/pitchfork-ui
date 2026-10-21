@@ -56,9 +56,11 @@
     "check:ts-ceiling": "node scripts/check-typescript-ceiling.mjs",
     "check:peers": "node scripts/check-binding-peers.mjs",
     "check:docs": "node scripts/check-docs.mjs",
+    "check:types": "node scripts/check-published-types.mjs",
     "deprecate:react": "node scripts/deprecate-react.mjs"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@csstools/postcss-global-data": "^4.0.0",
     "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^7.0.1",

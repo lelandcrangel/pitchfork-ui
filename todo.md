@@ -769,6 +769,43 @@ all already on the core helpers; `Dropdown` was the only one left.
 
 ---
 
+## `@pitchfork-ui/elements` ships ESM in a typeless package
+
+Found by `attw` while closing #26, and measured rather than taken on the
+tool's word.
+
+The package cannot be `"type": "module"` -- Stencil loads `stencil.config.ts`
+through `require()` -- so Node treats its `.js` output as CommonJS, while
+`dist/index.js` is one line of ESM (`export * from './esm/index.js'`). `attw`
+calls that an error in every ESM resolution mode, for the main entry, the
+loader and both `components` subpaths.
+
+**It is not an error on current Node.** Probed with a real ESM consumer
+against the built package on Node 22.22: the import succeeds and prints its
+exports, with
+`[MODULE_TYPELESS_PACKAGE_JSON] Warning: ... doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a
+performance overhead.` So every ESM consumer pays a failed CJS parse and a
+reparse per entry point, and gets a warning in their output. Node before 22.7
+has no `detect module syntax` and _would_ fail, and `attw` says some bundlers
+still do.
+
+**Fix:** have the Stencil output target emit the ESM entry as `.mjs`, so the
+extension carries the module kind and no `"type"` field is needed. That is
+output-target configuration rather than a hand edit, and it wants the three
+consumer smokes plus the node16 fixture to prove the entry points still
+resolve afterwards. `scripts/check-published-types.mjs` ignores
+`unexpected-module-syntax` for this package with the measurement beside it, so
+the day it is fixed the ignore comes out and nothing else changes.
+
+Worth knowing what is **not** wrong: `elements-angular` reports
+`false-cjs` for the same family of reason -- `ng-packagr` emits a `.d.ts`
+beside an ESM fesm bundle -- and that is how every Angular library on npm is
+shaped, green in the bundler mode Angular consumers resolve through. That one
+is ignored as correct, not as deferred.
+
+---
+
 ## Angular 22 has to land in one commit, and it is still Angular 21 here
 
 The dependency bumps for it exist, split across two Dependabot PRs that cannot
