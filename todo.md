@@ -818,10 +818,22 @@ half (`compiler`, `compiler-cli`, `build`, `cli`, `ng-packagr`). Angular's
 packages peer each other at an **exact** version, so half a major is not a
 state the workspace can install from.
 
-`.github/dependabot.yml` now groups `@angular*`, `ng-packagr` and `zone.js`
-into one `angular` group ahead of the two `dependency-type` groups, so the next
-pass proposes it as one PR. Three things that PR will need looked at by hand,
-none of which Dependabot can decide:
+`.github/dependabot.yml` groups `@angular*`, `ng-packagr` and `zone.js` into
+one `angular` group ahead of the two `dependency-type` groups. **That is not
+enough, and the grouping was expected to be.**
+[#148](https://github.com/lelandcrangel/pitchfork-ui/pull/148) is the first
+pass after it landed, and it proposed the development half again: the six
+toolchain packages, and none of `apps/consumer-angular`'s four runtime
+`dependencies`, which the group's patterns match and which carry no
+`dependency-type` filter to exclude them. Its lockfile pins
+`@angular/build@22.2.3` beside `@angular/core@21.2.25` -- a tree that cannot
+satisfy `@angular/build`'s own `@angular/core@^22.0.0` peer -- and its PR body
+lists only the six it moved, with no note about the four it did not. So
+Dependabot appears to have tried the runtime bump, found it unresolvable, and
+shipped the half that resolved. **Expect to do this by hand however it is
+grouped.**
+
+Four things it needs looked at, none of which Dependabot can decide:
 
 - **The peers stay `>=18.0.0`.** `scripts/check-binding-peers.mjs` enforces
   that now; the binding wraps custom elements and has no reason to care which
@@ -834,6 +846,12 @@ none of which Dependabot can decide:
   The smoke script renders all 108 elements through the Angular bindings, so a
   version skew between the app and the package it exercises fails there rather
   than at build time.
+- **The four runtime packages move in the same commit.**
+  `apps/consumer-angular`'s `@angular/common`, `core`, `forms` and
+  `platform-browser` are `dependencies`, and `@angular/platform-browser@22.2.3`
+  peers `@angular/core@"22.2.3"` pinned exactly, so the runtime and the
+  toolchain are one change. Every `@angular/*` is at 22.2.3 today, which is
+  what makes a caret safe here; it would not be mid-release.
 
 Not urgent: Angular 21 is current here, everything builds, and
 `npm run check:ts-ceiling` is what will say when the TypeScript half of this
