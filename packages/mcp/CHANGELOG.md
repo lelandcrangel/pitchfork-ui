@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.4.0...mcp-v0.4.1) (2026-10-21)
+
+
+### Bug Fixes
+
+* **mcp:** take @modelcontextprotocol/sdk 1.32.1 ([d6d86f6](https://github.com/lelandcrangel/pitchfork-ui/commit/d6d86f67524250526ff7e2c65f02ee6c3257e890))
+
 ## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.3.0...mcp-v0.4.0) (2026-10-13)
 
 

@@ -6,5 +6,5 @@
   "packages/elements-vue": "0.2.1",
   "packages/react": "0.17.0",
   "packages/tokens": "0.5.0",
-  "packages/mcp": "0.4.0"
+  "packages/mcp": "0.4.1"
 }
