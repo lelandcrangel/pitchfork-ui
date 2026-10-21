@@ -121,6 +121,14 @@ jobs:
       - name: Check the published types resolve under node16
         run: npx tsc --noEmit -p scripts/fixtures/node16-resolution/tsconfig.json
 
+      # The node16 probe above reads the built core and react, and nothing
+      # looked at the four element packages or at the export maps themselves --
+      # issue #26. attw packs each published package and resolves its types in
+      # every module mode. After the build, because `npm pack` ships `files`
+      # and an unbuilt package is empty, which would make this vacuous.
+      - name: Check every published package's types resolve (attw)
+        run: npm run check:types
+
       # Runs after the build, not in the test sweep above: it bootstraps a real
       # Angular application against the built library to prove the generated
       # ControlValueAccessor binds, so the artifacts have to exist first.
