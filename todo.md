@@ -801,3 +801,39 @@ none of which Dependabot can decide:
 Not urgent: Angular 21 is current here, everything builds, and
 `npm run check:ts-ceiling` is what will say when the TypeScript half of this
 can move at all.
+
+### Attempted, and what stopped it
+
+Tried on 21 October, against #144's dev half. Three things worth writing down
+so the next attempt starts further along.
+
+**#144's half cannot resolve on its own, which is now measured rather than
+suspected.** `@angular/build@22.2.3` peers `@angular/core@^22.0.0`, and #144
+leaves `apps/consumer-angular`'s `@angular/core` at `^21.2.25` -- the Angular
+runtime was in #136, which is closed. So the dev half alone is half a major
+from the other end.
+
+**The whole set is satisfiable on paper.** `@angular/core@22.2.3` peers
+`rxjs ^6.5.3 || ^7.4.0` (we have `^7.8.2`) and `zone.js ~0.15.0 || ~0.16.0`
+(we have `^0.16.3`); `@angular/animations` is a peer of
+`@angular/platform-browser@22` but marked `optional`, as it was at 21. Every
+`@angular/*` package is at 22.2.3 today, so a caret on that version does not
+drift away from the exact inter-package peers. The shape is: the four runtime
+packages in `consumer-angular`'s `dependencies`, the toolchain in both
+packages' `devDependencies`, `ng-packagr` to `^22.2.4`,
+`@analogjs/vite-plugin-angular` to `^2.9.1` (2.8.1 is no longer latest), and
+**the `elements-angular` peers untouched at `>=18.0.0`**, which
+`check:binding-peers` enforces.
+
+**What actually blocks it is the environment, not the dependency graph.**
+Angular 22 declares `engines.node: ^22.22.3 || ^24.15.0 || >=26.0.0`. A
+container on Node 22.22.2 -- one patch below the floor -- cannot build it,
+cannot run `test:angular`, and cannot run the 108-element Angular consumer
+smoke, which are precisely the three checks this change needs. The same
+container had npm 10.9.7 where `engines` asks for `>=11.0.0`, and npm 10 threw
+ERESOLVE on the move while reporting the nested
+`@analogjs/vite-plugin-angular@2.8.0` it could not replace; whether npm 11
+resolves it is untested, because there was no point generating a lockfile with
+the wrong tool for a change that could not then be validated. CI runs Node
+24.22 and npm 11.19, so **do this where the engines are satisfied** and let the
+Angular build, `test:angular` and the consumer smoke be the proof.
