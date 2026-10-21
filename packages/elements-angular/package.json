@@ -46,7 +46,7 @@
     "@angular/compiler-cli": "^21.2.25",
     "@angular/platform-browser": "^21.2.25",
     "@vitest/browser-playwright": "^4.1.11",
-    "ng-packagr": "^21.2.7",
+    "ng-packagr": "^22.2.4",
     "vitest": "^4.1.11",
     "zone.js": "^0.16.3"
   },
