@@ -46,8 +46,14 @@ From `color.semantic`: groups `background`, `text`, `border`, `action`, `status`
   `semantic/action/primary` → `brand/700` in Light, `brand/600` in Dark).
 - This is the single most valuable part of the kit: flipping the mode flips the
   whole design to dark, exactly like `[data-theme='dark']` does in CSS.
-- Mirror the dark-mode overrides already defined in
-  `packages/tokens/src/theme.css` (the `[data-theme='dark']` block).
+- Both modes are on the token: each `color.semantic.*` carries its light value
+  as `$value` and its dark value under `$extensions['pitchfork.dark']`, so one
+  token is one Figma variable with two modes and nothing has to be read out of
+  a stylesheet. The `[data-theme='dark']` block in
+  `packages/tokens/dist/css/dark-semantic.css` is generated from those
+  extensions; `packages/tokens/src/theme.css` keeps only `color-scheme` and the
+  `--pf-*` component overrides, which are not tokens and have no Figma
+  equivalent.
 
 ### 1c. Typography
 
@@ -214,7 +220,7 @@ These double as marketing screenshots for the Community listing.
 - Components: `packages/react/src/components/*` (one folder each, 65 total)
 - Public API surface: `packages/react/src/index.ts`
 - Tokens (primitives + semantic + dark mode): `packages/tokens/src/tokens/*.json`
-  and the `[data-theme='dark']` block in `packages/tokens/src/theme.css`
+  — one file, both modes, the dark value under `$extensions['pitchfork.dark']`
 - Icons: `packages/react/src/components/Icon/Icon.tsx` (`customIcons` + FA regular)
 - Live reference: Storybook at `lelandrangel.com/pitchfork-ui`
 - Patterns to recreate: `apps/docs/src/patterns/*.stories.tsx`

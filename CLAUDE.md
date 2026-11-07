@@ -217,7 +217,27 @@ Example from a component CSS file:
 
 Token names (`--color-*`, `--space-*`, `--size-*`, `--font-*`, `--radius-*`, `--shadow-*`) come from Style Dictionary and must not be used directly in component CSS — go through a `theme.css` alias. Add new aliases to `packages/tokens/src/theme.css` as needed.
 
-Dark mode is handled via `[data-theme='dark']` in `theme.css` — component CSS needs no dark mode selectors.
+Dark mode is handled via `[data-theme='dark']` — component CSS needs no dark
+mode selectors. The semantic colours in that block are **generated**: each
+`color.semantic.*` token carries its dark value under
+`$extensions['pitchfork.dark']` and `style-dictionary.config.mjs` writes
+`dist/css/dark-semantic.css`, which `theme.css` imports. So a new semantic
+colour needs both modes on the token, and never a hand-written
+`--color-semantic-*` line in `theme.css` — `npm run check:token-modes` refuses
+both. A `--pf-*` alias still belongs in `theme.css`, and an
+alias for anything that should differ between modes has to name the **semantic
+token**, never the primitive underneath it. Some aliases do name a primitive
+and are right to — a chart series wants `--color-brand-400` in both modes —
+but a primitive cannot move, so an alias that names one is a mode that will
+not flip. Measured: 86 of the 542 `:root` aliases name a colour primitive and
+51 of those have no dark-block override, which `todo.md` carries as the audit
+this change did not do. That is how `--pf-control-border-disabled` left a disabled
+control border at 14.48:1 on the dark background while its enabled counterpart
+moved to 3.75:1: the disabled control read as the more prominent of the two,
+and no contrast check could say so, because WCAG exempts disabled controls.
+`scripts/smoke-consumer.mjs` measures that one pair against a real build now,
+in dark mode — in light mode both resolve to the same primitive whether the
+fix is in or not, so the light-mode comparison is vacuous.
 
 ### Responsive breakpoints
 

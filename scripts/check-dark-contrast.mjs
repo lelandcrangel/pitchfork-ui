@@ -3,7 +3,7 @@
  * Resolves the CSS variable chain from theme.css dark block and reports failures.
  */
 
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -27,12 +27,20 @@ function flattenTokens(node, path = []) {
 
 const TOKEN_HEX = flattenTokens(colorTokens);
 
-// ─── Dark mode token aliases (read from theme.css, not copied) ───────────────
+// ─── Dark mode token aliases (read from the stylesheet, not copied) ─────────
 // This used to be a hand-maintained mirror of the [data-theme='dark'] block.
 // A checker that validates a copy of the thing it is checking will eventually
 // pass while the real stylesheet is broken, so it parses the stylesheet.
+//
+// That stylesheet is now generated. The semantic colours moved onto the tokens
+// as $extensions['pitchfork.dark'] and style-dictionary writes the dark block,
+// so the file that ships is dist/css/dark-semantic.css and this reads that one.
+// Reading color.json's extensions instead would be a shortcut worth refusing:
+// it would audit the input to the generator rather than its output, which is
+// the same mistake as auditing a copy. CI builds tokens before this runs; on a
+// bare checkout it says which command to run rather than finding no aliases.
 
-const THEME_CSS = resolve(root, 'packages/tokens/src/theme.css');
+const THEME_CSS = resolve(root, 'packages/tokens/dist/css/dark-semantic.css');
 
 // Walks braces rather than searching for a closing delimiter. `indexOf('\n}')`
 // looked fine but only guesses where the block ends: indent that brace and it
@@ -66,6 +74,12 @@ function extractBlock(css, marker) {
 }
 
 function readDarkAliases() {
+  if (!existsSync(THEME_CSS)) {
+    throw new Error(
+      `${THEME_CSS} is not there — run \`npm run build:tokens\` first. The dark block is ` +
+        'generated from the tokens now, so there is nothing to audit until it is built.',
+    );
+  }
   const css = readFileSync(THEME_CSS, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
   const block = extractBlock(css, "[data-theme='dark']");
   const aliases = {};

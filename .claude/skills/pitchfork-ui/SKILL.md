@@ -37,7 +37,7 @@ repository, the source in `packages/react/src/components/` is authoritative.
   through a CSS variable. In component CSS, use a `--pf-*` theme alias, not a
   raw `--color-*` token.
 - **Semantic HTML first.** A `<button>`, never a `<div role="button">`.
-- **Dark mode is automatic** via `[data-theme='dark']` in `theme.css`. Component
+- **Dark mode is automatic** via `[data-theme='dark']` on an ancestor. Component
   CSS must not contain dark-mode selectors.
 - **Mobile-first.** Base styles target small screens; widen in `@media (--sm)`,
   `(--md)`, `(--lg)`. Never write a raw pixel breakpoint.
