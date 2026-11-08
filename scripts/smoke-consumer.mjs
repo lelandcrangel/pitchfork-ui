@@ -1193,13 +1193,36 @@ try {
           const dialog = el?.shadowRoot?.querySelector('dialog');
           const panel = el?.shadowRoot?.querySelector('[part="panel"]');
           if (!dialog?.open || !panel) return null;
+          /*
+           * The first frame of the slide, held still. The v0.29 review saw the
+           * panel overshoot and snap back: the UA gives a modal dialog
+           * `overflow: auto`, the panel's starting transform overflowed it,
+           * and `showModal()` focusing the close button scrolled the dialog to
+           * cancel the transform out. Layout then held the panel at rest while
+           * the compositor animated it, and the two disagreed. At t=0 the
+           * dialog must not have scrolled, and the panel must start past the
+           * viewport's edge. Then the slide is finished, so the resting
+           * position below is read at rest rather than mid-flight.
+           */
+          const animation = panel.getAnimations()[0];
+          let start = null;
+          if (animation) {
+            animation.pause();
+            animation.currentTime = 0;
+            start = {
+              scrollLeft: Math.round(dialog.scrollLeft),
+              left: Math.round(panel.getBoundingClientRect().left),
+            };
+            animation.finish();
+          }
           const box = panel.getBoundingClientRect();
           return {
             right: Math.round(box.right),
             left: Math.round(box.left),
             width: Math.round(box.width),
             viewport: window.innerWidth,
-            animations: panel.getAnimations().length,
+            start,
+            animations: animation ? 1 : 0,
             animationName: getComputedStyle(panel).animationName,
             animationDuration: getComputedStyle(panel).animationDuration,
             overflow: document.documentElement.style.overflow,
@@ -1239,6 +1262,16 @@ try {
             `(animation-name "${opened.animationName}", duration ` +
             `"${opened.animationDuration}") — a @keyframes copy or a motion ` +
             'token is missing',
+        );
+      }
+      if (
+        opened.start &&
+        (opened.start.scrollLeft !== 0 || opened.start.left < opened.viewport - 1)
+      ) {
+        problems.push(
+          `pf-slideout-menu's first frame has the dialog scrolled ${opened.start.scrollLeft}px ` +
+            `and the panel at x=${opened.start.left} of ${opened.viewport} — focus scrolled the ` +
+            'dialog to cancel the slide, so the panel jumps instead of sliding in',
         );
       }
       if (opened.overflow !== 'hidden') {

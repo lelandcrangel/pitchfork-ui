@@ -653,6 +653,22 @@ Things that differ from the React library, learned by porting the first two:
   and a light-DOM button cannot take it back — so `pf-modal` needs none of
   core's `trapFocus`. The one thing `showModal()` does **not** do is lock page
   scroll, also measured, so the element does that itself.
+- **A modal `<dialog>` is a scroll container, and focus scrolls it.** The UA
+  gives `dialog:modal` `overflow: auto`. `pf-slideout-menu`'s panel starts
+  translated off the edge, which overflows the dialog, and `showModal()`
+  focuses the close button — so the dialog scrolled to bring it into view,
+  by exactly the transform. Measured with the slide paused at five points:
+  `scrollLeft` equalled the transform at every one and the panel's laid-out
+  position never moved, while the compositor animated it anyway, and a
+  designer saw it overshoot and snap back. `overflow: hidden` measures the
+  same, because a `hidden` box is still a scroll container that focus can
+  scroll; `overflow: clip` is not one. `pf-modal` escapes by geometry (its
+  8px rise fits inside the dialog's 16px padding) and `pf-command-palette`
+  by direction (nothing scrolls into negative overflow), so any new overlay
+  that slides a panel in from an edge needs `clip` on its dialog. Read the
+  first frame by pausing the animation at `currentTime = 0`: a check that
+  samples frames sees a panel that looks perfectly placed throughout, which
+  is precisely the defect, and a hidden page throttles the frames anyway.
 - **Light-dismiss needs trusted input, so test it with `userEvent`.** A
   synthetic `.click()` or `dispatchEvent(new KeyboardEvent(...))` does not
   trigger it — measured — which makes a test written that way pass whether the
