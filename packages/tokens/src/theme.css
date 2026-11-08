@@ -750,7 +750,6 @@
 
   /* HeaderNavigation aliases */
   --pf-header-nav-bg: var(--color-semantic-background-default);
-  --pf-header-nav-border: var(--color-semantic-border-default);
   --pf-header-nav-text: var(--color-semantic-text-default);
   --pf-header-nav-text-muted: var(--color-semantic-text-muted);
   --pf-header-nav-bg-subtle: var(--color-semantic-background-subtle);

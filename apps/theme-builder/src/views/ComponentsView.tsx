@@ -442,7 +442,6 @@ const MANIFEST: ComponentDef[] = [
     label: 'Header Navigation',
     vars: [
       { var: '--pf-header-nav-bg', label: 'BG', type: 'color' },
-      { var: '--pf-header-nav-border', label: 'Border', type: 'color' },
       { var: '--pf-header-nav-text', label: 'Text', type: 'color' },
       { var: '--pf-header-nav-text-muted', label: 'Muted text', type: 'color' },
       { var: '--pf-header-nav-bg-subtle', label: 'Subtle BG', type: 'color' },

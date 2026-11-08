@@ -782,6 +782,17 @@ Things that differ from the React library, learned by porting the first two:
   `::slotted(item + item)` from the container's sheet. `:host(:first-child)` in
   the child's own sheet says the same thing and needs no coordination — which
   is how `pf-accordion-item` draws a rule above every section but the first.
+- **A rule between sections needs the padding on the sections, not the
+  container.** `pf-popover` padded its panel and slotted everything into it,
+  so a divider a consumer drew between a heading and a list stopped short of
+  both edges, and no consumer markup could fix that. The padding is on its
+  header, body and footer now, which is the `pf-slideout-menu` arrangement.
+  The same review found the mirror image in `pf-button-group`: each button
+  carried the group's outer border, so a selected one painted the group's
+  edge brand-coloured. A group that has an outline draws it on the group, and
+  its children's fills sit inside. Both were caught by a designer looking at a
+  real app, not by a check: the smoke now measures each against the box it
+  must stay within, which is the assertion that would have failed.
 - **`inert` is not implied by a collapsed height.** `pf-accordion-item`'s panel
   animates to a `0fr` grid row with `overflow: hidden`, which hides its content
   and leaves it perfectly focusable: without `inert` on the closed panel, the

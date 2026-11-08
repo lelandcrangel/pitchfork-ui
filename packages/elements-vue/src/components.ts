@@ -772,6 +772,7 @@ export const PfPopover: StencilVueComponent<JSX.PfPopover> = /*@__PURE__*/ defin
   'open',
   'align',
   'label',
+  'heading',
   'dismissable',
   'pfOpenChange'
 ], [

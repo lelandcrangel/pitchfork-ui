@@ -21,13 +21,40 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
   color: var(--pf-popover-text);
-  max-width: min(320px, calc(100vw - 2 * var(--space-4)));
-  padding: var(--space-3);
-  width: max-content;
+  max-width: min(var(--pf-popover-max-width, 320px), calc(100vw - 2 * var(--space-4)));
+  /* The sections carry the padding, so a rule between them reaches the edges. */
+  padding: 0;
+  width: var(--pf-popover-width, max-content);
 }
 
 .panel:focus-visible {
   outline: none;
+}
+
+.header,
+.body,
+.footer {
+  padding: var(--space-3);
+}
+
+.header {
+  border-bottom: 1px solid var(--pf-popover-border);
+}
+
+.heading {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.footer {
+  border-top: 1px solid var(--pf-popover-border);
+}
+
+/* `hidden` has to beat any `display` a consumer gives the part. */
+.footer[hidden] {
+  display: none;
 }
 
 .panel:popover-open {

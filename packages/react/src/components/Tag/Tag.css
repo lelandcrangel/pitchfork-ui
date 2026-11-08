@@ -5,6 +5,13 @@
   gap: var(--space-1);
   min-height: 26px;
   padding: 0 var(--space-2);
+  /*
+   * One line, always: a pill is drawn around one line of text, and at
+   * line-height 1 a wrapped label crowds its two lines into the pill. In a
+   * table this is also what lets the column grow to fit the label instead of
+   * folding it.
+   */
+  white-space: nowrap;
 }
 
 .pf-tag__label {

@@ -11,6 +11,7 @@ import {
   Listen,
   Method,
   Prop,
+  State,
   Watch,
 } from '@stencil/core';
 
@@ -24,9 +25,26 @@ import {
  * `onOutsideInteraction` and it composes with the top-layer stack, so a
  * popover inside a popover closes in the right order.
  *
+ * A panel can be sectioned: `heading` draws a header row and the `footer` slot
+ * a footer row, each with a rule that runs to the panel's edges. The padding
+ * belongs to the sections rather than to the panel for exactly that reason —
+ * a rule drawn inside padded content stops short of both sides, which is what
+ * every consumer drawing their own header used to get. With neither, the
+ * panel looks as it always has: content in a padded box.
+ *
+ * The panel is at most 320px wide, which suits a few controls and is too
+ * narrow for a list of notifications. `--pf-popover-max-width` raises the cap
+ * and `--pf-popover-width` fixes a width; content that cannot fit is otherwise
+ * clipped, because the UA stylesheet gives every `[popover]` `overflow: auto`.
+ *
  * @slot - the trigger.
  * @slot content - the panel's content.
+ * @slot footer - a row pinned below the content, ruled off from it.
  * @part panel - the floating panel.
+ * @part header - the header row, present only when there is a heading.
+ * @part heading - the heading.
+ * @part body - the box the content renders into.
+ * @part footer - the footer row, present only when something is slotted.
  */
 @Component({
   tag: 'pf-popover',
@@ -42,8 +60,11 @@ export class PfPopover {
   /** Which edge of the trigger the panel lines up with. */
   @Prop() align: 'start' | 'end' = 'start';
 
-  /** Accessible name for the panel, which is a dialog. */
+  /** Accessible name for the panel, which is a dialog. Defaults to the heading. */
   @Prop() label?: string;
+
+  /** A heading for the panel, drawn in a header row ruled off from the content. */
+  @Prop() heading?: string;
 
   /**
    * Close on an outside click or Escape. Defaults to true.
@@ -57,7 +78,25 @@ export class PfPopover {
   /** Fires whenever the panel opens or closes, whoever caused it. */
   @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
 
+  /**
+   * Whether anything is slotted into the footer — asked in JS for the reason
+   * `pf-slideout-menu` gives: a wrapper around a `<slot>` cannot be collapsed
+   * from CSS, and an empty footer carries a rule and padding.
+   */
+  @State() hasFooter = false;
+
   private stopObserving?: () => void;
+
+  /* Read on the way in as well as on `slotchange`, so the first paint is right. */
+  componentWillLoad() {
+    this.readFooter();
+  }
+
+  private readFooter() {
+    this.hasFooter = Array.from(this.el.children).some(
+      (child) => child.getAttribute('slot') === 'footer',
+    );
+  }
 
   componentDidLoad() {
     this.syncTrigger();
@@ -190,10 +229,25 @@ export class PfPopover {
           popover={this.dismissable ? 'auto' : 'manual'}
           role="dialog"
           aria-label={this.label}
+          // A same-root IDREF, which resolves; a label wins when both are set.
+          aria-labelledby={!this.label && this.heading ? 'heading' : undefined}
           tabindex="-1"
           onToggle={this.onToggle}
         >
-          <slot name="content" />
+          {this.heading ? (
+            <header class="header" part="header">
+              <h2 class="heading" part="heading" id="heading">
+                {this.heading}
+              </h2>
+            </header>
+          ) : null}
+          <div class="body" part="body">
+            <slot name="content" />
+          </div>
+          {/* Rendered and hidden rather than omitted, so `slotchange` still fires. */}
+          <footer class="footer" part="footer" hidden={!this.hasFooter}>
+            <slot name="footer" onSlotchange={() => this.readFooter()} />
+          </footer>
         </div>
       </Host>
     );

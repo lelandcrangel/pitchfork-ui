@@ -2241,6 +2241,16 @@ export namespace Components {
      * popover while a `manual` one stays open. That is less code than
      * `onOutsideInteraction` and it composes with the top-layer stack, so a
      * popover inside a popover closes in the right order.
+     * A panel can be sectioned: `heading` draws a header row and the `footer` slot
+     * a footer row, each with a rule that runs to the panel's edges. The padding
+     * belongs to the sections rather than to the panel for exactly that reason —
+     * a rule drawn inside padded content stops short of both sides, which is what
+     * every consumer drawing their own header used to get. With neither, the
+     * panel looks as it always has: content in a padded box.
+     * The panel is at most 320px wide, which suits a few controls and is too
+     * narrow for a list of notifications. `--pf-popover-max-width` raises the cap
+     * and `--pf-popover-width` fixes a width; content that cannot fit is otherwise
+     * clipped, because the UA stylesheet gives every `[popover]` `overflow: auto`.
      */
     interface PfPopover {
         /**
@@ -2254,11 +2264,15 @@ export namespace Components {
          */
         "dismissable": boolean;
         /**
+          * A heading for the panel, drawn in a header row ruled off from the content.
+         */
+        "heading"?: string;
+        /**
           * Closes the panel.
          */
         "hide": () => Promise<void>;
         /**
-          * Accessible name for the panel, which is a dialog.
+          * Accessible name for the panel, which is a dialog. Defaults to the heading.
          */
         "label"?: string;
         /**
@@ -5344,6 +5358,16 @@ declare global {
      * popover while a `manual` one stays open. That is less code than
      * `onOutsideInteraction` and it composes with the top-layer stack, so a
      * popover inside a popover closes in the right order.
+     * A panel can be sectioned: `heading` draws a header row and the `footer` slot
+     * a footer row, each with a rule that runs to the panel's edges. The padding
+     * belongs to the sections rather than to the panel for exactly that reason —
+     * a rule drawn inside padded content stops short of both sides, which is what
+     * every consumer drawing their own header used to get. With neither, the
+     * panel looks as it always has: content in a padded box.
+     * The panel is at most 320px wide, which suits a few controls and is too
+     * narrow for a list of notifications. `--pf-popover-max-width` raises the cap
+     * and `--pf-popover-width` fixes a width; content that cannot fit is otherwise
+     * clipped, because the UA stylesheet gives every `[popover]` `overflow: auto`.
      */
     interface HTMLPfPopoverElement extends Components.PfPopover, HTMLStencilElement {
         addEventListener<K extends keyof HTMLPfPopoverElementEventMap>(type: K, listener: (this: HTMLPfPopoverElement, ev: PfPopoverCustomEvent<HTMLPfPopoverElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -8484,6 +8508,16 @@ declare namespace LocalJSX {
      * popover while a `manual` one stays open. That is less code than
      * `onOutsideInteraction` and it composes with the top-layer stack, so a
      * popover inside a popover closes in the right order.
+     * A panel can be sectioned: `heading` draws a header row and the `footer` slot
+     * a footer row, each with a rule that runs to the panel's edges. The padding
+     * belongs to the sections rather than to the panel for exactly that reason —
+     * a rule drawn inside padded content stops short of both sides, which is what
+     * every consumer drawing their own header used to get. With neither, the
+     * panel looks as it always has: content in a padded box.
+     * The panel is at most 320px wide, which suits a few controls and is too
+     * narrow for a list of notifications. `--pf-popover-max-width` raises the cap
+     * and `--pf-popover-width` fixes a width; content that cannot fit is otherwise
+     * clipped, because the UA stylesheet gives every `[popover]` `overflow: auto`.
      */
     interface PfPopover {
         /**
@@ -8497,7 +8531,11 @@ declare namespace LocalJSX {
          */
         "dismissable"?: boolean;
         /**
-          * Accessible name for the panel, which is a dialog.
+          * A heading for the panel, drawn in a header row ruled off from the content.
+         */
+        "heading"?: string;
+        /**
+          * Accessible name for the panel, which is a dialog. Defaults to the heading.
          */
         "label"?: string;
         /**
@@ -10495,6 +10533,7 @@ declare namespace LocalJSX {
         "open": boolean;
         "align": 'start' | 'end';
         "label": string;
+        "heading": string;
         "dismissable": boolean;
     }
     interface PfProgressBarAttributes {
@@ -11546,6 +11585,16 @@ declare module "@stencil/core" {
              * popover while a `manual` one stays open. That is less code than
              * `onOutsideInteraction` and it composes with the top-layer stack, so a
              * popover inside a popover closes in the right order.
+             * A panel can be sectioned: `heading` draws a header row and the `footer` slot
+             * a footer row, each with a rule that runs to the panel's edges. The padding
+             * belongs to the sections rather than to the panel for exactly that reason —
+             * a rule drawn inside padded content stops short of both sides, which is what
+             * every consumer drawing their own header used to get. With neither, the
+             * panel looks as it always has: content in a padded box.
+             * The panel is at most 320px wide, which suits a few controls and is too
+             * narrow for a list of notifications. `--pf-popover-max-width` raises the cap
+             * and `--pf-popover-width` fixes a width; content that cannot fit is otherwise
+             * clipped, because the UA stylesheet gives every `[popover]` `overflow: auto`.
              */
             "pf-popover": LocalJSX.IntrinsicElements["pf-popover"] & JSXBase.HTMLAttributes<HTMLPfPopoverElement>;
             /**

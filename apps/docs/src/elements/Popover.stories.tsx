@@ -10,10 +10,11 @@ const example = elementExamples['pf-popover'];
 
 const meta = {
   title: 'Components/Popover',
-  args: { align: 'start', dismissable: true, open: false, label: 'Filters' },
+  args: { align: 'start', dismissable: true, open: false, heading: 'Invitations' },
   argTypes: {
     align: { control: 'select', options: ['end', 'start'] },
     dismissable: { control: 'boolean' },
+    heading: { control: 'text' },
     label: { control: 'text' },
     open: { control: 'boolean' },
   },

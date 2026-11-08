@@ -1,7 +1,5 @@
 .pf-header-navigation {
   background: var(--pf-header-nav-bg);
-  border: 1px solid var(--pf-header-nav-border);
-  border-radius: var(--radius-md);
   width: 100%;
 }
 

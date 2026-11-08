@@ -1,5 +1,14 @@
+/*
+ * The group draws the outline, and every button's fill sits inside it. The
+ * buttons used to carry the outer border themselves, each lapping a pixel over
+ * the last, which put a selected button's brand-coloured border -- and any
+ * hover fill -- on top of the group's edge instead of within it.
+ */
 :host {
   align-items: stretch;
+  background: var(--pf-buttongroup-bg);
+  border: 1px solid var(--pf-buttongroup-border);
+  border-radius: var(--radius-md);
   display: inline-flex;
   flex-wrap: wrap;
 }

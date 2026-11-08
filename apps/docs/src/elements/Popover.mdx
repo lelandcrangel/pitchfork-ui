@@ -24,6 +24,18 @@ popover while a `manual` one stays open. That is less code than
 `onOutsideInteraction` and it composes with the top-layer stack, so a
 popover inside a popover closes in the right order.
 
+A panel can be sectioned: `heading` draws a header row and the `footer` slot
+a footer row, each with a rule that runs to the panel's edges. The padding
+belongs to the sections rather than to the panel for exactly that reason —
+a rule drawn inside padded content stops short of both sides, which is what
+every consumer drawing their own header used to get. With neither, the
+panel looks as it always has: content in a padded box.
+
+The panel is at most 320px wide, which suits a few controls and is too
+narrow for a list of notifications. `--pf-popover-max-width` raises the cap
+and `--pf-popover-width` fixes a width; content that cannot fit is otherwise
+clipped, because the UA stylesheet gives every `[popover]` `overflow: auto`.
+
 ## Example
 
 <ElementPreview example={elementExamples['pf-popover']} />
@@ -34,7 +46,8 @@ popover inside a popover closes in the right order.
 | --- | --- | --- | --- | --- |
 | `align` | `align` | `"end" \| "start"` | `'start'` | Which edge of the trigger the panel lines up with. |
 | `dismissable` | `dismissable` | `boolean` | `true` | Close on an outside click or Escape. Defaults to true. This is the `auto`/`manual` popover switch: turning it off hands the consumer responsibility for closing, which is what a popover holding an unfinished form wants. |
-| `label` | `label` | `string \| undefined` | — | Accessible name for the panel, which is a dialog. |
+| `heading` | `heading` | `string \| undefined` | — | A heading for the panel, drawn in a header row ruled off from the content. |
+| `label` | `label` | `string \| undefined` | — | Accessible name for the panel, which is a dialog. Defaults to the heading. |
 | `open` | `open` | `boolean` | `false` | Whether the panel is showing. Reflected so the stylesheet can select on it. |
 
 ## Events
@@ -56,11 +69,16 @@ popover inside a popover closes in the right order.
 | --- | --- |
 | _(default)_ | the trigger. |
 | `content` | the panel's content. |
+| `footer` | a row pinned below the content, ruled off from it. |
 
 ## Shadow parts
 
 | Part | Description |
 | --- | --- |
+| `body` | the box the content renders into. |
+| `footer` | the footer row, present only when something is slotted. |
+| `header` | the header row, present only when there is a heading. |
+| `heading` | the heading. |
 | `panel` | the floating panel. |
 
 ## Usage
