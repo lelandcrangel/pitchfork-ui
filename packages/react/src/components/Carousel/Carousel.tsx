@@ -149,7 +149,7 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
             goToIndex(resolvedActiveIndex - 1);
           }}
         >
-          <Icon name="square-caret-left" aria-hidden />
+          <Icon name="previous" aria-hidden />
         </button>
 
         {showIndicators && totalSlides > 1 ? (
@@ -187,7 +187,7 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(function Carou
             goToIndex(resolvedActiveIndex + 1);
           }}
         >
-          <Icon name="square-caret-right" aria-hidden />
+          <Icon name="next" aria-hidden />
         </button>
       </div>
     </div>

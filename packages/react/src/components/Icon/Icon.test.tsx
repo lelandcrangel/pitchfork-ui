@@ -1,7 +1,7 @@
 import { faPaperPlane, faStar } from '@fortawesome/free-regular-svg-icons';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { BUNDLED_FA_ICON_NAMES } from '@pitchfork-ui/core';
+import { BUNDLED_FA_ICON_NAMES, fromLucide, getIconRoles } from '@pitchfork-ui/core';
 import { Icon, getAvailableIconNames, getCustomIconNames, registerIcons } from './Icon';
 
 describe('Icon', () => {
@@ -136,6 +136,49 @@ describe('Icon', () => {
     expect(glyph('chart-bar')).toBe('star');
     // Not still rendering the icon it replaced.
     expect(glyph('bar-chart')).not.toBe('chart-bar');
+  });
+
+  // ─── Roles, and swapping the set ─────────────────────────────────────────
+
+  // The components ask for roles, so a role this layer cannot draw is a
+  // close button rendering nothing.
+  it('draws every role with nothing registered beyond the bundle', () => {
+    for (const role of getIconRoles()) {
+      expect(glyph(role), role).not.toBeNull();
+    }
+  });
+
+  it('draws a role through the glyph it defaults to', () => {
+    expect(glyph('close')).toBe('circle-xmark');
+    expect(glyph('next')).toBe('square-caret-right');
+    expect(glyph('add')).toBe('inline');
+  });
+
+  // The built-in glyphs used to be looked up first, so a registered chevron
+  // never drew. `chevron-up` because it is not also a role, which would reach
+  // the registry by another route.
+  it('draws a registered icon in place of a built-in glyph', () => {
+    registerIcons({ 'chevron-up': faStar });
+
+    expect(glyph('chevron-up')).toBe('star');
+  });
+
+  it('draws a stroked set with the fill off and the stroke on', () => {
+    registerIcons({
+      'lucide-x': fromLucide([
+        ['path', { d: 'M18 6 6 18' }],
+        ['path', { d: 'm6 6 12 12', 'fill-rule': 'evenodd' }],
+      ]),
+    });
+    const { container } = render(<Icon name="lucide-x" aria-hidden />);
+    const svg = container.querySelector('svg');
+
+    expect(svg?.getAttribute('fill')).toBe('none');
+    expect(svg?.getAttribute('stroke')).toBe('currentColor');
+    expect(svg?.getAttribute('stroke-width')).toBe('2');
+    expect(svg?.querySelectorAll('path')).toHaveLength(2);
+    // Camel-cased for React, which writes the SVG spelling back out.
+    expect(svg?.querySelectorAll('path')[1]?.getAttribute('fill-rule')).toBe('evenodd');
   });
 
   // ─── getAvailableIconNames ───────────────────────────────────────────────

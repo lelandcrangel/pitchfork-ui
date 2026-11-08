@@ -257,7 +257,7 @@ export class PfCalendar {
           disabled={atFirst}
           onClick={() => this.stepMonth(-1)}
         >
-          <pf-icon name="square-caret-left"></pf-icon>
+          <pf-icon name="previous"></pf-icon>
         </button>
 
         <div class="controls">
@@ -307,7 +307,7 @@ export class PfCalendar {
           disabled={atLast}
           onClick={() => this.stepMonth(1)}
         >
-          <pf-icon name="square-caret-right"></pf-icon>
+          <pf-icon name="next"></pf-icon>
         </button>
       </div>
     );

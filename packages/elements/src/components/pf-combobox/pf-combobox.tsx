@@ -460,7 +460,7 @@ export class PfCombobox {
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={this.clear}
               >
-                <pf-icon name="circle-xmark"></pf-icon>
+                <pf-icon name="close"></pf-icon>
               </button>
             )}
 

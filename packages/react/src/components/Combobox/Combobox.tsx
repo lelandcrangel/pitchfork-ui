@@ -265,7 +265,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
               onMouseDown={(event) => event.preventDefault()}
               onClick={clear}
             >
-              <Icon name="circle-xmark" aria-hidden />
+              <Icon name="close" aria-hidden />
             </button>
           ) : null}
           <span

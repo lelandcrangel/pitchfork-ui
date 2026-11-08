@@ -177,7 +177,7 @@ export class PfCodeSnippet {
               onClick={() => this.copy()}
             >
               <pf-icon
-                name={this.failed ? 'triangle-exclamation' : this.copied ? 'circle-check' : 'copy'}
+                name={this.failed ? 'warning' : this.copied ? 'success' : 'copy'}
                 aria-hidden="true"
               ></pf-icon>
               <span>{label}</span>

@@ -146,7 +146,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
               setDisplayMonth((current) => clampToYearRange(addMonths(current, -1)));
             }}
           >
-            <Icon name="square-caret-left" aria-hidden />
+            <Icon name="previous" aria-hidden />
           </button>
 
           <div className="pf-calendar__month-controls">
@@ -193,7 +193,7 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(function Calen
               setDisplayMonth((current) => clampToYearRange(addMonths(current, 1)));
             }}
           >
-            <Icon name="square-caret-right" aria-hidden />
+            <Icon name="next" aria-hidden />
           </button>
         </div>
 

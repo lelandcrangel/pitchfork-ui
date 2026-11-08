@@ -18,10 +18,15 @@ import * as IconStories from './Icon.stories';
 One glyph from the icon registry.
 
 The registry is core's, not this element's, and that is deliberate: a
-consumer calling `registerIcons()` has to get the icon in the React
+consumer calling `registerIconGlyphs()` has to get the icon in the React
 components *and* here, and a registry per layer would silently give them
 one or the other. A name the registry does not hold renders nothing and
 warns once.
+
+`name` takes a role (`close`, `next`, `search`…), which is what the other
+elements ask for, or a glyph name. What is registered wins over the
+built-in glyphs, so swapping in Font Awesome Pro, Lucide or a company set
+changes every icon the library draws — see Foundations → Icons.
 
 ## Example
 
@@ -32,7 +37,7 @@ warns once.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `label` | `label` | `string \| undefined` | — | Accessible name. Without one the icon is decorative and hidden from assistive technology, which is the right default beside a text label. |
-| `name` | `name` | `string` | — | A registered Font Awesome name, one of its aliases, or a custom glyph. |
+| `name` | `name` | `string` | — | A role such as `close` or `next`, a registered name or one of its Font Awesome aliases, or a built-in glyph. |
 
 ## Shadow parts
 

@@ -47,7 +47,7 @@ export class PfTag {
             aria-label={this.dismissLabel}
             onClick={() => this.pfDismiss.emit()}
           >
-            <pf-icon name="circle-xmark"></pf-icon>
+            <pf-icon name="close"></pf-icon>
           </button>
         )}
       </Host>

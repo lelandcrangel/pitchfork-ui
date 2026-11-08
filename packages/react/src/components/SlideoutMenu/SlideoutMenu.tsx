@@ -238,7 +238,7 @@ export function SlideoutMenu({
                   aria-label="Close slideout"
                   onClick={() => onOpenChange?.(false)}
                 >
-                  <Icon name="circle-xmark" aria-hidden />
+                  <Icon name="close" aria-hidden />
                 </button>
               ) : null}
             </header>

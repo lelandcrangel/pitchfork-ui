@@ -142,7 +142,7 @@ export class PfAlert {
               aria-label={this.dismissLabel}
               onClick={() => this.dismiss()}
             >
-              <pf-icon name="circle-xmark" aria-hidden="true"></pf-icon>
+              <pf-icon name="close" aria-hidden="true"></pf-icon>
             </button>
           )}
         </div>

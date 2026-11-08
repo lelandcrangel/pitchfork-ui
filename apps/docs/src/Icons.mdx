@@ -1,0 +1,225 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Icons" />
+
+# Icons
+
+Pitchfork UI draws its own icons out of the box: 15 Font Awesome free-regular
+icons and 13 glyphs of its own (the chevrons, `plus`, `minus`,
+`magnifying-glass` and so on). Any of them can be replaced with whatever set
+your product uses, whether that is Font Awesome Pro in any style, Lucide,
+Heroicons, Phosphor or a company set. One call at startup swaps every icon the
+components draw.
+
+The registry lives in `@pitchfork-ui/core`, so one registration reaches
+`<pf-icon>`, every element that draws an icon, and the React `Icon`.
+
+## Roles
+
+The components do not ask for a Font Awesome name. They ask for a **role**,
+which says what the icon is for, and each role draws a default glyph until you
+register something for it.
+
+| Role           | Default                | Where the components draw it                                         |
+| -------------- | ---------------------- | -------------------------------------------------------------------- |
+| `close`        | `circle-xmark`         | Dismiss on alerts, CTAs and tags; clearing a picker; removing a file |
+| `chevron-down` | `chevron-down`         | Selects, comboboxes, accordions, collapsibles                        |
+| `previous`     | `square-caret-left`    | Calendar months, carousel slides                                     |
+| `next`         | `square-caret-right`   | Calendar months, carousel slides                                     |
+| `search`       | `magnifying-glass`     | The command palette                                                  |
+| `add`          | `plus`                 | The number input's increment                                         |
+| `subtract`     | `minus`                | The number input's decrement                                         |
+| `info`         | `circle-info`          | `variant="info"` alerts and notifications                            |
+| `success`      | `circle-check`         | `variant="success"`; a code snippet once copied                      |
+| `warning`      | `triangle-exclamation` | `variant="warning"`; a copy that failed                              |
+| `danger`       | `circle-xmark`         | `variant="danger"`                                                   |
+| `help`         | `circle-question`      | `pf-inline-cta`'s default icon                                       |
+| `calendar`     | `calendar`             | Date pickers                                                         |
+| `clock`        | `clock`                | The time picker                                                      |
+| `upload`       | `file-arrow-up`        | The file uploader's dropzone                                         |
+| `copy`         | `copy`                 | The code snippet's copy button                                       |
+| `star`         | `star`                 | Ratings                                                              |
+| `more`         | `ellipsis`             | Yours, for an overflow menu                                          |
+
+`getIconRoles()` lists them. Use roles in your own markup too
+(`<pf-icon name="close">`), because then swapping the set swaps your icons as
+well as the library's.
+
+A name resolves in this order:
+
+1. anything registered under that exact name;
+2. for a role, whatever its default resolves to;
+3. a Font Awesome alias of something registered (`bar-chart` for `chart-bar`);
+4. one of the 13 built-in glyphs.
+
+So registering `close` changes every close button and nothing else, and
+registering `circle-xmark` still changes close **and** danger, because both
+default to it. A role is never reached through an alias: Font Awesome's `xmark`
+lists `remove` and `plus` lists `add` among their former names, and registering
+either for some other purpose must not take over the number input.
+
+Two of the roles depend on how the components use them:
+
+- **`chevron-down` has to point down.** The components rotate it with CSS to
+  show that something is open.
+- **`star` is drawn twice by a rating.** The empty star is drawn once, then
+  the same glyph again in the fill colour, clipped to the score. A filled star
+  gives a solid rating. An outline star gives a coloured outline.
+
+## Font Awesome Pro
+
+Pro icons come from your own licensed install of Font Awesome's packages and
+are registered at runtime. Pitchfork UI never bundles them and never depends
+on them. Every Pro style works, including light, thin, sharp and duotone. A
+duotone icon draws its secondary layer at Font Awesome's own 0.4 opacity.
+
+```ts
+import { registerIconSet } from '@pitchfork-ui/core';
+import {
+  faArrowUpFromBracket,
+  faCalendar,
+  faChevronDown,
+  faChevronLeft,
+  faChevronRight,
+  faCircleCheck,
+  faCircleExclamation,
+  faCircleInfo,
+  faCircleQuestion,
+  faClock,
+  faCopy,
+  faEllipsis,
+  faMagnifyingGlass,
+  faMinus,
+  faPlus,
+  faStar,
+  faTriangleExclamation,
+  faXmark,
+} from '@fortawesome/pro-light-svg-icons';
+
+const left = registerIconSet({
+  close: faXmark,
+  'chevron-down': faChevronDown,
+  previous: faChevronLeft,
+  next: faChevronRight,
+  search: faMagnifyingGlass,
+  add: faPlus,
+  subtract: faMinus,
+  info: faCircleInfo,
+  success: faCircleCheck,
+  warning: faTriangleExclamation,
+  danger: faCircleExclamation,
+  help: faCircleQuestion,
+  calendar: faCalendar,
+  clock: faClock,
+  upload: faArrowUpFromBracket,
+  copy: faCopy,
+  star: faStar,
+  more: faEllipsis,
+});
+
+// The roles this set did not cover, still drawn by the built-in glyphs.
+if (left.length > 0) console.warn('Built-in icons still in use for:', left);
+```
+
+`registerIconSet` returns the roles your set left on the defaults. A set that
+misses one still draws a built-in glyph in that spot, next to a UI drawn in
+something else, and the list tells you where. A role counts as covered when
+the set names either the role or its default glyph name.
+
+Glyph names keep working. If your markup already says
+`<pf-icon name="circle-check">`, registering `'circle-check': faCircleCheck`
+changes it.
+
+## Lucide
+
+The `lucide` package exports each icon as an `IconNode`, a list of
+`[tag, attributes]` pairs. The registry converts it with `fromLucide`, which
+also covers any other set that ships the same shape. Lucide is stroked, and
+each icon draws as a line in `currentColor` at its own weight.
+
+```ts
+import { registerIconSet } from '@pitchfork-ui/core';
+import {
+  Calendar,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  CircleAlert,
+  CircleCheck,
+  CircleHelp,
+  Clock,
+  Copy,
+  Ellipsis,
+  Info,
+  Minus,
+  Plus,
+  Search,
+  Star,
+  TriangleAlert,
+  Upload,
+  X,
+} from 'lucide';
+
+registerIconSet({
+  close: X,
+  'chevron-down': ChevronDown,
+  previous: ChevronLeft,
+  next: ChevronRight,
+  search: Search,
+  add: Plus,
+  subtract: Minus,
+  info: Info,
+  success: CircleCheck,
+  warning: TriangleAlert,
+  danger: CircleAlert,
+  help: CircleHelp,
+  calendar: Calendar,
+  clock: Clock,
+  upload: Upload,
+  copy: Copy,
+  star: Star,
+  more: Ellipsis,
+});
+```
+
+`lucide-react` exports components rather than nodes, so import from `lucide`
+even in a React app. It is tree-shaken the same way. For a set on another
+grid or weight, pass the difference: `fromLucide(node, { viewBox: '0 0 20 20',
+strokeWidth: 1.5 })`.
+
+## Any other set
+
+Everything the registry holds is an `IconGlyph`: a `viewBox`, whether the
+glyph is stroked or filled, and a list of shapes (`path`, `polyline`,
+`polygon`, `circle`, `ellipse`, `rect`, `line`). Each shape can override the
+fill, the stroke, the opacity or the fill rule. A Heroicons, Phosphor or
+company icon is written, or generated, in that shape:
+
+```ts
+import { registerIconGlyphs, type IconGlyph } from '@pitchfork-ui/core';
+
+const close: IconGlyph = {
+  viewBox: '0 0 24 24',
+  strokeWidth: 1.5,
+  shapes: [{ kind: 'path', d: 'M6 18 18 6M6 6l12 12' }],
+};
+
+const solidCheck: IconGlyph = {
+  viewBox: '0 0 24 24',
+  filled: true,
+  shapes: [{ kind: 'path', d: 'M2.25 12c0-5.385…', fillRule: 'evenodd' }],
+};
+
+registerIconGlyphs({ close, success: solidCheck });
+```
+
+If your set has a different shape of its own, `registerIconSet(icons, convert)`
+runs `convert` over each value first.
+
+Colour is not part of a glyph. Every paint is `currentColor` or `none`, so an
+icon always takes the colour of the element it sits in. The token chain keeps
+working whichever set draws the icons.
+
+**Register before the first render.** A `<pf-icon>` draws when it renders, and
+a registration does not re-render the icons already on the page. Put the call
+at your application's entry point, before you mount anything.

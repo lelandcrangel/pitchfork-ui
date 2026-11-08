@@ -549,7 +549,7 @@ export class PfDateRangePicker {
                 disabled={this.disabled}
                 onClick={this.clear}
               >
-                <pf-icon name="circle-xmark"></pf-icon>
+                <pf-icon name="close"></pf-icon>
               </button>
             )}
           </div>
@@ -588,7 +588,7 @@ export class PfDateRangePicker {
                 this.leftMonth = this.clamp(addMonths(this.leftMonth, -1));
               }}
             >
-              <pf-icon name="square-caret-left"></pf-icon>
+              <pf-icon name="previous"></pf-icon>
             </button>
             <button
               type="button"
@@ -598,7 +598,7 @@ export class PfDateRangePicker {
                 this.leftMonth = this.clamp(addMonths(this.leftMonth, 1));
               }}
             >
-              <pf-icon name="square-caret-right"></pf-icon>
+              <pf-icon name="next"></pf-icon>
             </button>
           </div>
 

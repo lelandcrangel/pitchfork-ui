@@ -1477,10 +1477,14 @@ export namespace Components {
     /**
      * One glyph from the icon registry.
      * The registry is core's, not this element's, and that is deliberate: a
-     * consumer calling `registerIcons()` has to get the icon in the React
+     * consumer calling `registerIconGlyphs()` has to get the icon in the React
      * components *and* here, and a registry per layer would silently give them
      * one or the other. A name the registry does not hold renders nothing and
      * warns once.
+     * `name` takes a role (`close`, `next`, `search`…), which is what the other
+     * elements ask for, or a glyph name. What is registered wins over the
+     * built-in glyphs, so swapping in Font Awesome Pro, Lucide or a company set
+     * changes every icon the library draws — see Foundations → Icons.
      */
     interface PfIcon {
         /**
@@ -1488,7 +1492,7 @@ export namespace Components {
          */
         "label"?: string;
         /**
-          * A registered Font Awesome name, one of its aliases, or a custom glyph.
+          * A role such as `close` or `next`, a registered name or one of its Font Awesome aliases, or a built-in glyph.
          */
         "name": string;
     }
@@ -1525,8 +1529,8 @@ export namespace Components {
          */
         "exiting": boolean;
         /**
-          * An icon name from the same registry as `pf-icon`.
-          * @default 'circle-question'
+          * An icon name from the same registry as `pf-icon`: a role such as `help`, or a glyph name.
+          * @default 'help'
          */
         "icon": string;
         /**
@@ -4850,10 +4854,14 @@ declare global {
     /**
      * One glyph from the icon registry.
      * The registry is core's, not this element's, and that is deliberate: a
-     * consumer calling `registerIcons()` has to get the icon in the React
+     * consumer calling `registerIconGlyphs()` has to get the icon in the React
      * components *and* here, and a registry per layer would silently give them
      * one or the other. A name the registry does not hold renders nothing and
      * warns once.
+     * `name` takes a role (`close`, `next`, `search`…), which is what the other
+     * elements ask for, or a glyph name. What is registered wins over the
+     * built-in glyphs, so swapping in Font Awesome Pro, Lucide or a company set
+     * changes every icon the library draws — see Foundations → Icons.
      */
     interface HTMLPfIconElement extends Components.PfIcon, HTMLStencilElement {
     }
@@ -7717,10 +7725,14 @@ declare namespace LocalJSX {
     /**
      * One glyph from the icon registry.
      * The registry is core's, not this element's, and that is deliberate: a
-     * consumer calling `registerIcons()` has to get the icon in the React
+     * consumer calling `registerIconGlyphs()` has to get the icon in the React
      * components *and* here, and a registry per layer would silently give them
      * one or the other. A name the registry does not hold renders nothing and
      * warns once.
+     * `name` takes a role (`close`, `next`, `search`…), which is what the other
+     * elements ask for, or a glyph name. What is registered wins over the
+     * built-in glyphs, so swapping in Font Awesome Pro, Lucide or a company set
+     * changes every icon the library draws — see Foundations → Icons.
      */
     interface PfIcon {
         /**
@@ -7728,7 +7740,7 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
-          * A registered Font Awesome name, one of its aliases, or a custom glyph.
+          * A role such as `close` or `next`, a registered name or one of its Font Awesome aliases, or a built-in glyph.
          */
         "name": string;
     }
@@ -7761,8 +7773,8 @@ declare namespace LocalJSX {
          */
         "exiting"?: boolean;
         /**
-          * An icon name from the same registry as `pf-icon`.
-          * @default 'circle-question'
+          * An icon name from the same registry as `pf-icon`: a role such as `help`, or a glyph name.
+          * @default 'help'
          */
         "icon"?: string;
         /**
@@ -11308,10 +11320,14 @@ declare module "@stencil/core" {
             /**
              * One glyph from the icon registry.
              * The registry is core's, not this element's, and that is deliberate: a
-             * consumer calling `registerIcons()` has to get the icon in the React
+             * consumer calling `registerIconGlyphs()` has to get the icon in the React
              * components *and* here, and a registry per layer would silently give them
              * one or the other. A name the registry does not hold renders nothing and
              * warns once.
+             * `name` takes a role (`close`, `next`, `search`…), which is what the other
+             * elements ask for, or a glyph name. What is registered wins over the
+             * built-in glyphs, so swapping in Font Awesome Pro, Lucide or a company set
+             * changes every icon the library draws — see Foundations → Icons.
              */
             "pf-icon": LocalJSX.IntrinsicElements["pf-icon"] & JSXBase.HTMLAttributes<HTMLPfIconElement>;
             /**

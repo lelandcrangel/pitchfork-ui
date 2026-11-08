@@ -100,7 +100,7 @@ export const Notification = forwardRef<HTMLDivElement, NotificationProps>(
             aria-label="Dismiss notification"
             onClick={startExit}
           >
-            <Icon name="circle-xmark" aria-hidden />
+            <Icon name="close" aria-hidden />
           </button>
         ) : null}
       </div>

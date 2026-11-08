@@ -145,6 +145,22 @@ pf-table::part(cell) {
 Dark mode works the same way it does for the React components:
 `[data-theme='dark']` on an ancestor, with no per-element handling.
 
+## Icons
+
+The elements ask for icons by **role**, such as `close`, `next`, `search` or
+`warning`, not by Font Awesome name. One `registerIconSet()` call from
+`@pitchfork-ui/core` swaps every icon they draw for Font Awesome Pro, Lucide
+or a set of your own. What you register wins over the built-in glyphs.
+Register at startup, before the first render. Foundations → Icons lists the
+roles and has an example for each set.
+
+```ts
+import { registerIconSet } from '@pitchfork-ui/core';
+import { X, ChevronDown } from 'lucide';
+
+registerIconSet({ close: X, 'chevron-down': ChevronDown });
+```
+
 ## Where the element API differs from the React one
 
 Most components take the same props. The differences are all consequences of

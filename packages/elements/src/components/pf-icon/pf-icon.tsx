@@ -1,7 +1,7 @@
-import { getIconPaths, normalizeIconName, resolveIconGlyph } from '@pitchfork-ui/core';
+import { resolveIconGlyph } from '@pitchfork-ui/core';
 import { Component, h, Host, Prop } from '@stencil/core';
 import { registerBundledIcons } from './bundled-icons';
-import { renderCustomIcon } from './custom-icons';
+import { renderGlyph } from './render-glyph';
 
 // Called rather than imported for its side effect: a side-effect-only
 // import is something a bundler may drop, and did.
@@ -16,7 +16,8 @@ const warnUnknown = (name: string) => {
   // this warning to exactly that, and unknown names failed in silence.
   console.warn(
     `[pitchfork-ui] <pf-icon name="${name}"> is not registered, so nothing was drawn. ` +
-      `Register it with registerIconGlyphs({ '${name}': <the icon> }) from @pitchfork-ui/core.`,
+      `Register it with registerIconGlyphs({ '${name}': <the icon> }) from @pitchfork-ui/core, ` +
+      'or use one of the roles getIconRoles() lists.',
   );
 };
 
@@ -24,10 +25,15 @@ const warnUnknown = (name: string) => {
  * One glyph from the icon registry.
  *
  * The registry is core's, not this element's, and that is deliberate: a
- * consumer calling `registerIcons()` has to get the icon in the React
+ * consumer calling `registerIconGlyphs()` has to get the icon in the React
  * components *and* here, and a registry per layer would silently give them
  * one or the other. A name the registry does not hold renders nothing and
  * warns once.
+ *
+ * `name` takes a role (`close`, `next`, `search`…), which is what the other
+ * elements ask for, or a glyph name. What is registered wins over the
+ * built-in glyphs, so swapping in Font Awesome Pro, Lucide or a company set
+ * changes every icon the library draws — see Foundations → Icons.
  *
  * @part svg - the rendered glyph.
  */
@@ -37,7 +43,10 @@ const warnUnknown = (name: string) => {
   shadow: true,
 })
 export class PfIcon {
-  /** A registered Font Awesome name, one of its aliases, or a custom glyph. */
+  /**
+   * A role such as `close` or `next`, a registered name or one of its Font
+   * Awesome aliases, or a built-in glyph.
+   */
   @Prop() name!: string;
 
   /**
@@ -47,10 +56,9 @@ export class PfIcon {
   @Prop() label?: string;
 
   render() {
-    const custom = renderCustomIcon(this.name) ?? renderCustomIcon(normalizeIconName(this.name));
-    const glyph = custom ? undefined : resolveIconGlyph(this.name);
+    const glyph = resolveIconGlyph(this.name);
 
-    if (!custom && !glyph) {
+    if (!glyph) {
       warnUnknown(this.name);
       return null;
     }
@@ -61,28 +69,8 @@ export class PfIcon {
         aria-label={this.label}
         aria-hidden={this.label ? null : 'true'}
       >
-        {custom ?? this.renderGlyph(glyph!)}
+        {renderGlyph(glyph)}
       </Host>
-    );
-  }
-
-  private renderGlyph(glyph: NonNullable<ReturnType<typeof resolveIconGlyph>>) {
-    const { viewBox, paths } = getIconPaths(glyph);
-
-    return (
-      <svg
-        part="svg"
-        width="1em"
-        height="1em"
-        viewBox={viewBox}
-        fill="currentColor"
-        focusable="false"
-        aria-hidden="true"
-      >
-        {paths.map((d) => (
-          <path d={d} />
-        ))}
-      </svg>
     );
   }
 }

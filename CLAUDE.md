@@ -272,7 +272,9 @@ Icons come from `@fortawesome/free-regular-svg-icons` only (the free **regular**
 
 **`Icon` resolves an explicit registry, not the whole regular set.** Each icon is an individual import in `bundledRegularIcons` inside `Icon.tsx`, which is what keeps a consumer's bundle to the icons actually in use. A name outside the registry renders `null` and warns once on the console — `paper-plane` and `comments` are real FA regular icons and neither of them works out of the box.
 
-Custom SVGs (chevrons, `triangle-exclamation`) live in the `customIcons` map in the same file and take precedence over the FA lookup. Add new custom SVGs there when a needed icon isn't in the regular FA set.
+The built-in glyphs (chevrons, `triangle-exclamation`) live in core's
+`CUSTOM_GLYPHS` and are the **last** thing a name resolves to, not the first.
+Add new ones there when a needed icon isn't in the regular FA set.
 
 **The thirteen custom glyphs are data in core, not markup in either layer.**
 `packages/core/src/custom-glyphs.ts` holds each one as a viewBox, a stroke
@@ -317,6 +319,47 @@ registerIcons({ 'paper-plane': faPaperPlane });
 ```
 
 `IconName` is the union of registered names widened with `string`, so editors complete the bundled names while a runtime registration is still accepted. Adding an icon the library's own components need goes in `bundledRegularIcons`, not in consumer code.
+
+### Swapping the set
+
+`apps/docs/src/Icons.mdx` is the consumer-facing page. What a contributor needs:
+
+- **Components ask for a role, never a glyph name.** `ICON_ROLES` in
+  `packages/core/src/icon-roles.ts` maps `close`, `next`, `search`, `warning`
+  and the rest to the glyph each draws by default, and `satisfies` makes a
+  default that nothing draws a compile error. A new icon in a component is a
+  new role (or an existing one), not a new Font Awesome name in the markup —
+  otherwise a Lucide consumer has to register Lucide's `X` under the name
+  `circle-xmark` to change a close button.
+- **Resolution order is registered → role default → FA alias → built-in.**
+  Both layers used to check the built-in glyphs first, which made the thirteen
+  of them unreplaceable: a consumer on Font Awesome Pro got Pro everywhere
+  except the chevrons, `plus` and `magnifying-glass`. A role never resolves
+  through an alias, because Font Awesome's `xmark` lists `remove` and `plus`
+  lists `add` among their former names — which is also why the decrement role
+  is `subtract`.
+- **The registry holds `IconGlyph`, one shape for every set** (`glyph.ts`):
+  a viewBox, stroked or filled, and a list of the seven SVG basic shapes, each
+  able to override fill, stroke, opacity and fill rule. `fromFontAwesome` and
+  `fromLucide` convert on the way in; `glyphElements` decides each shape's
+  attributes once, spelled as SVG spells them, and React camel-cases the one
+  hyphenated name. The FA tuple it replaced could not draw a stroked set, and
+  drew a duotone icon's secondary layer at full opacity — Font Awesome's own
+  renderer (`fontawesome-svg-core` 7.3.1) draws `pathData[0]` as the secondary
+  at 0.4, read from its source.
+- **The React `Icon` still hands a Font Awesome glyph to `FontAwesomeIcon`**,
+  through the `fontAwesome` field `fromFontAwesome` keeps, because `IconProps`
+  are Font Awesome's (`spin`, `size`) and only that renderer honours them.
+- **The registry lives on `globalThis`, under `Symbol.for`.** Stencil bundles
+  core into the elements' own chunks, so a built app has two copies of core —
+  measured: `apps/consumer-react`'s production bundle carried the registry
+  twice — and a module-level `Map` made a consumer's `registerIconGlyphs()`
+  reach their own imports and never `<pf-icon>`. Every unit test passed,
+  because a test imports one copy. The consumer smoke registers a Lucide glyph
+  from the app and reads its computed `fill`, `stroke` and `stroke-width` in
+  the element, which is what caught it. Core's tests delete the key before
+  each fresh import, because a fresh module alone is no longer a fresh
+  registry.
 
 ---
 

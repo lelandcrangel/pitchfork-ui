@@ -18,31 +18,35 @@ import {
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon, type FontAwesomeIconProps } from '@fortawesome/react-fontawesome';
 import {
-  type CustomGlyph as CustomGlyphData,
   type CustomGlyphName,
-  customGlyphAttributes,
-  getCustomGlyphNames,
-  getRegisteredIconNames,
-  normalizeIconName,
+  type IconGlyph,
+  type IconGlyphInput,
+  type IconRole,
+  getAvailableIconNames as availableIconNames,
+  getCustomIconNames as customIconNames,
+  glyphAttributes,
+  glyphElements,
   registerIconGlyphs,
-  resolveCustomGlyph,
   resolveIconGlyph,
 } from '@pitchfork-ui/core';
+import { createElement } from 'react';
 import { cx } from '../../utils/cx';
 import './Icon.css';
 
+/** `fill-rule` to `fillRule`: the one spelling React and SVG disagree on here. */
+const reactAttributeName = (name: string) => name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+
 /**
- * The custom glyphs, rendered from the shared data in @pitchfork-ui/core.
+ * A glyph from core's one shape, whichever set it came from.
  *
  * The geometry used to be written here as JSX and a second time as Stencil JSX
- * in `pf-icon/custom-icons.tsx`. Two copies of a shape agree on the day they
- * are written, and no test in either layer could have seen them stop agreeing,
- * because each one only ever rendered its own. Core holds the shapes; this
- * maps them to React's camelCase presentation attributes.
+ * in `pf-icon`. Core holds the shapes and decides which attributes each one
+ * has (`glyphElements`), spelled as SVG spells them; this camel-cases them for
+ * React.
  */
-function CustomGlyph({ glyph }: { glyph: CustomGlyphData }) {
+function GlyphSvg({ glyph }: { glyph: IconGlyph }) {
   const { viewBox, fill, stroke, strokeWidth, strokeLinecap, strokeLinejoin } =
-    customGlyphAttributes(glyph);
+    glyphAttributes(glyph);
 
   return (
     <svg
@@ -57,13 +61,14 @@ function CustomGlyph({ glyph }: { glyph: CustomGlyphData }) {
       focusable="false"
       aria-hidden="true"
     >
-      {glyph.shapes.map((shape, index) => {
-        if (shape.kind === 'polyline') return <polyline key={index} points={shape.points} />;
-        if (shape.kind === 'circle') {
-          return <circle key={index} cx={shape.cx} cy={shape.cy} r={shape.r} />;
-        }
-        return <path key={index} d={shape.d} />;
-      })}
+      {glyphElements(glyph).map(({ tag, attributes }, index) =>
+        createElement(tag, {
+          key: index,
+          ...Object.fromEntries(
+            Object.entries(attributes).map(([name, value]) => [reactAttributeName(name), value]),
+          ),
+        }),
+      )}
     </svg>
   );
 }
@@ -96,7 +101,7 @@ const bundledRegularIcons = {
 } satisfies Record<string, IconDefinition>;
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-icon>`, or `PfIcon` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
-export type RegisteredIconName = CustomGlyphName | keyof typeof bundledRegularIcons;
+export type RegisteredIconName = IconRole | CustomGlyphName | keyof typeof bundledRegularIcons;
 
 /**
  * A registered name, or any other string: `registerIcons()` can add names at
@@ -115,8 +120,8 @@ export type IconName = RegisteredIconName | (string & {});
 registerIconGlyphs(bundledRegularIcons);
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. The registry itself lives in `@pitchfork-ui/core`; import `registerIcons` from there and one call covers both `Icon` and `<pf-icon>`. */
-export const registerIcons = (icons: Record<string, IconDefinition>) => {
-  registerIconGlyphs(icons);
+export const registerIcons = (icons: Record<string, IconDefinition | IconGlyphInput>) => {
+  registerIconGlyphs(icons as Record<string, IconGlyphInput>);
 
   for (const name of Object.keys(icons)) {
     // A name that failed before may now resolve, so let it warn again if it
@@ -147,17 +152,16 @@ const warnUnknownIcon = (name: string) => {
       'Awesome -- call getAvailableIconNames() to list them, or add this one ' +
       "with registerIcons({ '" +
       name +
-      "': <the icon> }) from @fortawesome/free-regular-svg-icons.",
+      "': <the icon> }) from @fortawesome/free-regular-svg-icons, or any set " +
+      'core can convert. The components ask for roles -- getIconRoles() lists them.',
   );
 };
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Import `getAvailableIconNames` from `@pitchfork-ui/core`. */
-export const getAvailableIconNames = () => {
-  return [...new Set([...getRegisteredIconNames(), ...getCustomGlyphNames()])].sort();
-};
+export const getAvailableIconNames = () => availableIconNames();
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Import `getCustomIconNames` from `@pitchfork-ui/core`. */
-export const getCustomIconNames = () => getCustomGlyphNames();
+export const getCustomIconNames = () => customIconNames();
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-icon>`, or `PfIcon` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
@@ -167,45 +171,42 @@ export interface IconProps extends Omit<FontAwesomeIconProps, 'icon'> {
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-icon>`, or `PfIcon` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export function Icon({ name, label, className, style, ...props }: IconProps) {
-  const normalizedName = normalizeIconName(name);
+  // One lookup, in core, for a role, a registered name, an alias or a
+  // built-in glyph -- in that order. The built-in glyphs used to be checked
+  // here first, so a registered chevron could never replace ours.
+  const glyph = resolveIconGlyph(name);
 
-  // Normalized as well as raw: `legacyAliases` maps `circleInfo` to
-  // `circle-info`, which is a custom SVG -- and a raw-only lookup here meant
-  // that mapping never took effect. `circleInfo` and `magnifyingGlass`
-  // rendered nothing.
-  const customGlyph = resolveCustomGlyph(name) ?? resolveCustomGlyph(normalizedName);
-  if (customGlyph !== undefined) {
-    return (
-      <span
-        className={cx('pf-icon', className)}
-        aria-hidden={label ? undefined : true}
-        aria-label={label}
-        style={style}
-        {...(props as React.HTMLAttributes<HTMLSpanElement>)}
-      >
-        <CustomGlyph glyph={customGlyph} />
-      </span>
-    );
-  }
-
-  // core's registry is structurally typed so that core imports nothing;
-  // everything registered here is a real IconDefinition.
-  const faIcon = resolveIconGlyph(name) as IconDefinition | undefined;
-
-  if (!faIcon) {
+  if (!glyph) {
     warnUnknownIcon(name);
     return null;
   }
 
+  // A Font Awesome icon keeps Font Awesome's renderer, because `IconProps`
+  // are Font Awesome's (`spin`, `size`, `flip`...) and only that renderer
+  // honours them.
+  if (glyph.fontAwesome) {
+    return (
+      <FontAwesomeIcon
+        icon={glyph.fontAwesome as IconDefinition}
+        className={cx('pf-icon', className)}
+        aria-hidden={label ? undefined : true}
+        aria-label={label}
+        style={style}
+        {...props}
+      />
+    );
+  }
+
   return (
-    <FontAwesomeIcon
-      icon={faIcon}
+    <span
       className={cx('pf-icon', className)}
       aria-hidden={label ? undefined : true}
       aria-label={label}
       style={style}
-      {...props}
-    />
+      {...(props as React.HTMLAttributes<HTMLSpanElement>)}
+    >
+      <GlyphSvg glyph={glyph} />
+    </span>
   );
 }
 

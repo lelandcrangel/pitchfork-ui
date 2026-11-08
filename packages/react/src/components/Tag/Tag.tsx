@@ -25,7 +25,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(
           aria-label="Remove tag"
           onClick={() => onDismiss?.()}
         >
-          <Icon name="circle-xmark" aria-hidden />
+          <Icon name="close" aria-hidden />
         </button>
       ) : null}
     </span>

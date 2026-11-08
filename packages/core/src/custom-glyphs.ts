@@ -2,7 +2,7 @@
  * The glyphs the Font Awesome regular set does not carry, as data.
  *
  * Thirteen of them, and until now there were two copies: one as React JSX in
- * `Icon.tsx`, one as Stencil JSX in `pf-icon/custom-icons.tsx`. They agreed,
+ * `Icon.tsx`, one as Stencil JSX in `pf-icon/render-glyph.tsx`. They agreed,
  * which is what two copies do on the day they are written — and neither
  * layer's tests could have seen them diverge, because each one only ever
  * rendered its own.
@@ -14,32 +14,26 @@
  * reason `getIconPaths` returns a viewBox and path strings instead of an
  * `<svg>`.
  *
+ * They are also the *defaults*: a glyph registered under the same name, with
+ * `registerIconGlyphs()`, wins over the one here, so a consumer swapping in
+ * another set replaces these too rather than living with thirteen of ours.
+ *
  * Every glyph is drawn on a 24x24 grid and stroked in `currentColor`, except
  * `ellipsis`, which is three filled dots. A stroked glyph needs no `fill`
  * (SVG's initial `fill` is black, so `none` is not optional) and a filled one
  * needs no stroke, which is what `filled` selects.
  */
 
-/** One drawing primitive. The three the glyph set actually uses. */
-export type CustomGlyphShape =
-  | { readonly kind: 'polyline'; readonly points: string }
-  | { readonly kind: 'path'; readonly d: string }
-  | { readonly kind: 'circle'; readonly cx: number; readonly cy: number; readonly r: number };
+import { type IconGlyph, type IconGlyphShape, glyphAttributes } from './glyph';
 
-export interface CustomGlyph {
-  readonly viewBox: string;
-  /**
-   * Stroke width, in viewBox units. Absent on a filled glyph.
-   *
-   * The chevrons are heavier than everything else (3 against 2) because they
-   * are drawn small, next to text, where a 2-unit stroke reads as grey rather
-   * than as a mark.
-   */
-  readonly strokeWidth?: number;
-  /** Fill the shapes in `currentColor` and do not stroke them. */
-  readonly filled?: boolean;
-  readonly shapes: readonly CustomGlyphShape[];
-}
+/**
+ * The type the built-in glyphs were first written in, before it became the
+ * registry's. Kept so an import of the old name keeps compiling.
+ */
+export type CustomGlyphShape = IconGlyphShape;
+
+/** The registry's glyph type, under the name it had when only these used it. */
+export type CustomGlyph = IconGlyph;
 
 const polyline = (points: string): CustomGlyphShape => ({ kind: 'polyline', points });
 const path = (d: string): CustomGlyphShape => ({ kind: 'path', d });
@@ -129,22 +123,8 @@ export const getCustomGlyphNames = () => Object.keys(CUSTOM_GLYPHS).sort();
 export const resolveCustomGlyph = (name: string): CustomGlyph | undefined =>
   (CUSTOM_GLYPHS as Record<string, CustomGlyph>)[name];
 
-/**
- * The `<svg>` presentation attributes a glyph needs, as values rather than
- * attribute names: the two layers spell the names differently
- * (`strokeWidth` against `stroke-width`), so naming them here would only move
- * the duplication.
- */
-export function customGlyphAttributes(glyph: CustomGlyph) {
-  return {
-    viewBox: glyph.viewBox,
-    fill: glyph.filled ? 'currentColor' : 'none',
-    stroke: glyph.filled ? undefined : 'currentColor',
-    strokeWidth: glyph.filled ? undefined : glyph.strokeWidth,
-    strokeLinecap: glyph.filled ? undefined : ('round' as const),
-    strokeLinejoin: glyph.filled ? undefined : ('round' as const),
-  };
-}
+/** `glyphAttributes`, under the name it had when only these glyphs used it. */
+export const customGlyphAttributes = glyphAttributes;
 
 /**
  * The names of the Font Awesome regular icons both layers bundle.
@@ -173,3 +153,6 @@ export const BUNDLED_FA_ICON_NAMES = [
   'star',
   'user',
 ] as const;
+
+/** A Font Awesome regular icon both layers bundle. */
+export type BundledFaIconName = (typeof BUNDLED_FA_ICON_NAMES)[number];

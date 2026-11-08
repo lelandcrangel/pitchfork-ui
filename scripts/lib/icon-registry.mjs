@@ -15,9 +15,14 @@
  * (`circleCheck`), and a camelCase spelling of any name at all, because both
  * kebab-case before looking up.
  *
- * Three of the four inputs are in `@pitchfork-ui/core` and survive
+ * And the components do not ask for glyph names at all any more: they ask for
+ * a role (`close`, `next`, `search`), which core's `ICON_ROLES` maps to the
+ * glyph it draws by default. A role is a name that resolves, so it is in the
+ * answer too, with its default beside it.
+ *
+ * Four of the five inputs are in `@pitchfork-ui/core` and survive
  * `packages/react`: the custom glyphs, the legacy spellings, and
- * `BUNDLED_FA_ICON_NAMES`. The fourth cannot be shared and is the caller's to
+ * `BUNDLED_FA_ICON_NAMES` and the roles. The fifth cannot be shared and is the caller's to
  * name -- the `name: faXxx` map, which each layer has to write out itself so a
  * consumer's bundle carries only the icons in use. The aliases come from the
  * Font Awesome definitions that map points at, rather than being transcribed.
@@ -108,6 +113,7 @@ const keysIn = (text, declaration, where) =>
 export function readIconRegistry({ bundledFile, declaration }) {
   const glyphSource = readFileSync(join(ROOT, 'packages/core/src/custom-glyphs.ts'), 'utf8');
   const coreSource = readFileSync(join(ROOT, 'packages/core/src/icons.ts'), 'utf8');
+  const roleSource = readFileSync(join(ROOT, 'packages/core/src/icon-roles.ts'), 'utf8');
   const bundledSource = readFileSync(join(ROOT, bundledFile), 'utf8');
 
   const custom = keysIn(glyphSource, 'export const CUSTOM_GLYPHS = {', 'core/custom-glyphs.ts');
@@ -131,7 +137,17 @@ export function readIconRegistry({ bundledFile, declaration }) {
     ].map((m) => [m[1], m[2]]),
   );
 
-  if (custom.length === 0 || bundled.size === 0) {
+  // role -> the glyph name it draws by default. The doc comments between the
+  // entries are skipped because the pattern anchors on the key's indentation.
+  const roles = Object.fromEntries(
+    [
+      ...blockAfter(roleSource, 'export const ICON_ROLES = {', 'core/icon-roles.ts').matchAll(
+        /^ {2}'?([a-zA-Z][a-zA-Z0-9-]*)'?:\s*'([^']+)'/gm,
+      ),
+    ].map((m) => [m[1], m[2]]),
+  );
+
+  if (custom.length === 0 || bundled.size === 0 || Object.keys(roles).length === 0) {
     throw new Error(`icon-registry: parsed an empty registry from ${bundledFile}`);
   }
 
@@ -181,16 +197,33 @@ export function readIconRegistry({ bundledFile, declaration }) {
 
   const fontAwesome = [...bundled.keys()].sort();
 
+  /*
+   * The metadata's half of core's own assertion: a role whose default this
+   * layer cannot draw is a component asking for an empty box, and an agent
+   * told the role is valid would write markup that renders nothing.
+   */
+  const drawable = new Set([...custom, ...fontAwesome]);
+  const unfilled = Object.entries(roles).filter(([, fallback]) => !drawable.has(fallback));
+  if (unfilled.length > 0) {
+    throw new Error(
+      `icon-registry: ${unfilled.map(([role, name]) => `role "${role}" defaults to "${name}"`).join(', ')}, ` +
+        `which ${bundledFile} does not bundle and core does not draw.`,
+    );
+  }
+
   return {
     custom: [...custom].sort(),
     fontAwesome,
     aliases: [...aliases].sort(),
     legacyAliases,
+    roles,
     all: [...new Set([...custom, ...fontAwesome])].sort(),
     note:
       '`all` is what getAvailableIconNames() returns. Icon also resolves ' +
-      'every entry in `aliases`, every key of `legacyAliases`, and a ' +
-      'camelCase spelling of any of them. Anything else renders nothing ' +
-      'until the consumer adds it with registerIcons().',
+      'every key of `roles` (prefer these in markup: a consumer who swaps ' +
+      'the icon set swaps them), every entry in `aliases`, every key of ' +
+      '`legacyAliases`, and a camelCase spelling of any of them. Anything ' +
+      'else renders nothing until the consumer registers it with ' +
+      'registerIconGlyphs() or registerIconSet() from @pitchfork-ui/core.',
   };
 }

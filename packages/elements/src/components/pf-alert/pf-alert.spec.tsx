@@ -43,7 +43,7 @@ describe('pf-alert', () => {
     const { root } = await render('<pf-alert variant="success">Done</pf-alert>');
     const icon = part(root, 'icon')?.querySelector('pf-icon');
 
-    expect(icon?.getAttribute('name')).toBe('circle-check');
+    expect(icon?.getAttribute('name')).toBe('success');
   });
 
   it('offers the icon as a slot, with the variant’s as a fallback', async () => {
@@ -57,8 +57,8 @@ describe('pf-alert', () => {
         ?.getAttribute('name');
 
     expect(part(warning.root, 'icon')?.querySelector('slot[name="icon"]')).toBeTruthy();
-    expect(iconIn(warning.root)).toBe('triangle-exclamation');
-    expect(iconIn(danger.root)).toBe('circle-xmark');
+    expect(iconIn(warning.root)).toBe('warning');
+    expect(iconIn(danger.root)).toBe('danger');
   });
 
   it('shows the description when it has one', async () => {

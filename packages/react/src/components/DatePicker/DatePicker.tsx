@@ -186,7 +186,7 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
               disabled={disabled}
               onClick={clearDate}
             >
-              <Icon name="circle-xmark" aria-hidden />
+              <Icon name="close" aria-hidden />
             </button>
           ) : null}
         </div>
