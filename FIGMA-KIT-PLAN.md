@@ -7,6 +7,99 @@ package.
 **Goal:** designers can assemble screens in Figma using the same components,
 variants, and tokens that engineers use in code — so design and build stay 1:1.
 
+**This plan predates the elements.** It is written against
+`@pitchfork-ui/react`, which is in retirement. The components to mirror are the
+**108 custom elements** in `packages/elements`; `elements.json` is the API to
+build from, and the component lists in sections 3 and 5 below need rereading
+against it. The token work in section 1 is unaffected, because both layers read
+the same tokens.
+
+---
+
+## Status
+
+### Step 1 is done and shipped: both colour modes live on the token
+
+`color.semantic.*` used to hold only its light value, with the dark value
+hand-written in `theme.css` — two files, nothing relating them. A Figma
+variable with a Light and a Dark mode needs both values from one place, so that
+had to be fixed before any export could be written.
+
+Each semantic colour now carries its dark value under
+`$extensions['pitchfork.dark']`, and `style-dictionary.config.mjs` generates
+`dist/css/dark-semantic.css` from it. Merged in #162, live on
+lelandrangel.com/pitchfork-ui. `npm run check:token-modes` refuses a semantic
+colour with only one mode.
+
+**It also found a real defect**, which is the argument for doing this before
+anything else: `color.semantic.border.disabled` had no dark value at all,
+because `--pf-control-border-disabled` named the `gray-200` _primitive_. A
+primitive cannot move between modes, so a disabled control border sat at
+14.48:1 on the dark background while its enabled counterpart moved to 3.75:1 —
+the disabled control read as the _more prominent_ of the two. WCAG exempts
+disabled controls, so no contrast check could see it.
+
+### What the tokens actually are, measured
+
+Re-measure before relying on these; they are current as of November 2026.
+
+|                                 | count   | notes                                                          |
+| ------------------------------- | ------- | -------------------------------------------------------------- |
+| colour tokens                   | **85**  | 52 primitive, 33 semantic — the 33 are the ones with two modes |
+| `size.json`                     | 26      | 25 in `rem`, 1 in `px`                                         |
+| `typography.json`               | 16      |                                                                |
+| `motion.json`                   | 6       | no Figma equivalent; documentation only                        |
+| `shadow.json`                   | 4       | single CSS strings — see below                                 |
+| **total tokens**                | **137** | across all five files                                          |
+| `--pf-*` aliases in `theme.css` | **581** | the component layer; **not** Figma variables                   |
+
+The `--pf-*` layer is deliberately **out of scope for Figma**. It is 581
+component-specific aliases whose whole job is to let a consumer retheme without
+touching tokens; a Figma variable per alias would be 581 variables nobody
+picks from a dropdown. Bind Figma components to the **semantic** collection, as
+section 1b says.
+
+### Five things in the CSS that have no Figma equivalent
+
+Each needs a decision in the export, not a transform:
+
+1. **`color-mix()` — 13 uses in `theme.css`.** Figma variables hold a colour,
+   not an expression. Either resolve each to a literal at export time (losing
+   the relationship) or leave those aliases out.
+2. **`var(--x, fallback)` — 6 uses.** A Figma variable has no fallback. The
+   fallback has to be resolved or the alias dropped.
+3. **Shadows are single strings.** `shadow.sm` is
+   `"0 1px 2px rgb(15 23 42 / 0.08)"`; Figma effects need offset, blur, spread
+   and colour as separate fields, so the export has to parse them. All four are
+   simple `x y blur colour` with no spread, which makes the parse tractable —
+   but it is a parse, not a mapping.
+4. **The sans stack is 8 families.** Figma takes one font per text style, so
+   pick the head of the stack and record the fallbacks in the style's
+   description.
+5. **25 of 26 sizes are `rem`.** Figma is pixels. A `×16` transform is right
+   only while the root stays at 16px; state that assumption in the export
+   rather than burying it.
+
+### Figma plan gating — researched, verify before relying
+
+Figma moves these; check against current pricing before building a workflow on
+one. Researched November 2026, against a **Professional** seat:
+
+|                                            | requires                               | available to you  |
+| ------------------------------------------ | -------------------------------------- | ----------------- |
+| Multiple modes per collection (Light/Dark) | paid tier; **free is 1 mode**          | **yes**           |
+| Code Connect                               | Professional+, with a Full or Dev seat | **yes**           |
+| **Variables REST API _writes_**            | **Enterprise**                         | **no**            |
+| Tokens Studio Themes workflow              | Tokens Studio Pro                      | separate purchase |
+
+The consequence shapes everything downstream: **the token sync cannot be
+scripted push-button on a Professional seat.** Section 7's "optional
+automation" note is not available as written. The realistic options are a
+plugin that reads a JSON file (Tokens Studio, or a small purpose-built one), or
+a hand-application pass against a generated checklist. Decide this before
+building 20 components, because it determines whether variables are named to
+be matched by a script or by a person.
+
 ---
 
 ## 0. Guiding principles
@@ -210,15 +303,27 @@ These double as marketing screenshots for the Community listing.
 - When a component gains a variant in code, add the matching Figma property.
 - Bump the Figma file version alongside each npm minor/major release; mirror the
   changelog entry on the Changelog page.
-- **Optional automation:** explore the Figma REST API / a Style-Dictionary Figma
-  Variables export to script the token sync rather than hand-editing.
+- **The REST API route is closed on a Professional seat.** This line used to
+  say "explore the Figma REST API to script the token sync"; variable _writes_
+  are an Enterprise feature, so that is not available (see **Status** above).
+  What is: a Style Dictionary platform emitting a Figma-shaped JSON, applied by
+  a plugin that reads it — Tokens Studio, or a small purpose-built one. Reads
+  through the API work on lower tiers, so a **drift check** is feasible even
+  where the write is not: export the file's variables, diff against
+  `dist/json/tokens.json`, and fail when they disagree. That is worth more than
+  it sounds, because the failure mode here is silent divergence rather than a
+  broken build.
 
 ---
 
 ## Reference — source of truth in this repo
 
-- Components: `packages/react/src/components/*` (one folder each, 65 total)
-- Public API surface: `packages/react/src/index.ts`
+- **Components: `packages/elements/src/components/*` — 108 elements**, and
+  `elements.json` (built by `build-elements-metadata.mjs`) is the machine-readable
+  API: every prop, its type, its enum members, events, slots and parts. Build
+  the variant properties from that rather than from a reading of the source.
+- `packages/react/src/components/*` (65) is the **retiring** layer; use it only
+  to check what an element deliberately does differently.
 - Tokens (primitives + semantic + dark mode): `packages/tokens/src/tokens/*.json`
   — one file, both modes, the dark value under `$extensions['pitchfork.dark']`
 - Icons: `packages/react/src/components/Icon/Icon.tsx` (`customIcons` + FA regular)
