@@ -15,6 +15,18 @@
   height: 100%;
   max-height: 100%;
   max-width: 100%;
+  /*
+   * `clip`, not the UA's `auto` and not `hidden`. The panel starts translated
+   * off the edge, which overflows the dialog, and `showModal()` focuses the
+   * close button -- so a dialog that is a scroll container scrolls itself to
+   * bring the button into view, cancelling the transform. Measured: at every
+   * step of the slide `scrollLeft` equalled the transform and the panel's laid
+   * out position never moved, while the compositor animated it anyway, which
+   * is the overshoot-and-snap-back a reader sees. `hidden` is still a scroll
+   * container that focus can scroll, measured the same; `clip` is not one.
+   * The body keeps its own `overflow-y: auto`, so long content still scrolls.
+   */
+  overflow: clip;
   padding: 0;
   width: 100%;
 }
