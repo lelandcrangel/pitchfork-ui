@@ -270,7 +270,7 @@ export class PfNumberInput {
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => this.step_(-1)}
             >
-              <pf-icon name="minus" aria-hidden="true"></pf-icon>
+              <pf-icon name="subtract" aria-hidden="true"></pf-icon>
             </button>
 
             <input
@@ -307,7 +307,7 @@ export class PfNumberInput {
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => this.step_(1)}
             >
-              <pf-icon name="plus" aria-hidden="true"></pf-icon>
+              <pf-icon name="add" aria-hidden="true"></pf-icon>
             </button>
           </div>
 

@@ -358,7 +358,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                 disabled={disabled}
                 onClick={clearRange}
               >
-                <Icon name="circle-xmark" aria-hidden />
+                <Icon name="close" aria-hidden />
               </button>
             ) : null}
           </div>

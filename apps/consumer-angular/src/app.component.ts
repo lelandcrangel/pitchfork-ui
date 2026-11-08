@@ -1,5 +1,5 @@
 import { Component, computed, ElementRef, signal, viewChild } from '@angular/core';
-import { sortRowsBy, type SortState } from '@pitchfork-ui/core';
+import { fromLucide, registerIconGlyphs, sortRowsBy, type SortState } from '@pitchfork-ui/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   PfAccordion,
@@ -114,6 +114,23 @@ import {
   BooleanValueAccessor,
   NumericValueAccessor,
 } from '@pitchfork-ui/elements-angular';
+
+/*
+ * A stroked glyph registered the way a consumer on another icon set would:
+ * Lucide's `X`, as the `lucide` package exports it, through core's adapter.
+ * The smoke asserts it draws as a line -- `fill: none` and a real stroke --
+ * which is what a renderer built for Font Awesome's filled tuple got wrong.
+ * It also proves the registry the app imports is the one the elements read:
+ * a second copy of core bundled into the elements would leave it blank.
+ * Registered here, beside the markup that uses it, because `check:icons`
+ * only credits a registration to the file that makes it.
+ */
+registerIconGlyphs({
+  'smoke-stroked': fromLucide([
+    ['path', { d: 'M18 6 6 18' }],
+    ['path', { d: 'm6 6 12 12' }],
+  ]),
+});
 
 /**
  * Every element the library ships, used the way an Angular application would —
@@ -239,7 +256,10 @@ import {
   ],
   template: `
     <main data-testid="app">
-      <h1><pf-icon name="circle-check" label="Working"></pf-icon> Angular consumer</h1>
+      <h1>
+        <pf-icon name="circle-check" label="Working"></pf-icon> Angular consumer
+        <pf-icon name="smoke-stroked" data-smoke="stroked-icon"></pf-icon>
+      </h1>
 
       <div class="row">
         <pf-button variant="primary">Save</pf-button>

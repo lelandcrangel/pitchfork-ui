@@ -127,11 +127,13 @@ const fontAwesomeIconNames = new Set([
   ...(iconRegistry.aliases ?? []),
 ]);
 const legacyIconAliases = iconRegistry.legacyAliases ?? {};
+/** The roles the components ask for, which resolve whatever set is registered. */
+const iconRoles = new Set(Object.keys(iconRegistry.roles ?? {}));
 
 const toKebabCase = (value) => value.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
 
 /** The canonical names, for suggesting a correction. */
-export const iconNames = new Set(iconRegistry.all ?? []);
+export const iconNames = new Set([...iconRoles, ...(iconRegistry.all ?? [])]);
 
 /**
  * False for metadata built before `icons` existed, which callers must treat as
@@ -143,5 +145,9 @@ export function resolvesIconName(name) {
   if (customIconNames.has(name)) return true;
 
   const normalized = legacyIconAliases[name] ?? toKebabCase(name);
-  return customIconNames.has(normalized) || fontAwesomeIconNames.has(normalized);
+  return (
+    customIconNames.has(normalized) ||
+    fontAwesomeIconNames.has(normalized) ||
+    iconRoles.has(normalized)
+  );
 }

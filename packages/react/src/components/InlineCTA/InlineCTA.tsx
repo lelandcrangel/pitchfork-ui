@@ -27,7 +27,7 @@ export const InlineCTA = forwardRef<HTMLDivElement, InlineCTAProps>(function Inl
     description,
     action,
     icon,
-    iconName = 'circle-question',
+    iconName = 'help',
     tone = 'default',
     dismissible = false,
     onDismiss,
@@ -82,7 +82,7 @@ export const InlineCTA = forwardRef<HTMLDivElement, InlineCTAProps>(function Inl
           aria-label="Dismiss"
           onClick={startExit}
         >
-          <Icon name="circle-xmark" aria-hidden />
+          <Icon name="close" aria-hidden />
         </button>
       ) : null}
     </div>

@@ -149,7 +149,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => stepBy(-1)}
         >
-          <Icon name="minus" aria-hidden />
+          <Icon name="subtract" aria-hidden />
         </button>
 
         <input
@@ -208,7 +208,7 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(functi
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => stepBy(1)}
         >
-          <Icon name="plus" aria-hidden />
+          <Icon name="add" aria-hidden />
         </button>
 
         {name ? <input type="hidden" name={name} value={currentValue ?? ''} /> : null}

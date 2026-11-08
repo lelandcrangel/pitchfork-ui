@@ -78,7 +78,7 @@ export const Alert = forwardRef<HTMLDivElement, AlertProps>(
             aria-label="Dismiss alert"
             onClick={startExit}
           >
-            <Icon name="circle-xmark" aria-hidden />
+            <Icon name="close" aria-hidden />
           </button>
         ) : null}
       </div>

@@ -205,7 +205,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
           aria-describedby={describedBy}
         >
           <span className="pf-file-uploader__icon" aria-hidden>
-            <Icon name="file-arrow-up" />
+            <Icon name="upload" />
           </span>
           <span className="pf-file-uploader__title">Upload files</span>
           <span className="pf-file-uploader__subtitle">
@@ -231,7 +231,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(functi
                   aria-label={`Remove ${file.name}`}
                   disabled={disabled}
                 >
-                  <Icon name="circle-xmark" aria-hidden />
+                  <Icon name="close" aria-hidden />
                 </button>
               </li>
             ))}

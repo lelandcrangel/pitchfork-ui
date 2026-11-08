@@ -38,10 +38,10 @@ describe('pf-notification', () => {
   });
 
   it.each([
-    ['info', 'circle-info'],
-    ['success', 'circle-check'],
-    ['warning', 'triangle-exclamation'],
-    ['danger', 'circle-xmark'],
+    ['info', 'info'],
+    ['success', 'success'],
+    ['warning', 'warning'],
+    ['danger', 'danger'],
   ])('picks the %s icon for %s', async (variant, icon) => {
     const { root } = await render(`<pf-notification variant="${variant}"></pf-notification>`);
     expect(root.shadowRoot?.querySelector('pf-icon')?.getAttribute('name')).toBe(icon);

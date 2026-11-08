@@ -342,7 +342,7 @@ export class PfDatePicker {
                 disabled={this.disabled}
                 onClick={this.clear}
               >
-                <pf-icon name="circle-xmark"></pf-icon>
+                <pf-icon name="close"></pf-icon>
               </button>
             )}
           </div>

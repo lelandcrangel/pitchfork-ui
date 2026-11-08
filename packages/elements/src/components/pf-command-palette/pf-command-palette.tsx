@@ -351,7 +351,7 @@ export class PfCommandPalette {
         >
           <div class="panel" part="panel" onKeyDown={this.onKeyDown}>
             <div class="search">
-              <pf-icon name="magnifying-glass" class="search-icon"></pf-icon>
+              <pf-icon name="search" class="search-icon"></pf-icon>
               <input
                 part="input"
                 class="input"

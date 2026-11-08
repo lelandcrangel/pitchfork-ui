@@ -144,7 +144,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
                   aria-label="Close modal"
                   onClick={() => onOpenChange?.(false)}
                 >
-                  <Icon name="circle-xmark" aria-hidden />
+                  <Icon name="close" aria-hidden />
                 </button>
               ) : null}
             </ModalHeader>

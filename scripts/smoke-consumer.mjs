@@ -721,6 +721,44 @@ try {
     }
 
     /*
+     * A stroked icon set, registered by the app through core's `fromLucide`.
+     * SVG's initial `fill` is black, so a renderer that only knew Font
+     * Awesome's filled tuple -- which is what `<pf-icon>` was -- draws a
+     * line icon as a filled wedge, and a missing `stroke` draws nothing at
+     * all. Computed values, because the presentation attributes are only a
+     * claim until the cascade agrees. Blank here also means the app's
+     * `@pitchfork-ui/core` is not the registry the elements read.
+     */
+    const strokedHost = document.querySelector('pf-icon[data-smoke="stroked-icon"]');
+    const strokedSvg = strokedHost?.shadowRoot?.querySelector('svg');
+    if (!strokedHost) {
+      result.unstyled.push('the consumer app has no registered stroked pf-icon');
+    } else if (!strokedSvg) {
+      result.unstyled.push(
+        'the stroked glyph the app registered drew nothing — the app and the elements ' +
+          'are not sharing one @pitchfork-ui/core registry',
+      );
+    } else {
+      const style = getComputedStyle(strokedSvg);
+      const line = strokedSvg.querySelector('path');
+      const box = line?.getBBox();
+      if (style.fill !== 'none') {
+        result.unstyled.push(`a stroked pf-icon computes fill ${style.fill}, not none`);
+      }
+      if (!style.stroke || style.stroke === 'none' || transparent(style.stroke)) {
+        result.unstyled.push(`a stroked pf-icon computes stroke ${style.stroke}`);
+      }
+      if (style.strokeWidth !== '2px') {
+        result.unstyled.push(
+          `a stroked pf-icon computes stroke-width ${style.strokeWidth}, not 2px`,
+        );
+      }
+      if (!box || !(box.width > 0 && box.height > 0)) {
+        result.unstyled.push('a stroked pf-icon drew a path with no extent');
+      }
+    }
+
+    /*
      * Which edge the slideout lands on, and that its panel really animates.
      * Neither is assertable in packages/elements: no `styleUrl` CSS is applied
      * in either Vitest project, so there the panel has the UA's `margin: auto`
@@ -5666,7 +5704,8 @@ try {
       if (state.warningText === state.warningBackground) {
         problems.push("the alert's text is the same colour as its background");
       }
-      if (state.warningIcon !== 'triangle-exclamation') {
+      // A role since the components stopped asking for Font Awesome names.
+      if (state.warningIcon !== 'warning') {
         problems.push(`a warning alert drew the "${state.warningIcon}" icon`);
       }
       if (!state.iconDrawn) {

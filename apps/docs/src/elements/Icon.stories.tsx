@@ -10,7 +10,7 @@ const example = elementExamples['pf-icon'];
 
 const meta = {
   title: 'Components/Icon',
-  args: { name: 'circle-check', label: 'Done' },
+  args: { name: 'success', label: 'Done' },
   argTypes: { label: { control: 'text' }, name: { control: 'text' } },
   render: (args) => (
     <ElementPlayground

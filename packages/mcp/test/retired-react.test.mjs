@@ -146,6 +146,18 @@ test('validate_usage still checks icon names', async () => {
 });
 
 /*
+ * The components ask for roles, and a consumer's markup should too: a role is
+ * what a swapped icon set swaps. A validator that knew only glyph names would
+ * report `close` as a typo and suggest `clock`.
+ */
+test('validate_usage accepts an icon role', async () => {
+  const out = await call('validate_usage', {
+    code: '<pf-icon name="close"></pf-icon>\n<pf-inline-cta icon="previous">Back</pf-inline-cta>',
+  });
+  assert.match(out, /No problems found/);
+});
+
+/*
  * The conventions become the elements' own set. While the React package is
  * installed the React set is appended under its own heading; with it gone
  * there is nothing to append, and nothing about `forwardRef` or the

@@ -310,7 +310,7 @@ export class PfFileUploader {
             onDrop={this.onDrop}
           >
             <span class="icon" part="icon" aria-hidden="true">
-              <pf-icon name="file-arrow-up"></pf-icon>
+              <pf-icon name="upload"></pf-icon>
             </span>
             <span class="title">Upload files</span>
             <span class="subtitle">Drag and drop files here, or click to browse.</span>
@@ -337,7 +337,7 @@ export class PfFileUploader {
                     disabled={this.disabled}
                     onClick={() => this.removeAt(index)}
                   >
-                    <pf-icon name="circle-xmark" aria-hidden="true"></pf-icon>
+                    <pf-icon name="close" aria-hidden="true"></pf-icon>
                   </button>
                 </li>
               ))}

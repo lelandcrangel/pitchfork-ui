@@ -1,4 +1,4 @@
-import { sortRowsBy, type SortState } from '@pitchfork-ui/core';
+import { fromLucide, registerIconGlyphs, sortRowsBy, type SortState } from '@pitchfork-ui/core';
 import { useMemo, useRef, useState } from 'react';
 import {
   PfAccordion,
@@ -111,6 +111,23 @@ import {
   PfVisuallyHidden,
 } from '@pitchfork-ui/elements-react';
 
+/*
+ * A stroked glyph registered the way a consumer on another icon set would:
+ * Lucide's `X`, as the `lucide` package exports it, through core's adapter.
+ * The smoke asserts it draws as a line -- `fill: none` and a real stroke --
+ * which is what a renderer built for Font Awesome's filled tuple got wrong.
+ * It also proves the registry the app imports is the one the elements read:
+ * a second copy of core bundled into the elements would leave it blank.
+ * Registered here, beside the markup that uses it, because `check:icons`
+ * only credits a registration to the file that makes it.
+ */
+registerIconGlyphs({
+  'smoke-stroked': fromLucide([
+    ['path', { d: 'M18 6 6 18' }],
+    ['path', { d: 'm6 6 12 12' }],
+  ]),
+});
+
 /**
  * Every element the library ships, used the way an application would. The
  * point is not to look good — it is that this file compiles, bundles and
@@ -192,7 +209,8 @@ export function App() {
   return (
     <main data-testid="app">
       <h1>
-        <PfIcon name="circle-check" label="Working" /> React consumer
+        <PfIcon name="circle-check" label="Working" /> React consumer{' '}
+        <PfIcon name="smoke-stroked" data-smoke="stroked-icon" />
       </h1>
 
       <div className="row">

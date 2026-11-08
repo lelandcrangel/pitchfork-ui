@@ -107,6 +107,26 @@ ones and returning `undefined` rather than an empty string.
 `prefersReducedMotion()` reports the user's preference, and answers "no
 preference" rather than throwing where `matchMedia` is unavailable.
 
+### Icons
+
+```ts
+import { registerIconSet } from '@pitchfork-ui/core';
+import { X, ChevronDown } from 'lucide';
+
+const left = registerIconSet({ close: X, 'chevron-down': ChevronDown });
+```
+
+The one icon registry both rendering layers draw from. The components ask for
+a role (`close`, `next`, `search`, `warning`, the full list is
+`getIconRoles()`), and whatever you register beats the built-in glyphs, so
+one call at startup swaps every icon in the library. `registerIconSet`
+returns the roles your set left on the defaults.
+
+`registerIconGlyphs` accepts a Font Awesome `IconDefinition` in any style,
+Pro included, a Lucide `IconNode`, or an `IconGlyph` for any other set.
+`fromFontAwesome` and `fromLucide` do the conversion explicitly. Neither
+package is a dependency, and nothing here bundles them.
+
 ## Licence
 
 MIT

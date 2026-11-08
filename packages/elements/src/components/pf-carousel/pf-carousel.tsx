@@ -217,7 +217,7 @@ export class PfCarousel {
             disabled={atStart || this.total < 2}
             onClick={() => this.goTo(active - 1)}
           >
-            <pf-icon name="square-caret-left" aria-hidden="true"></pf-icon>
+            <pf-icon name="previous" aria-hidden="true"></pf-icon>
           </button>
 
           {this.showIndicators && this.total > 1 ? (
@@ -245,7 +245,7 @@ export class PfCarousel {
             disabled={atEnd || this.total < 2}
             onClick={() => this.goTo(active + 1)}
           >
-            <pf-icon name="square-caret-right" aria-hidden="true"></pf-icon>
+            <pf-icon name="next" aria-hidden="true"></pf-icon>
           </button>
         </div>
       </Host>

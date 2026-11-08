@@ -159,7 +159,7 @@ export function CommandPalette({
       >
         {/* Search input */}
         <div className="pf-command__search">
-          <Icon name="magnifying-glass" aria-hidden className="pf-command__search-icon" />
+          <Icon name="search" aria-hidden className="pf-command__search-icon" />
           <input
             ref={inputRef}
             id={inputId}

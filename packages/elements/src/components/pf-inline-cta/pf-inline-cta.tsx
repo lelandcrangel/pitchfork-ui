@@ -46,8 +46,8 @@ export class PfInlineCta {
   /** Colour treatment. Reflected so the stylesheet can select on it. */
   @Prop({ reflect: true }) tone: PfInlineCtaTone = 'default';
 
-  /** An icon name from the same registry as `pf-icon`. */
-  @Prop() icon = 'circle-question';
+  /** An icon name from the same registry as `pf-icon`: a role such as `help`, or a glyph name. */
+  @Prop() icon = 'help';
 
   /** Offer a dismiss button. Reflected: it changes the padding. */
   @Prop({ reflect: true }) dismissible = false;
@@ -153,7 +153,7 @@ export class PfInlineCta {
             aria-label={this.dismissLabel}
             onClick={() => void this.dismiss()}
           >
-            <pf-icon name="circle-xmark" aria-hidden="true"></pf-icon>
+            <pf-icon name="close" aria-hidden="true"></pf-icon>
           </button>
         )}
       </Host>

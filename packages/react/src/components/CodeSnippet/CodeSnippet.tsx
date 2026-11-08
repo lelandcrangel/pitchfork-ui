@@ -74,7 +74,7 @@ export const CodeSnippet = forwardRef<HTMLElement, CodeSnippetProps>(function Co
       }}
       aria-describedby={liveRegionId}
     >
-      <Icon name={copied ? 'circle-check' : 'copy'} aria-hidden />
+      <Icon name={copied ? 'success' : 'copy'} aria-hidden />
       <span>{copied ? copiedLabel : copyLabel}</span>
     </button>
   );

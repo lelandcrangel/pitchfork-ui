@@ -1,5 +1,11 @@
 import { describe, expect, it, render } from '@stencil/vitest';
-import { BUNDLED_FA_ICON_NAMES, CUSTOM_GLYPHS, registerIconGlyphs } from '@pitchfork-ui/core';
+import {
+  BUNDLED_FA_ICON_NAMES,
+  CUSTOM_GLYPHS,
+  fromLucide,
+  getIconRoles,
+  registerIconGlyphs,
+} from '@pitchfork-ui/core';
 import './pf-icon';
 import { bundledIconNames, getAvailableIconNames, getCustomIconNames } from './icon-names';
 
@@ -130,6 +136,60 @@ describe('pf-icon', () => {
    */
   it('bundles exactly the Font Awesome names core lists', () => {
     expect(bundledIconNames()).toEqual([...BUNDLED_FA_ICON_NAMES]);
+  });
+
+  /*
+   * The other elements ask for roles, so a role this element cannot draw is a
+   * close button or a calendar arrow rendering nothing. Core checks every
+   * default names a glyph core has or a layer bundles; this checks the
+   * element really draws each one once its own Font Awesome map is in.
+   */
+  it('draws every role with nothing registered beyond the bundle', async () => {
+    for (const role of getIconRoles()) {
+      const { root } = await render(`<pf-icon name="${role}"></pf-icon>`);
+      expect(svg(root), role).not.toBeNull();
+    }
+  });
+
+  /*
+   * Built-in glyphs used to be looked up first, so registering a chevron did
+   * nothing at all. `chevron-up` because it is not also a role, which would
+   * reach the registry by another route.
+   */
+  it('draws a registered glyph in place of a built-in one', async () => {
+    registerIconGlyphs({ 'chevron-up': { icon: [16, 16, [], 'f000', 'M9 9h1'] } });
+    const { root } = await render(`<pf-icon name="chevron-up"></pf-icon>`);
+
+    expect(svg(root)?.getAttribute('viewBox')).toBe('0 0 16 16');
+    expect(svg(root)?.querySelector('polyline')).toBeNull();
+    expect(svg(root)?.querySelector('path')?.getAttribute('d')).toBe('M9 9h1');
+  });
+
+  it('draws a stroked set with the fill off and the stroke on', async () => {
+    registerIconGlyphs({
+      'lucide-x': fromLucide([
+        ['path', { d: 'M18 6 6 18' }],
+        ['line', { x1: '6', y1: '6', x2: '18', y2: '18' }],
+      ]),
+    });
+    const { root } = await render(`<pf-icon name="lucide-x"></pf-icon>`);
+    const node = svg(root);
+
+    expect(node?.getAttribute('fill')).toBe('none');
+    expect(node?.getAttribute('stroke')).toBe('currentColor');
+    expect(node?.getAttribute('stroke-width')).toBe('2');
+    expect(node?.querySelector('path')?.getAttribute('d')).toBe('M18 6 6 18');
+    expect(node?.querySelector('line')?.getAttribute('x2')).toBe('18');
+  });
+
+  it('draws a duotone secondary layer translucent, under the primary', async () => {
+    registerIconGlyphs({ 'duo-bell': { icon: [448, 512, [], 'f0f3', ['M1 1h1', 'M2 2h2']] } });
+    const { root } = await render(`<pf-icon name="duo-bell"></pf-icon>`);
+    const [secondary, primary] = Array.from(svg(root)?.querySelectorAll('path') ?? []);
+
+    expect(secondary?.getAttribute('d')).toBe('M1 1h1');
+    expect(secondary?.getAttribute('opacity')).toBe('0.4');
+    expect(primary?.getAttribute('opacity')).toBeNull();
   });
 
   it('lists the names it can draw, custom glyphs included', () => {

@@ -41,6 +41,12 @@ if (!icons?.all?.length) {
 const custom = new Set(icons.custom);
 const fontAwesome = new Set([...icons.fontAwesome, ...icons.aliases]);
 const legacyAliases = icons.legacyAliases ?? {};
+// A role is a name every layer resolves, whatever set is registered.
+const roles = new Set(Object.keys(icons.roles ?? {}));
+if (roles.size === 0) {
+  console.error('elements.json carries no icon roles — build:elements-metadata is out of date.');
+  process.exit(1);
+}
 
 const toKebabCase = (value) => value.replace(/[A-Z]/g, (char) => `-${char.toLowerCase()}`);
 
@@ -48,7 +54,7 @@ const toKebabCase = (value) => value.replace(/[A-Z]/g, (char) => `-${char.toLowe
 function resolves(name) {
   if (custom.has(name)) return true;
   const normalized = legacyAliases[name] ?? toKebabCase(name);
-  return custom.has(normalized) || fontAwesome.has(normalized);
+  return custom.has(normalized) || fontAwesome.has(normalized) || roles.has(normalized);
 }
 
 const SEARCH = [
@@ -106,7 +112,7 @@ async function sourceFiles(dir) {
 function registeredIn(contents) {
   const registered = new Set();
 
-  for (const call of contents.matchAll(/registerIcons\s*\(/g)) {
+  for (const call of contents.matchAll(/register(?:Icons|IconGlyphs|IconSet)\s*\(/g)) {
     // Brace-match the argument object so a nested value cannot end it early.
     const open = contents.indexOf('{', call.index);
     if (open === -1) continue;
@@ -125,11 +131,15 @@ function registeredIn(contents) {
     }
     if (close === -1) continue;
 
-    // `'paper-plane': faPaperPlane` / `comments: faComments`. Requiring the
-    // `fa...` value keeps this from matching any other key in the block.
+    // `'paper-plane': faPaperPlane`, `close: X` (a Lucide import) or
+    // `send: fromLucide(Send)`. Requiring a value of that shape -- an `fa...`
+    // import, a capitalised one, or an adapter call -- keeps this from
+    // matching any other key in the block.
     for (const [, quoted, bare] of contents
       .slice(open, close)
-      .matchAll(/(?:'([^']+)'|([A-Za-z][A-Za-z0-9-]*))\s*:\s*fa[A-Z]/g)) {
+      .matchAll(
+        /(?:'([^']+)'|([A-Za-z][A-Za-z0-9-]*))\s*:\s*(?:fa[A-Z]|[A-Z]|from(?:Lucide|FontAwesome)\()/g,
+      )) {
       registered.add(quoted ?? bare);
     }
   }
@@ -163,8 +173,9 @@ if (problems.length > 0) {
     console.error(`  ${file}:${line}  "${name}"`);
   }
   console.error(
-    '\nEach renders an empty slot. Add the icon to `bundledRegularIcons` in ' +
-      'Icon.tsx, or use one of the names getAvailableIconNames() returns.',
+    '\nEach renders an empty slot. Use a role from getIconRoles() or one of ' +
+      'the names getAvailableIconNames() returns, or add the icon to both ' +
+      "layers' bundled maps.",
   );
   process.exitCode = 1;
 } else {

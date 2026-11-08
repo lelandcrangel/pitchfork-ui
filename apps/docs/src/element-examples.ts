@@ -472,11 +472,13 @@ export const elementExamples: Record<string, ElementExample> = {
   },
 
   'pf-icon': {
-    html: `<pf-icon name="circle-check" label="Done"></pf-icon>
-<pf-icon name="triangle-exclamation" label="Warning"></pf-icon>
+    // Roles rather than glyph names: a role is what a consumer's swapped
+    // icon set swaps, so it is the spelling worth copying.
+    html: `<pf-icon name="success" label="Done"></pf-icon>
+<pf-icon name="warning" label="Warning"></pf-icon>
 <pf-icon name="calendar"></pf-icon>
 <pf-icon name="chevron-down"></pf-icon>`,
-    interactive: `<pf-icon name="circle-check" label="Done"></pf-icon>`,
+    interactive: `<pf-icon name="success" label="Done"></pf-icon>`,
   },
 
   'pf-inline-cta': {
