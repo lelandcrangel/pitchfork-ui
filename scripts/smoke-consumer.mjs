@@ -3082,10 +3082,11 @@ try {
   }
 
   /*
-   * The button group, which is joined borders: each button laps one pixel over
-   * the last, only the ends are rounded, and the rounding comes from
-   * `:host(:first-child)` in the child's own sheet because `::slotted()` takes
-   * no combinator. None of that is visible without a real stylesheet.
+   * The button group: the group draws the outline, the buttons sit inside it
+   * divided by their own start borders, only the ends are rounded, and the
+   * rounding comes from `:host(:first-child)` in the child's own sheet because
+   * `::slotted()` takes no combinator. None of that is visible without a real
+   * stylesheet.
    */
   {
     const state = await page
@@ -3103,9 +3104,29 @@ try {
           pressed: items.map((node) =>
             node.shadowRoot.querySelector('[part="button"]').getAttribute('aria-pressed'),
           ),
-          // Joined: each button's left edge is a pixel inside the last one's
-          // right edge, so the shared border is drawn once.
-          overlaps: items.slice(1).map((_, index) => box(index + 1).left - box(index).right),
+          // Joined edge to edge: the divider is each button's own start border.
+          gaps: items.slice(1).map((_, index) => box(index + 1).left - box(index).right),
+          /*
+           * Inside the group's outline, every one. The v0.29 review found a
+           * button's fill covering the group's border: each button used to
+           * carry the outer border itself, so a selected one painted it brand
+           * colour. Measured against the group's padding box, which is its
+           * border box less the border — the box a fill must stay within.
+           */
+          groupBorder: parseFloat(getComputedStyle(group).borderTopWidth),
+          outside: (() => {
+            const outer = group.getBoundingClientRect();
+            const edge = parseFloat(getComputedStyle(group).borderTopWidth);
+            return items
+              .map((_, index) => box(index))
+              .filter(
+                (inner) =>
+                  inner.top < outer.top + edge - 0.5 ||
+                  inner.left < outer.left + edge - 0.5 ||
+                  inner.bottom > outer.bottom - edge + 0.5 ||
+                  inner.right > outer.right - edge + 0.5,
+              ).length;
+          })(),
           firstRadius: radius(0),
           middleRadius: radius(1),
           lastRadius: getComputedStyle(button(3)).borderTopRightRadius,
@@ -3151,10 +3172,22 @@ try {
             'expected the second one alone',
         );
       }
-      if (!state.overlaps.every((gap) => Math.abs(gap + 1) < 0.5)) {
+      if (!state.gaps.every((gap) => Math.abs(gap) < 0.5)) {
         problems.push(
-          `the buttons are ${JSON.stringify(state.overlaps)} apart, expected -1 — ` +
-            'they are not sharing a border',
+          `the buttons are ${JSON.stringify(state.gaps)} apart, expected 0 — ` +
+            'they should meet edge to edge, divided by their own start border',
+        );
+      }
+      if (state.groupBorder !== 1) {
+        problems.push(
+          `the group's border is ${state.groupBorder}px, expected 1 — the outline belongs ` +
+            'to the group, not to the buttons',
+        );
+      }
+      if (state.outside > 0) {
+        problems.push(
+          `${state.outside} button(s) reach past the inside of the group's border — a fill ` +
+            'covers the outline',
         );
       }
       if (parseFloat(state.firstRadius) < 4 || parseFloat(state.lastRadius) < 4) {
@@ -3852,9 +3885,20 @@ try {
         const plain = box('header-nav-plain');
         const disabled = box('header-nav-disabled');
 
+        const navStyle = getComputedStyle(nav);
         return {
           landmarks: [...nav.shadowRoot.querySelectorAll('nav')].length,
           hostRole: nav.getAttribute('role'),
+          /*
+           * No frame of its own. The v0.29 review found a bordered, rounded
+           * box drawn around the items inside the consumer's own header —
+           * a frame within a frame. Each side is read, because a regression
+           * to a bottom rule alone is a different decision from this one.
+           */
+          frame: ['Top', 'Right', 'Bottom', 'Left'].map((side) =>
+            parseFloat(navStyle[`border${side}Width`]),
+          ),
+          radius: navStyle.borderTopLeftRadius,
           // The brand is slotted here and the box is drawn; nothing is
           // slotted into the carousel's empty state, which the carousel
           // block covers.
@@ -3920,6 +3964,12 @@ try {
         problems.push(
           `the navigation rendered ${state.landmarks} nav landmarks and a host role of ` +
             `"${state.hostRole}" — expected one landmark and no banner`,
+        );
+      }
+      if (state.frame.some((width) => width !== 0) || state.radius !== '0px') {
+        problems.push(
+          `the navigation draws a frame (borders ${JSON.stringify(state.frame)}, ` +
+            `radius ${state.radius}) — it should sit unframed inside the consumer's header`,
         );
       }
       if (!state.brandDrawn) {
@@ -5788,6 +5838,143 @@ try {
       `a disabled control border is ${darkBorders.disabled} in dark mode where an enabled one ` +
         `is ${darkBorders.enabled}; they mirror each other in light mode and must in dark`,
     );
+  }
+
+  /*
+   * Two fixes from the v0.29 review that only a stylesheet can show, checked on
+   * elements made here rather than in the consumer apps, since neither needs
+   * the host framework to say anything.
+   *
+   * A badge and a tag stay on one line in a box too narrow for them. They used
+   * to wrap, and at line-height 1 the two lines crowded into the pill; in a
+   * table the column then folded the label rather than growing to fit it. One
+   * line is read off the host's height: a wrapped label is taller than the
+   * pill's min-height, a single line is exactly it.
+   *
+   * And a sectioned popover's rules run to the panel's edges. The padding
+   * used to belong to the panel, so any rule inside it stopped short on both
+   * sides; it belongs to the header, body and footer now. The width cap is
+   * also checked to move with `--pf-popover-max-width`, because content wider
+   * than the old fixed 320px was clipped by the UA's `overflow: auto`.
+   */
+  const reviewed = await page
+    .evaluate(async () => {
+      const frames = (n) =>
+        Array.from({ length: n }).reduce(
+          (wait) => wait.then(() => new Promise((resolve) => requestAnimationFrame(resolve))),
+          Promise.resolve(),
+        );
+      const stage = document.createElement('div');
+      stage.style.cssText = 'position:absolute;left:0;top:0;';
+      stage.innerHTML = `
+        <div style="width:24px"><pf-badge variant="brand">2nd period</pf-badge></div>
+        <div style="width:24px"><pf-tag variant="brand">2nd period</pf-tag></div>
+        <pf-popover heading="Invitations" style="--pf-popover-max-width:480px">
+          <button type="button">Open</button>
+          <div slot="content" style="width:400px">Daniel Okafor invited you</div>
+          <a slot="footer" href="#messages">Go to Messages</a>
+        </pf-popover>`;
+      document.body.append(stage);
+      await frames(6);
+
+      const pill = (tag) => {
+        const host = stage.querySelector(tag);
+        const style = getComputedStyle(host);
+        return {
+          height: host.getBoundingClientRect().height,
+          minHeight: parseFloat(style.minHeight),
+          whiteSpace: style.whiteSpace,
+        };
+      };
+      const result = { badge: pill('pf-badge'), tag: pill('pf-tag') };
+
+      const popover = stage.querySelector('pf-popover');
+      const part = (name) => popover.shadowRoot.querySelector(`[part="${name}"]`);
+      await popover.show();
+      const deadline = Date.now() + 3000;
+      while (!part('panel')?.matches(':popover-open')) {
+        if (Date.now() > deadline) {
+          stage.remove();
+          return { ...result, error: 'the sectioned popover never opened' };
+        }
+        await frames(1);
+      }
+      await frames(2);
+
+      const panel = part('panel');
+      const inner = panel.getBoundingClientRect();
+      const edge = parseFloat(getComputedStyle(panel).borderLeftWidth);
+      const spans = (name) => {
+        const box = part(name)?.getBoundingClientRect();
+        if (!box) return null;
+        return {
+          left: box.left - (inner.left + edge),
+          right: inner.right - edge - box.right,
+        };
+      };
+      result.popover = {
+        panelPadding: getComputedStyle(panel).paddingLeft,
+        panelWidth: inner.width,
+        header: spans('header'),
+        footer: spans('footer'),
+        // Null-safe, so an element missing a section reports that rather than
+        // throwing and taking the badge and tag checks down with it.
+        headerRule: part('header')
+          ? parseFloat(getComputedStyle(part('header')).borderBottomWidth)
+          : null,
+        footerRule: part('footer')
+          ? parseFloat(getComputedStyle(part('footer')).borderTopWidth)
+          : null,
+        bodyPadding: part('body') ? getComputedStyle(part('body')).paddingLeft : null,
+      };
+      await popover.hide();
+      stage.remove();
+      return result;
+    })
+    .catch((error) => ({ error: String(error) }));
+
+  if (reviewed.error) problems.push(`v0.29 review checks: ${reviewed.error}`);
+  for (const tag of ['badge', 'tag']) {
+    const pill = reviewed[tag];
+    if (!pill) continue;
+    if (pill.whiteSpace !== 'nowrap' || pill.height > pill.minHeight + 0.5) {
+      problems.push(
+        `a pf-${tag} wrapped in a narrow box: ${pill.height}px tall against a ` +
+          `${pill.minHeight}px pill, white-space ${pill.whiteSpace}`,
+      );
+    }
+  }
+  if (reviewed.popover) {
+    const { popover } = reviewed;
+    for (const name of ['header', 'footer']) {
+      const span = popover[name];
+      if (!span) {
+        problems.push(`a sectioned pf-popover rendered no ${name}`);
+      } else if (Math.abs(span.left) > 0.5 || Math.abs(span.right) > 0.5) {
+        problems.push(
+          `a pf-popover ${name} stops ${span.left}px / ${span.right}px short of the panel's ` +
+            'edges — its rule should run edge to edge',
+        );
+      }
+    }
+    if (popover.headerRule !== 1 || popover.footerRule !== 1) {
+      problems.push(
+        `a pf-popover's section rules are ${popover.headerRule}px / ${popover.footerRule}px, ` +
+          'expected 1px each',
+      );
+    }
+    if (popover.panelPadding !== '0px' || !popover.bodyPadding || popover.bodyPadding === '0px') {
+      problems.push(
+        `a pf-popover panel is padded ${popover.panelPadding} and its body ` +
+          `${popover.bodyPadding} — the padding belongs to the sections`,
+      );
+    }
+    if (popover.panelWidth <= 400) {
+      problems.push(
+        `a pf-popover with --pf-popover-max-width:480px is ${popover.panelWidth}px wide around ` +
+          '400px of content — the cap did not move, and the content is clipped',
+      );
+    }
   }
 
   for (const tag of report.missing) problems.push(`${tag} did not render`);

@@ -1,7 +1,10 @@
 :host {
+  /*
+   * No border and no radius: the navigation sits inside whatever header the
+   * consumer puts it in, and a box drawn around the items alone read as a
+   * second, nested frame inside that header.
+   */
   background: var(--pf-header-nav-bg);
-  border: 1px solid var(--pf-header-nav-border);
-  border-radius: var(--pf-header-nav-radius, var(--radius-md));
   display: block;
   width: 100%;
 

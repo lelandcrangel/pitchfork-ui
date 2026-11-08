@@ -846,6 +846,16 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-checkbox label="Open" checked></pf-checkbox>
     <pf-checkbox label="Assigned to me"></pf-checkbox>
   </div>
+</pf-popover>
+<pf-popover heading="Invitations" style="--pf-popover-max-width: 24rem">
+  <pf-button variant="secondary">Invitations</pf-button>
+  <div slot="content">Daniel Okafor invited you to the 7th grade reading intervention team.</div>
+  <pf-button slot="footer" variant="ghost">Go to messages</pf-button>
+</pf-popover>`,
+    interactive: `<pf-popover heading="Invitations">
+  <pf-button variant="secondary">Invitations</pf-button>
+  <div slot="content">Daniel Okafor invited you to the reading intervention team.</div>
+  <pf-button slot="footer" variant="ghost">Go to messages</pf-button>
 </pf-popover>`,
   },
 

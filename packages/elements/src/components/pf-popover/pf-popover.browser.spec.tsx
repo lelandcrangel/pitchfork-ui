@@ -242,3 +242,76 @@ test('the box lands at the coordinates it was given', async () => {
   expect(Math.round(box.left)).toBe(requested.left);
   expect(Math.round(box.top)).toBe(requested.top);
 });
+
+/*
+ * The sectioned panel. The rules that run to the panel's edges are CSS, which
+ * neither test project applies, so `scripts/smoke-consumer.mjs` measures those;
+ * what is asserted here is the structure the stylesheet hangs them on.
+ */
+const sectioned = (attrs = '', footer = true) => `
+  <pf-popover ${attrs}>
+    <button type="button">Open</button>
+    <div slot="content">Daniel Okafor invited you to the reading team</div>
+    ${footer ? '<a slot="footer" href="#messages">Go to Messages</a>' : ''}
+  </pf-popover>`;
+
+const part = (el: Popover, name: string) =>
+  el.shadowRoot?.querySelector(`[part="${name}"]`) as HTMLElement | null;
+
+test('a heading draws a header row and names the panel through it', async () => {
+  const el = await mount(sectioned('heading="Invitations"'));
+
+  expect(part(el, 'heading')?.textContent).toBe('Invitations');
+  expect(part(el, 'header')?.contains(part(el, 'heading'))).toBe(true);
+  // A same-root IDREF, the kind that resolves.
+  expect(panel(el).getAttribute('aria-labelledby')).toBe(part(el, 'heading')?.id);
+  expect(panel(el).hasAttribute('aria-label')).toBe(false);
+});
+
+test('a label still wins over the heading as the accessible name', async () => {
+  const el = await mount(sectioned('heading="Invitations" label="Team invitations"'));
+
+  expect(panel(el).getAttribute('aria-label')).toBe('Team invitations');
+  expect(panel(el).hasAttribute('aria-labelledby')).toBe(false);
+});
+
+test('with no heading there is no header row and nothing labels the panel by it', async () => {
+  const el = await mount(sectioned());
+
+  expect(part(el, 'header')).toBeNull();
+  expect(panel(el).hasAttribute('aria-labelledby')).toBe(false);
+});
+
+test('the content renders into the body, between the header and the footer', async () => {
+  const el = await mount(sectioned('heading="Invitations"'));
+
+  const order = Array.from(panel(el).children).map((child) => child.getAttribute('part'));
+  expect(order).toEqual(['header', 'body', 'footer']);
+  const slot = part(el, 'body')?.querySelector('slot') as HTMLSlotElement;
+  expect(slot.name).toBe('content');
+});
+
+test('the footer row shows only when something is slotted into it', async () => {
+  const withFooter = await mount(sectioned('', true));
+  expect(part(withFooter, 'footer')?.hidden).toBe(false);
+
+  const without = await mount(sectioned('', false));
+  expect(part(without, 'footer')?.hidden).toBe(true);
+});
+
+/*
+ * The mock DOM never fires `slotchange`, which is why this one is here: a
+ * footer omitted from the tree when empty would never hear of one added later.
+ */
+test('a footer added after load appears', async () => {
+  const el = await mount(sectioned('', false));
+  expect(part(el, 'footer')?.hidden).toBe(true);
+
+  const link = document.createElement('a');
+  link.slot = 'footer';
+  link.href = '#messages';
+  link.textContent = 'Go to Messages';
+  el.append(link);
+
+  await until(() => part(el, 'footer')?.hidden === false, 'the footer to appear');
+});

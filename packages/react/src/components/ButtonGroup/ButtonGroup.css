@@ -1,21 +1,28 @@
+/*
+ * The group draws the outline and every button's fill sits inside it, so a
+ * selected or hovered button can no longer cover the group's edge.
+ */
 .pf-button-group {
+  align-items: stretch;
+  background: var(--pf-buttongroup-bg);
+  border: 1px solid var(--pf-buttongroup-border);
+  border-radius: var(--radius-md);
   display: inline-flex;
   flex-wrap: wrap;
-  align-items: stretch;
 }
 
 .pf-button-group__button {
   align-items: center;
   background: var(--pf-buttongroup-bg);
-  border: 1px solid var(--pf-buttongroup-border);
+  border: 0;
   color: var(--pf-buttongroup-text);
   cursor: pointer;
   display: inline-flex;
   gap: var(--space-2);
   justify-content: center;
   line-height: 1;
-  margin-inline-start: -1px;
-  min-height: 40px;
+  /* 40px with the group's border, the height of every other control. */
+  min-height: 38px;
   padding: 0 var(--space-4);
   position: relative;
   transition:
@@ -25,21 +32,25 @@
     box-shadow 120ms ease;
 }
 
+.pf-button-group__button + .pf-button-group__button {
+  border-inline-start: 1px solid var(--pf-buttongroup-border);
+}
+
+/* One pixel less than the group, so a fill follows the inside of its corner. */
 .pf-button-group__button:first-child {
-  border-bottom-left-radius: var(--radius-md);
-  border-top-left-radius: var(--radius-md);
-  margin-inline-start: 0;
+  border-end-start-radius: calc(var(--radius-md) - 1px);
+  border-start-start-radius: calc(var(--radius-md) - 1px);
 }
 
 .pf-button-group__button:last-child {
-  border-bottom-right-radius: var(--radius-md);
-  border-top-right-radius: var(--radius-md);
+  border-end-end-radius: calc(var(--radius-md) - 1px);
+  border-start-end-radius: calc(var(--radius-md) - 1px);
 }
 
+/* Inset, so the ring stays inside the group's outline as the fill does. */
 .pf-button-group__button:focus-visible {
-  box-shadow: var(--pf-buttongroup-focus-ring, var(--pf-focus-ring));
+  box-shadow: var(--pf-buttongroup-focus-ring, inset 0 0 0 2px var(--pf-focus-ring-color));
   outline: none;
-  z-index: 2;
 }
 
 .pf-button-group__button:hover:not(:disabled):not(.pf-button-group__button--selected) {
@@ -48,14 +59,11 @@
 
 .pf-button-group__button--selected {
   background: var(--pf-buttongroup-action-primary);
-  border-color: var(--pf-buttongroup-action-primary);
   color: var(--pf-buttongroup-action-primary-text);
-  z-index: 1;
 }
 
 .pf-button-group__button--selected:hover:not(:disabled) {
   background: var(--pf-buttongroup-action-primary-hover);
-  border-color: var(--pf-buttongroup-action-primary-hover);
 }
 
 .pf-button-group__button:disabled {
@@ -69,7 +77,6 @@
 
 .pf-button-group__button--selected:disabled:hover {
   background: var(--pf-buttongroup-action-primary);
-  border-color: var(--pf-buttongroup-action-primary);
 }
 
 .pf-button-group__icon {
