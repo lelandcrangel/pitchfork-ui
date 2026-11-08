@@ -84,10 +84,16 @@ and neither owns it. If you are theming the component library, override the
 `--pf-*` aliases rather than these tokens; if you are building something of
 your own, start here.
 
-`theme.css` also carries the `@custom-media` breakpoint definitions and the
-`[data-theme='dark']` block. The token values themselves are
-mode-independent — dark mode is entirely a matter of which tokens the aliases
-point at.
+`theme.css` also carries the `@custom-media` breakpoint definitions, and it
+`@import`s the generated `[data-theme='dark']` block alongside the tokens
+themselves, so importing it still gets you both modes.
+
+Dark mode is a matter of which primitive each **semantic** token points at, and
+each one carries both: its light value as `$value` and its dark value under
+`$extensions['pitchfork.dark']`. The dark block is generated from those, which
+is what keeps a colour's two modes in one place — they used to be in two files,
+and one semantic colour had quietly ended up with only one of them. The
+`--pf-*` aliases are mode-independent and need no dark counterpart.
 
 ```css
 /* everything: tokens + aliases + dark mode */

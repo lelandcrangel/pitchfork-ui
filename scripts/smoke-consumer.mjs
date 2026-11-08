@@ -5699,6 +5699,58 @@ try {
     }
   }
 
+  /*
+   * Dark mode is generated now, so the thing to check is that the generated
+   * block reaches the page -- and the one pair it was added to fix.
+   * `--pf-control-border-disabled` used to name the `--color-gray-200`
+   * primitive, which does not move between modes, so a disabled control
+   * border stayed at 14.48:1 on the dark background while its enabled
+   * counterpart moved to 3.75:1: the disabled control read as the more
+   * prominent of the two. WCAG exempts disabled controls, so `check:contrast`
+   * could not see it, and neither Vitest project applies the stylesheet at
+   * all.
+   *
+   * A custom property's computed value is its specified value with every
+   * `var()` substituted, so reading one off the root walks the whole
+   * three-tier chain -- alias to semantic token to primitive -- in the real
+   * build. Comparing the two in *light* mode would be vacuous: they resolve
+   * to the same primitive there whether the fix is in or not. Probed by
+   * putting `var(--color-gray-200)` back: the disabled border reads #e2e8f0
+   * against the enabled border's #64748b and this fails.
+   */
+  const darkBorders = await page.evaluate(() => {
+    const root = document.documentElement;
+    const before = root.getAttribute('data-theme');
+    root.setAttribute('data-theme', 'dark');
+    const read = (name) => getComputedStyle(root).getPropertyValue(name).trim();
+    const values = {
+      enabled: read('--pf-control-border'),
+      disabled: read('--pf-control-border-disabled'),
+      semantic: read('--color-semantic-border-disabled'),
+      light: read('--color-gray-200'),
+    };
+    if (before === null) root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', before);
+    return values;
+  });
+
+  if (!darkBorders.disabled) {
+    problems.push(
+      '--pf-control-border-disabled resolved to nothing under [data-theme=dark] — the ' +
+        'generated dark block never reached the page',
+    );
+  } else if (darkBorders.disabled === darkBorders.light) {
+    problems.push(
+      `a disabled control border is still ${darkBorders.disabled} in dark mode, the light ` +
+        "mode's own gray-200 — it is naming a primitive rather than the semantic token",
+    );
+  } else if (darkBorders.disabled !== darkBorders.enabled) {
+    problems.push(
+      `a disabled control border is ${darkBorders.disabled} in dark mode where an enabled one ` +
+        `is ${darkBorders.enabled}; they mirror each other in light mode and must in dark`,
+    );
+  }
+
   for (const tag of report.missing) problems.push(`${tag} did not render`);
   for (const tag of report.notUpgraded) problems.push(`${tag} rendered but never upgraded`);
   problems.push(...report.unstyled);

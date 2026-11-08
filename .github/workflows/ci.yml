@@ -45,6 +45,18 @@ jobs:
       # build. format:check runs before the build, so a stale committed copy
       # passes here and the build silently regenerates it -- which is how the
       # published changelog page sat on 0.13.2 while the library was on 0.15.0.
+
+      # A semantic colour's two modes used to live in two files: the light
+      # value in color.json and the dark one in theme.css's dark block. One
+      # pair had drifted -- border.disabled had no dark value at all -- and
+      # nothing related the two, so nothing could say so. The dark values are
+      # on the tokens now and the dark block is generated; this refuses the
+      # three ways that comes apart, the worst of which is re-adding one
+      # hand-written --color-semantic-* line to theme.css, which would
+      # silently win over the generated value for that token and nothing else.
+      - name: Check every semantic colour carries both modes
+        run: npm run check:token-modes
+
       - name: Check dark mode contrast (WCAG AA)
         run: npm run check:contrast
 

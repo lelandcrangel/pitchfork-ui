@@ -892,3 +892,40 @@ resolves it is untested, because there was no point generating a lockfile with
 the wrong tool for a change that could not then be validated. CI runs Node
 24.22 and npm 11.19, so **do this where the engines are satisfied** and let the
 Angular build, `test:angular` and the consumer smoke be the proof.
+
+## Audit the `--pf-*` aliases that name a colour primitive
+
+The dark-mode move put both of a semantic colour's modes on the token and
+generated the `[data-theme='dark']` block from them, which closed the gap that
+had left `color.semantic.border.disabled` with no dark value at all. It did
+**not** close the other half of that defect, which was an alias naming a
+primitive: `--pf-control-border-disabled` was `var(--color-gray-200)`, and a
+primitive does not move between modes, so the border stayed light while the
+enabled one went dark.
+
+That one alias is fixed. Measured across `theme.css`: **86 of the 542 `:root`
+`--pf-*` declarations name a colour primitive, and 51 of those have no
+override in the dark block.** Some are correct — a credit-card gradient, a
+tooltip that is deliberately dark in both modes, the code-snippet surface —
+and `--pf-mix-base` exists precisely to be a fixed end of a `color-mix()`. But
+others read like the same defect:
+
+- `--pf-control-bg-disabled`, `--pf-control-text-disabled` — the two
+  remaining thirds of a disabled control, beside the border that was fixed
+- `--pf-badge-neutral-background`, `--pf-badge-neutral-foreground`,
+  `--pf-tag-neutral-bg`, `--pf-tag-neutral-text`
+- `--pf-switch-track-bg`, `--pf-switch-thumb-bg`
+- `--pf-rating-star-empty`, and the four `--pf-rating-badge-*`
+- `--pf-badgegroup-gray-100/200/700`, which name a primitive in the alias
+  **name** as well as the value
+
+Work each one: decide whether it should move between modes, and if it should,
+point it at a semantic token (adding one where none fits) rather than adding a
+dark-block override — an override is a second place for the value to live,
+which is the arrangement the move was undoing. WCAG will not report any of it:
+disabled controls are exempt, and a neutral badge that stays light on a dark
+page is a contrast _pass_. The check is a dark-mode screenshot, or an
+assertion in `scripts/smoke-consumer.mjs` of the kind the disabled border now
+has — and remember that comparing two such values in **light** mode is
+vacuous, because they resolve to the same primitive whether the fix is in
+or not.

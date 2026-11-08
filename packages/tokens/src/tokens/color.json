@@ -1,135 +1,478 @@
 {
   "color": {
     "base": {
-      "white": { "$value": "#ffffff", "$type": "color" },
-      "black": { "$value": "#0b0b0f", "$type": "color" }
+      "white": {
+        "$value": "#ffffff",
+        "$type": "color"
+      },
+      "black": {
+        "$value": "#0b0b0f",
+        "$type": "color"
+      }
     },
     "gray": {
-      "50": { "$value": "#f8fafc", "$type": "color" },
-      "100": { "$value": "#f1f5f9", "$type": "color" },
-      "200": { "$value": "#e2e8f0", "$type": "color" },
-      "300": { "$value": "#cbd5e1", "$type": "color" },
-      "400": { "$value": "#94a3b8", "$type": "color" },
-      "500": { "$value": "#64748b", "$type": "color" },
-      "600": { "$value": "#475569", "$type": "color" },
-      "700": { "$value": "#334155", "$type": "color" },
-      "800": { "$value": "#1e293b", "$type": "color" },
-      "900": { "$value": "#0f172a", "$type": "color" }
+      "50": {
+        "$value": "#f8fafc",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "#f1f5f9",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "#e2e8f0",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "#cbd5e1",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "#94a3b8",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "#64748b",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "#475569",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "#334155",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "#1e293b",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "#0f172a",
+        "$type": "color"
+      }
     },
     "brand": {
-      "50": { "$value": "#eef2ff", "$type": "color" },
-      "100": { "$value": "#e0e7ff", "$type": "color" },
-      "200": { "$value": "#c7d2fe", "$type": "color" },
-      "300": { "$value": "#a5b4fc", "$type": "color" },
-      "400": { "$value": "#818cf8", "$type": "color" },
-      "500": { "$value": "#6366f1", "$type": "color" },
-      "600": { "$value": "#4f46e5", "$type": "color" },
-      "700": { "$value": "#4338ca", "$type": "color" },
-      "800": { "$value": "#3730a3", "$type": "color" },
-      "900": { "$value": "#312e81", "$type": "color" }
+      "50": {
+        "$value": "#eef2ff",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "#e0e7ff",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "#c7d2fe",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "#a5b4fc",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "#818cf8",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "#6366f1",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "#4f46e5",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "#4338ca",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "#3730a3",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "#312e81",
+        "$type": "color"
+      }
     },
     "success": {
-      "50": { "$value": "#ecfdf3", "$type": "color" },
-      "100": { "$value": "#d1fadf", "$type": "color" },
-      "200": { "$value": "#a6f4c5", "$type": "color" },
-      "300": { "$value": "#6ce9a6", "$type": "color" },
-      "400": { "$value": "#32d583", "$type": "color" },
-      "500": { "$value": "#12b76a", "$type": "color" },
-      "600": { "$value": "#039855", "$type": "color" },
-      "700": { "$value": "#027a48", "$type": "color" },
-      "800": { "$value": "#05603a", "$type": "color" },
-      "900": { "$value": "#054f31", "$type": "color" }
+      "50": {
+        "$value": "#ecfdf3",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "#d1fadf",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "#a6f4c5",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "#6ce9a6",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "#32d583",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "#12b76a",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "#039855",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "#027a48",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "#05603a",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "#054f31",
+        "$type": "color"
+      }
     },
     "warning": {
-      "50": { "$value": "#fffaeb", "$type": "color" },
-      "100": { "$value": "#fef0c7", "$type": "color" },
-      "200": { "$value": "#fedf89", "$type": "color" },
-      "300": { "$value": "#fec84b", "$type": "color" },
-      "400": { "$value": "#fdb022", "$type": "color" },
-      "500": { "$value": "#f79009", "$type": "color" },
-      "600": { "$value": "#dc6803", "$type": "color" },
-      "700": { "$value": "#b54708", "$type": "color" },
-      "800": { "$value": "#93370d", "$type": "color" },
-      "900": { "$value": "#7a2e0e", "$type": "color" }
+      "50": {
+        "$value": "#fffaeb",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "#fef0c7",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "#fedf89",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "#fec84b",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "#fdb022",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "#f79009",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "#dc6803",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "#b54708",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "#93370d",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "#7a2e0e",
+        "$type": "color"
+      }
     },
     "danger": {
-      "50": { "$value": "#fef3f2", "$type": "color" },
-      "100": { "$value": "#fee4e2", "$type": "color" },
-      "200": { "$value": "#fecdca", "$type": "color" },
-      "300": { "$value": "#fda29b", "$type": "color" },
-      "400": { "$value": "#f97066", "$type": "color" },
-      "500": { "$value": "#f04438", "$type": "color" },
-      "600": { "$value": "#d92d20", "$type": "color" },
-      "700": { "$value": "#b42318", "$type": "color" },
-      "800": { "$value": "#912018", "$type": "color" },
-      "900": { "$value": "#7a271a", "$type": "color" }
+      "50": {
+        "$value": "#fef3f2",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "#fee4e2",
+        "$type": "color"
+      },
+      "200": {
+        "$value": "#fecdca",
+        "$type": "color"
+      },
+      "300": {
+        "$value": "#fda29b",
+        "$type": "color"
+      },
+      "400": {
+        "$value": "#f97066",
+        "$type": "color"
+      },
+      "500": {
+        "$value": "#f04438",
+        "$type": "color"
+      },
+      "600": {
+        "$value": "#d92d20",
+        "$type": "color"
+      },
+      "700": {
+        "$value": "#b42318",
+        "$type": "color"
+      },
+      "800": {
+        "$value": "#912018",
+        "$type": "color"
+      },
+      "900": {
+        "$value": "#7a271a",
+        "$type": "color"
+      }
     },
     "semantic": {
       "background": {
-        "default": { "$value": "{color.base.white}", "$type": "color" },
-        "subtle": { "$value": "{color.gray.50}", "$type": "color" },
-        "raised": { "$value": "{color.base.white}", "$type": "color" },
-        "disabled": { "$value": "{color.gray.100}", "$type": "color" }
+        "default": {
+          "$value": "{color.base.white}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.900}"
+          }
+        },
+        "subtle": {
+          "$value": "{color.gray.50}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.700}"
+          }
+        },
+        "raised": {
+          "$value": "{color.base.white}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.800}"
+          }
+        },
+        "disabled": {
+          "$value": "{color.gray.100}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.800}"
+          }
+        }
       },
       "text": {
-        "default": { "$value": "{color.gray.900}", "$type": "color" },
-        "muted": { "$value": "{color.gray.500}", "$type": "color" },
-        "subtle": { "$value": "{color.gray.600}", "$type": "color" },
-        "inverse": { "$value": "{color.base.white}", "$type": "color" },
-        "disabled": { "$value": "{color.gray.400}", "$type": "color" }
+        "default": {
+          "$value": "{color.gray.900}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.50}"
+          }
+        },
+        "muted": {
+          "$value": "{color.gray.500}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.300}"
+          }
+        },
+        "subtle": {
+          "$value": "{color.gray.600}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.200}"
+          }
+        },
+        "inverse": {
+          "$value": "{color.base.white}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.900}"
+          }
+        },
+        "disabled": {
+          "$value": "{color.gray.400}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.500}"
+          }
+        }
       },
       "border": {
-        "muted": { "$value": "{color.gray.100}", "$type": "color" },
-        "default": { "$value": "{color.gray.200}", "$type": "color" },
-        "strong": { "$value": "{color.gray.300}", "$type": "color" },
-        "focus": { "$value": "{color.brand.500}", "$type": "color" },
-        "disabled": { "$value": "{color.gray.200}", "$type": "color" }
+        "muted": {
+          "$value": "{color.gray.100}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.800}"
+          }
+        },
+        "default": {
+          "$value": "{color.gray.200}",
+          "$type": "color",
+          "$description": "Drives --pf-control-border and --pf-button-secondary-border, which are UI components under WCAG 1.4.11 and need 3:1. In dark mode gray-700 gave 1.72:1 on the default background and 1.41:1 on raised, and gray-600 only reaches 2.36:1, so gray-500 is the darkest step that passes.",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.500}"
+          }
+        },
+        "strong": {
+          "$value": "{color.gray.300}",
+          "$type": "color",
+          "$description": "Moves with border.default in dark mode, because it is the hover state of those same borders and would otherwise be identical to their resting state.",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.400}"
+          }
+        },
+        "focus": {
+          "$value": "{color.brand.500}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.brand.400}"
+          }
+        },
+        "disabled": {
+          "$value": "{color.gray.200}",
+          "$type": "color",
+          "$description": "Mirrors border.default in both modes, which is the relationship light mode already had (both gray-200). It had no dark value until the modes were unified: --pf-control-border-disabled pointed straight at the gray-200 primitive, so a disabled border stayed at 14.48:1 on the dark background while the enabled one moved to 3.75:1 — the disabled control read as the more prominent of the two. WCAG exempts disabled controls, so no contrast check caught it.",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.500}"
+          }
+        }
       },
       "action": {
-        "primary": { "$value": "{color.brand.700}", "$type": "color" },
-        "primaryHover": { "$value": "{color.brand.800}", "$type": "color" },
-        "primaryActive": { "$value": "{color.brand.900}", "$type": "color" },
-        "primaryText": { "$value": "{color.base.white}", "$type": "color" },
-        "secondary": { "$value": "{color.gray.100}", "$type": "color" },
-        "secondaryHover": { "$value": "{color.gray.200}", "$type": "color" },
-        "secondaryText": { "$value": "{color.gray.900}", "$type": "color" }
+        "primary": {
+          "$value": "{color.brand.700}",
+          "$type": "color",
+          "$description": "brand-600 (#2563eb) on white is ~5:1, which passes WCAG AA for normal text.",
+          "$extensions": {
+            "pitchfork.dark": "{color.brand.600}"
+          }
+        },
+        "primaryHover": {
+          "$value": "{color.brand.800}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.brand.700}"
+          }
+        },
+        "primaryActive": {
+          "$value": "{color.brand.900}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.brand.800}"
+          }
+        },
+        "primaryText": {
+          "$value": "{color.base.white}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.base.white}"
+          }
+        },
+        "secondary": {
+          "$value": "{color.gray.100}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.800}"
+          }
+        },
+        "secondaryHover": {
+          "$value": "{color.gray.200}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.700}"
+          }
+        },
+        "secondaryText": {
+          "$value": "{color.gray.900}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.gray.50}"
+          }
+        }
       },
       "status": {
         "success": {
           "background": {
             "$value": "{color.success.50}",
-            "$type": "color"
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.success.900}"
+            }
           },
-          "border": { "$value": "{color.success.200}", "$type": "color" },
+          "border": {
+            "$value": "{color.success.200}",
+            "$type": "color",
+            "$description": "In dark mode success-700 was 1.79:1 on success-900 and success-600 reaches only 2.59:1.",
+            "$extensions": {
+              "pitchfork.dark": "{color.success.500}"
+            }
+          },
           "foreground": {
             "$value": "{color.success.700}",
-            "$type": "color"
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.success.300}"
+            }
           },
-          "bright": { "$value": "{color.success.500}", "$type": "color" }
+          "bright": {
+            "$value": "{color.success.500}",
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.success.400}"
+            }
+          }
         },
         "warning": {
           "background": {
             "$value": "{color.warning.50}",
-            "$type": "color"
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.warning.900}"
+            }
           },
-          "border": { "$value": "{color.warning.200}", "$type": "color" },
+          "border": {
+            "$value": "{color.warning.200}",
+            "$type": "color",
+            "$description": "In dark mode warning-700 was 1.74:1 on warning-900 and warning-600 reaches only 2.71:1.",
+            "$extensions": {
+              "pitchfork.dark": "{color.warning.500}"
+            }
+          },
           "foreground": {
             "$value": "{color.warning.700}",
-            "$type": "color"
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.warning.300}"
+            }
           },
-          "bright": { "$value": "{color.warning.500}", "$type": "color" }
+          "bright": {
+            "$value": "{color.warning.500}",
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.warning.400}"
+            }
+          }
         },
         "danger": {
           "background": {
             "$value": "{color.danger.50}",
-            "$type": "color"
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.danger.900}"
+            }
           },
-          "border": { "$value": "{color.danger.200}", "$type": "color" },
+          "border": {
+            "$value": "{color.danger.200}",
+            "$type": "color",
+            "$description": "Sized against the danger background, which is the tighter constraint: an earlier note justified danger-600 by its 3.70:1 on gray-900 and never checked it against danger-900, where the same colour is 2.04:1. danger-500 gives 2.62:1, so danger-400 (3.53:1) is the darkest step that passes. It matches status.danger.bright; they never appear adjacent.",
+            "$extensions": {
+              "pitchfork.dark": "{color.danger.400}"
+            }
+          },
           "foreground": {
             "$value": "{color.danger.700}",
-            "$type": "color"
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.danger.300}"
+            }
           },
-          "bright": { "$value": "{color.danger.500}", "$type": "color" }
+          "bright": {
+            "$value": "{color.danger.500}",
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.danger.400}"
+            }
+          }
         }
       }
     }
