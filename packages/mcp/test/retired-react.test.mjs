@@ -153,8 +153,8 @@ test('validate_usage still checks icon names', async () => {
  */
 test('validate_usage accepts a name the app registers', async () => {
   const out = await call('validate_usage', {
-    code: '<pf-icon name="rocket"></pf-icon>\n<pf-inline-cta icon="companyLogo">Hi</pf-inline-cta>',
-    registeredIcons: ['rocket', 'company-logo'],
+    code: '<pf-icon name="rocket"></pf-icon>\n<pf-inline-cta icon="companyLogo">Hi</pf-inline-cta>\n<pf-icon name="my-rocket"></pf-icon>',
+    registeredIcons: ['rocket', 'company-logo', 'myRocket'],
   });
   assert.match(out, /No problems found/);
 });

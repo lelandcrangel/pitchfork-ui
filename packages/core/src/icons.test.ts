@@ -84,6 +84,32 @@ describe('the registry', () => {
     expect(faName(registry.resolveIconGlyph('chartBar'))).toBe('chart-bar');
   });
 
+  /*
+   * The other direction. A lookup normalises before it asks, so a glyph
+   * stored under its camelCase key was asked for as `my-rocket` and never
+   * found, by either spelling: the registration succeeded and drew nothing.
+   */
+  it('resolves a name registered in camelCase, by either spelling', () => {
+    registry.registerIconGlyphs({ myRocket: lucideX });
+
+    expect(registry.resolveIconGlyph('myRocket')).toBeDefined();
+    expect(registry.resolveIconGlyph('my-rocket')).toBeDefined();
+    expect(registry.getRegisteredIconNames()).toContain('my-rocket');
+  });
+
+  // Replacing has to find the first registration, or its aliases outlive it
+  // and the name is listed twice.
+  it('replaces an icon whichever spelling registered it', () => {
+    registry.registerIconGlyphs({ myRocket: fa('first', ['old-rocket']) });
+    registry.registerIconGlyphs({ 'my-rocket': fa('second') });
+
+    expect(faName(registry.resolveIconGlyph('myRocket'))).toBe('second');
+    expect(registry.resolveIconGlyph('old-rocket')).toBeUndefined();
+    expect(registry.getRegisteredIconNames().filter((n) => n.includes('rocket'))).toEqual([
+      'my-rocket',
+    ]);
+  });
+
   it('returns undefined for a name nothing draws', () => {
     expect(registry.resolveIconGlyph('nothing-like-this')).toBeUndefined();
   });

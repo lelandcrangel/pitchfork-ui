@@ -659,7 +659,8 @@ server.registerTool(
         resolves: resolvesIconName,
         normalize: normalizeIconName,
         names: iconNames,
-        registered: new Set(registeredIcons),
+        // Normalised on both sides, as core stores a registration and looks it up.
+        registered: new Set(registeredIcons.map(normalizeIconName)),
       },
       elementsByTag,
     );

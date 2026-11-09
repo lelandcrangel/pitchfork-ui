@@ -101,6 +101,8 @@ export const normalizeIconName = (name: string) => legacySpellings[name] ?? toKe
 /**
  * Add glyphs, or replace existing ones — the built-in glyphs and the bundled
  * Font Awesome icons included. Replacing takes the old icon's aliases with it.
+ * A name may be written either way (`myRocket` or `my-rocket`); both register
+ * the same icon, and markup can then use either spelling.
  *
  * Each value may be a glyph, a Font Awesome `IconDefinition` in any style, or
  * a Lucide `IconNode`; the last two are converted with `fromFontAwesome` and
@@ -109,10 +111,14 @@ export const normalizeIconName = (name: string) => legacySpellings[name] ?? toKe
 export function registerIconGlyphs(glyphs: Readonly<Record<string, IconGlyphInput>>) {
   for (const [name, input] of Object.entries(glyphs)) {
     const glyph = toIconGlyph(input, name);
-    const previous = registered.get(name);
+    // Stored under the name a lookup asks for. Every lookup normalises first,
+    // so a glyph stored as `myRocket` was looked up as `my-rocket` and never
+    // found, by either spelling.
+    const key = normalizeIconName(name);
+    const previous = registered.get(key);
     if (previous) unregisterAliases(previous);
 
-    registered.set(name, glyph);
+    registered.set(key, glyph);
     registerAliases(glyph);
   }
 }
