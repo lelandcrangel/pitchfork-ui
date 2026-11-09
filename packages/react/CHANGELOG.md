@@ -2,6 +2,132 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.19.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.18.0...react-v0.19.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **core:** IconGlyph is now the general glyph shape rather than Font Awesome's tuple, and resolveIconGlyph returns it, including for roles and built-in glyphs. The FA tuple type is FontAwesomeIconDefinition, which getIconPaths now takes. severityIconName returns a role (info, success, warning, danger), and the components' internal <pf-icon> elements carry role names, so code reading those names sees `close` where it saw `circle-xmark`. Registering a Font Awesome definition with registerIconGlyphs works as before.
+* **react:** every export of @pitchfork-ui/react is marked @deprecated. The package still builds and behaves identically; editors and any tooling that reads JSDoc will now flag its use.
+* **docs:** @pitchfork-ui/react's documentation pages are removed from the Storybook site, and metadata.json no longer carries React examples or descriptions. The package is unchanged and still published.
+* the package no longer ships dist/index.cjs or a "require" export condition. Consumers on Node 22+ can still require() it; older CommonJS consumers must import it as ESM.
+* **react:** the package no longer ships dist/index.cjs or a "require" export condition. Consumers on Node 22+ can still require() it; older CommonJS consumers must import it as ESM.
+* UtilityButton's `variant="danger"` is renamed to `variant="destructive"`. Update usages: `<UtilityButton variant="danger">` → `<UtilityButton variant="destructive">`.
+
+### Features
+
+* **accordion:** add Accordion component with examples and documentation ([2b8750b](https://github.com/lelandcrangel/pitchfork-ui/commit/2b8750b4962f36b7a643ef8d1e335b82b2ed46c4))
+* add animation support to Sparkline component for line drawing and area fading ([acad8d2](https://github.com/lelandcrangel/pitchfork-ui/commit/acad8d291ddb0b8b840afdf9224503e3b4b7375f))
+* add animation to Dropdown menu and update args for examples ([dd06cd8](https://github.com/lelandcrangel/pitchfork-ui/commit/dd06cd82023d75ec1ec99568c69942043ca5ebfb))
+* add animation to RadarChart value polygon with reduced motion support ([20233f3](https://github.com/lelandcrangel/pitchfork-ui/commit/20233f3ee5061a397bacddcdd36943d24e8027f9))
+* add AreaChart component with examples and documentation ([7c295aa](https://github.com/lelandcrangel/pitchfork-ui/commit/7c295aaa1aa36338550bc65be92bc4810e694f94))
+* add AvatarGroup component with examples and documentation ([9776442](https://github.com/lelandcrangel/pitchfork-ui/commit/97764426f1a46c1429258df96e34b250368cf59a))
+* add Collapsible component with styles, tests, and documentation ([41ccaea](https://github.com/lelandcrangel/pitchfork-ui/commit/41ccaea27f6c5c0a848683a19e20184e90d2f01e))
+* add Combobox component with accessibility features and styling ([c895759](https://github.com/lelandcrangel/pitchfork-ui/commit/c8957594fc122d4bfe4649150731a8026179473c))
+* add Command Palette component with styling and tests ([8da083c](https://github.com/lelandcrangel/pitchfork-ui/commit/8da083cdf19b25da2d43159b011d826ba339cd2e))
+* add ContextMenu component with styles, tests, and documentation ([fb95ac0](https://github.com/lelandcrangel/pitchfork-ui/commit/fb95ac0f2e11610f105bea1c53ec3b18ad40f6f6))
+* add dark mode support with Storybook configuration and accessibility tests ([89b469d](https://github.com/lelandcrangel/pitchfork-ui/commit/89b469da8a0b537d5f7346363431d15dac34d609))
+* add DateRangePicker component with examples and documentation ([b57bc50](https://github.com/lelandcrangel/pitchfork-ui/commit/b57bc5066cfe6ff311b77afddbb6cea501a9ad05))
+* add EmptyState component with examples and styles ([8638fff](https://github.com/lelandcrangel/pitchfork-ui/commit/8638fff0db2cb8acf2a401722bba5a96517bc286))
+* add exit animation and dismiss functionality to Alert and InlineCTA components ([487240d](https://github.com/lelandcrangel/pitchfork-ui/commit/487240d794b236470c1e980e09e588008de09b12))
+* add exit animation and presence handling to Tooltip component ([3a7601a](https://github.com/lelandcrangel/pitchfork-ui/commit/3a7601a34da740391cb9066dcc9dc6d83865bc26))
+* add exit animations and presence handling to Modal component ([ffecf45](https://github.com/lelandcrangel/pitchfork-ui/commit/ffecf45c2ab9c095135f8309ea35f1d1cd5fd155))
+* add Gauge Chart component with examples and documentation ([8ef63f3](https://github.com/lelandcrangel/pitchfork-ui/commit/8ef63f3dd3d0ad5b6d38ceefd706701296e82cb5))
+* add Heatmap component with styling, examples, and tests ([51d084b](https://github.com/lelandcrangel/pitchfork-ui/commit/51d084b05987afb67489ab5ad334a438074b053c))
+* add interactive Advancing demo to ProgressSteps and enhance styles with animations ([66a8633](https://github.com/lelandcrangel/pitchfork-ui/commit/66a863328c96d29a733224bf47daafd0028d7a05))
+* add Kbd component with examples, documentation, styles, and tests ([b3233af](https://github.com/lelandcrangel/pitchfork-ui/commit/b3233afb1d870c0064573904167ab0d40aa665b0))
+* add motion tokens for transition durations and easings; update components for consistent animations ([3d64509](https://github.com/lelandcrangel/pitchfork-ui/commit/3d645098b494f70a7f9bfa39e722ca0166620542))
+* add NumberInput component with increment/decrement functionality and formatting options ([3083211](https://github.com/lelandcrangel/pitchfork-ui/commit/308321160503a23e133041ec99189d5f0daadb07))
+* add Popover component with examples and documentation ([bb2cea7](https://github.com/lelandcrangel/pitchfork-ui/commit/bb2cea77ec108502a1c128fe3f2f21e16f09f094))
+* add React Server Components support ([7bbc598](https://github.com/lelandcrangel/pitchfork-ui/commit/7bbc598ee271d80f1355eb26b72b52708d05c150))
+* add README for @pitchfork-ui/react with installation, usage, and dark mode instructions ([90e8061](https://github.com/lelandcrangel/pitchfork-ui/commit/90e8061afc55bcb8e2c1559543e68f410dcbfd40))
+* add Resizable component with horizontal and vertical orientation support ([29cf367](https://github.com/lelandcrangel/pitchfork-ui/commit/29cf367e33c8ec5a910d04cfba47f1e916d6a413))
+* add ScrollArea component with customizable scroll behavior and themed scrollbars ([be80898](https://github.com/lelandcrangel/pitchfork-ui/commit/be8089873622f0dd976b7c17961345aab5213a2e))
+* add Sparkline component with examples and documentation ([9b039d1](https://github.com/lelandcrangel/pitchfork-ui/commit/9b039d128874119e10cd0ce480a4baa4c63c0341))
+* add staggered fade-in animation to Heatmap cells ([36d9c7d](https://github.com/lelandcrangel/pitchfork-ui/commit/36d9c7da4d0bffad3f1846757c869da2f206662b))
+* add TagInput component with styling, documentation, and tests ([8094f89](https://github.com/lelandcrangel/pitchfork-ui/commit/8094f897de7b38b284e113b9446b37c890fc7549))
+* add Theming documentation and theme starter CSS file for customization ([58b7ae7](https://github.com/lelandcrangel/pitchfork-ui/commit/58b7ae7c1c6764df7623825acd146991a8abbede))
+* add Timeline component with styles, stories, and tests ([4540858](https://github.com/lelandcrangel/pitchfork-ui/commit/4540858761c626070b74aff0837ea2bfec425e16))
+* add TimePicker component with 12-hour and 24-hour formats ([04eefba](https://github.com/lelandcrangel/pitchfork-ui/commit/04eefbafabe86c6fba836f19d5fb7b089618f615))
+* add Toast component with useToast hook and ToastProvider ([a7bca7d](https://github.com/lelandcrangel/pitchfork-ui/commit/a7bca7d684b07d20678f3608be9dfcdddb6e8fdf))
+* add Toolbar component with keyboard navigation and styling ([8e8b3fb](https://github.com/lelandcrangel/pitchfork-ui/commit/8e8b3fb7954c6b0686d496f5fa371415ce4c1c08))
+* add VisuallyHidden component with styles, tests, and documentation ([45ab25f](https://github.com/lelandcrangel/pitchfork-ui/commit/45ab25f8392f9bf815e14fc689ecc4e1aad163be))
+* add WCAG contrast ratio checker for dark mode token pairs ([c8316ba](https://github.com/lelandcrangel/pitchfork-ui/commit/c8316baf7ee60389a9c239cc4a520f331b19312d))
+* **Button:** add destructive variant with styles and documentation ([1181acc](https://github.com/lelandcrangel/pitchfork-ui/commit/1181accdf2954732703f5b45f4309f65d1f36017))
+* **combobox:** add clearable functionality with clear button and related tests ([407f45e](https://github.com/lelandcrangel/pitchfork-ui/commit/407f45e128fa3556d727ae6d199a062df345be33))
+* **core:** make the icon set swappable for any library ([cf2653b](https://github.com/lelandcrangel/pitchfork-ui/commit/cf2653b403227f4fe6a0952d276db900ca68069c))
+* **demo:** initialize demo app with basic structure and components ([f036b95](https://github.com/lelandcrangel/pitchfork-ui/commit/f036b959f8cb4dd9d02289109d6cdd2d246c272e))
+* **docs:** the elements take over Components; React docs removed ([383c11f](https://github.com/lelandcrangel/pitchfork-ui/commit/383c11f4d0288ffb3a6c66beecc2b8bdeb47665e))
+* **elements:** add 108 custom elements with React, Angular and Vue bindings ([#114](https://github.com/lelandcrangel/pitchfork-ui/issues/114)) ([50ed57a](https://github.com/lelandcrangel/pitchfork-ui/commit/50ed57ab3d9cdbda02258475be07c87c81ff5e43))
+* enhance Carousel component with accessibility improvements and transition updates ([936e30e](https://github.com/lelandcrangel/pitchfork-ui/commit/936e30e324e535f96d47ef7aaae62ff61186cecd))
+* enhance GaugeChart animation and accessibility; update fill transition and keyframes ([2eff637](https://github.com/lelandcrangel/pitchfork-ui/commit/2eff637b71e0fbab6624f60930ae20ede97bd8e4))
+* enhance layout responsiveness in various components and update styles for better usability ([21e0ca0](https://github.com/lelandcrangel/pitchfork-ui/commit/21e0ca00072d54820c7fcdd71d07c79b22b32e9b))
+* enhance Line & Bar Chart stories with interactive examples and improve padding in LineBarChart component ([3717589](https://github.com/lelandcrangel/pitchfork-ui/commit/3717589fd33880de6087a9644c7826eca9754748))
+* enhance MultiSelect component with menu animation and transition improvements ([a1bfaa2](https://github.com/lelandcrangel/pitchfork-ui/commit/a1bfaa224f1b122e236969f453742626941841fb))
+* enhance Notification component with exit animation and accessibility improvements ([a77ef0b](https://github.com/lelandcrangel/pitchfork-ui/commit/a77ef0ba5d88949a9e5b72ff9da08307c06e56cc))
+* enhance PieChart visual with conic-gradient animation and accessibility improvements ([a433b8a](https://github.com/lelandcrangel/pitchfork-ui/commit/a433b8a533fca2bd591317bd005fe5ad05114fe0))
+* enhance ProgressIndicators with animation on fill and stroke changes ([ad39736](https://github.com/lelandcrangel/pitchfork-ui/commit/ad397369e2ce57199904c9f8436364bc1d9fa6ed))
+* enhance Select component with menu animation and transition improvements ([3fdd23b](https://github.com/lelandcrangel/pitchfork-ui/commit/3fdd23bc0838ac5cd7018539a7c2528f5ad39095))
+* externalize FontAwesome dependencies and update Rollup output configuration ([f363a56](https://github.com/lelandcrangel/pitchfork-ui/commit/f363a567ea128a9e221235dfa48118b7cac6e8ff))
+* **Icon:** add displayName for improved React DevTools support ([2bba454](https://github.com/lelandcrangel/pitchfork-ui/commit/2bba45472d63e144ae18f873afed22d2f9930f68))
+* implement dark mode support with theme toggle and update CSS variables for accessibility ([111ec11](https://github.com/lelandcrangel/pitchfork-ui/commit/111ec11f7f0fc9740d8af0009316bc80202b4f20))
+* implement exit animation for Notification component using custom hook ([a89a482](https://github.com/lelandcrangel/pitchfork-ui/commit/a89a482a8c6ae0947903e8f481f424f06d6ccb66))
+* implement sliding indicator for Tabs component with responsive behavior ([6ff3c17](https://github.com/lelandcrangel/pitchfork-ui/commit/6ff3c1788f58b203f26702e151b9117a37aca596))
+* make the component library machine-consumable for coding agents ([#74](https://github.com/lelandcrangel/pitchfork-ui/issues/74)) ([3a4a904](https://github.com/lelandcrangel/pitchfork-ui/commit/3a4a904a47b7c11f31d4aafe9a9f7b8b2c613e3d))
+* mobile-first responsive system, EmptyState component, Prettier config ([23c1a9d](https://github.com/lelandcrangel/pitchfork-ui/commit/23c1a9d468886185296d9c195f7d8ae57cf33d50))
+* **react:** every export says it is deprecated, and a check that it does ([05275c8](https://github.com/lelandcrangel/pitchfork-ui/commit/05275c8a5ef55d33b1f5dc179295a8bdd82af51a))
+* **react:** mark every component [@deprecated](https://github.com/deprecated) ([9b38398](https://github.com/lelandcrangel/pitchfork-ui/commit/9b3839825d2f4a015da320c255451d6a2cc05cab))
+* **react:** ship ESM only; keep styles.css from a CSS-only pass ([08c3fcc](https://github.com/lelandcrangel/pitchfork-ui/commit/08c3fccdf6d2f7d5a8132dab2418366034098e32))
+* standardize danger vs destructive variant naming ([426a2c7](https://github.com/lelandcrangel/pitchfork-ui/commit/426a2c78cfc41caa311bd00d15b2ec3384cb1b4c))
+* **tabs:** add icons and count badges to tab items with accessibility support ([4a33acb](https://github.com/lelandcrangel/pitchfork-ui/commit/4a33acb88b07f36c97dae16cfd0cf8a1a6e1e33c))
+* **tabs:** enhance scrolling behavior and indicator measurement for better tab navigation ([fa6541b](https://github.com/lelandcrangel/pitchfork-ui/commit/fa6541b17a830a467bc230fea38c10ee40db74d3))
+* **tests:** add tests for EmptyState component ([353b230](https://github.com/lelandcrangel/pitchfork-ui/commit/353b230561521061c42d1d91ebc103a11809f20d))
+* **theme:** add LineBarChart color palette and update dark mode colors ([2871a42](https://github.com/lelandcrangel/pitchfork-ui/commit/2871a42e65ba828fd5f8d03b20139fda69903f82))
+* update changelog with accessibility improvements and add todo for dark mode implementation ([b8ab13f](https://github.com/lelandcrangel/pitchfork-ui/commit/b8ab13f4cfea0e275466dcb293ffce875a816a3e))
+* update color palette and typography to incorporate Geist font and enhance UI consistency ([0c5f66c](https://github.com/lelandcrangel/pitchfork-ui/commit/0c5f66c624f3fd4e6a174278f089c6563d29a1fa))
+* update components to support right-to-left (RTL) layout with CSS logical properties ([ca9f5ac](https://github.com/lelandcrangel/pitchfork-ui/commit/ca9f5aca8c0af4c275e6a7174679bba384847492))
+* update CSS styles for responsive design and improve layout ([1b62d73](https://github.com/lelandcrangel/pitchfork-ui/commit/1b62d7317bc7975fda58726354b083fbdb0dc435))
+* update documentation and examples for Storybook stories; enhance Card component styling ([4cf3bb2](https://github.com/lelandcrangel/pitchfork-ui/commit/4cf3bb244d9ca846c0d8aaea4b28f035627d7f66))
+* update README and package.json for automatic CSS injection; add new dependencies and update changelog ([3496628](https://github.com/lelandcrangel/pitchfork-ui/commit/3496628a5a84ad253f2c90ddfa7945b5edcb8bbd))
+* update README and package.json to include optional peer dependencies for CodeSnippet component ([f0257b3](https://github.com/lelandcrangel/pitchfork-ui/commit/f0257b30a0e6ada3fd8016f6b649ed8bdd235551))
+* **UtilityButton:** add title prop and enforce accessibility warnings ([1e21c19](https://github.com/lelandcrangel/pitchfork-ui/commit/1e21c19d0a649d980f99e88a9e92d80f401e6591))
+
+
+### Bug Fixes
+
+* **a11y:** getFocusableElements edge cases — contenteditable and fixed elements ([b59232e](https://github.com/lelandcrangel/pitchfork-ui/commit/b59232e6cae37b6eef9ae747d93c557060ed60b6))
+* **a11y:** migrate select-like triggers to ARIA 1.2 role="combobox" ([d68620c](https://github.com/lelandcrangel/pitchfork-ui/commit/d68620c1013728d9fed491d70dadb46399793d30))
+* **a11y:** remove aria-controls attribute from Dropdown trigger when closed ([06aa2c9](https://github.com/lelandcrangel/pitchfork-ui/commit/06aa2c99ee01c7007acf3bceb9f39971dadd06da))
+* **a11y:** update PieChart gradient implementation for better contrast detection ([18ab7dd](https://github.com/lelandcrangel/pitchfork-ui/commit/18ab7dda68c84adeef955e30a44cdb0710910323))
+* **a11y:** update roles from combobox to button for DatePicker, TimePicker, and related components ([009886a](https://github.com/lelandcrangel/pitchfork-ui/commit/009886aa2a5cad2651f01f223091bab910755c45))
+* **a11y:** use shared getFocusableElements in SlideoutMenu focus trap ([e93a527](https://github.com/lelandcrangel/pitchfork-ui/commit/e93a527efd7063bd80ad76eefcb6412171244885))
+* **Avatar:** correct alt attribute fallback for image ([491e67b](https://github.com/lelandcrangel/pitchfork-ui/commit/491e67b504b60ba0c763e035c5fecbd06c1945a4))
+* **badge:** keep single characters round ([#106](https://github.com/lelandcrangel/pitchfork-ui/issues/106)) ([45297ed](https://github.com/lelandcrangel/pitchfork-ui/commit/45297ed55975fb3b1e0a4833f98417d5863289ee))
+* **calendar:** use spans for month/year dropdown captions ([07f2069](https://github.com/lelandcrangel/pitchfork-ui/commit/07f206970d110bd10350454011e3ea03e037a980))
+* **charts:** align chart legend with the plot area ([36064c2](https://github.com/lelandcrangel/pitchfork-ui/commit/36064c22b4f9c0d2a781c76cd08cf065c2287cdd))
+* **charts:** route PieChart and RadarChart inline colors through theme aliases ([9c03140](https://github.com/lelandcrangel/pitchfork-ui/commit/9c03140136d87f93ef53579c88f8ba4ff8371e25))
+* **dropdown:** use theme aliases for disabled state instead of hardcoded hex ([099efa5](https://github.com/lelandcrangel/pitchfork-ui/commit/099efa5905e9a401071fd162ea08dc52c28b8309))
+* **elements:** the four component fixes from the v0.29 review ([4b9bdce](https://github.com/lelandcrangel/pitchfork-ui/commit/4b9bdceea94284a98403f4ce6be43ef1ad1aab35))
+* **GaugeChart:** give center label an explicit background for a11y; release 0.2.0 ([eff4e3c](https://github.com/lelandcrangel/pitchfork-ui/commit/eff4e3c3b3d273d2de47a98cca0dcee7d1a991df))
+* make the published package usable from outside this repo ([#101](https://github.com/lelandcrangel/pitchfork-ui/issues/101)) ([ee345c6](https://github.com/lelandcrangel/pitchfork-ui/commit/ee345c6a1d3f61c045ec7cc498726bc3e50c51cc))
+* **Modal:** adjust overflow and max-height for better mobile visibility ([75324d9](https://github.com/lelandcrangel/pitchfork-ui/commit/75324d93dfd3b091ca25d981ffd79740394f8e27))
+* **RadarChart:** ensure SVG overflow is visible ([260d5bd](https://github.com/lelandcrangel/pitchfork-ui/commit/260d5bde5d9a610b2f6098252a695b3fab77b23e))
+* **react:** convert Card to forwardRef and minify shipped CSS ([2dd62bd](https://github.com/lelandcrangel/pitchfork-ui/commit/2dd62bd262201b61b7c9e37c3b77f374dcc2679d))
+* **react:** convert Card to forwardRef and minify shipped CSS ([6494579](https://github.com/lelandcrangel/pitchfork-ui/commit/64945796e57d1afcd1afea1bfe7b04529bae1e40))
+* **react:** use flex-start/flex-end for flexbox alignment ([cd8dc53](https://github.com/lelandcrangel/pitchfork-ui/commit/cd8dc5374285a698b977629beb37994ed774af30))
+* **react:** use flex-start/flex-end for flexbox alignment ([83558c5](https://github.com/lelandcrangel/pitchfork-ui/commit/83558c5e16f147b79c8c3546d70f406c937a4604))
+* remove unnecessary opacity from outside days in Calendar CSS and clean up test imports ([9c87b8c](https://github.com/lelandcrangel/pitchfork-ui/commit/9c87b8c00675621c81360b49e98e08999aad8043))
+* resolve ci npm workspace install failure ([71a1343](https://github.com/lelandcrangel/pitchfork-ui/commit/71a1343d3af0c12fcc0291e5e4a80679ea961023))
+* **theme:** meet WCAG 3:1 on the five failing dark mode border pairs ([780e687](https://github.com/lelandcrangel/pitchfork-ui/commit/780e68766494e83795815cfeccd7b6994fcce7d7))
+* **theme:** migrate raw color tokens in component CSS to theme aliases ([585f9ad](https://github.com/lelandcrangel/pitchfork-ui/commit/585f9ad4f7a7a775e83ff583cd5dfe2d55e94e44))
+* update progress indicators to use accent color for fill and stroke ([d55ee7e](https://github.com/lelandcrangel/pitchfork-ui/commit/d55ee7e1e5b25ae6265f37b44780d2d391f1f16c))
+* update UtilityButton to use import.meta.env.DEV and loosen @pitchfork-ui/tokens dependency ([ac31f6a](https://github.com/lelandcrangel/pitchfork-ui/commit/ac31f6adc4bc620e81d69ba9352d183632c98163))
+
+
+### Miscellaneous Chores
+
+* release main ([#63](https://github.com/lelandcrangel/pitchfork-ui/issues/63)) ([6e93bd5](https://github.com/lelandcrangel/pitchfork-ui/commit/6e93bd513cf76c5b5c2f5f1cd9a92b7f6c7d60ca))
+
 ## [0.18.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.17.0...react-v0.18.0) (2026-11-09)
 
 

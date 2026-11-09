@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.3](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-angular-v0.2.2...elements-angular-v0.2.3) (2026-11-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/elements bumped from ^0.3.0 to ^0.4.0
+
 ## [0.2.2](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-angular-v0.2.1...elements-angular-v0.2.2) (2026-11-09)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/react",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "DEPRECATED — use @pitchfork-ui/elements instead. The former React component library for Pitchfork UI; still installable and patched for security until 30 April 2027.",
   "license": "MIT",
   "author": "Leland Rangel",

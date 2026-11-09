@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.6.0](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.5.0...mcp-v0.6.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **core:** IconGlyph is now the general glyph shape rather than Font Awesome's tuple, and resolveIconGlyph returns it, including for roles and built-in glyphs. The FA tuple type is FontAwesomeIconDefinition, which getIconPaths now takes. severityIconName returns a role (info, success, warning, danger), and the components' internal <pf-icon> elements carry role names, so code reading those names sees `close` where it saw `circle-xmark`. Registering a Font Awesome definition with registerIconGlyphs works as before.
+* **docs:** @pitchfork-ui/react's documentation pages are removed from the Storybook site, and metadata.json no longer carries React examples or descriptions. The package is unchanged and still published.
+
+### Features
+
+* **core:** make the icon set swappable for any library ([cf2653b](https://github.com/lelandcrangel/pitchfork-ui/commit/cf2653b403227f4fe6a0952d276db900ca68069c))
+* **docs:** the elements take over Components; React docs removed ([383c11f](https://github.com/lelandcrangel/pitchfork-ui/commit/383c11f4d0288ffb3a6c66beecc2b8bdeb47665e))
+* **elements:** add 108 custom elements with React, Angular and Vue bindings ([#114](https://github.com/lelandcrangel/pitchfork-ui/issues/114)) ([50ed57a](https://github.com/lelandcrangel/pitchfork-ui/commit/50ed57ab3d9cdbda02258475be07c87c81ff5e43))
+* make the component library machine-consumable for coding agents ([#74](https://github.com/lelandcrangel/pitchfork-ui/issues/74)) ([3a4a904](https://github.com/lelandcrangel/pitchfork-ui/commit/3a4a904a47b7c11f31d4aafe9a9f7b8b2c613e3d))
+* **mcp:** serve the element examples from the metadata ([bc6169b](https://github.com/lelandcrangel/pitchfork-ui/commit/bc6169b52bee7ec912bc5c42fcdded899040e73f))
+* **mcp:** the elements are the required layer, React the optional one ([018fec5](https://github.com/lelandcrangel/pitchfork-ui/commit/018fec570a294fb7378d7887018226405b16a02a))
+
+
+### Bug Fixes
+
+* **core:** store a registered icon under the name a lookup asks for ([61c335e](https://github.com/lelandcrangel/pitchfork-ui/commit/61c335e9ede85b3f06b7b8b1cd4adc196c4adca9))
+* make the published package usable from outside this repo ([#101](https://github.com/lelandcrangel/pitchfork-ui/issues/101)) ([ee345c6](https://github.com/lelandcrangel/pitchfork-ui/commit/ee345c6a1d3f61c045ec7cc498726bc3e50c51cc))
+* **mcp:** an icon name the app may register is a warning, not an error ([17b29e9](https://github.com/lelandcrangel/pitchfork-ui/commit/17b29e9a85ddadd69806e11fc5c1498f901994e1))
+* **mcp:** take @modelcontextprotocol/sdk 1.32.1 ([d6d86f6](https://github.com/lelandcrangel/pitchfork-ui/commit/d6d86f67524250526ff7e2c65f02ee6c3257e890))
+
 ## [0.5.0](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.4.1...mcp-v0.5.0) (2026-11-09)
 
 

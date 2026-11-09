@@ -1,10 +1,10 @@
 {
   "packages/core": "0.3.0",
-  "packages/elements": "0.3.0",
-  "packages/elements-angular": "0.2.2",
-  "packages/elements-react": "0.2.2",
-  "packages/elements-vue": "0.2.2",
-  "packages/react": "0.18.0",
+  "packages/elements": "0.4.0",
+  "packages/elements-angular": "0.2.3",
+  "packages/elements-react": "0.2.3",
+  "packages/elements-vue": "0.2.3",
+  "packages/react": "0.19.0",
   "packages/tokens": "0.6.0",
-  "packages/mcp": "0.5.0"
+  "packages/mcp": "0.6.0"
 }
