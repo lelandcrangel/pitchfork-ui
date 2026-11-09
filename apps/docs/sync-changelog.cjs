@@ -70,6 +70,34 @@ function dedupeBullets(markdown) {
     .join('\n');
 }
 
+/*
+ * The changelog is markdown written from commit messages, and the page is MDX,
+ * which is JSX: a bare `<pf-icon>` in a breaking-change note opens a JSX
+ * element that never closes, and a bare `{` opens an expression. Either fails
+ * the whole docs build -- which is how the first release to mention an element
+ * by tag outside backticks reddened its own release PR. Escape the three
+ * characters everywhere except inside code, where MDX already reads text
+ * literally and an escape would show up on the page as a stray backslash.
+ */
+function escapeForMdx(markdown) {
+  let fenced = false;
+  return markdown
+    .split('\n')
+    .map((line) => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        fenced = !fenced;
+        return line;
+      }
+      if (fenced) return line;
+      // Odd-numbered pieces are code spans, kept whole with their backticks.
+      return line
+        .split(/(`+[^`]*?`+)/)
+        .map((piece, i) => (i % 2 === 1 ? piece : piece.replace(/[<{}]/g, '\\$&')))
+        .join('');
+    })
+    .join('\n');
+}
+
 // The Storybook wrapper. The CHANGELOG.md supplies everything from its own
 // `# Changelog` heading down.
 const FRONTMATTER = `import { Meta } from '@storybook/addon-docs/blocks';
@@ -84,7 +112,7 @@ async function main() {
   const mdContent = fs.readFileSync(mdPath, 'utf8');
 
   const config = (await prettier.resolveConfig(mdxPath)) ?? {};
-  const next = await prettier.format(`${FRONTMATTER}${dedupeBullets(mdContent)}`, {
+  const next = await prettier.format(`${FRONTMATTER}${escapeForMdx(dedupeBullets(mdContent))}`, {
     ...config,
     filepath: mdxPath,
   });
