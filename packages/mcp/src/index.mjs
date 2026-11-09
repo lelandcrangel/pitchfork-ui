@@ -32,6 +32,7 @@ import {
   iconRegistryAvailable,
   metadata,
   metadataPath,
+  normalizeIconName,
   resolvesIconName,
   tokens,
 } from './data.mjs';
@@ -632,18 +633,33 @@ server.registerTool(
       'components, invalid variant values, missing required props, likely prop ' +
       'typos and hardcoded colours. Also checks `<pf-*>` element markup: ' +
       'unknown tags, attributes that do not exist, and props that have no ' +
-      'attribute at all and so cannot be set from markup. Run this on code you ' +
+      'attribute at all and so cannot be set from markup. An icon name that is ' +
+      'not built in is a warning rather than an error, because an app can ' +
+      'register any icon under any name at runtime; pass the names the app ' +
+      'registers in `registeredIcons` and they pass. Run this on code you ' +
       'generated before presenting it.',
-    inputSchema: { code: z.string().min(1).describe('The JSX snippet to check') },
+    inputSchema: {
+      code: z.string().min(1).describe('The JSX snippet to check'),
+      registeredIcons: z
+        .array(z.string().min(1))
+        .optional()
+        .describe(
+          'Icon names the app registers at runtime with `registerIconGlyphs()`, ' +
+            '`registerIconSet()` or `registerIcons()` (the keys of the object it ' +
+            'passes). They are treated as resolving.',
+        ),
+    },
   },
-  async ({ code }) => {
+  async ({ code, registeredIcons = [] }) => {
     const findings = validateUsage(
       code,
       componentsByName,
       {
         available: iconRegistryAvailable,
         resolves: resolvesIconName,
+        normalize: normalizeIconName,
         names: iconNames,
+        registered: new Set(registeredIcons),
       },
       elementsByTag,
     );

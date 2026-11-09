@@ -146,6 +146,38 @@ test('validate_usage still checks icon names', async () => {
 });
 
 /*
+ * Any set can be registered under any name at runtime, and this tool only
+ * sees a snippet, never the app's entry point. So a name it does not know is
+ * a warning that says how to tell it, and a name it is told about passes.
+ * Calling `name="rocket"` an error pushed an agent to rewrite correct markup.
+ */
+test('validate_usage accepts a name the app registers', async () => {
+  const out = await call('validate_usage', {
+    code: '<pf-icon name="rocket"></pf-icon>\n<pf-inline-cta icon="companyLogo">Hi</pf-inline-cta>',
+    registeredIcons: ['rocket', 'company-logo'],
+  });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage reports an unknown icon name as a warning, not an error', async () => {
+  const out = await call('validate_usage', { code: '<pf-icon name="rocket"></pf-icon>' });
+  assert.match(out, /^0 error\(s\), 1 warning\(s\)\./);
+  assert.match(out, /`name="rocket"` is not a built-in icon or role/);
+  assert.match(out, /registerIconSet\(\)/);
+  assert.match(out, /`registeredIcons`/);
+  assert.doesNotMatch(out, /Did you mean/, 'nothing built in is close to rocket');
+});
+
+test('validate_usage still suggests the built-in name for a typo', async () => {
+  const out = await call('validate_usage', {
+    code: '<pf-icon name="clsoe"></pf-icon>',
+    registeredIcons: ['rocket'],
+  });
+  assert.match(out, /Did you mean `"close"`\?/);
+  assert.match(out, /and is not in `registeredIcons`/);
+});
+
+/*
  * The components ask for roles, and a consumer's markup should too: a role is
  * what a swapped icon set swaps. A validator that knew only glyph names would
  * report `close` as a typo and suggest `clock`.
