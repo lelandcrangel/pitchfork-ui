@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.2](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-vue-v0.2.1...elements-vue-v0.2.2) (2026-11-09)
+
+
+### Bug Fixes
+
+* **elements:** the four component fixes from the v0.29 review ([4b9bdce](https://github.com/lelandcrangel/pitchfork-ui/commit/4b9bdceea94284a98403f4ce6be43ef1ad1aab35))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/elements bumped from ^0.2.1 to ^0.3.0
+
 ## [0.2.1](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-vue-v0.2.0...elements-vue-v0.2.1) (2026-10-13)
 
 

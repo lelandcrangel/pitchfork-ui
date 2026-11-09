@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/tokens",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Design tokens and the theme layer for Pitchfork UI — colour, spacing, radii, typography, shadow and motion built with Style Dictionary, plus the --pf-* alias layer and dark mode every rendering layer shares.",
   "license": "MIT",
   "author": "Leland Rangel",

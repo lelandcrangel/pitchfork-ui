@@ -2,6 +2,30 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.18.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.17.0...react-v0.18.0) (2026-11-09)
+
+
+### ⚠ BREAKING CHANGES
+
+* **core:** IconGlyph is now the general glyph shape rather than Font Awesome's tuple, and resolveIconGlyph returns it, including for roles and built-in glyphs. The FA tuple type is FontAwesomeIconDefinition, which getIconPaths now takes. severityIconName returns a role (info, success, warning, danger), and the components' internal <pf-icon> elements carry role names, so code reading those names sees `close` where it saw `circle-xmark`. Registering a Font Awesome definition with registerIconGlyphs works as before.
+
+### Features
+
+* **core:** make the icon set swappable for any library ([cf2653b](https://github.com/lelandcrangel/pitchfork-ui/commit/cf2653b403227f4fe6a0952d276db900ca68069c))
+
+
+### Bug Fixes
+
+* **elements:** the four component fixes from the v0.29 review ([4b9bdce](https://github.com/lelandcrangel/pitchfork-ui/commit/4b9bdceea94284a98403f4ce6be43ef1ad1aab35))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/core bumped from ^0.2.0 to ^0.3.0
+    * @pitchfork-ui/tokens bumped from ^0.5.0 to ^0.6.0
+
 ## [0.17.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.16.0...react-v0.17.0) (2026-10-13)
 
 

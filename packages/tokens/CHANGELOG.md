@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.5.0...tokens-v0.6.0) (2026-11-09)
+
+
+### Features
+
+* **tokens:** keep a semantic colour's two modes in one place ([#162](https://github.com/lelandcrangel/pitchfork-ui/issues/162)) ([f6bbb22](https://github.com/lelandcrangel/pitchfork-ui/commit/f6bbb224e4f51500900a6dbba8a9c0d9bf02033d))
+
+
+### Bug Fixes
+
+* **elements:** the four component fixes from the v0.29 review ([4b9bdce](https://github.com/lelandcrangel/pitchfork-ui/commit/4b9bdceea94284a98403f4ce6be43ef1ad1aab35))
+
 ## [0.5.0](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.4.2...tokens-v0.5.0) (2026-10-11)
 
 
