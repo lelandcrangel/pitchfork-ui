@@ -1977,6 +1977,22 @@ halves of are on disk by then. Probed both ways: it names all five mismatches
 and exits 1 against a simulated 0.2.0 release, and goes quiet once the ranges
 read `^0.2.0`.
 
+**Never write a tag with its angle brackets in a commit message, backticks or
+not.** A commit's text becomes release notes in two places that read it as
+markup. The docs changelog page is MDX, where a bare `<pf-icon>` is an
+unclosed JSX element and fails the Storybook build; `sync-changelog.cjs` now
+escapes it, outside code. The release PR's body is parsed by release-please
+as **HTML** to decide what to tag, and there backticks protect nothing:
+#168's breaking-change note made it lose three of #165's eight sections, so
+elements, mcp and react published with no tag or GitHub release and a second
+release PR opened at once, proposing 0.4.0 / 0.6.0 / 0.19.0 with a changelog
+reaching back to #114. Measured on #165's own body with release-please's
+parser: wrapped in backticks it loses the same three; written as "the
+pf-icon element" it reads all eight. `.github/workflows/release-pr-body.yml`
+runs that parser over the release PR on every push **and every body edit**,
+and fails while the fix is still a `BEGIN_COMMIT_OVERRIDE` in the source PR
+rather than three hand-made releases.
+
 **Regenerate the lockfile incrementally.** `npm install --package-lock-only` on
 top of the committed lockfile gives a 33-line diff of specifier strings.
 Deleting it first and letting npm rebuild it gives a 24,000-line diff with no
