@@ -473,8 +473,8 @@ const isElementPassthrough = (name) =>
  * validator only ever sees a snippet, never the app's entry point. Calling
  * `name="rocket"` broken would push an agent to rewrite correct markup, which
  * is worse than missing a typo. The caller can say what the app registers
- * with `registeredIcons`, and those names pass outright; they are matched
- * after the same normalisation the registry applies on lookup. A near-miss
+ * with `registeredIcons`, and those names pass outright; both sides are
+ * normalised, as the registry does when it stores a name and when it looks one up. A near-miss
  * still gets its suggestion, from the built-in names and the registered ones,
  * because that is the half of this check worth having.
  */
