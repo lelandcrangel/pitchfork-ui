@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Framework-free behaviour for Pitchfork UI — anchored positioning, focus trapping, outside-interaction dismissal, list navigation and accessibility helpers, with no dependency on any UI framework.",
   "license": "MIT",
   "author": "Leland Rangel",
