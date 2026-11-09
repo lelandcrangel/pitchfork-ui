@@ -166,8 +166,8 @@ test('validate_usage catches a misspelled prop', whenReact, async () => {
 // and is exactly the kind of mistake this tool exists to catch.
 test('validate_usage catches an icon name the library does not resolve', whenReact, async () => {
   const out = await call('validate_usage', { code: '<Icon name="paper-plane" />' });
-  assert.match(out, /is not an icon the library resolves/);
-  assert.match(out, /registerIcons/);
+  assert.match(out, /\*\*warning\*\*.*is not a built-in icon or role/);
+  assert.match(out, /registerIcons\(\)/);
 });
 
 test('validate_usage suggests the nearest icon name', whenReact, async () => {

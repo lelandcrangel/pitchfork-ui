@@ -465,6 +465,36 @@ const isElementPassthrough = (name) =>
  * a property leaves no attribute for a stylesheet or a query to find. The first
  * is reported, because writing it as an attribute does nothing whatsoever.
  */
+/**
+ * An icon name that nothing built in resolves, or `null` when it resolves.
+ *
+ * A **warning**, not an error. Any set can be registered under any name at
+ * runtime (`registerIconGlyphs({ rocket: fromLucide(Rocket) })`), and this
+ * validator only ever sees a snippet, never the app's entry point. Calling
+ * `name="rocket"` broken would push an agent to rewrite correct markup, which
+ * is worse than missing a typo. The caller can say what the app registers
+ * with `registeredIcons`, and those names pass outright; they are matched
+ * after the same normalisation the registry applies on lookup. A near-miss
+ * still gets its suggestion, from the built-in names and the registered ones,
+ * because that is the half of this check worth having.
+ */
+function unresolvedIcon(attr, icons, register) {
+  if (icons.resolves(attr.value)) return null;
+  const registered = icons.registered ?? new Set();
+  if (registered.has(icons.normalize(attr.value))) return null;
+
+  const suggestion = closest(attr.value, [...icons.names, ...registered]);
+  return {
+    severity: 'warning',
+    message:
+      `\`${attr.name}="${attr.value}"\` is not a built-in icon or role` +
+      (registered.size ? ' and is not in `registeredIcons`' : '') +
+      ', so it renders nothing unless the app registers it at runtime. ' +
+      (suggestion ? `Did you mean \`"${suggestion}"\`? ` : '') +
+      `If the app registers it with ${register}, pass the name in \`registeredIcons\`.`,
+  };
+}
+
 function validateElements(code, elementsByTag, icons, findings) {
   const tags = [...elementsByTag.keys()];
 
@@ -553,22 +583,14 @@ function validateElements(code, elementsByTag, icons, findings) {
         icons?.available &&
         isElementIconAttr(usage.name, attr.name) &&
         attr.literal &&
-        attr.value !== null &&
-        !icons.resolves(attr.value)
+        attr.value !== null
       ) {
-        const suggestion = closest(attr.value, [...icons.names]);
-        findings.push({
-          severity: 'error',
-          line: usage.line,
-          component: usage.name,
-          message:
-            `\`${attr.name}="${attr.value}"\` is not an icon the library resolves, ` +
-            'so it renders nothing. ' +
-            (suggestion
-              ? `Did you mean \`"${suggestion}"\`?`
-              : 'Pitchfork UI bundles a set of icons rather than all of Font Awesome.') +
-            ' Add it with `registerIconGlyphs()` if you need it.',
-        });
+        const finding = unresolvedIcon(
+          attr,
+          icons,
+          '`registerIconGlyphs()` or `registerIconSet()`',
+        );
+        if (finding) findings.push({ ...finding, line: usage.line, component: usage.name });
         continue;
       }
 
@@ -666,22 +688,10 @@ export function validateUsage(code, componentsByName, icons = null, elementsByTa
         icons?.available &&
         isIconProp(usage.name, attr.name) &&
         attr.literal &&
-        attr.value !== null &&
-        !icons.resolves(attr.value)
+        attr.value !== null
       ) {
-        const suggestion = closest(attr.value, [...icons.names]);
-        findings.push({
-          severity: 'error',
-          line: usage.line,
-          component: usage.name,
-          message:
-            `\`${attr.name}="${attr.value}"\` is not an icon the library resolves, ` +
-            'so it renders nothing. ' +
-            (suggestion
-              ? `Did you mean \`"${suggestion}"\`?`
-              : 'Pitchfork UI bundles a set of icons rather than all of Font Awesome.') +
-            ' Add it with `registerIcons()` if you need it.',
-        });
+        const finding = unresolvedIcon(attr, icons, '`registerIcons()`');
+        if (finding) findings.push({ ...finding, line: usage.line, component: usage.name });
         continue;
       }
 

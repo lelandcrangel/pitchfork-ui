@@ -141,10 +141,18 @@ export const iconNames = new Set([...iconRoles, ...(iconRegistry.all ?? [])]);
  */
 export const iconRegistryAvailable = customIconNames.size > 0 || fontAwesomeIconNames.size > 0;
 
+/**
+ * The name both layers actually look up, from core's `normalizeIconName`: a
+ * legacy spelling's replacement, or the kebab-cased name. A consumer's
+ * registration is looked up under this too, which is how `registeredIcons`
+ * is matched.
+ */
+export const normalizeIconName = (name) => legacyIconAliases[name] ?? toKebabCase(name);
+
 export function resolvesIconName(name) {
   if (customIconNames.has(name)) return true;
 
-  const normalized = legacyIconAliases[name] ?? toKebabCase(name);
+  const normalized = normalizeIconName(name);
   return (
     customIconNames.has(normalized) ||
     fontAwesomeIconNames.has(normalized) ||

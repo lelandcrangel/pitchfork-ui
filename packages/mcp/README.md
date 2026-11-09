@@ -124,6 +124,19 @@ The first of those is the one worth having: the markup parses, the element
 renders, and the value simply never arrives. Angular's `[prop]`/`(event)` and
 Vue's `:prop`/`@event` spellings are recognised and left alone.
 
+Icon names are checked against the built-in glyphs, the bundled Font Awesome
+icons, their aliases and the roles. Anything else is a **warning**, not an
+error: an app can register any icon under any name at runtime
+(`registerIconSet()`, `registerIconGlyphs()`, `registerIcons()`), and a
+snippet never shows the entry point that does it. Pass the names the app
+registers as `registeredIcons` and they pass:
+
+```json
+{ "code": "<pf-icon name=\"rocket\"></pf-icon>", "registeredIcons": ["rocket"] }
+```
+
+A near-miss of a known name still gets its suggestion (`clsoe` → `close`).
+
 ## Configuration
 
 | Variable                | Purpose                                                  |
