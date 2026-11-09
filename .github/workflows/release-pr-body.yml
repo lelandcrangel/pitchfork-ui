@@ -1,0 +1,49 @@
+name: Release PR body
+
+# release-please decides what to tag from the release PR's *body*, which it
+# parses as HTML. A bare tag in a release note -- `<pf-icon>`, from a commit's
+# BREAKING CHANGE footer -- swallowed three of #165's eight sections, so
+# elements, mcp and react published with no tag or GitHub release and a bogus
+# release PR opened straight after. scripts/check-release-pr-body.mjs runs
+# release-please's own parser over the body and fails on any section it cannot
+# read back, while the PR is still open.
+#
+# A workflow of its own rather than a step in CI, for two reasons. It has to
+# run on `edited`: release-please rewrites the body as well as pushing, and a
+# body edit is not a push, so CI never sees it. And it needs none of the
+# repository's dependencies, so it finishes in seconds where CI takes twenty
+# minutes -- a cheap thing to make required.
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-pr-body-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  parse:
+    # Only the release PR has a body release-please will parse.
+    if: github.head_ref == 'release-please--branches--main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      # The version googleapis/release-please-action@v5 bundles, as its own log
+      # prints it ("Running release-please version: …"). The parser is the
+      # thing under test, so this should follow the action when it moves.
+      RELEASE_PLEASE_VERSION: 17.6.0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Install release-please's parser
+        run: npm install --prefix "$RUNNER_TEMP/release-please" --no-save --no-audit --no-fund "release-please@$RELEASE_PLEASE_VERSION"
+      - name: Check release-please can read every release in the body
+        run: node scripts/check-release-pr-body.mjs --release-please "$RUNNER_TEMP/release-please"
