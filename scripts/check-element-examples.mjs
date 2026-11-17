@@ -84,7 +84,7 @@ for (const [tag, example] of Object.entries(elementExamples)) {
       { available: iconRegistryAvailable, resolves: resolvesIconName, names: iconNames },
       elementsByTag,
     );
-    for (const finding of findings) {
+    for (const finding of findings.filter((f) => f.severity !== 'info')) {
       (finding.severity === 'error' ? errors : warnings).push(`${where}: ${finding.message}`);
     }
   }
@@ -101,7 +101,7 @@ for (const [name, pattern] of Object.entries(patternMarkup)) {
     { available: iconRegistryAvailable, resolves: resolvesIconName, names: iconNames },
     elementsByTag,
   );
-  for (const finding of findings) {
+  for (const finding of findings.filter((f) => f.severity !== 'info')) {
     (finding.severity === 'error' ? errors : warnings).push(`pattern ${name}: ${finding.message}`);
   }
 }

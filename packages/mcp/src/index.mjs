@@ -633,7 +633,9 @@ server.registerTool(
       'components, invalid variant values, missing required props, likely prop ' +
       'typos and hardcoded colours. Also checks `<pf-*>` element markup: ' +
       'unknown tags, attributes that do not exist, and props that have no ' +
-      'attribute at all and so cannot be set from markup. An icon name that is ' +
+      'attribute at all and so cannot be set from markup. A generated binding ' +
+      '(`<PfButton fullWidth onPfChange={...}>`) is checked against its ' +
+      "element's props and events. An icon name that is " +
       'not built in is a warning rather than an error, because an app can ' +
       'register any icon under any name at runtime; pass the names the app ' +
       'registers in `registeredIcons` and they pass. Run this on code you ' +
@@ -664,19 +666,20 @@ server.registerTool(
       },
       elementsByTag,
     );
-    if (!findings.length) {
-      return text('No problems found. Components, props and values all check out.');
-    }
-
     const errors = findings.filter((f) => f.severity === 'error');
     const warnings = findings.filter((f) => f.severity === 'warning');
-    const lines = [
-      `${errors.length} error(s), ${warnings.length} warning(s).`,
-      '',
-      ...findings
-        .sort((a, b) => a.line - b.line)
-        .map((f) => `- **${f.severity}** (line ${f.line}): ${f.message}`),
-    ];
+    // An `info` finding is a note about correct code, such as which package a
+    // binding comes from, so it never turns a clean result into a dirty one.
+    const listed = findings
+      .sort((a, b) => a.line - b.line)
+      .map((f) => `- **${f.severity}** (line ${f.line}): ${f.message}`);
+
+    if (!errors.length && !warnings.length) {
+      const clean = 'No problems found. Components, props and values all check out.';
+      return text(listed.length ? [clean, '', ...listed].join('\n') : clean);
+    }
+
+    const lines = [`${errors.length} error(s), ${warnings.length} warning(s).`, '', ...listed];
     return text(lines.join('\n'));
   },
 );
