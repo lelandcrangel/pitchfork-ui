@@ -241,7 +241,12 @@ jobs:
       # in the log; failing on it would make this the step nobody reads, which
       # is the one thing an audit must not be. `todo.md` has the full
       # reasoning, including what has and has not been tried.
+      # `npm audit --omit=dev` at a workspace root counts every app under
+      # apps/ as production, so it answered a wider question than its name.
+      # This walks the lockfile from the published packages' own runtime
+      # dependencies instead, and carries any accepted advisory with an expiry
+      # that fails once a fix is published.
       - name: Security audit (what a consumer installs)
-        run: npm audit --omit=dev --audit-level=high
+        run: npm run audit:published
       - name: Security audit (whole tree, informational)
         run: npm audit --audit-level=high || true
