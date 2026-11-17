@@ -1,0 +1,134 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Foundations/Using with Tailwind" />
+
+# Using with Tailwind
+
+The elements work in a Tailwind app. They need one extra import, and there is
+one thing to know about token names.
+
+## What breaks, and why
+
+Tailwind's preflight starts by zeroing every element:
+
+```css
+*,
+::after,
+::before {
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+```
+
+About half of the elements draw their own box on the host element. A badge's
+padding, an option's inset, the frame around a card or a toolbar, and the rule
+under a table cell are all set by a `:host` rule inside the element's shadow
+root. The cascade does not weigh a shadow-root rule against a page rule by
+specificity. For normal declarations **the page's stylesheet wins**, whatever
+its specificity and whatever cascade layer it sits in. The element's own rule
+only applies where the page says nothing, and preflight's `*` says something
+about every element on the page.
+
+So in a Tailwind app those boxes disappear. Measured in Chromium against a
+Tailwind 4.3 build:
+
+| Element         | Without Tailwind                 | With Tailwind           |
+| --------------- | -------------------------------- | ----------------------- |
+| `pf-badge`      | padding `0 8px`                  | padding `0`             |
+| `pf-menu-item`  | padding `8px 12px`               | padding `0`             |
+| `pf-option`     | padding `8px 12px`               | padding `0`             |
+| `pf-card`       | border `1px solid`               | border `0`              |
+| `pf-toolbar`    | padding `4px`, border `1px`      | padding `0`, border `0` |
+| `pf-table-cell` | padding `14px 16px`, bottom rule | padding `0`, no rule    |
+
+## The fix: one import
+
+```css
+@import 'tailwindcss';
+@import '@pitchfork-ui/elements/tailwind.css';
+```
+
+You can also import it from JavaScript next to your other stylesheets
+(`import '@pitchfork-ui/elements/tailwind.css'`). It is opt-in, and an app that
+does not use Tailwind does not need it.
+
+The file is a single rule in Tailwind's `base` layer. It names every `pf-*`
+tag and sets `margin`, `padding` and `border` to `revert-layer`. That value
+rolls the property back past everything in the `base` layer, preflight
+included, and what is left is the element's own `:host` rule. With it loaded,
+the computed padding and borders of every element in the table above match a
+page without Tailwind.
+
+The rule sits below Tailwind's `utilities` layer, so your own classes still
+win: `pf-card` with `class="p-6 border-4 m-2"` measures 24px of padding, a 4px
+border and an 8px margin. Your unlayered CSS wins as well. The import order
+does not matter. The rule's type selectors outrank preflight's `*` within the
+same layer, and it measured the same imported before Tailwind, after it, and
+from JavaScript. It also works under Tailwind's `prefix(tw)`.
+
+Two alternatives look equivalent and are not, and both were measured:
+
+- **`revert-layer` outside a layer** rolls back to the layered styles below
+  it, and preflight is one of them, so nothing changes.
+- **`revert`** rolls back to the browser's defaults, which drops the element's
+  own `:host` rule along with preflight. Every element ends up with zero
+  padding.
+
+The rule lists the tags rather than matching `.hydrated`. Stencil gives that
+class to the elements of every Stencil library on the page, so matching it
+would also undo preflight for components that are not ours. The list is
+generated from the component folders on every build, so a new element is
+covered without anyone adding it by hand.
+
+The file is written for Tailwind. `revert-layer` only rolls back the layer it
+is declared in, so another reset is only undone by the same three declarations
+placed in that reset's own layer.
+
+## Shared token names
+
+Tailwind 4 defines its theme as CSS variables, and 18 of those names are also
+Pitchfork primitives:
+
+- `--color-gray-50` to `--color-gray-900`
+- `--radius-sm`, `--radius-md`, `--radius-lg`
+- `--shadow-sm`, `--shadow-md`, `--shadow-lg`
+- `--font-weight-medium`, `--font-weight-semibold`
+
+Tailwind declares its values in `@layer theme`. Pitchfork's token stylesheet
+declares its values on `:root` without a layer, and an unlayered declaration
+beats every layer. **So once Pitchfork's styles are loaded, Tailwind's gray
+and radius utilities draw Pitchfork's values:**
+
+| Utility                      | Tailwind alone             | With Pitchfork loaded |
+| ---------------------------- | -------------------------- | --------------------- |
+| `bg-gray-100`                | `oklch(96.7% 0.003 264.5)` | `#f1f5f9`             |
+| `text-gray-900`              | `oklch(21% 0.034 264.7)`   | `#0f172a`             |
+| `rounded-sm` / `-md` / `-lg` | 4px / 6px / 8px            | 6px / 8px / 12px      |
+
+The rest of the list behaves differently:
+
+- **Shadow utilities do not change.** Tailwind writes the shadow into the
+  utility itself, so `shadow-md` is Tailwind's shadow either way. But
+  `var(--shadow-md)` in your own CSS reads Pitchfork's.
+- **The two font weights have the same values in both** (500 and 600), so
+  nothing visible changes.
+- **`--color-brand-*` is Pitchfork's too.** Tailwind has no brand color, but
+  if you define `--color-brand-500` in `@theme`, Pitchfork's unlayered value
+  wins. `bg-brand-500` then draws Pitchfork's indigo, not your color.
+- **Retheming moves both.** An override of `--radius-*` on `:root`, as in
+  Foundations → Theming, changes Tailwind's `rounded-*` utilities as well as
+  the elements.
+
+Pitchfork has no option yet to prefix its token names. To keep the two apart:
+
+- **Accept the overlap.** Your gray text and rounded corners then match the
+  elements next to them, which is usually what you want, as long as you know
+  it is happening.
+- **Use names Pitchfork does not define.** Tailwind's `slate`, `zinc`,
+  `neutral` and `stone` palettes, `gray-950`, and `rounded-xl` and up are all
+  Tailwind's own. Give your own theme colors a name other than `brand`.
+- **Prefix Tailwind instead.** `@import 'tailwindcss' prefix(tw);` renames
+  Tailwind's theme variables to `--tw-color-gray-100` and so on, so no names
+  are shared. `tw:bg-gray-100` then measures Tailwind's value again. The cost
+  is a `tw:` on every class.

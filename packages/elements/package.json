@@ -38,7 +38,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "stencil build",
+    "build": "stencil build && node ../../scripts/build-tailwind-compat.mjs",
     "start": "stencil build --dev --watch --serve",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -92,6 +92,7 @@
     },
     "./components/*": "./dist/components/*",
     "./styles.css": "./dist/pitchfork/pitchfork.css",
+    "./tailwind.css": "./dist/tailwind.css",
     "./metadata": "./dist/elements.json"
   }
 }

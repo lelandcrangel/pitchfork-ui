@@ -53,6 +53,11 @@ import '@pitchfork-ui/elements/styles.css';
 <pf-button variant="primary">Save</pf-button>
 ```
 
+With a binding package (`@pitchfork-ui/elements-react`, `-angular` or `-vue`),
+do not also call `defineCustomElements()` from the loader. The bindings
+register each tag from `@pitchfork-ui/elements/components`, and the loader
+would register the same tags again from a second build.
+
 ### React
 
 The React bindings are **generated** from the elements by Stencil's output
