@@ -249,7 +249,14 @@ function scanTags(code, pattern) {
   return usages;
 }
 
-const findUsages = (code) => scanTags(code, '<([A-Z][A-Za-z0-9]*)');
+/*
+ * A `<` straight after an identifier, `)` or `]` is a type argument, not JSX:
+ * `useRef<HTMLDivElement>(null)`, `useState<Item[]>()`, `Promise<Result>`. JSX
+ * only ever opens where an expression could start -- after `(`, `=`, `>`,
+ * `return`, whitespace -- so the lookbehind costs no real usage. Without it a
+ * typed hook was reported as a component the library does not export.
+ */
+const findUsages = (code) => scanTags(code, '(?<![\\w$)\\]])<([A-Z][\\w$]*)');
 
 /**
  * Custom element usage: `<pf-button variant="primary">`. A separate scan
@@ -495,37 +502,74 @@ function unresolvedIcon(attr, icons, register) {
   };
 }
 
-function validateElements(code, elementsByTag, icons, findings) {
-  const tags = [...elementsByTag.keys()];
+/**
+ * Checks one usage of an element against its metadata -- written as markup
+ * (`<pf-button variant="ghost">`) or through a generated binding
+ * (`<PfButton variant="ghost">`). One function for both, because the two are
+ * the same element: a wrong enum value or an invented prop is the same
+ * mistake whichever spelling carried it, and two validators would drift the
+ * first time one of them was fixed.
+ *
+ * What differs is how a name is looked up:
+ *
+ *   - **Markup** names an *attribute*, so a prop with no attribute cannot be
+ *     set at all, and a camelCase property name is inert.
+ *   - **A binding** names a *property* (`fullWidth`, `onPfChange`), which is
+ *     what the React and Vue wrappers set, so every prop is reachable --
+ *     `sources` and `isDateDisabled` included -- and each `pfXxx` event is an
+ *     `onPfXxx` handler. Vue templates may also write the kebab-case
+ *     attribute, so that spelling resolves too.
+ */
+function checkElementUsage(usage, element, { binding, icons, findings }) {
+  const byAttr = new Map();
+  const byProp = new Map();
+  const propsWithoutAttr = new Map();
+  for (const prop of element.props) {
+    byProp.set(prop.name, prop);
+    if (prop.attr) byAttr.set(prop.attr, prop);
+    else propsWithoutAttr.set(prop.name.toLowerCase(), prop);
+  }
 
-  for (const usage of findElementUsages(code)) {
-    const element = elementsByTag.get(usage.name);
+  // How the usage is named in a finding, and what a name on it is called.
+  const subject = binding ? `\`${usage.name}\`` : `\`<${usage.name}>\``;
+  const noun = binding ? 'prop' : 'attribute';
+  const known = binding ? [...byProp.keys()] : [...byAttr.keys()];
+  const handlers = new Set(
+    element.events.map((event) => `on${event.name[0].toUpperCase()}${event.name.slice(1)}`),
+  );
 
-    if (!element) {
-      const suggestion = closest(usage.name, tags);
-      findings.push({
-        severity: 'error',
-        line: usage.line,
-        component: usage.name,
-        message:
-          `\`<${usage.name}>\` is not an element in this library.` +
-          (suggestion ? ` Did you mean \`<${suggestion}>\`?` : ''),
-      });
-      continue;
+  for (const attr of parseAttrs(usage.attrText)) {
+    if (attr.spread || !attr.name) continue;
+    const prop = binding ? (byProp.get(attr.name) ?? byAttr.get(attr.name)) : byAttr.get(attr.name);
+
+    if (!prop && binding) {
+      // A handler for one of this element's own events: `onPfChange`.
+      if (handlers.has(attr.name)) continue;
+      // `onPfChnage` is a handler for an event that never fires. Any other
+      // `on*` is a DOM listener and passes, as it does in markup.
+      if (/^onPf[A-Z]/.test(attr.name)) {
+        const suggestion = closest(attr.name, [...handlers]);
+        findings.push({
+          severity: 'error',
+          line: usage.line,
+          component: usage.name,
+          message:
+            `${subject} has no event for \`${attr.name}\`.` +
+            (suggestion
+              ? ` Did you mean \`${suggestion}\`?`
+              : handlers.size
+                ? ` Its events are: ${[...handlers].map((n) => `\`${n}\``).join(', ')}.`
+                : ' It emits no events of its own.'),
+        });
+        continue;
+      }
+      // React spells the global attributes in camelCase (`tabIndex`,
+      // `className`); `children` is a prop in React and a slot here.
+      if (attr.name === 'children' || isElementPassthrough(attr.name.toLowerCase())) continue;
     }
 
-    const byAttr = new Map();
-    const propsWithoutAttr = new Map();
-    for (const prop of element.props) {
-      if (prop.attr) byAttr.set(prop.attr, prop);
-      else propsWithoutAttr.set(prop.name.toLowerCase(), prop);
-    }
-
-    for (const attr of parseAttrs(usage.attrText)) {
-      if (attr.spread || !attr.name) continue;
-      const prop = byAttr.get(attr.name);
-
-      if (!prop) {
+    if (!prop) {
+      if (!binding) {
         // A prop that has no attribute, written as one. The markup parses, the
         // element renders, and the value never arrives.
         const propertyOnly = propsWithoutAttr.get(attr.name.toLowerCase());
@@ -556,56 +600,76 @@ function validateElements(code, elementsByTag, icons, findings) {
           });
           continue;
         }
-        if (isElementPassthrough(attr.name)) continue;
-        const suggestion = closest(attr.name, [...byAttr.keys()]);
-        findings.push({
-          severity: 'error',
-          line: usage.line,
-          component: usage.name,
-          message: suggestion
-            ? `\`<${usage.name}>\` has no attribute \`${attr.name}\`. Did you mean \`${suggestion}\`?`
-            : `\`<${usage.name}>\` has no attribute \`${attr.name}\`. ` +
-              (byAttr.size
-                ? `Its attributes are: ${[...byAttr.keys()].map((n) => `\`${n}\``).join(', ')}.`
-                : 'It takes no attributes of its own.'),
-        });
-        continue;
       }
-
-      /*
-       * An icon name the library does not resolve. This check existed only for
-       * the React side, so `<pf-icon name="paper-plane">` -- a real Font
-       * Awesome regular icon that this library does not bundle -- validated
-       * clean and rendered nothing. Measured against the server before the
-       * fix: "No problems found."
-       */
-      if (
-        icons?.available &&
-        isElementIconAttr(usage.name, attr.name) &&
-        attr.literal &&
-        attr.value !== null
-      ) {
-        const finding = unresolvedIcon(
-          attr,
-          icons,
-          '`registerIconGlyphs()` or `registerIconSet()`',
-        );
-        if (finding) findings.push({ ...finding, line: usage.line, component: usage.name });
-        continue;
-      }
-
-      const members = unionMembers(prop.type);
-      if (members && attr.literal && attr.value !== null && !members.includes(attr.value)) {
-        findings.push({
-          severity: 'error',
-          line: usage.line,
-          component: usage.name,
-          message:
-            `\`${attr.name}="${attr.value}"\` is not valid on \`<${usage.name}>\`. ` +
-            `Expected one of: ${members.map((m) => `"${m}"`).join(', ')}.`,
-        });
-      }
+      if (isElementPassthrough(attr.name)) continue;
+      const suggestion = closest(attr.name, known);
+      findings.push({
+        severity: 'error',
+        line: usage.line,
+        component: usage.name,
+        message:
+          `${subject} has no ${noun} \`${attr.name}\`.` +
+          (suggestion
+            ? ` Did you mean \`${suggestion}\`?`
+            : known.length
+              ? ` Its ${noun}s are: ${known.map((n) => `\`${n}\``).join(', ')}.`
+              : ` It takes no ${noun}s of its own.`),
+      });
+      continue;
     }
+
+    /*
+     * An icon name the library does not resolve. This check existed only for
+     * the React side, so `<pf-icon name="paper-plane">` -- a real Font
+     * Awesome regular icon that this library does not bundle -- validated
+     * clean and rendered nothing. Measured against the server before the
+     * fix: "No problems found."
+     */
+    if (
+      icons?.available &&
+      isElementIconAttr(element.tag, prop.attr ?? prop.name) &&
+      attr.literal &&
+      attr.value !== null
+    ) {
+      const finding = unresolvedIcon(attr, icons, '`registerIconGlyphs()` or `registerIconSet()`');
+      if (finding) findings.push({ ...finding, line: usage.line, component: usage.name });
+      continue;
+    }
+
+    const members = unionMembers(prop.type);
+    if (members && attr.literal && attr.value !== null && !members.includes(attr.value)) {
+      findings.push({
+        severity: 'error',
+        line: usage.line,
+        component: usage.name,
+        message:
+          `\`${attr.name}="${attr.value}"\` is not valid on ${subject}. ` +
+          `Expected one of: ${members.map((m) => `"${m}"`).join(', ')}.`,
+      });
+    }
+  }
+}
+
+function validateElements(code, elementsByTag, icons, findings) {
+  const tags = [...elementsByTag.keys()];
+
+  for (const usage of findElementUsages(code)) {
+    const element = elementsByTag.get(usage.name);
+
+    if (!element) {
+      const suggestion = closest(usage.name, tags);
+      findings.push({
+        severity: 'error',
+        line: usage.line,
+        component: usage.name,
+        message:
+          `\`<${usage.name}>\` is not an element in this library.` +
+          (suggestion ? ` Did you mean \`<${suggestion}>\`?` : ''),
+      });
+      continue;
+    }
+
+    checkElementUsage(usage, element, { binding: false, icons, findings });
   }
 }
 
@@ -623,10 +687,14 @@ export function validateUsage(code, componentsByName, icons = null, elementsByTa
        * library" about it would be wrong and would send an agent looking for a
        * typo it has not made.
        */
-      const binding = elementsByTag?.get(toTag(usage.name));
+      const binding = /^Pf[A-Z]/.test(usage.name) ? elementsByTag?.get(toTag(usage.name)) : null;
       if (binding) {
+        // A note, not a warning: the binding is the supported way to use the
+        // library from a framework, so warning about it would be crying wolf.
+        // It still says which package it comes from, because an agent that
+        // reached for it may be importing from the wrong one.
         findings.push({
-          severity: 'warning',
+          severity: 'info',
           line: usage.line,
           component: usage.name,
           message:
@@ -637,10 +705,30 @@ export function validateUsage(code, componentsByName, icons = null, elementsByTa
               ? `\`${binding.reactCounterpart}\` from @pitchfork-ui/react.`
               : 'the element directly.'),
         });
+        // The note used to be the whole answer, so `<PfButton variant="ghostly">`
+        // came back without a single error. The binding sets the element's
+        // properties, so it is checked against the element.
+        checkElementUsage(usage, binding, { binding: true, icons, findings });
         continue;
       }
 
-      const suggestion = closest(usage.name, known);
+      /*
+       * Only a name that could plausibly be ours is worth reporting. A snippet
+       * imports from other libraries too, and `<Router>` or `<QueryClientProvider>`
+       * is not a typo for anything here -- calling it "not exported by the
+       * library" is the false positive that teaches an agent to ignore this
+       * tool. Plausible means a binding's `Pf` prefix, or a near miss of a real
+       * name. The tolerance shrinks for short names, where two edits turn
+       * almost anything into something: `Nav` is two from `Tab`.
+       */
+      const candidates = [...known, ...(elementsByTag ? bindingNames(elementsByTag) : [])];
+      const suggestion = closest(usage.name, candidates);
+      const nearMiss =
+        suggestion !== null &&
+        distance(usage.name.toLowerCase(), suggestion.toLowerCase()) <=
+          (usage.name.length >= 6 ? 2 : 1);
+      if (!/^Pf[A-Z]/.test(usage.name) && !nearMiss) continue;
+
       findings.push({
         severity: 'error',
         line: usage.line,
@@ -742,6 +830,9 @@ export function validateUsage(code, componentsByName, icons = null, elementsByTa
 
   return findings;
 }
+
+/** `PfButton`, `PfNavItem`: the names the generated bindings export. */
+const bindingNames = (elementsByTag) => [...elementsByTag.values()].map((element) => element.name);
 
 /** `PfNavItem` → `pf-nav-item`, the inverse of what every binding generator does. */
 const toTag = (name) =>

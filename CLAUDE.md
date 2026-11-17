@@ -1931,6 +1931,21 @@ marks it _property only_, and `llms.txt` says so in its preamble.
 component, because "not exported by the library" would send an agent hunting a
 typo it has not made.
 
+**That note used to be the whole answer, so a binding was never checked.**
+`<PfButton variant="ghostly">` came back with one warning and no error: the
+usage was recognised and skipped. It now goes through the same
+`checkElementUsage` as `<pf-button>` markup, looked up by **property** name
+(`fullWidth`, and `onPfChange` for a `pfChange` event) rather than by attribute,
+and the binding note is `info`, which never makes a clean result dirty — the
+binding is the supported import, so warning about it was crying wolf. Two
+false positives went in the same change: a `<` straight after an identifier,
+`)` or `]` is a type argument (`useRef<HTMLDivElement>(null)` was "not
+exported by the library"), and an unknown capitalised name is reported only
+when it could be ours — a `Pf` prefix, or a near miss of a real name — so
+`<Router>` passes. The scanner assertion in the type-argument test is the one
+that bites: the unknown-name filter alone hides `HTMLDivElement` from the
+output, so reverting the lookbehind left the output check green.
+
 ---
 
 ## Dependency specifiers

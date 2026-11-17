@@ -544,3 +544,80 @@ test('validate_usage recognises a generated binding used in JSX', async () => {
   assert.match(out, /generated binding for `<pf-button>`/);
   assert.match(out, /elements-react/);
 });
+
+/*
+ * The binding note used to be the whole answer: `<PfButton>` was recognised
+ * and then skipped, so every prop on it went unchecked. A binding sets the
+ * element's properties, so it is held to the element's API.
+ */
+test('validate_usage checks an enum value on a generated binding', async () => {
+  const out = await call('validate_usage', { code: '<PfButton variant="ghostly">Go</PfButton>' });
+  assert.match(out, /1 error\(s\)/);
+  assert.match(out, /`variant="ghostly"` is not valid on `PfButton`/);
+  assert.match(out, /"ghost"/);
+});
+
+test('validate_usage accepts camelCase props and onPf handlers on a binding', async () => {
+  const out = await call('validate_usage', {
+    code:
+      '<PfButton fullWidth variant="ghost" className="wide" style={style} key="save" ' +
+      'ref={ref} id="save" slot="end" aria-label="Save" data-test="save" tabIndex={0} ' +
+      'onClick={save} {...rest}>Save</PfButton>\n' +
+      '<PfInput value={email} onPfChange={(e) => setEmail(e.detail)} onPfInput={track} required />\n' +
+      '<PfVideoPlayer sources={sources} label="Clip" />',
+  });
+  assert.match(out, /No problems found/);
+  // The note that it is a binding survives, as a note rather than a warning.
+  assert.match(out, /\*\*info\*\*.*generated binding for `<pf-input>`/);
+});
+
+test('validate_usage flags an invented prop and an unknown event on a binding', async () => {
+  const prop = await call('validate_usage', { code: '<PfButton tone="loud">Go</PfButton>' });
+  assert.match(prop, /`PfButton` has no prop `tone`/);
+
+  const event = await call('validate_usage', { code: '<PfInput onPfChnage={save} />' });
+  assert.match(event, /`PfInput` has no event for `onPfChnage`\. Did you mean `onPfChange`\?/);
+});
+
+/*
+ * A `<` after an identifier is a type argument. Read as JSX, a typed hook was
+ * "not exported by the library", which is the false positive that teaches an
+ * agent to stop running this tool.
+ */
+test('validate_usage does not read a TypeScript type argument as a component', async () => {
+  const out = await call('validate_usage', {
+    code:
+      'const ref = useRef<HTMLDivElement>(null);\n' +
+      'const [items, setItems] = useState<Item[]>([]);\n' +
+      'const result = await load<Result>();\n' +
+      '<pf-button variant="primary">Save</pf-button>',
+  });
+  assert.match(out, /No problems found/);
+
+  // The scanner itself, because the unknown-name filter below would also hide
+  // these from the output -- and a type argument that happens to share a
+  // component's name (`useState<Alert | null>`) is one the filter cannot hide.
+  const { findUsages } = await import('../src/validate.mjs');
+  const scanned = findUsages(
+    'const ref = useRef<HTMLDivElement>(null);\n' +
+      'const [alert, setAlert] = useState<Alert | null>(null);\n' +
+      'const rows = list[0]<Row>;\n' +
+      'return <Badge variant="brand">New</Badge>;',
+  );
+  assert.deepEqual(
+    scanned.map((usage) => usage.name),
+    ['Badge'],
+  );
+});
+
+test('validate_usage ignores a component from another library', async () => {
+  const out = await call('validate_usage', {
+    code: '<Router><QueryClientProvider client={client}><App /></QueryClientProvider></Router>',
+  });
+  assert.match(out, /No problems found/);
+});
+
+test('validate_usage still suggests the binding for a misspelled Pf name', async () => {
+  const out = await call('validate_usage', { code: '<PfButon>Go</PfButon>' });
+  assert.match(out, /`PfButon` is not exported by the library\. Did you mean `PfButton`\?/);
+});
