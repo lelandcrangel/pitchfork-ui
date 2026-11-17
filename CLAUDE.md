@@ -1381,6 +1381,51 @@ exceeded` pointing into the mock DOM's selector engine, which reads as a
 - **A component file may have only one export** — the component class.
   Helpers go in a sibling module, which is why `pf-icon` has `custom-icons.tsx`
   and `icon-names.ts` beside it.
+- **A form-associated control needs `formDisabledCallback`, and every one has
+  it.** `<fieldset disabled>` makes the host `:disabled` and drops it from
+  the submission, and nothing else tells the element: the control inside
+  stayed fully usable, so input was typed and silently lost. Each control
+  holds the platform's answer as `formDisabled` and reads `controlDisabled`
+  (its own `disabled` or the fieldset's) wherever it used to read
+  `disabled`. `form-controls.browser.spec.tsx` asserts it across all
+  sixteen at once, so a seventeenth cannot quietly miss it. The platform does
+  one thing unasked: a form-associated element with a `readonly` attribute is
+  barred from constraint validation, measured — code to skip validation
+  there is redundant.
+- **A button in a shadow root has no form owner**, so `pf-button`'s
+  `type="submit"` did nothing at all. The host is form-associated and calls
+  `form.requestSubmit()` itself; the inner button is always `type="button"`.
+  A custom element cannot be a form's submitter, so no `name=value` pair for
+  the button reaches the submission. Enter in `pf-input` submits the same
+  way, because implicit submission never reaches a shadow-root input either.
+- **ARIA a wrapper writes on a `pf-button` host is copied to the inner
+  button.** Popovers, dropdowns and tooltips set `aria-expanded`,
+  `aria-haspopup` and `aria-description` on their trigger, and on a role-less
+  host those are ignored — the button a screen reader lands on announced
+  neither. `src/forward-aria.ts` watches the host and renders the plain-value
+  ones inside. An IDREF such as `aria-controls` is deliberately not copied: it
+  would not resolve from inside the shadow root.
+- **A trigger is the first child without a `slot`, not
+  `firstElementChild`.** A consumer can write `<div slot="content">` before
+  the button, and then the content was the trigger. `src/slotted-trigger.ts`.
+- **Give focus back only when it would otherwise be lost.** A closing
+  listbox called `trigger.focus()` on every close, light-dismiss included,
+  so clicking another field had focus yanked back to the first one.
+  `shouldReturnFocus` in `src/focus-return.ts` returns focus only when it is
+  still on the element or has fallen to the body.
+- **Assert an accessible name with `page.getByRole(…, { name, exact: true })`.**
+  It computes the name the way the accessibility tree does, so it is the one
+  check that sees an IDREF from a host into its own shadow root resolving to
+  nothing — `pf-radio-group`'s did, with every attribute assertion passing.
+  The `exact` matters: names match by substring by default, and
+  `pf-modal`'s old fallback name, every word in the dialog run together,
+  contained "Delete project" and passed.
+- **A pointer left over an element by the previous test is hovering it.**
+  Playwright's mouse stays where the last click put it, and Chromium hovers
+  whatever renders underneath — so once `pf-carousel` paused under the
+  pointer, its autoplay test stopped stepping because an earlier test had
+  clicked its buttons. Park the pointer before testing anything that reacts
+  to hover.
 - **The package cannot be `"type": "module"`** — Stencil loads
   `stencil.config.ts` through `require()`. Hence `vitest.config.mts`.
 

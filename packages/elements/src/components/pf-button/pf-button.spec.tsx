@@ -46,9 +46,15 @@ describe('pf-button', () => {
     expect(button(root)?.getAttribute('aria-label')).toBe('Close');
   });
 
-  it('honours an explicit submit type', async () => {
+  /*
+   * The inner button is always a plain button: it is in the shadow root and
+   * has no form owner, so `type="submit"` there did nothing at all. The host
+   * is form-associated and submits its form itself, which
+   * form-controls.browser.spec.tsx proves in a real browser.
+   */
+  it('keeps the inner button a plain button whatever type the host has', async () => {
     const { root } = await render(`<pf-button type="submit">Send</pf-button>`);
 
-    expect(button(root)?.getAttribute('type')).toBe('submit');
+    expect(button(root)?.getAttribute('type')).toBe('button');
   });
 });
