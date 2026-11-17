@@ -1034,6 +1034,7 @@ export const PfTable: StencilVueComponent<JSX.PfTable> = /*@__PURE__*/ defineCon
   'striped',
   'hoverable',
   'stickyHeader',
+  'bare',
   'sortKey',
   'sortDirection',
   'label',

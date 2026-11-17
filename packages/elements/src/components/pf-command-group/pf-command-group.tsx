@@ -20,7 +20,7 @@ import { Component, h, Host, Prop } from '@stencil/core';
 })
 export class PfCommandGroup {
   /** The section heading. Searched along with each item's own text. */
-  @Prop() label?: string;
+  @Prop({ reflect: true }) label?: string;
 
   render() {
     return (

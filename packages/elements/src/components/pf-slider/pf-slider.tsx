@@ -1,5 +1,5 @@
 import {
-  clampToRange,
+  snapToRangeStep,
   composeDescribedBy,
   getRangePercent,
   normalizeRange,
@@ -15,6 +15,7 @@ import {
   Method,
   Prop,
   Watch,
+  State,
 } from '@stencil/core';
 
 import { applyControlValidity } from '../../form-validity';
@@ -126,15 +127,35 @@ export class PfSlider {
     this.value = this.initialValue;
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   /** The bounds, with a non-finite or inverted range made drawable. */
   private get range() {
     return normalizeRange(Number(this.min), Number(this.max), Number(this.step));
   }
 
-  /** The value as rendered: always inside the bounds. */
+  /**
+   * The value as rendered and submitted: inside the bounds and on a step, which
+   * is where the browser puts the native thumb anyway. Clamping alone left the
+   * fill, the label and the form saying 33 over a thumb sitting at 30.
+   */
   private get current() {
-    const { min, max } = this.range;
-    return clampToRange(Number(this.value), min, max);
+    const { min, max, step } = this.range;
+    return snapToRangeStep(Number(this.value), min, max, step);
   }
 
   private onInput = (event: Event) => {
@@ -170,7 +191,8 @@ export class PfSlider {
                 // aria-hidden: the input already reports its value to
                 // assistive technology through the range role.
                 <span class="value" part="value" aria-hidden="true">
-                  {Math.round(current)}
+                  {/* Not rounded: on step="0.1" a value of 0.5 read "1". */}
+                  {current}
                 </span>
               )}
             </div>
@@ -187,7 +209,7 @@ export class PfSlider {
             min={`${min}`}
             max={`${max}`}
             step={`${step}`}
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             aria-invalid={this.error ? 'true' : null}
             aria-describedby={describedBy}
             onInput={this.onInput}

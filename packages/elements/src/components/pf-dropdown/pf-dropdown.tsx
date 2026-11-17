@@ -17,6 +17,7 @@ import {
   Prop,
   Watch,
 } from '@stencil/core';
+import { defaultSlotTrigger } from '../../slotted-trigger';
 
 import { placePopover } from '../../place-popover';
 
@@ -96,7 +97,7 @@ export class PfDropdown {
   }
 
   private get trigger() {
-    return this.el.firstElementChild as HTMLElement | null;
+    return defaultSlotTrigger(this.el);
   }
 
   /** The actionable items, in source order. Separators are not items. */

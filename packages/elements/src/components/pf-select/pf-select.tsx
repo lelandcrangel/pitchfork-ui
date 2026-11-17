@@ -29,6 +29,8 @@ import {
   State,
   Watch,
 } from '@stencil/core';
+import { optionLabel } from '../../option-label';
+import { shouldReturnFocus } from '../../focus-return';
 
 const MOVES: Record<string, ListNavigationAction> = {
   [Keys.ArrowDown]: 'next',
@@ -146,7 +148,7 @@ export class PfSelect {
     for (const option of options) {
       const selected = this.optionValue(option) === this.value && this.value !== '';
       (option as HTMLElement & { selected: boolean }).selected = selected;
-      if (selected) label = option.textContent?.trim() ?? '';
+      if (selected) label = optionLabel(option);
     }
 
     this.selectedLabel = label;
@@ -161,7 +163,7 @@ export class PfSelect {
 
   @Method()
   async show(): Promise<void> {
-    if (!this.disabled) this.open = true;
+    if (!this.controlDisabled) this.open = true;
   }
 
   @Method()
@@ -187,6 +189,22 @@ export class PfSelect {
   /** A reset restores the value the control started with, not an empty one. */
   formResetCallback() {
     this.value = this.initialValue;
+  }
+
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
   }
 
   /** An option added or removed while mounted; re-mark the children. */
@@ -223,7 +241,7 @@ export class PfSelect {
 
   private showListbox() {
     const panel = this.listbox;
-    if (this.disabled || !panel || panel.matches(':popover-open')) return;
+    if (this.controlDisabled || !panel || panel.matches(':popover-open')) return;
 
     panel.showPopover();
     this.stopObserving?.();
@@ -270,7 +288,7 @@ export class PfSelect {
   private onToggle = (event: ToggleEvent) => {
     const nowOpen = event.newState === 'open';
     if (this.open !== nowOpen) this.open = nowOpen;
-    if (!nowOpen) this.trigger?.focus();
+    if (!nowOpen && shouldReturnFocus(this.el)) this.trigger?.focus();
   };
 
   private setActive(option: HTMLElement | null) {
@@ -315,7 +333,7 @@ export class PfSelect {
   @Listen('pfOptionSelect')
   handleOptionSelect(event: CustomEvent<{ value: string }>) {
     event.stopPropagation();
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
 
     const option = this.options().find(
       (candidate) => this.optionValue(candidate) === event.detail.value,
@@ -348,7 +366,7 @@ export class PfSelect {
     this.typeaheadTimer = setTimeout(() => this.clearTypeahead(), TYPEAHEAD_TIMEOUT_MS);
 
     const options = this.options();
-    const labels = options.map((option) => option.textContent ?? '');
+    const labels = options.map((option) => optionLabel(option));
     const from = this.activeOption ? options.indexOf(this.activeOption) : -1;
     const match = findTypeaheadMatch(labels, this.typeahead, from, (index) =>
       options[index].hasAttribute('disabled'),
@@ -367,7 +385,7 @@ export class PfSelect {
 
   @Listen('keydown')
   handleKeyDown(event: KeyboardEvent) {
-    if (this.disabled || event.defaultPrevented) return;
+    if (this.controlDisabled || event.defaultPrevented) return;
 
     const move = MOVES[event.key];
     if (move) {
@@ -422,7 +440,7 @@ export class PfSelect {
             class={{ trigger: true, 'trigger--invalid': Boolean(this.error) }}
             type="button"
             role="combobox"
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             aria-haspopup="listbox"
             aria-expanded={this.open ? 'true' : 'false'}
             /* Same shadow root as the listbox, so this IDREF resolves. */
@@ -431,7 +449,7 @@ export class PfSelect {
             aria-required={this.required ? 'true' : null}
             aria-describedby={describedBy}
             onClick={() => {
-              if (!this.disabled) this.open = !this.open;
+              if (!this.controlDisabled) this.open = !this.open;
             }}
           >
             <span class={{ value: true, 'value--placeholder': !this.selectedLabel }}>

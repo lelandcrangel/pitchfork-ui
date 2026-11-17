@@ -50,7 +50,8 @@
  * `:has(.input:disabled)`: the host carries the reflected attribute, which is
  * both simpler and the thing a consumer's own stylesheet can see.
  */
-:host([disabled]) .control {
+:host([disabled]) .control,
+:host(:disabled) .control {
   background: var(--pf-control-bg-disabled);
   border-color: var(--pf-control-border-disabled);
   color: var(--pf-control-text-disabled);

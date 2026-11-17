@@ -598,6 +598,23 @@ try {
           `pf-time-picker shows "${shown}", expected a 12-hour 2:30 PM beside its 14:30 value`,
         );
       }
+      /*
+       * Closed means not drawn. The panel's own `display: flex` beat the UA's
+       * `[popover]:not(:popover-open) { display: none }`, so the hour and
+       * minute lists sat under the field until it had been opened once. Only
+       * a real build applies the stylesheet that did it.
+       */
+      const timePanel = document
+        .querySelector('pf-time-picker')
+        ?.shadowRoot?.querySelector('[part="panel"]');
+      if (timePanel && !timePanel.matches(':popover-open')) {
+        const drawn = getComputedStyle(timePanel).display;
+        if (drawn !== 'none') {
+          result.unstyled.push(
+            `pf-time-picker's closed panel computes display: ${drawn}, not none`,
+          );
+        }
+      }
 
       const box = prefs.querySelector('pf-checkbox');
       if (box && typeof box.checkValidity === 'function') {

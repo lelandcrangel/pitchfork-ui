@@ -1,5 +1,5 @@
 import { composeDescribedBy } from '@pitchfork-ui/core';
-import { applyControlValidity } from '../../form-validity';
+import { applyControlValidity, typeMismatchMessage } from '../../form-validity';
 import { controlAriaLabel } from '../../control-label';
 import {
   AttachInternals,
@@ -12,6 +12,7 @@ import {
   Method,
   Prop,
   Watch,
+  State,
 } from '@stencil/core';
 
 export type PfInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
@@ -94,9 +95,21 @@ export class PfInput {
   @Watch('value')
   @Watch('error')
   @Watch('required')
+  @Watch('type')
   syncFormState() {
+    // (A `readonly` host needs nothing here: the platform bars a read-only
+    // form-associated element from constraint validation by itself.)
     this.internals.setFormValue(this.value ?? '');
     applyControlValidity(this.internals, Boolean(this.value), this.required, this.error);
+    if (this.error || !this.value) return;
+
+    // The inner input sits in the shadow root and its own constraints reach no
+    // form, so ask the browser the question it would ask a native input of
+    // this type. A detached probe answers for the value being set right now,
+    // where the rendered input still holds the previous one until the next
+    // render.
+    const mismatch = typeMismatchMessage(this.type, this.value);
+    if (mismatch) this.internals.setValidity({ typeMismatch: true }, mismatch);
   }
 
   /**
@@ -133,6 +146,22 @@ export class PfInput {
     this.value = this.initialValue;
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   private onInput = (event: Event) => {
     this.value = (event.target as HTMLInputElement).value;
     this.pfInput.emit({ value: this.value });
@@ -140,6 +169,20 @@ export class PfInput {
 
   private onChange = () => {
     this.pfChange.emit({ value: this.value });
+  };
+
+  /**
+   * Enter submits the form, as it does in a native text field. The input in
+   * the shadow root has no form owner, so the browser's implicit submission
+   * never happens on its own -- a login or search form built from this element
+   * would otherwise only submit from its button.
+   */
+  private onKeyDown = (event: KeyboardEvent) => {
+    if (event.key !== 'Enter' || event.isComposing || event.defaultPrevented) return;
+    const form = this.internals.form;
+    if (!form || this.controlDisabled) return;
+    event.preventDefault();
+    form.requestSubmit();
   };
 
   render() {
@@ -173,12 +216,13 @@ export class PfInput {
             value={this.value}
             placeholder={this.placeholder}
             required={this.required}
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             readOnly={this.readonly}
             aria-invalid={this.error ? 'true' : null}
             aria-describedby={describedBy}
             onInput={this.onInput}
             onChange={this.onChange}
+            onKeyDown={this.onKeyDown}
           />
           {this.description && (
             <p class="description" part="description" id="description">

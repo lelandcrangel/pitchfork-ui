@@ -52,9 +52,13 @@ export class PfModal {
   @Prop({ reflect: true }) size: PfModalSize = 'md';
 
   /**
-   * Accessible name. Falls back to the text of whatever is slotted, which is
-   * usually the header — `aria-labelledby` cannot be used, because an IDREF
-   * does not cross a shadow boundary and the header is in the light DOM.
+   * Accessible name. Without it the dialog is named by its `pf-modal-header`:
+   * by element reference where the browser has ARIA element reflection, which
+   * can point out of a shadow root where an IDREF cannot, and by a copy of the
+   * header's text where it does not. With neither, the dialog is unnamed --
+   * better than the old fallback, which was every word in the modal run
+   * together ("Delete project This cannot be undone. Cancel Delete") and which
+   * went stale when the content changed.
    */
   @Prop() label?: string;
 
@@ -170,6 +174,7 @@ export class PfModal {
   }
 
   componentDidRender() {
+    this.syncLabelledBy();
     this.ensureFocusInside();
   }
 
@@ -232,10 +237,34 @@ export class PfModal {
     this.open = false;
   };
 
+  /** The slotted header, found by walking children (the mock DOM has no `:scope`). */
+  private get header(): HTMLElement | null {
+    for (const child of Array.from(this.el.children)) {
+      if (child.tagName.toLowerCase() === 'pf-modal-header') return child as HTMLElement;
+    }
+    return null;
+  }
+
+  /** The copied-text fallback, used only where element reflection is missing. */
   private accessibleName() {
     if (this.label) return this.label;
-    const text = this.el.textContent?.trim();
-    return text ? text.slice(0, 120) : undefined;
+    if (this.supportsElementReflection()) return undefined;
+    const text = this.header?.textContent?.trim();
+    return text || undefined;
+  }
+
+  private supportsElementReflection() {
+    const dialog = this.dialog;
+    return Boolean(dialog && 'ariaLabelledByElements' in dialog);
+  }
+
+  /** Points the dialog at its header by reference, which stays current by itself. */
+  private syncLabelledBy() {
+    const dialog = this.dialog as
+      (HTMLDialogElement & { ariaLabelledByElements: Element[] | null }) | null;
+    if (!dialog || !this.supportsElementReflection()) return;
+    const header = this.label ? null : this.header;
+    dialog.ariaLabelledByElements = header ? [header] : null;
   }
 
   render() {
@@ -276,7 +305,8 @@ export class PfModal {
                 </svg>
               </button>
             )}
-            <slot />
+            {/* A header slotted in later still names the dialog. */}
+            <slot onSlotchange={() => this.syncLabelledBy()} />
           </div>
         </dialog>
       </Host>

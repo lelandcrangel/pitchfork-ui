@@ -39,7 +39,7 @@ only it can see the whole tree.
 | `disabled` | `disabled` | `boolean` | `false` | Reflected; the stylesheet and the tree's own filtering both read it. |
 | `expanded` | `expanded` | `boolean` | `false` | Set by the tree: whether this branch is open. Reflected. |
 | `hasChildren` | `has-children` | `boolean` | `false` | Set by the tree: whether there is anything to open. Reflected. |
-| `icon` | `icon` | `string \| undefined` | — | An icon name from the same registry as `pf-icon`. |
+| `icon` | `icon` | `string \| undefined` | — | An icon name from the same registry as `pf-icon`. Reflected: the row layout selects on `[icon]`. |
 | `level` | `level` | `number` | `1` | Set by the tree: how deep this item sits, counting from 1. |
 | `selected` | `selected` | `boolean` | `false` | Set by the tree. Reflected, so the stylesheet can mark the item. |
 | `value` | `value` | `string` | `''` | Identifies the item in the tree's selection and open set. Reflected because the generated bindings set props as properties, so without it a consumer selecting `pf-tree-item[value="..."]` finds nothing. The tree reads the property. |

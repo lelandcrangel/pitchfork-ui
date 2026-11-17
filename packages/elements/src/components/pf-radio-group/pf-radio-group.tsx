@@ -11,9 +11,11 @@ import {
   Method,
   Prop,
   Watch,
+  State,
 } from '@stencil/core';
 
 import { applyControlValidity } from '../../form-validity';
+import { controlAriaLabel } from '../../control-label';
 
 export type PfRadioGroupOrientation = 'vertical' | 'horizontal';
 
@@ -121,13 +123,29 @@ export class PfRadioGroup {
     this.syncChildren();
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   /** The choices, in source order. */
   private get radios(): HTMLElement[] {
     return Array.from(this.el.querySelectorAll('pf-radio-button'));
   }
 
   private isDisabled(radio: HTMLElement) {
-    return this.disabled || radio.hasAttribute('disabled');
+    return this.controlDisabled || radio.hasAttribute('disabled');
   }
 
   /**
@@ -141,6 +159,7 @@ export class PfRadioGroup {
    */
   @Watch('value')
   @Watch('disabled')
+  @Watch('formDisabled')
   syncChildren() {
     const radios = this.radios;
     if (radios.length === 0) return;
@@ -165,7 +184,7 @@ export class PfRadioGroup {
   @Listen('pfRadioSelect')
   handleSelect(event: CustomEvent<{ value: string }>) {
     event.stopPropagation();
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
 
     const next = event.detail.value;
     if (next === this.value) return;
@@ -182,7 +201,7 @@ export class PfRadioGroup {
    */
   @Listen('keydown')
   handleKeyDown(event: KeyboardEvent) {
-    if (event.defaultPrevented || this.disabled) return;
+    if (event.defaultPrevented || this.controlDisabled) return;
 
     const action = resolveRovingKey(event.key, this.orientation);
     if (!action) return;
@@ -207,15 +226,26 @@ export class PfRadioGroup {
   }
 
   render() {
+    /*
+     * The group role sits on the shadow wrapper, not the host. The legend and
+     * the error live in this shadow root, and an IDREF from the light-DOM host
+     * into it resolves to nothing -- the group had no accessible name and no
+     * error description, and a page with its own `#legend` named it after that.
+     * From the wrapper both references are same-root, and the slotted radios
+     * are still inside the group in the flattened tree.
+     */
     return (
-      <Host
-        role="radiogroup"
-        aria-labelledby={this.legend ? 'legend' : null}
-        aria-describedby={this.error ? 'error' : null}
-        aria-invalid={this.error ? 'true' : null}
-        aria-required={this.required ? 'true' : null}
-      >
-        <div class="field" part="field">
+      <Host>
+        <div
+          class="field"
+          part="field"
+          role="radiogroup"
+          aria-labelledby={this.legend ? 'legend' : null}
+          aria-label={controlAriaLabel(this.el, this.legend)}
+          aria-describedby={this.error ? 'error' : null}
+          aria-invalid={this.error ? 'true' : null}
+          aria-required={this.required ? 'true' : null}
+        >
           {this.legend && (
             <span class="legend" part="legend" id="legend">
               {this.legend}

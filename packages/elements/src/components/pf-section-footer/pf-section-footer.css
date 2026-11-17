@@ -45,7 +45,7 @@
 
 .heading {
   color: var(--pf-section-footer-text);
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   margin: 0;
 }

@@ -20,6 +20,10 @@ export class PfToolbarSeparator {
   @Prop({ reflect: true }) orientation: PfToolbarSeparatorOrientation = 'horizontal';
 
   render() {
-    return <Host role="separator" aria-orientation={this.orientation} />;
+    // `aria-orientation` describes the separator itself, which runs across the
+    // toolbar's axis: the hairline in a horizontal toolbar is vertical. Passing
+    // the toolbar's axis straight through announced it the wrong way round.
+    const across = this.orientation === 'horizontal' ? 'vertical' : 'horizontal';
+    return <Host role="separator" aria-orientation={across} />;
   }
 }

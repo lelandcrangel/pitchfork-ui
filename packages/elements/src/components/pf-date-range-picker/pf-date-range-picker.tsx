@@ -39,6 +39,7 @@ import {
   State,
   Watch,
 } from '@stencil/core';
+import { shouldReturnFocus } from '../../focus-return';
 
 const MOVES: Record<string, CalendarMove> = {
   [Keys.ArrowRight]: 'day-next',
@@ -233,7 +234,7 @@ export class PfDateRangePicker {
 
   @Method()
   async show(): Promise<void> {
-    if (!this.disabled) this.open = true;
+    if (!this.controlDisabled) this.open = true;
   }
 
   @Method()
@@ -258,8 +259,23 @@ export class PfDateRangePicker {
 
   formResetCallback() {
     this.value = this.initialValue;
-    this.awaitingEnd = false;
-    this.hovered = null;
+    this.abandonPending();
+  }
+
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
   }
 
   private range(): DateRangeValue {
@@ -293,7 +309,7 @@ export class PfDateRangePicker {
 
   private showPanel() {
     const panel = this.panel;
-    if (this.disabled || !panel || panel.matches(':popover-open')) return;
+    if (this.controlDisabled || !panel || panel.matches(':popover-open')) return;
 
     panel.showPopover();
     this.stopObserving?.();
@@ -320,7 +336,12 @@ export class PfDateRangePicker {
   private onToggle = (event: ToggleEvent) => {
     const nowOpen = event.newState === 'open';
     if (this.open !== nowOpen) this.open = nowOpen;
-    if (!nowOpen) this.trigger?.focus();
+    if (!nowOpen) {
+      // Closing with only a start chosen cancels that start, as Escape does in
+      // a native picker: the committed range is still the value.
+      if (this.awaitingEnd) this.abandonPending();
+      if (shouldReturnFocus(this.el)) this.trigger?.focus();
+    }
   };
 
   /** One click through core's state machine, plus this element's side-effects. */
@@ -343,8 +364,12 @@ export class PfDateRangePicker {
     this.focusedDate = toMidday(date);
 
     if (next.awaitingEnd) {
-      // Half-made: hold the start without reporting an incomplete range.
-      this.value = '';
+      /*
+       * Half-made: hold the start beside `value` and leave `value` alone. The
+       * committed range stays the answer until a new one is complete -- this
+       * used to clear it, so starting a new range and then closing the picker
+       * threw the old one away with no event, and a form submitted nothing.
+       */
       this.pendingStart = next.range.start;
       return;
     }
@@ -362,9 +387,18 @@ export class PfDateRangePicker {
 
   /** What the grids draw: the committed range, or the half-made one. */
   private displayRange(): DateRangeValue {
+    // A range being chosen wins over the committed one it may replace.
+    if (this.awaitingEnd && this.pendingStart) return { start: this.pendingStart, end: null };
     const committed = this.range();
     if (committed.start && committed.end) return committed;
     return { start: this.pendingStart, end: null };
+  }
+
+  /** Drops a half-made range, which leaves the committed `value` as it was. */
+  private abandonPending() {
+    this.pendingStart = null;
+    this.awaitingEnd = false;
+    this.hovered = null;
   }
 
   private moveFocus(move: CalendarMove) {
@@ -523,7 +557,7 @@ export class PfDateRangePicker {
               part="trigger"
               class={{ trigger: true, 'trigger--invalid': Boolean(this.error) }}
               type="button"
-              disabled={this.disabled}
+              disabled={this.controlDisabled}
               aria-haspopup="dialog"
               aria-expanded={this.open ? 'true' : 'false'}
               aria-controls="panel"
@@ -531,7 +565,7 @@ export class PfDateRangePicker {
               aria-required={this.required ? 'true' : null}
               aria-describedby={describedBy}
               onClick={() => {
-                if (!this.disabled) this.open = !this.open;
+                if (!this.controlDisabled) this.open = !this.open;
               }}
             >
               <span class={{ value: true, 'value--placeholder': !text }}>
@@ -546,7 +580,7 @@ export class PfDateRangePicker {
                 part="clear"
                 type="button"
                 aria-label="Clear selected dates"
-                disabled={this.disabled}
+                disabled={this.controlDisabled}
                 onClick={this.clear}
               >
                 <pf-icon name="close"></pf-icon>

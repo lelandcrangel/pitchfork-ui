@@ -44,3 +44,14 @@
 :host([disabled]:hover) {
   background: transparent;
 }
+
+/*
+ * Supporting text under the label. Styled through `::slotted` rather than a
+ * wrapper, so an option with no description has no empty box to collapse.
+ */
+::slotted([slot='description']) {
+  color: var(--pf-option-description-text, var(--pf-control-text-muted));
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-regular);
+}

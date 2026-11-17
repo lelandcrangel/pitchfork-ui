@@ -40,7 +40,7 @@ it, exactly as the React component does.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `dismissable` | `dismissable` | `boolean` | `true` | Close on Escape or a click on the overlay. Defaults to true. |
-| `label` | `label` | `string \| undefined` | — | Accessible name. Falls back to the text of whatever is slotted, which is usually the header — `aria-labelledby` cannot be used, because an IDREF does not cross a shadow boundary and the header is in the light DOM. |
+| `label` | `label` | `string \| undefined` | — | Accessible name. Without it the dialog is named by its `pf-modal-header`: by element reference where the browser has ARIA element reflection, which can point out of a shadow root where an IDREF cannot, and by a copy of the header's text where it does not. With neither, the dialog is unnamed -- better than the old fallback, which was every word in the modal run together ("Delete project This cannot be undone. Cancel Delete") and which went stale when the content changed. |
 | `open` | `open` | `boolean` | `false` | Whether the modal is showing. Reflected so the stylesheet can select on it. |
 | `showCloseButton` | `show-close-button` | `boolean` | `true` | Render the corner close button. Defaults to true. |
 | `size` | `size` | `"lg" \| "md" \| "sm"` | `'md'` | Panel width. Reflected so the stylesheet can select on it. |

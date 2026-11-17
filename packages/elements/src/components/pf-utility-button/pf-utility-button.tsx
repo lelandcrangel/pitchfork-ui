@@ -1,4 +1,10 @@
-import { Component, Element, h, Host, Prop } from '@stencil/core';
+import { AttachInternals, Component, Element, h, Host, Prop, State } from '@stencil/core';
+import {
+  type ForwardedAria,
+  observeForwardedAria,
+  readForwardedAria,
+  sameForwardedAria,
+} from '../../forward-aria';
 
 export type PfUtilityButtonVariant = 'neutral' | 'brand' | 'destructive';
 export type PfUtilityButtonSize = 'sm' | 'md';
@@ -18,9 +24,17 @@ export type PfUtilityButtonSize = 'sm' | 'md';
   // delegatesFocus so focusing <pf-utility-button> reaches the real button and
   // :focus-visible lands on the element the stylesheet rings.
   shadow: { delegatesFocus: true },
+  // Form-associated so `type="submit"` and `type="reset"` reach the form around
+  // the host; the native button in the shadow root has no form owner.
+  formAssociated: true,
 })
 export class PfUtilityButton {
   @Element() el!: HTMLElement;
+
+  @AttachInternals() internals!: ElementInternals;
+
+  /** Set by the platform, including for an enclosing `<fieldset disabled>`. */
+  @State() formDisabled = false;
 
   /** Colour treatment. Reflected so the stylesheet can select on it. */
   @Prop({ reflect: true }) variant: PfUtilityButtonVariant = 'neutral';
@@ -31,7 +45,10 @@ export class PfUtilityButton {
   /** Disable the button. Reflected so the stylesheet can select on it. */
   @Prop({ reflect: true }) disabled = false;
 
-  /** Mirrors the native attribute. */
+  /**
+   * Mirrors the native attribute: `submit` runs the form's `requestSubmit()`,
+   * `reset` its `reset()`.
+   */
   @Prop() type: 'button' | 'submit' | 'reset' = 'button';
 
   /**
@@ -66,13 +83,46 @@ export class PfUtilityButton {
     );
   }
 
+  /** ARIA state a wrapper set on the host, rendered onto the inner button. */
+  @State() forwardedAria: ForwardedAria = {};
+
+  private stopForwarding?: () => void;
+
+  connectedCallback() {
+    this.syncForwardedAria();
+    this.stopForwarding = observeForwardedAria(this.el, () => this.syncForwardedAria());
+  }
+
+  disconnectedCallback() {
+    this.stopForwarding?.();
+    this.stopForwarding = undefined;
+  }
+
+  private syncForwardedAria() {
+    const next = readForwardedAria(this.el);
+    if (!sameForwardedAria(next, this.forwardedAria)) this.forwardedAria = next;
+  }
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private onClick = () => {
+    const form = this.internals.form;
+    if (!form || this.disabled || this.formDisabled) return;
+    if (this.type === 'submit') form.requestSubmit();
+    else if (this.type === 'reset') form.reset();
+  };
+
   render() {
     return (
       <Host>
         <button
           part="button"
-          type={this.type}
-          disabled={this.disabled}
+          type="button"
+          disabled={this.disabled || this.formDisabled}
+          onClick={this.onClick}
+          {...this.forwardedAria}
           aria-label={this.label}
           title={this.tooltip ?? this.label}
         >

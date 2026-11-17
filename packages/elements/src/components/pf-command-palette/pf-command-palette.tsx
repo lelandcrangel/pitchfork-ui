@@ -245,8 +245,12 @@ export class PfCommandPalette {
       const matches = matchesCommandQuery(
         {
           label: item.textContent?.trim() ?? '',
-          description: item.getAttribute('description'),
-          group: group?.getAttribute('label') ?? null,
+          // Properties, not attributes: the framework bindings set these as
+          // properties, so through them the attributes never existed and a
+          // word that appeared only in a description or a group heading
+          // matched nothing. Plain HTML worked, which is why tests passed.
+          description: (item as HTMLElement & { description?: string }).description ?? null,
+          group: (group as (HTMLElement & { label?: string }) | null)?.label ?? null,
         },
         query,
       );

@@ -59,6 +59,14 @@ export class PfTable {
   /** Keep the header visible while the body scrolls. Reflected and bridged. */
   @Prop({ reflect: true }) stickyHeader = false;
 
+  /**
+   * Draw no frame of its own -- no border, radius or background -- for a table
+   * that sits inside something that already frames it, such as a `pf-card`.
+   * Without it the two frames double up: a second line above the card's
+   * footer and rounded corners on the last row.
+   */
+  @Prop({ reflect: true }) bare = false;
+
   /** The column being sorted on, by its `sort-key`. */
   @Prop({ mutable: true, reflect: true }) sortKey?: string;
 

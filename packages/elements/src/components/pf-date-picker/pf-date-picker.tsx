@@ -19,7 +19,9 @@ import {
   Method,
   Prop,
   Watch,
+  State,
 } from '@stencil/core';
+import { shouldReturnFocus } from '../../focus-return';
 
 /**
  * A form-associated date field: a trigger that opens `pf-calendar` in a
@@ -139,7 +141,7 @@ export class PfDatePicker {
   /** Opens the calendar. */
   @Method()
   async show(): Promise<void> {
-    if (!this.disabled) this.open = true;
+    if (!this.controlDisabled) this.open = true;
   }
 
   /** Closes the calendar. */
@@ -168,6 +170,22 @@ export class PfDatePicker {
     this.value = this.initialValue;
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   private get panel() {
     return this.el.shadowRoot?.querySelector<HTMLElement>('[part="panel"]') ?? null;
   }
@@ -186,7 +204,7 @@ export class PfDatePicker {
 
   private showPanel() {
     const panel = this.panel;
-    if (this.disabled || !panel || panel.matches(':popover-open')) return;
+    if (this.controlDisabled || !panel || panel.matches(':popover-open')) return;
 
     panel.showPopover();
     this.stopObserving?.();
@@ -218,7 +236,7 @@ export class PfDatePicker {
   private onToggle = (event: ToggleEvent) => {
     const nowOpen = event.newState === 'open';
     if (this.open !== nowOpen) this.open = nowOpen;
-    if (!nowOpen) this.trigger?.focus();
+    if (!nowOpen && shouldReturnFocus(this.el)) this.trigger?.focus();
   };
 
   /**
@@ -266,7 +284,7 @@ export class PfDatePicker {
    * it — so there is nothing to do here for it.
    */
   private onTriggerKeyDown = (event: KeyboardEvent) => {
-    if (this.open || this.disabled) return;
+    if (this.open || this.controlDisabled) return;
     if (event.key === Keys.ArrowDown || event.key === Keys.Enter || event.key === Keys.Space) {
       if (event.key === Keys.ArrowDown) {
         event.preventDefault();
@@ -314,7 +332,7 @@ export class PfDatePicker {
               part="trigger"
               class={{ trigger: true, 'trigger--invalid': Boolean(this.error) }}
               type="button"
-              disabled={this.disabled}
+              disabled={this.controlDisabled}
               aria-haspopup="dialog"
               aria-expanded={this.open ? 'true' : 'false'}
               /* Same shadow root as the panel, so this IDREF resolves. */
@@ -323,7 +341,7 @@ export class PfDatePicker {
               aria-required={this.required ? 'true' : null}
               aria-describedby={describedBy}
               onClick={() => {
-                if (!this.disabled) this.open = !this.open;
+                if (!this.controlDisabled) this.open = !this.open;
               }}
               onKeyDown={this.onTriggerKeyDown}
             >
@@ -339,7 +357,7 @@ export class PfDatePicker {
                 part="clear"
                 type="button"
                 aria-label="Clear selected date"
-                disabled={this.disabled}
+                disabled={this.controlDisabled}
                 onClick={this.clear}
               >
                 <pf-icon name="close"></pf-icon>

@@ -9,7 +9,10 @@ import { Component, Element, Event, EventEmitter, h, Host, Prop } from '@stencil
  * `active` back onto it, so the stylesheet has reflected attributes to select
  * on without the option knowing anything about its container.
  *
- * @slot - the option's label, which is also what typeahead searches.
+ * @slot - the option's label, which is also what typeahead searches and what
+ * the closed field shows.
+ * @slot description - supporting text drawn under the label, in the list only.
+ * The closed field, typeahead and filtering all ignore it.
  */
 @Component({
   tag: 'pf-option',
@@ -62,6 +65,9 @@ export class PfOption {
         onClick={this.onClick}
       >
         <slot />
+        {/* No wrapper: an unassigned slot generates no box, so an option
+            without a description draws exactly as it did. */}
+        <slot name="description" />
       </Host>
     );
   }
