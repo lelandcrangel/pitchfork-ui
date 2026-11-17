@@ -92,6 +92,15 @@
   padding: var(--space-1);
 }
 
+/*
+ * The `display: flex` above beats the UA's
+ * `[popover]:not(:popover-open) { display: none }`, so the hour and minute
+ * lists were drawn under the field until it had been opened and closed once.
+ */
+.panel:not(:popover-open) {
+  display: none;
+}
+
 .panel:popover-open {
   animation: pf-time-picker-in var(--pf-transition-enter);
 }

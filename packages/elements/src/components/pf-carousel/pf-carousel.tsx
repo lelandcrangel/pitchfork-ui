@@ -6,6 +6,7 @@ import {
   EventEmitter,
   h,
   Host,
+  Listen,
   Method,
   Prop,
   State,
@@ -72,14 +73,59 @@ export class PfCarousel {
 
   private timer?: number;
 
+  /**
+   * Autoplay holds still while the pointer is over the carousel or focus is in
+   * it -- WCAG 2.2.2, and the only way to read a slide or reach a link on one
+   * before it moves away.
+   */
+  @State() paused = false;
+
+  private hovered = false;
+
+  private focused = false;
+
+  private loaded = false;
+
+  @Listen('mouseenter')
+  handleMouseEnter() {
+    this.hovered = true;
+    this.paused = true;
+  }
+
+  @Listen('mouseleave')
+  handleMouseLeave() {
+    this.hovered = false;
+    this.paused = this.focused;
+  }
+
+  @Listen('focusin')
+  handleFocusIn() {
+    this.focused = true;
+    this.paused = true;
+  }
+
+  @Listen('focusout')
+  handleFocusOut(event: FocusEvent) {
+    const next = event.relatedTarget as Node | null;
+    if (next && (this.el.contains(next) || this.el.shadowRoot?.contains(next))) return;
+    this.focused = false;
+    this.paused = this.hovered;
+  }
+
   /** The light DOM is readable here, so first paint is already right. */
   componentWillLoad() {
     this.sync();
   }
 
   componentDidLoad() {
+    this.loaded = true;
     this.sync();
     this.startTimer();
+  }
+
+  /** A carousel moved in the DOM is disconnected and reconnected; resume. */
+  connectedCallback() {
+    if (this.loaded) this.startTimer();
   }
 
   disconnectedCallback() {
@@ -139,6 +185,12 @@ export class PfCarousel {
       node.position = position + 1;
       node.total = slides.length;
     }
+
+    // Slides that arrive after load -- a framework rendering from data -- never
+    // started the timer, which only ran at load and on the autoplay props.
+    if (this.loaded && this.autoPlay && this.timer === undefined && this.total >= 2) {
+      this.startTimer();
+    }
   }
 
   private goTo(next: number) {
@@ -161,7 +213,7 @@ export class PfCarousel {
 
     this.timer = window.setInterval(
       () => {
-        this.goTo(this.resolved + 1);
+        if (!this.paused) this.goTo(this.resolved + 1);
       },
       Number(this.autoPlayInterval) || 5000,
     );
@@ -204,7 +256,16 @@ export class PfCarousel {
           carousel has to go on. `aria-live` on a box that is always present:
           a live region added at the moment it changes is not announced.
         */}
-        <span class="sr-only" aria-live="polite" aria-atomic="true">
+        {/*
+          Silent while it turns by itself (the pattern's own rule): announcing
+          every automatic step talks over whatever the reader is doing. A step
+          the user asked for, or any step while paused, is announced.
+        */}
+        <span
+          class="sr-only"
+          aria-live={this.autoPlay && !this.paused && this.total > 1 ? 'off' : 'polite'}
+          aria-atomic="true"
+        >
           {this.total > 0 ? slidePositionLabel(active, this.total) : ''}
         </span>
 

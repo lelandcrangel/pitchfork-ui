@@ -420,7 +420,7 @@ export namespace Components {
          */
         "size": PfButtonSize;
         /**
-          * Mirrors the native attribute. `submit` and `reset` do not yet act on a form outside this element's shadow root -- that needs ElementInternals, which arrives with the form controls in Wave 3.
+          * Mirrors the native attribute. `submit` submits the form the host is in (running its validation, as `requestSubmit()` does) and `reset` resets it. The submitter is not reported in the submission: a custom element cannot be a form's submitter, so a `name`/`value` pair on it would go nowhere.
           * @default 'button'
          */
         "type": PfButtonType;
@@ -1797,7 +1797,7 @@ export namespace Components {
          */
         "hide": () => Promise<void>;
         /**
-          * Accessible name. Falls back to the text of whatever is slotted, which is usually the header — `aria-labelledby` cannot be used, because an IDREF does not cross a shadow boundary and the header is in the light DOM.
+          * Accessible name. Without it the dialog is named by its `pf-modal-header`: by element reference where the browser has ARIA element reflection, which can point out of a shadow root where an IDREF cannot, and by a copy of the header's text where it does not. With neither, the dialog is unnamed -- better than the old fallback, which was every word in the modal run together ("Delete project This cannot be undone. Cancel Delete") and which went stale when the content changed.
          */
         "label"?: string;
         /**
@@ -3176,6 +3176,11 @@ export namespace Components {
      */
     interface PfTable {
         /**
+          * Draw no frame of its own -- no border, radius or background -- for a table that sits inside something that already frames it, such as a `pf-card`. Without it the two frames double up: a second line above the card's footer and rounded corners on the last row.
+          * @default false
+         */
+        "bare": boolean;
+        /**
           * Tighter rows. Reflected, and bridged down to the cells' padding.
           * @default false
          */
@@ -3681,7 +3686,7 @@ export namespace Components {
          */
         "hasChildren": boolean;
         /**
-          * An icon name from the same registry as `pf-icon`.
+          * An icon name from the same registry as `pf-icon`. Reflected: the row layout selects on `[icon]`.
          */
         "icon"?: string;
         /**
@@ -3772,7 +3777,7 @@ export namespace Components {
          */
         "tooltip"?: string;
         /**
-          * Mirrors the native attribute.
+          * Mirrors the native attribute: `submit` runs the form's `requestSubmit()`, `reset` its `reset()`.
           * @default 'button'
          */
         "type": 'button' | 'submit' | 'reset';
@@ -6673,6 +6678,10 @@ declare namespace LocalJSX {
          */
         "disabled"?: boolean;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Stretch to the width of the container.
           * @default false
          */
@@ -6687,12 +6696,16 @@ declare namespace LocalJSX {
          */
         "loading"?: boolean;
         /**
+          * The name of the element, used when submitting an HTML form.
+         */
+        "name"?: string;
+        /**
           * Control size. Reflected so the stylesheet can select on it.
           * @default 'md'
          */
         "size"?: PfButtonSize;
         /**
-          * Mirrors the native attribute. `submit` and `reset` do not yet act on a form outside this element's shadow root -- that needs ElementInternals, which arrives with the form controls in Wave 3.
+          * Mirrors the native attribute. `submit` submits the form the host is in (running its validation, as `requestSubmit()` does) and `reset` resets it. The submitter is not reported in the submission: a custom element cannot be a form's submitter, so a `name`/`value` pair on it would go nowhere.
           * @default 'button'
          */
         "type"?: PfButtonType;
@@ -8065,7 +8078,7 @@ declare namespace LocalJSX {
          */
         "dismissable"?: boolean;
         /**
-          * Accessible name. Falls back to the text of whatever is slotted, which is usually the header — `aria-labelledby` cannot be used, because an IDREF does not cross a shadow boundary and the header is in the light DOM.
+          * Accessible name. Without it the dialog is named by its `pf-modal-header`: by element reference where the browser has ARIA element reflection, which can point out of a shadow root where an IDREF cannot, and by a copy of the header's text where it does not. With neither, the dialog is unnamed -- better than the old fallback, which was every word in the modal run together ("Delete project This cannot be undone. Cancel Delete") and which went stale when the content changed.
          */
         "label"?: string;
         /**
@@ -9439,6 +9452,11 @@ declare namespace LocalJSX {
      */
     interface PfTable {
         /**
+          * Draw no frame of its own -- no border, radius or background -- for a table that sits inside something that already frames it, such as a `pf-card`. Without it the two frames double up: a second line above the card's footer and rounded corners on the last row.
+          * @default false
+         */
+        "bare"?: boolean;
+        /**
           * Tighter rows. Reflected, and bridged down to the cells' padding.
           * @default false
          */
@@ -9952,7 +9970,7 @@ declare namespace LocalJSX {
          */
         "hasChildren"?: boolean;
         /**
-          * An icon name from the same registry as `pf-icon`.
+          * An icon name from the same registry as `pf-icon`. Reflected: the row layout selects on `[icon]`.
          */
         "icon"?: string;
         /**
@@ -10038,9 +10056,17 @@ declare namespace LocalJSX {
          */
         "disabled"?: boolean;
         /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
           * Accessible name. Required for an icon-only button, and also used as the native tooltip unless `tooltip` says otherwise.
          */
         "label"?: string;
+        /**
+          * The name of the element, used when submitting an HTML form.
+         */
+        "name"?: string;
         /**
           * Control size. Reflected so the stylesheet can select on it.
           * @default 'md'
@@ -10051,7 +10077,7 @@ declare namespace LocalJSX {
          */
         "tooltip"?: string;
         /**
-          * Mirrors the native attribute.
+          * Mirrors the native attribute: `submit` runs the form's `requestSubmit()`, `reset` its `reset()`.
           * @default 'button'
          */
         "type"?: 'button' | 'submit' | 'reset';
@@ -10722,6 +10748,7 @@ declare namespace LocalJSX {
         "striped": boolean;
         "hoverable": boolean;
         "stickyHeader": boolean;
+        "bare": boolean;
         "sortKey": string;
         "sortDirection": SortDirection;
         "label": string;

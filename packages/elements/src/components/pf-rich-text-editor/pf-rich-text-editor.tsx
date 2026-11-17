@@ -118,12 +118,22 @@ export class PfRichTextEditor {
 
   componentDidLoad() {
     this.writeValueIntoEditor();
+    // Again now the box exists: the first run, in componentWillLoad, could only
+    // read an empty editor, which left a required field with a starting value
+    // reporting itself empty and blocking the form until someone typed.
+    this.syncFormState();
     if (this.toolbar) syncRovingTabIndex(getRovingItems(this.toolbar));
   }
 
+  /** True while `onInput` writes the box's own markup back into `value`. */
+  private writingFromEditor = false;
+
   @Watch('value')
   handleValueChange() {
-    this.writeValueIntoEditor();
+    // A value that came from the box is already in the box. Writing it back
+    // reassigned `innerHTML` whenever the markup was a single paragraph (the
+    // stripped form differs), which put the caret back at the start mid-word.
+    if (!this.writingFromEditor) this.writeValueIntoEditor();
     this.syncFormState();
   }
 
@@ -166,6 +176,22 @@ export class PfRichTextEditor {
   }
 
   /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
+  /**
    * The editable area's content is written imperatively, never rendered.
    *
    * A `contenteditable` that a vdom also owns is a fight: the person types,
@@ -198,15 +224,21 @@ export class PfRichTextEditor {
       return;
     }
 
-    this.lastWithinLimit = this.editor.innerHTML;
+    const html = this.editor.innerHTML;
+    this.lastWithinLimit = html;
     this.characterCount = length;
-    this.value = this.editor.innerHTML;
+    this.writingFromEditor = true;
+    try {
+      this.value = html;
+    } finally {
+      this.writingFromEditor = false;
+    }
     this.syncFormState();
     this.pfChange.emit({ value: this.value });
   };
 
   private runCommand(command: string) {
-    if (!this.editor || this.disabled) return;
+    if (!this.editor || this.controlDisabled) return;
 
     this.editor.focus();
     /*
@@ -271,7 +303,7 @@ export class PfRichTextEditor {
             class={{
               box: true,
               'box--invalid': Boolean(this.error),
-              'box--disabled': this.disabled,
+              'box--disabled': this.controlDisabled,
             }}
           >
             <div
@@ -292,7 +324,7 @@ export class PfRichTextEditor {
                   part="tool"
                   data-command={tool.command}
                   aria-label={tool.label}
-                  disabled={this.disabled}
+                  disabled={this.controlDisabled}
                   // A press must not take the caret out of the editor, or the
                   // command has no selection to apply to.
                   onMouseDown={(event: MouseEvent) => event.preventDefault()}
@@ -318,8 +350,8 @@ export class PfRichTextEditor {
               aria-required={this.required ? 'true' : null}
               aria-invalid={this.error ? 'true' : null}
               aria-describedby={describedBy}
-              aria-disabled={this.disabled ? 'true' : null}
-              contentEditable={!this.disabled}
+              aria-disabled={this.controlDisabled ? 'true' : null}
+              contentEditable={!this.controlDisabled}
               data-placeholder={this.placeholder}
               style={{ '--pf-rte-min-height': `${this.minHeight}px` }}
               ref={(node) => (this.editor = node)}

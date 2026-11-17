@@ -14,6 +14,7 @@ import {
   State,
   Watch,
 } from '@stencil/core';
+import { defaultSlotTrigger } from '../../slotted-trigger';
 
 /**
  * An interactive panel anchored to its trigger.
@@ -143,7 +144,7 @@ export class PfPopover {
   }
 
   private get trigger() {
-    return this.el.firstElementChild as HTMLElement | null;
+    return defaultSlotTrigger(this.el);
   }
 
   /**

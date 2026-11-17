@@ -49,7 +49,7 @@
 }
 
 .trigger:hover:not(:disabled) {
-  border-color: var(--pf-input-border-hover);
+  border-color: var(--pf-control-border-hover);
 }
 
 .trigger:focus-visible {

@@ -22,6 +22,7 @@ import {
   Method,
   Prop,
   Watch,
+  State,
 } from '@stencil/core';
 
 /**
@@ -150,6 +151,22 @@ export class PfTagInput {
     if (field) field.value = '';
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   private tags(): string[] {
     return parseValueList(this.value);
   }
@@ -183,7 +200,7 @@ export class PfTagInput {
   }
 
   private remove(index: number) {
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
     this.commit(removeTagAt(this.tags(), index));
     this.input?.focus();
   }
@@ -193,7 +210,7 @@ export class PfTagInput {
    * which is the gesture every tag field has.
    */
   private onKeyDown = (event: KeyboardEvent) => {
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
     const field = event.target as HTMLInputElement;
 
     if (event.key === Keys.Enter || event.key === ',') {
@@ -220,7 +237,7 @@ export class PfTagInput {
    * stale state and kept only the last — fixed there too, in the same change.
    */
   private onPaste = (event: ClipboardEvent) => {
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
     const pasted = splitPastedTags(event.clipboardData?.getData('text') ?? '');
     if (pasted.length === 0) return;
 
@@ -261,7 +278,7 @@ export class PfTagInput {
                 key={tag}
                 part="tag"
                 variant={this.tagVariant}
-                dismissible={!this.disabled}
+                dismissible={!this.controlDisabled}
                 dismissLabel={`Remove ${tag}`}
                 onPfDismiss={() => this.remove(index)}
               >
@@ -276,7 +293,12 @@ export class PfTagInput {
               class="input"
               type="text"
               autocomplete="off"
-              disabled={this.disabled || atMax}
+              disabled={this.controlDisabled}
+              // Read-only, not disabled, at the maximum: disabling the input
+              // that has focus drops focus to the page, and Backspace -- the
+              // way to make room -- then reaches nothing. A read-only input
+              // keeps focus and still hears the key.
+              readOnly={atMax}
               required={this.required && tags.length === 0}
               placeholder={atMax ? '' : this.placeholder}
               aria-invalid={this.error ? 'true' : null}

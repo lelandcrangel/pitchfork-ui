@@ -2,6 +2,7 @@ import { Keys, observeSidePosition, type Side } from '@pitchfork-ui/core';
 
 import { placePopover } from '../../place-popover';
 import { Component, Element, h, Host, Listen, Prop, State, Watch } from '@stencil/core';
+import { defaultSlotTrigger } from '../../slotted-trigger';
 
 /**
  * A tooltip anchored to whatever is slotted into it.
@@ -85,7 +86,7 @@ export class PfTooltip {
    * accessibility tree reports it identically to a same-root IDREF.
    */
   private syncDescription() {
-    const trigger = this.el.firstElementChild;
+    const trigger = defaultSlotTrigger(this.el);
     if (!trigger) return;
 
     const slot = this.el.shadowRoot?.querySelector<HTMLSlotElement>('slot[name="content"]');
@@ -128,7 +129,7 @@ export class PfTooltip {
      */
     this.stopObserving?.();
     this.stopObserving = observeSidePosition({
-      getAnchor: () => this.el.firstElementChild as HTMLElement | null,
+      getAnchor: () => defaultSlotTrigger(this.el),
       getFloating: () => panel,
       side: this.placement,
       onChange: ({ side, left, top }) => {

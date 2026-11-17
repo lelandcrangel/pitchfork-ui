@@ -1,4 +1,10 @@
-import { Component, h, Host, Prop } from '@stencil/core';
+import { AttachInternals, Component, Element, h, Host, Prop, State } from '@stencil/core';
+import {
+  type ForwardedAria,
+  observeForwardedAria,
+  readForwardedAria,
+  sameForwardedAria,
+} from '../../forward-aria';
 
 export type PfButtonVariant = 'primary' | 'secondary' | 'ghost' | 'destructive';
 export type PfButtonSize = 'sm' | 'md' | 'lg';
@@ -23,8 +29,19 @@ export type PfButtonType = 'button' | 'submit' | 'reset';
   // delegatesFocus so that focusing <pf-button> reaches the real button, and
   // :focus-visible lands on the element that is actually styled for it.
   shadow: { delegatesFocus: true },
+  // Form-associated so `type="submit"` and `type="reset"` can reach the form
+  // around the host: the native button sits in the shadow root, where it has no
+  // form owner at all.
+  formAssociated: true,
 })
 export class PfButton {
+  @Element() el!: HTMLElement;
+
+  @AttachInternals() internals!: ElementInternals;
+
+  /** Set by the platform, including for an enclosing `<fieldset disabled>`. */
+  @State() formDisabled = false;
+
   /** Visual style. Reflected so the stylesheet can select on it. */
   @Prop({ reflect: true }) variant: PfButtonVariant = 'primary';
 
@@ -41,14 +58,46 @@ export class PfButton {
   @Prop({ reflect: true }) disabled = false;
 
   /**
-   * Mirrors the native attribute. `submit` and `reset` do not yet act on a form
-   * outside this element's shadow root -- that needs ElementInternals, which
-   * arrives with the form controls in Wave 3.
+   * Mirrors the native attribute. `submit` submits the form the host is in
+   * (running its validation, as `requestSubmit()` does) and `reset` resets it.
+   * The submitter is not reported in the submission: a custom element cannot
+   * be a form's submitter, so a `name`/`value` pair on it would go nowhere.
    */
   @Prop() type: PfButtonType = 'button';
 
   /** Accessible name, for when the slot holds only an icon. */
   @Prop() label?: string;
+
+  /** ARIA state a wrapper set on the host, rendered onto the inner button. */
+  @State() forwardedAria: ForwardedAria = {};
+
+  private stopForwarding?: () => void;
+
+  connectedCallback() {
+    this.syncForwardedAria();
+    this.stopForwarding = observeForwardedAria(this.el, () => this.syncForwardedAria());
+  }
+
+  disconnectedCallback() {
+    this.stopForwarding?.();
+    this.stopForwarding = undefined;
+  }
+
+  private syncForwardedAria() {
+    const next = readForwardedAria(this.el);
+    if (!sameForwardedAria(next, this.forwardedAria)) this.forwardedAria = next;
+  }
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private onClick = () => {
+    const form = this.internals.form;
+    if (!form || this.disabled || this.loading || this.formDisabled) return;
+    if (this.type === 'submit') form.requestSubmit();
+    else if (this.type === 'reset') form.reset();
+  };
 
   private renderSpinner() {
     return (
@@ -77,14 +126,18 @@ export class PfButton {
   }
 
   render() {
-    const isDisabled = this.disabled || this.loading;
+    const isDisabled = this.disabled || this.loading || this.formDisabled;
 
     return (
       <Host>
         <button
           part="button"
-          type={this.type}
+          // Always a plain button: the one inside has no form owner, and the
+          // host's own click handler does what `type` asks.
+          type="button"
           disabled={isDisabled}
+          onClick={this.onClick}
+          {...this.forwardedAria}
           aria-busy={this.loading ? 'true' : null}
           aria-label={this.label}
         >

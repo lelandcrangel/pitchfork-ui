@@ -29,6 +29,8 @@ import {
   State,
   Watch,
 } from '@stencil/core';
+import { optionLabel } from '../../option-label';
+import { shouldReturnFocus } from '../../focus-return';
 
 const MOVES: Record<string, ListNavigationAction> = {
   [Keys.ArrowDown]: 'next',
@@ -166,7 +168,7 @@ export class PfMultiSelect {
     // Chips in the order they were chosen, not the options' order.
     for (const value of chosen) {
       const option = this.options().find((candidate) => this.optionValue(candidate) === value);
-      if (option) labels.push(option.textContent?.trim() ?? value);
+      if (option) labels.push(optionLabel(option) || value);
     }
 
     this.chips = labels;
@@ -200,7 +202,7 @@ export class PfMultiSelect {
 
   @Method()
   async show(): Promise<void> {
-    if (!this.disabled) this.open = true;
+    if (!this.controlDisabled) this.open = true;
   }
 
   @Method()
@@ -225,6 +227,22 @@ export class PfMultiSelect {
 
   formResetCallback() {
     this.value = this.initialValue;
+  }
+
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
   }
 
   /** Re-reads the options, for a label edited in place. */
@@ -264,7 +282,7 @@ export class PfMultiSelect {
 
   private showListbox() {
     const panel = this.listbox;
-    if (this.disabled || !panel || panel.matches(':popover-open')) return;
+    if (this.controlDisabled || !panel || panel.matches(':popover-open')) return;
 
     panel.showPopover();
     this.stopObserving?.();
@@ -299,7 +317,7 @@ export class PfMultiSelect {
   private onToggle = (event: ToggleEvent) => {
     const nowOpen = event.newState === 'open';
     if (this.open !== nowOpen) this.open = nowOpen;
-    if (!nowOpen) this.trigger?.focus();
+    if (!nowOpen && shouldReturnFocus(this.el)) this.trigger?.focus();
   };
 
   private setActive(option: HTMLElement | null) {
@@ -330,7 +348,7 @@ export class PfMultiSelect {
    * each pick would make choosing three things three round trips.
    */
   private toggle(option: HTMLElement) {
-    if (option.hasAttribute('disabled') || this.disabled) return;
+    if (option.hasAttribute('disabled') || this.controlDisabled) return;
 
     const next = toggleValueInList(this.values(), this.optionValue(option));
     this.value = formatValueList(next);
@@ -356,7 +374,7 @@ export class PfMultiSelect {
 
   @Listen('keydown')
   handleKeyDown(event: KeyboardEvent) {
-    if (this.disabled || event.defaultPrevented) return;
+    if (this.controlDisabled || event.defaultPrevented) return;
 
     const move = MOVES[event.key];
     if (move) {
@@ -400,7 +418,7 @@ export class PfMultiSelect {
             class={{ trigger: true, 'trigger--invalid': Boolean(this.error) }}
             type="button"
             role="combobox"
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             aria-haspopup="listbox"
             aria-expanded={this.open ? 'true' : 'false'}
             /* Same shadow root as the listbox, so this IDREF resolves. */
@@ -409,7 +427,7 @@ export class PfMultiSelect {
             aria-required={this.required ? 'true' : null}
             aria-describedby={describedBy}
             onClick={() => {
-              if (!this.disabled) this.open = !this.open;
+              if (!this.controlDisabled) this.open = !this.open;
             }}
           >
             {this.chips.length > 0 ? (

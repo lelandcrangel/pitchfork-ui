@@ -41,8 +41,8 @@ export class PfTreeItem {
   /** Reflected; the stylesheet and the tree's own filtering both read it. */
   @Prop({ reflect: true }) disabled = false;
 
-  /** An icon name from the same registry as `pf-icon`. */
-  @Prop() icon?: string;
+  /** An icon name from the same registry as `pf-icon`. Reflected: the row layout selects on `[icon]`. */
+  @Prop({ reflect: true }) icon?: string;
 
   /** Set by the tree: how deep this item sits, counting from 1. */
   @Prop({ mutable: true }) level = 1;

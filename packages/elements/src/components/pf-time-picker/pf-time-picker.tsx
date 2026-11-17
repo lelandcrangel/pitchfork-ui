@@ -30,7 +30,9 @@ import {
   Method,
   Prop,
   Watch,
+  State,
 } from '@stencil/core';
+import { shouldReturnFocus } from '../../focus-return';
 
 /**
  * A form-associated time field: a trigger that opens hour, minute and (on a
@@ -137,7 +139,7 @@ export class PfTimePicker {
 
   @Method()
   async show(): Promise<void> {
-    if (!this.disabled) this.open = true;
+    if (!this.controlDisabled) this.open = true;
   }
 
   @Method()
@@ -165,6 +167,22 @@ export class PfTimePicker {
     this.value = this.initialValue;
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   /** `hourCycle` with the attribute case coerced; see the prop's comment. */
   private get cycle(): HourCycle {
     return Number(this.hourCycle) === 12 ? 12 : 24;
@@ -184,7 +202,7 @@ export class PfTimePicker {
 
   private showPanel() {
     const panel = this.panel;
-    if (this.disabled || !panel || panel.matches(':popover-open')) return;
+    if (this.controlDisabled || !panel || panel.matches(':popover-open')) return;
 
     panel.showPopover();
     this.stopObserving?.();
@@ -228,7 +246,7 @@ export class PfTimePicker {
   private onToggle = (event: ToggleEvent) => {
     const nowOpen = event.newState === 'open';
     if (this.open !== nowOpen) this.open = nowOpen;
-    if (!nowOpen) this.trigger?.focus();
+    if (!nowOpen && shouldReturnFocus(this.el)) this.trigger?.focus();
   };
 
   private commit(next: TimeParts) {
@@ -340,7 +358,7 @@ export class PfTimePicker {
             part="trigger"
             class={{ trigger: true, 'trigger--invalid': Boolean(this.error) }}
             type="button"
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             aria-haspopup="dialog"
             aria-expanded={this.open ? 'true' : 'false'}
             /* Same shadow root as the panel, so this IDREF resolves. */
@@ -349,7 +367,7 @@ export class PfTimePicker {
             aria-required={this.required ? 'true' : null}
             aria-describedby={describedBy}
             onClick={() => {
-              if (!this.disabled) this.open = !this.open;
+              if (!this.controlDisabled) this.open = !this.open;
             }}
           >
             <span class={{ value: true, 'value--placeholder': !display }}>

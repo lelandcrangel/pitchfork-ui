@@ -7,6 +7,7 @@
  * `:not(:disabled)` and reads `input.checked` as `undefined`.
  */
 import { expect, test } from 'vitest';
+import { page } from 'vitest/browser';
 import './pf-radio-group';
 import '../pf-radio-button/pf-radio-button';
 
@@ -60,12 +61,20 @@ const press = (key: string) =>
     new KeyboardEvent('keydown', { key, bubbles: true, composed: true, cancelable: true }),
   );
 
-test('announces itself as a radiogroup, labelled by its legend', async () => {
-  const group = await mount(GROUP());
+test('announces itself as a radiogroup, named by its legend', async () => {
+  await mount(GROUP());
 
-  expect(group.getAttribute('role')).toBe('radiogroup');
-  expect(group.getAttribute('aria-labelledby')).toBe('legend');
-  expect(group.shadowRoot?.querySelector('[part="legend"]')?.id).toBe('legend');
+  // The accessible name, not the attribute: an IDREF from the host into its
+  // own shadow root carried the right attribute and resolved to nothing.
+  await expect.element(page.getByRole('radiogroup', { name: 'Plan' })).toBeInTheDocument();
+});
+
+test('the error describes the group', async () => {
+  await mount(GROUP('error="Pick a plan"'));
+
+  await expect
+    .element(page.getByRole('radiogroup', { name: 'Plan' }))
+    .toHaveAccessibleDescription('Pick a plan');
 });
 
 test('the children are radios the browser draws', async () => {
@@ -252,8 +261,11 @@ test('an explicit error wins over the required message', async () => {
   const group = await mount(GROUP('required error="Pick a plan to continue."'));
 
   expect(await group.getValidationMessage()).toBe('Pick a plan to continue.');
-  expect(group.getAttribute('aria-invalid')).toBe('true');
-  expect(group.getAttribute('aria-describedby')).toBe('error');
+  const role = group.shadowRoot?.querySelector('[role="radiogroup"]');
+  expect(role?.getAttribute('aria-invalid')).toBe('true');
+  await expect
+    .element(page.getByRole('radiogroup', { name: 'Plan' }))
+    .toHaveAccessibleDescription('Pick a plan to continue.');
 });
 
 /*

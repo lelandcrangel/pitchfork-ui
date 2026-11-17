@@ -9,6 +9,7 @@ import {
   Method,
   Prop,
   Watch,
+  State,
 } from '@stencil/core';
 
 import { applyControlValidity } from '../../form-validity';
@@ -114,6 +115,22 @@ export class PfCheckbox {
     this.checked = this.initialChecked;
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   private onChange = (event: Event) => {
     this.checked = (event.target as HTMLInputElement).checked;
     this.pfChange.emit({ checked: this.checked, value: this.value });
@@ -133,7 +150,7 @@ export class PfCheckbox {
             value={this.value}
             checked={this.checked}
             required={this.required}
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             aria-invalid={this.error ? 'true' : null}
             aria-describedby={this.error ? 'error' : null}
             onChange={this.onChange}

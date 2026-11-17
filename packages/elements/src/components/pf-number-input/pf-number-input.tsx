@@ -144,6 +144,22 @@ export class PfNumberInput {
     this.draft = null;
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   /** Steps the value up or down, as the buttons and the arrows do. */
   @Method()
   async stepBy(direction: 1 | -1): Promise<void> {
@@ -182,7 +198,7 @@ export class PfNumberInput {
   }
 
   private step_(direction: 1 | -1) {
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
     this.draft = null;
     this.commit(stepNumber(this.current, direction, this.bounds));
   }
@@ -210,7 +226,7 @@ export class PfNumberInput {
   };
 
   private onKeyDown = (event: KeyboardEvent) => {
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
     const { min, max } = this.bounds;
 
     if (event.key === Keys.ArrowUp) {
@@ -265,7 +281,7 @@ export class PfNumberInput {
               class="step"
               part="decrement"
               aria-label={this.decrementLabel}
-              disabled={this.disabled || this.atMin}
+              disabled={this.controlDisabled || this.atMin}
               tabindex="-1"
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => this.step_(-1)}
@@ -285,7 +301,7 @@ export class PfNumberInput {
               value={shown}
               placeholder={this.placeholder}
               required={this.required}
-              disabled={this.disabled}
+              disabled={this.controlDisabled}
               autocomplete="off"
               aria-invalid={this.error ? 'true' : null}
               aria-describedby={describedBy}
@@ -302,7 +318,7 @@ export class PfNumberInput {
               class="step"
               part="increment"
               aria-label={this.incrementLabel}
-              disabled={this.disabled || this.atMax}
+              disabled={this.controlDisabled || this.atMax}
               tabindex="-1"
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => this.step_(1)}

@@ -12,7 +12,7 @@
 }
 
 .label {
-  color: var(--pf-field-label-text, var(--pf-input-label-text));
+  color: var(--pf-field-label);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
@@ -47,7 +47,7 @@
 }
 
 .trigger:hover:not(:disabled) {
-  border-color: var(--pf-input-border-hover);
+  border-color: var(--pf-control-border-hover);
 }
 
 .trigger:focus-visible {
@@ -71,7 +71,7 @@
 }
 
 .value--placeholder {
-  color: var(--pf-input-placeholder-text);
+  color: var(--pf-input-placeholder);
 }
 
 .clear {
@@ -79,7 +79,7 @@
   background: none;
   border: 0;
   border-radius: var(--radius-sm);
-  color: var(--pf-input-text-muted, var(--pf-input-placeholder-text));
+  color: var(--pf-control-text-muted);
   cursor: pointer;
   display: inline-flex;
   flex-shrink: 0;
@@ -97,7 +97,7 @@
 }
 
 .description {
-  color: var(--pf-input-description-text);
+  color: var(--pf-field-description);
   font-size: var(--font-size-xs);
   margin: 0;
 }

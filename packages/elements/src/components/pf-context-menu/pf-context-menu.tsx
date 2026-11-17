@@ -17,6 +17,7 @@ import {
   Prop,
   Watch,
 } from '@stencil/core';
+import { deepActiveElement, shouldReturnFocus } from '../../focus-return';
 
 import { placePopover } from '../../place-popover';
 
@@ -59,6 +60,18 @@ export class PfContextMenu {
 
   /** Where the menu was asked to appear, in client coordinates. */
   private point = { x: 0, y: 0 };
+
+  /** What had focus before the menu took it, which closing hands it back to. */
+  private returnFocusTo: HTMLElement | null = null;
+
+  /**
+   * `<pf-context-menu open>` has to show itself once it can: the watch never
+   * runs for an initial value, and after that every right-click set `open` to
+   * the value it already had, so the menu could not appear at all.
+   */
+  componentDidLoad() {
+    if (this.open) this.showMenu();
+  }
 
   /** See pf-popover: the watch is the one place every path passes through. */
   @Watch('open')
@@ -110,6 +123,7 @@ export class PfContextMenu {
     });
     placePopover(panel, x, y);
 
+    this.returnFocusTo = deepActiveElement();
     const first = this.enabledItems[0];
     syncRovingTabIndex(this.enabledItems, first);
     first?.focus();
@@ -118,6 +132,13 @@ export class PfContextMenu {
   private hideMenu() {
     const panel = this.panel;
     if (panel?.matches(':popover-open')) panel.hidePopover();
+
+    // The focused item has just been hidden, so without this a keyboard user
+    // (Shift+F10, arrows, Enter) is left on the body. Not when the menu closed
+    // because something else was clicked: that already has focus.
+    const target = this.returnFocusTo;
+    this.returnFocusTo = null;
+    if (target?.isConnected && shouldReturnFocus(this.el)) target.focus();
   }
 
   @Listen('contextmenu')

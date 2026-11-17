@@ -32,7 +32,7 @@ export class PfCommandItem {
   @Prop({ reflect: true }) value = '';
 
   /** A supporting line under the label. Searched along with the label. */
-  @Prop() description?: string;
+  @Prop({ reflect: true }) description?: string;
 
   /** Reflected so the stylesheet and the palette's item query can select on it. */
   @Prop({ reflect: true }) disabled = false;

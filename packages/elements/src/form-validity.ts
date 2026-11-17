@@ -43,3 +43,24 @@ export function applyControlValidity(
   const { flags, message } = resolveControlValidity(hasValue, required, error);
   internals.setValidity(flags, message);
 }
+
+/**
+ * The browser's own type-mismatch message for `value` in a native input of
+ * `type`, or `''` when the value is fine (or the type has no format to check).
+ *
+ * A form-associated element whose real input sits in a shadow root gets none
+ * of that input's constraints -- `<pf-input type="email" value="foo">` passed
+ * `checkValidity()` and submitted, where a native field refuses it. A detached
+ * probe asks the browser rather than reimplementing its email and URL rules,
+ * and answers for the value being set now rather than the one last rendered.
+ */
+let probe: HTMLInputElement | undefined;
+
+export function typeMismatchMessage(type: string, value: string): string {
+  if (type !== 'email' && type !== 'url') return '';
+  if (typeof document === 'undefined') return '';
+  probe ??= document.createElement('input');
+  probe.type = type;
+  probe.value = value;
+  return probe.validity?.typeMismatch ? probe.validationMessage : '';
+}

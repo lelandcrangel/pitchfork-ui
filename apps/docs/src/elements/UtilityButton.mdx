@@ -30,7 +30,7 @@ an icon alone.
 | `label` | `label` | `string \| undefined` | — | Accessible name. Required for an icon-only button, and also used as the native tooltip unless `tooltip` says otherwise. |
 | `size` | `size` | `"md" \| "sm"` | `'md'` | Control size. Reflected so the stylesheet can select on it. |
 | `tooltip` | `tooltip` | `string \| undefined` | — | Native tooltip text. Defaults to `label`. |
-| `type` | `type` | `"button" \| "reset" \| "submit"` | `'button'` | Mirrors the native attribute. |
+| `type` | `type` | `"button" \| "reset" \| "submit"` | `'button'` | Mirrors the native attribute: `submit` runs the form's `requestSubmit()`, `reset` its `reset()`. |
 | `variant` | `variant` | `"brand" \| "destructive" \| "neutral"` | `'neutral'` | Colour treatment. Reflected so the stylesheet can select on it. |
 
 ## Slots

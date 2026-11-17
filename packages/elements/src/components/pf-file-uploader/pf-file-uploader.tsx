@@ -122,6 +122,9 @@ export class PfFileUploader {
     this.syncFormState();
   }
 
+  // `name` too: it is built into the FormData below, so a name assigned after
+  // load never reaches the submission unless this runs again.
+  @Watch('name')
   @Watch('files')
   @Watch('error')
   @Watch('required')
@@ -174,7 +177,7 @@ export class PfFileUploader {
   /** Opens the file picker, as clicking the dropzone does. */
   @Method()
   async open() {
-    if (!this.disabled) this.input?.click();
+    if (!this.controlDisabled) this.input?.click();
   }
 
   /**
@@ -187,12 +190,28 @@ export class PfFileUploader {
     this.dragDepth = 0;
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   private get limits() {
     return { maxFiles: this.maxFiles, maxFileSize: this.maxFileSize, accept: this.accept };
   }
 
   private addFiles(selected: FileList | null) {
-    if (!selected || this.disabled) return;
+    if (!selected || this.controlDisabled) return;
 
     const next = mergeFileSelection(this.files ?? [], Array.from(selected), {
       multiple: this.multiple,
@@ -225,7 +244,7 @@ export class PfFileUploader {
   }
 
   private removeAt(index: number) {
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
     const next = (this.files ?? []).filter((_, position) => position !== index);
     this.rejection = undefined;
     this.files = next;
@@ -234,7 +253,7 @@ export class PfFileUploader {
 
   private onDragEnter = (event: DragEvent) => {
     event.preventDefault();
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
     this.dragDepth += 1;
   };
 
@@ -285,7 +304,7 @@ export class PfFileUploader {
             type="file"
             accept={this.accept}
             multiple={this.multiple}
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             tabindex={-1}
             aria-hidden="true"
             onChange={(event) => this.addFiles((event.target as HTMLInputElement).files)}
@@ -300,7 +319,7 @@ export class PfFileUploader {
               'dropzone--invalid': Boolean(message),
             }}
             part="dropzone"
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             aria-invalid={message ? 'true' : null}
             aria-describedby={describedBy}
             onClick={() => this.open()}
@@ -334,7 +353,7 @@ export class PfFileUploader {
                     class="remove"
                     part="remove"
                     aria-label={`Remove ${file.name}`}
-                    disabled={this.disabled}
+                    disabled={this.controlDisabled}
                     onClick={() => this.removeAt(index)}
                   >
                     <pf-icon name="close" aria-hidden="true"></pf-icon>

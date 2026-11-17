@@ -12,6 +12,7 @@ import {
   Method,
   Prop,
   Watch,
+  State,
 } from '@stencil/core';
 
 /**
@@ -130,6 +131,22 @@ export class PfTextarea {
     this.value = this.initialValue;
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   private onInput = (event: Event) => {
     this.value = (event.target as HTMLTextAreaElement).value;
     this.pfInput.emit({ value: this.value });
@@ -186,7 +203,7 @@ export class PfTextarea {
             rows={this.rows}
             placeholder={this.placeholder}
             required={this.required}
-            disabled={this.disabled}
+            disabled={this.controlDisabled}
             readOnly={this.readonly}
             aria-invalid={this.error ? 'true' : null}
             aria-describedby={describedBy}

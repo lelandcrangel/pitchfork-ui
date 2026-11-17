@@ -26,6 +26,8 @@ import {
   State,
   Watch,
 } from '@stencil/core';
+import { optionLabel } from '../../option-label';
+import { shouldReturnFocus } from '../../focus-return';
 
 const MOVES: Record<string, ListNavigationAction> = {
   [Keys.ArrowDown]: 'next',
@@ -161,7 +163,7 @@ export class PfCombobox {
 
   @Method()
   async show(): Promise<void> {
-    if (!this.disabled) this.open = true;
+    if (!this.controlDisabled) this.open = true;
   }
 
   @Method()
@@ -190,6 +192,22 @@ export class PfCombobox {
     this.applyQuery();
   }
 
+  /**
+   * Whether the platform says this control is disabled -- by its own
+   * `disabled` or by an enclosing `<fieldset disabled>`. A native control
+   * honours the fieldset; without this the host drops out of the submission
+   * while the control inside stays fully usable, so input is silently lost.
+   */
+  @State() formDisabled = false;
+
+  formDisabledCallback(disabled: boolean) {
+    this.formDisabled = disabled;
+  }
+
+  private get controlDisabled() {
+    return this.disabled || this.formDisabled;
+  }
+
   /** Re-reads the options, for a label edited in place (no `slotchange` fires). */
   @Method()
   async refresh(): Promise<void> {
@@ -215,7 +233,7 @@ export class PfCombobox {
 
   private selectedLabel(): string {
     const chosen = this.options().find((option) => this.optionValue(option) === this.value);
-    return this.value && chosen ? (chosen.textContent?.trim() ?? '') : '';
+    return this.value && chosen ? optionLabel(chosen) : '';
   }
 
   private get listbox() {
@@ -241,8 +259,7 @@ export class PfCombobox {
     const options = this.options();
 
     for (const option of options) {
-      const matches =
-        echoed || matchesCommandQuery({ label: option.textContent?.trim() ?? '' }, this.query);
+      const matches = echoed || matchesCommandQuery({ label: optionLabel(option) }, this.query);
       if (matches) option.removeAttribute('hidden');
       else option.setAttribute('hidden', '');
     }
@@ -257,7 +274,7 @@ export class PfCombobox {
 
   private showListbox() {
     const panel = this.listbox;
-    if (this.disabled || !panel || panel.matches(':popover-open')) return;
+    if (this.controlDisabled || !panel || panel.matches(':popover-open')) return;
 
     panel.showPopover();
     this.stopObserving?.();
@@ -295,7 +312,7 @@ export class PfCombobox {
     if (!nowOpen) {
       this.query = this.selectedLabel();
       this.applyQuery();
-      this.input?.focus();
+      if (shouldReturnFocus(this.el)) this.input?.focus();
     }
   };
 
@@ -346,7 +363,7 @@ export class PfCombobox {
   @Listen('pfOptionSelect')
   handleOptionSelect(event: CustomEvent<{ value: string }>) {
     event.stopPropagation();
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
 
     const option = this.options().find(
       (candidate) => this.optionValue(candidate) === event.detail.value,
@@ -380,7 +397,7 @@ export class PfCombobox {
   };
 
   private onKeyDown = (event: KeyboardEvent) => {
-    if (this.disabled) return;
+    if (this.controlDisabled) return;
 
     const move = MOVES[event.key];
     if (move) {
@@ -407,7 +424,8 @@ export class PfCombobox {
       this.description && 'description',
       this.error && 'error',
     );
-    const showClear = this.clearable && !this.disabled && (this.query !== '' || this.value !== '');
+    const showClear =
+      this.clearable && !this.controlDisabled && (this.query !== '' || this.value !== '');
 
     return (
       <Host>
@@ -432,7 +450,7 @@ export class PfCombobox {
               type="text"
               role="combobox"
               autocomplete="off"
-              disabled={this.disabled}
+              disabled={this.controlDisabled}
               required={this.required}
               placeholder={this.placeholder}
               value={this.query}
@@ -445,7 +463,7 @@ export class PfCombobox {
               onInput={this.onInput}
               onKeyDown={this.onKeyDown}
               onClick={() => {
-                if (!this.disabled) this.open = true;
+                if (!this.controlDisabled) this.open = true;
               }}
             />
 

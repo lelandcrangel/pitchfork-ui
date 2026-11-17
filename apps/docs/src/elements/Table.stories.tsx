@@ -11,6 +11,7 @@ const example = elementExamples['pf-table'];
 const meta = {
   title: 'Components/Table',
   args: {
+    bare: false,
     dense: false,
     hoverable: true,
     sortDirection: 'asc',
@@ -20,6 +21,7 @@ const meta = {
     sortKey: 'name',
   },
   argTypes: {
+    bare: { control: 'boolean' },
     dense: { control: 'boolean' },
     hoverable: { control: 'boolean' },
     label: { control: 'text' },
