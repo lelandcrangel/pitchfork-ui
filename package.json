@@ -43,6 +43,7 @@
     "format:check": "prettier . --check",
     "check:contrast": "node scripts/check-dark-contrast.mjs",
     "check:token-modes": "node scripts/check-token-modes.mjs",
+    "check:css-vars": "node scripts/check-css-vars.mjs",
     "prepare": "husky",
     "check:package": "node scripts/check-built-packages.mjs",
     "check:publishable": "node scripts/check-publishable.mjs",
