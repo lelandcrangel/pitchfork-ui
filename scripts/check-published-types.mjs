@@ -50,7 +50,9 @@ const PACKAGES = [
   {
     dir: 'elements',
     profile: 'esm-only',
-    exclude: ['./styles.css', './metadata'],
+    // Two stylesheets (the tokens, and the opt-in Tailwind compatibility sheet)
+    // and a JSON file: none has, or could have, a type declaration.
+    exclude: ['./styles.css', './tailwind.css', './metadata'],
     /*
      * The package cannot be `"type": "module"` -- Stencil loads
      * `stencil.config.ts` through `require()` -- so Node reads its `.js` output

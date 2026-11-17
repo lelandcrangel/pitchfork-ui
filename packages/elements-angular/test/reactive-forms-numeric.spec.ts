@@ -158,7 +158,9 @@ test('disables both elements when their controls are disabled', async () => {
  * it are children rendered by @for, and Angular never sees them.
  */
 test('the radio group binds as a single control', async () => {
-  expect(plan.getAttribute('role')).toBe('radiogroup');
+  // The group role is on the element's own wrapper, where the IDREFs to its
+  // legend and error resolve -- not on the host.
+  expect(plan.shadowRoot?.querySelector('[role="radiogroup"]')).not.toBeNull();
   expect(plan.querySelectorAll('pf-radio-button')).toHaveLength(2);
   expect(host.form.controls.plan.value).toBe('');
   expect(host.form.controls.plan.valid).toBe(false);
