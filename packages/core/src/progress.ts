@@ -1,3 +1,5 @@
+import { decimalsOf } from './number-field';
+
 /**
  * Progress arithmetic, shared because both layers must agree.
  *
@@ -23,11 +25,13 @@ export function clampProgressPercent(value: number, max: number): number {
 }
 
 /**
- * The value to announce for a given percentage — rounded, because a screen
- * reader reading "aria-valuenow: 30.000000000000004" serves nobody.
+ * The value to announce for a given percentage, rounded to two decimal places
+ * -- enough to drop a float artefact ("30.000000000000004") without dropping
+ * the value. It used to round to a whole number, which on a fractional scale
+ * (`max="1"`) announced 0.4 as 0 and could only ever say 0 or 1.
  */
 export function progressValueNow(percent: number, max: number): number {
-  return Math.round((percent / 100) * max);
+  return Math.round((percent / 100) * max * 100) / 100;
 }
 
 export interface ProgressCircleGeometry {
@@ -104,6 +108,25 @@ export function getRangePercent(value: number, min: number, max: number): number
   if (Number.isNaN(value)) return 0;
 
   return Math.max(0, Math.min(100, ((value - min) / range) * 100));
+}
+
+/**
+ * Where a native `<input type="range">` would put `value`: clamped, then on
+ * the nearest step counted from `min` (a tie goes up, as the platform's does),
+ * and never past the last step that fits under `max`.
+ *
+ * A slider that only clamps shows one number while its thumb sits on another:
+ * `value="33" step="10"` drew the thumb at 30 -- the browser sanitises it --
+ * while the fill, the label and the form all said 33.
+ */
+export function snapToRangeStep(value: number, min: number, max: number, step: number): number {
+  const clamped = clampToRange(value, min, max);
+  if (!(step > 0)) return clamped;
+
+  let snapped = min + Math.round((clamped - min) / step) * step;
+  if (snapped > max) snapped -= step;
+  const decimals = Math.max(decimalsOf(step), decimalsOf(min));
+  return Number(snapped.toFixed(decimals));
 }
 
 /** Keep `value` within the inclusive range. */

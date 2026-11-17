@@ -7,6 +7,7 @@ import {
   getRangePercent,
   normalizeRange,
   progressValueNow,
+  snapToRangeStep,
 } from './progress';
 
 describe('clampProgressPercent', () => {
@@ -55,6 +56,44 @@ describe('progressValueNow', () => {
     // 30/60 -> 50.00000000000001 in some orders of operations.
     expect(progressValueNow(clampProgressPercent(1, 3), 3)).toBe(1);
     expect(Number.isInteger(progressValueNow(33.333, 3))).toBe(true);
+  });
+
+  it('keeps a fraction on a fractional scale', () => {
+    // max="1" value="0.4" announced 0 when this rounded to whole units.
+    expect(progressValueNow(clampProgressPercent(0.4, 1), 1)).toBe(0.4);
+    expect(progressValueNow(clampProgressPercent(2.5, 10), 10)).toBe(2.5);
+  });
+});
+
+describe('snapToRangeStep', () => {
+  it('puts the value on the nearest step, as a native range does', () => {
+    expect(snapToRangeStep(33, 0, 100, 10)).toBe(30);
+    expect(snapToRangeStep(36, 0, 100, 10)).toBe(40);
+  });
+
+  it('breaks a tie upwards, like the platform', () => {
+    expect(snapToRangeStep(35, 0, 100, 10)).toBe(40);
+  });
+
+  it('counts steps from min, not from zero', () => {
+    expect(snapToRangeStep(7, 5, 25, 10)).toBe(5);
+    expect(snapToRangeStep(12, 5, 25, 10)).toBe(15);
+  });
+
+  it('never passes the last step that fits under max', () => {
+    // 0..25 by 10 allows 0, 10, 20 -- not 25 and not 30.
+    expect(snapToRangeStep(25, 0, 25, 10)).toBe(20);
+    expect(snapToRangeStep(99, 0, 25, 10)).toBe(20);
+  });
+
+  it('keeps a decimal step free of float noise', () => {
+    expect(snapToRangeStep(0.30000000000000004, 0, 1, 0.1)).toBe(0.3);
+    expect(snapToRangeStep(0.5, 0, 1, 0.1)).toBe(0.5);
+  });
+
+  it('clamps out-of-range values first', () => {
+    expect(snapToRangeStep(-5, 0, 100, 10)).toBe(0);
+    expect(snapToRangeStep(Number.NaN, 0, 100, 10)).toBe(0);
   });
 });
 
