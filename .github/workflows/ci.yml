@@ -57,6 +57,13 @@ jobs:
       - name: Check every semantic colour carries both modes
         run: npm run check:token-modes
 
+      # An undefined var() with no fallback computes its whole declaration
+      # away, and neither test project applies element CSS, so nothing else
+      # sees it: six had shipped (a hover border in the text colour, a
+      # placeholder drawn like a value, a heading at no particular size).
+      - name: Check every custom property an element reads is defined
+        run: npm run check:css-vars
+
       - name: Check dark mode contrast (WCAG AA)
         run: npm run check:contrast
 
