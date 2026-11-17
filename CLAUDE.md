@@ -1834,6 +1834,23 @@ imports `fromEvent` from `rxjs`, and the `dist/collection` that
 `packages/elements` advertises through `collection:main` imports
 `@stencil/core`.
 
+**`elements-react` bundles the output target's runtime; it does not depend
+on it.** The generated components import only
+`@stencil/react-output-target/runtime`, a few hundred lines over
+`@lit/react`, but that package also holds the build-time half, which depends
+on `ts-morph` -- and a dependency installs everything. So every consumer of
+the React binding received `ts-morph`, `@ts-morph/common`, `tinyglobby`,
+`picomatch`, `minimatch` and `glob` for code their app never loads, and with
+them GHSA-fc5q-39xc-vjpf, which has no fix. Its `vite.config.ts` now bundles
+that one package into `dist/vendor/` (not `node_modules/`, which npm never
+packs), `scripts/vendor-react-runtime-types.mjs` copies its two declaration
+files beside it and repoints the 108 generated `.d.ts` files at them, and
+`@lit/react` is a direct dependency. Measured from packed tarballs into an
+empty project: 14 packages installed, none of that chain among them, all 108
+components importable. The blocking audit is `scripts/audit-published.mjs`,
+which walks the lockfile from the published packages' runtime dependencies
+instead of auditing every app in the workspace as production.
+
 ### Smoke-testing them
 
 `scripts/smoke-consumer.mjs` renders all 108 elements and asserts their
