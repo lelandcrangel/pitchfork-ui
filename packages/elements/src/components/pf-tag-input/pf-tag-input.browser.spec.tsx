@@ -140,9 +140,19 @@ test('stops at the maximum and keeps the draft', async () => {
   expect(field(el).value).toBe('c');
 });
 
-test('disables the draft field once the maximum is reached', async () => {
+/*
+ * Read-only at the maximum, not disabled. Disabling the field that has focus
+ * dropped focus to the page, and Backspace -- the way to make room -- then
+ * reached nothing. This test used to assert `disabled`.
+ */
+test('at the maximum the draft field is read-only, and Backspace still makes room', async () => {
   const el = await mount('<pf-tag-input value="a,b" max="2"></pf-tag-input>');
-  await until(() => field(el).disabled === true, 'the field to be disabled at max');
+  await until(() => field(el).readOnly === true, 'the field to be read-only at max');
+  expect(field(el).disabled).toBe(false);
+
+  await typeAnd(el, '', 'Backspace');
+  await until(() => el.value === 'a', 'Backspace to remove the last tag');
+  await until(() => field(el).readOnly === false, 'the field to take input again');
 });
 
 test('refuses what validate rejects', async () => {

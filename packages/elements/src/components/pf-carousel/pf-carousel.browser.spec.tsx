@@ -171,6 +171,14 @@ test('the end button is disabled rather than ignoring the click', async () => {
 test('autoplay steps on its own and the interval is replaced, not stacked', async () => {
   const el = await mount(FIXTURE('auto-play auto-play-interval="60"'));
 
+  // The pointer is still where the tests above clicked, which is over this
+  // carousel -- and autoplay now holds still under the pointer (WCAG 2.2.2).
+  // Park it outside first.
+  const away = document.createElement('div');
+  away.style.cssText = 'position: fixed; right: 0; bottom: 0; width: 8px; height: 8px';
+  document.body.append(away);
+  await userEvent.hover(away);
+
   await until(() => el.index === 1, 'the first automatic step');
   await until(() => el.index === 2, 'the second automatic step');
   await until(() => el.index === 0, 'the wrap back to the start');

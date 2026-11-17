@@ -40,6 +40,9 @@ const panel = (el: Picker) => part(el, 'panel') as HTMLElement;
 const isOpen = (el: Picker) => panel(el).matches(':popover-open');
 const day = (el: Picker, iso: string) =>
   el.shadowRoot?.querySelector(`button[data-day="${iso}"]`) as HTMLButtonElement | null;
+/** The day drawn as the start: the pending one while a new range is half made. */
+const startDay = (el: Picker) =>
+  el.shadowRoot?.querySelector('button.day--start')?.getAttribute('data-day') ?? null;
 const classesOf = (el: Picker, iso: string) => Array.from(day(el, iso)?.classList ?? []);
 const insideDays = (el: Picker) =>
   Array.from(el.shadowRoot?.querySelectorAll('.day--inside') ?? []).map((d) =>
@@ -116,7 +119,9 @@ test('two clicks make a range, and report it once', async () => {
   await until(() => isOpen(el));
 
   day(el, '2024-03-05')!.click();
-  await until(() => el.value === '', 'the first click to clear the old range');
+  await until(() => startDay(el) === '2024-03-05', 'the first click to start a new range');
+  // The committed range stays the value until the new one is complete.
+  expect(el.value).toBe('2024-03-10/2024-03-20');
   expect(changes).toHaveLength(0);
 
   day(el, '2024-03-08')!.click();
@@ -131,7 +136,7 @@ test('two clicks make a range, and report it once', async () => {
  * A half-made range is not a range, so `value` stays empty until both ends
  * exist — a form read mid-selection would otherwise see a start with no end.
  */
-test('holds a half-made range out of the value', async () => {
+test('keeps the committed range as the value while a new one is half made', async () => {
   const el = await mount(
     '<pf-date-range-picker value="2024-03-10/2024-03-20"></pf-date-range-picker>',
   );
@@ -139,10 +144,12 @@ test('holds a half-made range out of the value', async () => {
   await until(() => isOpen(el));
 
   day(el, '2024-03-05')!.click();
-  await until(() => el.value === '');
 
-  // The start is still drawn, though.
+  // The new start is drawn, and the value is still the committed range: a
+  // half-made range is never the value, and clearing it instead lost the old
+  // range for good if the picker was then closed.
   await until(() => classesOf(el, '2024-03-05').includes('day--start'));
+  expect(el.value).toBe('2024-03-10/2024-03-20');
 });
 
 test('swaps the ends when the second click is earlier', async () => {
@@ -153,7 +160,7 @@ test('swaps the ends when the second click is earlier', async () => {
   await until(() => isOpen(el));
 
   day(el, '2024-03-18')!.click();
-  await until(() => el.value === '');
+  await until(() => startDay(el) === '2024-03-18');
   day(el, '2024-03-12')!.click();
 
   await until(() => el.value === '2024-03-12/2024-03-18', 'the ends to swap');
@@ -167,11 +174,11 @@ test('clicking the same day twice starts over rather than making a one-day range
   await until(() => isOpen(el));
 
   day(el, '2024-03-15')!.click();
-  await until(() => el.value === '');
+  await until(() => startDay(el) === '2024-03-15');
   day(el, '2024-03-15')!.click();
   await new Promise((resolve) => setTimeout(resolve, 80));
 
-  expect(el.value).toBe('');
+  expect(el.value).toBe('2024-03-10/2024-03-20');
   expect(isOpen(el)).toBe(true);
 });
 
@@ -184,7 +191,7 @@ test('previews a range from the hovered day', async () => {
   await until(() => isOpen(el));
 
   day(el, '2024-03-05')!.click();
-  await until(() => el.value === '');
+  await until(() => startDay(el) === '2024-03-05');
 
   /*
    * Re-dispatched while polling, because a hover is an *edge*: one
@@ -252,7 +259,11 @@ test('Enter picks the focused day', async () => {
   await until(() => isOpen(el));
 
   panel(el).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
-  await until(() => el.value === '', 'Enter to start a new range');
+  await until(
+    () =>
+      startDay(el) === '2024-03-10' && classesOf(el, '2024-03-20').every((c) => c !== 'day--end'),
+    'Enter to start a new range',
+  );
 
   panel(el).dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
   panel(el).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
