@@ -5,7 +5,8 @@ import { reactOutputTarget } from '@stencil/react-output-target';
 import { postcss } from '@stencil/postcss';
 import { Config } from '@stencil/core';
 import customMedia from 'postcss-custom-media';
-import { resolve } from 'node:path';
+import type { PluginCreator } from 'postcss';
+import { resolve, sep } from 'node:path';
 
 /**
  * The `--pf-*` alias layer, in its neutral home alongside the tokens it
@@ -13,11 +14,35 @@ import { resolve } from 'node:path';
  *
  * - the source copy supplies `@custom-media` definitions to PostCSS at build
  *   time, so the 32 `@media (--sm/--md)` queries in component CSS resolve;
- * - the built copy is the `globalStyle` below, shipped so an elements-only
- *   consumer gets styled components.
+ * - the built copy is the `globalStyle` below, which Stencil emits as
+ *   `dist/pitchfork/pitchfork.css` -- the `styles.css` a consumer loads once.
  */
 const themeCssSource = resolve(__dirname, '../tokens/src/theme.css');
 const themeCssBuilt = resolve(__dirname, '../tokens/dist/css/theme.css');
+
+/**
+ * The one rule of the token sheet that does anything inside a shadow root.
+ *
+ * Stencil used to attach the whole `globalStyle` -- 42.5 KB -- to every shadow
+ * root, and almost all of it is dead there: `:root`, `body` and
+ * `[data-theme='dark']` match nothing inside a shadow tree, and the
+ * custom properties reach the elements by inheritance from the document
+ * anyway, which is why a consumer loads `styles.css` at all. What did match
+ * was the `*, *::before, *::after` box-sizing reset, and the element
+ * stylesheets are written against it. So it goes into each of them instead,
+ * and `addGlobalStyleToComponents: false` stops the rest travelling in the
+ * JavaScript, being adopted into every root, and -- on a browser without
+ * constructable stylesheets -- being parsed once per element on the page.
+ */
+const shadowRootReset: PluginCreator<void> = () => ({
+  postcssPlugin: 'pitchfork-shadow-root-reset',
+  Once(root, { parse }) {
+    const file = root.source?.input.file ?? '';
+    if (!file.includes(`${sep}src${sep}components${sep}`)) return;
+    root.prepend(parse('*, *::before, *::after { box-sizing: border-box; }'));
+  },
+});
+shadowRootReset.postcss = true;
 
 export const config: Config = {
   namespace: 'pitchfork',
@@ -28,6 +53,9 @@ export const config: Config = {
    * at the top of this file, which is why it can be pointed at the built
    * stylesheet directly -- a bare `@pitchfork-ui/tokens/css` specifier could
    * not be, and used to need a concatenation step.
+   *
+   * It reaches the page as `styles.css` only; see `shadowRootReset` above for
+   * why it is no longer attached to each element too.
    */
   globalStyle: themeCssBuilt,
   taskQueue: 'async',
@@ -35,7 +63,14 @@ export const config: Config = {
   outputTargets: [
     {
       type: 'dist-custom-elements',
-      customElementsExportBehavior: 'auto-define-custom-elements',
+      // `default`, not `auto-define-custom-elements`: a module that registers
+      // its element on import has a side effect, so a bundler must keep every
+      // one a binding imports, and each binding imports all 108 from one file.
+      // An Angular or Vue app using one PfBadge shipped them all -- about
+      // 100 KB gzipped. Every binding calls `defineCustomElement()` itself, and
+      // `"sideEffects"` in package.json says the modules are safe to drop.
+      // `npm run check:binding-size` holds it.
+      customElementsExportBehavior: 'default',
       // The React output target requires the runtime to be bundled into each
       // component rather than imported from @stencil/core at runtime.
       externalRuntime: false,
@@ -126,7 +161,7 @@ export const config: Config = {
     // `@media (--sm/--md)` queries and the token alias chain behave
     // identically in both layers.
     postcss({
-      plugins: [globalData({ files: [themeCssSource] }), customMedia()],
+      plugins: [globalData({ files: [themeCssSource] }), customMedia(), shadowRootReset()],
     }),
   ],
   testing: {
@@ -134,5 +169,6 @@ export const config: Config = {
   },
   extras: {
     experimentalImportInjection: true,
+    addGlobalStyleToComponents: false,
   },
 };

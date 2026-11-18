@@ -53,10 +53,22 @@ import '@pitchfork-ui/elements/styles.css';
 <pf-button variant="primary">Save</pf-button>
 ```
 
+The loader registers every tag and fetches each element's code the first time
+the tag appears on the page. To bundle only the elements you use instead,
+import each one and register it yourself; importing the module alone
+registers nothing, which is what lets a bundler leave the others out:
+
+```ts
+import { defineCustomElement as defineButton } from '@pitchfork-ui/elements/components/pf-button.js';
+
+defineButton(); // pf-button, and any element it renders inside itself
+```
+
 With a binding package (`@pitchfork-ui/elements-react`, `-angular` or `-vue`),
-do not also call `defineCustomElements()` from the loader. The bindings
-register each tag from `@pitchfork-ui/elements/components`, and the loader
-would register the same tags again from a second build.
+do neither: each binding component registers its own tag the first time it
+renders, so an app ships the elements it uses and no others. Calling
+`defineCustomElements()` from the loader as well would register the same tags
+again from a second build.
 
 ### React
 

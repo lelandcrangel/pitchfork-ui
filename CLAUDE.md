@@ -1836,6 +1836,37 @@ cover the same six controls as the Angular value accessors, bound the same way
 Keeping the two lists identical is deliberate: a control that models in one
 framework and not the other is a difference no test would report.
 
+**A binding is only tree-shakable while importing an element does nothing.**
+The Angular and Vue bindings each import all 108 element modules from one
+file. Every proxy is droppable — Vue's are `/*@__PURE__*/`, and the Angular
+CLI's optimizer wraps the decorated classes itself — but each element module
+used to register itself on import (`auto-define-custom-elements`), and a
+bundler keeps a module with a side effect whether or not its exports are used.
+So one `PfBadge` in an Angular app shipped every element: 146.7 KB gzipped
+against a 30.1 KB empty app, and Vue the same. `sideEffects: false` on the
+binding alone changed nothing, measured. The fix is `customElementsExportBehavior:
+'default'` (every binding calls `defineCustomElement()` itself) plus a
+`"sideEffects"` list in `packages/elements/package.json` that names the lazy
+build, the loader and the CSS and leaves `dist/components` out. React was never
+affected: its generated components are one module each.
+`npm run check:binding-size` builds one-element apps with Vite and the
+Angular CLI and fails a binding more than 10 KB over the element alone —
+probed against `main`, where Vue and Angular read +97 and +101 KB.
+
+**The token sheet is not attached to the elements.** Stencil compiles a
+`globalStyle` into the element runtime and adopts it into every shadow root
+by default. Inside a shadow root almost all of `theme.css` is dead — `:root`,
+`body` and `[data-theme='dark']` match nothing there, and the custom properties
+arrive by inheritance from the document's own copy — but it cost 42.5 KB of
+every bundle (a badge alone was 13.2 KB gzipped, 7.4 KB without it) and, where
+constructable stylesheets are missing, a parse per element on the page.
+`extras.addGlobalStyleToComponents: false` stops that and `styles.css` comes
+out byte-identical. The one rule that did apply inside, the box-sizing reset,
+is prepended to every element stylesheet by the `shadowRootReset` PostCSS step
+in the Stencil config; the consumer smoke reads `box-sizing` inside every
+shadow root, and removing the step names 80 elements. `check:binding-size`
+also caps the badge at 10 KB, which the sheet coming back would break.
+
 **A generated wrapper imports its output target's runtime, and nothing
 hand-written mentions it.** The Vue proxies open with
 `import { defineContainer } from '@stencil/vue-output-target/runtime'`, and the

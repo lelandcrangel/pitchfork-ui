@@ -140,6 +140,13 @@ jobs:
       - name: Check the built packages
         run: npm run check:package
 
+      # One element through each binding, built by the tool that framework's
+      # consumers use, against the element on its own. Until 0.4 an Angular
+      # or Vue app using one PfBadge shipped all 108 elements -- about 100 KB
+      # gzipped -- because every element module registered itself on import.
+      - name: Check each binding ships only the elements an app uses
+        run: npm run check:binding-size
+
       # The repo's own tsconfigs use `moduleResolution: "bundler"`, which
       # forgives declaration files that node16 does not. 0.15.1 published
       # declarations whose relative specifiers carried no extension: under

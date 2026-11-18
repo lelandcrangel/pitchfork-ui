@@ -45,6 +45,7 @@
     "check:token-modes": "node scripts/check-token-modes.mjs",
     "check:css-vars": "node scripts/check-css-vars.mjs",
     "check:events": "node scripts/check-event-bubbling.mjs",
+    "check:binding-size": "node scripts/check-binding-size.mjs",
     "audit:published": "node scripts/audit-published.mjs",
     "prepare": "husky",
     "check:package": "node scripts/check-built-packages.mjs",

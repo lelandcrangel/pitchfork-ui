@@ -633,6 +633,28 @@ try {
     }
 
     /*
+     * The element stylesheets are written against `box-sizing: border-box`.
+     * It used to arrive inside every shadow root with the whole 42.5 KB token
+     * sheet; now each element's own stylesheet carries the one rule, and a
+     * box inside a shadow root is the only place to see whether it did.
+     */
+    const contentBox = [];
+    for (const host of document.querySelectorAll('*')) {
+      if (!host.localName.startsWith('pf-') || !host.shadowRoot) continue;
+      const inner = [...host.shadowRoot.children].find(
+        (node) => !['STYLE', 'SLOT', 'TEMPLATE'].includes(node.tagName),
+      );
+      if (inner && getComputedStyle(inner).boxSizing !== 'border-box') {
+        contentBox.push(host.localName);
+      }
+    }
+    if (contentBox.length > 0) {
+      result.unstyled.push(
+        `box-sizing is not border-box inside ${[...new Set(contentBox)].join(', ')}`,
+      );
+    }
+
+    /*
      * The claim the overlay wave rests on: a `popover` opened from inside a
      * shadow root escapes an ancestor's `overflow` and stacking context. That
      * is what `createPortal` does for the React library and the only
