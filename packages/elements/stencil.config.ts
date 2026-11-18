@@ -44,6 +44,91 @@ const shadowRootReset: PluginCreator<void> = () => ({
 });
 shadowRootReset.postcss = true;
 
+/**
+ * Makes each lazy entry fetch the elements its component renders, alongside
+ * itself rather than after it.
+ *
+ * The lazy loader asks for an element's bundle when the element connects, and
+ * an element rendered inside another's shadow root connects only once the
+ * parent's bundle has arrived, run and rendered. So every level of nesting
+ * cost more trips: measured over HTTP/2 at 80 ms of latency, `pf-tab` waited
+ * for its own bundle and that bundle's chunks before it asked for
+ * `pf-badge`, and a page of seven common elements made its entry requests in
+ * three waves and hydrated in about 560 ms. With this, two waves and about
+ * 465 ms. Stencil has no preload of its own for this -- `bundles` can only put
+ * one component in one bundle, and `pf-icon` is rendered by 25 of them.
+ *
+ * The cost is that an entry fetches what its component *can* render, not only
+ * what it does: a closed `pf-date-picker` now brings `pf-calendar` with it,
+ * which is also what makes its first open not wait on the network.
+ *
+ * Stencil's lazy entries are virtual modules named `<tag>.entry`, each
+ * re-exporting one component. This reads the component's compiled module for
+ * the `h('pf-…')` calls that render another element and gives the entry a
+ * bare `import '<that tag>.entry'`, so Rollup emits a static import between
+ * the two entry chunks: the browser fetches the child as soon as it parses
+ * the parent, and when the parent renders, the loader's own `import()` of the
+ * child resolves from the module map without a request. Stencil's
+ * `lazyBundleIdPlugin` already rewrites imports between entries, so the
+ * hashed names in `dist/pitchfork` come out right too.
+ *
+ * `no-treeshake` is what keeps the import: an entry only re-exports a class,
+ * which has no side effects, so Rollup would otherwise drop a bare import of
+ * it. The custom-elements build has no `.entry` modules, so this never runs
+ * there -- it already imports each dependency to define it.
+ * `scripts/check-built-packages.mjs` asserts every dependency in `docs.json`
+ * is imported by its parent's entry.
+ */
+const preloadRenderedElements = () => ({
+  name: 'pitchfork-preload-rendered-elements',
+  /*
+   * `allow-extension`, in the lazy build only, so the child's own entry chunk
+   * stays the one the parent imports. Once 25 entries import `pf-icon.entry`,
+   * core's icon helpers are needed by exactly the entries that need pf-icon,
+   * so Rollup puts them in its chunk -- and under Stencil's `strict` it may
+   * not export them from an entry, so it moved pf-icon into a shared chunk
+   * behind a one-line facade, and the facade was a serial request of its own.
+   * The loader reads an entry's component by name, so an extra export is
+   * harmless.
+   */
+  options(options: { input?: unknown; preserveEntrySignatures?: unknown }) {
+    const input = options.input;
+    const keys =
+      input && typeof input === 'object' && !Array.isArray(input)
+        ? Object.keys(input)
+        : Array.isArray(input)
+          ? input.map(String)
+          : [];
+    if (!keys.some((key) => key.endsWith('.entry'))) return null;
+    return { ...options, preserveEntrySignatures: 'allow-extension' };
+  },
+  async transform(
+    this: {
+      resolve: (source: string, importer: string) => Promise<{ id: string } | null>;
+      load: (options: { id: string }) => Promise<{ code: string | null }>;
+    },
+    code: string,
+    id: string,
+  ) {
+    const match = /^(pf-[a-z0-9-]+)\.entry$/.exec(id);
+    if (!match) return null;
+
+    const own = match[1];
+    const rendered = new Set<string>();
+    for (const [, source] of code.matchAll(/from\s+['"]([^'"]+)['"]/g)) {
+      const resolved = await this.resolve(source, id);
+      if (!resolved) continue;
+      const module = await this.load({ id: resolved.id });
+      for (const [, tag] of (module.code ?? '').matchAll(/\bh\(\s*["'](pf-[a-z0-9-]+)["']/g)) {
+        if (tag !== own) rendered.add(tag);
+      }
+    }
+
+    const imports = [...rendered].sort().map((tag) => `import '${tag}.entry';`);
+    return { code: [code, ...imports].join('\n'), map: null, moduleSideEffects: 'no-treeshake' };
+  },
+});
+
 export const config: Config = {
   namespace: 'pitchfork',
   /**
@@ -164,6 +249,9 @@ export const config: Config = {
       plugins: [globalData({ files: [themeCssSource] }), customMedia(), shadowRootReset()],
     }),
   ],
+  rollupPlugins: {
+    after: [preloadRenderedElements()],
+  },
   testing: {
     browserHeadless: 'shell',
   },

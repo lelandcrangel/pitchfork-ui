@@ -5,6 +5,9 @@
  * 1. Every path a package.json advertises exists.
  * 2. No ambient type dependency leaked into the published declarations.
  * 3. Icon's unknown-name warning survived bundling.
+ * 4. The Angular value accessors are exported, and every bare specifier a
+ *    bundle imports is a declared dependency.
+ * 5. Every lazy entry imports the entries of the elements it renders.
  *
  * @pitchfork-ui/react shipped 0.15.1 with `types` pointing at
  * `dist/src/index.d.ts`, a path the build has never produced. Nothing caught
@@ -300,4 +303,81 @@ if (uniqueUndeclared.length > 0) {
   process.exitCode = 1;
 } else {
   console.log('every bare specifier in the built bundles is a declared dependency');
+}
+
+/*
+ * Every lazy entry statically imports the entries of the elements its
+ * component renders, so the browser fetches a child alongside its parent
+ * rather than after the parent has loaded, run and rendered. The lazy loader
+ * only asks for an element's bundle when that element connects, and one
+ * rendered in a shadow root connects late: before
+ * `preloadRenderedElements` in the Stencil config, each level of nesting cost
+ * one to two more round trips, and a page of seven common elements hydrated
+ * in 560 ms against 465 ms at 80 ms of latency over HTTP/2.
+ *
+ * `docs.json` records which elements each component renders, read by Stencil
+ * itself, and is the list checked against. Both lazy builds are checked: the
+ * named one the loader uses, and the hashed one under `dist/pitchfork`, whose
+ * entry names come from the bundle map its own loader carries.
+ */
+const elementsDist = join(repoRoot, 'packages/elements/dist');
+const docsJson = join(elementsDist, 'docs.json');
+
+if (existsSync(docsJson)) {
+  const docs = JSON.parse(await readFile(docsJson, 'utf8'));
+  const parents = docs.components.filter((component) => component.dependencies.length > 0);
+  const missing = [];
+
+  const importsOf = (code) =>
+    new Set(
+      [...code.matchAll(/\bimport\s*(?:[^'"]*?\bfrom\s*)?['"]\.\/([^'"]+)['"]/g)].map(
+        (match) => match[1],
+      ),
+    );
+
+  for (const parent of parents) {
+    const entry = join(elementsDist, 'esm', `${parent.tag}.entry.js`);
+    const imports = existsSync(entry) ? importsOf(await readFile(entry, 'utf8')) : new Set();
+    for (const child of parent.dependencies) {
+      if (!imports.has(`${child}.entry.js`)) missing.push(`dist/esm: ${parent.tag} -> ${child}`);
+    }
+  }
+
+  const browserLoader = join(elementsDist, 'pitchfork/pitchfork.esm.js');
+  const bundleOf = new Map();
+  if (existsSync(browserLoader)) {
+    const loader = await readFile(browserLoader, 'utf8');
+    for (const [, bundle, tag] of loader.matchAll(/\["(p-[a-z0-9]+)",\[\[\d+,"(pf-[a-z0-9-]+)"/g)) {
+      bundleOf.set(tag, bundle);
+    }
+  }
+  if (bundleOf.size === 0) {
+    missing.push('dist/pitchfork: no bundle map found in pitchfork.esm.js');
+  } else {
+    for (const parent of parents) {
+      const entry = join(elementsDist, 'pitchfork', `${bundleOf.get(parent.tag)}.entry.js`);
+      const imports = existsSync(entry) ? importsOf(await readFile(entry, 'utf8')) : new Set();
+      for (const child of parent.dependencies) {
+        if (!imports.has(`${bundleOf.get(child)}.entry.js`)) {
+          missing.push(`dist/pitchfork: ${parent.tag} -> ${child}`);
+        }
+      }
+    }
+  }
+
+  if (missing.length > 0) {
+    console.error(
+      `\n${missing.length} lazy entr(ies) do not import an element their component renders, ` +
+        'so the loader fetches it only after the parent has rendered:',
+    );
+    for (const entry of missing) console.error(`  ${entry}`);
+    process.exitCode = 1;
+  } else {
+    console.log(
+      `every lazy entry imports the elements it renders (${parents.length} parents, both lazy builds)`,
+    );
+  }
+} else {
+  console.error('packages/elements/dist/docs.json is missing; build the elements first');
+  process.exitCode = 1;
 }
