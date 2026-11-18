@@ -488,3 +488,52 @@ test('labels the input', async () => {
   expect((part(el, 'label') as HTMLLabelElement).htmlFor).toBe('input');
   expect(input(el).id).toBe('input');
 });
+
+/*
+ * `scrollIntoView` lays the page out before it can tell that there is
+ * nothing to scroll, and every combobox picks a first active option while it
+ * loads -- so each closed combobox forced a layout: 50 of them beside 1,500
+ * paragraphs made 51 layouts on load where one is enough. Spied rather than
+ * timed: the call is the cost.
+ */
+const spyOnScrollIntoView = () => {
+  const original = Element.prototype.scrollIntoView;
+  const scrolled: Element[] = [];
+  Element.prototype.scrollIntoView = function (
+    this: Element,
+    arg?: boolean | ScrollIntoViewOptions,
+  ) {
+    scrolled.push(this);
+    original.call(this, arg);
+  };
+  return { scrolled, restore: () => (Element.prototype.scrollIntoView = original) };
+};
+
+test('loading a closed combobox scrolls nothing into view', async () => {
+  const spy = spyOnScrollIntoView();
+  try {
+    const el = await mount(`${FIXTURE()}${FIXTURE('value="cherry"')}${FIXTURE()}`);
+    await until(() => activeValue(el) === 'apple', 'a first active option');
+    for (let i = 0; i < 4; i += 1) await new Promise((resolve) => requestAnimationFrame(resolve));
+
+    expect(spy.scrolled).toEqual([]);
+  } finally {
+    spy.restore();
+  }
+});
+
+test('opening reveals the active option, and the arrows keep it in view', async () => {
+  const el = await mount(FIXTURE());
+  const spy = spyOnScrollIntoView();
+  try {
+    await press(el, 'ArrowDown');
+    await until(() => isOpen(el), 'ArrowDown to open it');
+    expect(spy.scrolled).toContain(option(el, 'apple'));
+
+    await press(el, 'ArrowDown');
+    await until(() => activeValue(el) === 'apricot', 'the next option');
+    expect(spy.scrolled.at(-1)).toBe(option(el, 'apricot'));
+  } finally {
+    spy.restore();
+  }
+});
