@@ -104,7 +104,7 @@ export class PfTimePicker {
   @Event() pfChange!: EventEmitter<{ value: string }>;
 
   /** Fires whenever the panel opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   private initialValue = '';
   private stopObserving?: () => void;

@@ -35,8 +35,7 @@ nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
 and tracks the active item with an IDREF, which resolves because the items
 are its own light-DOM descendants.
 
-The React `TreeView` makes every visible item a tab stop, which is a gap
-recorded in `todo.md`.
+The React `TreeView` makes every visible item a tab stop.
 
 ## Example
 
@@ -52,18 +51,18 @@ recorded in `todo.md`.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; \}` | Fires when the selection changes. |
-| `pfExpandedChange` | `\{ value: string; values: string[]; \}` | Fires when a branch opens or closes, with the open set. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfExpandedChange` | `{ value: string; values: string[]; }` | No | Fires when a branch opens or closes, with the open set. |
+| `pfSelectionChange` | `{ value: string; }` | No | Fires when the selection changes. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `collapseAll()` | `collapseAll() =&gt; Promise&lt;void&gt;` | Closes every branch. |
-| `expandAll()` | `expandAll() =&gt; Promise&lt;void&gt;` | Opens every branch. |
-| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the tree, for a consumer who changed an item through a property. |
+| `collapseAll()` | `collapseAll() => Promise<void>` | Closes every branch. |
+| `expandAll()` | `expandAll() => Promise<void>` | Opens every branch. |
+| `refresh()` | `refresh() => Promise<void>` | Re-reads the tree, for a consumer who changed an item through a property. |
 
 ## Slots
 

@@ -103,7 +103,7 @@ export class PfMultiSelect {
   @Event() pfChange!: EventEmitter<{ value: string; values: string[] }>;
 
   /** Fires whenever the listbox opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /** The labels of the chosen options, for the trigger's chips. */
   @State() chips: string[] = [];

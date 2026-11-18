@@ -59,7 +59,7 @@ const ensureId = (el: HTMLElement, fallback: string) => {
  * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
  * children.
  *
- * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+ * Children rather than an `items` array, because
  * the React `TabsItem` carries a `label` and a `content` that are both
  * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
  * and loops in their own template.
@@ -113,7 +113,7 @@ export class PfTabs {
   @Prop({ reflect: true }) fullWidth = false;
 
   /** Fires when the selected tab changes, however it was chosen. */
-  @Event() pfChange!: EventEmitter<{ value: string }>;
+  @Event({ bubbles: false }) pfTabChange!: EventEmitter<{ value: string }>;
 
   /**
    * The light DOM is readable here, so first paint already has the right tab
@@ -357,7 +357,7 @@ export class PfTabs {
     this.sync();
     this.placeIndicator();
     if (focus) descriptor.el.focus();
-    if (changed) this.pfChange.emit({ value: next });
+    if (changed) this.pfTabChange.emit({ value: next });
   }
 
   /**

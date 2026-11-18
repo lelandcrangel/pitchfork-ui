@@ -133,7 +133,9 @@ test('the live region is one node whose text follows the slide', async () => {
 test('the buttons and the dots step with a real click', async () => {
   const el = await mount(FIXTURE('loop="false"'));
   const changes: number[] = [];
-  el.addEventListener('pfChange', (event) => changes.push((event as CustomEvent).detail.index));
+  el.addEventListener('pfSlideChange', (event) =>
+    changes.push((event as CustomEvent).detail.index),
+  );
 
   await userEvent.click(part(el, 'next'));
   await until(() => el.index === 1, 'the next button');

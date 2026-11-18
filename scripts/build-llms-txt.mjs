@@ -215,6 +215,13 @@ function buildIndex() {
         'the boundary.',
     );
     out.push('');
+    out.push(
+      "Events are `CustomEvent`s with the payload in `detail`. A form control's " +
+        '`pfChange` and `pfInput` bubble, like `change` and `input`, and are marked ' +
+        '_(bubbles)_ below; every other event fires only on its own element, like ' +
+        '`toggle`, so its listener goes on that element, never on an ancestor.',
+    );
+    out.push('');
   }
   out.push('## Conventions');
   out.push('');
@@ -386,7 +393,8 @@ function buildFull() {
       out.push('');
       for (const event of element.events) {
         out.push(
-          `- \`${event.name}\`${event.detail ? ` — \`${cell(event.detail)}\`` : ''}` +
+          `- \`${event.name}\`${event.bubbles ? ' _(bubbles)_' : ''}` +
+            `${event.detail ? ` — \`${cell(event.detail)}\`` : ''}` +
             `${event.description ? `: ${firstSentence(event.description)}` : ''}`,
         );
       }

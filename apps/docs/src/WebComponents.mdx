@@ -65,12 +65,19 @@ target — never hand-edited — and give every element a typed component with
 real event props rather than `addEventListener`.
 
 ```tsx
-import { PfButton } from '@pitchfork-ui/elements-react';
+import { PfButton, PfTabs } from '@pitchfork-ui/elements-react';
 
-<PfButton variant="primary" onPfClick={save}>
+<PfButton variant="primary" onClick={save}>
   Save
 </PfButton>;
+
+<PfTabs value={tab} onPfTabChange={(event) => setTab(event.detail.value)}>
+  …
+</PfTabs>;
 ```
+
+A native event keeps its React name (`onClick`, `onKeyDown`); an element's own
+`pf*` event becomes `onPf*`.
 
 These bindings are what a React application uses now, and they are generated
 from the elements by Stencil's output target rather than hand-written — so they
@@ -85,14 +92,22 @@ Stencil-authored rather than Lit: with Lit each accessor would be
 hand-written, once per control.
 
 ```ts
-import { PfInput } from '@pitchfork-ui/elements-angular';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { PfInput, TextValueAccessor } from '@pitchfork-ui/elements-angular';
 
 @Component({
-  imports: [PfInput, ReactiveFormsModule],
+  imports: [PfInput, TextValueAccessor, ReactiveFormsModule],
   template: `<pf-input [formControl]="email" label="Email" />`,
 })
-export class SignUpForm {}
+export class SignUpForm {
+  email = new FormControl('');
+}
 ```
+
+The accessors are standalone directives, so import the one a control needs
+beside it: `TextValueAccessor` for the text controls, `BooleanValueAccessor`
+for `pf-checkbox` and `pf-switch`, `NumericValueAccessor` for `pf-slider`.
+Without it Angular reports "No value accessor" for the control.
 
 ### Vue
 
@@ -121,6 +136,37 @@ const dark = ref(false);
 controls the Angular `ControlValueAccessor`s cover. Everything else takes
 plain props and emits `pf-*` events.
 
+## Events
+
+Every event is a `CustomEvent` with its payload in `detail`, and the
+elements follow the platform about which ones bubble.
+
+**A form control's `pfChange` and `pfInput` bubble**, the way `change` and
+`input` do, so one listener on a form hears every control in it. Only form
+controls emit those two names.
+
+**Everything else fires on the element it is about and stops there**, the
+way `toggle` and `close` do: `pfOpenChange`, `pfSelect`, `pfDismiss`,
+`pfSortChange`, `pfPageChange` and every container's own change event. Listen
+on the element itself. Each framework binding already does, so `onPfOpenChange`,
+`(pfOpenChange)` and `@pf-open-change` need nothing extra.
+
+The reason is that containers nest. When these events bubbled, a `pf-select`
+closing inside a `pf-modal` reached the modal's own `pfOpenChange` handler as
+`{ open: false }`, and a `pf-switch` in a tab panel reached `pf-tabs`' change
+handler as `{ value: "on" }`. So the containers' change events also have
+names of their own:
+
+| Element           | Event               | `detail`            |
+| ----------------- | ------------------- | ------------------- |
+| `pf-tabs`         | `pfTabChange`       | `{ value }`         |
+| `pf-accordion`    | `pfExpandedChange`  | `{ value, values }` |
+| `pf-tree-view`    | `pfSelectionChange` | `{ value }`         |
+| `pf-button-group` | `pfSelectionChange` | `{ value, values }` |
+| `pf-calendar`     | `pfSelectionChange` | `{ value }`         |
+| `pf-carousel`     | `pfSlideChange`     | `{ index }`         |
+| `pf-resizable`    | `pfResize`          | `{ size }`          |
+
 ## Styling
 
 Two mechanisms, and the difference matters.
@@ -142,7 +188,7 @@ node, so every element exposes the boxes worth styling as `::part()`. Each
 one is listed on the element's own page.
 
 ```css
-pf-table::part(cell) {
+pf-input::part(input) {
   font-variant-numeric: tabular-nums;
 }
 ```

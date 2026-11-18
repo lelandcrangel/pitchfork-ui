@@ -120,7 +120,7 @@ test('moves real focus onto the day it moved to', async () => {
 test('Enter selects the focused day and reports it', async () => {
   const el = await mount('<pf-calendar value="2024-03-15"></pf-calendar>');
   const chosen: string[] = [];
-  el.addEventListener('pfChange', (event) => {
+  el.addEventListener('pfSelectionChange', (event) => {
     chosen.push((event as CustomEvent<{ value: string }>).detail.value);
   });
 
@@ -135,7 +135,7 @@ test('Enter selects the focused day and reports it', async () => {
 test('Space selects too', async () => {
   const el = await mount('<pf-calendar value="2024-03-15"></pf-calendar>');
   const chosen: string[] = [];
-  el.addEventListener('pfChange', (event) => {
+  el.addEventListener('pfSelectionChange', (event) => {
     chosen.push((event as CustomEvent<{ value: string }>).detail.value);
   });
 
@@ -148,7 +148,7 @@ test('Space selects too', async () => {
 test('a click selects and reports', async () => {
   const el = await mount('<pf-calendar value="2024-03-15"></pf-calendar>');
   const chosen: string[] = [];
-  el.addEventListener('pfChange', (event) => {
+  el.addEventListener('pfSelectionChange', (event) => {
     chosen.push((event as CustomEvent<{ value: string }>).detail.value);
   });
 
@@ -169,7 +169,7 @@ test('focus crosses a disabled day but Enter refuses it', async () => {
     '<pf-calendar value="2024-03-15" min="2024-03-10" max="2024-03-16"></pf-calendar>',
   );
   let reported = false;
-  el.addEventListener('pfChange', () => {
+  el.addEventListener('pfSelectionChange', () => {
     reported = true;
   });
 
@@ -188,7 +188,7 @@ test('a click on a disabled day does nothing', async () => {
     '<pf-calendar value="2024-03-15" min="2024-03-10" max="2024-03-20"></pf-calendar>',
   );
   let reported = false;
-  el.addEventListener('pfChange', () => {
+  el.addEventListener('pfSelectionChange', () => {
     reported = true;
   });
 
@@ -210,7 +210,7 @@ test('honours an isDateDisabled predicate set as a property', async () => {
   expect(dayFor(el, '2024-03-18')?.getAttribute('aria-disabled')).toBeNull();
 
   let reported = false;
-  el.addEventListener('pfChange', () => {
+  el.addEventListener('pfSelectionChange', () => {
     reported = true;
   });
   dayFor(el, '2024-03-16')!.click();
@@ -265,7 +265,7 @@ test('follows a value set from outside', async () => {
 test('goToMonth moves the grid without selecting anything', async () => {
   const el = await mount('<pf-calendar value="2024-03-15"></pf-calendar>');
   let reported = false;
-  el.addEventListener('pfChange', () => {
+  el.addEventListener('pfSelectionChange', () => {
     reported = true;
   });
 

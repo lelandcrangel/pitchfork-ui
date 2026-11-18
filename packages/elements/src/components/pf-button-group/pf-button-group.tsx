@@ -22,7 +22,7 @@ import {
  * a roving-tabindex pattern, unlike a toolbar or a tab strip.
  *
  * `value` is one comma-separated string, because that is what an attribute
- * can carry; `pfChange` also reports the parsed array, which is what a
+ * can carry; `pfSelectionChange` also reports the parsed array, which is what a
  * framework consumer usually wants.
  *
  * @slot - the `pf-button-group-item` children.
@@ -45,7 +45,7 @@ export class PfButtonGroup {
   @Prop({ reflect: true }) disabled = false;
 
   /** Fires when the selection changes, however it was changed. */
-  @Event() pfChange!: EventEmitter<{ value: string; values: string[] }>;
+  @Event({ bubbles: false }) pfSelectionChange!: EventEmitter<{ value: string; values: string[] }>;
 
   /** The light DOM is readable here, so first paint is already right. */
   componentWillLoad() {
@@ -122,7 +122,7 @@ export class PfButtonGroup {
 
     this.value = formatValueList(next);
     this.sync();
-    this.pfChange.emit({ value: this.value, values: next });
+    this.pfSelectionChange.emit({ value: this.value, values: next });
   }
 
   render() {

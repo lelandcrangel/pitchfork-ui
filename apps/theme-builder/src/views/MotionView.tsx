@@ -368,7 +368,7 @@ function MotionCanvas() {
           <PfAccordion
             type="single"
             value={accordionValue}
-            onPfChange={(event) => setAccordionValue(event.detail.value)}
+            onPfExpandedChange={(event) => setAccordionValue(event.detail.value)}
           >
             {ACCORDION_ITEMS.map((item) => (
               <PfAccordionItem key={item.value} value={item.value}>

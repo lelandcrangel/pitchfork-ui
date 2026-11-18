@@ -23,7 +23,7 @@ renders 42 buttons and no key handling, so reaching the end of a month means
 the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
 week, Home and End to the ends of the week, PageUp/PageDown a month. The
 arithmetic is core's `moveCalendarDate`, so the React component can adopt it
-without the two disagreeing — recorded in `todo.md`.
+without the two disagreeing.
 
 Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
 range of a century would mean a hundred custom elements rendered into this
@@ -39,7 +39,7 @@ its platform picker on a phone.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `endYear` | `end-year` | `number \| undefined` | — | Last year offered in the year picker. Defaults to 50 years on. |
-| `isDateDisabled` | — | `((date: Date) =&gt; boolean) \| undefined` | — | A predicate for days that cannot be chosen, beyond `min` and `max`. A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a React or Angular consumer passes it as they would any other prop, and a plain-HTML consumer uses `min`/`max` or assigns it in script. |
+| `isDateDisabled` | — | `((date: Date) => boolean) \| undefined` | — | A predicate for days that cannot be chosen, beyond `min` and `max`. A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a React or Angular consumer passes it as they would any other prop, and a plain-HTML consumer uses `min`/`max` or assigns it in script. |
 | `label` | `label` | `string` | `'Calendar'` | Accessible name for the grid. |
 | `max` | `max` | `string \| undefined` | — | Latest selectable date, as `YYYY-MM-DD`. |
 | `min` | `min` | `string \| undefined` | — | Earliest selectable date, as `YYYY-MM-DD`. |
@@ -49,16 +49,16 @@ its platform picker on a phone.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; \}` | Fires with the chosen date, as `YYYY-MM-DD`. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfSelectionChange` | `{ value: string; }` | No | Fires with the chosen date, as `YYYY-MM-DD`. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `focusSelectedDay()` | `focusSelectedDay() =&gt; Promise&lt;void&gt;` | Puts focus on the grid's single tab stop. A method rather than something a container does for itself: the tab stop is inside this shadow root, and reaching into another component's shadow root to find it is exactly the coupling `::part()` and `@Method()` exist to avoid. `pf-date-picker` calls this when its popover opens. |
-| `goToMonth()` | `goToMonth(date: string \| Date) =&gt; Promise&lt;void&gt;` | Moves the grid to the month holding `date` (a `Date` or `YYYY-MM-DD`). |
+| `focusSelectedDay()` | `focusSelectedDay() => Promise<void>` | Puts focus on the grid's single tab stop. A method rather than something a container does for itself: the tab stop is inside this shadow root, and reaching into another component's shadow root to find it is exactly the coupling `::part()` and `@Method()` exist to avoid. `pf-date-picker` calls this when its popover opens. |
+| `goToMonth()` | `goToMonth(date: string \| Date) => Promise<void>` | Moves the grid to the month holding `date` (a `Date` or `YYYY-MM-DD`). |
 
 ## Shadow parts
 

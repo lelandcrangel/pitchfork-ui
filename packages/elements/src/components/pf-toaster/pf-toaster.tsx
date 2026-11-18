@@ -32,7 +32,7 @@ interface Entry extends PfToastOptions {
  * The region toasts appear in, and the queue behind them.
  *
  * This is the one place the elements layer takes options rather than child
- * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+ * elements, against the rule everywhere else — because a
  * toast is not data the consumer is rendering, it is an event that happened.
  * React expresses that with a context provider and a module-level `toast()`;
  * the equivalent for a custom element is a method on the region, since a
@@ -64,7 +64,7 @@ export class PfToaster {
   @Prop() duration = 4000;
 
   /** Fires when a toast has left, with the id `toast()` returned. */
-  @Event() pfToastDismiss!: EventEmitter<{ id: string }>;
+  @Event({ bubbles: false }) pfToastDismiss!: EventEmitter<{ id: string }>;
 
   @State() entries: Entry[] = [];
 

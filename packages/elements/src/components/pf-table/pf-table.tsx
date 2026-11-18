@@ -80,7 +80,7 @@ export class PfTable {
    * Fires when a header is clicked, with the sort the table has moved to.
    * Sorting the rows is the consumer's to do.
    */
-  @Event() pfSortChange!: EventEmitter<SortState>;
+  @Event({ bubbles: false }) pfSortChange!: EventEmitter<SortState>;
 
   /** Whether there are any body rows, which decides the empty state. */
   @State() isEmpty = false;

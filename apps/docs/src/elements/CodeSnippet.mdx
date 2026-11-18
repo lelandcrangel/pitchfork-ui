@@ -49,16 +49,16 @@ they know.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfCopy` | `\{ code: string; \}` | Fires with the text that reached the clipboard. Not fired on a failure. |
-| `pfCopyError` | `\{ message: string; \}` | Fires when the copy could not be made, with the reason shown. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfCopy` | `{ code: string; }` | No | Fires with the text that reached the clipboard. Not fired on a failure. |
+| `pfCopyError` | `{ message: string; }` | No | Fires when the copy could not be made, with the reason shown. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `copy()` | `copy() =&gt; Promise&lt;boolean&gt;` | Copies the snippet, as pressing the button does. |
+| `copy()` | `copy() => Promise<boolean>` | Copies the snippet, as pressing the button does. |
 
 ## Slots
 

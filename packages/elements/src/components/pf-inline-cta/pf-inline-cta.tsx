@@ -56,7 +56,7 @@ export class PfInlineCta {
   @Prop() dismissLabel = 'Dismiss';
 
   /** Fires once the prompt has finished leaving. */
-  @Event() pfDismiss!: EventEmitter<void>;
+  @Event({ bubbles: false }) pfDismiss!: EventEmitter<void>;
 
   /** Whether the exit animation is running. Reflected for the stylesheet. */
   @Prop({ mutable: true, reflect: true }) exiting = false;
@@ -83,8 +83,7 @@ export class PfInlineCta {
    *
    * `getAnimations()` read after a frame, so the class the stylesheet animates
    * has landed; an empty list resolves at once, which is what makes this
-   * correct with no stylesheet, under `prefers-reduced-motion`, and in both
-   * test projects.
+   * correct with no stylesheet and under `prefers-reduced-motion`.
    */
   @Method()
   async dismiss(): Promise<void> {

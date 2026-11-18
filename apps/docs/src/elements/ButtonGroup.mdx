@@ -24,7 +24,7 @@ every one of them is an ordinary tab stop: a group of toggle buttons is not
 a roving-tabindex pattern, unlike a toolbar or a tab strip.
 
 `value` is one comma-separated string, because that is what an attribute
-can carry; `pfChange` also reports the parsed array, which is what a
+can carry; `pfSelectionChange` also reports the parsed array, which is what a
 framework consumer usually wants.
 
 ## Example
@@ -41,15 +41,15 @@ framework consumer usually wants.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; values: string[]; \}` | Fires when the selection changes, however it was changed. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfSelectionChange` | `{ value: string; values: string[]; }` | No | Fires when the selection changes, however it was changed. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children, for a consumer who changed one through a property. |
+| `refresh()` | `refresh() => Promise<void>` | Re-reads the children, for a consumer who changed one through a property. |
 
 ## Slots
 

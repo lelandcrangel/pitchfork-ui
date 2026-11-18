@@ -31,7 +31,7 @@ export class PfTag {
    * whoever owns the list decides, exactly as the React `onDismiss` callback
    * leaves it to the caller.
    */
-  @Event() pfDismiss!: EventEmitter<void>;
+  @Event({ bubbles: false }) pfDismiss!: EventEmitter<void>;
 
   render() {
     return (

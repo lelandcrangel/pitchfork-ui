@@ -137,24 +137,36 @@ const toPascal = (tag) =>
  */
 const pageName = (tag) => toPascal(tag).replace(/^Pf/, '');
 
-/**
- * MDX is JSX, so a brace or an angle bracket in a doc comment is parsed as an
- * expression or a tag. Inside a table cell the text is inline MDX, so it has
- * to be escaped rather than fenced.
- */
-const inlineCell = (text) =>
-  (text ?? '')
-    .replace(/\r?\n+/g, ' ')
-    .replace(/\|/g, '\\|')
+const oneLine = (text) => (text ?? '').replace(/\r?\n+/g, ' ').trim();
+
+/** Text MDX would read as JSX: an expression brace or a tag. */
+const escapeOutsideCode = (chunk) =>
+  chunk
     .replace(/[{}]/g, (brace) => `\\${brace}`)
     .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .trim();
+    .replace(/>/g, '&gt;');
 
-/** A type or default, which is always code and so needs no further escaping. */
+/**
+ * A table cell of prose. Inside a cell the text is inline MDX, so a brace or
+ * an angle bracket outside a code span has to be escaped -- and only outside:
+ * MDX already takes a code span literally, so an escape there is drawn as a
+ * visible backslash or `&lt;`, which is what every type in these tables used
+ * to show (`\{ value: string; \}`, `Promise&lt;boolean&gt;`). A pipe is the
+ * one character a code span cannot hold in a GFM table, so it is escaped
+ * everywhere.
+ */
+const inlineCell = (text) =>
+  oneLine(text)
+    .split(/(`[^`]*`)/g)
+    .map((part, index) =>
+      index % 2 === 1 ? part.replace(/\|/g, '\\|') : escapeOutsideCode(part.replace(/\|/g, '\\|')),
+    )
+    .join('');
+
+/** A type or default, which is always code: only the table's pipe needs escaping. */
 const codeCell = (text) => {
-  const value = inlineCell(text);
-  return value ? `\`${value.replace(/`/g, '')}\`` : '—';
+  const value = oneLine(text).replace(/`/g, '').replace(/\|/g, '\\|');
+  return value ? `\`${value}\`` : '—';
 };
 
 /**
@@ -169,9 +181,6 @@ const codeCell = (text) => {
  * did both wrong in the same file.
  */
 const blockProse = (text) => {
-  const escapeOutsideCode = (chunk) =>
-    chunk.replace(/[{}]/g, (brace) => `\\${brace}`).replace(/</g, '&lt;');
-
   // Split on code spans and fenced blocks, keeping them in the result.
   const parts = (text ?? '').split(/(```[\s\S]*?```|`[^`]*`)/g);
   return parts
@@ -465,11 +474,15 @@ import * as ${name}Stories from './${name}.stories';
 
   if ((component.events ?? []).length > 0) {
     sections.push(
+      // Whether an event bubbles decides where a listener has to go: a form
+      // control's value events reach a listener on the form, and everything
+      // else only one on the element itself (see check-event-bubbling.mjs).
       `## Events\n\n${table(
-        ['Event', 'Detail', 'Description'],
+        ['Event', 'Detail', 'Bubbles', 'Description'],
         component.events.map((event) => [
           `\`${event.event}\``,
           codeCell(event.detail),
+          event.bubbles ? 'Yes' : 'No',
           inlineCell(event.docs) || '—',
         ]),
       )}`,

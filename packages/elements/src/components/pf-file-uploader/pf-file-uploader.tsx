@@ -97,7 +97,7 @@ export class PfFileUploader {
   @Event() pfChange!: EventEmitter<{ files: File[] }>;
 
   /** Fires when a selection is refused, with the reason shown to the person. */
-  @Event() pfReject!: EventEmitter<{ message: string }>;
+  @Event({ bubbles: false }) pfReject!: EventEmitter<{ message: string }>;
 
   /** The uploader's own complaint about the last selection. */
   @State() rejection?: string;

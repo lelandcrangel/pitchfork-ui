@@ -66,7 +66,7 @@ afterEach(() => {
 test('the arrows move the selection, and the focus with it', async () => {
   const el = await mount(FIXTURE());
   const changes: string[] = [];
-  el.addEventListener('pfChange', (event) =>
+  el.addEventListener('pfTabChange', (event) =>
     changes.push((event as CustomEvent<{ value: string }>).detail.value),
   );
 
@@ -154,7 +154,7 @@ test('tabs in from outside onto the selected tab', async () => {
 test('a disabled tab refuses a click', async () => {
   const el = await mount(FIXTURE());
   const changes: string[] = [];
-  el.addEventListener('pfChange', () => changes.push('x'));
+  el.addEventListener('pfTabChange', () => changes.push('x'));
 
   /*
    * Dispatched rather than `userEvent.click`, which refuses the element

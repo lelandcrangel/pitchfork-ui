@@ -120,9 +120,9 @@ export const PfAccordion: StencilVueComponent<JSX.PfAccordion> = /*@__PURE__*/ d
   'value',
   'type',
   'headingLevel',
-  'pfChange'
+  'pfExpandedChange'
 ], [
-  'pfChange'
+  'pfExpandedChange'
 ]);
 
 
@@ -219,9 +219,9 @@ export const PfButtonGroup: StencilVueComponent<JSX.PfButtonGroup> = /*@__PURE__
   'value',
   'multiple',
   'disabled',
-  'pfChange'
+  'pfSelectionChange'
 ], [
-  'pfChange'
+  'pfSelectionChange'
 ]);
 
 
@@ -247,9 +247,9 @@ export const PfCalendar: StencilVueComponent<JSX.PfCalendar> = /*@__PURE__*/ def
   'showOutsideDays',
   'label',
   'isDateDisabled',
-  'pfChange'
+  'pfSelectionChange'
 ], [
-  'pfChange'
+  'pfSelectionChange'
 ]);
 
 
@@ -274,9 +274,9 @@ export const PfCarousel: StencilVueComponent<JSX.PfCarousel> = /*@__PURE__*/ def
   'label',
   'previousLabel',
   'nextLabel',
-  'pfChange'
+  'pfSlideChange'
 ], [
-  'pfChange'
+  'pfSlideChange'
 ]);
 
 
@@ -878,9 +878,9 @@ export const PfResizable: StencilVueComponent<JSX.PfResizable> = /*@__PURE__*/ d
   'max',
   'step',
   'handleLabel',
-  'pfChange'
+  'pfResize'
 ], [
-  'pfChange'
+  'pfResize'
 ]);
 
 
@@ -1070,9 +1070,9 @@ export const PfTabs: StencilVueComponent<JSX.PfTabs> = /*@__PURE__*/ defineConta
   'variant',
   'size',
   'fullWidth',
-  'pfChange'
+  'pfTabChange'
 ], [
-  'pfChange'
+  'pfTabChange'
 ]);
 
 
@@ -1206,10 +1206,10 @@ export const PfTreeView: StencilVueComponent<JSX.PfTreeView> = /*@__PURE__*/ def
   'value',
   'expanded',
   'label',
-  'pfChange',
+  'pfSelectionChange',
   'pfExpandedChange'
 ], [
-  'pfChange',
+  'pfSelectionChange',
   'pfExpandedChange'
 ]);
 

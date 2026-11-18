@@ -66,7 +66,11 @@ export function App() {
        * `connectedCallback`, which is what lets one pair per view land in two
        * different places.
        */}
-      <PfTabs className="app-tabs" value={view} onPfChange={(event) => setView(event.detail.value)}>
+      <PfTabs
+        className="app-tabs"
+        value={view}
+        onPfTabChange={(event) => setView(event.detail.value)}
+      >
         {VIEWS.map(({ value, label }) => (
           <PfTab key={value} value={value}>
             {label}

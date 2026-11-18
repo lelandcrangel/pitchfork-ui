@@ -55,21 +55,21 @@ behaviours in neighbouring controls.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; \}` | Fires when the chosen value changes. |
-| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the listbox opens or closes, whoever caused it. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ value: string; }` | Yes | Fires when the chosen value changes. |
+| `pfOpenChange` | `{ open: boolean; }` | No | Fires whenever the listbox opens or closes, whoever caused it. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
-| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | — |
-| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the options, for a label edited in place (no `slotchange` fires). |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `show()` | `show() =&gt; Promise&lt;void&gt;` | — |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | — |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | — |
+| `hide()` | `hide() => Promise<void>` | — |
+| `refresh()` | `refresh() => Promise<void>` | Re-reads the options, for a label edited in place (no `slotchange` fires). |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | — |
+| `show()` | `show() => Promise<void>` | — |
 
 ## Slots
 

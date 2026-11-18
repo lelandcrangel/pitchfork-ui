@@ -63,7 +63,7 @@ export class PfNotification {
    * Fires once the notification has finished leaving, which is the point at
    * which its owner should remove it from the DOM.
    */
-  @Event() pfDismiss!: EventEmitter<void>;
+  @Event({ bubbles: false }) pfDismiss!: EventEmitter<void>;
 
   @State() hasSlottedBody = false;
 

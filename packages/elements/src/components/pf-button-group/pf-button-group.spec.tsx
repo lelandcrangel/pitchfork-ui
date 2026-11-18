@@ -46,7 +46,7 @@ describe('pf-button-group', () => {
   it('moves the selection on a click, in single mode', async () => {
     const { root, waitForChanges } = await render(FIXTURE('value="day"'));
     const changes: Array<{ value: string; values: string[] }> = [];
-    root.addEventListener('pfChange', (event) =>
+    root.addEventListener('pfSelectionChange', (event) =>
       changes.push((event as CustomEvent<{ value: string; values: string[] }>).detail),
     );
 
@@ -95,7 +95,7 @@ describe('pf-button-group', () => {
   it('refuses a click while the group is disabled', async () => {
     const { root, waitForChanges } = await render(FIXTURE('disabled'));
     const changes: string[] = [];
-    root.addEventListener('pfChange', () => changes.push('x'));
+    root.addEventListener('pfSelectionChange', () => changes.push('x'));
 
     item(root, 'week').dispatchEvent(
       new CustomEvent('pfButtonGroupSelect', {

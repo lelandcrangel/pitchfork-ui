@@ -10,7 +10,13 @@ const example = elementExamples['pf-progress-step'];
 
 const meta = {
   title: 'Components/ProgressStep',
-  args: { last: false, orientation: 'horizontal', position: 1, state: 'current' },
+  args: {
+    last: false,
+    orientation: 'horizontal',
+    position: 1,
+    state: 'upcoming',
+    status: 'current',
+  },
   argTypes: {
     last: { control: 'boolean' },
     orientation: { control: 'select', options: ['horizontal', 'vertical'] },

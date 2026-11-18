@@ -82,7 +82,7 @@ export class PfSlideoutMenu {
   @Prop() showCloseButton = true;
 
   /** Fires whenever the panel opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /**
    * Whether anything is slotted into the footer.

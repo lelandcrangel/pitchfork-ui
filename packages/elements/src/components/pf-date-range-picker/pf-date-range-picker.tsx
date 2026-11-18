@@ -131,7 +131,7 @@ export class PfDateRangePicker {
   @Event() pfChange!: EventEmitter<{ value: string; start: string; end: string }>;
 
   /** Fires whenever the panel opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /** The left-hand month; the right-hand one is always the month after. */
   @State() leftMonth: Date = startOfMonth(new Date());

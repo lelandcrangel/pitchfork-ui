@@ -19,9 +19,7 @@ A calendar heatmap: one cell per day, darker where the value is higher.
 
 All of the arithmetic is core's, and the date stepping goes through
 `date.ts`, which pins every date to midday — a day step from midnight
-across a daylight-saving boundary loses or repeats a day, which is
-invisible under UTC and is why both test projects now run in a timezone
-that has daylight saving.
+across a daylight-saving boundary loses or repeats a day.
 
 ## Example
 
@@ -33,7 +31,7 @@ that has daylight saving.
 | --- | --- | --- | --- | --- |
 | `cellGap` | `cell-gap` | `number` | `3` | — |
 | `cellSize` | `cell-size` | `number` | `12` | — |
-| `data` | `data` | `HeatmapDatumLike[] \| string` | `[]` | One entry per day with a value, as `\{ date: 'YYYY-MM-DD', value \}`. An array for a framework consumer, or JSON for plain HTML, because Stencil coerces an attribute only for the primitive types it recognises and would otherwise hand this the string verbatim. |
+| `data` | `data` | `HeatmapDatumLike[] \| string` | `[]` | One entry per day with a value, as `{ date: 'YYYY-MM-DD', value }`. An array for a framework consumer, or JSON for plain HTML, because Stencil coerces an attribute only for the primitive types it recognises and would otherwise hand this the string verbatim. |
 | `endDate` | `end-date` | `string \| undefined` | — | Last day to draw. Defaults to the latest in the data. |
 | `label` | `label` | `string \| undefined` | — | The chart's accessible name. One is generated when it has none. |
 | `levels` | `levels` | `number` | `5` | Colour buckets, counting the empty one. |

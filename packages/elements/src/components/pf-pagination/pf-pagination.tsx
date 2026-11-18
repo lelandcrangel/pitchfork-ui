@@ -47,7 +47,7 @@ export class PfPagination {
   @Prop() label = 'Pagination';
 
   /** Emitted with the page the user asked for, already clamped to the range. */
-  @Event() pfPageChange!: EventEmitter<{ page: number }>;
+  @Event({ bubbles: false }) pfPageChange!: EventEmitter<{ page: number }>;
 
   private goTo(next: number) {
     if (this.disabled) return;

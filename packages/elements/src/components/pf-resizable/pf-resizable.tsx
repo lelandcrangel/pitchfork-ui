@@ -61,7 +61,7 @@ export class PfResizable {
   @Prop() handleLabel = 'Resize panels';
 
   /** Fires when the split changes, by pointer or by key. */
-  @Event() pfChange!: EventEmitter<{ size: number }>;
+  @Event({ bubbles: false }) pfResize!: EventEmitter<{ size: number }>;
 
   private dragging = false;
 
@@ -153,7 +153,7 @@ export class PfResizable {
   private commit(next: number) {
     if (next === this.resolved) return;
     this.size = next;
-    this.pfChange.emit({ size: next });
+    this.pfResize.emit({ size: next });
   }
 
   render() {

@@ -56,8 +56,7 @@ interface ItemNode extends TreeNodeLike {
  * and tracks the active item with an IDREF, which resolves because the items
  * are its own light-DOM descendants.
  *
- * The React `TreeView` makes every visible item a tab stop, which is a gap
- * recorded in `todo.md`.
+ * The React `TreeView` makes every visible item a tab stop.
  *
  * @slot - the `pf-tree-item` children.
  */
@@ -79,10 +78,10 @@ export class PfTreeView {
   @Prop() label?: string;
 
   /** Fires when the selection changes. */
-  @Event() pfChange!: EventEmitter<{ value: string }>;
+  @Event({ bubbles: false }) pfSelectionChange!: EventEmitter<{ value: string }>;
 
   /** Fires when a branch opens or closes, with the open set. */
-  @Event() pfExpandedChange!: EventEmitter<{ value: string; values: string[] }>;
+  @Event({ bubbles: false }) pfExpandedChange!: EventEmitter<{ value: string; values: string[] }>;
 
   /**
    * The item the keyboard is on, which is not always the selected one — the
@@ -239,7 +238,7 @@ export class PfTreeView {
 
     this.value = value;
     this.sync();
-    this.pfChange.emit({ value });
+    this.pfSelectionChange.emit({ value });
   }
 
   /** An item asking to be selected. The group decides. */

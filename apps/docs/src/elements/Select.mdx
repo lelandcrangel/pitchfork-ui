@@ -23,8 +23,8 @@ elements, so a label is a slot and can hold anything, where the React
 
 **It has typeahead, which the React component does not.** Typing `b` jumps
 to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
-ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
-answers the same keystrokes. `todo.md` has the React fix.
+ARIA listbox pattern, and the matching is core's, so `pf-combobox`
+answers the same keystrokes.
 
 Form-associated, so the value submits by itself. The React component fakes
 that with a hidden `<input>` beside the trigger.
@@ -55,21 +55,21 @@ work, because the listbox itself is in this same root.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; \}` | Fires when the chosen value changes. |
-| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the listbox opens or closes, whoever caused it. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ value: string; }` | Yes | Fires when the chosen value changes. |
+| `pfOpenChange` | `{ open: boolean; }` | No | Fires whenever the listbox opens or closes, whoever caused it. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
-| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | — |
-| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the options, for a label edited in place (which fires no slotchange). |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `show()` | `show() =&gt; Promise&lt;void&gt;` | — |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | — |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | — |
+| `hide()` | `hide() => Promise<void>` | — |
+| `refresh()` | `refresh() => Promise<void>` | Re-reads the options, for a label edited in place (which fires no slotchange). |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | — |
+| `show()` | `show() => Promise<void>` | — |
 
 ## Slots
 

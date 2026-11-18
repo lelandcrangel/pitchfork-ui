@@ -10,7 +10,7 @@ const example = elementExamples['pf-accordion-item'];
 
 const meta = {
   title: 'Components/AccordionItem',
-  args: { disabled: false, expanded: true, headingLevel: 3, value: 'one' },
+  args: { disabled: false, expanded: false, headingLevel: 3, value: 'one' },
   argTypes: {
     disabled: { control: 'boolean' },
     expanded: { control: 'boolean' },

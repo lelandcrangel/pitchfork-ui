@@ -16,9 +16,7 @@ import { Component, h, Host, Prop } from '@stencil/core';
  *
  * All of the arithmetic is core's, and the date stepping goes through
  * `date.ts`, which pins every date to midday — a day step from midnight
- * across a daylight-saving boundary loses or repeats a day, which is
- * invisible under UTC and is why both test projects now run in a timezone
- * that has daylight saving.
+ * across a daylight-saving boundary loses or repeats a day.
  *
  * @slot empty - what to show when there is nothing to draw.
  * @part empty - the empty state's box.

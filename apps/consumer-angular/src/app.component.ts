@@ -697,7 +697,7 @@ registerIconGlyphs({
           [startYear]="2020"
           [endYear]="2030"
           data-testid="calendar"
-          (pfChange)="day.set($event.detail.value)"
+          (pfSelectionChange)="day.set($event.detail.value)"
         ></pf-calendar>
         <output data-testid="calendar-value">{{ day() }}</output>
       </div>
@@ -712,7 +712,7 @@ registerIconGlyphs({
         [value]="tab()"
         variant="underline"
         data-testid="tabs"
-        (pfChange)="tab.set($event.detail.value)"
+        (pfTabChange)="tab.set($event.detail.value)"
       >
         <pf-tab value="overview" icon="circle-info">Overview</pf-tab>
         <pf-tab-panel value="overview">
@@ -739,7 +739,7 @@ registerIconGlyphs({
         [value]="sections()"
         [headingLevel]="3"
         data-testid="accordion"
-        (pfChange)="sections.set($event.detail.value)"
+        (pfExpandedChange)="sections.set($event.detail.value)"
       >
         <pf-accordion-item value="shipping">
           <span slot="title">Shipping</span>
@@ -887,7 +887,7 @@ registerIconGlyphs({
         <pf-button-group
           [value]="range()"
           data-testid="button-group"
-          (pfChange)="range.set($event.detail.value)"
+          (pfSelectionChange)="range.set($event.detail.value)"
         >
           <pf-button-group-item value="day">Day</pf-button-group-item>
           <pf-button-group-item value="week" icon="calendar">Week</pf-button-group-item>
@@ -950,7 +950,7 @@ registerIconGlyphs({
         [expanded]="openFolders()"
         label="Project files"
         data-testid="tree-view"
-        (pfChange)="file.set($event.detail.value)"
+        (pfSelectionChange)="file.set($event.detail.value)"
         (pfExpandedChange)="openFolders.set($event.detail.value)"
       >
         <pf-tree-item value="src" icon="folder-open">
@@ -1029,7 +1029,7 @@ registerIconGlyphs({
         label="Featured work"
         [loop]="true"
         data-testid="carousel"
-        (pfChange)="slide.set($event.detail.index)"
+        (pfSlideChange)="slide.set($event.detail.index)"
       >
         <pf-carousel-slide data-testid="carousel-slide-1">
           <pf-card>
@@ -1225,7 +1225,7 @@ registerIconGlyphs({
         [step]="5"
         style="height: 140px; border: 1px solid var(--pf-resizable-handle-bg)"
         data-testid="resizable"
-        (pfChange)="split.set($event.detail.size)"
+        (pfResize)="split.set($event.detail.size)"
       >
         <div slot="start" style="padding: var(--space-3)" data-testid="resizable-start">
           The first panel, whose share the separator controls.

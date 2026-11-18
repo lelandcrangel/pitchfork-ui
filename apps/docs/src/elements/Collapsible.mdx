@@ -40,16 +40,16 @@ names the header back with `aria-labelledby`.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the content opens or closes, whoever caused it. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfOpenChange` | `{ open: boolean; }` | No | Fires whenever the content opens or closes, whoever caused it. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | Closes the content. |
-| `show()` | `show() =&gt; Promise&lt;void&gt;` | Opens the content. |
+| `hide()` | `hide() => Promise<void>` | Closes the content. |
+| `show()` | `show() => Promise<void>` | Opens the content. |
 
 ## Slots
 

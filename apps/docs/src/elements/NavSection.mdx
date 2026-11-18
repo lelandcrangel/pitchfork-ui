@@ -33,9 +33,9 @@ The title names the list with a **same-root** IDREF: both the title and the
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfNavStructure` | `void` | Tells the navigation its items have moved. `slotchange` is not composed, so the navigation never hears this section's own slot change — exactly the reason `pf-tree-item` emits `pfTreeStructure`. Without it an item appended to a section is never given an orientation or a place in the one-current resolution. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfNavStructure` | `void` | Yes | Tells the navigation its items have moved. `slotchange` is not composed, so the navigation never hears this section's own slot change — exactly the reason `pf-tree-item` emits `pfTreeStructure`. Without it an item appended to a section is never given an orientation or a place in the one-current resolution. |
 
 ## Slots
 

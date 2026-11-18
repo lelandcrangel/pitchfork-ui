@@ -165,7 +165,7 @@ describe('pf-tabs', () => {
   it('selects on click, and reports the change once', async () => {
     const { root, waitForChanges } = await render(FIXTURE());
     const changes: string[] = [];
-    root.addEventListener('pfChange', (event) =>
+    root.addEventListener('pfTabChange', (event) =>
       changes.push((event as CustomEvent<{ value: string }>).detail.value),
     );
 
@@ -187,7 +187,7 @@ describe('pf-tabs', () => {
   it('stays quiet when the selected tab is clicked again', async () => {
     const { root, waitForChanges } = await render(FIXTURE());
     const changes: string[] = [];
-    root.addEventListener('pfChange', () => changes.push('x'));
+    root.addEventListener('pfTabChange', () => changes.push('x'));
 
     tab(root, 'overview').click();
     await waitForChanges();

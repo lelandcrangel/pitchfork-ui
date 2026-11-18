@@ -69,7 +69,7 @@ export class PfModal {
   @Prop() showCloseButton = true;
 
   /** Fires whenever the modal opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /**
    * Releases the page-scroll lock, or null when this modal does not hold it.
