@@ -13,6 +13,7 @@ import {
   straightSeriesPath,
 } from '@pitchfork-ui/core';
 import { Component, Element, h, Host, Method, Prop, State, Watch } from '@stencil/core';
+import { sameRecords } from '../../same-records';
 
 /** One row of a chart's data: a label and a number per series. */
 export type PfChartRow = { label: string } & Record<string, string | number>;
@@ -118,7 +119,7 @@ export class PfLineChart {
   sync() {
     const elements = this.seriesElements;
 
-    this.series = elements.map((element, index) => {
+    const next = elements.map((element, index) => {
       const node = element as HTMLElement & {
         seriesKey?: string;
         color?: string;
@@ -137,6 +138,8 @@ export class PfLineChart {
         dashed: node.dashed ?? element.hasAttribute('dashed'),
       };
     });
+    // Only a changed list: a new array re-renders whether or not it differs.
+    if (!sameRecords(next, this.series)) this.series = next;
   }
 
   render() {

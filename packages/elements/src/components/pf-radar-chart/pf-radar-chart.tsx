@@ -9,6 +9,7 @@ import {
   usableRadarAxes,
 } from '@pitchfork-ui/core';
 import { Component, Element, h, Host, Method, Prop, State, Watch } from '@stencil/core';
+import { sameRecords } from '../../same-records';
 
 /**
  * A radar chart over `pf-radar-axis` children.
@@ -108,7 +109,9 @@ export class PfRadarChart {
 
     const usable = usableRadarAxes(read);
     const drawable = usable.length >= RADAR_MINIMUM_AXES;
-    this.axes = drawable ? usable : [];
+    // Only a changed list: a new array re-renders whether or not it differs.
+    const next = drawable ? usable : [];
+    if (!sameRecords(next, this.axes)) this.axes = next;
 
     /*
      * `drawn` is set per child by identity of its reading, not by position:
