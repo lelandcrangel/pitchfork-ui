@@ -296,3 +296,60 @@ test('the placeholder is set as data for the stylesheet to show', async () => {
   const el = await mount('placeholder="Write something"');
   expect(editor(el).getAttribute('data-placeholder')).toBe('Write something');
 });
+
+/*
+ * Reading `textContent` or `innerHTML` serialises the whole document, so a
+ * keystroke should do each once. It read the text three times and set the
+ * form value twice -- once in `onInput`, once in the `value` watcher's form
+ * update, once in its own -- which on 3,000 paragraphs was 1.75 ms of every
+ * keystroke against 1.35 ms. Counted, because a time would flake.
+ */
+test('a keystroke reads the document once, and updates the form once', async () => {
+  const el = await mount(
+    'name="body" required character-max="5000"',
+    (html) => `<form>${html}</form>`,
+  );
+  const box = editor(el);
+
+  const reads = { textContent: 0, innerHTML: 0, setFormValue: 0 };
+  const text = Object.getOwnPropertyDescriptor(Node.prototype, 'textContent')!;
+  const markup = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML')!;
+  Object.defineProperty(box, 'textContent', {
+    configurable: true,
+    get() {
+      reads.textContent += 1;
+      return text.get!.call(this);
+    },
+    set(value) {
+      text.set!.call(this, value);
+    },
+  });
+  Object.defineProperty(box, 'innerHTML', {
+    configurable: true,
+    get() {
+      reads.innerHTML += 1;
+      return markup.get!.call(this);
+    },
+    set(value) {
+      markup.set!.call(this, value);
+    },
+  });
+  const setFormValue = ElementInternals.prototype.setFormValue;
+  ElementInternals.prototype.setFormValue = function (...args: Parameters<typeof setFormValue>) {
+    reads.setFormValue += 1;
+    return setFormValue.apply(this, args);
+  };
+
+  try {
+    box.focus();
+    await userEvent.keyboard('a');
+    await until(() => el.value !== '', 'the keystroke to reach the value');
+
+    expect(reads).toEqual({ textContent: 1, innerHTML: 1, setFormValue: 1 });
+    // And it still did its job: the value, the submission and the validity.
+    expect(new FormData(el.closest('form')!).get('body')).toBe(el.value);
+    expect(await el.checkValidity()).toBe(true);
+  } finally {
+    ElementInternals.prototype.setFormValue = setFormValue;
+  }
+});
