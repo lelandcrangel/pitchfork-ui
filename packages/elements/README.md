@@ -35,6 +35,18 @@ import { defineCustomElements } from '@pitchfork-ui/elements/loader';
 defineCustomElements();
 ```
 
+To bundle only the elements you use, register each one yourself. Importing an
+element's module registers nothing on its own, which is what lets a bundler
+drop the rest:
+
+```js
+import { defineCustomElement as defineButton } from '@pitchfork-ui/elements/components/pf-button.js';
+
+defineButton();
+```
+
+The React, Angular and Vue bindings do this for you.
+
 ## Theming
 
 Theming works exactly as it does in the React library: the `--pf-*` custom

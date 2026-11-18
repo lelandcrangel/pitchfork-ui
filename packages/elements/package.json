@@ -94,5 +94,15 @@
     "./styles.css": "./dist/pitchfork/pitchfork.css",
     "./tailwind.css": "./dist/tailwind.css",
     "./metadata": "./dist/elements.json"
-  }
+  },
+  "sideEffects": [
+    "*.css",
+    "./dist/index.js",
+    "./dist/index.cjs.js",
+    "./dist/esm/**",
+    "./dist/cjs/**",
+    "./dist/pitchfork/**",
+    "./dist/collection/**",
+    "./loader/**"
+  ]
 }
