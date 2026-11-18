@@ -332,7 +332,7 @@
         "primary": {
           "$value": "{color.brand.700}",
           "$type": "color",
-          "$description": "brand-600 (#2563eb) on white is ~5:1, which passes WCAG AA for normal text.",
+          "$description": "brand-700 (#4338ca) on white is 7.9:1, which passes WCAG AA for normal text and AAA for large.",
           "$extensions": {
             "pitchfork.dark": "{color.brand.600}"
           }

@@ -2,9 +2,9 @@
  * PitchforkUI — theme starter
  *
  * Copy this file into your project and override only the variables you need.
- * Import it AFTER @pitchfork-ui/react/styles.css.
+ * Import it AFTER the library's token stylesheet.
  *
- *   import '@pitchfork-ui/react/styles.css';
+ *   import '@pitchfork-ui/elements/styles.css';
  *   import './my-theme.css';
  *
  * WCAG note: when choosing a primary color, ensure --color-semantic-action-primary-text

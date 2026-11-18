@@ -44,8 +44,8 @@ export const elementExamples: Record<string, ElementExample> = {
   },
 
   'pf-accordion-item': {
-    html: `<pf-accordion style="width: 100%">
-  <pf-accordion-item value="one" expanded>
+    html: `<pf-accordion value="one" style="width: 100%">
+  <pf-accordion-item value="one">
     <span slot="title">Open to start with</span>
     The panel is <code>inert</code> while closed, so Tab skips what is inside it.
   </pf-accordion-item>
@@ -54,8 +54,8 @@ export const elementExamples: Record<string, ElementExample> = {
     Never opens.
   </pf-accordion-item>
 </pf-accordion>`,
-    interactive: `<pf-accordion style="width: 100%">
-  <pf-accordion-item value="one" expanded>
+    interactive: `<pf-accordion value="one" style="width: 100%">
+  <pf-accordion-item value="one">
     <span slot="title">Section</span>
     The panel is inert while closed.
   </pf-accordion-item>
@@ -104,8 +104,8 @@ export const elementExamples: Record<string, ElementExample> = {
   'pf-badge-group': {
     html: `<pf-badge-group label="New" message="Elements are here" color="brand"></pf-badge-group>
 <pf-badge-group
-  label="v0.2"
-  message="108 elements"
+  label="Update"
+  message="Swap the icon set"
   color="success"
   appearance="modern"
   badge-position="trailing"
@@ -121,7 +121,7 @@ export const elementExamples: Record<string, ElementExample> = {
   style="width: 100%"
 >
   <pf-chart-series series-key="direct" color="var(--color-brand-500)">Direct</pf-chart-series>
-  <pf-chart-series series-key="referral" color="var(--color-teal-500)">Referral</pf-chart-series>
+  <pf-chart-series series-key="referral" color="var(--color-success-500)">Referral</pf-chart-series>
 </pf-bar-chart>`,
   },
 
@@ -250,7 +250,7 @@ export const elementExamples: Record<string, ElementExample> = {
   style="width: 100%"
 >
   <pf-chart-series series-key="visits" color="var(--color-brand-500)">Visits</pf-chart-series>
-  <pf-chart-series series-key="forecast" color="var(--color-amber-500)" dashed>Forecast</pf-chart-series>
+  <pf-chart-series series-key="forecast" color="var(--color-warning-500)" dashed>Forecast</pf-chart-series>
 </pf-line-chart>`,
     interactive: `<pf-line-chart label="One series" data='[{"label": "Mon", "visits": 12}, {"label": "Tue", "visits": 18}, {"label": "Wed", "visits": 9}]' style="width: 100%">
   <pf-chart-series series-key="visits" color="var(--color-brand-500)">Visits</pf-chart-series>
@@ -275,7 +275,7 @@ export const elementExamples: Record<string, ElementExample> = {
 
   'pf-collapsible': {
     html: `<pf-collapsible style="width: 100%">
-  <span slot="trigger">What changed in 0.2.0?</span>
+  <span slot="trigger">What changed in this release?</span>
   <p style="margin: 0">108 custom elements, and three generated binding packages.</p>
 </pf-collapsible>`,
   },
@@ -573,7 +573,14 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-menu-item value="delete" destructive>Delete</pf-menu-item>
   </div>
 </pf-dropdown>`,
-    interactive: `<pf-menu-item value="edit">Edit</pf-menu-item>`,
+    // Open, so the item the controls drive is on screen: an item outside its
+    // menu has no menu styling and no keyboard behaviour to show.
+    interactive: `<pf-dropdown label="Actions" open>
+  <pf-button variant="secondary">Actions</pf-button>
+  <div slot="menu">
+    <pf-menu-item value="edit">Edit</pf-menu-item>
+  </div>
+</pf-dropdown>`,
   },
 
   'pf-menu-separator': {
@@ -604,10 +611,10 @@ export const elementExamples: Record<string, ElementExample> = {
     £48,210
     <span slot="trend">+12.4%</span>
   </pf-metric-card>
-  <pf-metric-card trend="negative">
+  <pf-metric-card trend="positive">
     <span slot="heading">Churn</span>
     2.1%
-    <span slot="trend">-0.3%</span>
+    <span slot="trend">−0.3%</span>
   </pf-metric-card>
   <pf-metric-card>
     <span slot="heading">Active seats</span>
@@ -676,8 +683,8 @@ export const elementExamples: Record<string, ElementExample> = {
 <pf-modal label="With a footer">
   <pf-modal-body>The footer keeps its actions against the bottom edge.</pf-modal-body>
   <pf-modal-footer>
-    <pf-button variant="secondary">Cancel</pf-button>
-    <pf-button variant="primary">Save</pf-button>
+    <pf-button variant="secondary" data-close>Cancel</pf-button>
+    <pf-button variant="primary" data-close>Save</pf-button>
   </pf-modal-footer>
 </pf-modal>`,
     // Closed, with a trigger. `showModal()` promotes the dialog to the top
@@ -688,6 +695,11 @@ export const elementExamples: Record<string, ElementExample> = {
       root.querySelector('[data-open]')?.addEventListener('click', () => {
         if (modal) modal.open = true;
       });
+      root.querySelectorAll('[data-close]').forEach((button) =>
+        button.addEventListener('click', () => {
+          if (modal) modal.open = false;
+        }),
+      );
     },
     interactive: `<pf-modal label="With a footer" open>
   <pf-modal-body>The footer keeps its actions against the bottom edge.</pf-modal-body>
@@ -756,18 +768,18 @@ export const elementExamples: Record<string, ElementExample> = {
     html: `<pf-sidebar-navigation label="Sidebar" style="min-width: 14rem">
   <pf-nav-section>
     <span slot="title">Workspace</span>
-    <pf-nav-item href="#" orientation="vertical" current>Overview</pf-nav-item>
-    <pf-nav-item href="#" orientation="vertical">Members</pf-nav-item>
+    <pf-nav-item href="#" current>Overview</pf-nav-item>
+    <pf-nav-item href="#">Members</pf-nav-item>
   </pf-nav-section>
   <pf-nav-section>
-    <pf-nav-item href="#" orientation="vertical">Untitled section</pf-nav-item>
+    <pf-nav-item href="#">Untitled section</pf-nav-item>
   </pf-nav-section>
 </pf-sidebar-navigation>`,
     interactive: `<pf-sidebar-navigation label="Sidebar" style="min-width: 14rem">
   <pf-nav-section>
     <span slot="title">Workspace</span>
-    <pf-nav-item href="#" orientation="vertical" current>Overview</pf-nav-item>
-    <pf-nav-item href="#" orientation="vertical">Members</pf-nav-item>
+    <pf-nav-item href="#" current>Overview</pf-nav-item>
+    <pf-nav-item href="#">Members</pf-nav-item>
   </pf-nav-section>
 </pf-sidebar-navigation>`,
   },
@@ -797,7 +809,10 @@ export const elementExamples: Record<string, ElementExample> = {
   <pf-option value="banana">Banana</pf-option>
   <pf-option value="cherry" disabled>Cherry (out of season)</pf-option>
 </pf-select>`,
-    interactive: `<pf-option value="banana">Banana</pf-option>`,
+    // Open, for the same reason: an option outside its select has no box.
+    interactive: `<pf-select label="Fruit" open style="width: 16rem">
+  <pf-option value="banana">Banana</pf-option>
+</pf-select>`,
   },
 
   'pf-page-header': {
@@ -821,8 +836,8 @@ export const elementExamples: Record<string, ElementExample> = {
   'pf-pie-chart': {
     html: `<pf-pie-chart label="Traffic by source" size="180">
   <pf-pie-slice value="48" color="var(--color-brand-500)">Direct</pf-pie-slice>
-  <pf-pie-slice value="31" color="var(--color-teal-500)">Search</pf-pie-slice>
-  <pf-pie-slice value="21" color="var(--color-amber-500)">Referral</pf-pie-slice>
+  <pf-pie-slice value="31" color="var(--color-success-500)">Search</pf-pie-slice>
+  <pf-pie-slice value="21" color="var(--color-warning-500)">Referral</pf-pie-slice>
   <span slot="center">1,204</span>
 </pf-pie-chart>`,
   },
@@ -830,12 +845,12 @@ export const elementExamples: Record<string, ElementExample> = {
   'pf-pie-slice': {
     html: `<pf-pie-chart label="Three equal thirds" size="160">
   <pf-pie-slice value="1" color="var(--color-brand-500)">One</pf-pie-slice>
-  <pf-pie-slice value="1" color="var(--color-teal-500)">Two</pf-pie-slice>
-  <pf-pie-slice value="1" color="var(--color-amber-500)">Three</pf-pie-slice>
+  <pf-pie-slice value="1" color="var(--color-success-500)">Two</pf-pie-slice>
+  <pf-pie-slice value="1" color="var(--color-warning-500)">Three</pf-pie-slice>
 </pf-pie-chart>`,
     interactive: `<pf-pie-chart label="Two slices" size="180">
   <pf-pie-slice value="48" color="var(--color-brand-500)">Direct</pf-pie-slice>
-  <pf-pie-slice value="52" color="var(--color-teal-500)">Search</pf-pie-slice>
+  <pf-pie-slice value="52" color="var(--color-success-500)">Search</pf-pie-slice>
 </pf-pie-chart>`,
   },
 
@@ -873,23 +888,23 @@ export const elementExamples: Record<string, ElementExample> = {
 
   'pf-progress-step': {
     html: `<pf-progress-steps style="width: 100%">
-  <pf-progress-step state="complete" position="1">
+  <pf-progress-step>
     <span slot="title">Basket</span>
   </pf-progress-step>
-  <pf-progress-step state="current" position="2">
+  <pf-progress-step status="current">
     <span slot="title">Delivery</span>
     <span slot="description">Where it goes</span>
   </pf-progress-step>
-  <pf-progress-step state="upcoming" position="3" last>
+  <pf-progress-step>
     <span slot="title">Payment</span>
   </pf-progress-step>
 </pf-progress-steps>`,
     interactive: `<pf-progress-steps style="width: 100%">
-  <pf-progress-step state="current" position="1">
+  <pf-progress-step status="current">
     <span slot="title">Delivery</span>
     <span slot="description">Where it goes</span>
   </pf-progress-step>
-  <pf-progress-step state="upcoming" position="2" last>
+  <pf-progress-step>
     <span slot="title">Payment</span>
   </pf-progress-step>
 </pf-progress-steps>`,
@@ -897,13 +912,13 @@ export const elementExamples: Record<string, ElementExample> = {
 
   'pf-progress-steps': {
     html: `<pf-progress-steps orientation="vertical" style="width: 100%">
-  <pf-progress-step state="complete" position="1">
+  <pf-progress-step>
     <span slot="title">Signed up</span>
   </pf-progress-step>
-  <pf-progress-step state="current" position="2">
+  <pf-progress-step status="current">
     <span slot="title">Verify your email</span>
   </pf-progress-step>
-  <pf-progress-step state="upcoming" position="3" last>
+  <pf-progress-step>
     <span slot="title">Invite your team</span>
   </pf-progress-step>
 </pf-progress-steps>`,
@@ -1031,16 +1046,16 @@ export const elementExamples: Record<string, ElementExample> = {
   <strong slot="header">Atlas</strong>
   <pf-nav-section>
     <span slot="title">Workspace</span>
-    <pf-nav-item href="#" orientation="vertical" current>Overview</pf-nav-item>
-    <pf-nav-item href="#" orientation="vertical">
+    <pf-nav-item href="#" current>Overview</pf-nav-item>
+    <pf-nav-item href="#">
       Inbox
       <pf-badge slot="badge" variant="brand">4</pf-badge>
     </pf-nav-item>
   </pf-nav-section>
   <pf-nav-section>
     <span slot="title">Settings</span>
-    <pf-nav-item href="#" orientation="vertical">Members</pf-nav-item>
-    <pf-nav-item orientation="vertical" disabled>Billing</pf-nav-item>
+    <pf-nav-item href="#">Members</pf-nav-item>
+    <pf-nav-item disabled>Billing</pf-nav-item>
   </pf-nav-section>
   <pf-button slot="footer" size="sm" variant="ghost">Sign out</pf-button>
 </pf-sidebar-navigation>`,
@@ -1081,7 +1096,7 @@ export const elementExamples: Record<string, ElementExample> = {
   label="As an area"
   variant="area"
   end-dot
-  color="var(--color-teal-500)"
+  color="var(--color-success-500)"
   data="[12, 9, 14, 11, 16, 13, 18]"
 ></pf-sparkline>`,
     interactive: `<pf-sparkline label="Last fourteen days" data="[4, 7, 5, 9, 8, 12, 10, 14, 11, 16, 15, 19, 17, 22]"></pf-sparkline>`,
@@ -1130,7 +1145,7 @@ export const elementExamples: Record<string, ElementExample> = {
     html: `<pf-table label="Orders" striped sort-key="name" sort-direction="asc" style="width: 100%">
   <span slot="caption">Three recent orders.</span>
   <pf-table-row head>
-    <pf-table-cell head sortable sort-key="name" sort="ascending" width="140">Item</pf-table-cell>
+    <pf-table-cell head sortable sort-key="name" width="140">Item</pf-table-cell>
     <pf-table-cell head sortable sort-key="total" align="right">Total</pf-table-cell>
     <pf-table-cell head>Notes</pf-table-cell>
   </pf-table-row>
@@ -1139,12 +1154,12 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-table-cell align="right">£24.00</pf-table-cell>
     <pf-table-cell>Gift</pf-table-cell>
   </pf-table-row>
-  <pf-table-row odd>
+  <pf-table-row>
     <pf-table-cell>Item 2</pf-table-cell>
     <pf-table-cell align="right">£18.50</pf-table-cell>
     <pf-table-cell>—</pf-table-cell>
   </pf-table-row>
-  <pf-table-row last>
+  <pf-table-row>
     <pf-table-cell>Item 10</pf-table-cell>
     <pf-table-cell align="right">£9.00</pf-table-cell>
     <pf-table-cell>Rush</pf-table-cell>
@@ -1159,7 +1174,7 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-table-cell head align="center">Centred</pf-table-cell>
     <pf-table-cell head align="right" sortable sort-key="total">Sortable</pf-table-cell>
   </pf-table-row>
-  <pf-table-row last>
+  <pf-table-row>
     <pf-table-cell>Left by default</pf-table-cell>
     <pf-table-cell align="center">Middle</pf-table-cell>
     <pf-table-cell align="right">£9.00</pf-table-cell>
@@ -1170,7 +1185,7 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-table-cell head width="160">Item</pf-table-cell>
     <pf-table-cell head align="right">Total</pf-table-cell>
   </pf-table-row>
-  <pf-table-row last>
+  <pf-table-row>
     <pf-table-cell>Item 1</pf-table-cell>
     <pf-table-cell align="right">£24.00</pf-table-cell>
   </pf-table-row>
@@ -1178,7 +1193,7 @@ export const elementExamples: Record<string, ElementExample> = {
   },
 
   'pf-table-row': {
-    html: `<pf-table label="Striping comes from the row" striped style="width: 100%">
+    html: `<pf-table label="The table marks its own rows" striped style="width: 100%">
   <pf-table-row head>
     <pf-table-cell head>Row</pf-table-cell>
     <pf-table-cell head>State</pf-table-cell>
@@ -1187,11 +1202,11 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-table-cell>First</pf-table-cell>
     <pf-table-cell>even</pf-table-cell>
   </pf-table-row>
-  <pf-table-row odd>
+  <pf-table-row>
     <pf-table-cell>Second</pf-table-cell>
     <pf-table-cell>odd — shaded</pf-table-cell>
   </pf-table-row>
-  <pf-table-row last>
+  <pf-table-row>
     <pf-table-cell>Third</pf-table-cell>
     <pf-table-cell>last — no rule beneath</pf-table-cell>
   </pf-table-row>
@@ -1201,7 +1216,7 @@ export const elementExamples: Record<string, ElementExample> = {
     <pf-table-cell head>Row</pf-table-cell>
     <pf-table-cell head>State</pf-table-cell>
   </pf-table-row>
-  <pf-table-row last>
+  <pf-table-row>
     <pf-table-cell>First</pf-table-cell>
     <pf-table-cell>even</pf-table-cell>
   </pf-table-row>
@@ -1272,7 +1287,7 @@ export const elementExamples: Record<string, ElementExample> = {
     <span slot="title">Out for delivery</span>
     <span slot="timestamp">14 March, 06:40</span>
   </pf-timeline-item>
-  <pf-timeline-item last>
+  <pf-timeline-item>
     <span slot="title">Order placed</span>
     <span slot="timestamp">12 March, 18:05</span>
   </pf-timeline-item>
@@ -1286,13 +1301,13 @@ export const elementExamples: Record<string, ElementExample> = {
     <span slot="title">Payment failed</span>
     <span slot="description">The marker grows to hold a slotted icon.</span>
   </pf-timeline-item>
-  <pf-timeline-item last>
+  <pf-timeline-item>
     <span slot="title">No icon</span>
     <span slot="description">A plain dot, measured in the real build rather than guessed from CSS.</span>
   </pf-timeline-item>
 </pf-timeline>`,
     interactive: `<pf-timeline label="One event" style="width: 100%">
-  <pf-timeline-item tone="success" last>
+  <pf-timeline-item tone="success">
     <pf-icon slot="icon" name="circle-check"></pf-icon>
     <span slot="title">Delivered</span>
     <span slot="timestamp">14 March, 09:12</span>
@@ -1357,7 +1372,7 @@ export const elementExamples: Record<string, ElementExample> = {
 
   'pf-tree-item': {
     html: `<pf-tree-view label="Project files" expanded="src" style="min-width: 16rem">
-  <pf-tree-item value="src" has-children expanded>
+  <pf-tree-item value="src">
     <span slot="label">src</span>
     <pf-tree-item value="index.ts">
       <span slot="label">index.ts</span>
@@ -1372,7 +1387,7 @@ export const elementExamples: Record<string, ElementExample> = {
   </pf-tree-item>
 </pf-tree-view>`,
     interactive: `<pf-tree-view label="Files" expanded="src" style="min-width: 16rem">
-  <pf-tree-item value="src" has-children expanded>
+  <pf-tree-item value="src">
     <span slot="label">src</span>
     <pf-tree-item value="index.ts">
       <span slot="label">index.ts</span>
@@ -1383,9 +1398,9 @@ export const elementExamples: Record<string, ElementExample> = {
 
   'pf-tree-view': {
     html: `<pf-tree-view label="Files" expanded="docs" value="guide.md" style="min-width: 16rem">
-  <pf-tree-item value="docs" has-children expanded>
+  <pf-tree-item value="docs">
     <span slot="label">docs</span>
-    <pf-tree-item value="guide.md" selected>
+    <pf-tree-item value="guide.md">
       <span slot="label">guide.md</span>
     </pf-tree-item>
     <pf-tree-item value="api.md">

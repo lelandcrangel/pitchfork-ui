@@ -9,7 +9,7 @@ PitchforkUI is built on a three-tier CSS variable chain. Overriding a handful of
 ```
 Token                             →  Semantic alias                    →  Component alias
 ──────────────────────────────────────────────────────────────────────────────────────────
-var(--color-brand-600) #4f46e5   →  --color-semantic-action-primary   →  --pf-button-primary-bg
+var(--color-brand-700) #4338ca   →  --color-semantic-action-primary   →  --pf-button-primary-bg
 ```
 
 Changing `--color-semantic-action-primary` updates buttons, pagination, calendar selections, checkboxes, sliders, progress indicators — every element that uses the primary brand color — in one declaration.
@@ -42,7 +42,7 @@ Then in `my-theme.css`, override only what you need:
 
   /* Typography */
   --font-family-sans: 'Inter', system-ui, sans-serif;
-  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --pf-code-font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 ```
 
@@ -52,16 +52,16 @@ That's it. No other changes required.
 
 ## Brand color
 
-The primary action color drives the most visual surface area. Override these four variables together to ensure buttons, focus rings, and interactive states all stay consistent:
+The primary action color drives the most visual surface area. Override these four variables together to keep buttons, selections and their interactive states consistent. Focus rings follow `--color-semantic-border-focus`, which is worth setting to the same hue:
 
 - **`--color-semantic-action-primary`**  
-  Button bg, selected states, accents · default `#4f46e5`
+  Button bg, selected states, accents · default `#4338ca` (brand-700)
 
 - **`--color-semantic-action-primary-hover`**  
-  Hover state · default `#4338ca`
+  Hover state · default `#3730a3` (brand-800)
 
 - **`--color-semantic-action-primary-active`**  
-  Active / pressed state · default `#3730a3`
+  Active / pressed state · default `#312e81` (brand-900)
 
 - **`--color-semantic-action-primary-text`**  
   Text color on the primary background · default `#ffffff`
@@ -158,13 +158,16 @@ Component styles use CSS logical properties (`margin-inline-start`, `padding-inl
 
 Or scope it to a subtree:
 
-```tsx
+```html
 <div dir="rtl">
-  <Breadcrumbs items={items} />
+  <pf-breadcrumbs>
+    <pf-breadcrumb href="/">Home</pf-breadcrumb>
+    <pf-breadcrumb>Settings</pf-breadcrumb>
+  </pf-breadcrumbs>
 </div>
 ```
 
-Spacing, alignment, dismiss buttons, and presence indicators all mirror automatically. Components whose direction is explicitly physical by API — e.g. `SlideoutMenu` `placement="left" | "right"` and `NotificationStack` `placement="top-right"` — stay fixed to the side you specify, as intended.
+Spacing, alignment, dismiss buttons, and presence indicators all mirror automatically. Elements whose direction is explicitly physical by API — `pf-slideout-menu`'s `placement="left"` or `"right"`, and `pf-toaster`'s `placement="top-right"` — stay fixed to the side you specify, as intended.
 
 ## Starter file
 

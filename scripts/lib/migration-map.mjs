@@ -85,6 +85,7 @@ export function loadMigrationMap({
 
     const becomesSlot = [];
     const staysTextProp = [];
+    const renamedProps = [];
     const unmapped = [];
     const becomesChildren = [];
     const staysProperty = [];
@@ -120,6 +121,12 @@ export function loadMigrationMap({
       if (isNode(prop.type)) {
         if (elementSlots.has(prop.name)) becomesSlot.push(prop.name);
         else if (elementProps.has(prop.name)) staysTextProp.push(prop.name);
+        // `title` is a global HTML attribute -- set on a host it draws the
+        // browser's own tooltip -- so an element that takes a title calls it
+        // `heading`. Without this, `CodeSnippet.title` and
+        // `SlideoutMenu.title` were listed as having nowhere to go.
+        else if (prop.name === 'title' && elementProps.has('heading'))
+          renamedProps.push({ from: 'title', to: 'heading' });
         else unmapped.push(prop.name);
         continue;
       }
@@ -144,6 +151,7 @@ export function loadMigrationMap({
     // passthrough -- `onClick` on `Button` never reaches this list.
     const reshaped =
       becomesSlot.length > 0 ||
+      renamedProps.length > 0 ||
       becomesChildren.length > 0 ||
       unmapped.length > 0 ||
       unhandledEvents.length > 0;
@@ -169,6 +177,8 @@ export function loadMigrationMap({
       dropIn: !reshaped,
       becomesSlot,
       staysTextProp,
+      // A content prop the element takes under another name.
+      renamedProps,
       unmapped,
       becomesChildren,
       staysProperty,

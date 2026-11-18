@@ -8,7 +8,8 @@
  *
  *   1. the import specifier, `@pitchfork-ui/react` -> `@pitchfork-ui/elements-react`
  *   2. the component name, `Button` -> `PfButton`
- *   3. the event props, `onClick` -> `onPfClick`
+ *   3. the event props the element can fire, `onDismiss` -> `onPfDismiss`
+ *      (`onClick` stays: `pf-button` emits no `pfClick`)
  *
  * And it audits the call sites of every `Pf*` element in the files it scans,
  * ported or not, for a handler the element cannot fire. That audit exists
@@ -356,6 +357,7 @@ function processFile(path) {
         component.unhandledEvents.length > 0 &&
         component.becomesSlot.length === 0 &&
         component.becomesChildren.length === 0 &&
+        component.renamedProps.length === 0 &&
         component.unmapped.length === 0;
       refusals.push({
         name,
@@ -365,6 +367,7 @@ function processFile(path) {
           : `the call site changes shape`,
         props: [
           ...component.becomesSlot.map((p) => `${p} -> slot`),
+          ...component.renamedProps.map((p) => `${p.from} -> the ${p.to} prop`),
           ...component.becomesChildren.map((p) => `${p} -> child elements`),
           ...component.unmapped.map((p) => `${p} -> needs a destination`),
           ...component.unhandledEvents.map(
