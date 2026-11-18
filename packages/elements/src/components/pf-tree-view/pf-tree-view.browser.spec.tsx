@@ -140,7 +140,7 @@ test('Home and End jump to the first and last visible item', async () => {
 test('Enter selects and toggles', async () => {
   const el = await mount(FIXTURE('value="package.json"'));
   const changes: string[] = [];
-  el.addEventListener('pfChange', (event) =>
+  el.addEventListener('pfSelectionChange', (event) =>
     changes.push((event as CustomEvent<{ value: string }>).detail.value),
   );
 
@@ -251,7 +251,7 @@ test('a disabled item takes no focus from the arrows’ neighbours', async () =>
   await until(() => activeValue(el) === 'b', 'moving onto it');
 
   const changes: string[] = [];
-  el.addEventListener('pfChange', () => changes.push('x'));
+  el.addEventListener('pfSelectionChange', () => changes.push('x'));
   await userEvent.keyboard('{Enter}');
   await frame();
   await frame();

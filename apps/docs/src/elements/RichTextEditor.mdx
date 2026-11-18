@@ -27,7 +27,7 @@ Two things differ from the React component, both deliberate:
 - **The toolbar is one tab stop**, with the arrows moving inside it, which
   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
   version is six tab stops inside a `role="toolbar"`, so tabbing past the
-  field walks every button; `todo.md` has that.
+  field walks every button.
 - **It is a real form control.** `formAssociated` with `ElementInternals` is
   what puts the value in `FormData`; a `contenteditable` is not a form
   control in any framework, and the React component's value reaches a form
@@ -58,18 +58,18 @@ same trade the React component makes.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; \}` | Fires when the value changes, however it changed. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ value: string; }` | Yes | Fires when the value changes, however it changed. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `format()` | `format(command: string) =&gt; Promise&lt;void&gt;` | Applies one of the toolbar's commands, as pressing its button does. |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | — |
+| `format()` | `format(command: string) => Promise<void>` | Applies one of the toolbar's commands, as pressing its button does. |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | — |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | — |
 
 ## Shadow parts
 

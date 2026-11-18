@@ -66,7 +66,7 @@ describe('pf-carousel', () => {
   it('steps forward and back from the buttons', async () => {
     const { root, waitForChanges } = await render(FIXTURE());
     const changes: number[] = [];
-    root.addEventListener('pfChange', (event) =>
+    root.addEventListener('pfSlideChange', (event) =>
       changes.push((event as CustomEvent<{ index: number }>).detail.index),
     );
 

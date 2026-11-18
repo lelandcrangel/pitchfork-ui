@@ -47,7 +47,7 @@ export class PfCollapsible {
   @Prop() showChevron = true;
 
   /** Fires whenever the content opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /** Opens the content. */
   @Method()

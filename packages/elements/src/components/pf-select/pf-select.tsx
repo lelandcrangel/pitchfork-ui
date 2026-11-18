@@ -48,8 +48,8 @@ const MOVES: Record<string, ListNavigationAction> = {
  *
  * **It has typeahead, which the React component does not.** Typing `b` jumps
  * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
- * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
- * answers the same keystrokes. `todo.md` has the React fix.
+ * ARIA listbox pattern, and the matching is core's, so `pf-combobox`
+ * answers the same keystrokes.
  *
  * Form-associated, so the value submits by itself. The React component fakes
  * that with a hidden `<input>` beside the trigger.
@@ -105,7 +105,7 @@ export class PfSelect {
   @Event() pfChange!: EventEmitter<{ value: string }>;
 
   /** Fires whenever the listbox opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /** The label of the chosen option, for the trigger to show. */
   @State() selectedLabel = '';

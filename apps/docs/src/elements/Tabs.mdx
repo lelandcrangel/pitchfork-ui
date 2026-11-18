@@ -18,7 +18,7 @@ import * as TabsStories from './Tabs.stories';
 A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
 children.
 
-Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+Children rather than an `items` array, because
 the React `TabsItem` carries a `label` and a `content` that are both
 `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
 and loops in their own template.
@@ -47,15 +47,15 @@ sliding indicator. Each `pf-tab` only reports that it was chosen, as
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; \}` | Fires when the selected tab changes, however it was chosen. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfTabChange` | `{ value: string; }` | No | Fires when the selected tab changes, however it was chosen. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the children. Needed because a consumer can change a tab through its *property* — `tab.disabled = true` — which leaves no attribute, moves no node and so fires neither `slotchange` nor any watcher here. |
+| `refresh()` | `refresh() => Promise<void>` | Re-reads the children. Needed because a consumer can change a tab through its *property* — `tab.disabled = true` — which leaves no attribute, moves no node and so fires neither `slotchange` nor any watcher here. |
 
 ## Slots
 

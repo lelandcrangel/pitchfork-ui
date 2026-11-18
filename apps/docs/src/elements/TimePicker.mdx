@@ -45,20 +45,20 @@ and nothing more — all of that arithmetic is core's.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; \}` | Fires when the time changes, with the canonical `HH:mm`. |
-| `pfOpenChange` | `\{ open: boolean; \}` | Fires whenever the panel opens or closes, whoever caused it. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ value: string; }` | Yes | Fires when the time changes, with the canonical `HH:mm`. |
+| `pfOpenChange` | `{ open: boolean; }` | No | Fires whenever the panel opens or closes, whoever caused it. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
-| `hide()` | `hide() =&gt; Promise&lt;void&gt;` | — |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `show()` | `show() =&gt; Promise&lt;void&gt;` | — |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | — |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | — |
+| `hide()` | `hide() => Promise<void>` | — |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | — |
+| `show()` | `show() => Promise<void>` | — |
 
 ## Shadow parts
 

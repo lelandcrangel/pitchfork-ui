@@ -37,7 +37,7 @@ through the accessor.
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `accept` | `accept` | `string \| undefined` | — | The `accept` list, in the form an `&lt;input type="file"&gt;` takes. |
+| `accept` | `accept` | `string \| undefined` | — | The `accept` list, in the form an `<input type="file">` takes. |
 | `description` | `description` | `string \| undefined` | — | — |
 | `disabled` | `disabled` | `boolean` | `false` | — |
 | `error` | `error` | `string \| undefined` | — | Error message from the consumer. Its presence marks the control invalid. |
@@ -51,19 +51,19 @@ through the accessor.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ files: File[]; \}` | Fires when the files held change, however they changed. |
-| `pfReject` | `\{ message: string; \}` | Fires when a selection is refused, with the reason shown to the person. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ files: File[]; }` | Yes | Fires when the files held change, however they changed. |
+| `pfReject` | `{ message: string; }` | No | Fires when a selection is refused, with the reason shown to the person. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
-| `open()` | `open() =&gt; Promise&lt;void&gt;` | Opens the file picker, as clicking the dropzone does. |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | — |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | — |
+| `open()` | `open() => Promise<void>` | Opens the file picker, as clicking the dropzone does. |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | — |
 
 ## Shadow parts
 

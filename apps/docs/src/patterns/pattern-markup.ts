@@ -79,13 +79,13 @@ export const patternMarkup: Record<string, Pattern> = {
           data="[120, 128, 126, 135, 140, 138, 150, 156, 161, 168, 172, 180]"
         ></pf-sparkline>
       </pf-metric-card>
-      <pf-metric-card trend="negative">
+      <pf-metric-card trend="positive">
         <span slot="heading">Churn</span>
         1.8%
-        <span slot="trend">0.4%</span>
+        <span slot="trend">−0.4%</span>
         <pf-sparkline
           label="Churn trend"
-          color="var(--color-danger-500)"
+          color="var(--color-success-500)"
           end-dot
           width="140"
           height="36"
@@ -273,7 +273,7 @@ export const patternMarkup: Record<string, Pattern> = {
   </pf-tabs>
 
   <pf-section-footer>
-    Changes save when you press Save.
+    <span slot="description">Changes apply to every workspace you own.</span>
     <pf-button slot="actions">Save changes</pf-button>
   </pf-section-footer>
 </div>`,
@@ -375,7 +375,7 @@ export const patternMarkup: Record<string, Pattern> = {
   <pf-table label="Invoices" striped sort-key="invoice" sort-direction="asc" style="width: 100%">
     <span slot="empty">No invoices match your filters.</span>
     <pf-table-row head>
-      <pf-table-cell head sortable sort-key="invoice" sort="ascending">Invoice</pf-table-cell>
+      <pf-table-cell head sortable sort-key="invoice">Invoice</pf-table-cell>
       <pf-table-cell head sortable sort-key="customer">Customer</pf-table-cell>
       <pf-table-cell head sortable sort-key="amount" align="right">Amount</pf-table-cell>
       <pf-table-cell head>Status</pf-table-cell>
@@ -413,7 +413,6 @@ export const patternMarkup: Record<string, Pattern> = {
         sortKey?: string;
         sortDirection?: SortDirection;
       };
-      const head = root.querySelector('pf-table-row[head]')!;
       const pagination = root.querySelector('pf-pagination') as HTMLElement & {
         page?: number;
         totalPages?: number;
@@ -445,11 +444,9 @@ export const patternMarkup: Record<string, Pattern> = {
 
         // The header row stays; only the body is replaced.
         for (const row of [...root.querySelectorAll('pf-table-row:not([head])')]) row.remove();
-        shown.forEach((row, index) => {
+        shown.forEach((row) => {
           const [label, variant] = badge[row.status];
           const tr = document.createElement('pf-table-row');
-          if (index % 2 === 1) tr.setAttribute('odd', '');
-          if (index === shown.length - 1) tr.setAttribute('last', '');
           tr.innerHTML = `<pf-table-cell>${row.invoice}</pf-table-cell>
 <pf-table-cell>${row.customer}</pf-table-cell>
 <pf-table-cell align="right">£${row.amount.toLocaleString('en-GB')}</pf-table-cell>
@@ -479,22 +476,19 @@ export const patternMarkup: Record<string, Pattern> = {
       });
 
       // The element announces which column and direction a reader asked for.
-      // Reordering the rows is what this handler is for.
-      root.addEventListener('pfSortChange', (event) => {
+      // Reordering the rows is what this handler is for. It listens on the
+      // table itself: an element's own events do not bubble, so a nested
+      // table's sort can never arrive here. The two form controls above are
+      // heard from the root, because a form control's events do.
+      table.addEventListener('pfSortChange', (event) => {
         const detail = (event as CustomEvent<{ key: string; direction: SortDirection }>).detail;
         if (!detail) return;
+        // The table has already marked the header cells; only the order is ours.
         sort = { key: detail.key, direction: detail.direction };
-        head.querySelectorAll('pf-table-cell[sortable]').forEach((cell) => {
-          const own = cell.getAttribute('sort-key') === detail.key;
-          cell.setAttribute(
-            'sort',
-            own ? (detail.direction === 'asc' ? 'ascending' : 'descending') : 'none',
-          );
-        });
         draw();
       });
 
-      root.addEventListener('pfPageChange', (event) => {
+      pagination.addEventListener('pfPageChange', (event) => {
         page = (event as CustomEvent<{ page: number }>).detail?.page ?? 1;
         draw();
       });
@@ -510,32 +504,38 @@ export const patternMarkup: Record<string, Pattern> = {
   <pf-modal-header><strong>Set up your account</strong></pf-modal-header>
   <pf-modal-body>
     <pf-progress-steps style="width: 100%; margin-bottom: 20px">
-      <pf-progress-step state="current" position="1">
+      <pf-progress-step status="current">
         <span slot="title">Account</span>
       </pf-progress-step>
-      <pf-progress-step state="upcoming" position="2">
+      <pf-progress-step>
         <span slot="title">Workspace</span>
       </pf-progress-step>
-      <pf-progress-step state="upcoming" position="3" last>
+      <pf-progress-step>
         <span slot="title">Preferences</span>
       </pf-progress-step>
     </pf-progress-steps>
 
-    <div data-step="0" style="display: grid; gap: 16px">
-      <pf-input label="Full name" value="John Smith"></pf-input>
-      <pf-input label="Email address" type="email" value="john@example.com"></pf-input>
+    <div data-step="0">
+      <div style="display: grid; gap: 16px">
+        <pf-input label="Full name" value="John Smith"></pf-input>
+        <pf-input label="Email address" type="email" value="john@example.com"></pf-input>
+      </div>
     </div>
-    <div data-step="1" hidden style="display: grid; gap: 16px">
-      <pf-input label="Workspace name" value="Acme Labs"></pf-input>
-      <pf-select label="Team size" value="2-10">
-        <pf-option value="1">Just me</pf-option>
-        <pf-option value="2-10">2–10</pf-option>
-        <pf-option value="11-50">11–50</pf-option>
-      </pf-select>
+    <div data-step="1" hidden>
+      <div style="display: grid; gap: 16px">
+        <pf-input label="Workspace name" value="Acme Labs"></pf-input>
+        <pf-select label="Team size" value="2-10">
+          <pf-option value="1">Just me</pf-option>
+          <pf-option value="2-10">2–10</pf-option>
+          <pf-option value="11-50">11–50</pf-option>
+        </pf-select>
+      </div>
     </div>
-    <div data-step="2" hidden style="display: grid; gap: 16px">
-      <pf-textarea label="What are you building?" placeholder="A sentence is plenty…"></pf-textarea>
-      <pf-switch label="Send me product updates" checked></pf-switch>
+    <div data-step="2" hidden>
+      <div style="display: grid; gap: 16px">
+        <pf-textarea label="What are you building?" placeholder="A sentence is plenty…"></pf-textarea>
+        <pf-switch label="Send me product updates" checked></pf-switch>
+      </div>
     </div>
   </pf-modal-body>
   <pf-modal-footer>
@@ -551,6 +551,9 @@ export const patternMarkup: Record<string, Pattern> = {
     setup: (root) => {
       const modal = root.querySelector('pf-modal') as HTMLElement & { open?: boolean };
       const panels = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+      const group = root.querySelector('pf-progress-steps') as HTMLElement & {
+        refresh(): Promise<void>;
+      };
       const steps = [...root.querySelectorAll('pf-progress-step')];
       const back = root.querySelector('[data-back]') as HTMLElement & { disabled?: boolean };
       const next = root.querySelector('[data-next]')!;
@@ -559,12 +562,10 @@ export const patternMarkup: Record<string, Pattern> = {
 
       const draw = () => {
         panels.forEach((panel, index) => panel.toggleAttribute('hidden', index !== step));
-        steps.forEach((node, index) => {
-          node.setAttribute(
-            'state',
-            index < step ? 'complete' : index === step ? 'current' : 'upcoming',
-          );
-        });
+        // Mark the one current step; the group works out which are complete.
+        steps.forEach((node) => node.removeAttribute('status'));
+        steps[step]?.setAttribute('status', 'current');
+        void group.refresh();
         back.disabled = step === 0;
         next.textContent = step === last ? 'Finish' : 'Next';
       };

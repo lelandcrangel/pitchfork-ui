@@ -116,7 +116,7 @@ export namespace Components {
          */
         "type": PfAccordionType;
         /**
-          * The open sections, as one comma-separated string — which is what an attribute can carry. `pfChange` also reports the parsed array, which is what a framework consumer usually wants.
+          * The open sections, as one comma-separated string — which is what an attribute can carry. `pfExpandedChange` also reports the parsed array, which is what a framework consumer usually wants.
           * @default ''
          */
         "value": string;
@@ -173,7 +173,7 @@ export namespace Components {
          */
         "description"?: string;
         /**
-          * Dismisses the alert, waiting for its exit animation first.  The wait is core's `animationsFinished`, which asks the element what is actually running rather than sleeping for a duration someone wrote down: under `prefers-reduced-motion` the stylesheet sets `animation: none`, no test project applies `styleUrl` CSS at all, and a consumer may not have loaded the stylesheet — in all three an `animationend` listener would wait for ever and a timeout would be a fiction.
+          * Dismisses the alert, waiting for its exit animation first.  The wait is core's `animationsFinished`, which asks the element what is actually running rather than sleeping for a duration someone wrote down: under `prefers-reduced-motion` the stylesheet sets `animation: none`, and a consumer may not have loaded the stylesheet — in both an `animationend` listener would wait for ever and a timeout would be a fiction.
          */
         "dismiss": () => Promise<void>;
         /**
@@ -388,11 +388,12 @@ export namespace Components {
     }
     /**
      * A button, with the variants, sizes and loading state the React `Button` has.
-     * The first element in this package, and the one the whole pipeline was proved
-     * on: the PostCSS chain, the generated React bindings and the generated Angular
-     * component all exist because this built end to end before anything else was
-     * attempted. `delegatesFocus` is why focusing the host reaches the real button
-     * inside, which is what lets `pf-toolbar` treat it as an item.
+     * `type="submit"` and `type="reset"` act on the form around it, as a native
+     * button's do. ARIA a wrapper sets on the host -- `aria-expanded`,
+     * `aria-haspopup`, `aria-pressed` -- is copied to the real button inside, which
+     * is the one a screen reader lands on. `delegatesFocus` is why focusing the
+     * host reaches that button, which is what lets `pf-toolbar` treat it as an
+     * item.
      */
     interface PfButton {
         /**
@@ -438,7 +439,7 @@ export namespace Components {
      * every one of them is an ordinary tab stop: a group of toggle buttons is not
      * a roving-tabindex pattern, unlike a toolbar or a tab strip.
      * `value` is one comma-separated string, because that is what an attribute
-     * can carry; `pfChange` also reports the parsed array, which is what a
+     * can carry; `pfSelectionChange` also reports the parsed array, which is what a
      * framework consumer usually wants.
      */
     interface PfButtonGroup {
@@ -509,7 +510,7 @@ export namespace Components {
      * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
      * week, Home and End to the ends of the week, PageUp/PageDown a month. The
      * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
-     * without the two disagreeing — recorded in `todo.md`.
+     * without the two disagreeing.
      * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
      * range of a century would mean a hundred custom elements rendered into this
      * shadow root for one control, and a `<select>` brings its own keyboard and
@@ -1425,9 +1426,7 @@ export namespace Components {
      * A calendar heatmap: one cell per day, darker where the value is higher.
      * All of the arithmetic is core's, and the date stepping goes through
      * `date.ts`, which pins every date to midday — a day step from midnight
-     * across a daylight-saving boundary loses or repeats a day, which is
-     * invisible under UTC and is why both test projects now run in a timezone
-     * that has daylight saving.
+     * across a daylight-saving boundary loses or repeats a day.
      */
     interface PfHeatmap {
         /**
@@ -1510,7 +1509,7 @@ export namespace Components {
      */
     interface PfInlineCta {
         /**
-          * Plays the exit animation and resolves once it has finished, then reports.  `getAnimations()` read after a frame, so the class the stylesheet animates has landed; an empty list resolves at once, which is what makes this correct with no stylesheet, under `prefers-reduced-motion`, and in both test projects.
+          * Plays the exit animation and resolves once it has finished, then reports.  `getAnimations()` read after a frame, so the class the stylesheet animates has landed; an empty list resolves at once, which is what makes this correct with no stylesheet and under `prefers-reduced-motion`.
          */
         "dismiss": () => Promise<void>;
         /**
@@ -2115,7 +2114,7 @@ export namespace Components {
      * The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
      * explanation, some metadata and the page's actions.
      * The trail is slotted rather than taken as data — the consumer nests a
-     * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+     * `pf-breadcrumbs`, where the React
      * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
      * Each crumb's label is a node, which does not cross the HTML boundary.
      */
@@ -2656,7 +2655,7 @@ export namespace Components {
      * - **The toolbar is one tab stop**, with the arrows moving inside it, which
      *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
      *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
-     *   field walks every button; `todo.md` has that.
+     *   field walks every button.
      * - **It is a real form control.** `formAssociated` with `ElementInternals` is
      *   what puts the value in `FormData`; a `contenteditable` is not a form
      *   control in any framework, and the React component's value reaches a form
@@ -2772,8 +2771,8 @@ export namespace Components {
      * `Select`'s `options` array can only hold a string.
      * **It has typeahead, which the React component does not.** Typing `b` jumps
      * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
-     * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
-     * answers the same keystrokes. `todo.md` has the React fix.
+     * ARIA listbox pattern, and the matching is core's, so `pf-combobox`
+     * answers the same keystrokes.
      * Form-associated, so the value submits by itself. The React component fakes
      * that with a hidden `<input>` beside the trigger.
      * The active option is set as an *element*, not an IDREF: the trigger is in
@@ -3291,7 +3290,7 @@ export namespace Components {
     /**
      * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
      * children.
-     * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+     * Children rather than an `items` array, because
      * the React `TabsItem` carries a `label` and a `content` that are both
      * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
      * and loops in their own template.
@@ -3557,7 +3556,7 @@ export namespace Components {
     /**
      * The region toasts appear in, and the queue behind them.
      * This is the one place the elements layer takes options rather than child
-     * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+     * elements, against the rule everywhere else — because a
      * toast is not data the consumer is rendering, it is an event that happened.
      * React expresses that with a context provider and a module-level `toast()`;
      * the equivalent for a custom element is a method on the region, since a
@@ -3722,8 +3721,7 @@ export namespace Components {
      * nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
      * and tracks the active item with an IDREF, which resolves because the items
      * are its own light-DOM descendants.
-     * The React `TreeView` makes every visible item a tab stop, which is a gap
-     * recorded in `todo.md`.
+     * The React `TreeView` makes every visible item a tab stop.
      */
     interface PfTreeView {
         /**
@@ -4081,7 +4079,7 @@ export interface PfTreeViewCustomEvent<T> extends CustomEvent<T> {
 }
 declare global {
     interface HTMLPfAccordionElementEventMap {
-        "pfChange": { value: string; values: string[] };
+        "pfExpandedChange": { value: string; values: string[] };
     }
     /**
      * A stack of `pf-accordion-item` children, of which either one or several can
@@ -4263,11 +4261,12 @@ declare global {
     };
     /**
      * A button, with the variants, sizes and loading state the React `Button` has.
-     * The first element in this package, and the one the whole pipeline was proved
-     * on: the PostCSS chain, the generated React bindings and the generated Angular
-     * component all exist because this built end to end before anything else was
-     * attempted. `delegatesFocus` is why focusing the host reaches the real button
-     * inside, which is what lets `pf-toolbar` treat it as an item.
+     * `type="submit"` and `type="reset"` act on the form around it, as a native
+     * button's do. ARIA a wrapper sets on the host -- `aria-expanded`,
+     * `aria-haspopup`, `aria-pressed` -- is copied to the real button inside, which
+     * is the one a screen reader lands on. `delegatesFocus` is why focusing the
+     * host reaches that button, which is what lets `pf-toolbar` treat it as an
+     * item.
      */
     interface HTMLPfButtonElement extends Components.PfButton, HTMLStencilElement {
     }
@@ -4276,7 +4275,7 @@ declare global {
         new (): HTMLPfButtonElement;
     };
     interface HTMLPfButtonGroupElementEventMap {
-        "pfChange": { value: string; values: string[] };
+        "pfSelectionChange": { value: string; values: string[] };
     }
     /**
      * A row of joined toggle buttons: pick one, or several.
@@ -4286,7 +4285,7 @@ declare global {
      * every one of them is an ordinary tab stop: a group of toggle buttons is not
      * a roving-tabindex pattern, unlike a toolbar or a tab strip.
      * `value` is one comma-separated string, because that is what an attribute
-     * can carry; `pfChange` also reports the parsed array, which is what a
+     * can carry; `pfSelectionChange` also reports the parsed array, which is what a
      * framework consumer usually wants.
      */
     interface HTMLPfButtonGroupElement extends Components.PfButtonGroup, HTMLStencilElement {
@@ -4329,7 +4328,7 @@ declare global {
         new (): HTMLPfButtonGroupItemElement;
     };
     interface HTMLPfCalendarElementEventMap {
-        "pfChange": { value: string };
+        "pfSelectionChange": { value: string };
     }
     /**
      * A month grid for picking a date.
@@ -4339,7 +4338,7 @@ declare global {
      * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
      * week, Home and End to the ends of the week, PageUp/PageDown a month. The
      * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
-     * without the two disagreeing — recorded in `todo.md`.
+     * without the two disagreeing.
      * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
      * range of a century would mean a hundred custom elements rendered into this
      * shadow root for one control, and a `<select>` brings its own keyboard and
@@ -4404,7 +4403,7 @@ declare global {
         new (): HTMLPfCardHeaderElement;
     };
     interface HTMLPfCarouselElementEventMap {
-        "pfChange": { index: number };
+        "pfSlideChange": { index: number };
     }
     /**
      * A carousel over `pf-carousel-slide` children.
@@ -4860,9 +4859,7 @@ declare global {
      * A calendar heatmap: one cell per day, darker where the value is higher.
      * All of the arithmetic is core's, and the date stepping goes through
      * `date.ts`, which pins every date to midday — a day step from midnight
-     * across a daylight-saving boundary loses or repeats a day, which is
-     * invisible under UTC and is why both test projects now run in a timezone
-     * that has daylight saving.
+     * across a daylight-saving boundary loses or repeats a day.
      */
     interface HTMLPfHeatmapElement extends Components.PfHeatmap, HTMLStencilElement {
     }
@@ -5294,7 +5291,7 @@ declare global {
      * The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
      * explanation, some metadata and the page's actions.
      * The trail is slotted rather than taken as data — the consumer nests a
-     * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+     * `pf-breadcrumbs`, where the React
      * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
      * Each crumb's label is a node, which does not cross the HTML boundary.
      */
@@ -5545,7 +5542,7 @@ declare global {
         new (): HTMLPfRatingStarsElement;
     };
     interface HTMLPfResizableElementEventMap {
-        "pfChange": { size: number };
+        "pfResize": { size: number };
     }
     /**
      * Two panels with a draggable separator between them.
@@ -5585,7 +5582,7 @@ declare global {
      * - **The toolbar is one tab stop**, with the arrows moving inside it, which
      *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
      *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
-     *   field walks every button; `todo.md` has that.
+     *   field walks every button.
      * - **It is a real form control.** `formAssociated` with `ElementInternals` is
      *   what puts the value in `FormData`; a `contenteditable` is not a form
      *   control in any framework, and the React component's value reaches a form
@@ -5656,8 +5653,8 @@ declare global {
      * `Select`'s `options` array can only hold a string.
      * **It has typeahead, which the React component does not.** Typing `b` jumps
      * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
-     * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
-     * answers the same keystrokes. `todo.md` has the React fix.
+     * ARIA listbox pattern, and the matching is core's, so `pf-combobox`
+     * answers the same keystrokes.
      * Form-associated, so the value submits by itself. The React component fakes
      * that with a hidden `<input>` beside the trigger.
      * The active option is set as an *element*, not an IDREF: the trigger is in
@@ -5912,12 +5909,12 @@ declare global {
         new (): HTMLPfTableRowElement;
     };
     interface HTMLPfTabsElementEventMap {
-        "pfChange": { value: string };
+        "pfTabChange": { value: string };
     }
     /**
      * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
      * children.
-     * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+     * Children rather than an `items` array, because
      * the React `TabsItem` carries a `label` and a `content` that are both
      * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
      * and loops in their own template.
@@ -6072,7 +6069,7 @@ declare global {
     /**
      * The region toasts appear in, and the queue behind them.
      * This is the one place the elements layer takes options rather than child
-     * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+     * elements, against the rule everywhere else — because a
      * toast is not data the consumer is rendering, it is an event that happened.
      * React expresses that with a context provider and a module-level `toast()`;
      * the equivalent for a custom element is a method on the region, since a
@@ -6172,7 +6169,7 @@ declare global {
         new (): HTMLPfTreeItemElement;
     };
     interface HTMLPfTreeViewElementEventMap {
-        "pfChange": { value: string };
+        "pfSelectionChange": { value: string };
         "pfExpandedChange": { value: string; values: string[] };
     }
     /**
@@ -6192,8 +6189,7 @@ declare global {
      * nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
      * and tracks the active item with an IDREF, which resolves because the items
      * are its own light-DOM descendants.
-     * The React `TreeView` makes every visible item a tab stop, which is a gap
-     * recorded in `todo.md`.
+     * The React `TreeView` makes every visible item a tab stop.
      */
     interface HTMLPfTreeViewElement extends Components.PfTreeView, HTMLStencilElement {
         addEventListener<K extends keyof HTMLPfTreeViewElementEventMap>(type: K, listener: (this: HTMLPfTreeViewElement, ev: PfTreeViewCustomEvent<HTMLPfTreeViewElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -6391,14 +6387,14 @@ declare namespace LocalJSX {
         /**
           * Fires when the open set changes, however it was changed.
          */
-        "onPfChange"?: (event: PfAccordionCustomEvent<{ value: string; values: string[] }>) => void;
+        "onPfExpandedChange"?: (event: PfAccordionCustomEvent<{ value: string; values: string[] }>) => void;
         /**
           * `single` closes the others when one opens; `multiple` leaves them.
           * @default 'single'
          */
         "type"?: PfAccordionType;
         /**
-          * The open sections, as one comma-separated string — which is what an attribute can carry. `pfChange` also reports the parsed array, which is what a framework consumer usually wants.
+          * The open sections, as one comma-separated string — which is what an attribute can carry. `pfExpandedChange` also reports the parsed array, which is what a framework consumer usually wants.
           * @default ''
          */
         "value"?: string;
@@ -6665,11 +6661,12 @@ declare namespace LocalJSX {
     }
     /**
      * A button, with the variants, sizes and loading state the React `Button` has.
-     * The first element in this package, and the one the whole pipeline was proved
-     * on: the PostCSS chain, the generated React bindings and the generated Angular
-     * component all exist because this built end to end before anything else was
-     * attempted. `delegatesFocus` is why focusing the host reaches the real button
-     * inside, which is what lets `pf-toolbar` treat it as an item.
+     * `type="submit"` and `type="reset"` act on the form around it, as a native
+     * button's do. ARIA a wrapper sets on the host -- `aria-expanded`,
+     * `aria-haspopup`, `aria-pressed` -- is copied to the real button inside, which
+     * is the one a screen reader lands on. `delegatesFocus` is why focusing the
+     * host reaches that button, which is what lets `pf-toolbar` treat it as an
+     * item.
      */
     interface PfButton {
         /**
@@ -6723,7 +6720,7 @@ declare namespace LocalJSX {
      * every one of them is an ordinary tab stop: a group of toggle buttons is not
      * a roving-tabindex pattern, unlike a toolbar or a tab strip.
      * `value` is one comma-separated string, because that is what an attribute
-     * can carry; `pfChange` also reports the parsed array, which is what a
+     * can carry; `pfSelectionChange` also reports the parsed array, which is what a
      * framework consumer usually wants.
      */
     interface PfButtonGroup {
@@ -6740,7 +6737,7 @@ declare namespace LocalJSX {
         /**
           * Fires when the selection changes, however it was changed.
          */
-        "onPfChange"?: (event: PfButtonGroupCustomEvent<{ value: string; values: string[] }>) => void;
+        "onPfSelectionChange"?: (event: PfButtonGroupCustomEvent<{ value: string; values: string[] }>) => void;
         /**
           * The chosen value, or values, as one comma-separated string.
           * @default ''
@@ -6798,7 +6795,7 @@ declare namespace LocalJSX {
      * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
      * week, Home and End to the ends of the week, PageUp/PageDown a month. The
      * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
-     * without the two disagreeing — recorded in `todo.md`.
+     * without the two disagreeing.
      * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
      * range of a century would mean a hundred custom elements rendered into this
      * shadow root for one control, and a `<select>` brings its own keyboard and
@@ -6829,7 +6826,7 @@ declare namespace LocalJSX {
         /**
           * Fires with the chosen date, as `YYYY-MM-DD`.
          */
-        "onPfChange"?: (event: PfCalendarCustomEvent<{ value: string }>) => void;
+        "onPfSelectionChange"?: (event: PfCalendarCustomEvent<{ value: string }>) => void;
         /**
           * Render the days borrowed from the neighbouring months.
           * @default true
@@ -6914,7 +6911,7 @@ declare namespace LocalJSX {
         /**
           * Fires when the slide on show changes, however it changed.
          */
-        "onPfChange"?: (event: PfCarouselCustomEvent<{ index: number }>) => void;
+        "onPfSlideChange"?: (event: PfCarouselCustomEvent<{ index: number }>) => void;
         /**
           * The step-back button's accessible name.
           * @default 'Previous slide'
@@ -7710,9 +7707,7 @@ declare namespace LocalJSX {
      * A calendar heatmap: one cell per day, darker where the value is higher.
      * All of the arithmetic is core's, and the date stepping goes through
      * `date.ts`, which pins every date to midday — a day step from midnight
-     * across a daylight-saving boundary loses or repeats a day, which is
-     * invisible under UTC and is why both test projects now run in a timezone
-     * that has daylight saving.
+     * across a daylight-saving boundary loses or repeats a day.
      */
     interface PfHeatmap {
         /**
@@ -8403,7 +8398,7 @@ declare namespace LocalJSX {
      * The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
      * explanation, some metadata and the page's actions.
      * The trail is slotted rather than taken as data — the consumer nests a
-     * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+     * `pf-breadcrumbs`, where the React
      * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
      * Each crumb's label is a node, which does not cross the HTML boundary.
      */
@@ -8909,7 +8904,7 @@ declare namespace LocalJSX {
         /**
           * Fires when the split changes, by pointer or by key.
          */
-        "onPfChange"?: (event: PfResizableCustomEvent<{ size: number }>) => void;
+        "onPfResize"?: (event: PfResizableCustomEvent<{ size: number }>) => void;
         /**
           * `horizontal` puts the panels side by side and drags left and right; `vertical` stacks them. Reflected, because the stylesheet selects on it.
           * @default 'horizontal'
@@ -8936,7 +8931,7 @@ declare namespace LocalJSX {
      * - **The toolbar is one tab stop**, with the arrows moving inside it, which
      *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
      *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
-     *   field walks every button; `todo.md` has that.
+     *   field walks every button.
      * - **It is a real form control.** `formAssociated` with `ElementInternals` is
      *   what puts the value in `FormData`; a `contenteditable` is not a form
      *   control in any framework, and the React component's value reaches a form
@@ -9053,8 +9048,8 @@ declare namespace LocalJSX {
      * `Select`'s `options` array can only hold a string.
      * **It has typeahead, which the React component does not.** Typing `b` jumps
      * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
-     * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
-     * answers the same keystrokes. `todo.md` has the React fix.
+     * ARIA listbox pattern, and the matching is core's, so `pf-combobox`
+     * answers the same keystrokes.
      * Form-associated, so the value submits by itself. The React component fakes
      * that with a hidden `<input>` beside the trigger.
      * The active option is set as an *element*, not an IDREF: the trigger is in
@@ -9571,7 +9566,7 @@ declare namespace LocalJSX {
     /**
      * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
      * children.
-     * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+     * Children rather than an `items` array, because
      * the React `TabsItem` carries a `label` and a `content` that are both
      * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
      * and loops in their own template.
@@ -9592,7 +9587,7 @@ declare namespace LocalJSX {
         /**
           * Fires when the selected tab changes, however it was chosen.
          */
-        "onPfChange"?: (event: PfTabsCustomEvent<{ value: string }>) => void;
+        "onPfTabChange"?: (event: PfTabsCustomEvent<{ value: string }>) => void;
         /**
           * Tab padding and type scale. Reflected, and pushed down onto every tab.
           * @default 'md'
@@ -9849,7 +9844,7 @@ declare namespace LocalJSX {
     /**
      * The region toasts appear in, and the queue behind them.
      * This is the one place the elements layer takes options rather than child
-     * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+     * elements, against the rule everywhere else — because a
      * toast is not data the consumer is rendering, it is an event that happened.
      * React expresses that with a context provider and a module-level `toast()`;
      * the equivalent for a custom element is a method on the region, since a
@@ -10018,8 +10013,7 @@ declare namespace LocalJSX {
      * nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
      * and tracks the active item with an IDREF, which resolves because the items
      * are its own light-DOM descendants.
-     * The React `TreeView` makes every visible item a tab stop, which is a gap
-     * recorded in `todo.md`.
+     * The React `TreeView` makes every visible item a tab stop.
      */
     interface PfTreeView {
         /**
@@ -10032,13 +10026,13 @@ declare namespace LocalJSX {
          */
         "label"?: string;
         /**
-          * Fires when the selection changes.
-         */
-        "onPfChange"?: (event: PfTreeViewCustomEvent<{ value: string }>) => void;
-        /**
           * Fires when a branch opens or closes, with the open set.
          */
         "onPfExpandedChange"?: (event: PfTreeViewCustomEvent<{ value: string; values: string[] }>) => void;
+        /**
+          * Fires when the selection changes.
+         */
+        "onPfSelectionChange"?: (event: PfTreeViewCustomEvent<{ value: string }>) => void;
         /**
           * The selected item's value.
           * @default ''
@@ -11094,11 +11088,12 @@ declare module "@stencil/core" {
             "pf-breadcrumbs": LocalJSX.IntrinsicElements["pf-breadcrumbs"] & JSXBase.HTMLAttributes<HTMLPfBreadcrumbsElement>;
             /**
              * A button, with the variants, sizes and loading state the React `Button` has.
-             * The first element in this package, and the one the whole pipeline was proved
-             * on: the PostCSS chain, the generated React bindings and the generated Angular
-             * component all exist because this built end to end before anything else was
-             * attempted. `delegatesFocus` is why focusing the host reaches the real button
-             * inside, which is what lets `pf-toolbar` treat it as an item.
+             * `type="submit"` and `type="reset"` act on the form around it, as a native
+             * button's do. ARIA a wrapper sets on the host -- `aria-expanded`,
+             * `aria-haspopup`, `aria-pressed` -- is copied to the real button inside, which
+             * is the one a screen reader lands on. `delegatesFocus` is why focusing the
+             * host reaches that button, which is what lets `pf-toolbar` treat it as an
+             * item.
              */
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
             /**
@@ -11109,7 +11104,7 @@ declare module "@stencil/core" {
              * every one of them is an ordinary tab stop: a group of toggle buttons is not
              * a roving-tabindex pattern, unlike a toolbar or a tab strip.
              * `value` is one comma-separated string, because that is what an attribute
-             * can carry; `pfChange` also reports the parsed array, which is what a
+             * can carry; `pfSelectionChange` also reports the parsed array, which is what a
              * framework consumer usually wants.
              */
             "pf-button-group": LocalJSX.IntrinsicElements["pf-button-group"] & JSXBase.HTMLAttributes<HTMLPfButtonGroupElement>;
@@ -11130,7 +11125,7 @@ declare module "@stencil/core" {
              * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
              * week, Home and End to the ends of the week, PageUp/PageDown a month. The
              * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
-             * without the two disagreeing — recorded in `todo.md`.
+             * without the two disagreeing.
              * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
              * range of a century would mean a hundred custom elements rendered into this
              * shadow root for one control, and a `<select>` brings its own keyboard and
@@ -11378,9 +11373,7 @@ declare module "@stencil/core" {
              * A calendar heatmap: one cell per day, darker where the value is higher.
              * All of the arithmetic is core's, and the date stepping goes through
              * `date.ts`, which pins every date to midday — a day step from midnight
-             * across a daylight-saving boundary loses or repeats a day, which is
-             * invisible under UTC and is why both test projects now run in a timezone
-             * that has daylight saving.
+             * across a daylight-saving boundary loses or repeats a day.
              */
             "pf-heatmap": LocalJSX.IntrinsicElements["pf-heatmap"] & JSXBase.HTMLAttributes<HTMLPfHeatmapElement>;
             /**
@@ -11585,7 +11578,7 @@ declare module "@stencil/core" {
              * The heading of a page: a breadcrumb trail, an eyebrow, the title, a line of
              * explanation, some metadata and the page's actions.
              * The trail is slotted rather than taken as data — the consumer nests a
-             * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+             * `pf-breadcrumbs`, where the React
              * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
              * Each crumb's label is a node, which does not cross the HTML boundary.
              */
@@ -11738,7 +11731,7 @@ declare module "@stencil/core" {
              * - **The toolbar is one tab stop**, with the arrows moving inside it, which
              *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
              *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
-             *   field walks every button; `todo.md` has that.
+             *   field walks every button.
              * - **It is a real form control.** `formAssociated` with `ElementInternals` is
              *   what puts the value in `FormData`; a `contenteditable` is not a form
              *   control in any framework, and the React component's value reaches a form
@@ -11777,8 +11770,8 @@ declare module "@stencil/core" {
              * `Select`'s `options` array can only hold a string.
              * **It has typeahead, which the React component does not.** Typing `b` jumps
              * to the next option beginning with `b`, `br` narrows, and `bbb` cycles — the
-             * ARIA listbox pattern, and the matching is core's so a later `pf-combobox`
-             * answers the same keystrokes. `todo.md` has the React fix.
+             * ARIA listbox pattern, and the matching is core's, so `pf-combobox`
+             * answers the same keystrokes.
              * Form-associated, so the value submits by itself. The React component fakes
              * that with a hidden `<input>` beside the trigger.
              * The active option is set as an *element*, not an IDREF: the trigger is in
@@ -11905,7 +11898,7 @@ declare module "@stencil/core" {
             /**
              * A tab set: a strip of `pf-tab` children over a stack of `pf-tab-panel`
              * children.
-             * Children rather than an `items` array (WEB-COMPONENTS-PLAN.md §2.1), because
+             * Children rather than an `items` array, because
              * the React `TabsItem` carries a `label` and a `content` that are both
              * `ReactNode` — neither crosses the HTML boundary, so a consumer nests instead
              * and loops in their own template.
@@ -11968,7 +11961,7 @@ declare module "@stencil/core" {
             /**
              * The region toasts appear in, and the queue behind them.
              * This is the one place the elements layer takes options rather than child
-             * elements, against the rule in `WEB-COMPONENTS-PLAN.md` §2.1 — because a
+             * elements, against the rule everywhere else — because a
              * toast is not data the consumer is rendering, it is an event that happened.
              * React expresses that with a context provider and a module-level `toast()`;
              * the equivalent for a custom element is a method on the region, since a
@@ -12038,8 +12031,7 @@ declare module "@stencil/core" {
              * nested `pf-tree-item` under a roving tabindex. So the tree takes the focus
              * and tracks the active item with an IDREF, which resolves because the items
              * are its own light-DOM descendants.
-             * The React `TreeView` makes every visible item a tab stop, which is a gap
-             * recorded in `todo.md`.
+             * The React `TreeView` makes every visible item a tab stop.
              */
             "pf-tree-view": LocalJSX.IntrinsicElements["pf-tree-view"] & JSXBase.HTMLAttributes<HTMLPfTreeViewElement>;
             /**

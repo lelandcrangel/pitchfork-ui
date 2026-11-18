@@ -83,10 +83,10 @@ export class PfCommandPalette {
   @Prop() dismissable = true;
 
   /** Fires whenever the palette opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /** Fires with the chosen item's `value`. The palette then closes. */
-  @Event() pfSelect!: EventEmitter<{ value: string }>;
+  @Event({ bubbles: false }) pfSelect!: EventEmitter<{ value: string }>;
 
   @State() query = '';
   @State() matchCount = 0;

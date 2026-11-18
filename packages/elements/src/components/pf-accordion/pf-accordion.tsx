@@ -47,7 +47,7 @@ export class PfAccordion {
 
   /**
    * The open sections, as one comma-separated string — which is what an
-   * attribute can carry. `pfChange` also reports the parsed array, which is
+   * attribute can carry. `pfExpandedChange` also reports the parsed array, which is
    * what a framework consumer usually wants.
    */
   @Prop({ mutable: true, reflect: true }) value = '';
@@ -67,7 +67,7 @@ export class PfAccordion {
   @Prop() headingLevel: PfAccordionHeadingLevel = 3;
 
   /** Fires when the open set changes, however it was changed. */
-  @Event() pfChange!: EventEmitter<{ value: string; values: string[] }>;
+  @Event({ bubbles: false }) pfExpandedChange!: EventEmitter<{ value: string; values: string[] }>;
 
   /** The light DOM is readable here, so first paint is already right. */
   componentWillLoad() {
@@ -135,7 +135,7 @@ export class PfAccordion {
   private setExpanded(next: string[]) {
     this.value = formatValueList(next);
     this.sync();
-    this.pfChange.emit({ value: this.value, values: next });
+    this.pfExpandedChange.emit({ value: this.value, values: next });
   }
 
   /**

@@ -141,7 +141,7 @@ describe('pf-tree-view', () => {
   it('selects on a click, and reports it once', async () => {
     const { root, waitForChanges } = await render(FIXTURE('expanded="src"'));
     const changes: string[] = [];
-    root.addEventListener('pfChange', (event) =>
+    root.addEventListener('pfSelectionChange', (event) =>
       changes.push((event as CustomEvent<{ value: string }>).detail.value),
     );
 
@@ -155,7 +155,7 @@ describe('pf-tree-view', () => {
   it('refuses to select a disabled item', async () => {
     const { root, waitForChanges } = await render(FIXTURE());
     const changes: string[] = [];
-    root.addEventListener('pfChange', () => changes.push('x'));
+    root.addEventListener('pfSelectionChange', () => changes.push('x'));
 
     (part(item(root, 'package.json'), 'row') as HTMLElement).click();
     await waitForChanges();

@@ -42,18 +42,18 @@ here reimplements them.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: number; \}` | Fires when the value is committed, like the native `change` event. |
-| `pfInput` | `\{ value: number; \}` | Fires as the user drags, like the native `input` event. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ value: number; }` | Yes | Fires when the value is committed, like the native `change` event. |
+| `pfInput` | `{ value: number; }` | Yes | Fires as the user drags, like the native `input` event. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | A form-associated custom element does not inherit this. |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | The message explaining why the control is invalid, or an empty string. |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | As `checkValidity`, but also shows the browser's validation message. |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | A form-associated custom element does not inherit this. |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | The message explaining why the control is invalid, or an empty string. |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | As `checkValidity`, but also shows the browser's validation message. |
 
 ## Shadow parts
 

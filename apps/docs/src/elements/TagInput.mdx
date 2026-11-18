@@ -49,22 +49,22 @@ does.
 | `placeholder` | `placeholder` | `string` | `'Add a tag…'` | — |
 | `required` | `required` | `boolean` | `false` | — |
 | `tagVariant` | `tag-variant` | `"brand" \| "danger" \| "neutral" \| "success" \| "warning"` | `'neutral'` | Visual variant for the chips, passed through to `pf-tag`. The type is imported from `pf-tag` rather than restated, so the two cannot drift apart — a second copy of the union would compile happily while offering a variant `pf-tag` has never heard of. |
-| `validate` | — | `((tag: string) =&gt; boolean) \| undefined` | — | Refuse a candidate tag. A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a framework consumer passes it like any other. |
+| `validate` | — | `((tag: string) => boolean) \| undefined` | — | Refuse a candidate tag. A property rather than an attribute, because a function cannot be written in HTML — the generated bindings set props as properties, so a framework consumer passes it like any other. |
 | `value` | `value` | `string` | `''` | The tags, comma-separated. Reflected, so HTML can set it. |
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; values: string[]; \}` | Fires when the tags change, with both representations. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ value: string; values: string[]; }` | Yes | Fires when the tags change, with both representations. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | — |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | — |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | — |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | — |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | — |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | — |
 
 ## Slots
 

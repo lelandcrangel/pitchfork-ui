@@ -62,7 +62,7 @@ export class PfAlert {
   @Prop() dismissLabel = 'Dismiss alert';
 
   /** Fires once the alert has finished leaving. */
-  @Event() pfDismiss!: EventEmitter<void>;
+  @Event({ bubbles: false }) pfDismiss!: EventEmitter<void>;
 
   /** Reflected, because that is what the exit animation selects on. */
   @State() exiting = false;
@@ -80,10 +80,9 @@ export class PfAlert {
    *
    * The wait is core's `animationsFinished`, which asks the element what is
    * actually running rather than sleeping for a duration someone wrote down:
-   * under `prefers-reduced-motion` the stylesheet sets `animation: none`, no
-   * test project applies `styleUrl` CSS at all, and a consumer may not have
-   * loaded the stylesheet — in all three an `animationend` listener would
-   * wait for ever and a timeout would be a fiction.
+   * under `prefers-reduced-motion` the stylesheet sets `animation: none`, and
+   * a consumer may not have loaded the stylesheet — in both an `animationend`
+   * listener would wait for ever and a timeout would be a fiction.
    */
   @Method()
   async dismiss() {

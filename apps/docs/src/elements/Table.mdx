@@ -52,15 +52,15 @@ themselves.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfSortChange` | `SortState` | Fires when a header is clicked, with the sort the table has moved to. Sorting the rows is the consumer's to do. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfSortChange` | `SortState` | No | Fires when a header is clicked, with the sort the table has moved to. Sorting the rows is the consumer's to do. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `refresh()` | `refresh() =&gt; Promise&lt;void&gt;` | Re-reads the rows, for a consumer who changed one through a property. |
+| `refresh()` | `refresh() => Promise<void>` | Re-reads the rows, for a consumer who changed one through a property. |
 
 ## Slots
 

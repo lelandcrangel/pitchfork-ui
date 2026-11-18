@@ -714,6 +714,24 @@ Things that differ from the React library, learned by porting the first two:
   a test counted them. Attaching the listener to the child in a `ref` stops
   the event before it reaches the host at all, and does not depend on
   listener registration order the way `stopImmediatePropagation` would.
+- **Only a form control's value events bubble; everything else is
+  `{ bubbles: false }`.** The platform's own split: `change` and `input`
+  bubble, `toggle` and `close` do not. A bubbling event reaches every
+  ancestor listening for its name, and a container can contain another of
+  itself, so no renaming fixes it alone. Before 0.4 seven containers emitted
+  `pfChange` — a `pf-switch` in a tab panel handed `pf-tabs`' handler
+  `{ value: "on" }` — and every overlay a bubbling `pfOpenChange`, so a
+  `pf-select` closing inside a `pf-modal` told a handler bound to the modal's
+  `open` to close it. So: `pfChange`/`pfInput` only from a form-associated
+  element, and bubbling; a child-to-parent protocol event (anything some
+  element `@Listen`s for) bubbles so the parent hears it; every other event
+  is declared `@Event({ bubbles: false })`, and a container's own change event
+  has its own name (`pfTabChange`, `pfExpandedChange`, `pfSelectionChange`,
+  `pfSlideChange`, `pfResize`). `npm run check:events` holds it from the
+  sources and fails on all 34 that shipped; `event-isolation.browser.spec.tsx`
+  holds the behaviour. A consumer who delegated `pfSortChange` or
+  `pfPageChange` from a wrapper now listens on the element — the data-table
+  pattern is the worked example — and every framework binding already did.
 - **A same-root IDREF is the one that works, so use it where you have one.**
   `pf-dropdown` cannot set `aria-controls`, because its trigger is slotted
   light DOM and its panel is in the shadow root. `pf-date-picker` renders

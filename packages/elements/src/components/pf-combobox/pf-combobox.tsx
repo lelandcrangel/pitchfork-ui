@@ -109,7 +109,7 @@ export class PfCombobox {
   @Event() pfChange!: EventEmitter<{ value: string }>;
 
   /** Fires whenever the listbox opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /** What the field holds, which is not the value until an option is chosen. */
   @State() query = '';

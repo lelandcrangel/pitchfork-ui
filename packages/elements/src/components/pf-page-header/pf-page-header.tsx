@@ -5,7 +5,7 @@ import { Component, Element, h, Host, State } from '@stencil/core';
  * explanation, some metadata and the page's actions.
  *
  * The trail is slotted rather than taken as data — the consumer nests a
- * `pf-breadcrumbs` (WEB-COMPONENTS-PLAN.md §2.1), where the React
+ * `pf-breadcrumbs`, where the React
  * `PageHeader` takes a `breadcrumbs` array and renders the component itself.
  * Each crumb's label is a node, which does not cross the HTML boundary.
  *

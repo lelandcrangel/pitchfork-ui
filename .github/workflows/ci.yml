@@ -64,6 +64,13 @@ jobs:
       - name: Check every custom property an element reads is defined
         run: npm run check:css-vars
 
+      # A bubbling event reaches every ancestor that listens for its name.
+      # Seven containers emitted pfChange, which every control inside them
+      # also emits, and thirteen overlays a bubbling pfOpenChange, so a select
+      # closing inside a modal told the modal's handler { open: false }.
+      - name: Check which element events bubble
+        run: npm run check:events
+
       - name: Check dark mode contrast (WCAG AA)
         run: npm run check:contrast
 

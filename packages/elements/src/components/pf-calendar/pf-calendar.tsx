@@ -38,7 +38,7 @@ import {
  * the ARIA pattern instead: one tab stop, arrows to move a day, up and down a
  * week, Home and End to the ends of the week, PageUp/PageDown a month. The
  * arithmetic is core's `moveCalendarDate`, so the React component can adopt it
- * without the two disagreeing — recorded in `todo.md`.
+ * without the two disagreeing.
  *
  * Month and year are native `<select>`s rather than two `pf-dropdown`s. A year
  * range of a century would mean a hundred custom elements rendered into this
@@ -92,7 +92,7 @@ export class PfCalendar {
   @Prop() isDateDisabled?: (date: Date) => boolean;
 
   /** Fires with the chosen date, as `YYYY-MM-DD`. */
-  @Event() pfChange!: EventEmitter<{ value: string }>;
+  @Event({ bubbles: false }) pfSelectionChange!: EventEmitter<{ value: string }>;
 
   /** The month on screen. */
   @State() displayMonth: Date = startOfMonth(new Date());
@@ -177,7 +177,7 @@ export class PfCalendar {
     this.value = formatISODate(date);
     this.focusedDate = date;
     this.displayMonth = this.clamp(startOfMonth(date));
-    this.pfChange.emit({ value: this.value });
+    this.pfSelectionChange.emit({ value: this.value });
   }
 
   /**

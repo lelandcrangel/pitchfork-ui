@@ -108,7 +108,7 @@ test('Home and End collapse to either bound', async () => {
 test('it reports every change once and nothing when it cannot move', async () => {
   const el = await mount('size="50" step="5" min="10" max="90"');
   const sizes: number[] = [];
-  el.addEventListener('pfChange', (event) =>
+  el.addEventListener('pfResize', (event) =>
     sizes.push((event as CustomEvent<{ size: number }>).detail.size),
   );
   part(el, 'handle').focus();

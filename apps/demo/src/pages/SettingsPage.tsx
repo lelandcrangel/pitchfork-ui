@@ -366,7 +366,7 @@ export function SettingsPage() {
        * invitation to the "controlled consumer overwrites what you assign"
        * problem the moment anything else makes this component re-render.
        */}
-      <PfTabs value={tab} onPfChange={(event) => setTab(event.detail.value)}>
+      <PfTabs value={tab} onPfTabChange={(event) => setTab(event.detail.value)}>
         <PfTab value="profile">Profile</PfTab>
         <PfTab value="notifications">Notifications</PfTab>
         <PfTab value="billing">Billing</PfTab>

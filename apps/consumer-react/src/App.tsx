@@ -774,7 +774,7 @@ export function App() {
           startYear={2020}
           endYear={2030}
           data-testid="calendar"
-          onPfChange={(event) => setDay(event.detail.value)}
+          onPfSelectionChange={(event) => setDay(event.detail.value)}
         />
         <output data-testid="calendar-value">{day}</output>
       </div>
@@ -794,7 +794,7 @@ export function App() {
         value={tab}
         variant="underline"
         data-testid="tabs"
-        onPfChange={(event) => setTab(event.detail.value)}
+        onPfTabChange={(event) => setTab(event.detail.value)}
       >
         <PfTab value="overview" icon="circle-info">
           Overview
@@ -828,7 +828,7 @@ export function App() {
         value={sections}
         headingLevel={3}
         data-testid="accordion"
-        onPfChange={(event) => setSections(event.detail.value)}
+        onPfExpandedChange={(event) => setSections(event.detail.value)}
       >
         <PfAccordionItem value="shipping">
           <span slot="title">Shipping</span>
@@ -1031,7 +1031,7 @@ export function App() {
         <PfButtonGroup
           value={range}
           data-testid="button-group"
-          onPfChange={(event) => setRange(event.detail.value)}
+          onPfSelectionChange={(event) => setRange(event.detail.value)}
         >
           <PfButtonGroupItem value="day">Day</PfButtonGroupItem>
           <PfButtonGroupItem value="week" icon="calendar">
@@ -1125,7 +1125,7 @@ export function App() {
         expanded={openFolders}
         label="Project files"
         data-testid="tree-view"
-        onPfChange={(event) => setFile(event.detail.value)}
+        onPfSelectionChange={(event) => setFile(event.detail.value)}
         onPfExpandedChange={(event) => setOpenFolders(event.detail.value)}
       >
         <PfTreeItem value="src" icon="folder-open">
@@ -1235,7 +1235,7 @@ export function App() {
         label="Featured work"
         loop
         data-testid="carousel"
-        onPfChange={(event) => setSlide(event.detail.index)}
+        onPfSlideChange={(event) => setSlide(event.detail.index)}
       >
         <PfCarouselSlide data-testid="carousel-slide-1">
           <PfCard>
@@ -1488,7 +1488,7 @@ export function App() {
         step={5}
         style={{ height: '140px', border: '1px solid var(--pf-resizable-handle-bg)' }}
         data-testid="resizable"
-        onPfChange={(event) => setSplit(event.detail.size)}
+        onPfResize={(event) => setSplit(event.detail.size)}
       >
         <div slot="start" style={{ padding: 'var(--space-3)' }} data-testid="resizable-start">
           The first panel, whose share the separator controls.

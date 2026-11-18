@@ -35,7 +35,7 @@ import { applyControlValidity } from '../../form-validity';
  * - **The toolbar is one tab stop**, with the arrows moving inside it, which
  *   is the ARIA toolbar pattern and what `pf-toolbar` already does. The React
  *   version is six tab stops inside a `role="toolbar"`, so tabbing past the
- *   field walks every button; `todo.md` has that.
+ *   field walks every button.
  * - **It is a real form control.** `formAssociated` with `ElementInternals` is
  *   what puts the value in `FormData`; a `contenteditable` is not a form
  *   control in any framework, and the React component's value reaches a form

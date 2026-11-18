@@ -66,7 +66,7 @@ export class PfCarousel {
   @Prop() nextLabel = 'Next slide';
 
   /** Fires when the slide on show changes, however it changed. */
-  @Event() pfChange!: EventEmitter<{ index: number }>;
+  @Event({ bubbles: false }) pfSlideChange!: EventEmitter<{ index: number }>;
 
   /** How many slides there are, which every control depends on. */
   @State() total = 0;
@@ -199,7 +199,7 @@ export class PfCarousel {
 
     this.index = index;
     this.sync();
-    this.pfChange.emit({ index });
+    this.pfSlideChange.emit({ index });
   }
 
   /**

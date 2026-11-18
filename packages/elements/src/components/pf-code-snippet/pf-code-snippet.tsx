@@ -77,10 +77,10 @@ export class PfCodeSnippet {
   @Prop() feedbackDuration = 1600;
 
   /** Fires with the text that reached the clipboard. Not fired on a failure. */
-  @Event() pfCopy!: EventEmitter<{ code: string }>;
+  @Event({ bubbles: false }) pfCopy!: EventEmitter<{ code: string }>;
 
   /** Fires when the copy could not be made, with the reason shown. */
-  @Event() pfCopyError!: EventEmitter<{ message: string }>;
+  @Event({ bubbles: false }) pfCopyError!: EventEmitter<{ message: string }>;
 
   @State() copied = false;
 

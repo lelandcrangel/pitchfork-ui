@@ -10,7 +10,7 @@ const example = elementExamples['pf-timeline-item'];
 
 const meta = {
   title: 'Components/TimelineItem',
-  args: { last: true, tone: 'success' },
+  args: { last: false, tone: 'success' },
   argTypes: {
     last: { control: 'boolean' },
     tone: { control: 'select', options: ['danger', 'default', 'success', 'warning'] },

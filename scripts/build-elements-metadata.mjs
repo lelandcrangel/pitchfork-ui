@@ -255,7 +255,7 @@ const ABSORBED = {
   },
   NotificationStack: {
     tag: 'pf-toaster',
-    how: '`pf-toaster` is the positioned stack, with `placement` where the React component takes `position`.',
+    how: '`pf-toaster` is the positioned stack and takes the same `placement` values.',
   },
   PageHeaderMeta: {
     tag: 'pf-page-header',
@@ -401,6 +401,9 @@ const elements = docsJson.components
       events: component.events.map((event) => ({
         name: event.event,
         detail: event.detail || null,
+        // Where a listener has to go: only a form control's value events and
+        // the child-to-parent ones reach an ancestor.
+        bubbles: event.bubbles !== false,
         description: clean(event.docs),
       })),
       methods: component.methods.map((method) => ({

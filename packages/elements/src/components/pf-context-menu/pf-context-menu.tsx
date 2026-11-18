@@ -53,10 +53,10 @@ export class PfContextMenu {
   @Prop({ reflect: true }) disabled = false;
 
   /** Fires whenever the menu opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /** Fires with the chosen item's value. The menu closes itself afterwards. */
-  @Event() pfSelect!: EventEmitter<{ value: string }>;
+  @Event({ bubbles: false }) pfSelect!: EventEmitter<{ value: string }>;
 
   /** Where the menu was asked to appear, in client coordinates. */
   private point = { x: 0, y: 0 };

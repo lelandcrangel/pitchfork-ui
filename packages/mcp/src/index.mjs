@@ -167,7 +167,9 @@ function renderElement(element) {
     lines.push('## Events', '');
     for (const event of element.events) {
       lines.push(
-        `- \`${event.name}\`${event.detail ? ` — detail \`${event.detail}\`` : ''}` +
+        `- \`${event.name}\`` +
+          `${event.bubbles === false ? ' (does not bubble: listen on this element)' : event.bubbles ? ' (bubbles)' : ''}` +
+          `${event.detail ? ` — detail \`${event.detail}\`` : ''}` +
           `${event.description ? `: ${event.description.split('\n')[0]}` : ''}`,
       );
     }

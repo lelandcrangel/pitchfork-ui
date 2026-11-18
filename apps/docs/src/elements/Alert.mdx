@@ -43,15 +43,15 @@ announce assertively and `info` and `success` wait their turn.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfDismiss` | `void` | Fires once the alert has finished leaving. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfDismiss` | `void` | No | Fires once the alert has finished leaving. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `dismiss()` | `dismiss() =&gt; Promise&lt;void&gt;` | Dismisses the alert, waiting for its exit animation first. The wait is core's `animationsFinished`, which asks the element what is actually running rather than sleeping for a duration someone wrote down: under `prefers-reduced-motion` the stylesheet sets `animation: none`, no test project applies `styleUrl` CSS at all, and a consumer may not have loaded the stylesheet — in all three an `animationend` listener would wait for ever and a timeout would be a fiction. |
+| `dismiss()` | `dismiss() => Promise<void>` | Dismisses the alert, waiting for its exit animation first. The wait is core's `animationsFinished`, which asks the element what is actually running rather than sleeping for a duration someone wrote down: under `prefers-reduced-motion` the stylesheet sets `animation: none`, and a consumer may not have loaded the stylesheet — in both an `animationend` listener would wait for ever and a timeout would be a fiction. |
 
 ## Slots
 

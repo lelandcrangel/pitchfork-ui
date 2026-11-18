@@ -90,7 +90,7 @@ describe('pf-accordion', () => {
   it('reports the change as a string and as an array', async () => {
     const { root, waitForChanges } = await render(FIXTURE('type="multiple" value="shipping"'));
     const changes: Array<{ value: string; values: string[] }> = [];
-    root.addEventListener('pfChange', (event) =>
+    root.addEventListener('pfExpandedChange', (event) =>
       changes.push((event as CustomEvent<{ value: string; values: string[] }>).detail),
     );
 
@@ -103,7 +103,7 @@ describe('pf-accordion', () => {
   it('refuses a disabled section', async () => {
     const { root, waitForChanges } = await render(FIXTURE());
     const changes: string[] = [];
-    root.addEventListener('pfChange', () => changes.push('x'));
+    root.addEventListener('pfExpandedChange', () => changes.push('x'));
 
     // `button.disabled` reads undefined in the mock DOM, so the attribute is
     // the only thing to look at here.

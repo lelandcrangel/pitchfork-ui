@@ -43,15 +43,15 @@ when no animation started, which is the ordinary case under
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfDismiss` | `void` | Fires once the prompt has finished leaving. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfDismiss` | `void` | No | Fires once the prompt has finished leaving. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `dismiss()` | `dismiss() =&gt; Promise&lt;void&gt;` | Plays the exit animation and resolves once it has finished, then reports. `getAnimations()` read after a frame, so the class the stylesheet animates has landed; an empty list resolves at once, which is what makes this correct with no stylesheet, under `prefers-reduced-motion`, and in both test projects. |
+| `dismiss()` | `dismiss() => Promise<void>` | Plays the exit animation and resolves once it has finished, then reports. `getAnimations()` read after a frame, so the class the stylesheet animates has landed; an empty list resolves at once, which is what makes this correct with no stylesheet and under `prefers-reduced-motion`. |
 
 ## Slots
 

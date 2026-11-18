@@ -13,8 +13,8 @@ const meta = {
   args: {
     active: false,
     disabled: false,
-    expanded: true,
-    hasChildren: true,
+    expanded: false,
+    hasChildren: false,
     level: 1,
     selected: false,
     value: 'src',

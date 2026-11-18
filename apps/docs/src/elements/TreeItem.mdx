@@ -46,11 +46,11 @@ only it can see the whole tree.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfTreeSelect` | `\{ value: string; \}` | Asks the tree to select this item. The tree decides. |
-| `pfTreeStructure` | `void` | Tells the tree that the items inside this one have changed. `slotchange` does not cross a shadow boundary — it is not composed — so a tree cannot hear its grandchildren arrive. Without this, an item appended to a branch is never given a level, an id or a place in the keyboard order; a browser test adds one. |
-| `pfTreeToggle` | `\{ value: string; \}` | Asks the tree to open or close this branch. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfTreeSelect` | `{ value: string; }` | Yes | Asks the tree to select this item. The tree decides. |
+| `pfTreeStructure` | `void` | Yes | Tells the tree that the items inside this one have changed. `slotchange` does not cross a shadow boundary — it is not composed — so a tree cannot hear its grandchildren arrive. Without this, an item appended to a branch is never given a level, an id or a place in the keyboard order; a browser test adds one. |
+| `pfTreeToggle` | `{ value: string; }` | Yes | Asks the tree to open or close this branch. |
 
 ## Slots
 

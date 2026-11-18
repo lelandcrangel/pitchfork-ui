@@ -106,7 +106,7 @@ export class PfDatePicker {
   @Event() pfChange!: EventEmitter<{ value: string }>;
 
   /** Fires whenever the calendar opens or closes, whoever caused it. */
-  @Event() pfOpenChange!: EventEmitter<{ open: boolean }>;
+  @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
 
   /** What a form reset restores; `value` has been overwritten by then. */
   private initialValue = '';
@@ -240,24 +240,21 @@ export class PfDatePicker {
   };
 
   /**
-   * Listens on the calendar element itself, not on the host.
+   * Listens on the calendar element itself, because that is the only place the
+   * calendar's `pfSelectionChange` can be heard: it does not bubble.
    *
-   * Both were tried. A `@Listen('pfChange')` on the host sees the calendar's
-   * event *and* this element's own — a Stencil event is composed, so by then
-   * both have been retargeted to the host and `event.target` cannot tell them
-   * apart. Worse, `stopPropagation()` there does not help: the consumer's
-   * listener is on that same node, and stopping propagation never stops
-   * same-node listeners, so every pick reported twice. Caught by a test that
-   * counted them.
-   *
-   * On the calendar, the event is stopped before it reaches the host at all,
-   * which does not depend on listener registration order the way
-   * `stopImmediatePropagation` would.
+   * It used to be `pfChange`, the same name as this element's own event, and a
+   * `@Listen('pfChange')` on the host then heard both -- a Stencil event is
+   * composed, so by the time either reached the host it had been retargeted
+   * there and `event.target` could not tell them apart, while
+   * `stopPropagation()` never stops a same-node listener, so a consumer saw
+   * every pick twice. The rename and the non-bubbling event take the collision
+   * away at its source; stopping it here is belt and braces.
    */
   private bindCalendar = (element?: HTMLElement) => {
     if (!element || element === this.boundCalendar) return;
     this.boundCalendar = element;
-    element.addEventListener('pfChange', this.onCalendarChange as EventListener);
+    element.addEventListener('pfSelectionChange', this.onCalendarChange as EventListener);
   };
 
   private boundCalendar?: HTMLElement;

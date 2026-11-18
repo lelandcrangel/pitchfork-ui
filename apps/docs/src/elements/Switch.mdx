@@ -40,17 +40,17 @@ difference assistive technology needs.
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ checked: boolean; value: string; \}` | Fires when the user turns the switch on or off. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ checked: boolean; value: string; }` | Yes | Fires when the user turns the switch on or off. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | A form-associated custom element does not inherit this. |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | The message explaining why the control is invalid, or an empty string. |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | As `checkValidity`, but also shows the browser's validation message. |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | A form-associated custom element does not inherit this. |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | The message explaining why the control is invalid, or an empty string. |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | As `checkValidity`, but also shows the browser's validation message. |
 
 ## Shadow parts
 

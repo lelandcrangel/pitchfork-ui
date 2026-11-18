@@ -1097,7 +1097,11 @@ function AccordionPreview() {
   // One string: `pf-accordion`'s `value` is the open item, not a list.
   const [value, setValue] = useState('a');
   return (
-    <PfAccordion type="single" value={value} onPfChange={(event) => setValue(event.detail.value)}>
+    <PfAccordion
+      type="single"
+      value={value}
+      onPfExpandedChange={(event) => setValue(event.detail.value)}
+    >
       {ACCORDION_ITEMS.map((item) => (
         <PfAccordionItem key={item.value} value={item.value}>
           <span slot="title">{item.title}</span>
@@ -1210,7 +1214,10 @@ function ButtonPreview() {
 function ButtonGroupPreview() {
   const [selected, setSelected] = useState('list');
   return (
-    <PfButtonGroup value={selected} onPfChange={(event) => setSelected(event.detail.value)}>
+    <PfButtonGroup
+      value={selected}
+      onPfSelectionChange={(event) => setSelected(event.detail.value)}
+    >
       <PfButtonGroupItem value="list">List</PfButtonGroupItem>
       <PfButtonGroupItem value="grid">Grid</PfButtonGroupItem>
       <PfButtonGroupItem value="table">Table</PfButtonGroupItem>
@@ -1727,7 +1734,7 @@ const TAB_ITEMS = [
 function TabsPreview() {
   const [value, setValue] = useState('overview');
   return (
-    <PfTabs value={value} onPfChange={(event) => setValue(event.detail.value)}>
+    <PfTabs value={value} onPfTabChange={(event) => setValue(event.detail.value)}>
       {TAB_ITEMS.map((item) => (
         <PfTab key={item.value} value={item.value}>
           {item.label}

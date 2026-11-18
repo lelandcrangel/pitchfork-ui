@@ -43,18 +43,18 @@ Angular's generated value accessor has something to bind to. A plain
 
 ## Events
 
-| Event | Detail | Description |
-| --- | --- | --- |
-| `pfChange` | `\{ value: string; \}` | Fires when the value is committed, like the native `change` event. |
-| `pfInput` | `\{ value: string; \}` | Fires on every keystroke, like the native `input` event. |
+| Event | Detail | Bubbles | Description |
+| --- | --- | --- | --- |
+| `pfChange` | `{ value: string; }` | Yes | Fires when the value is committed, like the native `change` event. |
+| `pfInput` | `{ value: string; }` | Yes | Fires on every keystroke, like the native `input` event. |
 
 ## Methods
 
 | Method | Signature | Description |
 | --- | --- | --- |
-| `checkValidity()` | `checkValidity() =&gt; Promise&lt;boolean&gt;` | Whether the control currently satisfies its constraints. A form-associated custom element does not inherit `checkValidity` from anywhere -- the spec puts it on ElementInternals, so the element has to forward it or consumers cannot ask. |
-| `getValidationMessage()` | `getValidationMessage() =&gt; Promise&lt;string&gt;` | The message explaining why the control is invalid, or an empty string. |
-| `reportValidity()` | `reportValidity() =&gt; Promise&lt;boolean&gt;` | As `checkValidity`, but also shows the browser's validation message. |
+| `checkValidity()` | `checkValidity() => Promise<boolean>` | Whether the control currently satisfies its constraints. A form-associated custom element does not inherit `checkValidity` from anywhere -- the spec puts it on ElementInternals, so the element has to forward it or consumers cannot ask. |
+| `getValidationMessage()` | `getValidationMessage() => Promise<string>` | The message explaining why the control is invalid, or an empty string. |
+| `reportValidity()` | `reportValidity() => Promise<boolean>` | As `checkValidity`, but also shows the browser's validation message. |
 
 ## Shadow parts
 
