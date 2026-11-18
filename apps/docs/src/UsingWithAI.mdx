@@ -126,7 +126,7 @@ picked the server up — check its MCP panel or logs.
 
 ### The tools
 
-The first four are where an agent should live. The next three cover the
+The first four are where an agent should live. The last three cover the
 deprecated React package, for maintaining code that already uses it.
 
 | Tool                | What it answers                                                           |
@@ -172,8 +172,9 @@ bundled in the server package.
 | `PITCHFORK_UI_METADATA` | `@pitchfork-ui/react/metadata` — the deprecated React API |
 
 The last one is **optional**, and it is the only one that is: a project on the
-elements alone gets a server that starts normally and says the React layer is
-gone when a React tool is called. The other two always resolve, because the
+elements alone gets a server that starts normally and answers React questions
+from the copy bundled with it, for as long as `@pitchfork-ui/react` is
+published; once it is not, a React tool says the layer is gone. The other two always resolve, because the
 bundled copy is the floor — which is what makes `npx` work with nothing
 installed.
 

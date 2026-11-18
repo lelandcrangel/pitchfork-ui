@@ -21,12 +21,12 @@ a typed component with real event props. For 37 of the
 91 components the whole move is three mechanical renames:
 
 ```tsx
-import { Button } from '@pitchfork-ui/react';
-<Button variant="primary" onClick={save}>Save</Button>;
+import { Alert } from '@pitchfork-ui/react';
+<Alert variant="success" onDismiss={close}>Saved</Alert>;
 
 // becomes
-import { PfButton } from '@pitchfork-ui/elements-react';
-<PfButton variant="primary" onPfClick={save}>Save</PfButton>;
+import { PfAlert } from '@pitchfork-ui/elements-react';
+<PfAlert variant="success" onPfDismiss={close}>Saved</PfAlert>;
 ```
 
 A codemod does exactly those three and refuses everything else. It is
@@ -135,10 +135,10 @@ component and leaving a dead handler behind.
 
 | Component | Becomes | Prop with no equivalent | The element's events |
 | --- | --- | --- | --- |
-| `Calendar` | `PfCalendar` | `onValueChange` | `pfChange` |
+| `Calendar` | `PfCalendar` | `onValueChange` | `pfSelectionChange` |
 | `DatePicker` | `PfDatePicker` | `onValueChange` | `pfChange`, `pfOpenChange` |
 | `DateRangePicker` | `PfDateRangePicker` | `onValueChange` | `pfChange`, `pfOpenChange` |
-| `Resizable` | `PfResizable` | `onSizeChange` | `pfChange` |
+| `Resizable` | `PfResizable` | `onSizeChange` | `pfResize` |
 | `Slider` | `PfSlider` | `onValueChange` | `pfChange`, `pfInput` |
 | `TimePicker` | `PfTimePicker` | `onValueChange` | `pfChange`, `pfOpenChange` |
 
@@ -198,7 +198,7 @@ Change the import, add the `Pf`, rename the event props. Nothing else.
 | `ButtonGroup` | `PfButtonGroup` | — | `items`, `defaultValue` | `value` | — | `onValueChange` |
 | `Calendar` | `PfCalendar` | — | — | — | — | `onValueChange` |
 | `Carousel` | `PfCarousel` | — | — | — | `slides` | `onIndexChange` |
-| `CodeSnippet` | `PfCodeSnippet` | — | — | — | `title` | `onCodeCopy` |
+| `CodeSnippet` | `PfCodeSnippet` | — | — | `title` → `heading` | — | `onCodeCopy` |
 | `Collapsible` | `PfCollapsible` | `trigger` | — | — | — | — |
 | `Combobox` | `PfCombobox` | — | `options` | — | — | `onValueChange` |
 | `CommandPalette` | `PfCommandPalette` | — | `items` | — | — | — |
@@ -230,7 +230,7 @@ Change the import, add the `Pf`, rename the event props. Nothing else.
 | `SectionHeader` | `PfSectionHeader` | `eyebrow`, `description`, `metadata`, `actions` | — | — | `heading` | — |
 | `Select` | `PfSelect` | — | `options` | — | — | `onValueChange` |
 | `SidebarNavigation` | `PfSidebarNavigation` | `header`, `footer` | `sections` | — | — | — |
-| `SlideoutMenu` | `PfSlideoutMenu` | `footer` | — | `description` | `title` | — |
+| `SlideoutMenu` | `PfSlideoutMenu` | `footer` | — | `description`, `title` → `heading` | — | — |
 | `Slider` | `PfSlider` | — | — | — | — | `onValueChange` |
 | `Table` | `PfTable` | `caption` | `columns`, `rows` | — | `emptyState` | `onSortStateChange` |
 | `Tabs` | `PfTabs` | — | `items` | — | — | `onValueChange` |
@@ -253,7 +253,6 @@ page documents what each one is for.
 | Component | Prop | Element | The element's slots |
 | --- | --- | --- | --- |
 | `Carousel` | `slides` | `pf-carousel` | `(default)`, `empty` |
-| `CodeSnippet` | `title` | `pf-code-snippet` | `(default)` |
 | `ContentDivider` | `label` | `pf-content-divider` | `(default)` |
 | `EmptyState` | `heading` | `pf-empty-state` | `(default)`, `action`, `description`, `icon` |
 | `GaugeChart` | `centerLabel`, `subLabel` | `pf-gauge-chart` | `center`, `sub` |
@@ -266,7 +265,6 @@ page documents what each one is for.
 | `PieChart` | `centerLabel`, `emptyLabel` | `pf-pie-chart` | `(default)`, `center`, `empty` |
 | `SectionFooter` | `heading` | `pf-section-footer` | `(default)`, `actions`, `description` |
 | `SectionHeader` | `heading` | `pf-section-header` | `(default)`, `actions`, `description`, `eyebrow`, `metadata` |
-| `SlideoutMenu` | `title` | `pf-slideout-menu` | `(default)`, `footer` |
 | `Table` | `emptyState` | `pf-table` | `(default)`, `caption`, `empty` |
 
 ## Absorbed by an element (4)
@@ -279,7 +277,7 @@ rebuilt around the element named here.
 | --- | --- | --- |
 | `AreaChart` | `pf-line-chart` | set `area` on `pf-line-chart`. |
 | `CalendarGrid` | `pf-calendar` | `pf-calendar` is one element; the React layer splits the grid out as a sub-component. |
-| `NotificationStack` | `pf-toaster` | `pf-toaster` is the positioned stack, with `placement` where the React component takes `position`. |
+| `NotificationStack` | `pf-toaster` | `pf-toaster` is the positioned stack and takes the same `placement` values. |
 | `PageHeaderMeta` | `pf-page-header` | slot into `pf-page-header`'s `metadata` slot. |
 
 ## What is not changing

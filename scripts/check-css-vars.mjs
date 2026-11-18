@@ -86,8 +86,24 @@ for (const dir of fs.readdirSync(componentsDir)) {
   for (const match of source.matchAll(/['"`](--[\w-]+)['"`]\s*[:,]/g)) defined.add(match[1]);
 }
 
+/*
+ * The docs' own markup reads tokens too -- a chart series' `color`, a
+ * swatch's background -- and fails the same way, out of sight of every
+ * check that only reads markup: `var(--color-teal-500)` names a palette that
+ * does not exist, so the docs drew a pie chart with no pie and a forecast
+ * line with no stroke. Read as text, which finds them wherever they are
+ * written.
+ */
+const docsSources = [
+  'apps/docs/src/element-examples.ts',
+  'apps/docs/src/patterns/pattern-markup.ts',
+]
+  .map((file) => path.join(root, file))
+  .filter((file) => fs.existsSync(file))
+  .map((file) => ({ file, css: fs.readFileSync(file, 'utf8') }));
+
 const problems = [];
-for (const { file, css } of sources) {
+for (const { file, css } of [...sources, ...docsSources]) {
   // `var(--name)` closed straight away, with no fallback after a comma.
   for (const match of css.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)) {
     if (defined.has(match[1])) continue;
@@ -109,5 +125,6 @@ if (problems.length > 0) {
 
 console.log(
   `check-css-vars: every var() without a fallback resolves (${stylesheets.length} stylesheets, ` +
+    `${docsSources.length} docs example files, ` +
     `${defined.size} defined names).`,
 );

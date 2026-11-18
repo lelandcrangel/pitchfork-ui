@@ -74,11 +74,12 @@ if (listed !== map.components.length) {
 }
 
 /* Counted within the reshaped group, so they sum to it. */
+const contentMoves = (c) => c.becomesSlot.length + c.renamedProps.length + c.unmapped.length;
 const contentOnlyCount = reshaped.filter(
-  (c) => c.becomesSlot.length + c.unmapped.length > 0 && c.becomesChildren.length === 0,
+  (c) => contentMoves(c) > 0 && c.becomesChildren.length === 0,
 ).length;
 const dataOnlyCount = reshaped.filter(
-  (c) => c.becomesChildren.length > 0 && c.becomesSlot.length + c.unmapped.length === 0,
+  (c) => c.becomesChildren.length > 0 && contentMoves(c) === 0,
 ).length;
 const bothCount = reshaped.length - contentOnlyCount - dataOnlyCount;
 
@@ -92,6 +93,7 @@ const eventOnly = reshaped.filter(
     c.unhandledEvents.length > 0 &&
     c.becomesSlot.length === 0 &&
     c.becomesChildren.length === 0 &&
+    c.renamedProps.length === 0 &&
     c.unmapped.length === 0,
 );
 
@@ -118,12 +120,12 @@ a typed component with real event props. For ${dropIns.length} of the
 ${map.components.length} components the whole move is three mechanical renames:
 
 \`\`\`tsx
-import { Button } from '@pitchfork-ui/react';
-<Button variant="primary" onClick={save}>Save</Button>;
+import { Alert } from '@pitchfork-ui/react';
+<Alert variant="success" onDismiss={close}>Saved</Alert>;
 
 // becomes
-import { PfButton } from '@pitchfork-ui/elements-react';
-<PfButton variant="primary" onPfClick={save}>Save</PfButton>;
+import { PfAlert } from '@pitchfork-ui/elements-react';
+<PfAlert variant="success" onPfDismiss={close}>Saved</PfAlert>;
 \`\`\`
 
 A codemod does exactly those three and refuses everything else. It is
@@ -265,9 +267,10 @@ ${rows(reshaped, [
   {
     head: 'Still a property',
     get: (c) =>
-      [...c.staysProperty, ...c.staysTextProp].length
-        ? code([...c.staysProperty, ...c.staysTextProp])
-        : '—',
+      [
+        ...[...c.staysProperty, ...c.staysTextProp].map((p) => `\`${p}\``),
+        ...c.renamedProps.map((p) => `\`${p.from}\` → \`${p.to}\``),
+      ].join(', ') || '—',
   },
   {
     head: 'Needs a destination',

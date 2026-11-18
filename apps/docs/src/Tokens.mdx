@@ -556,7 +556,7 @@ export const ShadowPreview = () => (
 
 Tokens live in `packages/tokens/src/tokens` and are compiled by Style Dictionary.
 
-The React package imports generated CSS variables from `@pitchfork-ui/tokens/css`.
+The elements ship these generated CSS variables as `@pitchfork-ui/elements/styles.css`.
 
 ## CSS Custom Properties (Generated)
 
@@ -594,13 +594,13 @@ Shadow variables provide elevation depth and surface layering.
 
 ## Dark Theme Layer
 
-The React theme adds a dark override layer using `[data-theme='dark']`, remapping semantic tokens while preserving the same variable API.
+The theme adds a dark override layer using `[data-theme='dark']`, remapping semantic tokens while preserving the same variable API.
 
 ```css
 [data-theme='dark'] {
   --color-semantic-background-default: var(--color-gray-900);
   --color-semantic-text-default: var(--color-gray-50);
-  --color-semantic-action-primary: var(--color-brand-500);
+  --color-semantic-action-primary: var(--color-brand-600);
 }
 ```
 
