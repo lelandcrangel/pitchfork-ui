@@ -39,6 +39,17 @@ const panel = (el: Picker) => part(el, 'panel') as HTMLElement;
 const isOpen = (el: Picker) => panel(el).matches(':popover-open');
 const columns = (el: Picker) =>
   Array.from(el.shadowRoot?.querySelectorAll('[part="column"]') ?? []) as HTMLElement[];
+/*
+ * The columns are built the first time the panel opens, not at load, so a
+ * test that reads them opens the picker first.
+ */
+const mountOpen = async (html: string) => {
+  const el = await mount(html);
+  await el.show();
+  await until(() => columns(el).length > 0, 'the columns to be built');
+  return el;
+};
+
 const columnNamed = (el: Picker, name: string) =>
   columns(el).find((column) => column.getAttribute('aria-label') === name)!;
 const optionIn = (el: Picker, column: string, label: string) =>
@@ -71,10 +82,10 @@ test('shows a 12-hour value with a meridiem, keeping the value canonical', async
 });
 
 test('offers two columns on a 24-hour cycle and three on a 12-hour one', async () => {
-  const day = await mount('<pf-time-picker value="14:30"></pf-time-picker>');
+  const day = await mountOpen('<pf-time-picker value="14:30"></pf-time-picker>');
   expect(columns(day).map((c) => c.getAttribute('aria-label'))).toEqual(['Hour', 'Minute']);
 
-  const half = await mount('<pf-time-picker value="14:30" hour-cycle="12"></pf-time-picker>');
+  const half = await mountOpen('<pf-time-picker value="14:30" hour-cycle="12"></pf-time-picker>');
   expect(columns(half).map((c) => c.getAttribute('aria-label'))).toEqual([
     'Hour',
     'Minute',
@@ -83,13 +94,13 @@ test('offers two columns on a 24-hour cycle and three on a 12-hour one', async (
 });
 
 test('offers 24 hours and 60 minutes by default', async () => {
-  const el = await mount('<pf-time-picker></pf-time-picker>');
+  const el = await mountOpen('<pf-time-picker></pf-time-picker>');
   expect(columnNamed(el, 'Hour').querySelectorAll('button')).toHaveLength(24);
   expect(columnNamed(el, 'Minute').querySelectorAll('button')).toHaveLength(60);
 });
 
 test('honours minute-step', async () => {
-  const el = await mount('<pf-time-picker minute-step="15"></pf-time-picker>');
+  const el = await mountOpen('<pf-time-picker minute-step="15"></pf-time-picker>');
   const labels = Array.from(columnNamed(el, 'Minute').querySelectorAll('button')).map((b) =>
     b.textContent?.trim(),
   );
@@ -97,7 +108,7 @@ test('honours minute-step', async () => {
 });
 
 test('marks the chosen hour and minute in their columns', async () => {
-  const el = await mount('<pf-time-picker value="14:30"></pf-time-picker>');
+  const el = await mountOpen('<pf-time-picker value="14:30"></pf-time-picker>');
 
   expect(selectedIn(el, 'Hour')).toBe('14');
   expect(selectedIn(el, 'Minute')).toBe('30');
@@ -105,7 +116,7 @@ test('marks the chosen hour and minute in their columns', async () => {
 
 /* On a 12-hour cycle the hour column shows the face, not the 24-hour hour. */
 test('marks the clock face on a 12-hour cycle', async () => {
-  const el = await mount('<pf-time-picker value="14:30" hour-cycle="12"></pf-time-picker>');
+  const el = await mountOpen('<pf-time-picker value="14:30" hour-cycle="12"></pf-time-picker>');
 
   expect(selectedIn(el, 'Hour')).toBe('02');
   expect(selectedIn(el, 'AM or PM')).toBe('PM');
@@ -198,7 +209,7 @@ test('picking only a minute produces a complete time', async () => {
 });
 
 test('ignores a value that is not a time', async () => {
-  const el = await mount('<pf-time-picker value="25:99"></pf-time-picker>');
+  const el = await mountOpen('<pf-time-picker value="25:99"></pf-time-picker>');
 
   expect(trigger(el).textContent).toContain('Select time');
   expect(selectedIn(el, 'Hour')).toBeNull();

@@ -11,7 +11,14 @@ import { cx } from '../../utils/cx';
 import { FieldWrapper } from '../../utils/FieldWrapper';
 import { Icon } from '../Icon';
 import { CalendarGrid } from '../Calendar/CalendarGrid';
-import { addMonths, nextDateRangeSelection, rangeDayState, startOfMonth } from '@pitchfork-ui/core';
+import {
+  addMonths,
+  formatMonthYear,
+  formatShortDate,
+  nextDateRangeSelection,
+  rangeDayState,
+  startOfMonth,
+} from '@pitchfork-ui/core';
 import './DateRangePicker.css';
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-date-range-picker>`, or `PfDateRangePicker` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
@@ -46,11 +53,7 @@ export interface DateRangePickerProps extends Omit<
 
 const formatDate = (d: Date | null) => {
   if (!d) return '';
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(d);
+  return formatShortDate(d);
 };
 
 // ─── mini calendar (inline, range-aware) ─────────────────────────────────────
@@ -92,9 +95,7 @@ function RangeCalendar({
   initialFocusedDate,
   hideNavDesktop = false,
 }: RangeCalendarProps) {
-  const monthLabel = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(
-    monthDate,
-  );
+  const monthLabel = formatMonthYear(monthDate);
 
   // Core's, so `<pf-date-range-picker>` previews the same range from the same
   // hover — including that a hovered day stands in for the missing end only

@@ -1,4 +1,4 @@
-import { toMidday } from '@pitchfork-ui/core';
+import { formatShortDate, toMidday } from '@pitchfork-ui/core';
 import { forwardRef, useId, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { composeDescribedBy, Keys } from '../../a11y';
@@ -102,11 +102,7 @@ export const DatePicker = forwardRef<HTMLDivElement, DatePickerProps>(function D
       return '';
     }
 
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    }).format(selectedDate);
+    return formatShortDate(selectedDate);
   }, [selectedDate]);
 
   const selectDate = (nextDate: Date) => {
