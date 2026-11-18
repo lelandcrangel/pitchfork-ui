@@ -258,3 +258,46 @@ test('a disabled item takes no focus from the arrows’ neighbours', async () =>
   expect(el.value).toBe('a');
   expect(changes).toEqual([]);
 });
+
+/*
+ * Loading a tree rescans it a bounded number of times, however many items
+ * it holds. Every item whose default slot is filled -- every item, once the
+ * markup has a newline in it -- forwards a `slotchange` when it renders, and
+ * each one used to rescan the whole tree: 1,005 rescans and 1,387 ms for a
+ * 1,000-item tree written one item per line. Counted rather than timed, so it
+ * cannot flake on a slow machine.
+ */
+test('loading rescans the tree a bounded number of times, however large it is', async () => {
+  await customElements.whenDefined('pf-tree-view');
+  const proto = customElements.get('pf-tree-view')!.prototype as { sync?: () => void };
+  // A rename must fail here rather than leave the count at zero.
+  expect(typeof proto.sync).toBe('function');
+  const original = proto.sync!;
+  let rescans = 0;
+  proto.sync = function (this: unknown) {
+    rescans += 1;
+    return original.call(this);
+  };
+
+  try {
+    let html = '<pf-tree-view expanded="b0">';
+    for (let branch = 0; branch < 20; branch += 1) {
+      html += `\n  <pf-tree-item value="b${branch}">\n    <span slot="label">Branch</span>`;
+      for (let leaf = 0; leaf < 9; leaf += 1) {
+        html += `\n    <pf-tree-item value="b${branch}-${leaf}">\n      <span slot="label">Leaf</span>\n    </pf-tree-item>`;
+      }
+      html += '\n  </pf-tree-item>';
+    }
+    const el = await mount(`${html}\n</pf-tree-view>`);
+
+    const last = item(el, 'b19-8');
+    await until(() => last.getAttribute('aria-level') === '2', 'the last item being placed');
+    for (let i = 0; i < 10; i += 1) await frame();
+
+    // Every item was reached, and the structural events were folded together.
+    expect(el.querySelectorAll('pf-tree-item[aria-level]').length).toBe(200);
+    expect(rescans).toBeLessThanOrEqual(6);
+  } finally {
+    proto.sync = original;
+  }
+});
