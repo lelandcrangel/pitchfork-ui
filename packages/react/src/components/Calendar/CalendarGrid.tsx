@@ -4,6 +4,8 @@ import { isActivationKey } from '../../a11y';
 import {
   WEEKDAY_LABELS,
   buildCalendarDays,
+  formatLongDate,
+  formatMonthYear,
   isSameDay,
   moveCalendarDate,
   resolveCalendarKey,
@@ -143,12 +145,7 @@ export function CalendarGrid({
     }
   };
 
-  const monthLabel = useMemo(() => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'long',
-      year: 'numeric',
-    }).format(monthDate);
-  }, [monthDate]);
+  const monthLabel = useMemo(() => formatMonthYear(monthDate), [monthDate]);
 
   return (
     <div ref={gridRef} className={`${classPrefix}__grid`} role="grid" aria-label={monthLabel}>
@@ -195,11 +192,7 @@ export function CalendarGrid({
                   state.rangeEnd && `${classPrefix}__day--range-end`,
                   state.inRange && `${classPrefix}__day--in-range`,
                 )}
-                aria-label={new Intl.DateTimeFormat('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                }).format(date)}
+                aria-label={formatLongDate(date)}
                 aria-selected={isEndpoint || Boolean(state.inRange)}
                 aria-current={isToday ? 'date' : undefined}
                 /*

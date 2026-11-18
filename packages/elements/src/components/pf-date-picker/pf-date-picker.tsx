@@ -1,10 +1,12 @@
 import {
   composeDescribedBy,
+  formatShortDate,
   Keys,
   observeAnchoredPosition,
   parseISODate,
 } from '@pitchfork-ui/core';
 
+import { DeferredPanel } from '../../deferred-panel';
 import { applyControlValidity } from '../../form-validity';
 import { controlAriaLabel } from '../../control-label';
 import { placePopover } from '../../place-popover';
@@ -130,11 +132,32 @@ export class PfDatePicker {
     applyControlValidity(this.internals, Boolean(this.value), this.required, this.error);
   }
 
+  /**
+   * Whether the panel's content has been built. It is built the first time
+   * the panel opens rather than at load; see `src/deferred-panel.ts`.
+   */
+  @State() panelBuilt = false;
+
+  private panelGate = new DeferredPanel(this, () => this.showPanel());
+
+  componentDidLoad() {
+    // `@Watch` does not run for a value the element starts with.
+    if (this.open) this.panelGate.open();
+  }
+
+  componentDidRender() {
+    this.panelGate.rendered(this.open);
+  }
+
   /** The one place an open or close is announced, whatever caused it. */
   @Watch('open')
   syncOpen(next: boolean, previous: boolean) {
-    if (next) this.showPanel();
-    else this.hidePanel();
+    if (next) {
+      this.panelGate.open();
+    } else {
+      this.panelGate.close();
+      this.hidePanel();
+    }
     if (next !== previous) this.pfOpenChange.emit({ open: next });
   }
 
@@ -196,9 +219,12 @@ export class PfDatePicker {
 
   private get calendar() {
     return (
-      this.el.shadowRoot?.querySelector<HTMLElement & { focusSelectedDay(): Promise<void> }>(
-        'pf-calendar',
-      ) ?? null
+      this.el.shadowRoot?.querySelector<
+        HTMLElement & {
+          focusSelectedDay(): Promise<void>;
+          componentOnReady?(): Promise<unknown>;
+        }
+      >('pf-calendar') ?? null
     );
   }
 
@@ -219,7 +245,13 @@ export class PfDatePicker {
 
     // Focus the grid, not the panel: the calendar owns its own tab stop, and
     // it asks for focus through a method rather than having it reached for.
-    void this.calendar?.focusSelectedDay();
+    // On the first open the calendar has only just been created, and a
+    // parent's render does not wait for a child it added, so wait for the
+    // calendar's own first render before asking.
+    const calendar = this.calendar;
+    void (calendar?.componentOnReady?.() ?? Promise.resolve()).then(() =>
+      calendar?.focusSelectedDay(),
+    );
   }
 
   private hidePanel() {
@@ -294,11 +326,7 @@ export class PfDatePicker {
   private formatted(): string {
     const date = parseISODate(this.value);
     if (!date) return '';
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    }).format(date);
+    return formatShortDate(date);
   }
 
   render() {
@@ -383,17 +411,19 @@ export class PfDatePicker {
           aria-label="Choose a date"
           onToggle={this.onToggle}
         >
-          <pf-calendar
-            ref={this.bindCalendar}
-            part="calendar"
-            value={this.value || undefined}
-            min={this.min}
-            max={this.max}
-            startYear={this.startYear}
-            endYear={this.endYear}
-            showOutsideDays={this.showOutsideDays}
-            isDateDisabled={this.isDateDisabled}
-          ></pf-calendar>
+          {this.panelBuilt && (
+            <pf-calendar
+              ref={this.bindCalendar}
+              part="calendar"
+              value={this.value || undefined}
+              min={this.min}
+              max={this.max}
+              startYear={this.startYear}
+              endYear={this.endYear}
+              showOutsideDays={this.showOutsideDays}
+              isDateDisabled={this.isDateDisabled}
+            ></pf-calendar>
+          )}
         </div>
       </Host>
     );

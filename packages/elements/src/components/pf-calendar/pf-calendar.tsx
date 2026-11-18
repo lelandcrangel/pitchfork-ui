@@ -4,6 +4,9 @@ import {
   CALENDAR_CELL_COUNT,
   clampMonthToYearRange,
   formatISODate,
+  formatDayLabel,
+  formatMonthYear,
+  getMonthNames,
   isOutsideDateRange,
   isSameDay,
   Keys,
@@ -241,9 +244,7 @@ export class PfCalendar {
   private renderHeader() {
     const { start, end } = this.years;
     const years = Array.from({ length: end - start + 1 }, (_, index) => start + index);
-    const months = Array.from({ length: 12 }, (_, month) =>
-      new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(2024, month, 1)),
-    );
+    const months = getMonthNames();
 
     const atFirst = this.displayMonth.getFullYear() === start && this.displayMonth.getMonth() === 0;
     const atLast = this.displayMonth.getFullYear() === end && this.displayMonth.getMonth() === 11;
@@ -317,10 +318,7 @@ export class PfCalendar {
     const days = buildCalendarDays(this.displayMonth);
     const selected = this.selectedDate();
     const today = toMidday(new Date());
-    const monthLabel = new Intl.DateTimeFormat('en-US', {
-      month: 'long',
-      year: 'numeric',
-    }).format(this.displayMonth);
+    const monthLabel = formatMonthYear(this.displayMonth);
 
     return (
       <Host>
@@ -372,12 +370,7 @@ export class PfCalendar {
                       aria-selected={isSelected ? 'true' : 'false'}
                       aria-current={isToday ? 'date' : null}
                       aria-disabled={disabled ? 'true' : null}
-                      aria-label={new Intl.DateTimeFormat('en-US', {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      }).format(date)}
+                      aria-label={formatDayLabel(date)}
                       onClick={() => {
                         this.select(date);
                         this.shouldRestoreFocus = true;

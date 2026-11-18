@@ -11,6 +11,9 @@ import {
   isSameMonth,
   Keys,
   moveCalendarDate,
+  formatDayLabel,
+  formatMonthYear,
+  formatShortDate,
   nextDateRangeSelection,
   observeAnchoredPosition,
   parseDateRange,
@@ -23,6 +26,7 @@ import {
   type DateRangeValue,
 } from '@pitchfork-ui/core';
 
+import { DeferredPanel } from '../../deferred-panel';
 import { applyControlValidity } from '../../form-validity';
 import { controlAriaLabel } from '../../control-label';
 import { placePopover } from '../../place-popover';
@@ -167,7 +171,14 @@ export class PfDateRangePicker {
     this.syncFormState();
   }
 
+  componentDidLoad() {
+    // `@Watch` does not run for a value the element starts with.
+    if (this.open) this.panelGate.open();
+  }
+
   componentDidRender() {
+    // First, because finishing a deferred open is what asks for focus below.
+    this.panelGate.rendered(this.open);
     if (!this.shouldRestoreFocus) return;
     this.shouldRestoreFocus = false;
     this.el.shadowRoot?.querySelector<HTMLButtonElement>('button[data-day][tabindex="0"]')?.focus();
@@ -225,10 +236,22 @@ export class PfDateRangePicker {
     applyControlValidity(this.internals, Boolean(start && end), this.required, this.error);
   }
 
+  /**
+   * Whether the panel's content has been built. It is built the first time
+   * the panel opens rather than at load; see `src/deferred-panel.ts`.
+   */
+  @State() panelBuilt = false;
+
+  private panelGate = new DeferredPanel(this, () => this.showPanel());
+
   @Watch('open')
   syncOpen(next: boolean, previous: boolean) {
-    if (next) this.showPanel();
-    else this.hidePanel();
+    if (next) {
+      this.panelGate.open();
+    } else {
+      this.panelGate.close();
+      this.hidePanel();
+    }
     if (next !== previous) this.pfOpenChange.emit({ open: next });
   }
 
@@ -444,22 +467,14 @@ export class PfDateRangePicker {
   private formatted(): string {
     const { start, end } = this.range();
     if (!start || !end) return '';
-    const format = new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-    return `${format.format(start)} – ${format.format(end)}`;
+    return `${formatShortDate(start)} – ${formatShortDate(end)}`;
   }
 
   private renderGrid(month: Date) {
     const days = buildCalendarDays(month);
     const range = this.displayRange();
     const today = toMidday(new Date());
-    const label = new Intl.DateTimeFormat('en-US', {
-      month: 'long',
-      year: 'numeric',
-    }).format(month);
+    const label = formatMonthYear(month);
 
     return (
       <div class="month">
@@ -503,12 +518,7 @@ export class PfDateRangePicker {
                     aria-selected={isEndpoint || state.isInside ? 'true' : 'false'}
                     aria-current={isSameDay(today, date) ? 'date' : null}
                     aria-disabled={disabled ? 'true' : null}
-                    aria-label={new Intl.DateTimeFormat('en-US', {
-                      weekday: 'long',
-                      month: 'long',
-                      day: 'numeric',
-                      year: 'numeric',
-                    }).format(date)}
+                    aria-label={formatDayLabel(date)}
                     onClick={() => {
                       this.pick(date);
                       this.shouldRestoreFocus = true;
@@ -613,33 +623,35 @@ export class PfDateRangePicker {
             this.hovered = null;
           }}
         >
-          <div class="nav">
-            <button
-              type="button"
-              class="step"
-              aria-label="Previous month"
-              onClick={() => {
-                this.leftMonth = this.clamp(addMonths(this.leftMonth, -1));
-              }}
-            >
-              <pf-icon name="previous"></pf-icon>
-            </button>
-            <button
-              type="button"
-              class="step"
-              aria-label="Next month"
-              onClick={() => {
-                this.leftMonth = this.clamp(addMonths(this.leftMonth, 1));
-              }}
-            >
-              <pf-icon name="next"></pf-icon>
-            </button>
-          </div>
+          {this.panelBuilt && [
+            <div class="nav">
+              <button
+                type="button"
+                class="step"
+                aria-label="Previous month"
+                onClick={() => {
+                  this.leftMonth = this.clamp(addMonths(this.leftMonth, -1));
+                }}
+              >
+                <pf-icon name="previous"></pf-icon>
+              </button>
+              <button
+                type="button"
+                class="step"
+                aria-label="Next month"
+                onClick={() => {
+                  this.leftMonth = this.clamp(addMonths(this.leftMonth, 1));
+                }}
+              >
+                <pf-icon name="next"></pf-icon>
+              </button>
+            </div>,
 
-          <div class="months">
-            {this.renderGrid(this.leftMonth)}
-            {this.renderGrid(right)}
-          </div>
+            <div class="months">
+              {this.renderGrid(this.leftMonth)}
+              {this.renderGrid(right)}
+            </div>,
+          ]}
         </div>
       </Host>
     );

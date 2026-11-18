@@ -1444,6 +1444,20 @@ exceeded` pointing into the mock DOM's selector engine, which reads as a
   pointer, its autoplay test stopped stepping because an earlier test had
   clicked its buttons. Park the pointer before testing anything that reacts
   to hover.
+- **A closed picker builds no panel content.** `pf-date-picker`,
+  `pf-date-range-picker` and `pf-time-picker` render the popover element at
+  load and its content on the first open, through `src/deferred-panel.ts`:
+  a closed date picker was 192 DOM nodes and is 8. The first open has to wait
+  for that render — `@Watch('open')` runs before it — so the panel is shown
+  from `componentDidRender`, and the date picker waits for the new calendar's
+  `componentOnReady()` before focusing it, because a parent's render does not
+  wait for a child it has just added. Removing that wait fails
+  `picker-panels.browser.spec.tsx`. The same change fixed all three ignoring
+  `open` set in markup, which no `@Watch` sees.
+- **Make an `Intl` formatter once.** Constructing one resolves the locale and
+  options every time; the calendars made one per day cell per render, which
+  was most of a render's cost (`pf-calendar` 1.74 ms → 0.16 ms). Core's
+  `date-format.ts` holds them, and both layers use it.
 - **The package cannot be `"type": "module"`** — Stencil loads
   `stencil.config.ts` through `require()`. Hence `vitest.config.mts`.
 

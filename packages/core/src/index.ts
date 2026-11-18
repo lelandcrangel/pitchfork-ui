@@ -8,6 +8,7 @@ export * from './cartesian';
 export * from './command';
 export * from './custom-glyphs';
 export * from './date';
+export * from './date-format';
 export * from './date-range';
 export * from './dismiss';
 export * from './files';

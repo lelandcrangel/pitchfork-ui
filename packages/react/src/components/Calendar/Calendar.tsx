@@ -6,17 +6,14 @@ import { CalendarGrid } from './CalendarGrid';
 import {
   addMonths,
   clampMonthToYearRange,
+  getMonthNames,
   isSameDay,
   startOfMonth,
   toMidday,
 } from '@pitchfork-ui/core';
 import './Calendar.css';
 
-const MONTH_OPTIONS = Array.from({ length: 12 }, (_, month) => {
-  const date = new Date(2024, month, 1);
-  const label = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date);
-  return { value: month, label };
-});
+const MONTH_OPTIONS = getMonthNames().map((label, month) => ({ value: month, label }));
 
 /** @deprecated `@pitchfork-ui/react` is deprecated. Use `<pf-calendar>`, or `PfCalendar` from `@pitchfork-ui/elements-react`. See Foundations → Migrating. */
 export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue'> {

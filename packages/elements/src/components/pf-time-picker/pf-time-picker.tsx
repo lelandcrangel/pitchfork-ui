@@ -16,6 +16,7 @@ import {
   type TimeParts,
 } from '@pitchfork-ui/core';
 
+import { DeferredPanel } from '../../deferred-panel';
 import { applyControlValidity } from '../../form-validity';
 import { controlAriaLabel } from '../../control-label';
 import { placePopover } from '../../place-popover';
@@ -114,7 +115,13 @@ export class PfTimePicker {
     this.syncFormState();
   }
 
+  componentDidLoad() {
+    // `@Watch` does not run for a value the element starts with.
+    if (this.open) this.panelGate.open();
+  }
+
   componentDidRender() {
+    this.panelGate.rendered(this.open);
     if (this.open) this.scrollSelectedIntoView();
   }
 
@@ -130,10 +137,22 @@ export class PfTimePicker {
     applyControlValidity(this.internals, Boolean(this.value), this.required, this.error);
   }
 
+  /**
+   * Whether the panel's content has been built. It is built the first time
+   * the panel opens rather than at load; see `src/deferred-panel.ts`.
+   */
+  @State() panelBuilt = false;
+
+  private panelGate = new DeferredPanel(this, () => this.showPanel());
+
   @Watch('open')
   syncOpen(next: boolean, previous: boolean) {
-    if (next) this.showPanel();
-    else this.hidePanel();
+    if (next) {
+      this.panelGate.open();
+    } else {
+      this.panelGate.close();
+      this.hidePanel();
+    }
     if (next !== previous) this.pfOpenChange.emit({ open: next });
   }
 
@@ -397,27 +416,30 @@ export class PfTimePicker {
           aria-label="Choose a time"
           onToggle={this.onToggle}
         >
-          {this.renderColumn(
-            'Hour',
-            hourOptions(this.cycle).map((option) => ({
-              key: `h-${option}`,
-              label: padTimePart(option),
-              selected: shownHour === option,
-              onSelect: () => this.selectHour(option),
-            })),
-          )}
+          {this.panelBuilt &&
+            this.renderColumn(
+              'Hour',
+              hourOptions(this.cycle).map((option) => ({
+                key: `h-${option}`,
+                label: padTimePart(option),
+                selected: shownHour === option,
+                onSelect: () => this.selectHour(option),
+              })),
+            )}
 
-          {this.renderColumn(
-            'Minute',
-            timeRange(60, this.minuteStep).map((option) => ({
-              key: `m-${option}`,
-              label: padTimePart(option),
-              selected: minute === option,
-              onSelect: () => this.selectMinute(option),
-            })),
-          )}
+          {this.panelBuilt &&
+            this.renderColumn(
+              'Minute',
+              timeRange(60, this.minuteStep).map((option) => ({
+                key: `m-${option}`,
+                label: padTimePart(option),
+                selected: minute === option,
+                onSelect: () => this.selectMinute(option),
+              })),
+            )}
 
-          {this.cycle === 12 &&
+          {this.panelBuilt &&
+            this.cycle === 12 &&
             this.renderColumn(
               'AM or PM',
               (['AM', 'PM'] as Meridiem[]).map((option) => ({
