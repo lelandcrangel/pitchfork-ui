@@ -27,6 +27,7 @@ import { defineCustomElement as definePfCarousel } from '@pitchfork-ui/elements/
 import { defineCustomElement as definePfCarouselSlide } from '@pitchfork-ui/elements/components/pf-carousel-slide.js';
 import { defineCustomElement as definePfChartSeries } from '@pitchfork-ui/elements/components/pf-chart-series.js';
 import { defineCustomElement as definePfCheckbox } from '@pitchfork-ui/elements/components/pf-checkbox.js';
+import { defineCustomElement as definePfCheckboxGroup } from '@pitchfork-ui/elements/components/pf-checkbox-group.js';
 import { defineCustomElement as definePfCodeSnippet } from '@pitchfork-ui/elements/components/pf-code-snippet.js';
 import { defineCustomElement as definePfCollapsible } from '@pitchfork-ui/elements/components/pf-collapsible.js';
 import { defineCustomElement as definePfCombobox } from '@pitchfork-ui/elements/components/pf-combobox.js';
@@ -38,6 +39,8 @@ import { defineCustomElement as definePfContextMenu } from '@pitchfork-ui/elemen
 import { defineCustomElement as definePfCreditCard } from '@pitchfork-ui/elements/components/pf-credit-card.js';
 import { defineCustomElement as definePfDatePicker } from '@pitchfork-ui/elements/components/pf-date-picker.js';
 import { defineCustomElement as definePfDateRangePicker } from '@pitchfork-ui/elements/components/pf-date-range-picker.js';
+import { defineCustomElement as definePfDescriptionItem } from '@pitchfork-ui/elements/components/pf-description-item.js';
+import { defineCustomElement as definePfDescriptionList } from '@pitchfork-ui/elements/components/pf-description-list.js';
 import { defineCustomElement as definePfDropdown } from '@pitchfork-ui/elements/components/pf-dropdown.js';
 import { defineCustomElement as definePfEmptyState } from '@pitchfork-ui/elements/components/pf-empty-state.js';
 import { defineCustomElement as definePfFileUploader } from '@pitchfork-ui/elements/components/pf-file-uploader.js';
@@ -49,6 +52,7 @@ import { defineCustomElement as definePfInlineCta } from '@pitchfork-ui/elements
 import { defineCustomElement as definePfInput } from '@pitchfork-ui/elements/components/pf-input.js';
 import { defineCustomElement as definePfKbd } from '@pitchfork-ui/elements/components/pf-kbd.js';
 import { defineCustomElement as definePfLineChart } from '@pitchfork-ui/elements/components/pf-line-chart.js';
+import { defineCustomElement as definePfLink } from '@pitchfork-ui/elements/components/pf-link.js';
 import { defineCustomElement as definePfLoadingDots } from '@pitchfork-ui/elements/components/pf-loading-dots.js';
 import { defineCustomElement as definePfLoadingSkeleton } from '@pitchfork-ui/elements/components/pf-loading-skeleton.js';
 import { defineCustomElement as definePfLoadingSpinner } from '@pitchfork-ui/elements/components/pf-loading-spinner.js';
@@ -211,7 +215,11 @@ export const PfButton: StencilVueComponent<JSX.PfButton> = /*@__PURE__*/ defineC
   'loading',
   'disabled',
   'type',
-  'label'
+  'label',
+  'href',
+  'target',
+  'rel',
+  'download'
 ]);
 
 
@@ -308,6 +316,21 @@ export const PfCheckbox: StencilVueComponent<JSX.PfCheckbox, JSX.PfCheckbox["che
   'pfChange'
 ],
 'checked', 'pfChange', undefined);
+
+
+export const PfCheckboxGroup: StencilVueComponent<JSX.PfCheckboxGroup> = /*@__PURE__*/ defineContainer<JSX.PfCheckboxGroup>('pf-checkbox-group', definePfCheckboxGroup, [
+  'name',
+  'value',
+  'legend',
+  'description',
+  'error',
+  'orientation',
+  'required',
+  'disabled',
+  'pfChange'
+], [
+  'pfChange'
+]);
 
 
 export const PfCodeSnippet: StencilVueComponent<JSX.PfCodeSnippet> = /*@__PURE__*/ defineContainer<JSX.PfCodeSnippet>('pf-code-snippet', definePfCodeSnippet, [
@@ -465,6 +488,19 @@ export const PfDateRangePicker: StencilVueComponent<JSX.PfDateRangePicker> = /*@
 ]);
 
 
+export const PfDescriptionItem: StencilVueComponent<JSX.PfDescriptionItem> = /*@__PURE__*/ defineContainer<JSX.PfDescriptionItem>('pf-description-item', definePfDescriptionItem, [
+  'term',
+  'orientation',
+  'divided'
+]);
+
+
+export const PfDescriptionList: StencilVueComponent<JSX.PfDescriptionList> = /*@__PURE__*/ defineContainer<JSX.PfDescriptionList>('pf-description-list', definePfDescriptionList, [
+  'orientation',
+  'divided'
+]);
+
+
 export const PfDropdown: StencilVueComponent<JSX.PfDropdown> = /*@__PURE__*/ defineContainer<JSX.PfDropdown>('pf-dropdown', definePfDropdown, [
   'open',
   'align',
@@ -562,6 +598,8 @@ export const PfInput: StencilVueComponent<JSX.PfInput, JSX.PfInput["value"]> = /
   'required',
   'disabled',
   'readonly',
+  'clearable',
+  'revealable',
   'pfInput',
   'pfChange'
 ], [
@@ -585,6 +623,16 @@ export const PfLineChart: StencilVueComponent<JSX.PfLineChart> = /*@__PURE__*/ d
   'showLegend',
   'yAxisLabel',
   'label'
+]);
+
+
+export const PfLink: StencilVueComponent<JSX.PfLink> = /*@__PURE__*/ defineContainer<JSX.PfLink>('pf-link', definePfLink, [
+  'href',
+  'target',
+  'rel',
+  'download',
+  'variant',
+  'external'
 ]);
 
 
@@ -636,6 +684,7 @@ export const PfModal: StencilVueComponent<JSX.PfModal> = /*@__PURE__*/ defineCon
   'label',
   'dismissable',
   'showCloseButton',
+  'alert',
   'pfOpenChange'
 ], [
   'pfOpenChange'

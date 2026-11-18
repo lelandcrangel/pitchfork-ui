@@ -76,6 +76,10 @@ import {
   PfRadioButton,
   PfOption,
   PfRadioGroup,
+  PfCheckboxGroup,
+  PfLink,
+  PfDescriptionList,
+  PfDescriptionItem,
   PfRatingBadge,
   PfRatingStars,
   PfResizable,
@@ -216,6 +220,10 @@ registerIconGlyphs({
     PfRadioButton,
     PfOption,
     PfRadioGroup,
+    PfCheckboxGroup,
+    PfLink,
+    PfDescriptionList,
+    PfDescriptionItem,
     PfRatingBadge,
     PfRatingStars,
     PfResizable,
@@ -535,6 +543,19 @@ registerIconGlyphs({
           }
         </pf-radio-group>
       </form>
+
+      <!-- The four elements added in 0.4, outside the form the smoke submits. -->
+      <section data-testid="additions">
+        <pf-checkbox-group name="topics" legend="Topics" value="news">
+          <pf-checkbox value="news" label="News"></pf-checkbox>
+          <pf-checkbox value="tips" label="Tips"></pf-checkbox>
+        </pf-checkbox-group>
+        <p>Read the <pf-link href="#guide">guide</pf-link>.</p>
+        <pf-description-list [divided]="true">
+          <pf-description-item term="Plan">Team</pf-description-item>
+          <pf-description-item term="Seats">12 of 20</pf-description-item>
+        </pf-description-list>
+      </section>
       <p data-testid="prefs-state">
         terms {{ prefs.controls.terms.value }} / notify {{ prefs.controls.notify.value }} / valid
         {{ prefs.valid }}

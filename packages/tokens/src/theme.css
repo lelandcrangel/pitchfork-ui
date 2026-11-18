@@ -75,6 +75,7 @@
   --pf-input-border: var(--pf-control-border);
   --pf-input-text: var(--pf-control-text);
   --pf-input-placeholder: var(--pf-control-text-muted);
+  --pf-input-adornment: var(--color-semantic-text-muted);
 
   /* Surface/select aliases */
   --pf-surface-bg: var(
@@ -215,6 +216,13 @@
   --pf-radiogroup-text: var(--color-semantic-text-default);
   --pf-radiogroup-text-muted: var(--color-semantic-text-muted);
   --pf-radiogroup-accent: var(--color-semantic-action-primary);
+  --pf-checkboxgroup-text: var(--color-semantic-text-default);
+  --pf-link-text: var(--color-semantic-text-link);
+  --pf-link-text-hover: var(--color-semantic-text-link-hover);
+  --pf-link-subtle-underline: var(--color-semantic-border-strong);
+  --pf-descriptionlist-text: var(--color-semantic-text-default);
+  --pf-descriptionlist-term: var(--color-semantic-text-muted);
+  --pf-descriptionlist-divider: var(--color-semantic-border-default);
 
   /* SidebarNavigation aliases */
   --pf-sidebar-nav-bg: var(--color-semantic-background-default);

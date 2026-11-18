@@ -22,6 +22,12 @@ real `<form>`: the value reaches `FormData`, constraint validation works, and
 Angular's generated value accessor has something to bind to. A plain
 `<input>` inside a shadow root does none of that.
 
+Text, an icon or a unit can sit inside the box on either side of the text,
+through the `prefix` and `suffix` slots. `clearable` adds a button that
+empties the field, and `revealable` on a password field adds one that shows
+and hides what was typed; both are real buttons inside the box, and both
+hand focus back to the text.
+
 ## Example
 
 <ElementPreview example={elementExamples['pf-input']} />
@@ -30,6 +36,7 @@ Angular's generated value accessor has something to bind to. A plain
 
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
+| `clearable` | `clearable` | `boolean` | `false` | Offer a button that empties the field while it holds a value. |
 | `description` | `description` | `string \| undefined` | — | Hint text below the control. |
 | `disabled` | `disabled` | `boolean` | `false` | — |
 | `error` | `error` | `string \| undefined` | — | Error message. Its presence is what marks the control invalid. |
@@ -38,6 +45,7 @@ Angular's generated value accessor has something to bind to. A plain
 | `placeholder` | `placeholder` | `string \| undefined` | — | — |
 | `readonly` | `readonly` | `boolean` | `false` | — |
 | `required` | `required` | `boolean` | `false` | — |
+| `revealable` | `revealable` | `boolean` | `false` | On a password field, offer a button that shows what was typed. |
 | `type` | `type` | `"email" \| "password" \| "search" \| "tel" \| "text" \| "url"` | `'text'` | — |
 | `value` | `value` | `string` | `''` | The control's value. |
 
@@ -56,15 +64,25 @@ Angular's generated value accessor has something to bind to. A plain
 | `getValidationMessage()` | `getValidationMessage() => Promise<string>` | The message explaining why the control is invalid, or an empty string. |
 | `reportValidity()` | `reportValidity() => Promise<boolean>` | As `checkValidity`, but also shows the browser's validation message. |
 
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| `prefix` | an icon or text before the value, inside the box. |
+| `suffix` | an icon, unit or text after the value, inside the box. |
+
 ## Shadow parts
 
 | Part | Description |
 | --- | --- |
+| `clear` | the clear button, when `clearable` is set. |
+| `control` | the box: border, background, adornments and the input. |
 | `description` | the hint text below the control. |
 | `error` | the error message below the control. |
 | `field` | the wrapper around label, control and messages. |
 | `input` | the native input. |
 | `label` | the label element. |
+| `reveal` | the show-password button, when `revealable` is set. |
 
 ## Usage
 

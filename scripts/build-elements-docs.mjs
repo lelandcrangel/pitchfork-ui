@@ -3,7 +3,7 @@
  * Generates one Storybook docs page per custom element from Stencil's own
  * `docs.json`.
  *
- * Generated rather than hand-written, and that is the point: there are 108
+ * Generated rather than hand-written, and that is the point: there are 112
  * elements, and a prop table written by hand is a prop table that is wrong by
  * the second release. Stencil already records every prop, event, method, slot
  * and part from the source, so the reference cannot drift from the code — and
@@ -21,7 +21,7 @@
  * `apps/docs/src/element-examples.ts`, and this reads the keys out of it the
  * way `build-metadata.mjs` reads the icon lists out of `Icon.tsx`: by parsing
  * the source and throwing a named error when the shape it expects is not
- * there, so a rename is caught here rather than quietly producing 108 pages
+ * there, so a rename is caught here rather than quietly producing 112 pages
  * with no previews on them.
  */
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';

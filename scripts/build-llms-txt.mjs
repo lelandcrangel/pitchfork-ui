@@ -569,7 +569,7 @@ if (metadata) {
  * This used to assert that every React component had a docs page, which was
  * the right question while the site documented them. It does not any more, so
  * the question that can go wrong is the elements': a page title changing under
- * `elementDocsUrl` would silently publish 108 dead links, and `--verify`
+ * `elementDocsUrl` would silently publish 112 dead links, and `--verify`
  * catches that only when a Storybook build is there to compare against.
  */
 if (process.argv.includes('--strict')) {

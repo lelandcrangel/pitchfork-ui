@@ -25,9 +25,20 @@ export type PfInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'ur
  * Angular's generated value accessor has something to bind to. A plain
  * `<input>` inside a shadow root does none of that.
  *
+ * Text, an icon or a unit can sit inside the box on either side of the text,
+ * through the `prefix` and `suffix` slots. `clearable` adds a button that
+ * empties the field, and `revealable` on a password field adds one that shows
+ * and hides what was typed; both are real buttons inside the box, and both
+ * hand focus back to the text.
+ *
+ * @slot prefix - an icon or text before the value, inside the box.
+ * @slot suffix - an icon, unit or text after the value, inside the box.
  * @part field - the wrapper around label, control and messages.
  * @part label - the label element.
+ * @part control - the box: border, background, adornments and the input.
  * @part input - the native input.
+ * @part clear - the clear button, when `clearable` is set.
+ * @part reveal - the show-password button, when `revealable` is set.
  * @part description - the hint text below the control.
  * @part error - the error message below the control.
  */
@@ -74,6 +85,15 @@ export class PfInput {
   @Prop({ reflect: true }) disabled = false;
 
   @Prop({ reflect: true }) readonly = false;
+
+  /** Offer a button that empties the field while it holds a value. */
+  @Prop() clearable = false;
+
+  /** On a password field, offer a button that shows what was typed. */
+  @Prop() revealable = false;
+
+  /** Whether a password is being shown as text. */
+  @State() revealed = false;
 
   /** Fires on every keystroke, like the native `input` event. */
   @Event() pfInput!: EventEmitter<{ value: string }>;
@@ -171,6 +191,23 @@ export class PfInput {
     this.pfChange.emit({ value: this.value });
   };
 
+  private get inputEl() {
+    return this.el.shadowRoot?.querySelector<HTMLInputElement>('input') ?? null;
+  }
+
+  /** Empties the field as typing would, so both events fire, and keeps focus in it. */
+  private clear = () => {
+    this.value = '';
+    this.pfInput.emit({ value: '' });
+    this.pfChange.emit({ value: '' });
+    this.inputEl?.focus();
+  };
+
+  private toggleReveal = () => {
+    this.revealed = !this.revealed;
+    this.inputEl?.focus();
+  };
+
   /**
    * Enter submits the form, as it does in a native text field. The input in
    * the shadow root has no form owner, so the browser's implicit submission
@@ -206,24 +243,61 @@ export class PfInput {
               )}
             </label>
           )}
-          <input
-            id="input"
-            aria-label={controlAriaLabel(this.el, this.label)}
-            part="input"
-            class={{ input: true, 'input--invalid': Boolean(this.error) }}
-            type={this.type}
-            name={this.name}
-            value={this.value}
-            placeholder={this.placeholder}
-            required={this.required}
-            disabled={this.controlDisabled}
-            readOnly={this.readonly}
-            aria-invalid={this.error ? 'true' : null}
-            aria-describedby={describedBy}
-            onInput={this.onInput}
-            onChange={this.onChange}
-            onKeyDown={this.onKeyDown}
-          />
+          <div
+            class={{
+              control: true,
+              'control--invalid': Boolean(this.error),
+              'control--disabled': this.controlDisabled,
+            }}
+            part="control"
+          >
+            <slot name="prefix" />
+            <input
+              id="input"
+              aria-label={controlAriaLabel(this.el, this.label)}
+              part="input"
+              class="input"
+              type={this.type === 'password' && this.revealed ? 'text' : this.type}
+              name={this.name}
+              value={this.value}
+              placeholder={this.placeholder}
+              required={this.required}
+              disabled={this.controlDisabled}
+              readOnly={this.readonly}
+              aria-invalid={this.error ? 'true' : null}
+              aria-describedby={describedBy}
+              onInput={this.onInput}
+              onChange={this.onChange}
+              onKeyDown={this.onKeyDown}
+            />
+            {this.clearable && this.value && !this.controlDisabled && !this.readonly && (
+              <button
+                type="button"
+                class="action"
+                part="clear"
+                aria-label="Clear"
+                onClick={this.clear}
+              >
+                <pf-icon name="close" aria-hidden="true"></pf-icon>
+              </button>
+            )}
+            {this.revealable && this.type === 'password' && (
+              // One label and a pressed state, rather than a label that swaps:
+              // the APG's advice for a toggle, so the name a reader learnt stays.
+              <button
+                type="button"
+                class="action"
+                part="reveal"
+                aria-label="Show password"
+                aria-pressed={this.revealed ? 'true' : 'false'}
+                disabled={this.controlDisabled}
+                onClick={this.toggleReveal}
+              >
+                <pf-icon name={this.revealed ? 'conceal' : 'reveal'} aria-hidden="true"></pf-icon>
+              </button>
+            )}
+            <slot name="suffix" />
+          </div>
           {this.description && (
             <p class="description" part="description" id="description">
               {this.description}

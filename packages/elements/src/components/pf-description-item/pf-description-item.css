@@ -1,0 +1,36 @@
+/*
+ * The item spans the list's grid and hands its two children to the list's
+ * tracks, so a term lines up with every other term rather than sizing to its
+ * own text.
+ */
+:host {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  /* Only matters stacked, where the details sit under the term. */
+  row-gap: var(--space-1);
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.term {
+  color: var(--pf-descriptionlist-term);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.details {
+  margin: 0;
+  min-width: 0;
+}
+
+:host([divided]) {
+  border-top: 1px solid var(--pf-descriptionlist-divider);
+  padding-block: var(--space-3);
+}
+
+:host([divided]:first-child) {
+  border-top: 0;
+}

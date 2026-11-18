@@ -36,7 +36,7 @@ const config: StorybookConfig & { title: string } = {
     {
       // Storybook's MDX pipeline runs remark with no GFM extension, so a
       // pipe table renders as a paragraph of pipe characters. That was a
-      // curiosity while one page had a table; the 108 generated element
+      // curiosity while one page had a table; the 112 generated element
       // reference pages are almost entirely tables, so without this the
       // whole web-components section of the site is pipe soup. Probed by
       // removing the plugin again: `<table` disappears from the built

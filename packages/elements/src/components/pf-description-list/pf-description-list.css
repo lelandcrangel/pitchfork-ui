@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+/*
+ * One grid for the whole list, so every term shares a column: each item lays
+ * its own term and details onto these two tracks with `subgrid`.
+ */
+.list {
+  color: var(--pf-descriptionlist-text);
+  display: grid;
+  gap: var(--space-3) var(--space-6);
+  grid-template-columns: minmax(8rem, max-content) 1fr;
+  margin: 0;
+}
+
+:host([orientation='vertical']) .list {
+  grid-template-columns: 1fr;
+}
+
+:host([divided]) .list {
+  row-gap: 0;
+}

@@ -5,6 +5,7 @@
  */
 import { afterEach, expect, test } from 'vitest';
 import { page, userEvent } from 'vitest/browser';
+import { axNodesWithRole } from './chromium.browser-helper';
 import './components/pf-button/pf-button';
 import './components/pf-carousel/pf-carousel';
 import './components/pf-carousel-slide/pf-carousel-slide';
@@ -146,15 +147,27 @@ test('pf-tooltip describes the button a screen reader actually lands on', async 
     .toHaveAccessibleDescription('Saves the draft');
 });
 
+/*
+ * Read from Chromium's tree, and after show() rather than open in markup: the
+ * locator cannot follow the element reference that names the dialog, and the
+ * first render's copied `aria-label` let it pass without ever looking at it.
+ */
 test('pf-modal is named by its header, not by all of its text', async () => {
   await mount(`
-    <pf-modal open>
+    <pf-modal>
       <pf-modal-header>Delete project</pf-modal-header>
       <pf-modal-body>This cannot be undone.</pf-modal-body>
     </pf-modal>`);
-  await expect
-    .element(page.getByRole('dialog', { name: 'Delete project', exact: true }))
-    .toBeInTheDocument();
+  await (document.querySelector('pf-modal') as HTMLElement & { show(): Promise<void> }).show();
+  await until(
+    () => Boolean(document.querySelector('pf-modal')?.shadowRoot?.querySelector('dialog')?.open),
+    'the modal to open',
+  );
+  // Let the re-render that follows opening land: it is what drops the
+  // copied aria-label, so reading before it would see the copy.
+  for (let i = 0; i < 6; i += 1) await frame();
+  const named = (await axNodesWithRole('dialog')).map((node) => node.name);
+  expect(named).toEqual(['Delete project']);
 });
 
 test('pf-tag-input at its maximum keeps the field usable rather than disabled', async () => {

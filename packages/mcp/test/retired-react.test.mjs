@@ -114,14 +114,14 @@ for (const [name, args] of [
     const out = await call(name, args);
     assert.match(out, /@pitchfork-ui\/react has been retired/);
     // And points at what to call instead, with the real element count.
-    assert.match(out, /108 custom elements/);
+    assert.match(out, /112 custom elements/);
     assert.match(out, /`list_elements`/);
     assert.match(out, /@pitchfork-ui\/elements-react/);
   });
 }
 
 test('the element tools are unaffected', async () => {
-  assert.match(await call('list_elements'), /^108 elements/);
+  assert.match(await call('list_elements'), /^112 elements/);
   assert.match(await call('get_element', { name: 'pf-button' }), /^# <pf-button>/);
   assert.match(await call('get_examples', { name: 'pf-select' }), /pf-option/);
   assert.match(await call('get_tokens', { group: 'color' }), /color/);

@@ -258,7 +258,7 @@ test('validate_usage accepts every documented example', async () => {
   //
   // This used to walk the React components' examples. They came from the docs
   // pages, which are gone, so the corpus is the elements' now -- one worked
-  // example and, where it differs, one single instance, for all 108.
+  // example and, where it differs, one single instance, for all 112.
   const { elementMetadata, elementsByTag, componentsByName } = await import('../src/data.mjs');
   const { validateUsage } = await import('../src/validate.mjs');
 
@@ -356,7 +356,7 @@ test('every element reaches the server with an example', async () => {
 
 test('list_elements lists every element, grouped by the same categories', async () => {
   const out = await call('list_elements');
-  assert.match(out, /108 elements/);
+  assert.match(out, /112 elements/);
   assert.match(out, /<pf-button>/);
   assert.match(out, /## navigation/);
 });

@@ -17,8 +17,9 @@ import {
 const glyphs: Record<string, CustomGlyph> = CUSTOM_GLYPHS;
 
 describe('custom glyphs', () => {
-  it('carries the thirteen glyphs Font Awesome regular does not', () => {
+  it('carries the fourteen glyphs Font Awesome regular does not', () => {
     expect(getCustomGlyphNames()).toEqual([
+      'arrow-up-right-from-square',
       'chevron-down',
       'chevron-left',
       'chevron-right',
@@ -89,7 +90,7 @@ describe('custom glyphs', () => {
 
   it('lists the Font Awesome names both layers bundle', () => {
     expect([...BUNDLED_FA_ICON_NAMES]).toEqual([...BUNDLED_FA_ICON_NAMES].slice().sort());
-    expect(BUNDLED_FA_ICON_NAMES).toHaveLength(15);
+    expect(BUNDLED_FA_ICON_NAMES).toHaveLength(17);
     // A custom glyph and a bundled FA name must not claim the same name, or
     // which one draws depends on each layer's lookup order.
     for (const name of BUNDLED_FA_ICON_NAMES) {

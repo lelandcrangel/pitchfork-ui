@@ -3,7 +3,7 @@
  * What one element costs through each framework binding, against what it
  * costs imported on its own.
  *
- * Each binding imports all 108 element modules from one file, and a bundler
+ * Each binding imports all 112 element modules from one file, and a bundler
  * may only drop the 107 an app does not use if importing them does nothing.
  * Until 0.4 every element module registered itself on import
  * (`customElementsExportBehavior: 'auto-define-custom-elements'`), so none of

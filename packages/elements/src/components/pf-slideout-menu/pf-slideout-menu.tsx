@@ -13,7 +13,7 @@ import {
   Watch,
 } from '@stencil/core';
 
-export type PfSlideoutMenuPlacement = 'left' | 'right';
+export type PfSlideoutMenuPlacement = 'left' | 'right' | 'top' | 'bottom';
 export type PfSlideoutMenuSize = 'sm' | 'md' | 'lg';
 
 /**
@@ -52,7 +52,11 @@ export class PfSlideoutMenu {
   /** Whether the panel is showing. Reflected so the stylesheet can select on it. */
   @Prop({ mutable: true, reflect: true }) open = false;
 
-  /** Which edge it slides in from. Reflected; the stylesheet positions on it. */
+  /**
+   * Which edge it slides in from. Reflected; the stylesheet positions on it.
+   * `top` and `bottom` make a sheet: full width, as tall as its content up to
+   * a cap that `size` sets, which is the shape a phone expects.
+   */
   @Prop({ reflect: true }) placement: PfSlideoutMenuPlacement = 'right';
 
   /** Panel width. Reflected so the stylesheet can select on it. */

@@ -151,7 +151,8 @@ export const elementExamples: Record<string, ElementExample> = {
 <pf-button variant="ghost">Skip</pf-button>
 <pf-button variant="destructive">Delete</pf-button>
 <pf-button variant="primary" loading>Saving</pf-button>
-<pf-button variant="primary" disabled>Unavailable</pf-button>`,
+<pf-button variant="primary" disabled>Unavailable</pf-button>
+<pf-button variant="secondary" href="#settings">Go to settings</pf-button>`,
     interactive: `<pf-button>Button</pf-button>`,
   },
 
@@ -504,7 +505,15 @@ export const elementExamples: Record<string, ElementExample> = {
   value="SW1A 1AA"
   error="That postcode is not in our delivery area."
   style="min-width: 18rem"
-></pf-input>`,
+></pf-input>
+<pf-input label="Price" name="price" value="12.00" style="min-width: 18rem">
+  <span slot="prefix">£</span>
+  <span slot="suffix">per seat</span>
+</pf-input>
+<pf-input label="Search" name="q" value="Invoices" clearable style="min-width: 18rem">
+  <pf-icon slot="prefix" name="search"></pf-icon>
+</pf-input>
+<pf-input label="Password" name="password" type="password" value="correct horse" revealable style="min-width: 18rem"></pf-input>`,
     interactive: `<pf-input label="Email" name="email" placeholder="you@example.com" style="min-width: 18rem"></pf-input>`,
   },
 
@@ -624,8 +633,10 @@ export const elementExamples: Record<string, ElementExample> = {
   },
 
   'pf-modal': {
+    // An alert dialog: a destructive confirmation, named by its header and
+    // described by its body, that an overlay click cannot answer.
     html: `<pf-button data-open variant="primary">Delete the workspace</pf-button>
-<pf-modal label="Delete the workspace">
+<pf-modal alert>
   <pf-modal-header><strong>Delete the workspace</strong></pf-modal-header>
   <pf-modal-body>Everything in it goes with it. This cannot be undone.</pf-modal-body>
   <pf-modal-footer>
@@ -647,7 +658,7 @@ export const elementExamples: Record<string, ElementExample> = {
         });
       }
     },
-    interactive: `<pf-modal label="Delete the workspace" open>
+    interactive: `<pf-modal alert open>
   <pf-modal-header><strong>Delete the workspace</strong></pf-modal-header>
   <pf-modal-body>Everything in it goes with it. This cannot be undone.</pf-modal-body>
   <pf-modal-footer>
@@ -969,6 +980,45 @@ export const elementExamples: Record<string, ElementExample> = {
 </pf-radio-group>`,
   },
 
+  'pf-checkbox-group': {
+    html: `<pf-checkbox-group name="topics" legend="Email me about" description="Pick any." value="releases">
+  <pf-checkbox value="releases" label="New releases"></pf-checkbox>
+  <pf-checkbox value="tips" label="Tips and guides"></pf-checkbox>
+  <pf-checkbox value="offers" label="Offers"></pf-checkbox>
+</pf-checkbox-group>`,
+  },
+
+  'pf-description-item': {
+    html: `<pf-description-list style="width: 100%">
+  <pf-description-item term="Plan">Team, billed yearly</pf-description-item>
+  <pf-description-item>
+    <span slot="term">Seats</span>
+    <strong>12</strong> of 20 in use
+  </pf-description-item>
+</pf-description-list>`,
+    interactive: `<pf-description-list style="width: 100%">
+  <pf-description-item term="Plan">Team, billed yearly</pf-description-item>
+</pf-description-list>`,
+  },
+
+  'pf-description-list': {
+    html: `<pf-description-list divided style="width: 100%">
+  <pf-description-item term="Order">PF-10482</pf-description-item>
+  <pf-description-item term="Placed">14 March 2024</pf-description-item>
+  <pf-description-item term="Ship to">12 Station Road, Leeds</pf-description-item>
+  <pf-description-item term="Total">£86.40</pf-description-item>
+</pf-description-list>`,
+  },
+
+  'pf-link': {
+    html: `<p style="margin: 0">
+  Read the <pf-link href="#guide">setup guide</pf-link>, or check the
+  <pf-link href="https://example.com/status" external>status page</pf-link>.
+  <pf-link href="#more" variant="subtle">A quieter link</pf-link> suits dense text.
+</p>`,
+    interactive: `<pf-link href="#guide">Setup guide</pf-link>`,
+  },
+
   'pf-radio-group': {
     html: `<pf-radio-group name="delivery" legend="Delivery" value="standard" orientation="horizontal">
   <pf-radio-button value="standard">Standard</pf-radio-button>
@@ -1063,16 +1113,28 @@ export const elementExamples: Record<string, ElementExample> = {
 
   'pf-slideout-menu': {
     html: `<pf-button id="open-slideout" variant="secondary">Open the menu</pf-button>
+<pf-button id="open-sheet" variant="secondary">Open a bottom sheet</pf-button>
 <pf-slideout-menu id="demo-slideout" label="Navigation" heading="Navigation">
   <pf-nav-item href="#" orientation="vertical" current>Overview</pf-nav-item>
   <pf-nav-item href="#" orientation="vertical">Members</pf-nav-item>
   <pf-button slot="footer" size="sm" variant="ghost">Sign out</pf-button>
+</pf-slideout-menu>
+<pf-slideout-menu id="demo-sheet" label="Share" heading="Share" placement="bottom" size="sm">
+  <p style="margin: 0">Anyone with the link can view this page.</p>
+  <pf-button slot="footer" size="sm">Copy link</pf-button>
 </pf-slideout-menu>`,
     setup: (root) => {
-      const menu = root.querySelector('#demo-slideout') as
-        (HTMLElement & { show?: () => void }) | null;
-      root.querySelector('#open-slideout')?.addEventListener('click', () => menu?.show?.());
+      const open = (trigger: string, panel: string) => {
+        const menu = root.querySelector(panel) as (HTMLElement & { show?: () => void }) | null;
+        root.querySelector(trigger)?.addEventListener('click', () => menu?.show?.());
+      };
+      open('#open-slideout', '#demo-slideout');
+      open('#open-sheet', '#demo-sheet');
     },
+    interactive: `<pf-slideout-menu label="Navigation" heading="Navigation" open>
+  <pf-nav-item href="#" orientation="vertical" current>Overview</pf-nav-item>
+  <pf-nav-item href="#" orientation="vertical">Members</pf-nav-item>
+</pf-slideout-menu>`,
   },
 
   'pf-slider': {

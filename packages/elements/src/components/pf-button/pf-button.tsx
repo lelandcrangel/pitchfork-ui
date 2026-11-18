@@ -20,8 +20,11 @@ export type PfButtonType = 'button' | 'submit' | 'reset';
  * host reaches that button, which is what lets `pf-toolbar` treat it as an
  * item.
  *
+ * With `href` it is a link styled as a button — the right element for
+ * "Go to settings", where the action is navigation.
+ *
  * @slot - the button's label.
- * @part button - the native button element.
+ * @part button - the native button, or the `<a>` when `href` is set.
  * @part spinner - the loading spinner.
  */
 @Component({
@@ -68,6 +71,23 @@ export class PfButton {
 
   /** Accessible name, for when the slot holds only an icon. */
   @Prop() label?: string;
+
+  /**
+   * Makes it a link that looks like a button: the inner element is an `<a>`,
+   * so it navigates, opens in a new tab on a modified click and is announced
+   * as a link. `type` is ignored. A disabled or loading link has no `href` at
+   * all, since an anchor has no disabled state of its own.
+   */
+  @Prop({ reflect: true }) href?: string;
+
+  /** Where the link opens, as on an `<a>`. Only with `href`. */
+  @Prop() target?: string;
+
+  /** The link's relationship to its target, as on an `<a>`. Only with `href`. */
+  @Prop() rel?: string;
+
+  /** Download the target instead of navigating, as on an `<a>`. Only with `href`. */
+  @Prop() download?: string;
 
   /** ARIA state a wrapper set on the host, rendered onto the inner button. */
   @State() forwardedAria: ForwardedAria = {};
@@ -128,10 +148,48 @@ export class PfButton {
 
   render() {
     const isDisabled = this.disabled || this.loading || this.formDisabled;
+    const content = [this.loading && this.renderSpinner(), <slot />];
+
+    if (this.href !== undefined) {
+      return (
+        <Host>
+          {isDisabled ? (
+            // An anchor has no disabled state, so a disabled one drops its
+            // `href` -- which takes it out of the tab order and stops it
+            // navigating -- and says what it is.
+            <a
+              class="control"
+              part="button"
+              role="link"
+              aria-disabled="true"
+              {...this.forwardedAria}
+              aria-busy={this.loading ? 'true' : null}
+              aria-label={this.label}
+            >
+              {content}
+            </a>
+          ) : (
+            <a
+              class="control"
+              part="button"
+              href={this.href}
+              target={this.target}
+              rel={this.rel}
+              download={this.download}
+              {...this.forwardedAria}
+              aria-label={this.label}
+            >
+              {content}
+            </a>
+          )}
+        </Host>
+      );
+    }
 
     return (
       <Host>
         <button
+          class="control"
           part="button"
           // Always a plain button: the one inside has no form owner, and the
           // host's own click handler does what `type` asks.
@@ -142,8 +200,7 @@ export class PfButton {
           aria-busy={this.loading ? 'true' : null}
           aria-label={this.label}
         >
-          {this.loading && this.renderSpinner()}
-          <slot />
+          {content}
         </button>
       </Host>
     );

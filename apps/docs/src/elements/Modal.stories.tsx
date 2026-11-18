@@ -10,14 +10,9 @@ const example = elementExamples['pf-modal'];
 
 const meta = {
   title: 'Components/Modal',
-  args: {
-    dismissable: true,
-    open: true,
-    showCloseButton: true,
-    size: 'md',
-    label: 'Delete the workspace',
-  },
+  args: { alert: true, dismissable: true, open: true, showCloseButton: true, size: 'md' },
   argTypes: {
+    alert: { control: 'boolean' },
     dismissable: { control: 'boolean' },
     label: { control: 'text' },
     open: { control: 'boolean' },

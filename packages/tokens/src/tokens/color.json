@@ -286,6 +286,21 @@
           "$extensions": {
             "pitchfork.dark": "{color.gray.500}"
           }
+        },
+        "link": {
+          "$value": "{color.brand.700}",
+          "$type": "color",
+          "$description": "Link text. brand-700 on white is 7.9:1; brand-300 on the dark background keeps a link readable where the action colour would not.",
+          "$extensions": {
+            "pitchfork.dark": "{color.brand.300}"
+          }
+        },
+        "link-hover": {
+          "$value": "{color.brand.800}",
+          "$type": "color",
+          "$extensions": {
+            "pitchfork.dark": "{color.brand.200}"
+          }
         }
       },
       "border": {

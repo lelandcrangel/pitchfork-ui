@@ -31,6 +31,13 @@ export type PfModalSize = 'sm' | 'md' | 'lg';
  * wheel still scrolled the page behind an open modal — so this element locks
  * it, exactly as the React component does.
  *
+ * `alert` makes it an alert dialog — a confirmation that interrupts, such as
+ * "Delete this project?". The dialog takes `role="alertdialog"`, is described
+ * by its `pf-modal-body` as well as named by its header, and ignores a click
+ * on the overlay, since a stray click should not answer the question. Escape
+ * still cancels, which the ARIA pattern allows; add `dismissable="false"` to
+ * insist on a choice.
+ *
  * @slot - the modal's sections, usually `pf-modal-header`, `pf-modal-body` and
  * `pf-modal-footer`.
  * @part dialog - the native dialog, which is also the overlay.
@@ -67,6 +74,9 @@ export class PfModal {
 
   /** Render the corner close button. Defaults to true. */
   @Prop() showCloseButton = true;
+
+  /** An alert dialog: a confirmation that needs an answer. Reflected for the stylesheet. */
+  @Prop({ reflect: true }) alert = false;
 
   /** Fires whenever the modal opens or closes, whoever caused it. */
   @Event({ bubbles: false }) pfOpenChange!: EventEmitter<{ open: boolean }>;
@@ -233,16 +243,20 @@ export class PfModal {
    * is an inner box, so anything landing on the dialog missed the content.
    */
   private onDialogClick = (event: MouseEvent) => {
-    if (!this.dismissable || event.target !== this.dialog) return;
+    if (!this.dismissable || this.alert || event.target !== this.dialog) return;
     this.open = false;
   };
 
-  /** The slotted header, found by walking children (the mock DOM has no `:scope`). */
-  private get header(): HTMLElement | null {
+  /** A slotted section, found by walking children (the mock DOM has no `:scope`). */
+  private child(tag: string): HTMLElement | null {
     for (const child of Array.from(this.el.children)) {
-      if (child.tagName.toLowerCase() === 'pf-modal-header') return child as HTMLElement;
+      if (child.tagName.toLowerCase() === tag) return child as HTMLElement;
     }
     return null;
+  }
+
+  private get header(): HTMLElement | null {
+    return this.child('pf-modal-header');
   }
 
   /** The copied-text fallback, used only where element reflection is missing. */
@@ -258,13 +272,24 @@ export class PfModal {
     return Boolean(dialog && 'ariaLabelledByElements' in dialog);
   }
 
-  /** Points the dialog at its header by reference, which stays current by itself. */
-  private syncLabelledBy() {
+  /**
+   * Points the dialog at its header by reference, which stays current by
+   * itself -- and, for an alert, at its body as the description, which is
+   * what a reader hears straight after the name.
+   */
+  @Watch('alert')
+  syncLabelledBy() {
     const dialog = this.dialog as
-      (HTMLDialogElement & { ariaLabelledByElements: Element[] | null }) | null;
+      | (HTMLDialogElement & {
+          ariaLabelledByElements: Element[] | null;
+          ariaDescribedByElements: Element[] | null;
+        })
+      | null;
     if (!dialog || !this.supportsElementReflection()) return;
     const header = this.label ? null : this.header;
     dialog.ariaLabelledByElements = header ? [header] : null;
+    const body = this.alert ? this.child('pf-modal-body') : null;
+    dialog.ariaDescribedByElements = body ? [body] : null;
   }
 
   render() {
@@ -273,6 +298,7 @@ export class PfModal {
         <dialog
           part="dialog"
           class="dialog"
+          role={this.alert ? 'alertdialog' : undefined}
           aria-label={this.accessibleName()}
           onCancel={this.onCancel}
           onFocusout={this.onFocusOut}

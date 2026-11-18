@@ -75,6 +75,10 @@ import {
   PfRadioButton,
   PfOption,
   PfRadioGroup,
+  PfCheckboxGroup,
+  PfLink,
+  PfDescriptionList,
+  PfDescriptionItem,
   PfRatingBadge,
   PfRatingStars,
   PfResizable,
@@ -538,6 +542,21 @@ export function App() {
         </PfButton>
       </form>
       <p data-testid="submitted">submitted: {submitted}</p>
+
+      {/* The four elements added in 0.4, outside the form the smoke submits. */}
+      <section data-testid="additions">
+        <PfCheckboxGroup name="topics" legend="Topics" value="news">
+          <PfCheckbox value="news" label="News" />
+          <PfCheckbox value="tips" label="Tips" />
+        </PfCheckboxGroup>
+        <p>
+          Read the <PfLink href="#guide">guide</PfLink>.
+        </p>
+        <PfDescriptionList divided>
+          <PfDescriptionItem term="Plan">Team</PfDescriptionItem>
+          <PfDescriptionItem term="Seats">12 of 20</PfDescriptionItem>
+        </PfDescriptionList>
+      </section>
 
       {/*
         Deliberately inside a clipping, stacking-context box: the panel is a

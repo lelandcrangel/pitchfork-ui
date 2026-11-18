@@ -1,7 +1,7 @@
 /**
  * Writes `apps/docs/src/Migrating.mdx` from the migration map.
  *
- * Generated for the same reason the 108 reference pages are: the mapping is a
+ * Generated for the same reason the 112 reference pages are: the mapping is a
  * fact about two recorded APIs, so a hand-written copy is a copy to drift. The
  * prose that is *judgement* -- why a content prop cannot be a prop, why a
  * consumer's loop inverts -- is written here in this generator, once, and the
