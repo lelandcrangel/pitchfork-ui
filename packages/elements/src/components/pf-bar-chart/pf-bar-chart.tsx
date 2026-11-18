@@ -10,6 +10,7 @@ import {
   plotY,
 } from '@pitchfork-ui/core';
 import { Component, Element, h, Host, Method, Prop, State, Watch } from '@stencil/core';
+import { sameRecords } from '../../same-records';
 import type { PfChartRow } from '../pf-line-chart/pf-line-chart';
 
 /**
@@ -84,7 +85,7 @@ export class PfBarChart {
 
   @Watch('data')
   sync() {
-    this.series = this.seriesElements.map((element, index) => {
+    const next = this.seriesElements.map((element, index) => {
       const node = element as HTMLElement & { seriesKey?: string; color?: string };
       const color = chartSeriesColor(
         index,
@@ -95,6 +96,8 @@ export class PfBarChart {
 
       return { key: node.seriesKey ?? element.getAttribute('series-key') ?? '', color };
     });
+    // Only a changed list: a new array re-renders whether or not it differs.
+    if (!sameRecords(next, this.series)) this.series = next;
   }
 
   render() {
