@@ -1465,6 +1465,34 @@ exceeded` pointing into the mock DOM's selector engine, which reads as a
   the group's empty value down and unticked every one, and since `checked`
   reflects, the attribute was gone too. Read the property if the child has
   upgraded and the attribute if not, before the first render.
+- **The lazy loader cannot see an element inside a shadow root coming.** It
+  asks for a bundle when an element connects, and one rendered by another
+  element connects only after the parent has loaded, run and rendered — a
+  round trip or two per level. Stencil has no preload, and importing a child
+  component from a parent's source does nothing: the lazy build strips it.
+  `preloadRenderedElements` in `stencil.config.ts` adds the import to the
+  virtual `<tag>.entry` module instead, and needs two things to work, both
+  measured: `moduleSideEffects: 'no-treeshake'`, or Rollup drops a bare import
+  of a module that only re-exports a class, and `allow-extension` entry
+  signatures, or `pf-icon` lands in a shared chunk behind a facade that is a
+  serial request of its own. `check:package` reads `docs.json` and fails on a
+  parent entry that does not import a child, in both lazy builds.
+- **`scrollIntoView` lays the page out even when there is nothing to
+  scroll.** A closed listbox's option is `display: none` and the call still
+  forces a layout first, so a combobox that kept its active option in view
+  while loading forced one layout per instance. Scroll only while the panel is
+  open.
+- **A new array in `@State` re-renders whether or not it differs.** Stencil
+  compares state by identity, so a `sync()` that rebuilds a list from the
+  children re-renders every time it runs — and an element that reads its
+  children before first paint, in `componentDidLoad` and on the first
+  `slotchange` renders twice on load. Assign the list only when it changed;
+  `src/same-records.ts` compares flat records.
+- **A `slotchange` per item makes loading quadratic.** Whitespace is slotted
+  text, so once markup has newlines every `pf-tree-item` fires one, and a
+  tree that rescanned on each took 1,387 ms for 1,000 items. Coalesce
+  structural rescans into one per frame, and keep the immediate rescan for
+  the paths whose result is read straight back (a key, `value`, `refresh()`).
 - **The package cannot be `"type": "module"`** — Stencil loads
   `stencil.config.ts` through `require()`. Hence `vitest.config.mts`.
 

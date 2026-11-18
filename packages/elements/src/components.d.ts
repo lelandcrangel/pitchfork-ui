@@ -622,7 +622,7 @@ export namespace Components {
      */
     interface PfCarousel {
         /**
-          * Step forward on a timer.
+          * Step forward on a timer -- held while the pointer or focus is on the carousel, and stopped while it is scrolled out of view or the page is hidden.
           * @default false
          */
         "autoPlay": boolean;
@@ -7189,7 +7189,7 @@ declare namespace LocalJSX {
      */
     interface PfCarousel {
         /**
-          * Step forward on a timer.
+          * Step forward on a timer -- held while the pointer or focus is on the carousel, and stopped while it is scrolled out of view or the page is hidden.
           * @default false
          */
         "autoPlay"?: boolean;
