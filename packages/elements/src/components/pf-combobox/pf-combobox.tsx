@@ -291,6 +291,7 @@ export class PfCombobox {
     });
 
     this.applyQuery();
+    this.revealActive();
   }
 
   private hideListbox() {
@@ -324,6 +325,22 @@ export class PfCombobox {
 
     this.activeOption = option;
     this.syncActiveDescendant();
+    if (this.open) this.revealActive();
+  }
+
+  /**
+   * Scrolls the active option into the listbox's view -- only while the
+   * listbox is open.
+   *
+   * `scrollIntoView` lays the page out before it can tell that there is
+   * nothing to scroll, and every combobox picks a first active option while it
+   * loads, closed. So a form of them forced one layout each: measured in
+   * Chromium, 50 closed comboboxes beside 1,500 paragraphs made 50 calls and
+   * 51 layouts, about 27 ms of layout, for options nobody could see. Opening
+   * is when it matters, so the listbox reveals its active option then.
+   */
+  private revealActive() {
+    const option = this.activeOption;
     if (option && typeof option.scrollIntoView === 'function') {
       option.scrollIntoView({ block: 'nearest' });
     }
