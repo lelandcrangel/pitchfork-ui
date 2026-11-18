@@ -43,6 +43,19 @@
   justify-content: flex-start;
 }
 
+:host([placement='top']) .dialog,
+:host([placement='bottom']) .dialog {
+  flex-direction: column;
+}
+
+:host([placement='top']) .dialog {
+  justify-content: flex-start;
+}
+
+:host([placement='bottom']) .dialog {
+  justify-content: flex-end;
+}
+
 .dialog::backdrop {
   background: var(--pf-slideoutmenu-overlay-backdrop, var(--pf-overlay-backdrop));
 }
@@ -81,6 +94,41 @@
 }
 
 /*
+ * A sheet: the full width, and only as tall as its content up to a cap, with
+ * the corners rounded on the edge that faces the page.
+ */
+:host([placement='top']) .panel,
+:host([placement='bottom']) .panel {
+  height: auto;
+  width: 100%;
+}
+
+:host([placement='top'][size='sm']) .panel,
+:host([placement='bottom'][size='sm']) .panel {
+  max-height: 40vh;
+}
+
+:host([placement='top'][size='md']) .panel,
+:host([placement='bottom'][size='md']) .panel {
+  max-height: 60vh;
+}
+
+:host([placement='top'][size='lg']) .panel,
+:host([placement='bottom'][size='lg']) .panel {
+  max-height: 85vh;
+}
+
+:host([placement='top']) .panel {
+  border-bottom-width: 1px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+:host([placement='bottom']) .panel {
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-top-width: 1px;
+}
+
+/*
  * Its own copy of each: @keyframes do not cross a shadow boundary, so the
  * global sheet's definitions are invisible in here.
  */
@@ -92,6 +140,14 @@
   animation: pf-slideout-in-left var(--pf-transition-slow);
 }
 
+:host([placement='top']) .dialog[open] .panel {
+  animation: pf-slideout-in-top var(--pf-transition-slow);
+}
+
+:host([placement='bottom']) .dialog[open] .panel {
+  animation: pf-slideout-in-bottom var(--pf-transition-slow);
+}
+
 @keyframes pf-slideout-in-right {
   from {
     transform: translateX(100%);
@@ -101,6 +157,18 @@
 @keyframes pf-slideout-in-left {
   from {
     transform: translateX(-100%);
+  }
+}
+
+@keyframes pf-slideout-in-top {
+  from {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes pf-slideout-in-bottom {
+  from {
+    transform: translateY(100%);
   }
 }
 

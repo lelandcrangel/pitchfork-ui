@@ -5,7 +5,7 @@ import { withCssVariableControls } from './CssVariableDecorator';
 import { withTheme } from './ThemeDecorator';
 
 /*
- * Registers all 108 custom elements, so the generated reference pages can show
+ * Registers all 112 custom elements, so the generated reference pages can show
  * a live one. Before this they were tables describing elements the page could
  * not render -- which is the wrong way round for the part of this site that
  * exists to help someone decide whether to move off the React components.

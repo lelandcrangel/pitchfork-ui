@@ -54,6 +54,12 @@ export const ICON_ROLES = {
   star: 'star',
   /** More options. */
   more: 'ellipsis',
+  /** A link that opens somewhere else, in a new tab. */
+  external: 'arrow-up-right-from-square',
+  /** Show a hidden password. */
+  reveal: 'eye',
+  /** Hide a shown password again. */
+  conceal: 'eye-slash',
 } as const satisfies Record<string, CustomGlyphName | BundledFaIconName>;
 
 /** A name a component asks for by purpose rather than by glyph. */

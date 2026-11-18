@@ -1,0 +1,67 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { ElementPreview } from '../ElementPreview';
+import { elementExamples } from '../element-examples';
+import * as DescriptionItemStories from './DescriptionItem.stories';
+
+<Meta of={DescriptionItemStories} />
+
+{/*
+  Generated from packages/elements/dist/docs.json by
+  scripts/build-elements-docs.mjs. Edit the component's doc comments, not
+  this file — CI fails if the two disagree. The example comes from
+  apps/docs/src/element-examples.ts; edit it there.
+*/}
+
+# `<pf-description-item>`
+
+
+One term and its details, inside a `pf-description-list`.
+
+Renders a `<dt>` and a `<dd>`. The term is the `term` slot, or the `term`
+attribute for plain text; the details are the default slot.
+
+## Example
+
+<ElementPreview example={elementExamples['pf-description-item']} />
+
+## Properties
+
+| Property | Attribute | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `divided` | `divided` | `boolean` | `false` | Set by the list: draw a rule above this item. Reflected for the stylesheet. |
+| `orientation` | `orientation` | `"horizontal" \| "vertical"` | `'horizontal'` | Set by the list. Reflected for the stylesheet. |
+| `term` | `term` | `string \| undefined` | — | The term, as text. A `term` slot wins over it. |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| _(default)_ | the details. |
+| `term` | the term, when it needs markup. |
+
+## Shadow parts
+
+| Part | Description |
+| --- | --- |
+| `details` | the `<dd>`. |
+| `term` | the `<dt>`. |
+
+## Usage
+
+```html
+<!-- Plain HTML, after `import '@pitchfork-ui/elements/loader'` -->
+<pf-description-item></pf-description-item>
+```
+
+```tsx
+// React, through the generated bindings
+import { DescriptionItem } from '@pitchfork-ui/elements-react';
+
+<DescriptionItem />;
+```
+
+```html
+<!-- Angular, through the generated standalone components -->
+<pf-description-item></pf-description-item>
+```
+

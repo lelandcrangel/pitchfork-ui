@@ -41,7 +41,7 @@ core's reference-counted `lockPageScroll`.
 | `heading` | `heading` | `string \| undefined` | — | The heading shown in the header. |
 | `label` | `label` | `string \| undefined` | — | Accessible name, for when there is no `heading` to name it. With a heading, `aria-labelledby` is used instead and points at the heading's id. That works here and not in `pf-modal` because this heading is a prop rendered into this element's own shadow root, so the IDREF never crosses a boundary — `pf-modal`'s header is slotted light DOM, which is why it has to fall back to copying text into `aria-label`. |
 | `open` | `open` | `boolean` | `false` | Whether the panel is showing. Reflected so the stylesheet can select on it. |
-| `placement` | `placement` | `"left" \| "right"` | `'right'` | Which edge it slides in from. Reflected; the stylesheet positions on it. |
+| `placement` | `placement` | `"bottom" \| "left" \| "right" \| "top"` | `'right'` | Which edge it slides in from. Reflected; the stylesheet positions on it. `top` and `bottom` make a sheet: full width, as tall as its content up to a cap that `size` sets, which is the shape a phone expects. |
 | `showCloseButton` | `show-close-button` | `boolean` | `true` | Render the corner close button. Defaults to true. |
 | `size` | `size` | `"lg" \| "md" \| "sm"` | `'md'` | Panel width. Reflected so the stylesheet can select on it. |
 

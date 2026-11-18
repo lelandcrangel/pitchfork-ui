@@ -1,7 +1,7 @@
 /**
  * The glyphs the Font Awesome regular set does not carry, as data.
  *
- * Thirteen of them, and until now there were two copies: one as React JSX in
+ * Fourteen of them, and until now there were two copies: one as React JSX in
  * `Icon.tsx`, one as Stencil JSX in `pf-icon/render-glyph.tsx`. They agreed,
  * which is what two copies do on the day they are written — and neither
  * layer's tests could have seen them diverge, because each one only ever
@@ -16,7 +16,7 @@
  *
  * They are also the *defaults*: a glyph registered under the same name, with
  * `registerIconGlyphs()`, wins over the one here, so a consumer swapping in
- * another set replaces these too rather than living with thirteen of ours.
+ * another set replaces these too rather than living with fourteen of ours.
  *
  * Every glyph is drawn on a 24x24 grid and stroked in `currentColor`, except
  * `ellipsis`, which is three filled dots. A stroked glyph needs no `fill`
@@ -109,6 +109,16 @@ export const CUSTOM_GLYPHS = {
     shapes: [circle(11, 11, 8), path('m21 21-4.35-4.35')],
   },
   minus: { viewBox: VIEW_BOX, strokeWidth: 2.5, shapes: [path('M5 12h14')] },
+  // A link that leaves the page: a box with an arrow out of its corner.
+  'arrow-up-right-from-square': {
+    viewBox: VIEW_BOX,
+    strokeWidth: 2,
+    shapes: [
+      path('M14 4h6v6'),
+      path('M20 4l-9 9'),
+      path('M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5'),
+    ],
+  },
   // `satisfies` rather than an annotation, so the keys stay literal: it is
   // what gives `RegisteredIconName` in the React layer, and an editor its
   // completions.
@@ -145,6 +155,8 @@ export const BUNDLED_FA_ICON_NAMES = [
   'circle-xmark',
   'copy',
   'credit-card',
+  'eye',
+  'eye-slash',
   'file',
   'folder-open',
   'square-caret-left',

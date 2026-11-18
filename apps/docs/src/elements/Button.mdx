@@ -24,6 +24,9 @@ is the one a screen reader lands on. `delegatesFocus` is why focusing the
 host reaches that button, which is what lets `pf-toolbar` treat it as an
 item.
 
+With `href` it is a link styled as a button — the right element for
+"Go to settings", where the action is navigation.
+
 ## Example
 
 <ElementPreview example={elementExamples['pf-button']} />
@@ -33,10 +36,14 @@ item.
 | Property | Attribute | Type | Default | Description |
 | --- | --- | --- | --- | --- |
 | `disabled` | `disabled` | `boolean` | `false` | Disable the button. |
+| `download` | `download` | `string \| undefined` | — | Download the target instead of navigating, as on an `<a>`. Only with `href`. |
 | `fullWidth` | `full-width` | `boolean` | `false` | Stretch to the width of the container. |
+| `href` | `href` | `string \| undefined` | — | Makes it a link that looks like a button: the inner element is an `<a>`, so it navigates, opens in a new tab on a modified click and is announced as a link. `type` is ignored. A disabled or loading link has no `href` at all, since an anchor has no disabled state of its own. |
 | `label` | `label` | `string \| undefined` | — | Accessible name, for when the slot holds only an icon. |
 | `loading` | `loading` | `boolean` | `false` | Show a spinner and block interaction. |
+| `rel` | `rel` | `string \| undefined` | — | The link's relationship to its target, as on an `<a>`. Only with `href`. |
 | `size` | `size` | `"lg" \| "md" \| "sm"` | `'md'` | Control size. Reflected so the stylesheet can select on it. |
+| `target` | `target` | `string \| undefined` | — | Where the link opens, as on an `<a>`. Only with `href`. |
 | `type` | `type` | `"button" \| "reset" \| "submit"` | `'button'` | Mirrors the native attribute. `submit` submits the form the host is in (running its validation, as `requestSubmit()` does) and `reset` resets it. The submitter is not reported in the submission: a custom element cannot be a form's submitter, so a `name`/`value` pair on it would go nowhere. |
 | `variant` | `variant` | `"destructive" \| "ghost" \| "primary" \| "secondary"` | `'primary'` | Visual style. Reflected so the stylesheet can select on it. |
 
@@ -50,7 +57,7 @@ item.
 
 | Part | Description |
 | --- | --- |
-| `button` | the native button element. |
+| `button` | the native button, or the `<a>` when `href` is set. |
 | `spinner` | the loading spinner. |
 
 ## Usage

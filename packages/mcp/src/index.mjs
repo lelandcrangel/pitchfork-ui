@@ -10,7 +10,7 @@
  * `scripts/build-elements-metadata.mjs`. This process holds no knowledge of its
  * own.
  *
- * The 108 custom elements are the library. The 91 `@pitchfork-ui/react`
+ * The 112 custom elements are the library. The 91 `@pitchfork-ui/react`
  * components are deprecated, and the three tools that answer for them say so
  * and keep working while the package is installed -- and say the layer is gone,
  * rather than failing, once it is not.
@@ -288,7 +288,7 @@ server.registerTool(
     description:
       'List the components of @pitchfork-ui/react, which is DEPRECATED. Use this ' +
       'only to work on code that already imports it; for anything new call ' +
-      '`list_elements`, which lists the 108 custom elements that are the library ' +
+      '`list_elements`, which lists the 112 custom elements that are the library ' +
       'now. Every component here has an element that replaces it.',
     inputSchema: { category: z.enum(elementMetadata.categories).optional() },
   },

@@ -22,7 +22,7 @@
   display: none;
 }
 
-button {
+.control {
   align-items: center;
   background: none;
   border: 1px solid transparent;
@@ -46,73 +46,73 @@ button {
     box-shadow var(--pf-transition-fast);
 }
 
-button:focus-visible {
+.control:focus-visible {
   box-shadow: var(--pf-button-focus-ring, var(--pf-focus-ring));
   outline: none;
 }
 
-button:disabled {
+.control:is(:disabled, [aria-disabled='true']) {
   cursor: not-allowed;
   opacity: 0.55;
 }
 
-:host([size='sm']) button {
+:host([size='sm']) .control {
   font-size: var(--font-size-sm);
   min-height: 36px;
   padding: 0 var(--space-3);
 }
 
-:host([size='md']) button {
+:host([size='md']) .control {
   font-size: var(--font-size-md);
   min-height: 40px;
   padding: 0 var(--space-4);
 }
 
-:host([size='lg']) button {
+:host([size='lg']) .control {
   font-size: var(--font-size-lg);
   min-height: 48px;
   padding: 0 var(--space-5);
 }
 
-:host([variant='primary']) button {
+:host([variant='primary']) .control {
   background: var(--pf-button-primary-bg);
   color: var(--pf-button-primary-text);
 }
 
-:host([variant='primary']) button:hover:not(:disabled) {
+:host([variant='primary']) .control:hover:not(:disabled, [aria-disabled='true']) {
   background: var(--pf-button-primary-bg-hover);
 }
 
-:host([variant='secondary']) button {
+:host([variant='secondary']) .control {
   background: var(--pf-button-secondary-bg);
   border-color: var(--pf-button-secondary-border);
   color: var(--pf-button-secondary-text);
 }
 
-:host([variant='secondary']) button:hover:not(:disabled) {
+:host([variant='secondary']) .control:hover:not(:disabled, [aria-disabled='true']) {
   background: var(--pf-button-secondary-bg-hover);
   border-color: var(--pf-button-secondary-border-hover);
 }
 
-:host([variant='ghost']) button {
+:host([variant='ghost']) .control {
   background: transparent;
   color: var(--pf-button-ghost-text);
 }
 
-:host([variant='ghost']) button:hover:not(:disabled) {
+:host([variant='ghost']) .control:hover:not(:disabled, [aria-disabled='true']) {
   background: var(--pf-button-ghost-bg-hover);
 }
 
-:host([variant='destructive']) button {
+:host([variant='destructive']) .control {
   background: var(--pf-button-destructive-bg);
   color: var(--pf-button-destructive-text);
 }
 
-:host([variant='destructive']) button:hover:not(:disabled) {
+:host([variant='destructive']) .control:hover:not(:disabled, [aria-disabled='true']) {
   background: var(--pf-button-destructive-bg-hover);
 }
 
-:host([loading]) button:disabled {
+:host([loading]) .control:is(:disabled, [aria-disabled='true']) {
   cursor: wait;
   opacity: 1;
 }
@@ -123,7 +123,7 @@ button:disabled {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  button {
+  .control {
     transition: none;
   }
 

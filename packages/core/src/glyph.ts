@@ -10,7 +10,7 @@
  * solid blob.
  *
  * `IconGlyph` is the general shape: a viewBox, whether the glyph is stroked or
- * filled, and a list of SVG primitives. It is what the thirteen built-in
+ * filled, and a list of SVG primitives. It is what the built-in
  * glyphs were already written in, and both rendering layers draw it.
  *
  * Core imports nothing, so the adapters are structural. `fromFontAwesome`

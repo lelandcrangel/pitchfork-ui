@@ -12,7 +12,7 @@ const meta = {
   title: 'Components/SlideoutMenu',
   args: {
     dismissable: true,
-    open: false,
+    open: true,
     placement: 'right',
     showCloseButton: true,
     size: 'md',
@@ -25,7 +25,7 @@ const meta = {
     heading: { control: 'text' },
     label: { control: 'text' },
     open: { control: 'boolean' },
-    placement: { control: 'select', options: ['left', 'right'] },
+    placement: { control: 'select', options: ['bottom', 'left', 'right', 'top'] },
     showCloseButton: { control: 'boolean' },
     size: { control: 'select', options: ['lg', 'md', 'sm'] },
   },

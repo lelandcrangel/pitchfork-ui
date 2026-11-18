@@ -5,7 +5,7 @@
 // things only the Vue bindings can get wrong.
 //
 // Deliberately not `smoke-consumer.mjs --label vue`: that script asserts every
-// one of the 108 elements and its layout, which is what the React and Angular
+// one of the 112 elements and its layout, which is what the React and Angular
 // consumers are for. Rendering all of them a third time would prove nothing
 // new about the *bindings*, which is what this package is. What it checks
 // instead:

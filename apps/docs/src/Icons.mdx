@@ -4,8 +4,8 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Icons
 
-Pitchfork UI draws its own icons out of the box: 15 Font Awesome free-regular
-icons and 13 glyphs of its own (the chevrons, `plus`, `minus`,
+Pitchfork UI draws its own icons out of the box: 17 Font Awesome free-regular
+icons and 14 glyphs of its own (the chevrons, `plus`, `minus`,
 `magnifying-glass` and so on). Any of them can be replaced with whatever set
 your product uses, whether that is Font Awesome Pro in any style, Lucide,
 Heroicons, Phosphor or a company set. One call at startup swaps every icon the
@@ -20,26 +20,29 @@ The components do not ask for a Font Awesome name. They ask for a **role**,
 which says what the icon is for, and each role draws a default glyph until you
 register something for it.
 
-| Role           | Default                | Where the components draw it                                         |
-| -------------- | ---------------------- | -------------------------------------------------------------------- |
-| `close`        | `circle-xmark`         | Dismiss on alerts, CTAs and tags; clearing a picker; removing a file |
-| `chevron-down` | `chevron-down`         | Selects, comboboxes, accordions, collapsibles                        |
-| `previous`     | `square-caret-left`    | Calendar months, carousel slides                                     |
-| `next`         | `square-caret-right`   | Calendar months, carousel slides                                     |
-| `search`       | `magnifying-glass`     | The command palette                                                  |
-| `add`          | `plus`                 | The number input's increment                                         |
-| `subtract`     | `minus`                | The number input's decrement                                         |
-| `info`         | `circle-info`          | `variant="info"` alerts and notifications                            |
-| `success`      | `circle-check`         | `variant="success"`; a code snippet once copied                      |
-| `warning`      | `triangle-exclamation` | `variant="warning"`; a copy that failed                              |
-| `danger`       | `circle-xmark`         | `variant="danger"`                                                   |
-| `help`         | `circle-question`      | `pf-inline-cta`'s default icon                                       |
-| `calendar`     | `calendar`             | Date pickers                                                         |
-| `clock`        | `clock`                | The time picker                                                      |
-| `upload`       | `file-arrow-up`        | The file uploader's dropzone                                         |
-| `copy`         | `copy`                 | The code snippet's copy button                                       |
-| `star`         | `star`                 | Ratings                                                              |
-| `more`         | `ellipsis`             | Yours, for an overflow menu                                          |
+| Role           | Default                      | Where the components draw it                                         |
+| -------------- | ---------------------------- | -------------------------------------------------------------------- |
+| `close`        | `circle-xmark`               | Dismiss on alerts, CTAs and tags; clearing a picker; removing a file |
+| `chevron-down` | `chevron-down`               | Selects, comboboxes, accordions, collapsibles                        |
+| `previous`     | `square-caret-left`          | Calendar months, carousel slides                                     |
+| `next`         | `square-caret-right`         | Calendar months, carousel slides                                     |
+| `search`       | `magnifying-glass`           | The command palette                                                  |
+| `add`          | `plus`                       | The number input's increment                                         |
+| `subtract`     | `minus`                      | The number input's decrement                                         |
+| `info`         | `circle-info`                | `variant="info"` alerts and notifications                            |
+| `success`      | `circle-check`               | `variant="success"`; a code snippet once copied                      |
+| `warning`      | `triangle-exclamation`       | `variant="warning"`; a copy that failed                              |
+| `danger`       | `circle-xmark`               | `variant="danger"`                                                   |
+| `help`         | `circle-question`            | `pf-inline-cta`'s default icon                                       |
+| `calendar`     | `calendar`                   | Date pickers                                                         |
+| `clock`        | `clock`                      | The time picker                                                      |
+| `upload`       | `file-arrow-up`              | The file uploader's dropzone                                         |
+| `copy`         | `copy`                       | The code snippet's copy button                                       |
+| `star`         | `star`                       | Ratings                                                              |
+| `more`         | `ellipsis`                   | Yours, for an overflow menu                                          |
+| `external`     | `arrow-up-right-from-square` | A `pf-link` that opens in a new tab                                  |
+| `reveal`       | `eye`                        | `pf-input`'s show-password button                                    |
+| `conceal`      | `eye-slash`                  | `pf-input`'s hide-password button                                    |
 
 `getIconRoles()` lists them. Use roles in your own markup too
 (`<pf-icon name="close">`), because then swapping the set swaps your icons as
@@ -50,7 +53,7 @@ A name resolves in this order:
 1. anything registered under that exact name;
 2. for a role, whatever its default resolves to;
 3. a Font Awesome alias of something registered (`bar-chart` for `chart-bar`);
-4. one of the 13 built-in glyphs.
+4. one of the 14 built-in glyphs.
 
 So registering `close` changes every close button and nothing else, and
 registering `circle-xmark` still changes close **and** danger, because both

@@ -11,9 +11,11 @@ const example = elementExamples['pf-input'];
 const meta = {
   title: 'Components/Input',
   args: {
+    clearable: false,
     disabled: false,
     readonly: false,
     required: false,
+    revealable: false,
     type: 'text',
     value: '',
     label: 'Email',
@@ -21,6 +23,7 @@ const meta = {
     placeholder: 'you@example.com',
   },
   argTypes: {
+    clearable: { control: 'boolean' },
     description: { control: 'text' },
     disabled: { control: 'boolean' },
     error: { control: 'text' },
@@ -29,6 +32,7 @@ const meta = {
     placeholder: { control: 'text' },
     readonly: { control: 'boolean' },
     required: { control: 'boolean' },
+    revealable: { control: 'boolean' },
     type: { control: 'select', options: ['email', 'password', 'search', 'tel', 'text', 'url'] },
     value: { control: 'text' },
   },

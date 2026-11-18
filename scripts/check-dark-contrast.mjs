@@ -159,6 +159,14 @@ const PAIRS = [
     4.5,
     'text',
   ],
+  ['Link text on bg', 'color-semantic-text-link', 'color-semantic-background-default', 4.5, 'text'],
+  [
+    'Link hover text on bg',
+    'color-semantic-text-link-hover',
+    'color-semantic-background-default',
+    4.5,
+    'text',
+  ],
   [
     'Disabled text on bg',
     'color-semantic-text-disabled',

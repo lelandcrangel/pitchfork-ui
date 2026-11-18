@@ -1,0 +1,63 @@
+:host {
+  display: inline;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.link {
+  border-radius: var(--radius-sm);
+  color: var(--pf-link-text);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: from-font;
+  text-underline-offset: 0.15em;
+  transition: color var(--pf-transition-fast);
+}
+
+.link:hover {
+  color: var(--pf-link-text-hover);
+}
+
+.link:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+:host([variant='subtle']) .link {
+  color: inherit;
+  text-decoration-color: var(--pf-link-subtle-underline);
+}
+
+:host([variant='subtle']) .link:hover {
+  color: var(--pf-link-text-hover);
+  text-decoration-color: currentColor;
+}
+
+.icon {
+  display: inline-block;
+  font-size: 0.85em;
+  margin-inline-start: 0.2em;
+  vertical-align: -0.05em;
+}
+
+/* A shadow root cannot reach the global `.pf-sr-only`, so this is a copy. */
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+}

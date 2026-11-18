@@ -19,5 +19,12 @@
     "resolveJsonModule": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist", "loader", "**/*.spec.tsx", "**/*.spec.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "loader",
+    "**/*.spec.tsx",
+    "**/*.spec.ts",
+    "**/*.browser-helper.ts"
+  ]
 }

@@ -120,6 +120,7 @@ const CATEGORIES = [
 const CATEGORY = {
   // forms
   'pf-checkbox': 'forms',
+  'pf-checkbox-group': 'forms',
   'pf-combobox': 'forms',
   'pf-date-picker': 'forms',
   'pf-date-range-picker': 'forms',
@@ -153,6 +154,7 @@ const CATEGORY = {
   'pf-badge': 'display',
   'pf-badge-group': 'display',
   'pf-card': 'display',
+  'pf-description-list': 'display',
   'pf-card-content': 'display',
   'pf-card-footer': 'display',
   'pf-card-header': 'display',
@@ -169,6 +171,7 @@ const CATEGORY = {
   'pf-tooltip': 'display',
 
   // navigation
+  'pf-link': 'navigation',
   'pf-breadcrumbs': 'navigation',
   'pf-header-navigation': 'navigation',
   'pf-pagination': 'navigation',
@@ -272,6 +275,7 @@ const ABSORBED = {
 const CHILD_OF = {
   'pf-accordion-item': 'pf-accordion',
   'pf-breadcrumb': 'pf-breadcrumbs',
+  'pf-description-item': 'pf-description-list',
   'pf-button-group-item': 'pf-button-group',
   'pf-carousel-slide': 'pf-carousel',
   'pf-chart-series': 'pf-line-chart',
@@ -299,7 +303,7 @@ const CHILD_OF = {
  * `null` for every element once the React metadata is gone, which is correct
  * rather than a degradation: there is no counterpart to point at. The
  * `COUNTERPART` warning is only raised while there is a list to check against,
- * or it would fire for all 108.
+ * or it would fire for all 112.
  */
 function counterpartOf(tag) {
   if (!reactMetadata || CHILD_OF[tag]) return null;

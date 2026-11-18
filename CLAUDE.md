@@ -1,6 +1,6 @@
 # Pitchfork UI — Claude Context
 
-Component library for lelandrangel.com. **108 standard custom elements** backed
+Component library for lelandrangel.com. **112 standard custom elements** backed
 by a Style Dictionary token system, with generated React, Angular and Vue
 bindings, documented with Storybook.
 
@@ -276,7 +276,7 @@ The built-in glyphs (chevrons, `triangle-exclamation`) live in core's
 `CUSTOM_GLYPHS` and are the **last** thing a name resolves to, not the first.
 Add new ones there when a needed icon isn't in the regular FA set.
 
-**The thirteen custom glyphs are data in core, not markup in either layer.**
+**The fourteen custom glyphs are data in core, not markup in either layer.**
 `packages/core/src/custom-glyphs.ts` holds each one as a viewBox, a stroke
 width and a list of `polyline`/`path`/`circle` shapes; `Icon` maps them to
 React's camelCase presentation attributes and `pf-icon` to the hyphenated
@@ -1458,6 +1458,13 @@ exceeded` pointing into the mock DOM's selector engine, which reads as a
   options every time; the calendars made one per day cell per render, which
   was most of a render's cost (`pf-calendar` 1.74 ms → 0.16 ms). Core's
   `date-format.ts` holds them, and both layers use it.
+- **A group that takes its starting state from its children reads it in
+  `componentWillLoad`.** `pf-checkbox-group` lets `<pf-checkbox checked>`
+  set the start when the group has no `value`, and first read the children in
+  `componentDidLoad` — by which time the slot's first `slotchange` had pushed
+  the group's empty value down and unticked every one, and since `checked`
+  reflects, the attribute was gone too. Read the property if the child has
+  upgraded and the attribute if not, before the first render.
 - **The package cannot be `"type": "module"`** — Stencil loads
   `stencil.config.ts` through `require()`. Hence `vitest.config.mts`.
 
@@ -1517,6 +1524,23 @@ What each project cannot do, measured rather than assumed:
   the consumer apps' job — `scripts/smoke-consumer.mjs` asserts them against a
   real build, which is where a missing `--pf-*` alias actually shows up.
 
+- **`getByRole(…, { name })` cannot see a name given by element
+  reference.** Playwright computes accessible names itself and does not
+  follow `ariaLabelledByElements` or `ariaDescribedByElements` — the only way
+  a dialog in a shadow root can be named by slotted content. Measured on
+  `pf-modal` after `show()`: no dialog named "Confirm" by the locator, exactly
+  "Confirm" in Chromium's own tree. Worse, the modal's first render copies the
+  header into `aria-label` (the dialog does not exist yet to ask about
+  reflection), so a test that opened it in markup passed on the copy and never
+  looked at the reference; reverting the reference left it green.
+  `userEvent.click(element)` builds the same kind of locator, so a click on
+  the modal's overlay found the dialog only while the copy lasted, and timed
+  out at 15s once the re-render had dropped it — only under a full run's
+  load, in a different test each time. `src/chromium.browser-helper.ts` reads
+  Chromium's tree over CDP and clicks by coordinates (`clickAt`), across the
+  iframe Vitest runs specs in, scaled by that iframe's drawn size. Let the re-render after opening land before
+  reading it. Helpers named `*.browser-helper.ts` are excluded from the
+  Stencil build in `tsconfig.json`, because they import `vitest/browser`.
 - **A dep Vite discovers mid-run reloads the page and kills a suite.** Browser
   mode serves the suites off a real Vite dev server, so every bare specifier
   has to be pre-bundled; `@stencil/core/internal/client` is reached through the
@@ -1601,7 +1625,7 @@ to it with `<Meta of={PfAlertStories} />` rather than a title of its own. A
 title in both would make two sidebar entries instead of one with two children.
 
 `preview.ts` calls `defineCustomElements()` from `@pitchfork-ui/elements/loader`
-so all 108 are registered, and each page renders one through
+so all 112 are registered, and each page renders one through
 `ElementPreview`. The markup comes from `apps/docs/src/element-examples.ts`,
 keyed by tag — `docs.json` records every prop and slot and has no idea that
 `pf-select` needs `pf-option` children or what a sensible `data` array looks
@@ -1650,7 +1674,7 @@ judgement with no check behind it.
 
 `apps/docs/src/elements/` is in `eslint.config.js`'s ignores as well as
 `.prettierignore` now, for the same reason the generated bindings are — but it
-is still covered by `tsc -b`, which is what proves 108 generated stories
+is still covered by `tsc -b`, which is what proves 112 generated stories
 compile.
 
 Five things this settled, three of them the hard way:
@@ -1726,7 +1750,7 @@ Two things that bit while writing it:
   only because they are in `.prettierignore`.
 - **The generated pages are in `.prettierignore`**, because `--verify`
   compares the generator's own output. Formatting them afterwards would make
-  every build report 108 stale pages.
+  every build report 112 stale pages.
 - **Storybook's MDX runs remark with no GFM extension**, so a pipe table is a
   paragraph of pipe characters until `remark-gfm` is in addon-docs'
   `mdxCompileOptions`. These pages are almost entirely tables, so the whole
@@ -1824,7 +1848,7 @@ A pattern with wiring shows its `setup` source in the "Show code" panel through
 running it. That depends on `main.ts` setting `minify: false`, which it already
 does for other reasons.
 
-`check:examples` validates all seven against `elements.json` as well as the 108
+`check:examples` validates all seven against `elements.json` as well as the 112
 examples — each puts a dozen elements together, so a wrong attribute has a
 dozen places to hide. Probed with `variant="hero"` on a `pf-button`.
 
@@ -1851,7 +1875,7 @@ Keeping the two lists identical is deliberate: a control that models in one
 framework and not the other is a difference no test would report.
 
 **A binding is only tree-shakable while importing an element does nothing.**
-The Angular and Vue bindings each import all 108 element modules from one
+The Angular and Vue bindings each import all 112 element modules from one
 file. Every proxy is droppable — Vue's are `/*@__PURE__*/`, and the Angular
 CLI's optimizer wraps the decorated classes itself — but each element module
 used to register itself on import (`auto-define-custom-elements`), and a
@@ -1916,10 +1940,10 @@ instead of auditing every app in the workspace as production.
 
 ### Smoke-testing them
 
-`scripts/smoke-consumer.mjs` renders all 108 elements and asserts their
+`scripts/smoke-consumer.mjs` renders all 112 elements and asserts their
 computed styles; `consumer-react` and `consumer-angular` both run it.
 `scripts/smoke-vue.mjs` is deliberately a different script rather than
-`smoke-consumer.mjs --label vue`: rendering all 108 a third time would prove
+`smoke-consumer.mjs --label vue`: rendering all 112 a third time would prove
 nothing new about the _bindings_, which is what the package is. It renders ten
 elements and checks the three things only a Vue binding can get wrong:
 

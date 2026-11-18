@@ -7,6 +7,7 @@
  * the dialog's own Escape handling respond to trusted input only — measured.
  */
 import { userEvent } from 'vitest/browser';
+import { axNodesWithRole, clickAt } from '../../chromium.browser-helper';
 import { afterEach, expect, test } from 'vitest';
 import './pf-modal';
 import '../pf-modal-header/pf-modal-header';
@@ -182,7 +183,7 @@ test('a click on the overlay closes it', async () => {
 
   // The very corner of the dialog box: outside the centred panel.
   const box = dialog(el).getBoundingClientRect();
-  await userEvent.click(dialog(el), { position: { x: 2, y: 2 } });
+  await clickAt(dialog(el), 2, 2);
   void box;
   await until(() => !el.open, 'the modal to close on an overlay click');
 });
@@ -203,7 +204,7 @@ test('a non-dismissable modal ignores an overlay click', async () => {
   await el.show();
   await until(() => dialog(el).open);
 
-  await userEvent.click(dialog(el), { position: { x: 2, y: 2 } });
+  await clickAt(dialog(el), 2, 2);
   await new Promise((resolve) => setTimeout(resolve, 150));
 
   expect(el.open).toBe(true);
@@ -240,4 +241,35 @@ test('renders its three sections as separate elements', async () => {
   expect(el.querySelector('pf-modal-header')?.shadowRoot).not.toBeNull();
   expect(el.querySelector('pf-modal-body')?.shadowRoot).not.toBeNull();
   expect(el.querySelector('pf-modal-footer')?.shadowRoot).not.toBeNull();
+});
+
+/*
+ * An alert dialog is named by its header and described by its body, so a
+ * reader hears the question and what it means before the buttons. Read from
+ * Chromium's tree: both are element references, which the locator cannot see.
+ */
+test('alert is an alertdialog, named by its header and described by its body', async () => {
+  const el = await mount(FIXTURE('alert'));
+  await el.show();
+  await until(() => dialog(el).open);
+  for (let i = 0; i < 6; i += 1) await new Promise((resolve) => requestAnimationFrame(resolve));
+
+  expect(await axNodesWithRole('alertdialog')).toEqual([
+    { role: 'alertdialog', name: 'Confirm', description: 'Are you sure?' },
+  ]);
+  expect(await axNodesWithRole('dialog')).toEqual([]);
+});
+
+/* A stray click should not answer the question. */
+test('alert ignores an overlay click, and Escape still cancels', async () => {
+  const el = await mount(FIXTURE('alert'));
+  await el.show();
+  await until(() => dialog(el).open);
+
+  await clickAt(dialog(el), 2, 2);
+  await new Promise((resolve) => setTimeout(resolve, 150));
+  expect(el.open).toBe(true);
+
+  await userEvent.keyboard('{Escape}');
+  await until(() => !el.open, 'Escape to close it');
 });

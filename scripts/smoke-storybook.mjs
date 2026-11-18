@@ -51,7 +51,7 @@ const ANCHOR = {
 // One docs page as well as the stories, because the two are compiled by
 // different pipelines and only one of them was ever checked.
 //
-// The 108 generated element reference pages are almost entirely GFM tables,
+// The 112 generated element reference pages are almost entirely GFM tables,
 // and Storybook's MDX pipeline runs remark with no GFM extension unless
 // `remark-gfm` is wired into addon-docs' `mdxCompileOptions`. Without it a
 // pipe table is a paragraph of pipe characters: no error, no failed request,

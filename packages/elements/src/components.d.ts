@@ -14,14 +14,17 @@ import { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 import { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
 import { PfChartRow } from "./components/pf-line-chart/pf-line-chart";
 import { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
+import { PfCheckboxGroupOrientation } from "./components/pf-checkbox-group/pf-checkbox-group";
 import { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 import { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
+import { PfDescriptionListOrientation } from "./components/pf-description-list/pf-description-list";
 import { PfEmptyStateSize } from "./components/pf-empty-state/pf-empty-state";
 import { HeatmapDatumLike, HourCycle, Side, SortDirection, SortState, StepStatus } from "@pitchfork-ui/core";
 import { PfInlineCtaTone } from "./components/pf-inline-cta/pf-inline-cta";
 import { PfInputType } from "./components/pf-input/pf-input";
 import { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 import { PfChartRow as PfChartRow1 } from "./components/pf-line-chart/pf-line-chart";
+import { PfLinkVariant } from "./components/pf-link/pf-link";
 import { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 import { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 import { PfModalSize } from "./components/pf-modal/pf-modal";
@@ -55,14 +58,17 @@ export { PfBadgeVariant } from "./components/pf-badge/pf-badge";
 export { PfBadgeGroupAppearance, PfBadgeGroupBadgePosition, PfBadgeGroupColor } from "./components/pf-badge-group/pf-badge-group";
 export { PfChartRow } from "./components/pf-line-chart/pf-line-chart";
 export { PfButtonSize, PfButtonType, PfButtonVariant } from "./components/pf-button/pf-button";
+export { PfCheckboxGroupOrientation } from "./components/pf-checkbox-group/pf-checkbox-group";
 export { PfContentDividerOrientation } from "./components/pf-content-divider/pf-content-divider";
 export { PfCreditCardBrand } from "./components/pf-credit-card/pf-credit-card";
+export { PfDescriptionListOrientation } from "./components/pf-description-list/pf-description-list";
 export { PfEmptyStateSize } from "./components/pf-empty-state/pf-empty-state";
 export { HeatmapDatumLike, HourCycle, Side, SortDirection, SortState, StepStatus } from "@pitchfork-ui/core";
 export { PfInlineCtaTone } from "./components/pf-inline-cta/pf-inline-cta";
 export { PfInputType } from "./components/pf-input/pf-input";
 export { PfKbdSize } from "./components/pf-kbd/pf-kbd";
 export { PfChartRow as PfChartRow1 } from "./components/pf-line-chart/pf-line-chart";
+export { PfLinkVariant } from "./components/pf-link/pf-link";
 export { PfLoadingDotsSize } from "./components/pf-loading-dots/pf-loading-dots";
 export { PfMetricTrend } from "./components/pf-metric-card/pf-metric-card";
 export { PfModalSize } from "./components/pf-modal/pf-modal";
@@ -394,6 +400,8 @@ export namespace Components {
      * is the one a screen reader lands on. `delegatesFocus` is why focusing the
      * host reaches that button, which is what lets `pf-toolbar` treat it as an
      * item.
+     * With `href` it is a link styled as a button — the right element for
+     * "Go to settings", where the action is navigation.
      */
     interface PfButton {
         /**
@@ -402,10 +410,18 @@ export namespace Components {
          */
         "disabled": boolean;
         /**
+          * Download the target instead of navigating, as on an `<a>`. Only with `href`.
+         */
+        "download"?: string;
+        /**
           * Stretch to the width of the container.
           * @default false
          */
         "fullWidth": boolean;
+        /**
+          * Makes it a link that looks like a button: the inner element is an `<a>`, so it navigates, opens in a new tab on a modified click and is announced as a link. `type` is ignored. A disabled or loading link has no `href` at all, since an anchor has no disabled state of its own.
+         */
+        "href"?: string;
         /**
           * Accessible name, for when the slot holds only an icon.
          */
@@ -416,10 +432,18 @@ export namespace Components {
          */
         "loading": boolean;
         /**
+          * The link's relationship to its target, as on an `<a>`. Only with `href`.
+         */
+        "rel"?: string;
+        /**
           * Control size. Reflected so the stylesheet can select on it.
           * @default 'md'
          */
         "size": PfButtonSize;
+        /**
+          * Where the link opens, as on an `<a>`. Only with `href`.
+         */
+        "target"?: string;
         /**
           * Mirrors the native attribute. `submit` submits the form the host is in (running its validation, as `requestSubmit()` does) and `reset` resets it. The submitter is not reported in the submission: a custom element cannot be a form's submitter, so a `name`/`value` pair on it would go nowhere.
           * @default 'button'
@@ -750,6 +774,71 @@ export namespace Components {
         /**
           * What is submitted when ticked. Mirrors the native attribute, whose default is also `on` — a checkbox with no value still submits something.
           * @default 'on'
+         */
+        "value": string;
+    }
+    /**
+     * A form-associated group of `pf-checkbox` children, with one legend, one
+     * error and one submission.
+     * The group is the control, as `pf-radio-group` is: it holds the `name` and
+     * the `value`, and the checkboxes only say which of them is ticked. Give each
+     * child a `value` and no `name` — a named child would submit itself as well.
+     * The group submits one entry per ticked value under its own name, which is
+     * how a set of native checkboxes sharing a name arrives, so
+     * `formData.getAll(name)` reads them back as an array.
+     * `value` is the ticked values, comma-separated, because that is what an
+     * attribute can carry; `pfChange` also reports them as an array. With no
+     * `value` given, the children's own `checked` attributes set the starting
+     * state, so either spelling works in markup.
+     * `required` means at least one must be ticked.
+     */
+    interface PfCheckboxGroup {
+        /**
+          * A form-associated custom element does not inherit this.
+         */
+        "checkValidity": () => Promise<boolean>;
+        /**
+          * A hint below the legend.
+         */
+        "description"?: string;
+        /**
+          * Disable every choice. Reflected for the stylesheet.
+          * @default false
+         */
+        "disabled": boolean;
+        /**
+          * Error message. Its presence is what marks the group invalid.
+         */
+        "error"?: string;
+        /**
+          * The message explaining why the group is invalid, or an empty string.
+         */
+        "getValidationMessage": () => Promise<string>;
+        /**
+          * The group's heading.
+         */
+        "legend"?: string;
+        /**
+          * Submitted under this name, once per ticked value. Reflected for consumers' selectors; the submission itself is a FormData built here.
+         */
+        "name"?: string;
+        /**
+          * Layout of the choices. Reflected for the stylesheet.
+          * @default 'vertical'
+         */
+        "orientation": PfCheckboxGroupOrientation;
+        /**
+          * As `checkValidity`, but also shows the browser's validation message.
+         */
+        "reportValidity": () => Promise<boolean>;
+        /**
+          * At least one choice must be ticked.
+          * @default false
+         */
+        "required": boolean;
+        /**
+          * The ticked values, comma-separated. Reflected, so HTML can set it.
+          * @default ''
          */
         "value": string;
     }
@@ -1241,6 +1330,48 @@ export namespace Components {
         "value": string;
     }
     /**
+     * One term and its details, inside a `pf-description-list`.
+     * Renders a `<dt>` and a `<dd>`. The term is the `term` slot, or the `term`
+     * attribute for plain text; the details are the default slot.
+     */
+    interface PfDescriptionItem {
+        /**
+          * Set by the list: draw a rule above this item. Reflected for the stylesheet.
+          * @default false
+         */
+        "divided": boolean;
+        /**
+          * Set by the list. Reflected for the stylesheet.
+          * @default 'horizontal'
+         */
+        "orientation": 'horizontal' | 'vertical';
+        /**
+          * The term, as text. A `term` slot wins over it.
+         */
+        "term"?: string;
+    }
+    /**
+     * Pairs of a term and its details: an order's summary, a record's fields, a
+     * plan's limits.
+     * The list renders a real `<dl>` and each `pf-description-item` its own
+     * `<dt>` and `<dd>`, so a screen reader announces terms and their
+     * definitions. `horizontal` puts each term beside its details, with every
+     * term in one column so the details line up down the page; `vertical`
+     * stacks them, which is what a narrow container wants.
+     */
+    interface PfDescriptionList {
+        /**
+          * Draw a rule between items. Reflected; pushed onto the items, which draw it.
+          * @default false
+         */
+        "divided": boolean;
+        /**
+          * Terms beside their details, or above them. Reflected; pushed onto the items.
+          * @default 'horizontal'
+         */
+        "orientation": PfDescriptionListOrientation;
+    }
+    /**
      * A menu of actions, anchored to a trigger.
      * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
      * `pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
@@ -1544,12 +1675,22 @@ export namespace Components {
      * real `<form>`: the value reaches `FormData`, constraint validation works, and
      * Angular's generated value accessor has something to bind to. A plain
      * `<input>` inside a shadow root does none of that.
+     * Text, an icon or a unit can sit inside the box on either side of the text,
+     * through the `prefix` and `suffix` slots. `clearable` adds a button that
+     * empties the field, and `revealable` on a password field adds one that shows
+     * and hides what was typed; both are real buttons inside the box, and both
+     * hand focus back to the text.
      */
     interface PfInput {
         /**
           * Whether the control currently satisfies its constraints.  A form-associated custom element does not inherit `checkValidity` from anywhere -- the spec puts it on ElementInternals, so the element has to forward it or consumers cannot ask.
          */
         "checkValidity": () => Promise<boolean>;
+        /**
+          * Offer a button that empties the field while it holds a value.
+          * @default false
+         */
+        "clearable": boolean;
         /**
           * Hint text below the control.
          */
@@ -1587,6 +1728,11 @@ export namespace Components {
           * @default false
          */
         "required": boolean;
+        /**
+          * On a password field, offer a button that shows what was typed.
+          * @default false
+         */
+        "revealable": boolean;
         /**
           * @default 'text'
          */
@@ -1659,6 +1805,45 @@ export namespace Components {
           * Printed down the y axis, and used as the chart's name when it has none.
          */
         "yAxisLabel"?: string;
+    }
+    /**
+     * A text link, in the library's colours and focus ring.
+     * For a link that has to look like a button — "Go to settings" as a call to
+     * action — use `pf-button` with `href` instead. This is the one that sits in
+     * running text.
+     * `external` is the one decision it makes for you. A link that opens a new tab
+     * should say so before it is followed, so it gets `target="_blank"`, a
+     * `rel` of `noopener noreferrer` unless you give one, the `external` icon
+     * role, and "(opens in a new tab)" for a screen reader — which an icon alone
+     * would not tell anyone.
+     */
+    interface PfLink {
+        /**
+          * Download the target instead of navigating, as on an `<a>`.
+         */
+        "download"?: string;
+        /**
+          * Opens in a new tab, and says so.
+          * @default false
+         */
+        "external": boolean;
+        /**
+          * Where the link goes.
+         */
+        "href"?: string;
+        /**
+          * The link's relationship to its target, as on an `<a>`.
+         */
+        "rel"?: string;
+        /**
+          * Where it opens, as on an `<a>`. `external` sets `_blank`.
+         */
+        "target"?: string;
+        /**
+          * `subtle` draws the link in the surrounding text colour, underlined, for a page dense with links. Reflected for the stylesheet.
+          * @default 'default'
+         */
+        "variant": PfLinkVariant;
     }
     /**
      * Three pulsing dots, for an indeterminate wait in a tight space.
@@ -1784,8 +1969,19 @@ export namespace Components {
      * What `showModal()` does *not* do is lock page scroll — measured: a real
      * wheel still scrolled the page behind an open modal — so this element locks
      * it, exactly as the React component does.
+     * `alert` makes it an alert dialog — a confirmation that interrupts, such as
+     * "Delete this project?". The dialog takes `role="alertdialog"`, is described
+     * by its `pf-modal-body` as well as named by its header, and ignores a click
+     * on the overlay, since a stray click should not answer the question. Escape
+     * still cancels, which the ARIA pattern allows; add `dismissable="false"` to
+     * insist on a choice.
      */
     interface PfModal {
+        /**
+          * An alert dialog: a confirmation that needs an answer. Reflected for the stylesheet.
+          * @default false
+         */
+        "alert": boolean;
         /**
           * Close on Escape or a click on the overlay. Defaults to true.
           * @default true
@@ -2893,7 +3089,7 @@ export namespace Components {
          */
         "open": boolean;
         /**
-          * Which edge it slides in from. Reflected; the stylesheet positions on it.
+          * Which edge it slides in from. Reflected; the stylesheet positions on it. `top` and `bottom` make a sheet: full width, as tall as its content up to a cap that `size` sets, which is the shape a phone expects.
           * @default 'right'
          */
         "placement": PfSlideoutMenuPlacement;
@@ -3913,6 +4109,10 @@ export interface PfCheckboxCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCheckboxElement;
 }
+export interface PfCheckboxGroupCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLPfCheckboxGroupElement;
+}
 export interface PfCodeSnippetCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLPfCodeSnippetElement;
@@ -4267,6 +4467,8 @@ declare global {
      * is the one a screen reader lands on. `delegatesFocus` is why focusing the
      * host reaches that button, which is what lets `pf-toolbar` treat it as an
      * item.
+     * With `href` it is a link styled as a button — the right element for
+     * "Go to settings", where the action is navigation.
      */
     interface HTMLPfButtonElement extends Components.PfButton, HTMLStencilElement {
     }
@@ -4476,6 +4678,38 @@ declare global {
     var HTMLPfCheckboxElement: {
         prototype: HTMLPfCheckboxElement;
         new (): HTMLPfCheckboxElement;
+    };
+    interface HTMLPfCheckboxGroupElementEventMap {
+        "pfChange": { value: string; values: string[] };
+    }
+    /**
+     * A form-associated group of `pf-checkbox` children, with one legend, one
+     * error and one submission.
+     * The group is the control, as `pf-radio-group` is: it holds the `name` and
+     * the `value`, and the checkboxes only say which of them is ticked. Give each
+     * child a `value` and no `name` — a named child would submit itself as well.
+     * The group submits one entry per ticked value under its own name, which is
+     * how a set of native checkboxes sharing a name arrives, so
+     * `formData.getAll(name)` reads them back as an array.
+     * `value` is the ticked values, comma-separated, because that is what an
+     * attribute can carry; `pfChange` also reports them as an array. With no
+     * `value` given, the children's own `checked` attributes set the starting
+     * state, so either spelling works in markup.
+     * `required` means at least one must be ticked.
+     */
+    interface HTMLPfCheckboxGroupElement extends Components.PfCheckboxGroup, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLPfCheckboxGroupElementEventMap>(type: K, listener: (this: HTMLPfCheckboxGroupElement, ev: PfCheckboxGroupCustomEvent<HTMLPfCheckboxGroupElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLPfCheckboxGroupElementEventMap>(type: K, listener: (this: HTMLPfCheckboxGroupElement, ev: PfCheckboxGroupCustomEvent<HTMLPfCheckboxGroupElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLPfCheckboxGroupElement: {
+        prototype: HTMLPfCheckboxGroupElement;
+        new (): HTMLPfCheckboxGroupElement;
     };
     interface HTMLPfCodeSnippetElementEventMap {
         "pfCopy": { code: string };
@@ -4748,6 +4982,32 @@ declare global {
         prototype: HTMLPfDateRangePickerElement;
         new (): HTMLPfDateRangePickerElement;
     };
+    /**
+     * One term and its details, inside a `pf-description-list`.
+     * Renders a `<dt>` and a `<dd>`. The term is the `term` slot, or the `term`
+     * attribute for plain text; the details are the default slot.
+     */
+    interface HTMLPfDescriptionItemElement extends Components.PfDescriptionItem, HTMLStencilElement {
+    }
+    var HTMLPfDescriptionItemElement: {
+        prototype: HTMLPfDescriptionItemElement;
+        new (): HTMLPfDescriptionItemElement;
+    };
+    /**
+     * Pairs of a term and its details: an order's summary, a record's fields, a
+     * plan's limits.
+     * The list renders a real `<dl>` and each `pf-description-item` its own
+     * `<dt>` and `<dd>`, so a screen reader announces terms and their
+     * definitions. `horizontal` puts each term beside its details, with every
+     * term in one column so the details line up down the page; `vertical`
+     * stacks them, which is what a narrow container wants.
+     */
+    interface HTMLPfDescriptionListElement extends Components.PfDescriptionList, HTMLStencilElement {
+    }
+    var HTMLPfDescriptionListElement: {
+        prototype: HTMLPfDescriptionListElement;
+        new (): HTMLPfDescriptionListElement;
+    };
     interface HTMLPfDropdownElementEventMap {
         "pfOpenChange": { open: boolean };
         "pfSelect": { value: string };
@@ -4924,6 +5184,11 @@ declare global {
      * real `<form>`: the value reaches `FormData`, constraint validation works, and
      * Angular's generated value accessor has something to bind to. A plain
      * `<input>` inside a shadow root does none of that.
+     * Text, an icon or a unit can sit inside the box on either side of the text,
+     * through the `prefix` and `suffix` slots. `clearable` adds a button that
+     * empties the field, and `revealable` on a password field adds one that shows
+     * and hides what was typed; both are real buttons inside the box, and both
+     * hand focus back to the text.
      */
     interface HTMLPfInputElement extends Components.PfInput, HTMLStencilElement {
         addEventListener<K extends keyof HTMLPfInputElementEventMap>(type: K, listener: (this: HTMLPfInputElement, ev: PfInputCustomEvent<HTMLPfInputElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -4965,6 +5230,23 @@ declare global {
     var HTMLPfLineChartElement: {
         prototype: HTMLPfLineChartElement;
         new (): HTMLPfLineChartElement;
+    };
+    /**
+     * A text link, in the library's colours and focus ring.
+     * For a link that has to look like a button — "Go to settings" as a call to
+     * action — use `pf-button` with `href` instead. This is the one that sits in
+     * running text.
+     * `external` is the one decision it makes for you. A link that opens a new tab
+     * should say so before it is followed, so it gets `target="_blank"`, a
+     * `rel` of `noopener noreferrer` unless you give one, the `external` icon
+     * role, and "(opens in a new tab)" for a screen reader — which an icon alone
+     * would not tell anyone.
+     */
+    interface HTMLPfLinkElement extends Components.PfLink, HTMLStencilElement {
+    }
+    var HTMLPfLinkElement: {
+        prototype: HTMLPfLinkElement;
+        new (): HTMLPfLinkElement;
     };
     /**
      * Three pulsing dots, for an indeterminate wait in a tight space.
@@ -5068,6 +5350,12 @@ declare global {
      * What `showModal()` does *not* do is lock page scroll — measured: a real
      * wheel still scrolled the page behind an open modal — so this element locks
      * it, exactly as the React component does.
+     * `alert` makes it an alert dialog — a confirmation that interrupts, such as
+     * "Delete this project?". The dialog takes `role="alertdialog"`, is described
+     * by its `pf-modal-body` as well as named by its header, and ignores a click
+     * on the overlay, since a stray click should not answer the question. Escape
+     * still cancels, which the ARIA pattern allows; add `dismissable="false"` to
+     * insist on a choice.
      */
     interface HTMLPfModalElement extends Components.PfModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLPfModalElementEventMap>(type: K, listener: (this: HTMLPfModalElement, ev: PfModalCustomEvent<HTMLPfModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -6275,6 +6563,7 @@ declare global {
         "pf-carousel-slide": HTMLPfCarouselSlideElement;
         "pf-chart-series": HTMLPfChartSeriesElement;
         "pf-checkbox": HTMLPfCheckboxElement;
+        "pf-checkbox-group": HTMLPfCheckboxGroupElement;
         "pf-code-snippet": HTMLPfCodeSnippetElement;
         "pf-collapsible": HTMLPfCollapsibleElement;
         "pf-combobox": HTMLPfComboboxElement;
@@ -6286,6 +6575,8 @@ declare global {
         "pf-credit-card": HTMLPfCreditCardElement;
         "pf-date-picker": HTMLPfDatePickerElement;
         "pf-date-range-picker": HTMLPfDateRangePickerElement;
+        "pf-description-item": HTMLPfDescriptionItemElement;
+        "pf-description-list": HTMLPfDescriptionListElement;
         "pf-dropdown": HTMLPfDropdownElement;
         "pf-empty-state": HTMLPfEmptyStateElement;
         "pf-file-uploader": HTMLPfFileUploaderElement;
@@ -6297,6 +6588,7 @@ declare global {
         "pf-input": HTMLPfInputElement;
         "pf-kbd": HTMLPfKbdElement;
         "pf-line-chart": HTMLPfLineChartElement;
+        "pf-link": HTMLPfLinkElement;
         "pf-loading-dots": HTMLPfLoadingDotsElement;
         "pf-loading-skeleton": HTMLPfLoadingSkeletonElement;
         "pf-loading-spinner": HTMLPfLoadingSpinnerElement;
@@ -6667,6 +6959,8 @@ declare namespace LocalJSX {
      * is the one a screen reader lands on. `delegatesFocus` is why focusing the
      * host reaches that button, which is what lets `pf-toolbar` treat it as an
      * item.
+     * With `href` it is a link styled as a button — the right element for
+     * "Go to settings", where the action is navigation.
      */
     interface PfButton {
         /**
@@ -6674,6 +6968,10 @@ declare namespace LocalJSX {
           * @default false
          */
         "disabled"?: boolean;
+        /**
+          * Download the target instead of navigating, as on an `<a>`. Only with `href`.
+         */
+        "download"?: string;
         /**
           * The `id` of a `<form>` element to associate this element with.
          */
@@ -6683,6 +6981,10 @@ declare namespace LocalJSX {
           * @default false
          */
         "fullWidth"?: boolean;
+        /**
+          * Makes it a link that looks like a button: the inner element is an `<a>`, so it navigates, opens in a new tab on a modified click and is announced as a link. `type` is ignored. A disabled or loading link has no `href` at all, since an anchor has no disabled state of its own.
+         */
+        "href"?: string;
         /**
           * Accessible name, for when the slot holds only an icon.
          */
@@ -6697,10 +6999,18 @@ declare namespace LocalJSX {
          */
         "name"?: string;
         /**
+          * The link's relationship to its target, as on an `<a>`. Only with `href`.
+         */
+        "rel"?: string;
+        /**
           * Control size. Reflected so the stylesheet can select on it.
           * @default 'md'
          */
         "size"?: PfButtonSize;
+        /**
+          * Where the link opens, as on an `<a>`. Only with `href`.
+         */
+        "target"?: string;
         /**
           * Mirrors the native attribute. `submit` submits the form the host is in (running its validation, as `requestSubmit()` does) and `reset` resets it. The submitter is not reported in the submission: a custom element cannot be a form's submitter, so a `name`/`value` pair on it would go nowhere.
           * @default 'button'
@@ -7019,6 +7329,67 @@ declare namespace LocalJSX {
         /**
           * What is submitted when ticked. Mirrors the native attribute, whose default is also `on` — a checkbox with no value still submits something.
           * @default 'on'
+         */
+        "value"?: string;
+    }
+    /**
+     * A form-associated group of `pf-checkbox` children, with one legend, one
+     * error and one submission.
+     * The group is the control, as `pf-radio-group` is: it holds the `name` and
+     * the `value`, and the checkboxes only say which of them is ticked. Give each
+     * child a `value` and no `name` — a named child would submit itself as well.
+     * The group submits one entry per ticked value under its own name, which is
+     * how a set of native checkboxes sharing a name arrives, so
+     * `formData.getAll(name)` reads them back as an array.
+     * `value` is the ticked values, comma-separated, because that is what an
+     * attribute can carry; `pfChange` also reports them as an array. With no
+     * `value` given, the children's own `checked` attributes set the starting
+     * state, so either spelling works in markup.
+     * `required` means at least one must be ticked.
+     */
+    interface PfCheckboxGroup {
+        /**
+          * A hint below the legend.
+         */
+        "description"?: string;
+        /**
+          * Disable every choice. Reflected for the stylesheet.
+          * @default false
+         */
+        "disabled"?: boolean;
+        /**
+          * Error message. Its presence is what marks the group invalid.
+         */
+        "error"?: string;
+        /**
+          * The `id` of a `<form>` element to associate this element with.
+         */
+        "form"?: string;
+        /**
+          * The group's heading.
+         */
+        "legend"?: string;
+        /**
+          * Submitted under this name, once per ticked value. Reflected for consumers' selectors; the submission itself is a FormData built here.
+         */
+        "name"?: string;
+        /**
+          * Fires when a choice is ticked or unticked.
+         */
+        "onPfChange"?: (event: PfCheckboxGroupCustomEvent<{ value: string; values: string[] }>) => void;
+        /**
+          * Layout of the choices. Reflected for the stylesheet.
+          * @default 'vertical'
+         */
+        "orientation"?: PfCheckboxGroupOrientation;
+        /**
+          * At least one choice must be ticked.
+          * @default false
+         */
+        "required"?: boolean;
+        /**
+          * The ticked values, comma-separated. Reflected, so HTML can set it.
+          * @default ''
          */
         "value"?: string;
     }
@@ -7521,6 +7892,48 @@ declare namespace LocalJSX {
         "value"?: string;
     }
     /**
+     * One term and its details, inside a `pf-description-list`.
+     * Renders a `<dt>` and a `<dd>`. The term is the `term` slot, or the `term`
+     * attribute for plain text; the details are the default slot.
+     */
+    interface PfDescriptionItem {
+        /**
+          * Set by the list: draw a rule above this item. Reflected for the stylesheet.
+          * @default false
+         */
+        "divided"?: boolean;
+        /**
+          * Set by the list. Reflected for the stylesheet.
+          * @default 'horizontal'
+         */
+        "orientation"?: 'horizontal' | 'vertical';
+        /**
+          * The term, as text. A `term` slot wins over it.
+         */
+        "term"?: string;
+    }
+    /**
+     * Pairs of a term and its details: an order's summary, a record's fields, a
+     * plan's limits.
+     * The list renders a real `<dl>` and each `pf-description-item` its own
+     * `<dt>` and `<dd>`, so a screen reader announces terms and their
+     * definitions. `horizontal` puts each term beside its details, with every
+     * term in one column so the details line up down the page; `vertical`
+     * stacks them, which is what a narrow container wants.
+     */
+    interface PfDescriptionList {
+        /**
+          * Draw a rule between items. Reflected; pushed onto the items, which draw it.
+          * @default false
+         */
+        "divided"?: boolean;
+        /**
+          * Terms beside their details, or above them. Reflected; pushed onto the items.
+          * @default 'horizontal'
+         */
+        "orientation"?: PfDescriptionListOrientation;
+    }
+    /**
      * A menu of actions, anchored to a trigger.
      * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
      * `pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
@@ -7825,8 +8238,18 @@ declare namespace LocalJSX {
      * real `<form>`: the value reaches `FormData`, constraint validation works, and
      * Angular's generated value accessor has something to bind to. A plain
      * `<input>` inside a shadow root does none of that.
+     * Text, an icon or a unit can sit inside the box on either side of the text,
+     * through the `prefix` and `suffix` slots. `clearable` adds a button that
+     * empties the field, and `revealable` on a password field adds one that shows
+     * and hides what was typed; both are real buttons inside the box, and both
+     * hand focus back to the text.
      */
     interface PfInput {
+        /**
+          * Offer a button that empties the field while it holds a value.
+          * @default false
+         */
+        "clearable"?: boolean;
         /**
           * Hint text below the control.
          */
@@ -7868,6 +8291,11 @@ declare namespace LocalJSX {
           * @default false
          */
         "required"?: boolean;
+        /**
+          * On a password field, offer a button that shows what was typed.
+          * @default false
+         */
+        "revealable"?: boolean;
         /**
           * @default 'text'
          */
@@ -7936,6 +8364,45 @@ declare namespace LocalJSX {
           * Printed down the y axis, and used as the chart's name when it has none.
          */
         "yAxisLabel"?: string;
+    }
+    /**
+     * A text link, in the library's colours and focus ring.
+     * For a link that has to look like a button — "Go to settings" as a call to
+     * action — use `pf-button` with `href` instead. This is the one that sits in
+     * running text.
+     * `external` is the one decision it makes for you. A link that opens a new tab
+     * should say so before it is followed, so it gets `target="_blank"`, a
+     * `rel` of `noopener noreferrer` unless you give one, the `external` icon
+     * role, and "(opens in a new tab)" for a screen reader — which an icon alone
+     * would not tell anyone.
+     */
+    interface PfLink {
+        /**
+          * Download the target instead of navigating, as on an `<a>`.
+         */
+        "download"?: string;
+        /**
+          * Opens in a new tab, and says so.
+          * @default false
+         */
+        "external"?: boolean;
+        /**
+          * Where the link goes.
+         */
+        "href"?: string;
+        /**
+          * The link's relationship to its target, as on an `<a>`.
+         */
+        "rel"?: string;
+        /**
+          * Where it opens, as on an `<a>`. `external` sets `_blank`.
+         */
+        "target"?: string;
+        /**
+          * `subtle` draws the link in the surrounding text colour, underlined, for a page dense with links. Reflected for the stylesheet.
+          * @default 'default'
+         */
+        "variant"?: PfLinkVariant;
     }
     /**
      * Three pulsing dots, for an indeterminate wait in a tight space.
@@ -8065,8 +8532,19 @@ declare namespace LocalJSX {
      * What `showModal()` does *not* do is lock page scroll — measured: a real
      * wheel still scrolled the page behind an open modal — so this element locks
      * it, exactly as the React component does.
+     * `alert` makes it an alert dialog — a confirmation that interrupts, such as
+     * "Delete this project?". The dialog takes `role="alertdialog"`, is described
+     * by its `pf-modal-body` as well as named by its header, and ignores a click
+     * on the overlay, since a stray click should not answer the question. Escape
+     * still cancels, which the ARIA pattern allows; add `dismissable="false"` to
+     * insist on a choice.
      */
     interface PfModal {
+        /**
+          * An alert dialog: a confirmation that needs an answer. Reflected for the stylesheet.
+          * @default false
+         */
+        "alert"?: boolean;
         /**
           * Close on Escape or a click on the overlay. Defaults to true.
           * @default true
@@ -9169,7 +9647,7 @@ declare namespace LocalJSX {
          */
         "open"?: boolean;
         /**
-          * Which edge it slides in from. Reflected; the stylesheet positions on it.
+          * Which edge it slides in from. Reflected; the stylesheet positions on it. `top` and `bottom` make a sheet: full width, as tall as its content up to a cap that `size` sets, which is the shape a phone expects.
           * @default 'right'
          */
         "placement"?: PfSlideoutMenuPlacement;
@@ -10232,6 +10710,10 @@ declare namespace LocalJSX {
         "disabled": boolean;
         "type": PfButtonType;
         "label": string;
+        "href": string;
+        "target": string;
+        "rel": string;
+        "download": string;
     }
     interface PfButtonGroupAttributes {
         "value": string;
@@ -10282,6 +10764,16 @@ declare namespace LocalJSX {
         "value": string;
         "label": string;
         "error": string;
+        "required": boolean;
+        "disabled": boolean;
+    }
+    interface PfCheckboxGroupAttributes {
+        "name": string;
+        "value": string;
+        "legend": string;
+        "description": string;
+        "error": string;
+        "orientation": PfCheckboxGroupOrientation;
         "required": boolean;
         "disabled": boolean;
     }
@@ -10380,6 +10872,15 @@ declare namespace LocalJSX {
         "startYear": number;
         "endYear": number;
     }
+    interface PfDescriptionItemAttributes {
+        "term": string;
+        "orientation": 'horizontal' | 'vertical';
+        "divided": boolean;
+    }
+    interface PfDescriptionListAttributes {
+        "orientation": PfDescriptionListOrientation;
+        "divided": boolean;
+    }
     interface PfDropdownAttributes {
         "open": boolean;
         "align": 'start' | 'end';
@@ -10447,6 +10948,8 @@ declare namespace LocalJSX {
         "required": boolean;
         "disabled": boolean;
         "readonly": boolean;
+        "clearable": boolean;
+        "revealable": boolean;
     }
     interface PfKbdAttributes {
         "size": PfKbdSize;
@@ -10459,6 +10962,14 @@ declare namespace LocalJSX {
         "showLegend": boolean;
         "yAxisLabel": string;
         "label": string;
+    }
+    interface PfLinkAttributes {
+        "href": string;
+        "target": string;
+        "rel": string;
+        "download": string;
+        "variant": PfLinkVariant;
+        "external": boolean;
     }
     interface PfLoadingDotsAttributes {
         "size": PfLoadingDotsSize;
@@ -10489,6 +11000,7 @@ declare namespace LocalJSX {
         "label": string;
         "dismissable": boolean;
         "showCloseButton": boolean;
+        "alert": boolean;
     }
     interface PfMultiSelectAttributes {
         "name": string;
@@ -10896,6 +11408,7 @@ declare namespace LocalJSX {
         "pf-carousel-slide": Omit<PfCarouselSlide, keyof PfCarouselSlideAttributes> & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes]?: PfCarouselSlide[K] } & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes as `attr:${K}`]?: PfCarouselSlideAttributes[K] } & { [K in keyof PfCarouselSlide & keyof PfCarouselSlideAttributes as `prop:${K}`]?: PfCarouselSlide[K] };
         "pf-chart-series": Omit<PfChartSeries, keyof PfChartSeriesAttributes> & { [K in keyof PfChartSeries & keyof PfChartSeriesAttributes]?: PfChartSeries[K] } & { [K in keyof PfChartSeries & keyof PfChartSeriesAttributes as `attr:${K}`]?: PfChartSeriesAttributes[K] } & { [K in keyof PfChartSeries & keyof PfChartSeriesAttributes as `prop:${K}`]?: PfChartSeries[K] };
         "pf-checkbox": Omit<PfCheckbox, keyof PfCheckboxAttributes> & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes]?: PfCheckbox[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `attr:${K}`]?: PfCheckboxAttributes[K] } & { [K in keyof PfCheckbox & keyof PfCheckboxAttributes as `prop:${K}`]?: PfCheckbox[K] };
+        "pf-checkbox-group": Omit<PfCheckboxGroup, keyof PfCheckboxGroupAttributes> & { [K in keyof PfCheckboxGroup & keyof PfCheckboxGroupAttributes]?: PfCheckboxGroup[K] } & { [K in keyof PfCheckboxGroup & keyof PfCheckboxGroupAttributes as `attr:${K}`]?: PfCheckboxGroupAttributes[K] } & { [K in keyof PfCheckboxGroup & keyof PfCheckboxGroupAttributes as `prop:${K}`]?: PfCheckboxGroup[K] };
         "pf-code-snippet": Omit<PfCodeSnippet, keyof PfCodeSnippetAttributes> & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes]?: PfCodeSnippet[K] } & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes as `attr:${K}`]?: PfCodeSnippetAttributes[K] } & { [K in keyof PfCodeSnippet & keyof PfCodeSnippetAttributes as `prop:${K}`]?: PfCodeSnippet[K] };
         "pf-collapsible": Omit<PfCollapsible, keyof PfCollapsibleAttributes> & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes]?: PfCollapsible[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `attr:${K}`]?: PfCollapsibleAttributes[K] } & { [K in keyof PfCollapsible & keyof PfCollapsibleAttributes as `prop:${K}`]?: PfCollapsible[K] };
         "pf-combobox": Omit<PfCombobox, keyof PfComboboxAttributes> & { [K in keyof PfCombobox & keyof PfComboboxAttributes]?: PfCombobox[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `attr:${K}`]?: PfComboboxAttributes[K] } & { [K in keyof PfCombobox & keyof PfComboboxAttributes as `prop:${K}`]?: PfCombobox[K] };
@@ -10907,6 +11420,8 @@ declare namespace LocalJSX {
         "pf-credit-card": Omit<PfCreditCard, keyof PfCreditCardAttributes> & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes]?: PfCreditCard[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `attr:${K}`]?: PfCreditCardAttributes[K] } & { [K in keyof PfCreditCard & keyof PfCreditCardAttributes as `prop:${K}`]?: PfCreditCard[K] };
         "pf-date-picker": Omit<PfDatePicker, keyof PfDatePickerAttributes> & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes]?: PfDatePicker[K] } & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes as `attr:${K}`]?: PfDatePickerAttributes[K] } & { [K in keyof PfDatePicker & keyof PfDatePickerAttributes as `prop:${K}`]?: PfDatePicker[K] };
         "pf-date-range-picker": Omit<PfDateRangePicker, keyof PfDateRangePickerAttributes> & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes]?: PfDateRangePicker[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `attr:${K}`]?: PfDateRangePickerAttributes[K] } & { [K in keyof PfDateRangePicker & keyof PfDateRangePickerAttributes as `prop:${K}`]?: PfDateRangePicker[K] };
+        "pf-description-item": Omit<PfDescriptionItem, keyof PfDescriptionItemAttributes> & { [K in keyof PfDescriptionItem & keyof PfDescriptionItemAttributes]?: PfDescriptionItem[K] } & { [K in keyof PfDescriptionItem & keyof PfDescriptionItemAttributes as `attr:${K}`]?: PfDescriptionItemAttributes[K] } & { [K in keyof PfDescriptionItem & keyof PfDescriptionItemAttributes as `prop:${K}`]?: PfDescriptionItem[K] };
+        "pf-description-list": Omit<PfDescriptionList, keyof PfDescriptionListAttributes> & { [K in keyof PfDescriptionList & keyof PfDescriptionListAttributes]?: PfDescriptionList[K] } & { [K in keyof PfDescriptionList & keyof PfDescriptionListAttributes as `attr:${K}`]?: PfDescriptionListAttributes[K] } & { [K in keyof PfDescriptionList & keyof PfDescriptionListAttributes as `prop:${K}`]?: PfDescriptionList[K] };
         "pf-dropdown": Omit<PfDropdown, keyof PfDropdownAttributes> & { [K in keyof PfDropdown & keyof PfDropdownAttributes]?: PfDropdown[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `attr:${K}`]?: PfDropdownAttributes[K] } & { [K in keyof PfDropdown & keyof PfDropdownAttributes as `prop:${K}`]?: PfDropdown[K] };
         "pf-empty-state": Omit<PfEmptyState, keyof PfEmptyStateAttributes> & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes]?: PfEmptyState[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `attr:${K}`]?: PfEmptyStateAttributes[K] } & { [K in keyof PfEmptyState & keyof PfEmptyStateAttributes as `prop:${K}`]?: PfEmptyState[K] };
         "pf-file-uploader": Omit<PfFileUploader, keyof PfFileUploaderAttributes> & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes]?: PfFileUploader[K] } & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes as `attr:${K}`]?: PfFileUploaderAttributes[K] } & { [K in keyof PfFileUploader & keyof PfFileUploaderAttributes as `prop:${K}`]?: PfFileUploader[K] };
@@ -10918,6 +11433,7 @@ declare namespace LocalJSX {
         "pf-input": Omit<PfInput, keyof PfInputAttributes> & { [K in keyof PfInput & keyof PfInputAttributes]?: PfInput[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `attr:${K}`]?: PfInputAttributes[K] } & { [K in keyof PfInput & keyof PfInputAttributes as `prop:${K}`]?: PfInput[K] };
         "pf-kbd": Omit<PfKbd, keyof PfKbdAttributes> & { [K in keyof PfKbd & keyof PfKbdAttributes]?: PfKbd[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `attr:${K}`]?: PfKbdAttributes[K] } & { [K in keyof PfKbd & keyof PfKbdAttributes as `prop:${K}`]?: PfKbd[K] };
         "pf-line-chart": Omit<PfLineChart, keyof PfLineChartAttributes> & { [K in keyof PfLineChart & keyof PfLineChartAttributes]?: PfLineChart[K] } & { [K in keyof PfLineChart & keyof PfLineChartAttributes as `attr:${K}`]?: PfLineChartAttributes[K] } & { [K in keyof PfLineChart & keyof PfLineChartAttributes as `prop:${K}`]?: PfLineChart[K] };
+        "pf-link": Omit<PfLink, keyof PfLinkAttributes> & { [K in keyof PfLink & keyof PfLinkAttributes]?: PfLink[K] } & { [K in keyof PfLink & keyof PfLinkAttributes as `attr:${K}`]?: PfLinkAttributes[K] } & { [K in keyof PfLink & keyof PfLinkAttributes as `prop:${K}`]?: PfLink[K] };
         "pf-loading-dots": Omit<PfLoadingDots, keyof PfLoadingDotsAttributes> & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes]?: PfLoadingDots[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `attr:${K}`]?: PfLoadingDotsAttributes[K] } & { [K in keyof PfLoadingDots & keyof PfLoadingDotsAttributes as `prop:${K}`]?: PfLoadingDots[K] };
         "pf-loading-skeleton": Omit<PfLoadingSkeleton, keyof PfLoadingSkeletonAttributes> & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes]?: PfLoadingSkeleton[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `attr:${K}`]?: PfLoadingSkeletonAttributes[K] } & { [K in keyof PfLoadingSkeleton & keyof PfLoadingSkeletonAttributes as `prop:${K}`]?: PfLoadingSkeleton[K] };
         "pf-loading-spinner": Omit<PfLoadingSpinner, keyof PfLoadingSpinnerAttributes> & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes]?: PfLoadingSpinner[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `attr:${K}`]?: PfLoadingSpinnerAttributes[K] } & { [K in keyof PfLoadingSpinner & keyof PfLoadingSpinnerAttributes as `prop:${K}`]?: PfLoadingSpinner[K] };
@@ -11094,6 +11610,8 @@ declare module "@stencil/core" {
              * is the one a screen reader lands on. `delegatesFocus` is why focusing the
              * host reaches that button, which is what lets `pf-toolbar` treat it as an
              * item.
+             * With `href` it is a link styled as a button — the right element for
+             * "Go to settings", where the action is navigation.
              */
             "pf-button": LocalJSX.IntrinsicElements["pf-button"] & JSXBase.HTMLAttributes<HTMLPfButtonElement>;
             /**
@@ -11189,6 +11707,22 @@ declare module "@stencil/core" {
              * A form-associated checkbox.
              */
             "pf-checkbox": LocalJSX.IntrinsicElements["pf-checkbox"] & JSXBase.HTMLAttributes<HTMLPfCheckboxElement>;
+            /**
+             * A form-associated group of `pf-checkbox` children, with one legend, one
+             * error and one submission.
+             * The group is the control, as `pf-radio-group` is: it holds the `name` and
+             * the `value`, and the checkboxes only say which of them is ticked. Give each
+             * child a `value` and no `name` — a named child would submit itself as well.
+             * The group submits one entry per ticked value under its own name, which is
+             * how a set of native checkboxes sharing a name arrives, so
+             * `formData.getAll(name)` reads them back as an array.
+             * `value` is the ticked values, comma-separated, because that is what an
+             * attribute can carry; `pfChange` also reports them as an array. With no
+             * `value` given, the children's own `checked` attributes set the starting
+             * state, so either spelling works in markup.
+             * `required` means at least one must be ticked.
+             */
+            "pf-checkbox-group": LocalJSX.IntrinsicElements["pf-checkbox-group"] & JSXBase.HTMLAttributes<HTMLPfCheckboxGroupElement>;
             /**
              * A code block with a copy button.
              * **No syntax highlighting, deliberately.** The React `CodeSnippet` uses
@@ -11312,6 +11846,22 @@ declare module "@stencil/core" {
              */
             "pf-date-range-picker": LocalJSX.IntrinsicElements["pf-date-range-picker"] & JSXBase.HTMLAttributes<HTMLPfDateRangePickerElement>;
             /**
+             * One term and its details, inside a `pf-description-list`.
+             * Renders a `<dt>` and a `<dd>`. The term is the `term` slot, or the `term`
+             * attribute for plain text; the details are the default slot.
+             */
+            "pf-description-item": LocalJSX.IntrinsicElements["pf-description-item"] & JSXBase.HTMLAttributes<HTMLPfDescriptionItemElement>;
+            /**
+             * Pairs of a term and its details: an order's summary, a record's fields, a
+             * plan's limits.
+             * The list renders a real `<dl>` and each `pf-description-item` its own
+             * `<dt>` and `<dd>`, so a screen reader announces terms and their
+             * definitions. `horizontal` puts each term beside its details, with every
+             * term in one column so the details line up down the page; `vertical`
+             * stacks them, which is what a narrow container wants.
+             */
+            "pf-description-list": LocalJSX.IntrinsicElements["pf-description-list"] & JSXBase.HTMLAttributes<HTMLPfDescriptionListElement>;
+            /**
              * A menu of actions, anchored to a trigger.
              * `popover="auto"`, so light-dismiss and Escape are the browser's, as in
              * `pf-popover`. The keyboard pattern is the ARIA menu one and reuses core's
@@ -11408,6 +11958,11 @@ declare module "@stencil/core" {
              * real `<form>`: the value reaches `FormData`, constraint validation works, and
              * Angular's generated value accessor has something to bind to. A plain
              * `<input>` inside a shadow root does none of that.
+             * Text, an icon or a unit can sit inside the box on either side of the text,
+             * through the `prefix` and `suffix` slots. `clearable` adds a button that
+             * empties the field, and `revealable` on a password field adds one that shows
+             * and hides what was typed; both are real buttons inside the box, and both
+             * hand focus back to the text.
              */
             "pf-input": LocalJSX.IntrinsicElements["pf-input"] & JSXBase.HTMLAttributes<HTMLPfInputElement>;
             /**
@@ -11427,6 +11982,18 @@ declare module "@stencil/core" {
              * tick scale, or the gridlines say one thing and the line says another.
              */
             "pf-line-chart": LocalJSX.IntrinsicElements["pf-line-chart"] & JSXBase.HTMLAttributes<HTMLPfLineChartElement>;
+            /**
+             * A text link, in the library's colours and focus ring.
+             * For a link that has to look like a button — "Go to settings" as a call to
+             * action — use `pf-button` with `href` instead. This is the one that sits in
+             * running text.
+             * `external` is the one decision it makes for you. A link that opens a new tab
+             * should say so before it is followed, so it gets `target="_blank"`, a
+             * `rel` of `noopener noreferrer` unless you give one, the `external` icon
+             * role, and "(opens in a new tab)" for a screen reader — which an icon alone
+             * would not tell anyone.
+             */
+            "pf-link": LocalJSX.IntrinsicElements["pf-link"] & JSXBase.HTMLAttributes<HTMLPfLinkElement>;
             /**
              * Three pulsing dots, for an indeterminate wait in a tight space.
              */
@@ -11480,6 +12047,12 @@ declare module "@stencil/core" {
              * What `showModal()` does *not* do is lock page scroll — measured: a real
              * wheel still scrolled the page behind an open modal — so this element locks
              * it, exactly as the React component does.
+             * `alert` makes it an alert dialog — a confirmation that interrupts, such as
+             * "Delete this project?". The dialog takes `role="alertdialog"`, is described
+             * by its `pf-modal-body` as well as named by its header, and ignores a click
+             * on the overlay, since a stray click should not answer the question. Escape
+             * still cancels, which the ARIA pattern allows; add `dismissable="false"` to
+             * insist on a choice.
              */
             "pf-modal": LocalJSX.IntrinsicElements["pf-modal"] & JSXBase.HTMLAttributes<HTMLPfModalElement>;
             /**

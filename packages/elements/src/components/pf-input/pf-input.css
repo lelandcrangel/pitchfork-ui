@@ -34,15 +34,22 @@
   margin: 0;
 }
 
-.input {
+/*
+ * The box is the control, not the input: the border, the background and the
+ * focus ring sit here so the adornments and buttons are inside it with the
+ * text. The ring shows for keyboard focus on the text only, which is what
+ * `:focus-visible` on a native input already decides.
+ */
+.control {
+  align-items: center;
   background: var(--pf-input-bg);
   border: 1px solid var(--pf-input-border);
   border-radius: var(--radius-md);
   color: var(--pf-input-text);
-  font: inherit;
+  display: flex;
+  gap: var(--space-2);
   min-height: 40px;
   padding: 0 var(--space-3);
-  width: 100%;
   transition:
     background 0.2s,
     border 0.2s,
@@ -50,7 +57,16 @@
     opacity 0.2s;
 }
 
-.input:disabled {
+.control:has(.input:focus-visible) {
+  border-color: var(--pf-input-focus-border);
+  box-shadow: var(--pf-input-focus-ring, var(--pf-focus-ring));
+}
+
+.control--invalid {
+  border-color: var(--pf-input-invalid-border);
+}
+
+.control--disabled {
   background: var(--pf-control-bg-disabled);
   border-color: var(--pf-control-border-disabled);
   color: var(--pf-control-text-disabled);
@@ -58,25 +74,66 @@
   opacity: 0.6;
 }
 
-.input:focus {
-  outline: none;
+.input {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  flex: 1;
+  font: inherit;
+  min-height: 38px;
+  min-width: 0;
+  padding: 0;
 }
 
-.input:focus-visible {
-  border-color: var(--pf-input-focus-border);
-  box-shadow: var(--pf-input-focus-ring, var(--pf-focus-ring));
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.input:focus {
+  outline: none;
 }
 
 .input::placeholder {
   color: var(--pf-input-placeholder);
 }
 
-.input--invalid {
-  border-color: var(--pf-input-invalid-border);
+::slotted([slot='prefix']),
+::slotted([slot='suffix']) {
+  color: var(--pf-input-adornment);
+  flex-shrink: 0;
+}
+
+.action {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--pf-input-adornment);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  /* Comfortable to hit without making the box taller. */
+  height: 28px;
+  margin-inline: calc(var(--space-1) * -1);
+  width: 28px;
+}
+
+.action:hover {
+  color: var(--pf-input-text);
+}
+
+.action:focus-visible {
+  box-shadow: var(--pf-focus-ring);
+  outline: none;
+}
+
+.action:disabled {
+  cursor: not-allowed;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .input {
+  .control {
     transition: none;
   }
 }
