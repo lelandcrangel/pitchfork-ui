@@ -240,3 +240,85 @@ test('a carousel that starts empty accepts its first slide', async () => {
   expect(part(el, 'empty')).toBeNull();
   expect(added.hasAttribute('inert')).toBe(false);
 });
+
+/*
+ * Autoplay stops while nobody can see the carousel, and stops the timer
+ * rather than skipping its ticks: before, a 50 ms carousel in a hidden tab or
+ * scrolled out of view made 10 steps and 10 timer wakeups every 500 ms. The
+ * wakeups are counted by wrapping `setInterval` for the test's own interval,
+ * so a version that only skipped the step would still fail.
+ */
+const INTERVAL = 45;
+
+const countWakeups = () => {
+  const real = window.setInterval;
+  const counts = { wakeups: 0 };
+  window.setInterval = ((handler: () => void, timeout?: number) =>
+    real(() => {
+      if (timeout === INTERVAL) counts.wakeups += 1;
+      handler();
+    }, timeout)) as typeof window.setInterval;
+  return { counts, restore: () => (window.setInterval = real) };
+};
+
+const parkPointer = async () => {
+  const away = document.createElement('div');
+  away.id = 'parked-pointer';
+  away.style.cssText = 'position: fixed; right: 0; bottom: 0; width: 8px; height: 8px';
+  document.body.append(away);
+  await userEvent.hover(away);
+};
+
+/* Steps are counted rather than read off `index`, which six steps over three slides would wrap back to. */
+const holdsStill = async (el: Carousel, timer: { wakeups: number }) => {
+  let steps = 0;
+  const count = () => (steps += 1);
+  el.addEventListener('pfSlideChange', count);
+  timer.wakeups = 0;
+  await new Promise((resolve) => setTimeout(resolve, INTERVAL * 6));
+  el.removeEventListener('pfSlideChange', count);
+  expect(steps).toBe(0);
+  expect(timer.wakeups).toBe(0);
+};
+
+test('autoplay stops while the page is hidden, and resumes when it is shown', async () => {
+  const timer = countWakeups();
+  try {
+    const el = await mount(FIXTURE(`auto-play auto-play-interval="${INTERVAL}"`));
+    await parkPointer();
+    await until(() => el.index === 1, 'the first automatic step');
+
+    Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' });
+    document.dispatchEvent(new Event('visibilitychange'));
+    await holdsStill(el, timer.counts);
+
+    delete (document as unknown as { visibilityState?: string }).visibilityState;
+    document.dispatchEvent(new Event('visibilitychange'));
+    const before = el.index;
+    await until(() => el.index !== before, 'a step once the page is shown again');
+  } finally {
+    delete (document as unknown as { visibilityState?: string }).visibilityState;
+    timer.restore();
+  }
+});
+
+test('autoplay stops while scrolled out of view, and resumes in view', async () => {
+  const timer = countWakeups();
+  try {
+    const el = await mount(
+      `<div id="spacer" style="height: 400vh"></div>${FIXTURE(`auto-play auto-play-interval="${INTERVAL}"`)}`,
+    );
+    await parkPointer();
+    window.scrollTo(0, 0);
+    // The observer reports asynchronously; give it a few frames.
+    for (let i = 0; i < 4; i += 1) await frame();
+    await holdsStill(el, timer.counts);
+
+    el.scrollIntoView();
+    const before = el.index;
+    await until(() => el.index !== before, 'a step once it is in view');
+  } finally {
+    window.scrollTo(0, 0);
+    timer.restore();
+  }
+});

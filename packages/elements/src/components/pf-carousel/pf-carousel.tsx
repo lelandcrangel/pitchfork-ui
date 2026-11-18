@@ -50,7 +50,11 @@ export class PfCarousel {
   /** Show the dots. */
   @Prop({ reflect: true }) showIndicators = true;
 
-  /** Step forward on a timer. */
+  /**
+   * Step forward on a timer -- held while the pointer or focus is on the
+   * carousel, and stopped while it is scrolled out of view or the page is
+   * hidden.
+   */
   @Prop({ reflect: true }) autoPlay = false;
 
   /** How long between steps, in milliseconds. */
@@ -120,16 +124,71 @@ export class PfCarousel {
   componentDidLoad() {
     this.loaded = true;
     this.sync();
+    this.watchVisibility();
     this.startTimer();
   }
 
   /** A carousel moved in the DOM is disconnected and reconnected; resume. */
   connectedCallback() {
-    if (this.loaded) this.startTimer();
+    if (!this.loaded) return;
+    this.watchVisibility();
+    this.startTimer();
   }
 
   disconnectedCallback() {
+    this.unwatchVisibility();
     this.stopTimer();
+  }
+
+  /*
+   * Autoplay stops altogether while nobody can see the carousel: in a hidden
+   * tab, or scrolled out of the viewport. Before, the timer kept stepping --
+   * measured in Chromium on a 50 ms interval, 10 steps and 10 timer wakeups in
+   * 500 ms either way, each step a render and a transition nobody saw, and a
+   * reader coming back found it somewhere they had not left it. Stopping the
+   * interval rather than skipping its ticks is what saves the wakeups, and it
+   * restarts from a full interval when the carousel is seen again, so the
+   * slide that comes into view stays up for its whole turn.
+   */
+  private pageVisible = true;
+  private onScreen = true;
+  private observer?: IntersectionObserver;
+
+  private onVisibilityChange = () => {
+    const visible = document.visibilityState !== 'hidden';
+    if (visible === this.pageVisible) return;
+    this.pageVisible = visible;
+    this.startTimer();
+  };
+
+  /** Only while autoplay is on: a still carousel has nothing to pause. */
+  private watchVisibility() {
+    if (!this.autoPlay) {
+      this.unwatchVisibility();
+      return;
+    }
+    if (this.observer) return;
+
+    this.pageVisible = document.visibilityState !== 'hidden';
+    document.addEventListener('visibilitychange', this.onVisibilityChange);
+
+    // Absent from the test projects' mock DOM, and from very old browsers,
+    // where autoplay simply keeps the old behaviour.
+    if (typeof IntersectionObserver !== 'function') return;
+    this.observer = new IntersectionObserver((entries) => {
+      const seen = entries[entries.length - 1].isIntersecting;
+      if (seen === this.onScreen) return;
+      this.onScreen = seen;
+      this.startTimer();
+    });
+    this.observer.observe(this.el);
+  }
+
+  private unwatchVisibility() {
+    document.removeEventListener('visibilitychange', this.onVisibilityChange);
+    this.observer?.disconnect();
+    this.observer = undefined;
+    this.onScreen = true;
   }
 
   @Watch('index')
@@ -141,6 +200,7 @@ export class PfCarousel {
   @Watch('autoPlay')
   @Watch('autoPlayInterval')
   handleTimerChange() {
+    if (this.loaded) this.watchVisibility();
     this.startTimer();
   }
 
@@ -209,7 +269,7 @@ export class PfCarousel {
    */
   private startTimer() {
     this.stopTimer();
-    if (!this.autoPlay || this.total < 2) return;
+    if (!this.autoPlay || this.total < 2 || !this.pageVisible || !this.onScreen) return;
 
     this.timer = window.setInterval(
       () => {
