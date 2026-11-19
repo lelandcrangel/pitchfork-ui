@@ -2201,8 +2201,7 @@ from the nested copies.
 
 ### What Dependabot gets wrong here
 
-Three findings, all from one week's group PRs, and each invisible to every
-other check in the repository.
+Each of these was invisible to every other check in the repository.
 
 **A `peerDependencies` range is a requirement to Dependabot, so it narrows
 one.** On #131 it took `@pitchfork-ui/elements-angular`'s Angular peers from
@@ -2225,8 +2224,53 @@ cuts Angular in half: `common`, `core` and `forms` are peers of
 `elements-angular` and so production, while `compiler`, `compiler-cli`, `build`
 and `ng-packagr` are devDependencies. #131 and #132 are what that looks like —
 one PR moving the peers, the other the build tooling, neither installable
-alone. An `angular` group by `patterns` now comes **first**, because Dependabot
-puts a dependency in the first group it matches.
+alone. An `angular` group by `patterns` was added first, on the reading that
+Dependabot puts a dependency in the first group it matches — and **it never
+produced a PR**. A month later #182 and #191 split Angular 22 exactly the same
+way. The pattern now spells the scope out (`'@angular/*'`), and both type
+groups carry the same names under `exclude-patterns`, which keeps Angular out
+of them whatever the matching rule turns out to be. Whether the `angular`
+group itself now fires is the next weekly run's to show.
+
+**Its default range strategy narrows peers, so it is off.** The check above
+refuses a narrowed peer; it does not stop one being proposed every week. #182
+took `react` from `>=18.2.0` to `^19.3.1` and `vue` from `>=3.4.38` to
+`^3.5.45` on published bindings. `versioning-strategy: increase-if-necessary`
+leaves any range that already accepts the new version alone and moves only the
+lockfile — so a caret on a devDependency now lags the installed version until
+a bump actually needs it, which is the price.
+
+**Its lockfiles do not install under CI's npm.** Every group PR in the week of
+#182 failed `npm ci` in seconds with `Missing: yaml@2.9.1 from lock file`, on a
+fresh rebuild as well as a stale one — the lockfile Dependabot writes is not
+the one npm 11 expects. Rebuilding the PR does not help. The working answer is
+one hand-made PR that applies the group's manifest changes and regenerates the
+lockfile here, with npm 11, then closes the Dependabot PRs as superseded.
+
+**A security bump for one nested copy can rewrite every manifest.** #170 was a
+Vite 7.3.7 → 7.3.8 fix for the copy `apps/consumer-angular` pinned, and it set
+`vite` to `^7.3.8` in the root and both other consumer apps as well — a
+downgrade from Vite 8 everywhere, which then failed to resolve. Read the
+manifest diff of a single-package PR, not its title.
+
+**Moving a framework major leaves its old copies nested in the lockfile.**
+`npm install --package-lock-only` would not move Angular 21 → 22 at all
+(ERESOLVE), because `apps/consumer-angular/node_modules` and
+`packages/elements-angular/node_modules` still held Angular 21's build tooling,
+pinned to Vite 7 and TypeScript 5.9. Deleting only those lockfile entries —
+every `@angular/*`, `@angular-devkit/*`, `@analogjs/*` and `ng-packagr`, and
+everything nested under the two Angular workspaces — and re-resolving moved
+it, and 153 nested entries collapsed into the root's Vite 8 and TypeScript 6.
+It also left `react-dom` at the root on 19.3.0 beside `react` 19.3.1, which
+React refuses at render: all 75 React test files failed to import. Run
+`npm update <pair> --package-lock-only` for anything that must move in step.
+
+**`@analogjs/vite-plugin-angular` 2.9 compiles only what is in its program.**
+It looks for `tsconfig.spec.json` by name, and from 2.9 a file outside the
+program is passed through with its decorators intact — the Angular binding's
+three spec files then reached Chromium as raw TypeScript and failed with
+"Invalid or unexpected token". `packages/elements-angular/tsconfig.spec.json`
+is that program; removing it fails all three again.
 
 **An ignore with no expiry is a `// TODO` in a config file.** `typescript` is
 ignored at `>= 6.1.0` because nothing in the tree accepts 7.x:

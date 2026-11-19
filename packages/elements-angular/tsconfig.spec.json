@@ -1,0 +1,11 @@
+// The program @analogjs/vite-plugin-angular compiles the tests with. It looks
+// for this file by name; from 2.9 it also skips any file outside the program,
+// so without it the specs reach the browser with their decorators uncompiled
+// and fail to import with "Invalid or unexpected token".
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": false
+  },
+  "include": ["src/**/*.ts", "test/**/*.ts"]
+}
