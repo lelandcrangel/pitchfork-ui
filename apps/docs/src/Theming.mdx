@@ -1,16 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
+import { TokenChain } from './TokenChain';
+
 <Meta title="Foundations/Theming" />
 
 # Theming
 
 PitchforkUI is built on a three-tier CSS variable chain. Overriding a handful of variables on `:root` is all it takes to retheme every component at once — no build step, no configuration file, no wrapper components.
 
-```
-Token                             →  Semantic alias                    →  Component alias
-──────────────────────────────────────────────────────────────────────────────────────────
-var(--color-brand-700) #4338ca   →  --color-semantic-action-primary   →  --pf-button-primary-bg
-```
+<TokenChain />
 
 Changing `--color-semantic-action-primary` updates buttons, pagination, calendar selections, checkboxes, sliders, progress indicators — every element that uses the primary brand color — in one declaration.
 
