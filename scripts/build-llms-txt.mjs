@@ -225,10 +225,23 @@ function buildIndex() {
   }
   out.push('## Conventions');
   out.push('');
+  /*
+   * These are for someone using the elements. The list used to be the React
+   * layer's -- BEM class names such as `.pf-button--primary` and mobile-first
+   * component CSS -- and an element has no such classes: its variants are
+   * reflected attributes, and its inside is reached through `::part()`.
+   */
   out.push('- Never hardcode a colour, radius or spacing value. Use the CSS variables.');
-  out.push('- Class names are BEM-like under a `pf-` prefix: `.pf-button--primary`.');
-  out.push('- Dark mode is handled by `[data-theme="dark"]`; components need no dark styles.');
-  out.push('- Styles are mobile-first; wider layouts are added in `@media` blocks.');
+  out.push(
+    '- Variants and states are attributes (`variant="primary"`, `size="sm"`), not class ' +
+      "names. Style an element's inside through the `::part()`s it lists.",
+  );
+  out.push(
+    '- Theme by overriding the `--color-semantic-*` tokens on `:root`, or one element ' +
+      'by overriding its `--pf-*` alias on that element.',
+  );
+  out.push('- Dark mode is `[data-theme="dark"]` on an ancestor; elements need no dark styles.');
+  out.push('- Lists go in as child elements (`<pf-option>` inside `<pf-select>`), not as arrays.');
   out.push('- Prefer semantic HTML — a `<button>`, not a `<div role="button">`.');
   out.push('');
 
