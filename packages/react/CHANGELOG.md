@@ -2,6 +2,31 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.19.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.18.0...react-v0.19.0) (2026-11-19)
+
+
+### Features
+
+* **elements:** add a link, a checkbox group and a description list, and extend four elements ([623512e](https://github.com/lelandcrangel/pitchfork-ui/commit/623512e100ac0d122983b3e663ba1d4ffa707fd5))
+
+
+### Bug Fixes
+
+* **elements:** the forms and accessibility defects from the November audit ([1a30842](https://github.com/lelandcrangel/pitchfork-ui/commit/1a3084281a11ef472ef8669e59380be4246625cc))
+
+
+### Performance Improvements
+
+* **elements:** build picker panels on first open, and make each date formatter once ([5277459](https://github.com/lelandcrangel/pitchfork-ui/commit/5277459d820d6fb49c4a779ef0e836cddef5d644))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/core bumped from ^0.3.0 to ^0.4.0
+    * @pitchfork-ui/tokens bumped from ^0.6.0 to ^0.7.0
+
 ## [0.18.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.17.0...react-v0.18.0) (2026-11-09)
 
 

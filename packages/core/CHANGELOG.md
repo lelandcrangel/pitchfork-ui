@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/core-v0.3.0...core-v0.4.0) (2026-11-19)
+
+
+### Features
+
+* **elements:** add a link, a checkbox group and a description list, and extend four elements ([623512e](https://github.com/lelandcrangel/pitchfork-ui/commit/623512e100ac0d122983b3e663ba1d4ffa707fd5))
+
+
+### Bug Fixes
+
+* **core:** announce fractional progress, and snap a range value to its step ([3bfaf03](https://github.com/lelandcrangel/pitchfork-ui/commit/3bfaf0331122b67f5b8638964241aefe444d5735))
+
+
+### Performance Improvements
+
+* **elements:** build picker panels on first open, and make each date formatter once ([5277459](https://github.com/lelandcrangel/pitchfork-ui/commit/5277459d820d6fb49c4a779ef0e836cddef5d644))
+
 ## [0.3.0](https://github.com/lelandcrangel/pitchfork-ui/compare/core-v0.2.0...core-v0.3.0) (2026-11-09)
 
 

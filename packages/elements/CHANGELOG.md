@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-v0.3.0...elements-v0.4.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **elements:** importing an element module from @pitchfork-ui/elements/components no longer registers the element. Call the defineCustomElement() it exports, or use the loader's defineCustomElements(). The React, Angular and Vue bindings, the loader and the documented install paths are unaffected.
+* **elements:** pf-tabs, pf-accordion, pf-tree-view, pf-button-group, pf-calendar, pf-carousel and pf-resizable no longer emit pfChange. Listen for pfTabChange, pfExpandedChange, pfSelectionChange, pfSlideChange or pfResize instead; the detail is unchanged. pfOpenChange, pfSelect, pfDismiss, pfSortChange, pfPageChange, pfCopy, pfCopyError, pfReject, pfToastDismiss and pfExpandedChange no longer bubble. A listener on the element itself, which is what every framework binding attaches, is unaffected; a listener delegated from an ancestor has to move onto the element.
+
+### Features
+
+* **elements:** add a link, a checkbox group and a description list, and extend four elements ([623512e](https://github.com/lelandcrangel/pitchfork-ui/commit/623512e100ac0d122983b3e663ba1d4ffa707fd5))
+* **elements:** ship a Tailwind compatibility sheet as @pitchfork-ui/elements/tailwind.css ([c6ec8c9](https://github.com/lelandcrangel/pitchfork-ui/commit/c6ec8c9f0fc14d5ba2b17779b7865ff602f22640))
+* **elements:** stop element events reaching listeners that are not theirs ([851f036](https://github.com/lelandcrangel/pitchfork-ui/commit/851f036f822499bc7c3622c359379d650fe83dfb))
+
+
+### Bug Fixes
+
+* **elements:** the forms and accessibility defects from the November audit ([1a30842](https://github.com/lelandcrangel/pitchfork-ui/commit/1a3084281a11ef472ef8669e59380be4246625cc))
+
+
+### Performance Improvements
+
+* **elements:** build picker panels on first open, and make each date formatter once ([5277459](https://github.com/lelandcrangel/pitchfork-ui/commit/5277459d820d6fb49c4a779ef0e836cddef5d644))
+* **elements:** fetch the elements a lazy entry renders alongside it ([f4540f7](https://github.com/lelandcrangel/pitchfork-ui/commit/f4540f759937769c24a582eeed3abd4d4473adcd))
+* **elements:** read the rich-text document once per keystroke ([6a64daf](https://github.com/lelandcrangel/pitchfork-ui/commit/6a64daf5b92ba5003b6859479966b28fa3422a64))
+* **elements:** render the line, bar and radar charts once as they load ([089a532](https://github.com/lelandcrangel/pitchfork-ui/commit/089a532200eb3cf80e996ab7d8e5dbb5db61454a))
+* **elements:** rescan a loading tree view once per frame, not once per item ([cf2f7c9](https://github.com/lelandcrangel/pitchfork-ui/commit/cf2f7c90e49d7db594187943c0996f583733a1b4))
+* **elements:** ship only the elements an app uses, without the token sheet in each ([76781a4](https://github.com/lelandcrangel/pitchfork-ui/commit/76781a4da055676a4b82374fc17fd7714616310b))
+* **elements:** stop carousel autoplay while hidden or scrolled out of view ([ca9f206](https://github.com/lelandcrangel/pitchfork-ui/commit/ca9f20656565aefc3dd57ed3063df8d0de069613))
+* **elements:** stop each closed combobox forcing a layout while it loads ([bc8f0d4](https://github.com/lelandcrangel/pitchfork-ui/commit/bc8f0d47460700841308d7495fd32bc5c2aa40e0))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/core bumped from ^0.3.0 to ^0.4.0
+    * @pitchfork-ui/tokens bumped from ^0.6.0 to ^0.7.0
+
 ## [0.3.0](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-v0.2.1...elements-v0.3.0) (2026-11-09)
 
 

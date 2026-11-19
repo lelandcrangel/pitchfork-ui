@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.6.0...tokens-v0.7.0) (2026-11-19)
+
+
+### Features
+
+* **elements:** add a link, a checkbox group and a description list, and extend four elements ([623512e](https://github.com/lelandcrangel/pitchfork-ui/commit/623512e100ac0d122983b3e663ba1d4ffa707fd5))
+
 ## [0.6.0](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.5.0...tokens-v0.6.0) (2026-11-09)
 
 

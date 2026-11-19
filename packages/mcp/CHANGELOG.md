@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.0](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.5.0...mcp-v0.6.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **elements:** pf-tabs, pf-accordion, pf-tree-view, pf-button-group, pf-calendar, pf-carousel and pf-resizable no longer emit pfChange. Listen for pfTabChange, pfExpandedChange, pfSelectionChange, pfSlideChange or pfResize instead; the detail is unchanged. pfOpenChange, pfSelect, pfDismiss, pfSortChange, pfPageChange, pfCopy, pfCopyError, pfReject, pfToastDismiss and pfExpandedChange no longer bubble. A listener on the element itself, which is what every framework binding attaches, is unaffected; a listener delegated from an ancestor has to move onto the element.
+
+### Features
+
+* **elements:** add a link, a checkbox group and a description list, and extend four elements ([623512e](https://github.com/lelandcrangel/pitchfork-ui/commit/623512e100ac0d122983b3e663ba1d4ffa707fd5))
+* **elements:** stop element events reaching listeners that are not theirs ([851f036](https://github.com/lelandcrangel/pitchfork-ui/commit/851f036f822499bc7c3622c359379d650fe83dfb))
+
+
+### Bug Fixes
+
+* **mcp:** check generated bindings against their element, and stop flagging type arguments ([34bee40](https://github.com/lelandcrangel/pitchfork-ui/commit/34bee4016481ff07b90b44104abb047899e0466f))
+
 ## [0.5.0](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.4.1...mcp-v0.5.0) (2026-11-09)
 
 

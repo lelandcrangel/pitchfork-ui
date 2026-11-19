@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.3.0](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-angular-v0.2.2...elements-angular-v0.3.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **elements:** importing an element module from @pitchfork-ui/elements/components no longer registers the element. Call the defineCustomElement() it exports, or use the loader's defineCustomElements(). The React, Angular and Vue bindings, the loader and the documented install paths are unaffected.
+
+### Bug Fixes
+
+* **ci:** exclude the Tailwind sheet from the types check, and follow the radiogroup role ([1174c77](https://github.com/lelandcrangel/pitchfork-ui/commit/1174c770c4563748d056558f6e19088a556eb6c7))
+
+
+### Performance Improvements
+
+* **elements:** ship only the elements an app uses, without the token sheet in each ([76781a4](https://github.com/lelandcrangel/pitchfork-ui/commit/76781a4da055676a4b82374fc17fd7714616310b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/elements bumped from ^0.3.0 to ^0.4.0
+
 ## [0.2.2](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-angular-v0.2.1...elements-angular-v0.2.2) (2026-11-09)
 
 
