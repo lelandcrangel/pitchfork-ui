@@ -123,7 +123,7 @@ export type IconName = RegisteredIconName | (string & {});
  */
 registerIconGlyphs(bundledRegularIcons);
 
-/** @deprecated `@pitchfork-ui/react` is deprecated. The registry itself lives in `@pitchfork-ui/core`; import `registerIcons` from there and one call covers both `Icon` and `<pf-icon>`. */
+/** @deprecated `@pitchfork-ui/react` is deprecated. The registry itself lives in `@pitchfork-ui/core`: `registerIconGlyphs` there takes the same object, Font Awesome icons included, and one call covers both `Icon` and `<pf-icon>`. */
 export const registerIcons = (icons: Record<string, IconDefinition | IconGlyphInput>) => {
   registerIconGlyphs(icons as Record<string, IconGlyphInput>);
 

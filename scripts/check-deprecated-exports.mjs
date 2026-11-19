@@ -46,7 +46,8 @@ if (!existsSync(entry)) {
 // they read as tagged until core's dist existed and the alias resolved to the
 // real declaration. A check whose answer depends on whether something else was
 // built is a check that passes on the wrong machine.
-const program = ts.createProgram([entry], {
+const coreEntry = join(root, 'packages/core/src/index.ts');
+const program = ts.createProgram([entry, coreEntry], {
   target: ts.ScriptTarget.ES2022,
   module: ts.ModuleKind.ESNext,
   moduleResolution: ts.ModuleResolutionKind.Bundler,
@@ -91,6 +92,28 @@ const taggedOnlyOnASpecifier = (symbol) =>
     (d) => ts.isExportSpecifier(d) && ts.getJSDocCommentsAndTags(d).length > 0,
   );
 
+/*
+ * A tag that sends the reader to core has to name something core exports. The
+ * editor shows that message at every call site, so a wrong name there is a
+ * wrong instruction delivered to everyone: `registerIcons` said to import
+ * `registerIcons` from `@pitchfork-ui/core`, which has none -- the function is
+ * `registerIconGlyphs`. Every lower-case identifier in backticks in such a
+ * message is checked, except React's own hooks, which a message may mention
+ * ("the `useState` around them is yours") without claiming core has them.
+ */
+const coreExports = new Set(
+  checker
+    .getExportsOfModule(checker.getSymbolAtLocation(program.getSourceFile(coreEntry)))
+    .map((s) => s.getName()),
+);
+const REACT_HOOKS = new Set(['useState', 'useEffect', 'useRef', 'useMemo', 'useCallback', 'useId']);
+const deprecationText = (symbol) =>
+  (symbol.getJsDocTags(checker) ?? [])
+    .filter((t) => t.name === 'deprecated')
+    .map((t) => ts.displayPartsToString(t.text))
+    .join(' ');
+const wrongCoreNames = [];
+
 const untagged = { value: [], type: [] };
 const specifierOnly = [];
 let tagged = 0;
@@ -99,6 +122,15 @@ for (const symbol of checker.getExportsOfModule(moduleSymbol)) {
   const resolved = symbol.flags & ts.SymbolFlags.Alias ? checker.getAliasedSymbol(symbol) : symbol;
   const ownTag = (symbol.getJsDocTags(checker) ?? []).some((t) => t.name === 'deprecated');
   const aliasedTag = (resolved.getJsDocTags(checker) ?? []).some((t) => t.name === 'deprecated');
+
+  const message = deprecationText(symbol) || deprecationText(resolved);
+  if (message.includes('@pitchfork-ui/core')) {
+    for (const [, name] of message.matchAll(/`([a-z][A-Za-z0-9]+)`/g)) {
+      if (!coreExports.has(name) && !REACT_HOOKS.has(name)) {
+        wrongCoreNames.push(`${symbol.getName()} names \`${name}\``);
+      }
+    }
+  }
 
   if (ownTag && !aliasedTag && taggedOnlyOnASpecifier(symbol)) {
     specifierOnly.push(symbol.getName());
@@ -112,8 +144,21 @@ for (const symbol of checker.getExportsOfModule(moduleSymbol)) {
 const total = tagged + untagged.value.length + untagged.type.length + specifierOnly.length;
 const missing = untagged.value.length + untagged.type.length + specifierOnly.length;
 
+if (wrongCoreNames.length) {
+  console.error(
+    `@pitchfork-ui/react: ${wrongCoreNames.length} @deprecated message(s) send the reader to ` +
+      'something @pitchfork-ui/core does not export:\n',
+  );
+  for (const line of wrongCoreNames.sort()) console.error(`    ${line}`);
+  console.error('');
+}
+
 if (!missing) {
-  console.log(`@pitchfork-ui/react: all ${total} public exports carry @deprecated.`);
+  if (wrongCoreNames.length) process.exit(1);
+  console.log(
+    `@pitchfork-ui/react: all ${total} public exports carry @deprecated, and every ` +
+      'core name they give exists.',
+  );
   process.exit(0);
 }
 
