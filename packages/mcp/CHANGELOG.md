@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.1](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.6.0...mcp-v0.6.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **mcp:** keep the React layer's rules out of the elements' conventions ([8071b9b](https://github.com/lelandcrangel/pitchfork-ui/commit/8071b9bebe2f5666f547c55570d6d9115fcc3122))
+* **mcp:** say which tools are for the deprecated layer, and lead validate_usage with the elements ([cc9ee4a](https://github.com/lelandcrangel/pitchfork-ui/commit/cc9ee4ac92f3bf29efd88e66b3326754538887ea))
+* **mcp:** stop pointing a binding user back at the deprecated React package ([f3b1a27](https://github.com/lelandcrangel/pitchfork-ui/commit/f3b1a27b7d58de179b2642027f6ecf6f3494f40f))
+
 ## [0.6.0](https://github.com/lelandcrangel/pitchfork-ui/compare/mcp-v0.5.0...mcp-v0.6.0) (2026-11-19)
 
 
