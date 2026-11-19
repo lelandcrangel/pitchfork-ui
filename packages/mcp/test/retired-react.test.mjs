@@ -201,4 +201,9 @@ test('get_conventions returns the element rules and no React ones', async () => 
   assert.match(out, /::part\(/, 'the custom-property-versus-part split is in there');
   assert.doesNotMatch(out, /Deprecated: @pitchfork-ui\/react/);
   assert.doesNotMatch(out, /forwardRef/);
+  // Nor the React layer's class names, imports or internal helpers, which
+  // reached the element set through sections of CLAUDE.md it shared.
+  assert.doesNotMatch(out, /\.pf-button--/);
+  assert.doesNotMatch(out, /from '@pitchfork-ui\/react'/);
+  assert.doesNotMatch(out, /composeDescribedBy/);
 });

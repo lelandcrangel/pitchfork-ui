@@ -207,10 +207,11 @@ Example from `theme.css`:
 --pf-button-primary-bg: var(--color-semantic-action-primary);
 ```
 
-Example from a component CSS file:
+Example from an element's stylesheet, which selects its variant on the
+reflected attribute:
 
 ```css
-.pf-button--primary {
+:host([variant='primary']) .control {
   background: var(--pf-button-primary-bg);
 }
 ```

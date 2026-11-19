@@ -44,6 +44,12 @@ export const REACT_CONVENTION_SECTIONS = [
  * class names, which an element consumer does not have and should not be told
  * about.
  *
+ * `## Icon system` and `## Accessibility` were here too, and both are written
+ * for someone building the React layer: the React `<Icon>` and
+ * `registerIcons` from `@pitchfork-ui/react`, and `composeDescribedBy` and
+ * `Keys` from its `a11y/` folder. `WebComponents.mdx` has the consumer's
+ * Icons section, so an element agent loses nothing it could use.
+ *
  * What is **not** here is CLAUDE.md's `Web components` section, and that is
  * deliberate. It is 74 KB of hard-won measurement written for someone editing
  * this repository -- which Vitest project cannot see a computed style, how to
@@ -54,8 +60,6 @@ export const REACT_CONVENTION_SECTIONS = [
 export const ELEMENT_CONVENTION_SECTIONS = [
   '### CSS variable inheritance chain',
   '### Responsive breakpoints',
-  '## Icon system',
-  '## Accessibility',
 ];
 
 /**
