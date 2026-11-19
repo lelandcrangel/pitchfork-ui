@@ -5,6 +5,13 @@ updates:
     schedule:
       interval: 'weekly'
     open-pull-requests-limit: 5
+    # Leave a range alone while it already accepts the new version, and update
+    # only the lockfile. The default rewrites ranges to the new version, which
+    # on a peer is a narrowing: #182 took `react` from `>=18.2.0` to `^19.3.1`
+    # and `vue` from `>=3.4.38` to `^3.5.45` on the published bindings, dropping
+    # every consumer on React 18 or Vue 3.4 in a patch release.
+    # `check:peers` would refuse it; this stops it being proposed.
+    versioning-strategy: 'increase-if-necessary'
     # TypeScript majors nothing in the tree can accept yet. `typescript-eslint`
     # peers `typescript >=4.8.4 <6.1.0` -- on its canary too, measured -- and
     # `@angular/compiler-cli@21` peers `>=5.9 <6.1`, so a bump to 7.x produces a
@@ -30,16 +37,38 @@ updates:
     # `@angular/core@"22.2.2"`, pinned exactly -- and #131 and #132 are what the
     # split looks like: one PR took the peers to 21/22 and the other the build
     # tooling to 22, and neither is installable on its own.
+    #
+    # `'@angular*'` stood here for a month and never produced an Angular PR:
+    # the Angular bumps landed in the two type groups instead, and #182 and #191
+    # split Angular 22 exactly as described above. So the scope is spelled out
+    # with its slash, and -- the part that holds whatever the matching rule
+    # turns out to be -- the type groups exclude the same names, so Angular can
+    # never land in them. `@analogjs/vite-plugin-angular` peers the Angular
+    # compiler, so it moves with it.
     groups:
       angular:
         patterns:
-          - '@angular*'
+          - '@angular/*'
+          - '@angular-devkit/*'
+          - '@analogjs/*'
           - 'ng-packagr'
           - 'zone.js'
       production-dependencies:
         dependency-type: 'production'
+        exclude-patterns:
+          - '@angular/*'
+          - '@angular-devkit/*'
+          - '@analogjs/*'
+          - 'ng-packagr'
+          - 'zone.js'
       dev-dependencies:
         dependency-type: 'development'
+        exclude-patterns:
+          - '@angular/*'
+          - '@angular-devkit/*'
+          - '@analogjs/*'
+          - 'ng-packagr'
+          - 'zone.js'
     commit-message:
       prefix: 'chore'
       prefix-development: 'chore'
