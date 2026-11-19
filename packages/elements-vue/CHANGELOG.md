@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.3.0](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-vue-v0.2.2...elements-vue-v0.3.0) (2026-11-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **elements:** pf-tabs, pf-accordion, pf-tree-view, pf-button-group, pf-calendar, pf-carousel and pf-resizable no longer emit pfChange. Listen for pfTabChange, pfExpandedChange, pfSelectionChange, pfSlideChange or pfResize instead; the detail is unchanged. pfOpenChange, pfSelect, pfDismiss, pfSortChange, pfPageChange, pfCopy, pfCopyError, pfReject, pfToastDismiss and pfExpandedChange no longer bubble. A listener on the element itself, which is what every framework binding attaches, is unaffected; a listener delegated from an ancestor has to move onto the element.
+
+### Features
+
+* **elements:** add a link, a checkbox group and a description list, and extend four elements ([623512e](https://github.com/lelandcrangel/pitchfork-ui/commit/623512e100ac0d122983b3e663ba1d4ffa707fd5))
+* **elements:** stop element events reaching listeners that are not theirs ([851f036](https://github.com/lelandcrangel/pitchfork-ui/commit/851f036f822499bc7c3622c359379d650fe83dfb))
+
+
+### Bug Fixes
+
+* **elements:** the forms and accessibility defects from the November audit ([1a30842](https://github.com/lelandcrangel/pitchfork-ui/commit/1a3084281a11ef472ef8669e59380be4246625cc))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/elements bumped from ^0.3.0 to ^0.4.0
+
 ## [0.2.2](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-vue-v0.2.1...elements-vue-v0.2.2) (2026-11-09)
 
 
