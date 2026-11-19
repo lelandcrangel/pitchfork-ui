@@ -3,9 +3,10 @@
 The [Pitchfork UI](https://lelandrangel.com/pitchfork-ui/) design system as
 standard custom elements, authored with [Stencil](https://stenciljs.com/).
 
-These are the same components as `@pitchfork-ui/react`, built to run anywhere —
-React, Angular, Vue, or a plain HTML page. Framework wrappers are generated from
-this package rather than hand-written.
+112 elements that run anywhere — React, Angular, Vue, or a plain HTML page.
+Framework bindings are generated from this package rather than hand-written:
+`@pitchfork-ui/elements-react`, `@pitchfork-ui/elements-angular` and
+`@pitchfork-ui/elements-vue`.
 
 ## Install
 
@@ -49,9 +50,11 @@ The React, Angular and Vue bindings do this for you.
 
 ## Theming
 
-Theming works exactly as it does in the React library: the `--pf-*` custom
-properties are declared once on `:root` and inherit through the shadow boundary.
-Component internals are encapsulated; the token layer is not.
+The `--pf-*` custom properties, and the semantic tokens they read, are declared
+once on `:root` and inherit through the shadow boundary. Override a
+`--color-semantic-*` token on `:root` to retheme everything that uses it, or one
+`--pf-*` alias to change one thing. Component internals are encapsulated; the
+token layer is not.
 
 ```css
 :root {
@@ -77,9 +80,10 @@ own CSS as normal.
 
 ## Status
 
-Early. Components land in waves — see `WEB-COMPONENTS-PLAN.md` in the
-repository. `@pitchfork-ui/react` remains the complete, hand-authored library
-and is not going away.
+This is the library. It replaces `@pitchfork-ui/react`, which is deprecated and
+is removed after **30 April 2027**; the
+[migration guide](https://lelandrangel.com/pitchfork-ui/?path=/docs/foundations-migrating--docs)
+gives every React component's element and which props change shape.
 
 ## Licence
 

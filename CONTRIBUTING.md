@@ -20,67 +20,118 @@ Every commit message must follow this structure:
 | ----------------------------------------------------------- | ---------------------- | --------------- |
 | `fix`                                                       | Bug fix                | patch (`0.0.x`) |
 | `feat`                                                      | New feature            | minor (`0.x.0`) |
-| `feat!` or `BREAKING CHANGE:` footer                        | Breaking API change    | major (`x.0.0`) |
+| `feat!` or `BREAKING CHANGE:` footer                        | Breaking API change    | minor while 0.x |
 | `chore`, `docs`, `style`, `refactor`, `test`, `build`, `ci` | Non-user-facing change | none            |
+
+Every package is still below 1.0, and release-please is set to
+`bump-minor-pre-major`, so a breaking change moves `0.4.0` to `0.5.0`, not to
+`1.0.0`.
 
 ### Examples
 
 ```
-feat(Button): add loading prop with spinner
-fix(Calendar): correct today border using warning-border token
-docs: add Slider usage examples to MDX
-refactor(theme): flatten CSS variable fallback chains
-feat!: rename Badge size prop from "sm" to "small"
+feat(elements): add a clearable option to the input
+fix(elements): keep the date picker's panel inside the viewport
+fix(mcp): report a property-only prop written in markup
+docs: correct the theming page's override example
+feat(elements)!: rename the tabs change event
 
-BREAKING CHANGE: the `sm` value on Badge's size prop has been renamed to `small`.
+BREAKING CHANGE: pf-tabs emits pfTabChange instead of pfChange.
 ```
+
+**Never write a tag with its angle brackets in a commit message**, backticks or
+not. The message becomes release notes in two places that read it as markup: the
+docs changelog page is MDX, and release-please parses the release PR's body as
+HTML to decide what to tag. Write "the pf-icon element" instead.
 
 ### Scopes
 
-Use the component name in PascalCase as the scope when the change is specific to one component: `(Button)`, `(Calendar)`, `(Input)`. Omit the scope for workspace-wide changes.
+Use the package as the scope: `(elements)`, `(core)`, `(tokens)`, `(mcp)`,
+`(elements-react)`, `(docs)`. Omit the scope for a change across the workspace.
 
 ---
 
 ## Release workflow
 
-Releases are fully automated. When commits land on `main`:
+Releases are automated, with two approvals on the way. When commits land on
+`main`:
 
-1. The **release-please** GitHub Action opens (or updates) a Release PR titled `chore: release @pitchfork-ui/react vX.Y.Z`.
-2. The PR contains the bumped version in `package.json` and an updated `CHANGELOG.md` — both generated from your commit messages.
-3. **Merge the PR** when you are ready to ship. The action then creates a GitHub release and tags the commit.
+1. The **release-please** action opens or updates one release PR, `chore:
+release main`, covering every package whose folder those commits touched,
+   each with its bumped version and `CHANGELOG.md`.
+2. **Merge it** when you are ready to ship. `main` requires an approving review,
+   and the release PR needs one like any other.
+3. The action tags each package and creates its GitHub release, then the
+   **publish** job waits for approval on the `release` environment. Approve it
+   in the run, and it publishes to npm with provenance.
 
-> `feat:` and `fix:` commits accumulate in the Release PR until you merge it. There is no need to manually edit `package.json` or `CHANGELOG.md`.
+A package is versioned only from commits that touch **its own folder**. That
+matters for the generated bindings: a change to an element that changes what a
+binding exports reaches `@pitchfork-ui/elements-react` with no commit in its
+folder, so release-please would give it a patch at most. When an element change
+breaks a binding's API, add a commit in the binding's own folder — its README is
+the natural place — marked as breaking.
 
-Both `@pitchfork-ui/react` and `@pitchfork-ui/tokens` are versioned independently. A commit scoped to `packages/tokens` only bumps the tokens package; the react package is bumped only when its own files change.
+`release-please-config.json` uses the `node-workspace` plugin, which rewrites
+the ranges between the packages (`^0.3.0` → `^0.4.0`) as part of the release.
 
 ---
 
-## Component Standards
+## Adding an element
 
-Every component should:
-
-- Use semantic HTML first.
-- Forward refs when it wraps a native interactive element.
-- Support `className` and native HTML props.
-- Use CSS variables generated from Style Dictionary tokens.
-- Include Storybook stories with common states.
-- Include at least one accessibility-focused test.
-- Avoid unnecessary runtime dependencies.
-
-## Component Folder Template
+New components are custom elements in `packages/elements`. `packages/react` is
+deprecated and takes no new components. `CLAUDE.md`'s **Web components**
+section has the reasoning behind each rule here, and it is worth reading before
+the first one.
 
 ```txt
-ComponentName/
-  ComponentName.tsx
-  ComponentName.css
-  ComponentName.test.tsx
-  ComponentName.stories.tsx
-  index.ts
+packages/elements/src/components/pf-name/
+  pf-name.tsx                 the component class, and nothing else exported
+  pf-name.css                 its shadow-root styles
+  pf-name.spec.tsx            unit tests, in Stencil's mock DOM
+  pf-name.browser.spec.tsx    browser tests, in Chromium
 ```
+
+### Checklist for every new element
+
+- [ ] The component, with a doc comment that says what it is for, and `@slot`
+      and `@part` tags for each slot and part. The generated docs page is built
+      from it, and `--strict` fails an element with none.
+- [ ] Its stylesheet reads `--pf-*` aliases only, never a raw `--color-*`
+      token. Each alias is defined in `packages/tokens/src/theme.css`, and one
+      for anything that should change in dark mode names a **semantic** token.
+- [ ] Tests. Anything form-associated, anything keyboard-driven and anything
+      that reacts to slotted content is tested in the browser project; the mock
+      DOM cannot see it. At least one test is about accessibility.
+- [ ] An entry in `apps/docs/src/element-examples.ts`, with an `interactive`
+      single instance when the example shows several.
+- [ ] Its category in `CATEGORY` in `scripts/build-elements-metadata.mjs`, or
+      its parent in `CHILD_OF` if it only makes sense inside one.
+- [ ] `npm run build:elements` and `npm run build:elements-docs`, which write its
+      docs page, its Interactive story and the three bindings. Commit the page
+      and the story; never edit them by hand.
+- [ ] The tag in the consumer apps and the `EXPECTED` list in
+      `scripts/smoke-consumer.mjs`, with an assertion on any computed style the
+      unit tests cannot see.
+- [ ] `npm run check:examples`, `check:events` and `check:css-vars` pass.
+
+### Rules the checks hold
+
+- Reflect any prop the stylesheet or a selector reads, and select variants on
+  attributes (`:host([variant='primary'])`), not classes.
+- A form control is `formAssociated` with `@AttachInternals()`, reflects `name`,
+  and has `formResetCallback` and `formDisabledCallback`.
+- Only a form control emits `pfChange` and `pfInput`. Every other event is
+  `@Event({ bubbles: false })` unless a parent element listens for it, and a
+  container's own change event has a name of its own.
+- Data-driven elements take child elements, not array props.
+
+---
 
 ## API Guidance
 
-Keep APIs small and predictable. Prefer native platform behavior before custom abstractions.
+Keep APIs small and predictable. Prefer native platform behaviour before custom
+abstractions.
 
 ---
 
@@ -120,148 +171,24 @@ Do not use raw `min-width` or `max-width` pixel values in component CSS — alwa
 
 ## No Inline Styles
 
-Do not use the `style` attribute in component source or story files. Inline styles cannot be overridden by consumers and are harder to debug in browser devtools.
+Do not use the `style` attribute in component source. Inline styles cannot be overridden by consumers and are harder to debug in browser devtools.
 
 - Put layout and visual rules in CSS using the token variable chain.
-- For values that must be dynamic (e.g. a Storybook range control arg), prefer a CSS custom property on the element (`style={{ '--pf-foo': value }}`) and reference it in the component's CSS — this keeps the override surface in CSS where it belongs.
-- In example stories, size constraints belong in the story canvas layout, not on the rendered component. A card sized by its container is a more honest example than one with a hardcoded `maxWidth`.
+- For a value that must be dynamic, set a CSS custom property on the element and read it in the component's CSS — this keeps the override surface in CSS where it belongs.
+- In the examples in `apps/docs/src/element-examples.ts`, size constraints belong to the layout around the element, not on it. A card sized by its container is a more honest example than one with a hardcoded width.
 
 ---
 
-## Storybook Stories
-
-### CSS Variable Decorator
-
-Every `ComponentName.stories.tsx` controls file must have a story named exactly **`Interactive`** — this is what activates the CSS Variable Decorator panel.
-
-The decorator (`withCssVariableControls`) is applied globally and auto-activates when three conditions are met:
-
-1. The story name is `Interactive` (or the story id contains `--interactive`)
-2. The story title starts with `Components/`
-3. The title has an entry in the `scopeByStoryTitle` map in `apps/docs/.storybook/CssVariableDecorator.tsx`
-
-When adding a new component, add its title → scope mapping to that map:
-
-```ts
-// CssVariableDecorator.tsx → scopeByStoryTitle
-'Components/MyComponent': ['mycomponent'],
-```
-
-The scope string must match the lowercase component folder name (e.g. `EmptyState/` → `'emptystate'`). The decorator will auto-extract all `--pf-*` CSS variables from that component's CSS file and expose them as live controls in the story panel.
-
 ---
 
-### Checklist for every new component
+## Documentation
 
-Every new component requires all of the following before it is considered complete:
+The element pages in `apps/docs/src/elements/` are generated from the
+components' doc comments and `element-examples.ts`, and `--verify` in CI fails
+on one that is stale. Each has a Docs page and an Interactive story; the
+story's controls come from the element's props, and its CSS Variables panel
+from the `--pf-*` variables its stylesheet reads. Neither needs registering.
 
-- [ ] `packages/react/src/components/ComponentName/ComponentName.tsx` — component implementation
-- [ ] `packages/react/src/components/ComponentName/ComponentName.css` — scoped styles using CSS variables
-- [ ] `packages/react/src/components/ComponentName/ComponentName.test.tsx` — Vitest + Testing Library tests (at minimum: renders, accessibility role/label, keyboard interaction if applicable, prop forwarding)
-- [ ] `packages/react/src/components/ComponentName/index.ts` — re-exports
-- [ ] `packages/react/src/index.ts` — add `export * from './components/ComponentName'`
-- [ ] `apps/docs/src/ComponentName.stories.tsx` — controls/args story with an `Interactive` export
-- [ ] `apps/docs/src/ComponentName.examples.stories.tsx` — composition examples
-- [ ] `apps/docs/src/ComponentName.mdx` — documentation page wiring in the examples
-- [ ] `apps/docs/.storybook/CssVariableDecorator.tsx` — add `'Components/ComponentName': ['componentname']` to `scopeByStoryTitle` so the CSS Variables panel activates on the Interactive story
-
-### Three Storybook files per component
-
-| File                                 | Purpose                                                          |
-| ------------------------------------ | ---------------------------------------------------------------- |
-| `ComponentName.stories.tsx`          | Controls/args stories — used with the Storybook controls panel   |
-| `ComponentName.examples.stories.tsx` | Composition examples — what the component looks like in real use |
-| `ComponentName.mdx`                  | Documentation page — imports examples via `<Canvas>` blocks      |
-
-### Example stories: always set `parameters.docs.source.code`
-
-Example stories use a `render` function, but Storybook's code panel would otherwise show the entire `render: () => (...)` wrapper instead of clean JSX. Always override it with `parameters.docs.source.code` so the displayed snippet looks like application code:
-
-```tsx
-export const Basic: Story = {
-  render: () => (
-    <Card style={{ maxWidth: 480 }}>
-      <CardHeader>
-        <strong>Project summary</strong>
-      </CardHeader>
-      <CardContent>This card composes header, content, and footer slots.</CardContent>
-      <CardFooter style={{ display: 'flex', gap: 8 }}>
-        <Button>Save</Button>
-        <Button variant="secondary">Cancel</Button>
-      </CardFooter>
-    </Card>
-  ),
-  parameters: {
-    docs: {
-      source: {
-        code: `<Card style={{ maxWidth: 480 }}>
-  <CardHeader><strong>Project summary</strong></CardHeader>
-  <CardContent>This card composes header, content, and footer slots.</CardContent>
-  <CardFooter style={{ display: 'flex', gap: 8 }}>
-    <Button>Save</Button>
-    <Button variant="secondary">Cancel</Button>
-  </CardFooter>
-</Card>`,
-      },
-    },
-  },
-};
-```
-
-The `code` string should be plain JSX as it would appear in a real application — no imports, no wrappers, no story boilerplate. Keep the indentation to 2 spaces.
-
-### Extract objects, arrays, and functions to named consts
-
-Never pass inline object literals `={{ }}`, array literals `={[]}`, or anonymous functions `={() => {}}` directly as JSX props in example stories or their `source.code` strings. Extract them to named `const` variables above the component and reference them by name. This mirrors real application code — nobody defines their data inline in JSX — and keeps the rendered markup readable.
-
-```tsx
-// ❌ avoid
-<ProgressSteps
-  steps={[
-    { id: 'account', label: 'Create account' },
-    { id: 'plan', label: 'Choose plan' },
-    { id: 'confirm', label: 'Confirm' },
-  ]}
-/>;
-
-// ✓ prefer
-const steps = [
-  { id: 'account', label: 'Create account' },
-  { id: 'plan', label: 'Choose plan' },
-  { id: 'confirm', label: 'Confirm' },
-];
-
-<ProgressSteps steps={steps} />;
-```
-
-The const definition must also appear verbatim at the top of the `source.code` string so the snippet is fully self-contained and matches what the component actually renders:
-
-```tsx
-export const CheckoutFlow: Story = {
-  render: () => <ProgressSteps steps={checkoutSteps} />,
-  parameters: {
-    docs: {
-      source: {
-        code: `const checkoutSteps = [
-  { title: 'Cart', status: 'complete' },
-  { title: 'Payment', status: 'current' },
-  { title: 'Confirm', status: 'upcoming' },
-];
-
-<ProgressSteps steps={checkoutSteps} />`,
-      },
-    },
-  },
-};
-```
-
-The same rule applies to functions passed as props. Define them as named consts and show the definition in `source.code` so readers understand how to write the predicate:
-
-```tsx
-const disableWeekends = (date: Date) => {
-  const day = date.getDay();
-  return day === 0 || day === 6;
-};
-
-<Calendar disabledDates={disableWeekends} />;
-```
+The Foundations pages (`apps/docs/src/*.mdx`) are hand-written. Keep an MDX
+comment on one line: Prettier rewrites a multi-line one into something MDX
+cannot parse.

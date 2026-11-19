@@ -7,9 +7,10 @@ about arithmetic rather than about any particular UI framework: anchored
 positioning, focus trapping, outside-interaction dismissal, list navigation and
 a handful of accessibility helpers. It imports nothing.
 
-`@pitchfork-ui/react` is built on top of it — its hooks are thin adapters that
-wire these functions into React's lifecycle. Anything else that renders DOM can
-use them the same way.
+`@pitchfork-ui/elements` is built on it, and so is the deprecated
+`@pitchfork-ui/react`, whose hooks are thin adapters that wire these functions
+into React's lifecycle. Anything else that renders DOM can use them the same
+way.
 
 ## Install
 
