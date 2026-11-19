@@ -1,10 +1,35 @@
-import { type CSSProperties, useEffect, useRef, useState, type ReactNode } from 'react';
+/// <reference types="vite/client" />
+import {
+  type CSSProperties,
+  type DetailedHTMLProps,
+  type HTMLAttributes,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { createPortal } from 'react-dom';
 import colorTokens from '../../../packages/tokens/src/tokens/color.json';
 import sizeTokens from '../../../packages/tokens/src/tokens/size.json';
 import shadowTokens from '../../../packages/tokens/src/tokens/shadow.json';
 
 type CssVariableScope = string;
+
+/*
+ * This file was never type-checked: TypeScript's include skips a dot-folder
+ * such as `.storybook`, so nothing here was in the program until
+ * `storybook-project.spec.ts` imported it. These two declarations are what the
+ * check then asked for -- Vite's `import.meta.glob` types above, and the one
+ * custom element this file renders as JSX.
+ */
+declare module 'react' {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace JSX {
+    interface IntrinsicElements {
+      'pf-icon': DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & { name?: string };
+    }
+  }
+}
 
 interface CssVariableControl {
   name: string;
