@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { controlsForStoryTitle } from '../.storybook/CssVariableDecorator';
 
 /**
  * The invariants the generated element pages depend on, checked without a
@@ -58,5 +60,34 @@ describe('generated element pages', () => {
       expect(name.startsWith('Pf'), `${file} still carries the Pf prefix`).toBe(false);
       expect(source, `${file} should export Interactive`).toContain('export const Interactive');
     }
+  });
+});
+
+/*
+ * The CSS Variables panel on an Interactive story shows the controls for its
+ * scope, and the scope comes from the story title. It used to come from a
+ * hand-kept map written for the React stories' titles, which the element
+ * stories never matched: 68 of 112 showed no panel, the newest four included,
+ * and nothing failed. This holds it the other way round: an element whose
+ * stylesheet reads a `--pf-*` variable must get a panel.
+ */
+describe('the CSS Variables panel', () => {
+  const componentsDir = join(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../../packages/elements/src/components',
+  );
+
+  it('has controls for every element whose stylesheet reads a --pf-* variable', () => {
+    const missing: string[] = [];
+    for (const file of stories) {
+      const name = file.replace('.stories.tsx', '');
+      const tag = `pf-${name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()}`;
+      const css = join(componentsDir, tag, `${tag}.css`);
+      if (!existsSync(css)) continue; // no stylesheet, so nothing to control
+      const source = readFileSync(css, 'utf8');
+      if (!/var\(--pf-/.test(source)) continue;
+      if (controlsForStoryTitle(`Components/${name}`).length === 0) missing.push(name);
+    }
+    expect(missing, `no CSS Variables panel for: ${missing.join(', ')}`).toEqual([]);
   });
 });
