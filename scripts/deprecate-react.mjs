@@ -4,6 +4,7 @@
  *
  *   node scripts/deprecate-react.mjs            # report what it would do
  *   node scripts/deprecate-react.mjs --apply    # write it to the registry
+ *   node scripts/deprecate-react.mjs --check    # warn in CI about any version without it
  *
  * This is Phase 6 of `REACT-RETIREMENT-PLAN.md`, and it is a script rather than
  * a command in a commit message for the same three reasons
@@ -28,11 +29,12 @@
  * **Re-run it after any further publish.** A version published after this has
  * no deprecation of its own -- the registry stores the flag per version, not
  * per package -- so a patch release would quietly arrive undeprecated. That is
- * why the report lists the undeprecated versions rather than a count.
+ * why the report lists the undeprecated versions rather than a count, and why
+ * the release workflow runs `--check` after every publish.
  */
 
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
@@ -42,6 +44,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PACKAGE = '@pitchfork-ui/react';
 
 const apply = process.argv.includes('--apply');
+const check = process.argv.includes('--check');
 
 const elementsPkg = JSON.parse(readFileSync(join(ROOT, 'packages/elements/package.json'), 'utf8'));
 const site = elementsPkg.homepage.replace(/\/$/, '');
@@ -74,6 +77,42 @@ async function published() {
 const before = await published();
 const undeprecated = before.filter((entry) => !entry.deprecated);
 
+/*
+ * `--check` is the release workflow's reminder, and it cannot be the fix:
+ * trusted publishing authenticates `npm publish` and nothing else, so the job
+ * that just published a version has no credentials to deprecate it. It
+ * reports instead, as a warning on the run and a line in its summary, and
+ * never fails -- the publish it follows has already succeeded, and a red run
+ * reads as a release that needs re-running.
+ *
+ * The version on disk counts too. The registry took five minutes to list
+ * 0.19.1 after its publish, so a check that only read the packument straight
+ * after publishing would report the old versions and miss the new one -- the
+ * one this check exists for.
+ */
+if (check) {
+  // Once Phase 7 removes the package from the workspace there is no version on
+  // disk, and the registry's list is the whole answer.
+  const manifest = join(ROOT, 'packages/react/package.json');
+  const local = existsSync(manifest) ? JSON.parse(readFileSync(manifest, 'utf8')).version : null;
+  const missing = undeprecated.map((entry) => entry.version);
+  if (local && !before.some((entry) => entry.version === local)) missing.push(local);
+
+  if (missing.length === 0) {
+    console.log(`${PACKAGE}: every published version carries the deprecation notice.`);
+    process.exit(0);
+  }
+
+  const text =
+    `${PACKAGE} ${missing.join(', ')} ${missing.length === 1 ? 'has' : 'have'} no npm ` +
+    'deprecation notice. Run `npm run deprecate:react -- --apply` with your own npm login.';
+  console.log(`::warning title=Deprecate ${PACKAGE}::${text}`);
+  if (process.env.GITHUB_STEP_SUMMARY) {
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### Deprecation notice missing\n\n${text}\n`);
+  }
+  process.exit(0);
+}
+
 console.log(`${PACKAGE}: ${before.length} published version(s)`);
 console.log(`  already deprecated: ${before.length - undeprecated.length}`);
 console.log(`  not yet:            ${undeprecated.length}`);
@@ -85,8 +124,8 @@ if (!apply) {
   console.log(
     '\nIt needs your own npm credentials — `npm whoami` has to answer, and the ' +
       'account needs publish rights on the scope. A trusted publisher grants ' +
-      '*publish*, and whether it covers `deprecate` is untested here, which is ' +
-      'why this is not in the release workflow.',
+      '*publish* only, which is why the release workflow runs --check and not ' +
+      'this.',
   );
   process.exit(0);
 }
