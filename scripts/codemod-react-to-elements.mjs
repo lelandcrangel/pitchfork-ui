@@ -47,6 +47,9 @@ import { join, relative, extname, dirname } from 'node:path';
 import { loadMigrationMap } from './lib/migration-map.mjs';
 
 const REACT_PACKAGE = '@pitchfork-ui/react';
+/** The annotation this tool writes above an import, when it ends right there. */
+const ANNOTATION_ABOVE =
+  /\/\*\n \* TODO\(pitchfork-ui\): still on [^\n]*\n(?: \*[^\n]*\n)*? \*\/\n$/;
 const ELEMENTS_PACKAGE = '@pitchfork-ui/elements-react';
 const GUIDE = 'Foundations/Migrating in Storybook';
 const EXTENSIONS = new Set(['.tsx', '.ts', '.jsx', '.js']);
@@ -319,7 +322,7 @@ function processFile(path) {
       return { path, skipped: ['mentions the package but imports nothing it can rewrite'] };
     }
     if (write) writeFileSync(path, only);
-    return { path, applied: sheets, changed: true };
+    return { path, applied: sheets, changed: true, text: only };
   }
 
   const imported = imports.flatMap((i) => i.names);
@@ -399,8 +402,17 @@ function processFile(path) {
   // renames below cannot touch them and no index drifts while they run.
   const PLACEHOLDER = '\u0000PF_IMPORTS\u0000';
   for (const statement of [...imports].reverse()) {
+    /*
+     * A TODO block this tool wrote on an earlier run sits directly above the
+     * import it annotates, outside the statement, so it has to come out with
+     * it. Left in place, every rerun stacked a second copy above the one it
+     * regenerates -- and a migration is run in passes, fixing a few call sites
+     * between each. The block is rebuilt from the refusals as they stand now.
+     */
+    const earlier = next.slice(0, statement.start).match(ANNOTATION_ABOVE);
+    const start = earlier ? statement.start - earlier[0].length : statement.start;
     next =
-      next.slice(0, statement.start) +
+      next.slice(0, start) +
       (statement === imports[0] ? PLACEHOLDER : '') +
       next.slice(statement.end);
   }
@@ -482,7 +494,7 @@ function processFile(path) {
 
   if (next === source) return { path, applied: [] };
   if (write) writeFileSync(path, next);
-  return { path, applied, changed: true };
+  return { path, applied, changed: true, text: next };
 }
 
 /**
@@ -530,17 +542,56 @@ function walk(target, found = []) {
 }
 
 const files = targets.flatMap((t) => walk(t));
+
+/*
+ * Stylesheets are read, never rewritten. A selector on a React component's
+ * class (`.pf-button--primary`) matches nothing once the element renders: its
+ * markup is in a shadow root, and the host carries no such class. The rule
+ * stays valid CSS, so nothing reports it and the style is simply gone. There is
+ * no mechanical answer either -- the same intent is a `--pf-*` variable or a
+ * `::part()`, depending on what it styled -- so this lists them for the person
+ * doing the migration.
+ */
+const STYLE_EXTENSIONS = new Set(['.css', '.scss', '.sass', '.less']);
+function walkStyles(target, found = []) {
+  const stat = statSync(target);
+  if (stat.isFile()) {
+    if (STYLE_EXTENSIONS.has(extname(target))) found.push(target);
+    return found;
+  }
+  for (const entry of readdirSync(target, { withFileTypes: true })) {
+    if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
+    walkStyles(join(target, entry.name), found);
+  }
+  return found;
+}
+const selectorFindings = targets
+  .flatMap((t) => walkStyles(t))
+  .flatMap((path) => {
+    const source = readFileSync(path, 'utf8').replace(/\/\*[\s\S]*?\*\//g, (c) =>
+      c.replace(/[^\n]/g, ' '),
+    );
+    const found = [];
+    for (const match of source.matchAll(/\.pf-[a-z][\w-]*/g)) {
+      found.push({ path, line: lineAt(source, match.index), selector: match[0] });
+    }
+    return found;
+  });
 const results = files.map(processFile).filter(Boolean);
 
 /*
- * The audit reads the file from disk *after* the rewrite, so with `--write` it
- * sees the renamed call sites this run produced -- which is the case that
- * matters, since the rename is what strands an `onChange` on an element. On a
- * dry run it reports what is already there, which is the same check a ported
+ * The audit reads each file as this run leaves it -- or, on a dry run, as it
+ * *would* leave it -- so it sees the renamed call sites, which is the case that
+ * matters: the rename is what strands an `onChange` on an element. It used to
+ * read the disk in both modes, so a dry run audited the unrenamed `<Switch>`,
+ * found no binding to check, and reported nothing; the report a migration is
+ * meant to start from was the one place the defect could not show up. A file
+ * this run does not change is audited as it is, which is the check a ported
  * app wants on its own.
  */
+const rewritten = new Map(results.filter((r) => r.text !== undefined).map((r) => [r.path, r.text]));
 const handlerFindings = files.flatMap((path) => {
-  const current = readFileSync(path, 'utf8');
+  const current = rewritten.get(path) ?? readFileSync(path, 'utf8');
   if (!current.includes(ELEMENTS_PACKAGE)) return [];
   return auditHandlers(current, byBinding).map((finding) => ({ ...finding, path }));
 });
@@ -612,7 +663,9 @@ if (undeclared.size > 0 && !quiet) {
 if (handlerFindings.length > 0) {
   console.log(
     `\n${handlerFindings.length} handler(s) the element cannot fire — these ` +
-      'type-check, render and never run:',
+      'type-check, render and never run' +
+      // A dry run audits the text it would write, so its lines are that text's.
+      (write ? ':' : ' (lines as they will be after --write):'),
   );
   for (const finding of handlerFindings) {
     const events = finding.events.length > 0 ? finding.events.join(', ') : 'no events at all';
@@ -622,6 +675,16 @@ if (handlerFindings.length > 0) {
     );
   }
   process.exitCode = 1;
+}
+
+if (selectorFindings.length > 0 && !quiet) {
+  console.log(
+    `\n${selectorFindings.length} stylesheet selector(s) on a React class name, which ` +
+      'no element renders in the page. Restyle through a --pf-* variable or ::part():',
+  );
+  for (const finding of selectorFindings) {
+    console.log(`  ${relative(process.cwd(), finding.path)}:${finding.line}  ${finding.selector}`);
+  }
 }
 
 const verb = write ? 'rewrote' : 'would rewrite';

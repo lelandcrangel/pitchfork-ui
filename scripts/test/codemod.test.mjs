@@ -27,8 +27,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const CODEMOD = join(ROOT, 'scripts', 'codemod-react-to-elements.mjs');
 
 /** Write `files` into a fresh directory, run the codemod, read them back. */
-function run(files, { write = true, args = [] } = {}) {
-  const dir = mkdtempSync(join(tmpdir(), 'pf-codemod-'));
+function run(files, { write = true, args = [], dir: existing } = {}) {
+  const dir = existing ?? mkdtempSync(join(tmpdir(), 'pf-codemod-'));
   // A manifest declaring the target, so the dependency warning -- which has
   // its own test -- does not fire in every other case.
   writeFileSync(
@@ -350,4 +350,68 @@ test('leaves a handler inside a string or a comment alone', () => {
 
   assert.doesNotMatch(stdout, /cannot fire/);
   assert.equal(exitCode, 0);
+});
+
+/*
+ * A migration is run in passes: report, apply, fix a few call sites, run again.
+ * The TODO block sits above the import it annotates, outside the statement, so
+ * every rerun used to add a second copy above the one it regenerated.
+ */
+test('a second --write leaves a converted file exactly as it was', () => {
+  const files = {
+    'a.tsx': [
+      "import { Button, Select } from '@pitchfork-ui/react';",
+      'export const X = () => <><Button>go</Button><Select options={o} /></>;',
+    ].join('\n'),
+  };
+  const first = run(files);
+  const once = first.after['a.tsx'];
+  const again = run({}, { dir: first.dir });
+  const twice = readFileSync(join(first.dir, 'a.tsx'), 'utf8');
+
+  assert.equal(twice.match(/TODO\(pitchfork-ui\)/g).length, 1);
+  assert.equal(twice, once);
+  assert.match(again.stdout, /rewrote 0/);
+});
+
+/*
+ * The report is where a migration starts, and it used to audit the file as it
+ * was on disk -- an unrenamed `<Switch>`, which no binding check applies to --
+ * so the dead handler only appeared after `--write` had made it.
+ */
+test('a dry run reports the handler the rename would strand', () => {
+  const { stdout, after } = run(
+    {
+      'a.tsx': [
+        "import { Switch } from '@pitchfork-ui/react';",
+        'export const Toggle = () => <Switch checked={on} onChange={(e) => set(e.target.checked)} />;',
+      ].join('\n'),
+    },
+    { write: false },
+  );
+
+  assert.match(stdout, /<PfSwitch onChange>/);
+  assert.match(stdout, /lines as they will be after --write/);
+  // Still a dry run: the file is untouched.
+  assert.match(after['a.tsx'], /<Switch checked/);
+});
+
+/*
+ * No element renders a React class name in the page, so a selector on one
+ * stays valid CSS and styles nothing. The codemod lists it rather than
+ * guessing at a variable or a part.
+ */
+test('lists a stylesheet selector on a React class name, and leaves the file alone', () => {
+  const css =
+    '/* .pf-ignored in a comment */\n.app .pf-button--primary { color: red; }\n.mine { color: blue; }\n';
+  const { stdout, after } = run({
+    'a.tsx':
+      "import { Button } from '@pitchfork-ui/react';\nexport const X = () => <Button>go</Button>;",
+    'app.css': css,
+  });
+
+  assert.match(stdout, /1 stylesheet selector/);
+  assert.match(stdout, /app\.css:2 {2}\.pf-button--primary/);
+  assert.doesNotMatch(stdout, /pf-ignored/);
+  assert.equal(after['app.css'], css);
 });
