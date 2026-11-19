@@ -19,6 +19,8 @@
       "@pitchfork-ui/core": ["../../packages/core/src"]
     }
   },
-  "include": ["src", ".storybook"],
+  // A bare ".storybook" matches nothing: TypeScript's wildcard expansion
+  // skips dot-folders, so the folder has to be named with an explicit glob.
+  "include": ["src", ".storybook/**/*"],
   "references": []
 }
