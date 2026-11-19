@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.19.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.19.0...react-v0.19.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* **react:** point registerIcons' deprecation at the function core really exports ([fdbf115](https://github.com/lelandcrangel/pitchfork-ui/commit/fdbf11521513cb2d889e0da6717d8e1462ab593e))
+
 ## [0.19.0](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.18.0...react-v0.19.0) (2026-11-19)
 
 
