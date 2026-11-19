@@ -140,11 +140,21 @@ function extractControlsFromCss(cssContent: string, scope: string): CssVariableC
  * The `pf-` prefix comes off, because the scopes are keyed off story titles --
  * `Components/Button` maps to `button` -- while the element folders are named
  * after their tags. Leaving it on makes every scope `pf-button`, which matches
- * nothing in `scopeByStoryTitle` and silently contributes no controls at all.
+ * no story's scope and silently contributes no controls at all.
  */
 function scopeFromPath(path: string): string {
   const match = path.match(/components\/([^/]+)\//);
-  return match ? match[1].replace(/^pf-/, '').toLowerCase() : '';
+  return match ? toScope(match[1].replace(/^pf-/, '')) : '';
+}
+
+/**
+ * One spelling for a scope, whichever side it came from: `pf-checkbox-group`
+ * from a folder and `Components/CheckboxGroup` from a story title both become
+ * `checkboxgroup`. The folder side kept its hyphens until this was shared, so a
+ * hyphenated element could never meet its story's scope.
+ */
+function toScope(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 function buildGeneratedControls(existingScopes: Set<string>): CssVariableControl[] {
@@ -2405,90 +2415,43 @@ function ColorSelect({
   );
 }
 
-const scopeByStoryTitle: Record<string, CssVariableScope[]> = {
-  // existing curated scopes
-  'Components/Modals': ['modal'],
-  'Components/Metrics': ['metrics'],
-  'Components/Loading Indicators': ['loadingindicators'],
-  'Components/Credit Card': ['creditcard'],
-  'Components/Button': ['button'],
-  'Components/Card': ['card'],
-  'Components/ContentDivider': ['contentdivider'],
-  'Components/Carousel': ['carousel'],
-  'Components/Button Group': ['buttongroup'],
-  'Components/Breadcrumbs': ['breadcrumbs'],
-  'Components/Input': ['input'],
-  'Components/Dropdown': ['dropdown'],
-  'Components/FileUploader': ['fileuploader'],
-  'Components/Resizable': ['resizable'],
-  'Components/ScrollArea': ['scrollarea'],
-  'Components/Select': ['select'],
-  'Components/TimePicker': ['timepicker'],
-  'Components/Toolbar': ['toolbar'],
-  'Components/TagInput': ['taginput'],
-  'Components/Timeline': ['timeline'],
+/*
+ * Most stories need no entry: the scope is the story title with its
+ * `Components/` prefix and every non-alphanumeric removed, which is how the
+ * element folders are scoped too (`Components/CheckboxGroup` and
+ * `pf-checkbox-group` are both `checkboxgroup`).
+ *
+ * This used to be a hand-kept map from every title to its scope, written for
+ * the React stories -- `Components/Modals`, `Components/Loading Indicators` --
+ * and the element stories took over the titles without the map following. 68
+ * of the 112 Interactive stories matched nothing and showed no CSS Variables
+ * panel at all, every one of the four elements added last among them. These
+ * are the titles whose hand-crafted controls use a different scope name.
+ */
+const scopeOverrides: Record<string, CssVariableScope[]> = {
   'Components/CommandPalette': ['command'],
-  'Components/ContextMenu': ['contextmenu'],
-  'Components/Collapsible': ['collapsible'],
-  'Components/Combobox': ['combobox'],
-  'Components/NumberInput': ['numberinput'],
   'Components/DateRangePicker': ['daterange'],
-  'Components/Checkbox': ['checkbox'],
-  'Components/CodeSnippet': ['codesnippet'],
   'Components/RadioButton': ['radio'],
-  'Components/Switch': ['switch'],
-  'Components/Avatar': ['avatar'],
-  'Components/Alert': ['alert'],
-  'Components/Notifications': ['notification'],
-  'Components/InlineCTA': ['inlinecta'],
-  'Components/Badge': ['badge'],
-  'Components/BadgeGroup': ['badgegroup'],
-  'Components/Badge Group': ['badgegroup'],
-  'Components/Tag': ['tag'],
-  'Components/Utility Button': ['utilitybutton'],
-  'Components/Calendar': ['calendar'],
-  'Components/DatePicker': ['datepicker'],
-  'Components/Icon': ['icon'],
-  'Components/HeaderNavigation': ['headernavigation'],
-  // auto-extracted scopes for remaining components
-  'Components/Multi Select': ['multiselect'],
-  'Components/Page Headers': ['pageheader'],
-  'Components/Paginations': ['pagination'],
-  'Components/Pie Charts': ['piechart'],
-  'Components/Progress Indicators': ['progressindicators'],
-  'Components/Progress Steps': ['progresssteps'],
-  'Components/Radar Charts': ['radarchart'],
-  'Components/Radio Buttons': ['radiobutton'],
-  'Components/Radio Groups': ['radiogroup'],
-  'Components/Rich Text Editor': ['richtexteditor'],
-  'Components/Section Footers': ['sectionfooter'],
-  'Components/Section Headers': ['sectionheader'],
-  'Components/Sidebar Navigations': ['sidebarnavigation'],
-  'Components/Slideout Menus': ['slideoutmenu'],
-  'Components/Slider': ['slider'],
-  'Components/Tables': ['table'],
-  'Components/Tabs': ['tabs'],
-  'Components/Textarea': ['textarea'],
-  'Components/Tooltip': ['tooltip'],
-  'Components/Tree Views': ['treeview'],
-  'Components/Video Player': ['videoplayer'],
-  'Components/Line & Bar Charts': ['linebarcharts'],
-  'Components/Area Chart': ['linebarcharts'],
-  'Components/Rating': ['rating'],
-  'Components/EmptyState': ['emptystate'],
-  'Components/Accordion': ['accordion'],
-  'Components/Avatar Group': ['avatargroup'],
-  'Components/Popover': ['popover'],
-  'Components/Gauge Chart': ['gaugechart'],
-  'Components/Heatmap': ['heatmap'],
-  'Components/Kbd': ['kbd'],
-  'Components/Sparkline': ['sparkline'],
 };
+
+function scopesForTitle(title: string): CssVariableScope[] {
+  return scopeOverrides[title] ?? [toScope(title.replace(/^Components\//, ''))];
+}
 
 // Build generated controls for scopes not covered by hand-crafted CSS_VARIABLE_CONTROLS
 const handCraftedScopes = new Set(CSS_VARIABLE_CONTROLS.flatMap((c) => c.scopes));
 const GENERATED_CONTROLS = buildGeneratedControls(handCraftedScopes);
 const ALL_CONTROLS = [...CSS_VARIABLE_CONTROLS, ...GENERATED_CONTROLS];
+
+/**
+ * Every control a story with this title can show, before the variant filter.
+ * Exported for `storybook-project.spec.ts`, which asserts that every element
+ * whose stylesheet reads a `--pf-*` variable gets a panel.
+ */
+export function controlsForStoryTitle(title: string): CssVariableControl[] {
+  const scopes = scopesForTitle(title);
+  return ALL_CONTROLS.filter((control) => control.scopes.some((scope) => scopes.includes(scope)));
+}
 
 export function withCssVariableControls(
   Story: () => ReactNode,
@@ -2510,7 +2473,7 @@ export function withCssVariableControls(
     ((typeof context.name === 'string' && context.name.toLowerCase().startsWith('interactive')) ||
       (typeof context.id === 'string' && context.id.toLowerCase().includes('--interactive')));
   const isComponentStory = Boolean(context.title?.startsWith('Components/'));
-  const mappedScopes = context.title ? (scopeByStoryTitle[context.title] ?? []) : [];
+  const mappedScopes = context.title ? scopesForTitle(context.title) : [];
   const activeScopes: CssVariableScope[] = mappedScopes;
   const activeVariants = [
     context.args?.variant,

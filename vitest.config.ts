@@ -25,6 +25,11 @@ export default defineConfig({
           name: 'storybook-smoke',
           environment: 'jsdom',
           include: ['apps/docs/src/storybook-project.spec.ts'],
+          // The CSS Variables decorator reads the element stylesheets with a
+          // `?raw` glob, and Vitest hands back an empty string for any CSS it
+          // is not told to process -- measured: 112 files found, every one
+          // empty -- so the panel test saw no variables anywhere.
+          css: { include: [/packages\/elements\/src\/components\/.+\.css/] },
         },
       },
     ],
