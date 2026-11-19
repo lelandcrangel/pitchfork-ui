@@ -71,8 +71,10 @@ would rather not install anything, the same content is published as
 [`llms-full.txt`](https://lelandrangel.com/pitchfork-ui/llms-full.txt), or as
 `@pitchfork-ui/elements/metadata` for your own tooling.
 
-This repository also carries an agent skill, `.claude/skills/pitchfork-ui`,
-with the rules an agent cannot infer from the API alone.
+This repository also carries two agent skills: `.claude/skills/pitchfork-ui`,
+with the rules an agent cannot infer from the API alone, and
+`.claude/skills/pitchfork-migrate`, which moves an app off the deprecated
+`@pitchfork-ui/react`.
 
 See [Using with AI](https://lelandrangel.com/pitchfork-ui/?path=/docs/foundations-using-with-ai--docs)
 for setup in other clients and for what changes in the output.
