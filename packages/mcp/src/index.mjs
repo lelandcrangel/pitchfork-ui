@@ -284,7 +284,7 @@ const reactLayerRetired = () =>
 server.registerTool(
   'list_components',
   {
-    title: 'List components',
+    title: 'List deprecated React components',
     description:
       'List the components of @pitchfork-ui/react, which is DEPRECATED. Use this ' +
       'only to work on code that already imports it; for anything new call ' +
@@ -321,7 +321,7 @@ server.registerTool(
 server.registerTool(
   'search_components',
   {
-    title: 'Search components',
+    title: 'Find the element for a job',
     description:
       'Find something by describing what you need in plain language, e.g. ' +
       '"upload a file", "show a loading state", "pick a date range". Searches ' +
@@ -386,7 +386,7 @@ server.registerTool(
 server.registerTool(
   'get_component',
   {
-    title: 'Get a component API',
+    title: 'Get a deprecated React component API',
     description:
       'The full API for one component of the DEPRECATED @pitchfork-ui/react: ' +
       'props with types and defaults, what it extends, its accessibility ' +
@@ -405,14 +405,18 @@ server.registerTool(
 server.registerTool(
   'get_examples',
   {
-    title: 'Get component or element examples',
+    title: 'Get element examples',
     description:
       'Copy-ready markup for a custom element. Takes an element tag ' +
       '("pf-table"), an element name ("PfTable"), or a deprecated React ' +
       'component name ("Table") — which answers with the element that ' +
       'replaces it, since the React examples went with their docs pages.',
     inputSchema: {
-      name: z.string().describe('Component name, element tag, or element name'),
+      name: z
+        .string()
+        .describe(
+          'Element tag ("pf-table"), element name ("PfTable") or a deprecated component name',
+        ),
     },
   },
   async ({ name }) => {
@@ -629,21 +633,21 @@ server.registerTool(
 server.registerTool(
   'validate_usage',
   {
-    title: 'Validate component usage',
+    title: 'Validate usage',
     description:
-      'Check a JSX snippet against the real component API. Reports unknown ' +
-      'components, invalid variant values, missing required props, likely prop ' +
-      'typos and hardcoded colours. Also checks `<pf-*>` element markup: ' +
-      'unknown tags, attributes that do not exist, and props that have no ' +
-      'attribute at all and so cannot be set from markup. A generated binding ' +
+      'Check `<pf-*>` element markup, or JSX that uses the generated bindings, ' +
+      'against the real API. Reports unknown tags, attributes that do not exist, ' +
+      'invalid values, likely typos, props that have no attribute and so cannot ' +
+      'be set from markup, and hardcoded colours. A generated binding ' +
       '(`<PfButton fullWidth onPfChange={...}>`) is checked against its ' +
-      "element's props and events. An icon name that is " +
+      "element's props and events. JSX that uses the deprecated " +
+      '@pitchfork-ui/react components is checked against their props. An icon name that is ' +
       'not built in is a warning rather than an error, because an app can ' +
       'register any icon under any name at runtime; pass the names the app ' +
       'registers in `registeredIcons` and they pass. Run this on code you ' +
       'generated before presenting it.',
     inputSchema: {
-      code: z.string().min(1).describe('The JSX snippet to check'),
+      code: z.string().min(1).describe('The markup or JSX to check'),
       registeredIcons: z
         .array(z.string().min(1))
         .optional()
