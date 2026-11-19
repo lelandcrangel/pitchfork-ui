@@ -692,18 +692,17 @@ export function validateUsage(code, componentsByName, icons = null, elementsByTa
         // A note, not a warning: the binding is the supported way to use the
         // library from a framework, so warning about it would be crying wolf.
         // It still says which package it comes from, because an agent that
-        // reached for it may be importing from the wrong one.
+        // reached for it may be importing from the wrong one. It used to offer
+        // the @pitchfork-ui/react counterpart as an alternative, which steered
+        // an agent already on the supported path back to the deprecated one.
         findings.push({
           severity: 'info',
           line: usage.line,
           component: usage.name,
           message:
             `\`${usage.name}\` is the generated binding for \`<${binding.tag}>\`, ` +
-            'not a @pitchfork-ui/react component. Import it from ' +
-            '@pitchfork-ui/elements-react (or -angular, -vue), or use ' +
-            (binding.reactCounterpart
-              ? `\`${binding.reactCounterpart}\` from @pitchfork-ui/react.`
-              : 'the element directly.'),
+            'from @pitchfork-ui/elements-react (or -angular, -vue). It is the ' +
+            'supported way to use the element from a framework.',
         });
         // The note used to be the whole answer, so `<PfButton variant="ghostly">`
         // came back without a single error. The binding sets the element's

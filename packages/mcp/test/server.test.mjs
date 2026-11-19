@@ -543,6 +543,9 @@ test('validate_usage recognises a generated binding used in JSX', async () => {
   const out = await call('validate_usage', { code: '<PfButton variant="primary">Go</PfButton>' });
   assert.match(out, /generated binding for `<pf-button>`/);
   assert.match(out, /elements-react/);
+  // The binding is the supported path; the note must not offer the
+  // deprecated package as an alternative to it.
+  assert.doesNotMatch(out, /@pitchfork-ui\/react\b/);
 });
 
 /*
