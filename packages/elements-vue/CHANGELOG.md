@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.1](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-vue-v0.3.0...elements-vue-v0.3.1) (2026-11-20)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/elements bumped from ^0.4.0 to ^0.4.1
+
 ## [0.3.0](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-vue-v0.2.2...elements-vue-v0.3.0) (2026-11-19)
 
 

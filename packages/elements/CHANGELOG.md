@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-v0.4.0...elements-v0.4.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* **elements:** let text fields shrink to the column they are given ([0a268c0](https://github.com/lelandcrangel/pitchfork-ui/commit/0a268c0f599ae1d4778a13bd2d39bdddb3327ac2))
+
 ## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-v0.3.0...elements-v0.4.0) (2026-11-19)
 
 
