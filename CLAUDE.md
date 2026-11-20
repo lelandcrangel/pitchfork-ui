@@ -230,9 +230,9 @@ alias for anything that should differ between modes has to name the **semantic
 token**, never the primitive underneath it. Some aliases do name a primitive
 and are right to — a chart series wants `--color-brand-400` in both modes —
 but a primitive cannot move, so an alias that names one is a mode that will
-not flip. Measured: 86 of the 542 `:root` aliases name a colour primitive and
-51 of those have no dark-block override, which `todo.md` carries as the audit
-this change did not do. That is how `--pf-control-border-disabled` left a disabled
+not flip. Measured after the audit `todo.md` records: 57 of the 549 `:root`
+aliases name a colour primitive somewhere in their value, 24 of them with no
+dark-block override, and all but the switch track are deliberate. That is how `--pf-control-border-disabled` left a disabled
 control border at 14.48:1 on the dark background while its enabled counterpart
 moved to 3.75:1: the disabled control read as the more prominent of the two,
 and no contrast check could say so, because WCAG exempts disabled controls.

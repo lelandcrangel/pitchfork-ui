@@ -396,6 +396,30 @@
         }
       },
       "status": {
+        "neutral": {
+          "background": {
+            "$value": "{color.gray.100}",
+            "$type": "color",
+            "$description": "A neutral badge, tag or badge group. Light in light mode and a step above the raised surface in dark mode, so it stays visible on a card as well as on the page.",
+            "$extensions": {
+              "pitchfork.dark": "{color.gray.700}"
+            }
+          },
+          "border": {
+            "$value": "{color.gray.200}",
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.gray.400}"
+            }
+          },
+          "foreground": {
+            "$value": "{color.gray.700}",
+            "$type": "color",
+            "$extensions": {
+              "pitchfork.dark": "{color.gray.200}"
+            }
+          }
+        },
         "success": {
           "background": {
             "$value": "{color.success.50}",
