@@ -57,6 +57,15 @@
   min-width: 6ch;
   outline: none;
   padding: var(--space-1);
+  /*
+   * A native input is as wide as its size attribute (20 characters) until told
+   * otherwise, and that intrinsic width became the whole element's narrowest
+   * size: two of these side by side would not fit a 426px card, so the column
+   * widened and the card clipped it. A percentage width makes the input
+   * contribute nothing to the min-content size, so the element shrinks to
+   * whatever its container gives it.
+   */
+  width: 100%;
 }
 
 .input::placeholder {

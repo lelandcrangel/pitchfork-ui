@@ -1095,6 +1095,64 @@ try {
   }
 
   /*
+   * A text field has to shrink to the column it is given.
+   *
+   * A native input is as wide as its `size` (20 characters) unless its own
+   * width says otherwise, and in `pf-input`, `pf-combobox` and `pf-tag-input`
+   * that intrinsic width became the element's min-content size: 220, 224 and
+   * 196px. Two `pf-input`s in a `1fr 1fr` row could then not fit the 426px
+   * inside a `pf-card`, so the checkout pattern's whole column widened and the
+   * card's `overflow: hidden` cut every field's right edge off. `width: 100%`
+   * on the inner input is the fix, and neither test project could see it,
+   * since neither applies the stylesheet.
+   *
+   * The track is `1fr` in a 120px box, as the pattern's are, and not a fixed
+   * `120px` track: a fixed track stretches the element to 120 whatever its
+   * min-content size, so the first version of this check passed with the fix
+   * reverted. `1fr` cannot shrink below its content, which is the mechanism.
+   *
+   * The column is 120px because every control's own chrome fits it -- the
+   * three measure 38, 54 and 74px at min-content once fixed -- while a 20-character input cannot.
+   */
+  const NARROW_COLUMN = 120;
+  const narrow = await page
+    .evaluate(
+      async ([tags, column]) => {
+        // One box each: in a shared track the widest field widens the others,
+        // and the report would blame all three for one.
+        const boxes = tags.map((tag) => {
+          const box = document.createElement('div');
+          box.style.cssText = `display: grid; grid-template-columns: 1fr; width: ${column}px; position: absolute; left: 0; top: 0`;
+          box.innerHTML = `<${tag} label="Name"></${tag}>`;
+          document.body.appendChild(box);
+          return box;
+        });
+        for (let i = 0; i < 80; i += 1) await new Promise((r) => requestAnimationFrame(r));
+        const widths = boxes.map((box) => [
+          box.firstElementChild.localName,
+          Math.round(box.firstElementChild.getBoundingClientRect().width),
+        ]);
+        for (const box of boxes) box.remove();
+        return widths;
+      },
+      [['pf-input', 'pf-combobox', 'pf-tag-input'], NARROW_COLUMN],
+    )
+    .catch((error) => ({ error: String(error) }));
+
+  if (narrow?.error) {
+    problems.push(`narrow column: ${narrow.error}`);
+  } else {
+    const wide = narrow.filter(([, width]) => width > NARROW_COLUMN);
+    if (wide.length > 0) {
+      problems.push(
+        `${wide.map(([tag, width]) => `${tag} ${width}px`).join(', ')} in a ${NARROW_COLUMN}px ` +
+          'column — the inner input keeps its 20-character intrinsic width, so the field ' +
+          'widens its grid track and a card around it clips the edge',
+      );
+    }
+  }
+
+  /*
    * A modal whose content and `open` arrive in the **same task**, which is
    * what every framework's commit does and what the consumer apps' static
    * markup does not.
