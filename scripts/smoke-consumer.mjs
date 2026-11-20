@@ -5975,6 +5975,56 @@ try {
   }
 
   /*
+   * The same defect, for the colours a reader sees most: a neutral badge, a
+   * neutral tag, a gray badge group and the rating badge each named a
+   * primitive, so in dark mode they stayed light pills -- gray-100 behind
+   * gray-700 text, and a cream rating badge -- while every other variant
+   * beside them went dark. A destructive utility button hovered to the same
+   * near-white pink in both modes, under pale-red dark-mode text. Each now
+   * moves with the theme, so each has to read differently under
+   * [data-theme=dark] than without it. Probed by
+   * putting `var(--color-gray-100)` back on the neutral badge: it reads
+   * #f1f5f9 in both modes and this names it.
+   */
+  const themedAliases = await page.evaluate(() => {
+    const root = document.documentElement;
+    const before = root.getAttribute('data-theme');
+    const names = [
+      '--pf-badge-neutral-background',
+      '--pf-badge-neutral-foreground',
+      '--pf-tag-neutral-bg',
+      '--pf-tag-neutral-text',
+      '--pf-badgegroup-gray-100',
+      '--pf-badgegroup-gray-200',
+      '--pf-badgegroup-gray-700',
+      '--pf-rating-badge-bg',
+      '--pf-rating-badge-border',
+      '--pf-rating-badge-text',
+      '--pf-utility-btn-destructive-bg-hover',
+    ];
+    const readAll = (theme) => {
+      root.setAttribute('data-theme', theme);
+      const style = getComputedStyle(root);
+      return Object.fromEntries(names.map((n) => [n, style.getPropertyValue(n).trim()]));
+    };
+    const light = readAll('light');
+    const dark = readAll('dark');
+    if (before === null) root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', before);
+    return names.map((name) => ({ name, light: light[name], dark: dark[name] }));
+  });
+  for (const { name, light, dark } of themedAliases) {
+    if (!light || !dark) {
+      problems.push(`${name} resolved to nothing in ${light ? 'dark' : 'light'} mode`);
+    } else if (light === dark) {
+      problems.push(
+        `${name} is ${dark} in both modes — it names a primitive rather than a semantic ` +
+          'token, so it stays a light colour on a dark page',
+      );
+    }
+  }
+
+  /*
    * Two fixes from the v0.29 review that only a stylesheet can show, checked on
    * elements made here rather than in the consumer apps, since neither needs
    * the host framework to say anything.

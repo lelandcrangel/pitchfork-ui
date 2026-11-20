@@ -1368,7 +1368,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-badge-neutral-background',
     label: 'Badge neutral background',
-    defaultValue: 'var(--color-gray-100)',
+    defaultValue: 'var(--color-semantic-status-neutral-background)',
     type: 'color',
     scopes: ['badge'],
     variants: ['neutral'],
@@ -1376,7 +1376,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-badge-neutral-foreground',
     label: 'Badge neutral foreground',
-    defaultValue: 'var(--color-gray-700)',
+    defaultValue: 'var(--color-semantic-status-neutral-foreground)',
     type: 'color',
     scopes: ['badge'],
     variants: ['neutral'],
@@ -1432,7 +1432,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-badgegroup-gray-100',
     label: 'Badge Group gray badge background',
-    defaultValue: 'var(--color-gray-100)',
+    defaultValue: 'var(--color-semantic-status-neutral-background)',
     type: 'color',
     scopes: ['badgegroup'],
     variants: ['gray'],
@@ -1440,7 +1440,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-badgegroup-gray-200',
     label: 'Badge Group gray border',
-    defaultValue: 'var(--color-gray-200)',
+    defaultValue: 'var(--color-semantic-status-neutral-border)',
     type: 'color',
     scopes: ['badgegroup'],
     variants: ['gray'],
@@ -1448,7 +1448,7 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
   {
     name: '--pf-badgegroup-gray-700',
     label: 'Badge Group gray foreground',
-    defaultValue: 'var(--color-gray-700)',
+    defaultValue: 'var(--color-semantic-status-neutral-foreground)',
     type: 'color',
     scopes: ['badgegroup'],
     variants: ['gray'],
@@ -1850,17 +1850,17 @@ const CSS_VARIABLE_CONTROLS: CssVariableControl[] = [
     variants: ['info'],
   },
   {
-    name: '--color-gray-100',
-    label: 'Gray 100',
-    defaultValue: 'var(--color-gray-100)',
+    name: '--color-semantic-status-neutral-background',
+    label: 'Neutral background',
+    defaultValue: 'var(--color-semantic-status-neutral-background)',
     type: 'color',
     scopes: ['badge', 'tag'],
     variants: ['neutral'],
   },
   {
-    name: '--color-gray-700',
-    label: 'Gray 700',
-    defaultValue: 'var(--color-gray-700)',
+    name: '--color-semantic-status-neutral-foreground',
+    label: 'Neutral foreground',
+    defaultValue: 'var(--color-semantic-status-neutral-foreground)',
     type: 'color',
     scopes: ['badge', 'tag'],
     variants: ['neutral'],

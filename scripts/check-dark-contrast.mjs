@@ -246,6 +246,29 @@ const PAIRS = [
     'ui',
   ],
 
+  // Status — neutral
+  [
+    'Neutral foreground on neutral bg',
+    'color-semantic-status-neutral-foreground',
+    'color-semantic-status-neutral-background',
+    4.5,
+    'text',
+  ],
+  [
+    'Neutral border on neutral bg',
+    'color-semantic-status-neutral-border',
+    'color-semantic-status-neutral-background',
+    3.0,
+    'ui',
+  ],
+  [
+    'Neutral border on default bg',
+    'color-semantic-status-neutral-border',
+    'color-semantic-background-default',
+    3.0,
+    'ui',
+  ],
+
   // Status — success
   [
     'Success foreground on success bg',
