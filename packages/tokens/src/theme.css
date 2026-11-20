@@ -275,12 +275,22 @@
   /* Rating aliases */
   --pf-rating-text: var(--color-semantic-text-default);
   --pf-rating-text-muted: var(--color-semantic-text-muted);
-  --pf-rating-star-empty: var(--color-gray-300);
-  --pf-rating-star-fill: var(--color-warning-500);
-  --pf-rating-badge-bg: var(--color-warning-50);
-  --pf-rating-badge-border: var(--color-warning-200);
-  --pf-rating-badge-text: var(--color-warning-700);
-  --pf-rating-badge-reviews: var(--color-warning-800);
+  --pf-rating-star-empty: var(--color-semantic-border-strong);
+  --pf-rating-star-fill: var(--color-semantic-status-warning-bright);
+  --pf-rating-badge-bg: var(--color-semantic-status-warning-background);
+  --pf-rating-badge-border: var(--color-semantic-status-warning-border);
+  --pf-rating-badge-text: var(--color-semantic-status-warning-foreground);
+  /*
+   * The review count is a step stronger than the score beside it. Mixing
+   * toward the default text colour keeps that step in both modes: darker in
+   * light mode, lighter in dark, from one semantic pair rather than two
+   * primitives that cannot move.
+   */
+  --pf-rating-badge-reviews: color-mix(
+    in srgb,
+    var(--color-semantic-status-warning-foreground) 80%,
+    var(--color-semantic-text-default)
+  );
 
   /* SectionHeader aliases */
   --pf-section-header-border: var(--color-semantic-border-default);
@@ -505,8 +515,8 @@
   --pf-daterange-range-text: var(--color-base-white);
 
   /* Badge aliases */
-  --pf-badge-neutral-background: var(--color-gray-100);
-  --pf-badge-neutral-foreground: var(--color-gray-700);
+  --pf-badge-neutral-background: var(--color-semantic-status-neutral-background);
+  --pf-badge-neutral-foreground: var(--color-semantic-status-neutral-foreground);
   --pf-badge-brand-background: var(--color-brand-100);
   --pf-badge-brand-foreground: var(--color-brand-700);
   --pf-badge-success-background: var(--color-semantic-status-success-background);
@@ -516,10 +526,14 @@
   --pf-badge-danger-background: var(--color-semantic-status-danger-background);
   --pf-badge-danger-foreground: var(--color-semantic-status-danger-foreground);
 
-  /* BadgeGroup aliases */
-  --pf-badgegroup-gray-100: var(--color-gray-100);
-  --pf-badgegroup-gray-200: var(--color-gray-200);
-  --pf-badgegroup-gray-700: var(--color-gray-700);
+  /*
+   * BadgeGroup aliases. The gray-* names are older than the semantic tokens
+   * and are kept because a consumer may already override them; the values
+   * point at the neutral status colours so they change with the theme.
+   */
+  --pf-badgegroup-gray-100: var(--color-semantic-status-neutral-background);
+  --pf-badgegroup-gray-200: var(--color-semantic-status-neutral-border);
+  --pf-badgegroup-gray-700: var(--color-semantic-status-neutral-foreground);
   --pf-badgegroup-brand-100: var(--color-brand-100);
   --pf-badgegroup-brand-300: var(--color-brand-300);
   --pf-badgegroup-brand-700: var(--color-brand-700);
@@ -745,8 +759,8 @@
   --pf-multiselect-invalid-border: var(--color-semantic-status-danger-border);
 
   /* Tag aliases */
-  --pf-tag-neutral-bg: var(--color-gray-100);
-  --pf-tag-neutral-text: var(--color-gray-700);
+  --pf-tag-neutral-bg: var(--color-semantic-status-neutral-background);
+  --pf-tag-neutral-text: var(--color-semantic-status-neutral-foreground);
   --pf-tag-brand-bg: var(--color-brand-100);
   --pf-tag-brand-text: var(--color-brand-700);
   --pf-tag-success-bg: var(--color-semantic-status-success-background);
@@ -822,6 +836,18 @@
   --pf-utility-btn-brand-border: var(--color-brand-700);
   --pf-utility-btn-brand-text: var(--color-brand-300);
   --pf-utility-btn-brand-bg-hover: var(--color-brand-800);
+
+  /*
+   * The destructive hover was danger-100 in both modes, so in dark mode its
+   * danger-300 text sat on a near-white pink. A full step to danger-800 is
+   * 4.46:1 against that text, just short of AA; halfway between 900 and 800
+   * is 4.77:1 and still reads as a hover.
+   */
+  --pf-utility-btn-destructive-bg-hover: color-mix(
+    in srgb,
+    var(--color-danger-900),
+    var(--color-danger-800)
+  );
 
   /* Calendar — same border-default contrast issue as TreeView */
   --pf-calendar-border: var(--color-semantic-border-strong);
