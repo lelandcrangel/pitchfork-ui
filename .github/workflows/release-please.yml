@@ -104,6 +104,11 @@ jobs:
           # build would silently omit.
           npm pack --workspace @pitchfork-ui/elements --dry-run 2>&1 | grep -q 'dist/elements.json'
           npm pack --workspace @pitchfork-ui/elements --dry-run 2>&1 | grep -q 'dist/pitchfork/pitchfork.css'
+          # Written after `stencil build` by mark-elements-esm.mjs. The exports
+          # map's import condition points at the .mjs, so without them every
+          # ESM import of the package fails to resolve.
+          npm pack --workspace @pitchfork-ui/elements --dry-run 2>&1 | grep -q 'dist/index.mjs'
+          npm pack --workspace @pitchfork-ui/elements --dry-run 2>&1 | grep -q 'dist/components/package.json'
           npm pack --workspace @pitchfork-ui/elements-react --dry-run 2>&1 | grep -q 'dist/index.js'
           npm pack --workspace @pitchfork-ui/elements-angular --dry-run 2>&1 | grep -q 'dist/fesm2022/pitchfork-ui-elements-angular.mjs'
           npm pack --workspace @pitchfork-ui/elements-vue --dry-run 2>&1 | grep -q 'dist/components.js'
