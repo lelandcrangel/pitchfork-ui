@@ -38,7 +38,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "stencil build && node ../../scripts/build-tailwind-compat.mjs",
+    "build": "stencil build && node ../../scripts/mark-elements-esm.mjs && node ../../scripts/build-tailwind-compat.mjs",
     "start": "stencil build --dev --watch --serve",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -68,15 +68,25 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs.js",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/index.cjs.js"
+      },
       "default": "./dist/index.js"
     },
     "./loader": {
-      "types": "./loader/index.d.ts",
-      "import": "./loader/index.js",
-      "require": "./loader/index.cjs.js",
+      "import": {
+        "types": "./loader/index.d.mts",
+        "default": "./loader/index.mjs"
+      },
+      "require": {
+        "types": "./loader/index.d.ts",
+        "default": "./loader/index.cjs.js"
+      },
       "default": "./loader/index.js"
     },
     "./dist/components": {
@@ -98,6 +108,7 @@
   "sideEffects": [
     "*.css",
     "./dist/index.js",
+    "./dist/index.mjs",
     "./dist/index.cjs.js",
     "./dist/esm/**",
     "./dist/cjs/**",

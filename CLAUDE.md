@@ -1495,7 +1495,19 @@ exceeded` pointing into the mock DOM's selector engine, which reads as a
   structural rescans into one per frame, and keep the immediate rescan for
   the paths whose result is read straight back (a key, `value`, `refresh()`).
 - **The package cannot be `"type": "module"`** — Stencil loads
-  `stencil.config.ts` through `require()`. Hence `vitest.config.mts`.
+  `stencil.config.ts` through `require()`. Hence `vitest.config.mts`, and
+  hence `scripts/mark-elements-esm.mjs` after every `stencil build`: it marks
+  the ESM-only output folders with their own `{"type": "module"}`, copies the
+  two entry points that sit beside a CommonJS twin to `.mjs` (with a `.d.mts`
+  each), and gives the ESM declarations explicit import paths. Without it
+  Node before 22.7 fails on `export`, and later Node warns
+  `MODULE_TYPELESS_PACKAGE_JSON` and parses every file twice. A new ESM entry
+  point beside a CommonJS file belongs in its list. **A folder marker also
+  hides the parent's `sideEffects` from a bundler**, which reads the nearest
+  `package.json`: the first version left the field out, and a one-badge
+  Angular app went from 10 KB to 110 KB because esbuild kept all 112 element
+  modules. Each marker now copies the parent's answer for its folder, and
+  `check:binding-size` is what caught it.
 
 ### Testing elements
 

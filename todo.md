@@ -769,34 +769,54 @@ all already on the core helpers; `Dropdown` was the only one left.
 
 ---
 
-## `@pitchfork-ui/elements` ships ESM in a typeless package
+## `@pitchfork-ui/elements` shipped ESM in a typeless package — fixed
 
-Found by `attw` while closing #26, and measured rather than taken on the
-tool's word.
+Found by `attw` while closing #26. The package cannot be `"type": "module"`
+(Stencil loads `stencil.config.ts` through `require()`), so Node read every
+`.js` file in it as CommonJS while `dist/index.js`, the loader, `dist/esm` and
+`dist/components` are ES modules. On Node 22.7+ each import printed
+`MODULE_TYPELESS_PACKAGE_JSON` and parsed the file twice. Before 22.7 it
+failed outright, measured on 20.9 and 18.17:
+`SyntaxError: Unexpected token 'export'`.
 
-The package cannot be `"type": "module"` -- Stencil loads `stencil.config.ts`
-through `require()` -- so Node treats its `.js` output as CommonJS, while
-`dist/index.js` is one line of ESM (`export * from './esm/index.js'`). `attw`
-calls that an error in every ESM resolution mode, for the main entry, the
-loader and both `components` subpaths.
+`scripts/mark-elements-esm.mjs` runs after `stencil build` and does three
+things:
 
-**It is not an error on current Node.** Probed with a real ESM consumer
-against the built package on Node 22.22: the import succeeds and prints its
-exports, with
-`[MODULE_TYPELESS_PACKAGE_JSON] Warning: ... doesn't parse as CommonJS.
-Reparsing as ES module because module syntax was detected. This incurs a
-performance overhead.` So every ESM consumer pays a failed CJS parse and a
-reparse per entry point, and gets a warning in their output. Node before 22.7
-has no `detect module syntax` and _would_ fail, and `attw` says some bundlers
-still do.
+- It writes `{"type": "module"}` into `dist/esm`, `dist/components` and
+  `dist/collection`, which hold nothing but ES modules. A folder marker covers
+  every chunk, not just the entry.
+- It copies `dist/index.js` and `loader/index.js` to `.mjs`, because each
+  sits beside a CommonJS twin and cannot share a folder marker with it. The
+  `import` condition points at the copy, and `module` still names the `.js`.
+- It gives the types the same split. `dist/types` stays CommonJS-format, as
+  Stencil wrote it, for `require` and node10. Each `.mjs` gets a `.d.mts` that
+  re-exports that tree. The declarations in `dist/components` get explicit
+  import paths, because an ESM declaration cannot import `'../types'` without
+  one.
 
-**Fix:** have the Stencil output target emit the ESM entry as `.mjs`, so the
-extension carries the module kind and no `"type"` field is needed. That is
-output-target configuration rather than a hand edit, and it wants the three
-consumer smokes plus the node16 fixture to prove the entry points still
-resolve afterwards. `scripts/check-published-types.mjs` ignores
-`unexpected-module-syntax` for this package with the measurement beside it, so
-the day it is fixed the ignore comes out and nothing else changes.
+Each folder marker also carries the parent's `sideEffects` answer for that
+folder. A bundler reads that field from the nearest `package.json` too, and
+without it esbuild kept all 112 element modules in a one-badge Angular app
+(110 KB where the binding should add 2.8); `check:binding-size` caught it.
+
+Measured afterwards:
+
+- Every entry point imports with no warning on Node 24, and also on 20.9 and
+  18.17, where the old `.js` entry fails.
+- `require` of the root and the loader still works.
+- `attw` passes every resolution mode with the `unexpected-module-syntax`
+  ignore removed.
+- A TypeScript consumer typechecks under `bundler`, and under `node16` from
+  both an `.mts` and a `.cts` file, and still rejects `variant="ghostly"`.
+
+**Still true, and not this change:** under `node16` with
+`skipLibCheck: false`, Stencil's CommonJS-format `dist/types` imports the
+ESM-only `@pitchfork-ui/core`, which TypeScript reports as TS1479 inside our
+declarations. It was the same before, because the same files were reached by
+the same route. Making `dist/types` ESM would break the `require` view
+instead. The real fix is for Stencil to emit declarations with explicit
+extensions. Like the `vue-router` note above, it only shows with library
+checking on.
 
 Worth knowing what is **not** wrong: `elements-angular` reports
 `false-cjs` for the same family of reason -- `ng-packagr` emits a `.d.ts`
