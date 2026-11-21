@@ -53,17 +53,6 @@ const PACKAGES = [
     // Two stylesheets (the tokens, and the opt-in Tailwind compatibility sheet)
     // and a JSON file: none has, or could have, a type declaration.
     exclude: ['./styles.css', './tailwind.css', './metadata'],
-    /*
-     * The package cannot be `"type": "module"` -- Stencil loads
-     * `stencil.config.ts` through `require()` -- so Node reads its `.js` output
-     * as CJS while `dist/index.js` holds `export * from './esm/index.js'`.
-     * Measured on Node 22.22: the import *works*, because `detect module
-     * syntax` reparses it, and costs a `MODULE_TYPELESS_PACKAGE_JSON` warning
-     * and one reparse. `attw` calls that an error, which is true of Node before
-     * 22.7 and of some bundlers. `todo.md` carries the fix (emit `.mjs`); until
-     * then this is a known wart rather than an unknown one.
-     */
-    ignore: ['unexpected-module-syntax'],
   },
 
   { dir: 'elements-react', profile: 'esm-only' },
