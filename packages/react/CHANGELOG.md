@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented below, grouped by date and feature area.
 
+## [0.19.2](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.19.1...react-v0.19.2) (2026-11-22)
+
+
+### Bug Fixes
+
+* **elements:** centre the slider thumb on its bar ([5a3b0a8](https://github.com/lelandcrangel/pitchfork-ui/commit/5a3b0a82bbf62b170acb1e9db447b385dce7c291))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/tokens bumped from ^0.7.0 to ^0.7.1
+
 ## [0.19.1](https://github.com/lelandcrangel/pitchfork-ui/compare/react-v0.19.0...react-v0.19.1) (2026-11-19)
 
 

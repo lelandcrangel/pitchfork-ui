@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.7.0...tokens-v0.7.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* **tokens:** let neutral badges, tags and the rating badge go dark ([f3018ac](https://github.com/lelandcrangel/pitchfork-ui/commit/f3018ac8ae9f671e3896591300ab035bb5a03912))
+
 ## [0.7.0](https://github.com/lelandcrangel/pitchfork-ui/compare/tokens-v0.6.0...tokens-v0.7.0) (2026-11-19)
 
 

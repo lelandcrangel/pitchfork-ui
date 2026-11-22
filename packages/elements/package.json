@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/elements",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Framework-agnostic custom elements for Pitchfork UI — the design system as standard web components, usable from React, Angular, Vue or plain HTML.",
   "license": "MIT",
   "author": "Leland Rangel",
@@ -48,7 +48,7 @@
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@pitchfork-ui/core": "^0.4.0",
-    "@pitchfork-ui/tokens": "^0.7.0",
+    "@pitchfork-ui/tokens": "^0.7.1",
     "@stencil/core": "^4.45.3"
   },
   "devDependencies": {
