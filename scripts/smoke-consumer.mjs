@@ -1153,6 +1153,95 @@ try {
   }
 
   /*
+   * The slider's thumb has to sit on the centre of its bar.
+   *
+   * The thumb's `margin-top` is written for an inner track the bar's own height,
+   * and Chromium only gives the track that height when the stylesheet says so.
+   * Left unsized, the track grew to fit the thumb, was centred on the bar, and
+   * the margin then lifted the thumb a second time: 2px high, on every slider.
+   *
+   * A pseudo-element has no box to ask for, so this reads pixels: it screenshots
+   * the bar with the thumb at one end, finds the painted rows in the thumb's
+   * column and in a bare stretch of track, and compares their centres. Probed by
+   * deleting the track rule from a real build: the offset reads -2.
+   */
+  const sliderBox = await page
+    .evaluate(async () => {
+      const box = document.createElement('div');
+      box.id = 'pf-slider-centre-probe';
+      box.style.cssText =
+        'position: fixed; left: 0; top: 0; width: 240px; padding: 24px; background: #fff; z-index: 2147483647';
+      box.innerHTML = '<pf-slider aria-label="Centre" value="0"></pf-slider>';
+      document.body.appendChild(box);
+      for (let i = 0; i < 80; i += 1) await new Promise((r) => requestAnimationFrame(r));
+      const input = box.querySelector('pf-slider')?.shadowRoot?.querySelector('input');
+      if (!input) return { error: 'pf-slider never rendered its input' };
+      const rect = input.getBoundingClientRect();
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height };
+    })
+    .catch((error) => ({ error: String(error) }));
+
+  if (sliderBox?.error) {
+    problems.push(`pf-slider thumb: ${sliderBox.error}`);
+  } else {
+    const pad = 16;
+    const shot = await page.screenshot({
+      clip: {
+        x: sliderBox.x,
+        y: sliderBox.y - pad,
+        width: sliderBox.width,
+        height: sliderBox.height + pad * 2,
+      },
+    });
+    const offset = await page.evaluate(async (png) => {
+      const image = new Image();
+      image.src = `data:image/png;base64,${png}`;
+      await image.decode();
+      const canvas = document.createElement('canvas');
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0);
+      const { data, width, height } = context.getImageData(0, 0, image.width, image.height);
+      // The rows painted in one column, against the probe's white background.
+      const centre = (x) => {
+        let top = -1;
+        let bottom = -1;
+        for (let y = 0; y < height; y += 1) {
+          const i = (y * width + x) * 4;
+          if (data[i] < 245 || data[i + 1] < 245 || data[i + 2] < 245) {
+            if (top < 0) top = y;
+            bottom = y;
+          }
+        }
+        return top < 0 ? null : (top + bottom + 1) / 2;
+      };
+      // The thumb is 18px wide at the left end; 60% along is bare track.
+      const scale =
+        width /
+        document
+          .getElementById('pf-slider-centre-probe')
+          .querySelector('pf-slider')
+          .getBoundingClientRect().width;
+      const thumb = centre(Math.round(9 * scale));
+      const track = centre(Math.round(width * 0.6));
+      document.getElementById('pf-slider-centre-probe').remove();
+      if (thumb === null || track === null)
+        return { error: 'found no thumb or no track in the screenshot' };
+      return (thumb - track) / scale;
+    }, shot.toString('base64'));
+
+    if (offset?.error) {
+      problems.push(`pf-slider thumb: ${offset.error}`);
+    } else if (Math.abs(offset) > 1) {
+      problems.push(
+        `pf-slider's thumb sits ${offset.toFixed(1)}px off the centre of its bar — the inner ` +
+          '::-webkit-slider-runnable-track has lost its height, so the thumb margin lifts it twice',
+      );
+    }
+  }
+
+  /*
    * A modal whose content and `open` arrive in the **same task**, which is
    * what every framework's commit does and what the consumer apps' static
    * markup does not.
