@@ -69,6 +69,17 @@
   box-shadow: var(--pf-slider-focus-ring, var(--pf-focus-ring));
 }
 
+/*
+ * The thumb's margin-top below is written for an inner track the bar's own
+ * height. Left unsized, Chromium sizes that track to fit the thumb instead
+ * (13px, the thumb less its margin) and centres it on the 8px bar, so the
+ * margin lifted the thumb a second time and it sat 2px above the bar's centre.
+ */
+.slider::-webkit-slider-runnable-track {
+  border-radius: var(--radius-full);
+  height: var(--pf-slider-track-height);
+}
+
 .slider::-webkit-slider-thumb {
   appearance: none;
   background: var(--pf-slider-bg);
