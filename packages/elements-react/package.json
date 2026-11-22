@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/elements-react",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "React bindings for @pitchfork-ui/elements — typed React components generated from the Pitchfork UI custom elements.",
   "license": "MIT",
   "author": "Leland Rangel",
@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@lit/react": "^1.0.8",
-    "@pitchfork-ui/elements": "^0.4.0"
+    "@pitchfork-ui/elements": "^0.4.1"
   },
   "peerDependencies": {
     "react": ">=18.2.0",

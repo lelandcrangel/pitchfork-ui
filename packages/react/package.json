@@ -1,6 +1,6 @@
 {
   "name": "@pitchfork-ui/react",
-  "version": "0.19.1",
+  "version": "0.19.2",
   "description": "DEPRECATED — use @pitchfork-ui/elements instead. The former React component library for Pitchfork UI; still installable and patched for security until 30 April 2027.",
   "license": "MIT",
   "author": "Leland Rangel",
@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "@pitchfork-ui/core": "^0.4.0",
-    "@pitchfork-ui/tokens": "^0.7.0"
+    "@pitchfork-ui/tokens": "^0.7.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.3.0",

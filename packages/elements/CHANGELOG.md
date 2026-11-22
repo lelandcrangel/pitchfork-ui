@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.1](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-v0.4.0...elements-v0.4.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* **elements:** centre the slider thumb on its bar ([5a3b0a8](https://github.com/lelandcrangel/pitchfork-ui/commit/5a3b0a82bbf62b170acb1e9db447b385dce7c291))
+* **elements:** let text fields shrink to the column they are given ([0a268c0](https://github.com/lelandcrangel/pitchfork-ui/commit/0a268c0f599ae1d4778a13bd2d39bdddb3327ac2))
+* **elements:** tell Node which built files are ES modules ([3a5d695](https://github.com/lelandcrangel/pitchfork-ui/commit/3a5d6950e7dfc92be9a6a90303c0c8ef18e2da78))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @pitchfork-ui/tokens bumped from ^0.7.0 to ^0.7.1
+
 ## [0.4.0](https://github.com/lelandcrangel/pitchfork-ui/compare/elements-v0.3.0...elements-v0.4.0) (2026-11-19)
 
 
