@@ -39,7 +39,7 @@
     "@stencil/vue-output-target": "^0.15.0"
   },
   "peerDependencies": {
-    "vue": ">=3.4.38"
+    "vue": "^3.5.46"
   },
   "devDependencies": {
     "vite-plugin-dts": "^5.0.2"

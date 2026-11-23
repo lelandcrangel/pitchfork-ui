@@ -49,7 +49,7 @@
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@pitchfork-ui/core": "^0.4.0",
     "@pitchfork-ui/tokens": "^0.7.1",
-    "@stencil/core": "^4.45.3"
+    "@stencil/core": "^4.45.5"
   },
   "devDependencies": {
     "@csstools/postcss-global-data": "^4.0.0",
