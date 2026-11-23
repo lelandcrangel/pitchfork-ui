@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@pitchfork-ui/elements": "^0.4.1",
-    "tslib": "^2.3.0"
+    "tslib": "^2.9.1"
   },
   "peerDependencies": {
     "@angular/common": ">=18.0.0",
